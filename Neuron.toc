@@ -1,0 +1,46 @@
+## Interface: 70300
+## Title: Neuron
+## Notes: A macro-based action bar and object manager add-on
+## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (aka Maul)
+## X-Credits-Maintainer: Soyier
+## Version: 0.9.0
+## DefaultState: enabled
+## SavedVariables: NeuronGDB, NeuronItemCache, NeuronProfilesDB
+## SavedVariablesPerCharacter: NeuronCDB, NeuronSpec,
+## OptionalDeps: Align, Masque, BarKeep, Bartender4, Dominos, MagnetButtons, nMainbar, Orbs, rActionBarStyler, StellarBars, Tukui, XBar, Titan, Ace3,
+## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved. Copyright© 2017-2017 Britt W. Yazel, aka Soyier - All rights reserved.
+## X-Permissions: AI-Art Visual Elements used with Author Permission (Quokka@WoWInterface)
+## X-Email: bwyazel@gmail.com
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\AceLocale-3.0\AceLocale-3.0.xml
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+
+
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+
+Localizations\Neuron_Localizations.xml
+
+Neuron.lua
+
+Neuron_States.lua
+Neuron_Buttons.lua
+Neuron_Bars.lua
+Neuron_EditFrames.lua
+Neuron_KeyBinder.lua
+Neuron_Flyouts.lua
+Neuron_SnapTo.lua
+
+Neuron_ExtraBar.lua
+Neuron_StanceBar.lua
+Neuron_ZoneAbilityBar.lua
+
+Neuron-Broker.lua
+
+Neuron.xml
