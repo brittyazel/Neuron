@@ -20,13 +20,16 @@ package-as: Neuron
 enable-nolib-creation: no
 
 ignore:
-    - README.md
-    #- Neuron/Libs/
-    #- Neuron-GUI/Libs/
+  - README.md
+  #- Neuron/Libs/
+  #- Neuron-GUI/Libs/
+
+optional-dependencies:
+    - masque
 
 move-folders:
-    Neuron/Neuron-GUI: Neuron-GUI
-    Neuron/Neuron-Bag: Neuron-Bag
-    Neuron/Neuron-Menu: Neuron-Menu
-    Neuron/Neuron-Pet: Neuron-Pet
-    Neuron/Neuron-Status: Neuron-Status
+  Neuron/Neuron-GUI: Neuron-GUI
+  Neuron/Neuron-Bag: Neuron-Bag
+  Neuron/Neuron-Menu: Neuron-Menu
+  Neuron/Neuron-Pet: Neuron-Pet
+  Neuron/Neuron-Status: Neuron-Status
