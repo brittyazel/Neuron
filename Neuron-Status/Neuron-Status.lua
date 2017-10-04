@@ -289,6 +289,7 @@ local sbStrings = {
 		[2] = { L.TEXT_FACTION, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end },
 		[3] = { L.TEXT_CURRNEXT, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
 		[4] = { L.TEXT_PERCENT, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
+		[5] = { L.TEXT_BUBBLES, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
 	},
 	mirror = {
 		[1] = { L.TEXT_BLANK, function(sb) return "" end },
@@ -437,6 +438,7 @@ local reptable = {}
 	reptable.rep = name.." - "..standing
 	reptable.current = (value-minrep).."/"..(maxrep-minrep)
 	reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
+	reptable.bubbles = tostring(((((value-minrep)/(maxrep-minrep))*100)/5)):gsub("(%d*)(%.)(%d*)","%1")
 	reptable.rephour = "---"
 	reptable.min = minrep
 	reptable.max = maxrep
