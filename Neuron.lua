@@ -2239,7 +2239,7 @@ function NeuronProfile:RefreshConfig()
 	NeuronGDB = self.db.profile["NeuronGDB"]
 	NeuronSpec = {cSpec = GetSpecialization()}
 	defGDB, GDB, defCDB, CDB, defSPEC, SPEC = CopyTable(NeuronGDB), CopyTable(NeuronGDB), CopyTable(NeuronCDB), CopyTable(NeuronCDB), CopyTable(NeuronSpec), CopyTable(NeuronSpec)
-	IONButtonProfileUpdate()
+	NEURONButtonProfileUpdate()
 	--IONBarProfileUpdate()
 	StaticPopup_Show("ReloadUI")
 end

@@ -19,8 +19,7 @@ L.FAQ = [[
 Below you will find answers to various questions that may arise as you use Neuron. Though please note that not all answers may be found here.
 
 For questions not answered here, please direct them here:
-|cff33c7ffhttps://mods.curse.com/addons/wow/neuron |r or
-|cff33c7ffhttp://www.wowinterface.com/downloads/info10636-Neuron.html#comments |r
+|cff33c7ffhttps://mods.curse.com/addons/wow/neuron |r
 
 Further, if you encounter any bugs or missing features, please direct all inquiries here:
 |cff33c7ffhttps://github.com/brittyazel/Neuron/issues |r
@@ -36,63 +35,11 @@ L.CHANGELOG_TITLE = "Changelog"
 L.CHANGELOG = [[
 |cffffd200Changelog:|r
 
-Neuron Lithium v3.0 Update Changes
+Neuron 0.9.0 Update Changes:
 
-Bug fixes
--Fixed PlaySound bug that was introduced in 7.3
--Fixed issue with Paragon reputations not calculating reputation points correctly
--Fixed the F.A.Q section to actually work, and work is underway to improve the F.A.Q into a full fledged resource
--Fixed the Menu sometimes displaying the *?* icon for a single click, and then dissapearing
+ -Initial release
 
-Updates and Additions
--Changed the Minimap button to a new color (teal) to represent the new Lithium release of Neuron
--Updated all Ace3 libraries to their latest version to fix the above PlaySound bug.
-
-                         --------------------------------------------------
-
-ION Helium v2.0 Update Changes
-
-Bug Fixes
--Fixed issue where mounts would not display proper tooltip.
--Fixed issue where toys would not display proper tooltip.
--Fixed issue where toys would not correct usability shade.
--Fixed issue where auto cast could not be toggled on pet bar.
--Fixed issue where high rank in the Brawler Guild would break the status bars.
--Fixed issue where Bar Editor state list would not display after selection a non action bar.
--Fixed issues with the Macro Editor icon selector and its interaction with spces.
--Fixed issue where a user could not re-add a special bar (Extra Action, Menu) if deleted.
--Updated spell cooldown display to not display cooldown on spells with charges until all charges have been used.
--Tweaked spell detection code to hopefully fix some of the tooltip & cooldown displays issues that are still floating around.
--Various code fixes to help prevent taint errors.
-
-Updates & Additions
-*Game Menu Bar*
--Updated code to reflect the current default menu bar.  It now will display alerts when there are changes to collections or talents.
-
-*Action Bar Editor*
--Added visibility state toggles to editor UI.
--Added additional bar states to option list. States added were target, indoors, outdoors, mounted, flying, help, harm, resting, swimming.
--Added ability to enter custom states via the editor UI.  The UI will check to make sure the entered custom state is valid and give an error if it is not.
--Added spell target options to the bars.  Bars can now be set so spells on them have Self, Focus, & Mouse over casting options.  Only spells that contain the #autowrite line in the macro editor will be affected by the settings.
-
-*Macro Editor*
--Added a "Reset" button to completely reset the current macro to a fresh state.
--Added a "Save" button to verify that changes have been saved.
--Added spec selection buttons for bars that are set to dual spec.  This allows a user to view a buttons macro info for alternate specs with out having to switch.
--Updated state list to include custom states
-
-*Extra Action Bar*
--Updated button to allow stop requests when a character is on a Taxi.
-
-*Draenor Action Button*
--This has been completely overhauled. The default Blizzard version of the button has been disabled and a new NEURON specific version has been implemented.  This version has the same functionality as the default button but with the added functionality of NEURON bars.
--An option to hide the decorative border of the button has been added under its Bar Editor Options.
-
-*Stance Bar*
--A stance bar has been added to NEURON for classes/specs that have them.
-
-*Flyouts*
--Flyouts have been updated to provide additional functional and to fix some bugs.  Some of the flyout commands have either changed or have been removed.  Please see the Flyout section of the FAQ for full information.]]
+]]
 
 L.FAQ_BAR_CONFIGURE_TITLE = "Bar Configuration"
 L.FAQ_BAR_CONFIGURE = [[

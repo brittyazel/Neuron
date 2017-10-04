@@ -417,7 +417,7 @@ If you have any questions or concerns please direct all inquirires our github pa
 
 Cheers,
 
--Maul, Soyier, & SLOKnightfall]]
+-Soyier]]
 
 --NEW
 
@@ -429,7 +429,7 @@ Please take a moment to look over the changelog to familiarize yourself with the
 
 Enjoy!
 
--Maul, Soyier, & SLOKnightfall
+-Soyier
 
 P.S. You might want to try right-clicking on the XP bar for a new secret feature]]
 
