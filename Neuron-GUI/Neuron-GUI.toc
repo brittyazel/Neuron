@@ -6,18 +6,14 @@
 ## Version: @project-version@
 ## DefaultState: enabled
 ## Dependencies: Neuron
-## LoadOnDemand: 1
 ## SavedVariables: NeuronGUIGDB
 ## SavedVariablesPerCharacter: NeuronGUICDB
 ## X-Child-Of: Neuron
 ## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved. Copyright© 2017-2017 Britt W. Yazel, aka Soyier - All rights reserved.
 ## X-Permissions: AI-Art Visual Elements used with Author Permission (Quokka@WoWInterface)
 ## X-Email: bwyazel@gmail.com
-## X-Versioning: Atoms
+## LoadOnDemand: 1
 
-Libs\LibStub\LibStub.lua
-Libs\AceLocale-3.0\AceLocale-3.0.lua
-Libs\AceLocale-3.0\AceLocale-3.0.xml
 
 Neuron-GUI.lua
 Neuron-GUI.xml
