@@ -3,7 +3,7 @@
 ## Notes: A macro-based action bar and object manager add-on
 ## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (aka Maul)
 ## X-Credits-Maintainer: Soyier
-## Version: 0.9.0
+## Version: @project-version@
 ## DefaultState: enabled
 ## SavedVariables: NeuronGDB, NeuronItemCache, NeuronProfilesDB
 ## SavedVariablesPerCharacter: NeuronCDB, NeuronSpec,
