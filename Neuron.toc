@@ -7,7 +7,7 @@
 ## DefaultState: enabled
 ## SavedVariables: NeuronGDB, NeuronItemCache, NeuronProfilesDB
 ## SavedVariablesPerCharacter: NeuronCDB, NeuronSpec,
-## OptionalDeps: Align, Masque, BarKeep, Bartender4, Dominos, MagnetButtons, nMainbar, Orbs, rActionBarStyler, StellarBars, Tukui, XBar, Titan, Ace3,
+## OptionalDeps: Masque
 ## X-Copyright: Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved. Copyright© 2017-2017 Britt W. Yazel, aka Soyier - All rights reserved.
 ## X-Permissions: AI-Art Visual Elements used with Author Permission (Quokka@WoWInterface)
 ## X-Email: bwyazel@gmail.com
