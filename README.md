@@ -5,7 +5,7 @@ Neuron is a full featured action Bar addon for World of Warcraft: Legion, update
 ## Install:
 To install, make sure to move the *Neuron-GUI, Neuron-Menu, Neuron-Pet, Neuron-Status, and Neuron-Bag* out of the **Neuron** directory, as they are each their own addons. Move the afformentioned 5 directories as well as the Neuron directory to the World of Warcraft>Interface>addons directory.
 
-When the addon is successfully installed the World of Warcraft directory should contain 6 separate folders at the same level:
+When the addon is successfully installed the World of Warcraft>Interface>addons directory should contain 6 separate folders at the same level:
  * Neuron
  * Neuron-GUI
  * Neuron-Menu
