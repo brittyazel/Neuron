@@ -1,8 +1,5 @@
 package-as: Neuron
 
-manual-changelog:
-    filename: CHANGELOG.md
-    markup-type: markdown
 
 #this will eventually be necessary for curse to automagically pull in all the necessary and up-to-date libraries
 #for wowinterface, I should just upload the versions that curse spits out, which means I need to plug in all of curse's feature sets.
