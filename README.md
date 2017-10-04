@@ -22,4 +22,4 @@ or:
 ---
 
 ### Credits:
-Neuron is a fork of the amazing "Ion Action Bars" addon started my Maul. All credits for the framework of this addon should go to him accordingly, along with SLOKnightFall for his maintainership through the years. If you would like to use the continuation of the Ion addon instead of Neuron, please find it on either Curse or WowInterface.
+Neuron is a fork of the amazing "Ion Action Bars" addon started by Connor Chenoweth aka **Maul**, for World of Warcraft Legion and onwards. All credit for the bulk of this addon should go to him accordingly, along with SLOKnightFall for his maintainership through the years. If you would like to use the ongoing continuation of the Ion addon instead of Neuron, please find it on either Curse or WowInterface.
