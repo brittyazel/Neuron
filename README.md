@@ -28,7 +28,7 @@ Neuron comes bundled with four modules that can be used for a full featured acti
 * Neuron: Bag
 * Neuron: Pet
 
-##Theme Support:
+## Theme Support:
 
 Neuron inherits all theming courtesy of the **[Masque](https://mods.curse.com/addons/wow/masque "Masque")** addon. Neuron has full Masque compatibility, and the theming options found in Masque are quite in-depth, not to mention the robust portfolio of skins made to support Masque. In short, you can make your bars look any way you like!
 
@@ -49,7 +49,7 @@ Neuron contains a graphical bar editor that allows for nearly endless customizat
 If the command line is your thing, all of the options found in the graphical bar editor can also be set using the below command structure.
 
 
-##Commands:
+## Commands:
 Type /neuron alone to display a list of available commands, which are:
 
 * **menu:** Toggle the main menu
@@ -86,6 +86,6 @@ Type /neuron alone to display a list of available commands, which are:
 
 
 
-##Credits:
+## Credits:
 
 Neuron is a fork of the amazing *Ion Action Bars* addon started by Connor Chenoweth aka **Maul**, for World of Warcraft Legion and onwards. All credit for the bulk of this addon should go to him accordingly, along with SLOKnightFall for his maintainership throughout the years. If you would like to use the ongoing continuation of the Ion addon instead of Neuron, please find it on either Curse or WowInterface.
