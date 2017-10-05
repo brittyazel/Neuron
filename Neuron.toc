@@ -41,7 +41,6 @@ Neuron_SnapTo.lua
 Neuron_ExtraBar.lua
 Neuron_StanceBar.lua
 Neuron_ZoneAbilityBar.lua
-
-Neuron-Broker.lua
+Neuron_OrbButton.lua
 
 Neuron.xml
