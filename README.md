@@ -78,7 +78,7 @@ Type /neuron alone to display a list of available commands, which are:
 * **showgrid:** Toggle the current bar's showgrid flag
 * **x:** Change current bar's horizontal axis position
 * **y:** Change current bar's vertical axis position
-* **state:** Toggle states for the current bar (/mac state &lt;state&gt;). Type /mac statelist for vaild states
+* **state:** Toggle states for the current bar (/neuron state &lt;state&gt;). Type /neuron statelist for vaild states
 * **statelist:** Print a list of valid states
 * **load:** Load a profile
 * **lock:** Lock buttons

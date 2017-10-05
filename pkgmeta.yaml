@@ -22,7 +22,6 @@ enable-nolib-creation: no
 ignore:
   - README.md
   #- Neuron/Libs/
-  #- Neuron-GUI/Libs/
 
 optional-dependencies:
     - masque
