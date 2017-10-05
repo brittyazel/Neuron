@@ -3123,7 +3123,7 @@ function BUTTON:SetType(save, kill, init)
 		self:SetAttribute("overrideID_Offset", 156)
 		self:SetAttribute("vehicleID_Offset", 132)
 		self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
-		self:SetAttribute("possessExit_Macro", "/click PossessButton2")
+		self:SetAttribute("possessExit_Macro", "/stopcasting")  --kind of a hack to make the command /stopcasting. It used to be /click PossessButton2 which was super broken
 
 		self:SetAttribute("_childupdate", [[
 
