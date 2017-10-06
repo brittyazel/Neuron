@@ -24,7 +24,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-latestVersionNum = "0.9.2" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+latestVersionNum = "0.9.3" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 Neuron = {
 	SLASHCMDS = {},
