@@ -96,9 +96,9 @@
 						</Backdrop>
 						<Scripts>
 							<OnLoad>
-								self:SetBackdropColor(0, 0, 0, 0.8)
-								self:SetBackdropBorderColor(0.8,0.8,0.8,0)
-								self:SetFrameLevel(0)
+									self:SetBackdropColor(0, 0, 0, 0.8)
+									self:SetBackdropBorderColor(0.8,0.8,0.8,0)
+									self:SetFrameLevel(0)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -121,9 +121,9 @@
 						</Backdrop>
 						<Scripts>
 							<OnLoad>
-								self:SetBackdropColor(0, 0, 0, 0)
-								self:SetBackdropBorderColor(0.8,0.8,0.8,0)
-								self:SetFrameLevel(10)
+									self:SetBackdropColor(0, 0, 0, 0)
+									self:SetBackdropBorderColor(0.8,0.8,0.8,0)
+									self:SetFrameLevel(10)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -138,9 +138,9 @@
 						</Backdrop>
 						<Scripts>
 							<OnLoad>
-								self:SetBackdropColor(1, 1, 1, 0.5)
-								self:SetBackdropBorderColor(1, 1, 1)
-								self:SetFrameLevel(3)
+									self:SetBackdropColor(1, 1, 1, 0.5)
+									self:SetBackdropBorderColor(1, 1, 1)
+									self:SetFrameLevel(3)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -148,8 +148,8 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						self:SetFrameLevel(1)
-						self.barflash:SetAllPoints(self.border)
+							self:SetFrameLevel(1)
+							self.barflash:SetAllPoints(self.border)
 					</OnLoad>
 				</Scripts>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
@@ -221,9 +221,9 @@
 								</Backdrop>
 								<Scripts>
 									<OnLoad>
-										self:SetBackdropColor(0, 0, 0, 1)
-										self:SetBackdropBorderColor(0.8,0.8,0.8,0)
-										self:SetFrameLevel(0)
+											self:SetBackdropColor(0, 0, 0, 1)
+											self:SetBackdropBorderColor(0.8,0.8,0.8,0)
+											self:SetFrameLevel(0)
 									</OnLoad>
 								</Scripts>
 							</Frame>
@@ -246,16 +246,16 @@
 								</Backdrop>
 								<Scripts>
 									<OnLoad>
-										self:SetBackdropColor(0, 0, 0, 0)
-										self:SetBackdropBorderColor(0.8,0.8,0.8,0)
-										self:SetFrameLevel(10)
+											self:SetBackdropColor(0, 0, 0, 0)
+											self:SetBackdropBorderColor(0.8,0.8,0.8,0)
+											self:SetFrameLevel(10)
 									</OnLoad>
 								</Scripts>
 							</Frame>
 						</Frames>
 						<Scripts>
 							<OnLoad>
-								self:SetFrameLevel(1)
+									self:SetFrameLevel(1)
 							</OnLoad>
 						</Scripts>
 						<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
@@ -264,7 +264,7 @@
 				</Frames>
 				<Scripts>
 					<OnShow>
-						self.feedback:SetStatusBarColor(self:GetParent().sb:GetStatusBarColor())
+							self.feedback:SetStatusBarColor(self:GetParent().sb:GetStatusBarColor())
 					</OnShow>
 				</Scripts>
 			</CheckButton>
@@ -287,7 +287,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						Neuron:SB_EditorTypes_OnLoad(self)
+							Neuron:SB_EditorTypes_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -305,26 +305,26 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						Neuron.SB_AdjustableOptions_OnLoad(self)
+							Neuron.SB_AdjustableOptions_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				Neuron:StatusBarEditor_OnLoad(self)
+					Neuron:StatusBarEditor_OnLoad(self)
 			</OnLoad>
 			<OnShow>
-				Neuron:StatusBarEditor_OnShow(self)
+					Neuron:StatusBarEditor_OnShow(self)
 			</OnShow>
 			<OnHide>
-				Neuron:StatusBarEditor_OnHide(self)
+					Neuron:StatusBarEditor_OnHide(self)
 			</OnHide>
 			<OnDragStart>
-				self:GetParent():StartMoving()
+					self:GetParent():StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-				self:GetParent():StopMovingOrSizing()
+					self:GetParent():StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</Frame>

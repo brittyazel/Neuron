@@ -357,7 +357,7 @@ local function xpstrings_Update() --handles updating all the strings for the pla
 			restedXP = "0"
 		end
 
-	--artifact xp option
+		--artifact xp option
 	elseif(xpType == "artifact_xp") then
 
 		--when first logging in for some reason this check fails, even if the player is wearing an artifact weapon
@@ -386,16 +386,16 @@ local function xpstrings_Update() --handles updating all the strings for the pla
 		bubbles = (bubbles):gsub("(%d*)(%.)(%d*)","%1")
 		percentXP = format("%.1f", percentXP); --format
 
-	--honor xp option
+		--honor xp option
 	elseif(xpType == "honor_points") then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
 		restedXP = GetHonorRestState();
 
 		local level = UnitHonorLevel("player");
-    local levelmax = GetMaxPlayerHonorLevel();
+		local levelmax = GetMaxPlayerHonorLevel();
 
-    if (level ~= levelmax) then
+		if (level ~= levelmax) then
 			percentXP = (currXP/nextXP)*100
 		else
 			percentXP = 100
@@ -422,19 +422,19 @@ end
 
 --These factions return fID but have 8 levels instead of 6
 local BrawlerGuildFactions = {
---[1691] = true, --Aliance Legion needs verification
---[1691] = true, --Aliance WoD
-[1419] = true, --Aliance MoP
---[2010] = true, --Horde Legion  needs verification
---[1690] = true, --Horde WoD
-[1374] = true, --Horde MoP
+	--[1691] = true, --Aliance Legion needs verification
+	--[1691] = true, --Aliance WoD
+	[1419] = true, --Aliance MoP
+	--[2010] = true, --Horde Legion  needs verification
+	--[1690] = true, --Horde WoD
+	[1374] = true, --Horde MoP
 }
 
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
 -- @return reptable:  Table containing provided data
 local function SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, value, colors)
-local reptable = {}
+	local reptable = {}
 	reptable.rep = name.." - "..standing
 	reptable.current = (value-minrep).."/"..(maxrep-minrep)
 	reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
@@ -532,11 +532,11 @@ local function XPBar_OnEvent(self, event, ...)
 
 	if(xpType == "artifact_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
 
-			currXP, nextXP, restedXP = xpstrings_Update()
+		currXP, nextXP, restedXP = xpstrings_Update()
 
-			self:SetStatusBarColor(1, 1, 0); --set to yellow?
+		self:SetStatusBarColor(1, 1, 0); --set to yellow?
 
-			hasChanged = true;
+		hasChanged = true;
 
 	end
 
@@ -641,9 +641,9 @@ local function repDropDown_Initialize(frame) --Initialize the dropdown menu for 
 		info.arg2 = repbar_OnEvent
 		info.text = L.AUTO_SELECT
 		info.func = function(self, statusbar, func, checked)
-					local faction = sbStrings.rep[2][2](statusbar.sb)
-					statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb, nil, faction)
-				end
+			local faction = sbStrings.rep[2][2](statusbar.sb)
+			statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb, nil, faction)
+		end
 
 		if (frame.statusbar.data.repID == 0) then
 			checked = 1
@@ -729,8 +729,8 @@ local function repDropDown_Initialize(frame) --Initialize the dropdown menu for 
 			info.arg2 = repbar_OnEvent
 			info.text = text
 			info.func = function(self, statusbar, func, checked)
-						statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb)
-					end
+				statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb)
+			end
 
 			if (frame.statusbar.data.repID == ID) then
 				checked = 1
@@ -920,7 +920,7 @@ function STATUS:CastBar_OnEvent(event, ...)
 	elseif (event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") then
 
 		if ((self.casting and event == "UNIT_SPELLCAST_STOP" and select(4, ...) == self.castID) or
-		     (self.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP")) then
+				(self.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP")) then
 
 			self.spark:Hide()
 			self.barflash:SetAlpha(0.0)
@@ -1267,16 +1267,16 @@ end
 function STATUS:SetBorder(sb, config, bordercolor)
 
 	sb.border:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-				edgeFile = BarBorders[config.border][2],
-				tile = true,
-				tileSize = BarBorders[config.border][7],
-				edgeSize = BarBorders[config.border][8],
-				insets = { left = BarBorders[config.border][3],
-					   right = BarBorders[config.border][4],
-					   top = BarBorders[config.border][5],
-					   bottom = BarBorders[config.border][6]
-					 }
-				})
+		edgeFile = BarBorders[config.border][2],
+		tile = true,
+		tileSize = BarBorders[config.border][7],
+		edgeSize = BarBorders[config.border][8],
+		insets = { left = BarBorders[config.border][3],
+			right = BarBorders[config.border][4],
+			top = BarBorders[config.border][5],
+			bottom = BarBorders[config.border][6]
+		}
+	})
 
 	sb.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
 	sb.border:SetPoint("BOTTOMRIGHT", BarBorders[config.border][11], BarBorders[config.border][12])
@@ -1291,16 +1291,16 @@ function STATUS:SetBorder(sb, config, bordercolor)
 
 	if (sb.barflash) then
 		sb.barflash:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-					edgeFile = BarBorders[config.border][2],
-					tile = true,
-					tileSize = BarBorders[config.border][7],
-					edgeSize = BarBorders[config.border][8],
-					insets = { left = BarBorders[config.border][3],
-						   right = BarBorders[config.border][4],
-						   top = BarBorders[config.border][5],
-						   bottom = BarBorders[config.border][6]
-						 }
-					})
+			edgeFile = BarBorders[config.border][2],
+			tile = true,
+			tileSize = BarBorders[config.border][7],
+			edgeSize = BarBorders[config.border][8],
+			insets = { left = BarBorders[config.border][3],
+				right = BarBorders[config.border][4],
+				top = BarBorders[config.border][5],
+				bottom = BarBorders[config.border][6]
+			}
+		})
 	end
 end
 
@@ -2548,7 +2548,7 @@ function STATUS:SetType(save)
 			self.sb:RegisterEvent("ARTIFACT_XP_UPDATE")
 			self.sb:RegisterEvent("UPDATE_EXHAUSTION")
 			self.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
-            self.sb:RegisterEvent("ARTIFACT_UPDATE")
+			self.sb:RegisterEvent("ARTIFACT_UPDATE")
 			self.sb:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
 			self.sb:SetScript("OnEvent", XPBar_OnEvent)
@@ -2691,9 +2691,9 @@ local function controlOnEvent(self, event, ...)
 		NEURON:RegisterBarClass("status", "Status Bar Group", "Status Bar", statusbarsGDB, statusbarsCDB, STATUSIndex, statusbtnsGDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
 
 		NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
-							     SNAPTO = true,
-							     HIDDEN = true,
-							     TOOLTIPS = true }, false, false)
+			SNAPTO = true,
+			HIDDEN = true,
+			TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then --makes the initial 4 status bars
 
@@ -2756,17 +2756,17 @@ local function controlOnEvent(self, event, ...)
 
 		PEW = true
 
-	--[[elseif (event == "PLAYER_XP_UPDATE" or event == "UPDATE_EXHAUSTION") then
+		--[[elseif (event == "PLAYER_XP_UPDATE" or event == "UPDATE_EXHAUSTION") then
 
-		xpstrings_Update()
+            xpstrings_Update()
 
-	elseif (event == "ARTIFACT_XP_UPDATE") then
+        elseif (event == "ARTIFACT_XP_UPDATE") then
 
-		xpstrings_Update()
+            xpstrings_Update()
 
-	elseif(event == "HONOR_XP_UPDATE") then
+        elseif(event == "HONOR_XP_UPDATE") then
 
-		pointstrings_Update()]]
+            pointstrings_Update()]]
 
 	elseif (event == "UPDATE_FACTION" or event == "CHAT_MSG_COMBAT_FACTION_CHANGE") then
 

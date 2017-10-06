@@ -152,9 +152,9 @@ local function DelayedUpdate(self, elapsed)
 end
 
 local LOGIN_Updater = CreateFrame("Frame", nil, UIParent)
-	LOGIN_Updater:SetScript("OnUpdate", DelayedUpdate)
-	LOGIN_Updater:Hide()
-	LOGIN_Updater.elapsed = 0
+LOGIN_Updater:SetScript("OnUpdate", DelayedUpdate)
+LOGIN_Updater:Hide()
+LOGIN_Updater.elapsed = 0
 
 
 ORB:SetScript("OnEvent", function(self, event, ...)

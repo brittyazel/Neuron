@@ -395,7 +395,7 @@ end
 function NEURON:BindingsEditor_OnLoad(frame)
 
 	--this line was causing a crash on the beta
-      NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
+	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	frame:SetBackdropColor(0,0,0,0.8)

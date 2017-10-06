@@ -139,11 +139,11 @@ local function ZoneAbilityFrame_Update(self)
 		StartChargeCooldown(self, chargeStart, chargeDuration, enable);
 	end
 
-				--if (duration and duration >= NeuronGDB.timerLimit and self.iconframeaurawatch.active) then
-				--self.auraQueue = self.iconframeaurawatch.queueinfo
-				--self.iconframeaurawatch.duration = 0
-				--self.iconframeaurawatch:Hide()
-			--end
+	--if (duration and duration >= NeuronGDB.timerLimit and self.iconframeaurawatch.active) then
+	--self.auraQueue = self.iconframeaurawatch.queueinfo
+	--self.iconframeaurawatch.duration = 0
+	--self.iconframeaurawatch:Hide()
+	--end
 	if (start) then
 		--CooldownFrame_SetTimer(self.SpellButton.Cooldown, start, duration, enable);
 		self:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
@@ -153,7 +153,7 @@ local function ZoneAbilityFrame_Update(self)
 	self.spellID = spellID;
 
 	if (self.spellName and not InCombatLockdown()) then
-      self:SetAttribute("*macrotext1", "/cast " .. self.spellName .. "();")
+		self:SetAttribute("*macrotext1", "/cast " .. self.spellName .. "();")
 	end
 end
 
@@ -166,8 +166,8 @@ function ZONEABILITYRBTN:OnEvent(event, ...)
 	local spellID, spellType = GetZoneAbilitySpellInfo();
 
 	if (event == "SPELLS_CHANGED" or event=="UNIT_AURA") then
-    self.baseName = GetSpellInfo(spellID);
-    ZoneAbilitySpellID = spellID
+		self.baseName = GetSpellInfo(spellID);
+		ZoneAbilitySpellID = spellID
 	end
 
 	if (not self.baseName) then
@@ -411,12 +411,12 @@ end
 
 
 function ZONEABILITYRBTN:UpdateFrame()
-if zoneabilitybarsGDB[1].border then
+	if zoneabilitybarsGDB[1].border then
 
-NeuronZoneActionButton1.style:Show()
-else
-NeuronZoneActionButton1.style:Hide()
-end
+		NeuronZoneActionButton1.style:Show()
+	else
+		NeuronZoneActionButton1.style:Hide()
+	end
 	-- empty
 end
 
@@ -489,18 +489,18 @@ local function controlOnEvent(self, event, ...)
 		NEURON:RegisterBarClass("zoneabilitybar", "Zone Action Bar", "Zone Action Button", zoneabilitybarsGDB, zoneabilitybarsCDB, ZONEABILITYRBTNIndex, zoneabilitybtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, false, STORAGE, gDef, nil, false)
 
 		NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
-		                                SHOWGRID = false,
-		                                SNAPTO = true,
-		                                UPCLICKS = true,
-		                                DOWNCLICKS = true,
-		                                HIDDEN = true,
-		                                LOCKBAR = false,
-		                                TOOLTIPS = true,
-							  BINDTEXT = true,
-							  RANGEIND = true,
-							  CDTEXT = true,
-							  CDALPHA = true,
-							  ZONEABILITY = true}, false, 65)
+			SHOWGRID = false,
+			SNAPTO = true,
+			UPCLICKS = true,
+			DOWNCLICKS = true,
+			HIDDEN = true,
+			LOCKBAR = false,
+			TOOLTIPS = true,
+			BINDTEXT = true,
+			RANGEIND = true,
+			CDTEXT = true,
+			CDALPHA = true,
+			ZONEABILITY = true}, false, 65)
 
 		if (GDB.zoneabilitybarFirstRun) then
 

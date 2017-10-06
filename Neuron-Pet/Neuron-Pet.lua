@@ -323,12 +323,12 @@ end
 
 
 function PETBTN:PET_BAR_SHOWGRID(event, ...)
---empty
+	--empty
 end
 
 
 function PETBTN:PET_BAR_HIDEGRID(event, ...)
---empty
+	--empty
 end
 
 
@@ -665,18 +665,19 @@ local function controlOnEvent(self, event, ...)
 
 		NEURON:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false, STORAGE, gDef, nil, true)
 
-		NEURON:RegisterGUIOptions("pet", { AUTOHIDE = true,
-		                                SHOWGRID = true,
-		                                SNAPTO = true,
-		                                UPCLICKS = true,
-		                                DOWNCLICKS = true,
-		                                HIDDEN = true,
-		                                LOCKBAR = true,
-		                                TOOLTIPS = true,
-							  BINDTEXT = true,
-							  RANGEIND = true,
-							  CDTEXT = true,
-							  CDALPHA = true }, false, 65)
+		NEURON:RegisterGUIOptions("pet", {
+			AUTOHIDE = true,
+			SHOWGRID = true,
+			SNAPTO = true,
+			UPCLICKS = true,
+			DOWNCLICKS = true,
+			HIDDEN = true,
+			LOCKBAR = true,
+			TOOLTIPS = true,
+			BINDTEXT = true,
+			RANGEIND = true,
+			CDTEXT = true,
+			CDALPHA = true }, false, 65)
 
 		if (GDB.firstRun) then
 

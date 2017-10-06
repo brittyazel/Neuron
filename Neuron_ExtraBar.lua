@@ -473,17 +473,17 @@ local function controlOnEvent(self, event, ...)
 		NEURON:RegisterBarClass("extrabar", "Extra Action Bar", "Extra Action Button", xbarsGDB, xbarsCDB, XBTNIndex, xbtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, false, STORAGE, gDef, nil, false)
 
 		NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
-		                    	             SHOWGRID = true,
-		                    	             SNAPTO = true,
-		                    	             UPCLICKS = true,
-		                    	             DOWNCLICKS = true,
-		                    	             HIDDEN = true,
-		                    	             LOCKBAR = true,
-		                    	             TOOLTIPS = true,
-								 BINDTEXT = true,
-								 RANGEIND = true,
-								 CDTEXT = true,
-								 CDALPHA = true }, false, 65)
+			SHOWGRID = true,
+			SNAPTO = true,
+			UPCLICKS = true,
+			DOWNCLICKS = true,
+			HIDDEN = true,
+			LOCKBAR = true,
+			TOOLTIPS = true,
+			BINDTEXT = true,
+			RANGEIND = true,
+			CDTEXT = true,
+			CDALPHA = true }, false, 65)
 
 		if (GDB.xbarFirstRun) then
 

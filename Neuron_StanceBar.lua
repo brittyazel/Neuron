@@ -72,19 +72,19 @@ local function HasAction(id, icon)
 	local texture, _, _, _ = GetShapeshiftFormInfo(id)
 
 	--if (GetPetActionSlotUsable(id)) then
---
-		--if (texture) then
-			--return true
-		--else
-		--	return false
-		--end
+	--
+	--if (texture) then
+	--return true
+	--else
+	--	return false
+	--end
 	--else
 
-		if (icon and texture) then
-			return true
-		else
-			return false
-		end
+	if (icon and texture) then
+		return true
+	else
+		return false
+	end
 	--end
 end
 
@@ -154,7 +154,7 @@ function SBTN:STANCE_UpdateCooldown()
 			self:STANCE_UpdateIcon(spell, nil, texture, false)
 		end
 		display = true
-		
+
 	else
 		display = false
 	end
@@ -477,18 +477,19 @@ local function controlOnEvent(self, event, ...)
 
 		NEURON:RegisterBarClass("stancebar", "Stance Bar", "Stance Button", sbarsGDB, sbarsCDB, SBTNIndex, sbtnsGDB, "CheckButton", "NeuronStanceButtonTemplate", { __index = SBTN }, NEURON.maxStanceID, false, STORAGE, gDef, nil, false)
 
-		NEURON:RegisterGUIOptions("stancebar", { AUTOHIDE = true,
-		                                SHOWGRID = true,
-		                                SNAPTO = true,
-		                                UPCLICKS = true,
-		                                DOWNCLICKS = true,
-		                                HIDDEN = true,
-		                                LOCKBAR = false,
-		                                TOOLTIPS = true,
-							  BINDTEXT = true,
-							  RANGEIND = false,
-							  CDTEXT = true,
-							  CDALPHA = true }, false, 65)
+		NEURON:RegisterGUIOptions("stancebar", {
+			AUTOHIDE = true,
+			SHOWGRID = true,
+			SNAPTO = true,
+			UPCLICKS = true,
+			DOWNCLICKS = true,
+			HIDDEN = true,
+			LOCKBAR = false,
+			TOOLTIPS = true,
+			BINDTEXT = true,
+			RANGEIND = false,
+			CDTEXT = true,
+			CDALPHA = true }, false, 65)
 
 		if (GDB.sbarFirstRun) then
 

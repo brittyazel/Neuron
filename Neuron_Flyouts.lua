@@ -73,9 +73,9 @@ f.filter = {} -- table of search:keyword search functions (f.filter.item(arg))
 -- adds a type/value attribute pair to rtable if it's not already there
 local function addToTable(actionType,actionValue)
 	--for i=1,#rtable,2 do
-		--if rtable[i]==actionType and rtable[i+1]==actionValue then
-			--return
-		--end
+	--if rtable[i]==actionType and rtable[i+1]==actionValue then
+	--return
+	--end
 	--end
 	--tinsert(rtable,actionType)
 	--tinsert(rtable,actionValue)
@@ -266,7 +266,7 @@ function BUTTON:filter_spell(data)
 		else
 			excluded = false
 		end
---revisit
+		--revisit
 		if type(arg)=="number" and IsSpellKnown(arg) then
 			local name = GetSpellInfo(arg)
 			if name then
@@ -327,7 +327,7 @@ function BUTTON:filter_type(data)
 				for j=1,GetContainerNumSlots(i) do
 					local isQuestItem, questID, isActive = GetContainerItemQuestInfo(i,j)
 					if isQuestItem or questID or isActive then
-						 data[(format("item:%d",GetContainerItemID(i,j))):lower()] = "item" --addToTable("item",format("item:%d",GetContainerItemID(i,j)))
+						data[(format("item:%d",GetContainerItemID(i,j))):lower()] = "item" --addToTable("item",format("item:%d",GetContainerItemID(i,j)))
 					end
 				end
 			end
@@ -337,7 +337,7 @@ function BUTTON:filter_type(data)
 			if GetItemCount(name)>0 then
 				local _, _, _, _, _, itemType, itemSubType, _, itemSlot = GetItemInfo(itemID)
 				if itemType and ((itemType:lower()):match(arg) or (itemSubType:lower()):match(arg) or (itemSlot:lower()):match(arg)) then
-					 data[itemID:lower()] = "item" --addToTable("item",itemID)
+					data[itemID:lower()] = "item" --addToTable("item",itemID)
 				end
 			end
 		end
@@ -389,7 +389,7 @@ function BUTTON:filter_mount(data)
 				end
 			end
 		end
-		
+
 	end
 	RemoveExclusions(data)
 end
@@ -437,7 +437,7 @@ function BUTTON:filter_profession(data)
 						local isPassive = IsPassiveSpell(offset+i,"professions")
 
 						if not isPassive then
-						tinsert(profSpells, spellName:lower())
+							tinsert(profSpells, spellName:lower())
 							data[spellName:lower()] = "spell"
 						end
 					end
@@ -473,7 +473,7 @@ function BUTTON:filter_pet(data, arg, rtable)
 		end
 
 
-	-- the following can create 150-200k of garbage...why? pets are officially unsupported so this is permitted to stay
+		-- the following can create 150-200k of garbage...why? pets are officially unsupported so this is permitted to stay
 		for i=1,C_PetJournal.GetNumPets() do
 			local petID,_,owned,customName,_,isFavorite,_,realName, icon = C_PetJournal.GetPetInfoByIndex(i)
 			if petID and owned then
@@ -482,7 +482,7 @@ function BUTTON:filter_pet(data, arg, rtable)
 					if ((customName and (customName:lower()):match(arg)) or (realName and (realName:lower()):match(arg))) and excluded then
 						exclusions[realName] = true
 					else
-					--addToTable("macro",format("/summonpet %s",customName or realName))
+						--addToTable("macro",format("/summonpet %s",customName or realName))
 						data[realName] = "companion"
 						petIcons[realName] = icon
 					end
@@ -539,7 +539,7 @@ function BUTTON:filter_toy(data)
 end
 
 
- --- Sorting fuinction
+--- Sorting fuinction
 local function keySort(list)
 	wipe(array)
 
@@ -661,7 +661,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 		end
 
 		if (data) then
-			for spell, source in keySort(data) do 
+			for spell, source in keySort(data) do
 				button = self:Flyout_GetButton()
 
 				if (source == "spell" or source =="blizz") then
@@ -1424,11 +1424,11 @@ local function controlOnEvent(self, event, ...)
 	elseif (event == "PLAYER_LOGIN") then
 		--f.TOYS_UPDATED() -- update toy cache
 		f.CacheBags()
-	
+
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 		PEW = true
 
-	--try to delay item flyouts as late as possible so items are recognized as being in inventory
+		--try to delay item flyouts as late as possible so items are recognized as being in inventory
 	elseif (event == "UPDATE_INVENTORY_DURABILITY" and not A_UPDATE) then
 		ANCHOR_LOGIN_Updater:Show()
 		A_UPDATE = true

@@ -62,19 +62,19 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				Neuron.NeuronBackpackButton_OnLoad(self)
+					Neuron.NeuronBackpackButton_OnLoad(self)
 			</OnLoad>
 			<OnReceiveDrag>
-				Neuron.NeuronBackpackButton_OnReceiveDrag(self, button)
+					Neuron.NeuronBackpackButton_OnReceiveDrag(self, button)
 			</OnReceiveDrag>
 			<OnEnter>
-				Neuron.NeuronBackpackButton_OnEnter(self)
+					Neuron.NeuronBackpackButton_OnEnter(self)
 			</OnEnter>
 			<OnLeave>
-				Neuron.NeuronBackpackButton_OnLeave(self)
+					Neuron.NeuronBackpackButton_OnLeave(self)
 			</OnLeave>
 			<OnEvent>
-				Neuron.NeuronBackpackButton_OnEvent(self, event, ...)
+					Neuron.NeuronBackpackButton_OnEvent(self, event, ...)
 			</OnEvent>
 		</Scripts>
 		<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot2">

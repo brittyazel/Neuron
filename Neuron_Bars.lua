@@ -477,7 +477,7 @@ function HANDLER:UpdateVisibility(bar)
 
 				if (state == "stance" and bar.gdata.hidestates:find(":stance8")) then
 					self:AddVisibilityDriver(bar, state, "[stance:2/3,stealth] stance8; "..values.states)
-				--elseif (state == "custom" and bar.cdata.custom) then
+					--elseif (state == "custom" and bar.cdata.custom) then
 					--self:AddVisibilityDriver(bar, state, bar.cdata.custom)
 				else
 					self:AddVisibilityDriver(bar, state, values.states)
@@ -510,8 +510,8 @@ function HANDLER:BuildStateMap(bar, remapState)
 			local newstate = remapState..remap
 
 			if (MAS[remapState] and
-			    MAS[remapState].homestate and
-			    MAS[remapState].homestate == newstate) then
+					MAS[remapState].homestate and
+					MAS[remapState].homestate == newstate) then
 				statemap = statemap.."["..state..":"..map.."] homestate; "
 			else
 				statemap = statemap.."["..state..":"..map.."] "..newstate.."; "
@@ -641,7 +641,7 @@ function BAR:CreateDriver()
 
 	driver:HookScript("OnAttributeChanged",
 
-			function(self,name,value)
+		function(self,name,value)
 
 		end)
 
@@ -713,7 +713,7 @@ function BAR:CreateHandler()
 
 	handler:SetID(self:GetID())
 
-		--Dynamicly builds handler actions based on states in NEURON.STATEINDEX using Global text
+	--Dynamicly builds handler actions based on states in NEURON.STATEINDEX using Global text
 	for _, modifier in pairs(NEURON.STATEINDEX) do
 		local action = HANDLER_BASE_ACTION:gsub("<MODIFIER>", modifier)
 		handler:SetAttribute("_onstate-"..modifier, action)
@@ -848,9 +848,9 @@ function BAR:CreateHandler()
 
 						]])
 
-    handler:SetAttribute("_onstate-current", [[ self:SetAttribute("activestate", self:GetAttribute("state-current") or "homestate") ]])
+	handler:SetAttribute("_onstate-current", [[ self:SetAttribute("activestate", self:GetAttribute("state-current") or "homestate") ]])
 
-    handler:SetAttribute("statestack", "homestate")
+	handler:SetAttribute("statestack", "homestate")
 
 	handler:SetAttribute("activestate", "homestate")
 
@@ -858,9 +858,9 @@ function BAR:CreateHandler()
 
 	handler:HookScript("OnAttributeChanged",
 
-			function(self,name,value)
+		function(self,name,value)
 
-			end)
+		end)
 
 	--handler:SetAttribute("_onshow", [[ control:ChildUpdate("onshow", "show") ]])
 
@@ -1170,8 +1170,8 @@ function BAR:SetPerimeter()
 		if (object and num < count) then
 			local objTop, objBottom, objLeft, objRight = object:GetTop(), object:GetBottom(), object:GetLeft(), object:GetRight()
 			local scale = 1
---See if this fixes the ranom position error that happens
-		if not objTop then return end
+			--See if this fixes the ranom position error that happens
+			if not objTop then return end
 
 			self.objectCount = self.objectCount + 1
 
@@ -3122,23 +3122,23 @@ local function controlOnEvent(self, event, ...)
 		NEURON:RegisterBarClass("bar", "Action Bar", "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
 
 		NEURON:RegisterGUIOptions("bar",	{ AUTOHIDE = true,
-							  SHOWGRID = true,
-							  SPELLGLOW = true,
-							  SNAPTO = true,
-							  UPCLICKS = true,
-							  DOWNCLICKS = true,
-							  DUALSPEC = true,
-							  HIDDEN = true,
-							  LOCKBAR = true,
-							  TOOLTIPS = true,
-							  BINDTEXT = true,
-							  MACROTEXT = true,
-							  COUNTTEXT = true,
-							  RANGEIND = true,
-							  CDTEXT = true,
-							  CDALPHA = true,
-							  AURATEXT = true,
-							  AURAIND = true }, true, 115)
+			SHOWGRID = true,
+			SPELLGLOW = true,
+			SNAPTO = true,
+			UPCLICKS = true,
+			DOWNCLICKS = true,
+			DUALSPEC = true,
+			HIDDEN = true,
+			LOCKBAR = true,
+			TOOLTIPS = true,
+			BINDTEXT = true,
+			MACROTEXT = true,
+			COUNTTEXT = true,
+			RANGEIND = true,
+			CDTEXT = true,
+			CDALPHA = true,
+			AURATEXT = true,
+			AURAIND = true }, true, 115)
 
 		if (GDB.firstRun) then
 			local oid, offset = 1, 0
@@ -3206,53 +3206,53 @@ frame.elapsed = 0
 
 
 function NEURONBarProfileUpdate()
-		GDB, CDB, SPEC = NeuronGDB, NeuronCDB, NeuronSpec
-		barGDB = GDB.bars
-		barCDB = CDB.bars
+	GDB, CDB, SPEC = NeuronGDB, NeuronCDB, NeuronSpec
+	barGDB = GDB.bars
+	barCDB = CDB.bars
 
-		if (GDB.firstRun) then
-			local oid, offset = 1, 0
-			for id, defaults in ipairs(gDef) do
-				NEURON.RegisteredBarData["bar"].gDef = defaults
+	if (GDB.firstRun) then
+		local oid, offset = 1, 0
+		for id, defaults in ipairs(gDef) do
+			NEURON.RegisteredBarData["bar"].gDef = defaults
 
-				local bar, object = NEURON:CreateNewBar("bar", id, true)
+			local bar, object = NEURON:CreateNewBar("bar", id, true)
 
-				for i=oid+offset,oid+11+offset do
-					object = NEURON:CreateNewObject("bar", i, true)
-					bar:AddObjectToList(object)
-				end
-
-				NEURON.RegisteredBarData["bar"].gDef = nil
-				offset = offset + 12
+			for i=oid+offset,oid+11+offset do
+				object = NEURON:CreateNewObject("bar", i, true)
+				bar:AddObjectToList(object)
 			end
 
-		else
-			for id,data in pairs(barGDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewBar("bar", id)
-				end
-			end
+			NEURON.RegisteredBarData["bar"].gDef = nil
+			offset = offset + 12
+		end
 
-			for id,data in pairs(GDB.buttons) do
-				if (data ~= nil) then
-					NEURON:CreateNewObject("bar", id)
+	else
+		for id,data in pairs(barGDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewBar("bar", id)
+			end
+		end
+
+		for id,data in pairs(GDB.buttons) do
+			if (data ~= nil) then
+				NEURON:CreateNewObject("bar", id)
+			end
+		end
+	end
+
+	STORAGE:Hide()
+
+	for _,bar in pairs(BARIndex) do
+		if (CDB.firstRun) then
+			for id, cdefaults in ipairs(cDef) do
+				if (id == bar:GetID()) then
+					bar:SetDefaults(nil, cdefaults)
 				end
 			end
 		end
 
-		STORAGE:Hide()
-
-		for _,bar in pairs(BARIndex) do
-			if (CDB.firstRun) then
-				for id, cdefaults in ipairs(cDef) do
-					if (id == bar:GetID()) then
-						bar:SetDefaults(nil, cdefaults)
-					end
-				end
-			end
-
-			bar:Load()
-		end
+		bar:Load()
+	end
 end
 
 --- Sets a Target Casting state for a bar
@@ -3262,17 +3262,17 @@ end
 -- @param query: N/A
 function BAR:SetCastingTarget(value, gui, checked, query)
 	if (value) then
-	--[[
-		if (not MAS[state]) then
-			if (not gui) then
-				NEURON:PrintStateList()
-			else
-				print("GUI option error")
-			end
+		--[[
+            if (not MAS[state]) then
+                if (not gui) then
+                    NEURON:PrintStateList()
+                else
+                    print("GUI option error")
+                end
 
-			return
-		end
---]]
+                return
+            end
+    --]]
 		if (gui) then
 
 			if (checked) then
@@ -3296,24 +3296,24 @@ function BAR:SetCastingTarget(value, gui, checked, query)
 		BUTTON:UpdateMacroCastTargets()
 		self:Update()
 	elseif (not gui) then
---[[
-		wipe(statetable)
+		--[[
+                wipe(statetable)
 
-		for k,v in pairs(NEURON.STATEINDEX) do
+                for k,v in pairs(NEURON.STATEINDEX) do
 
-			if (self.cdata[k]) then
-				tinsert(statetable, k..": on")
-			else
-				tinsert(statetable, k..": off")
-			end
-		end
+                    if (self.cdata[k]) then
+                        tinsert(statetable, k..": on")
+                    else
+                        tinsert(statetable, k..": off")
+                    end
+                end
 
-		tsort(statetable)
+                tsort(statetable)
 
-		for k,v in ipairs(statetable) do
-			print(v)
-		end
+                for k,v in ipairs(statetable) do
+                    print(v)
+                end
 
-		--]]
+                --]]
 	end
 end

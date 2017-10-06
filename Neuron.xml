@@ -66,54 +66,54 @@
 		</HighlightTexture>
 		<Scripts>
 			<OnLoad>
-				self:SetBackdropColor(0, 0, 0)
-				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+					self:SetBackdropColor(0, 0, 0)
+					self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnClick>
-				local text = self.text:GetText()
-				local parent = self:GetParent()
-				local parentparent = self:GetParent():GetParent()
-				local edit = parentparent.edit
+					local text = self.text:GetText()
+					local parent = self:GetParent()
+					local parentparent = self:GetParent():GetParent()
+					local edit = parentparent.edit
 
-				if (text) then
+					if (text) then
 
-					if (parentparent:GetObjectType() == "EditBox") then
+						if (parentparent:GetObjectType() == "EditBox") then
 
-						parentparent:SetText("")
-						parentparent:SetText(text)
-						parentparent:SetFocus()
-						parentparent:ClearFocus()
+							parentparent:SetText("")
+							parentparent:SetText(text)
+							parentparent:SetFocus()
+							parentparent:ClearFocus()
 
-						if (self.value) then
-							parentparent.value = self.value
+							if (self.value) then
+								parentparent.value = self.value
+							end
+
+						elseif (edit and self.value) then
+
+							print("hit2")
+
+							edit:SetText("")
+							edit:SetText(self.value)
+
+						elseif (edit) then
+
+							print("hit3")
+
+							edit:SetText("")
+							edit:SetText(text)
 						end
-
-					elseif (edit and self.value) then
-
-						print("hit2")
-
-						edit:SetText("")
-						edit:SetText(self.value)
-
-					elseif (edit) then
-
-						print("hit3")
-
-						edit:SetText("")
-						edit:SetText(text)
 					end
-				end
 
-				parent:Hide()
+					parent:Hide()
 			</OnClick>
 			<OnEnter>
-				if (self.tooltip) then
-					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-					GameTooltip:SetText(self.tooltip)
-				end
+					if (self.tooltip) then
+						GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+						GameTooltip:SetText(self.tooltip)
+					end
 			</OnEnter>
 			<OnLeave>
-				GameTooltip:Hide()
+					GameTooltip:Hide()
 			</OnLeave>
 		</Scripts>
 		<ButtonText name="$parentText" inherits="GameFontHighlight" justifyH="CENTER" parentKey="text">
@@ -159,9 +159,9 @@
 			<CheckButton name="$parentKeyBind" parentKey="keybind" inherits="SecureActionButtonTemplate">
 				<Scripts>
 					<OnLoad>
-						self:RegisterForClicks("AnyUp, AnyDown")
-						self:RegisterEvent("ADDON_LOADED")
-						self.config = {	clickAnchor = true, mouseoverAnchor = true }
+							self:RegisterForClicks("AnyUp, AnyDown")
+							self:RegisterEvent("ADDON_LOADED")
+							self.config = {	clickAnchor = true, mouseoverAnchor = true }
 					</OnLoad>
 					<OnEvent>
 
@@ -298,24 +298,24 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-				if ( self:GetChecked() ) then
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-				else
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-				end
+					if ( self:GetChecked() ) then
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+					else
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+					end
 			</OnClick>
 			<OnEnter>
-				if ( self.tooltipText ) then
-					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-					GameTooltip:SetText(self.tooltipText)
-				end
-				if ( self.tooltipRequirement ) then
-					GameTooltip:AddLine(self.tooltipRequirement)
-				end
-				GameTooltip:Show();
+					if ( self.tooltipText ) then
+						GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+						GameTooltip:SetText(self.tooltipText)
+					end
+					if ( self.tooltipRequirement ) then
+						GameTooltip:AddLine(self.tooltipRequirement)
+					end
+					GameTooltip:Show();
 			</OnEnter>
 			<OnLeave>
-				GameTooltip:Hide();
+					GameTooltip:Hide();
 			</OnLeave>
 		</Scripts>
 		<NormalTexture file="Interface\Addons\Neuron\Images\RoundCheckBox.tga"/>
@@ -490,11 +490,11 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								self:SetFrameLevel(3)
-								self.button = self:GetParent():GetParent()
+									self:SetFrameLevel(3)
+									self.button = self:GetParent():GetParent()
 							</OnLoad>
 							<OnHide>
-								self.active = nil
+									self.active = nil
 							</OnHide>
 						</Scripts>
 					</Cooldown>
@@ -516,31 +516,31 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								self:SetFrameLevel(3)
-								self.button = self:GetParent():GetParent()
-								self.alphafade = true
+									self:SetFrameLevel(3)
+									self.button = self:GetParent():GetParent()
+									self.alphafade = true
 							</OnLoad>
 							<OnHide>
-								self.active = nil
+									self.active = nil
 							</OnHide>
 						</Scripts>
 					</Cooldown>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						self:SetFrameLevel(2)
+							self:SetFrameLevel(2)
 
-						local icon = _G[self:GetName().."Icon"]
-						icon.filler = _G[self:GetName().."Filler"]
+							local icon = _G[self:GetName().."Icon"]
+							icon.filler = _G[self:GetName().."Filler"]
 
-						if (icon and icon.filler) then
+							if (icon and icon.filler) then
 
-							icon.oShow = icon.Show
-							icon.oHide = icon.Hide
+								icon.oShow = icon.Show
+								icon.oHide = icon.Hide
 
-							icon.Show = function(self) self.filler:Show() self:oShow() end
-							icon.Hide = function(self) self.filler:Hide() self:oHide() end
-						end
+								icon.Show = function(self) self.filler:Show() self:oShow() end
+								icon.Hide = function(self) self.filler:Hide() self:oHide() end
+							end
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -749,11 +749,11 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								self:SetFrameLevel(3)
-								self.button = self:GetParent():GetParent()
+									self:SetFrameLevel(3)
+									self.button = self:GetParent():GetParent()
 							</OnLoad>
 							<OnHide>
-								self.active = nil
+									self.active = nil
 							</OnHide>
 						</Scripts>
 					</Cooldown>
@@ -775,31 +775,31 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								self:SetFrameLevel(3)
-								self.button = self:GetParent():GetParent()
-								self.alphafade = true
+									self:SetFrameLevel(3)
+									self.button = self:GetParent():GetParent()
+									self.alphafade = true
 							</OnLoad>
 							<OnHide>
-								self.active = nil
+									self.active = nil
 							</OnHide>
 						</Scripts>
 					</Cooldown>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						self:SetFrameLevel(2)
+							self:SetFrameLevel(2)
 
-						local icon = _G[self:GetName().."Icon"]
-						icon.filler = _G[self:GetName().."Filler"]
+							local icon = _G[self:GetName().."Icon"]
+							icon.filler = _G[self:GetName().."Filler"]
 
-						if (icon and icon.filler) then
+							if (icon and icon.filler) then
 
-							icon.oShow = icon.Show
-							icon.oHide = icon.Hide
+								icon.oShow = icon.Show
+								icon.oHide = icon.Hide
 
-							icon.Show = function(self) self.filler:Show() self:oShow() end
-							icon.Hide = function(self) self.filler:Hide() self:oHide() end
-						end
+								icon.Show = function(self) self.filler:Show() self:oShow() end
+								icon.Hide = function(self) self.filler:Hide() self:oHide() end
+							end
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1004,30 +1004,30 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								self:SetFrameLevel(3)
-								self.button = self:GetParent():GetParent()
+									self:SetFrameLevel(3)
+									self.button = self:GetParent():GetParent()
 							</OnLoad>
 							<OnHide>
-								self.active = nil
+									self.active = nil
 							</OnHide>
 						</Scripts>
 					</Cooldown>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						self:SetFrameLevel(2)
+							self:SetFrameLevel(2)
 
-						local icon = _G[self:GetName().."Icon"]
-						icon.filler = _G[self:GetName().."Filler"]
+							local icon = _G[self:GetName().."Icon"]
+							icon.filler = _G[self:GetName().."Filler"]
 
-						if (icon and icon.filler) then
+							if (icon and icon.filler) then
 
-							icon.oShow = icon.Show
-							icon.oHide = icon.Hide
+								icon.oShow = icon.Show
+								icon.oHide = icon.Hide
 
-							icon.Show = function(self) self.filler:Show() self:oShow() end
-							icon.Hide = function(self) self.filler:Hide() self:oHide() end
-						end
+								icon.Show = function(self) self.filler:Show() self:oShow() end
+								icon.Hide = function(self) self.filler:Hide() self:oHide() end
+							end
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1062,7 +1062,7 @@
 		<Size x="36" y="36"/>
 		<Scripts>
 			<OnLoad>
-				self:SetFrameLevel(2)
+					self:SetFrameLevel(2)
 			</OnLoad>
 		</Scripts>
 		<NormalTexture name="$parentIcon" parentKey="icon">
@@ -1102,22 +1102,22 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						self:GetParent().show = nil
-						self:GetParent().popup.timer = 0;
-						if (self:GetParent().popup:IsVisible()) then
-							self:GetParent().popup:Hide()
-						else
-							if (self:GetParent().popup.data) then
-								self:GetParent().popup:Show()
+							self:GetParent().show = nil
+							self:GetParent().popup.timer = 0;
+							if (self:GetParent().popup:IsVisible()) then
+								self:GetParent().popup:Hide()
+							else
+								if (self:GetParent().popup.data) then
+									self:GetParent().popup:Show()
+								end
 							end
-						end
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 					</OnClick>
 					<OnEnter>
-						self:GetParent():SetBackdropBorderColor(1, 0.82, 0, 1)
+							self:GetParent():SetBackdropBorderColor(1, 0.82, 0, 1)
 					</OnEnter>
 					<OnLeave>
-						self:GetParent():SetBackdropBorderColor(0, 0, 0, 0)
+							self:GetParent():SetBackdropBorderColor(0, 0, 0, 0)
 					</OnLeave>
 				</Scripts>
 			</Button>
@@ -1140,35 +1140,35 @@
 				</Backdrop>
 				<Scripts>
 					<OnLoad>
-						self.timer = 0
-						self.options = {}
-						self:RegisterEvent("ADDON_LOADED")
-						self:SetBackdropColor(0, 0, 0)
-						self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
-						self:Hide()
+							self.timer = 0
+							self.options = {}
+							self:RegisterEvent("ADDON_LOADED")
+							self:SetBackdropColor(0, 0, 0)
+							self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+							self:Hide()
 					</OnLoad>
 					<OnShow>
-						self.timer = 0
+							self.timer = 0
 					</OnShow>
 					<OnHide>
-						self:GetParent().click = nil
+							self:GetParent().click = nil
 					</OnHide>
 					<OnUpdate>
-						self.timer = self.timer + elapsed
-						if (self:IsVisible() and self.timer > 5) then
-							if (not self:IsMouseOver()) then
-								self:Hide()
+							self.timer = self.timer + elapsed
+							if (self:IsVisible() and self.timer > 5) then
+								if (not self:IsMouseOver()) then
+									self:Hide()
+								end
 							end
-						end
 					</OnUpdate>
 				</Scripts>
 			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self:RegisterEvent("PLAYER_LOGIN")
-				self:SetBackdropColor(0, 0, 0)
-				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+					self:RegisterEvent("PLAYER_LOGIN")
+					self:SetBackdropColor(0, 0, 0)
+					self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnTabPressed>
 				self:ClearFocus()
@@ -1222,25 +1222,25 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						self:RegisterEvent("ADDON_LOADED")
+							self:RegisterEvent("ADDON_LOADED")
 					</OnLoad>
 					<OnEvent>
-                                                if (... == "Neuron") then
-							self:SetWidth(self:GetParent():GetHeight())
-							self:SetHeight(self:GetParent():GetHeight())
-                                                end
+							if (... == "Neuron") then
+								self:SetWidth(self:GetParent():GetHeight())
+								self:SetHeight(self:GetParent():GetHeight())
+							end
 					</OnEvent>
 					<OnClick>
-						self:GetParent().show = nil
-						self:GetParent().popup.timer = 0;
-						if (self:GetParent().popup:IsVisible()) then
-							self:GetParent().popup:Hide()
-						else
-							if (self:GetParent().popup.data) then
-								self:GetParent().popup:Show()
+							self:GetParent().show = nil
+							self:GetParent().popup.timer = 0;
+							if (self:GetParent().popup:IsVisible()) then
+								self:GetParent().popup:Hide()
+							else
+								if (self:GetParent().popup.data) then
+									self:GetParent().popup:Show()
+								end
 							end
-						end
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 					</OnClick>
 				</Scripts>
 				<NormalTexture name="$parentNormalTexture" file="Interface\AddOns\Neuron\Images\UI-Panel-ExpandButton-Up"/>
@@ -1267,35 +1267,35 @@
 				</Backdrop>
 				<Scripts>
 					<OnLoad>
-						self.timer = 0
-						self.options = {}
-						self:RegisterEvent("ADDON_LOADED")
-						self:SetBackdropColor(0, 0, 0)
-						self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
-						self:Hide()
+							self.timer = 0
+							self.options = {}
+							self:RegisterEvent("ADDON_LOADED")
+							self:SetBackdropColor(0, 0, 0)
+							self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+							self:Hide()
 					</OnLoad>
 					<OnShow>
-						self.timer = 0
+							self.timer = 0
 					</OnShow>
 					<OnHide>
-						self:GetParent().click = nil
+							self:GetParent().click = nil
 					</OnHide>
 					<OnUpdate>
-						self.timer = self.timer + elapsed
-						if (self:IsVisible() and self.timer > 5) then
-							if (not self:IsMouseOver()) then
-								self:Hide()
+							self.timer = self.timer + elapsed
+							if (self:IsVisible() and self.timer > 5) then
+								if (not self:IsMouseOver()) then
+									self:Hide()
+								end
 							end
-						end
 					</OnUpdate>
 				</Scripts>
 			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self:RegisterEvent("PLAYER_LOGIN")
-				self:SetBackdropColor(0, 0, 0, 0)
-				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+					self:RegisterEvent("PLAYER_LOGIN")
+					self:SetBackdropColor(0, 0, 0, 0)
+					self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnTabPressed>
 				self:ClearFocus()
@@ -1349,14 +1349,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self.elapsed = 0
-								self:RegisterForClicks("AnyUp","AnyDown")
+									self.elapsed = 0
+									self:RegisterForClicks("AnyUp","AnyDown")
 							</OnLoad>
 							<OnClick>
-								Neuron.NeuronAdjustOption_AddOnClick(self, button, down)
+									Neuron.NeuronAdjustOption_AddOnClick(self, button, down)
 							</OnClick>
 							<OnUpdate>
-								Neuron.NeuronAdjustOption_AddOnUpdate(self, elapsed)
+									Neuron.NeuronAdjustOption_AddOnUpdate(self, elapsed)
 							</OnUpdate>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\Neuron\Images\AdjustOptionRight-Up"/>
@@ -1372,14 +1372,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self.elapsed = 0
-								self:RegisterForClicks("AnyUp","AnyDown")
+									self.elapsed = 0
+									self:RegisterForClicks("AnyUp","AnyDown")
 							</OnLoad>
 							<OnClick>
-								Neuron.NeuronAdjustOption_SubOnClick(self, button, down)
+									Neuron.NeuronAdjustOption_SubOnClick(self, button, down)
 							</OnClick>
 							<OnUpdate>
-								Neuron.NeuronAdjustOption_SubOnUpdate(self, elapsed)
+									Neuron.NeuronAdjustOption_SubOnUpdate(self, elapsed)
 							</OnUpdate>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\Neuron\Images\AdjustOptionLeft-Up"/>
@@ -1395,9 +1395,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								Neuron.SubFrameBlankBackdrop_OnLoad(self)
-								self:SetBackdropColor(0, 0, 0, 0)
-								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+									Neuron.SubFrameBlankBackdrop_OnLoad(self)
+									self:SetBackdropColor(0, 0, 0, 0)
+									self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
 							<OnTabPressed>
 								self.hasfocus = nil
@@ -1440,9 +1440,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								Neuron.SubFrameBlankBackdrop_OnLoad(self)
-								self:SetBackdropColor(0, 0, 0, 0)
-								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+									Neuron.SubFrameBlankBackdrop_OnLoad(self)
+									self:SetBackdropColor(0, 0, 0, 0)
+									self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
 						</Scripts>
 					</EditBox>
@@ -1451,21 +1451,21 @@
 		</Frames>
 		<Scripts>
 			<OnUpdate>
-				if (self.method1:IsShown()) then
-					if (not self.method1.edit.hasfocus) then
-						if (not self.shown and MouseIsOver(self) and GetMouseFocus() == self.edit) then
-							self.method1.add:Show()
-							self.method1.sub:Show()
-							self.method1.edit:SetBackdropBorderColor(1, 0.82, 0, 1)
-							self.shown = true
-						elseif (self.shown and not MouseIsOver(self)) then
-							self.method1.add:Hide()
-							self.method1.sub:Hide()
-							self.method1.edit:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
-							self.shown = nil
+					if (self.method1:IsShown()) then
+						if (not self.method1.edit.hasfocus) then
+							if (not self.shown and MouseIsOver(self) and GetMouseFocus() == self.edit) then
+								self.method1.add:Show()
+								self.method1.sub:Show()
+								self.method1.edit:SetBackdropBorderColor(1, 0.82, 0, 1)
+								self.shown = true
+							elseif (self.shown and not MouseIsOver(self)) then
+								self.method1.add:Hide()
+								self.method1.sub:Hide()
+								self.method1.edit:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+								self.shown = nil
+							end
 						end
 					end
-				end
 			</OnUpdate>
 		</Scripts>
 	</Frame>
@@ -1530,7 +1530,7 @@
 			<Frame name="$parentDragFrame" hidden="true" toplevel="true">
 				<Scripts>
 					<OnUpdate>
-						Neuron:DragFrame_OnUpdate()
+							Neuron:DragFrame_OnUpdate()
 					</OnUpdate>
 				</Scripts>
 			</Frame>
@@ -1545,31 +1545,31 @@
 		</HighlightTexture>
 		<Scripts>
 			<OnLoad>
-				Neuron:MinimapButton_OnLoad(self)
+					Neuron:MinimapButton_OnLoad(self)
 			</OnLoad>
 			<OnEvent>
-				Neuron:MinimapButton_OnEvent(self)
+					Neuron:MinimapButton_OnEvent(self)
 			</OnEvent>
 			<OnDragStart>
-				Neuron:MinimapButton_OnDragStart(self)
+					Neuron:MinimapButton_OnDragStart(self)
 			</OnDragStart>
 			<OnDragStop>
-				Neuron:MinimapButton_OnDragStop(self)
+					Neuron:MinimapButton_OnDragStop(self)
 			</OnDragStop>
 			<OnShow>
-				Neuron:MinimapButton_OnShow(self)
+					Neuron:MinimapButton_OnShow(self)
 			</OnShow>
 			<OnHide>
-				Neuron:MinimapButton_OnHide(self)
+					Neuron:MinimapButton_OnHide(self)
 			</OnHide>
 			<OnEnter>
-				Neuron:MinimapButton_OnEnter(self)
+					Neuron:MinimapButton_OnEnter(self)
 			</OnEnter>
 			<OnLeave>
-				Neuron:MinimapButton_OnLeave(self)
+					Neuron:MinimapButton_OnLeave(self)
 			</OnLeave>
 			<OnClick>
-				Neuron:MinimapButton_OnClick(self, button)
+					Neuron:MinimapButton_OnClick(self, button)
 			</OnClick>
 		</Scripts>
 	</Button>
@@ -1606,19 +1606,19 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				Neuron:BindingsEditor_OnLoad(self)
+					Neuron:BindingsEditor_OnLoad(self)
 			</OnLoad>
 			<OnShow>
-				Neuron:BindingsEditor_OnShow(self)
+					Neuron:BindingsEditor_OnShow(self)
 			</OnShow>
 			<OnHide>
-				Neuron:BindingsEditor_OnHide(self)
+					Neuron:BindingsEditor_OnHide(self)
 			</OnHide>
 			<OnDragStart>
-				self:StartMoving()
+					self:StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-				self:StopMovingOrSizing()
+					self:StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</GameTooltip>

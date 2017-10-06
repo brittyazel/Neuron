@@ -190,9 +190,9 @@ local function updateMicroButtons()
 	end
 
 	if ( ( GameMenuFrame and GameMenuFrame:IsShown() )
-		or ( InterfaceOptionsFrame:IsShown())
-		or ( KeyBindingFrame and KeyBindingFrame:IsShown())
-		or ( MacroFrame and MacroFrame:IsShown()) ) then
+			or ( InterfaceOptionsFrame:IsShown())
+			or ( KeyBindingFrame and KeyBindingFrame:IsShown())
+			or ( MacroFrame and MacroFrame:IsShown()) ) then
 		NeuronLatencyButton:SetButtonState("PUSHED", true)
 		NEURON.LatencyButton_SetPushed(NeuronLatencyButton)
 	else
@@ -204,7 +204,7 @@ local function updateMicroButtons()
 	--if ( _G.IsTrialAccount() or (_G.IsVeteranTrialAccount() and not _G.IsInGuild()) or factionGroup == "Neutral" ) then
 	if ( _G.IsTrialAccount() or (_G.IsVeteranTrialAccount() and not _G.IsInGuild()) or factionGroup == "Neutral" or _G.IsKioskModeEnabled() ) then
 		NeuronGuildButton:Disable()
-			if (_G.IsKioskModeEnabled()) then
+		if (_G.IsKioskModeEnabled()) then
 			_G.SetKioskTooltip(GuildMicroButton);--Check
 		end
 	elseif ( ( GuildFrame and GuildFrame:IsShown() ) or ( LookingForGuildFrame and LookingForGuildFrame:IsShown() ) ) then
@@ -263,7 +263,7 @@ local function updateMicroButtons()
 	end
 
 
---	EJMicroButton_UpdateDisplay();  --New??
+	--	EJMicroButton_UpdateDisplay();  --New??
 
 	if ( EncounterJournal and EncounterJournal:IsShown() ) then
 		NeuronEJButton:SetButtonState("PUSHED", true)
@@ -274,7 +274,7 @@ local function updateMicroButtons()
 			if not InCombatLockdown() then NeuronEJButton:Disable() end
 			EJMicroButton_ClearNewAdventureNotice()  --CHECK
 		else
-			 if not InCombatLockdown() then NeuronEJButton:Enable() end
+			if not InCombatLockdown() then NeuronEJButton:Enable() end
 			NeuronEJButton:SetButtonState("NORMAL")
 		end
 	end
@@ -311,7 +311,7 @@ local function updateMicroButtons()
 		if not InCombatLockdown() then NeuronStoreButton:Disable() end
 	elseif (  _G.C_StorePublic.IsDisabledByParentalControls() ) then
 		NeuronStoreButton.disabledTooltip =  _G.BLIZZARD_STORE_ERROR_PARENTAL_CONTROLS
-		 if not InCombatLockdown() then NeuronStoreButton:Disable() end
+		if not InCombatLockdown() then NeuronStoreButton:Disable() end
 	else
 		NeuronStoreButton.disabledTooltip = nil
 		if not InCombatLockdown() then NeuronStoreButton:Enable() end

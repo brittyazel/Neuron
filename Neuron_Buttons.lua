@@ -580,7 +580,7 @@ function BUTTON:MACRO_UpdateData(...)
 			--find #ud_show option!
 			if (not ud_show and cmd:find("^#show")) then
 				ud_show = SecureCmdOptionParse(options); ud_showcmd = cmd
-			--sometimes SecureCmdOptionParse will return "" since that is not what we want, keep looking
+				--sometimes SecureCmdOptionParse will return "" since that is not what we want, keep looking
 			elseif (ud_show and #ud_show < 1 and cmd:find("^#show")) then
 				ud_show = SecureCmdOptionParse(options); ud_showcmd = cmd
 			end
@@ -1002,13 +1002,13 @@ function BUTTON:MACRO_UpdateState(...)
 
 	elseif (show and #show>0) then
 
-        if (GetItemInfo(show) or ItemCache[show]) then
-            self:MACRO_SetItemState(show)
-        else
-            self:MACRO_SetSpellState(show)
-        end
+		if (GetItemInfo(show) or ItemCache[show]) then
+			self:MACRO_SetItemState(show)
+		else
+			self:MACRO_SetSpellState(show)
+		end
 
-    elseif (spell and #spell>0) then
+	elseif (spell and #spell>0) then
 
 		self:MACRO_SetSpellState(spell)
 
@@ -1018,14 +1018,14 @@ function BUTTON:MACRO_UpdateState(...)
 
 	elseif (self:GetAttribute("macroShow")) then
 
-        show = self:GetAttribute("macroShow")
+		show = self:GetAttribute("macroShow")
 
-        if (GetItemInfo(show) or ItemCache[show]) then
-            self:MACRO_SetItemState(show)
-        else
-            self:MACRO_SetSpellState(show)
-        end
-    else
+		if (GetItemInfo(show) or ItemCache[show]) then
+			self:MACRO_SetItemState(show)
+		else
+			self:MACRO_SetSpellState(show)
+		end
+	else
 		self:SetChecked(nil)
 		self.count:SetText("")
 	end
@@ -1114,13 +1114,13 @@ function BUTTON:MACRO_SetSpellCooldown(spell)
 				spell_id = FairySwarmID
 			end
 		end
---Needs work
+		--Needs work
 		if (spell_id == GarrisonAbilityID and ZoneAbilityID) then spell_id = ZoneAbilityID end
 	end
 
 	local start, duration, enable = GetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration = GetSpellCharges(spell)
- 	start, duration, enable = GetSpellCooldown(spell)
+	start, duration, enable = GetSpellCooldown(spell)
 
 	if (duration and duration >= GDB.timerLimit and self.iconframeaurawatch.active) then
 		self.auraQueue = self.iconframeaurawatch.queueinfo
@@ -1429,7 +1429,7 @@ end
 
 
 function BUTTON:MACRO_ACTIONBAR_UPDATE_USABLE(...)
-    -- TODO
+	-- TODO
 end
 
 
@@ -1775,8 +1775,8 @@ function BUTTON:MACRO_PlaceBlizzEquipSet(action1)
 			self.data.macro_Icon = false
 		end
 
- 		self.data.macro_Name = ""
- 		self.data.macro_Watch = false
+		self.data.macro_Name = ""
+		self.data.macro_Watch = false
 		self.data.macro_Auto = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
@@ -1830,7 +1830,7 @@ function BUTTON:MACRO_PlaceMount(action1, action2, hasAction)
 			self.data.macro_Auto = "Random Mount;"
 			self.data.macro_Icon = "Interface\\ICONS\\ACHIEVEMENT_GUILDPERK_MOUNTUP"
 			self.data.macro_Name = "Random Mount"
-		--Any other mount from the Journal
+			--Any other mount from the Journal
 		else
 			local mountName,_, mountIcon = GetSpellInfo(CurrentMountSpellID)
 			self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
@@ -1977,9 +1977,9 @@ function BUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
 	end
 end
 
- --Workarround to getting icos to show when ourside of a ion frame.  Bascialy creates a blank
- --macro, sets its icon to what what picked up, and have the cursor pick up the macro. The temp
- --macro is then deleted when the item is placed.
+--Workarround to getting icos to show when ourside of a ion frame.  Bascialy creates a blank
+--macro, sets its icon to what what picked up, and have the cursor pick up the macro. The temp
+--macro is then deleted when the item is placed.
 local macroIndex = nil
 local function macroFuss(MacroDrag)
 
@@ -2554,8 +2554,8 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 				if (self.bar.cdata[id:match("%a+")]) or (id == "" and self.bar.cdata["custom"])  then
 				elseif not self.bar.cdata[id:match("%a+")] then
 					self.statedata[id]= nil
+				end
 			end
-		end
 
 			self.specAction = self:GetAttribute("SpecialAction")
 			self:MACRO_UpdateAll(true)
@@ -2826,7 +2826,7 @@ function BUTTON:SaveData(state)
 		state = self:GetParent():GetAttribute("activestate") or "homestate"
 	end
 
---Possible fix to keep the home state action from getting overwritten
+	--Possible fix to keep the home state action from getting overwritten
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
 		return
@@ -3295,11 +3295,11 @@ function BUTTON:SetFauxState(state)
 
 				--else
 
-					self:SetAttribute("type", "action")
+				self:SetAttribute("type", "action")
 
-					self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
+				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
 
-					self:SetAttribute("HasActionID", true)
+				self:SetAttribute("HasActionID", true)
 				--end
 			end
 
@@ -3372,7 +3372,7 @@ end
 function BUTTON:AutoUpdateMacro(macro)
 	if (GetModifiedClick("SELFCAST") ~= "NONE" ) then
 		macro = macro:gsub("%[@player,mod:%u+%]", "[@player,mod:"..GetModifiedClick("SELFCAST").."]")
-		else
+	else
 		macro = macro:gsub("%[@player,mod:%u+%]", "")
 	end
 
@@ -3542,11 +3542,11 @@ frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
 
 function NEURONButtonProfileUpdate()
-		GDB, CDB = NeuronGDB, NeuronCDB
+	GDB, CDB = NeuronGDB, NeuronCDB
 
-		btnGDB = GDB.buttons
+	btnGDB = GDB.buttons
 
-		btnCDB = CDB.buttons
+	btnCDB = CDB.buttons
 end
 
 
@@ -3574,24 +3574,24 @@ function BUTTON:UpdateMacroCastTargets(global_update)
 		local macro_update = false
 
 		for i = 1,2 do
-				for state, info in pairs(cur_button[i]) do
-					if info.macro_Text and info.macro_Text:find("#autowrite\n/cast") then
-						local spell, subName = "", ""
+			for state, info in pairs(cur_button[i]) do
+				if info.macro_Text and info.macro_Text:find("#autowrite\n/cast") then
+					local spell, subName = "", ""
 
-						spell = info.macro_Text:gsub("%[.*%]", "")
-						spell, subName = spell:match("#autowrite\n/cast%s*(.+)%((.*)%)")
+					spell = info.macro_Text:gsub("%[.*%]", "")
+					spell, subName = spell:match("#autowrite\n/cast%s*(.+)%((.*)%)")
 
-						if spell then
-							if global_update then
-								info.macro_Text = NEURON.BUTTON:AutoUpdateMacro(info.macro_Text)
-							else
-								info.macro_Text = NEURON.BUTTON:AutoWriteMacro(spell, subName)
-							end
-
+					if spell then
+						if global_update then
+							info.macro_Text = NEURON.BUTTON:AutoUpdateMacro(info.macro_Text)
+						else
+							info.macro_Text = NEURON.BUTTON:AutoWriteMacro(spell, subName)
 						end
-						macro_update = true
+
 					end
+					macro_update = true
 				end
+			end
 		end
 
 		if macro_update then

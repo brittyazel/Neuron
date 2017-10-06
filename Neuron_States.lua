@@ -352,7 +352,7 @@ Neuron.MANAGED_BAR_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 25,
-		},
+	},
 	swimming = {
 		states = "[noswimming] swimming0; [swimming] swimming1",
 		rangeStart = 1,

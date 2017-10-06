@@ -19,36 +19,36 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				Neuron.CharacterButton_OnLoad(self)
+					Neuron.CharacterButton_OnLoad(self)
 			</OnLoad>
 			<OnMouseDown>
-				if ( self.down ) then
-					self.down = nil
-					ToggleCharacter("PaperDollFrame")
-					return
-				end
-				Neuron.CharacterButton_SetPushed(self)
-				self.down = 1
+					if ( self.down ) then
+						self.down = nil
+						ToggleCharacter("PaperDollFrame")
+						return
+					end
+					Neuron.CharacterButton_SetPushed(self)
+					self.down = 1
 			</OnMouseDown>
 			<OnMouseUp>
-				if ( self.down ) then
-					self.down = nil;
-					if ( self:IsMouseOver() ) then
-						ToggleCharacter("PaperDollFrame");
+					if ( self.down ) then
+						self.down = nil;
+						if ( self:IsMouseOver() ) then
+							ToggleCharacter("PaperDollFrame");
+						end
+						Neuron.updateMicroButtons();
+						return;
 					end
-					Neuron.updateMicroButtons();
-					return;
-				end
-				if ( self:GetButtonState() == "NORMAL" ) then
-					Neuron.CharacterMicroButton_SetPushed();
-					self.down = 1;
-				else
-					Neuron.CharacterMicroButton_SetNormal();
-					self.down = 1;
-				end
+					if ( self:GetButtonState() == "NORMAL" ) then
+						Neuron.CharacterMicroButton_SetPushed();
+						self.down = 1;
+					else
+						Neuron.CharacterMicroButton_SetNormal();
+						self.down = 1;
+					end
 			</OnMouseUp>
 			<OnEvent>
-				Neuron.CharacterButton_OnEvent(self, event, ...)
+					Neuron.CharacterButton_OnEvent(self, event, ...)
 			</OnEvent>
 		</Scripts>
 	</Button>
@@ -56,14 +56,14 @@
 	<Button name="NeuronSpellbookButton" inherits="SecureActionButtonTemplate, MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				self:SetAttribute("type", "macro")
-				self:SetAttribute("*macrotext*", "/click SpellbookMicroButton")
-				LoadMicroButtonTextures(self, "Spellbook")
-				Neuron.AddMenuElement(self)
+					self:SetAttribute("type", "macro")
+					self:SetAttribute("*macrotext*", "/click SpellbookMicroButton")
+					LoadMicroButtonTextures(self, "Spellbook")
+					Neuron.AddMenuElement(self)
 			</OnLoad>
 			<OnEnter>
-				self.tooltipText = MicroButtonTooltipText(_G.SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
-				GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0, _G.NEWBIE_TOOLTIP_SPELLBOOK)
+					self.tooltipText = MicroButtonTooltipText(_G.SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
+					GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0, _G.NEWBIE_TOOLTIP_SPELLBOOK)
 			</OnEnter>
 		</Scripts>
 	</Button>
@@ -71,36 +71,36 @@
 	<Button name="NeuronTalentButton" inherits="SecureActionButtonTemplate, MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				LoadMicroButtonTextures(self, "Talents")
+					LoadMicroButtonTextures(self, "Talents")
 
-				--self:SetAttribute("type", "macro")
-				--self:SetAttribute("*macrotext*", "/click TalentMicroButton")
+					--self:SetAttribute("type", "macro")
+					--self:SetAttribute("*macrotext*", "/click TalentMicroButton")
 
-				self.tooltipText = MicroButtonTooltipText(_G.TALENTS_BUTTON, "TOGGLETALENTS")
-				self.newbieText = _G.NEWBIE_TOOLTIP_TALENTS
+					self.tooltipText = MicroButtonTooltipText(_G.TALENTS_BUTTON, "TOGGLETALENTS")
+					self.newbieText = _G.NEWBIE_TOOLTIP_TALENTS
 
-				self.minLevel = SHOW_SPEC_LEVEL
-				self:RegisterEvent("PLAYER_LEVEL_UP")
-				self:RegisterEvent("UPDATE_BINDINGS")
-				self:RegisterEvent("PLAYER_TALENT_UPDATE")
-				self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-				self:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED")
+					self.minLevel = SHOW_SPEC_LEVEL
+					self:RegisterEvent("PLAYER_LEVEL_UP")
+					self:RegisterEvent("UPDATE_BINDINGS")
+					self:RegisterEvent("PLAYER_TALENT_UPDATE")
+					self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+					self:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED")
 
-				self:RegisterEvent("UNIT_LEVEL")
-				Neuron.AddMenuElement(self)
+					self:RegisterEvent("UNIT_LEVEL")
+					Neuron.AddMenuElement(self)
 
-				Neuron.CreateAnimationLayer(self)
+					Neuron.CreateAnimationLayer(self)
 			</OnLoad>
 			<OnShow>
-				if (IsKioskModeEnabled() and select(2, UnitClass("player") ~= "DEMONHUNTER")) then
-					self:Disable();
-				end
+					if (IsKioskModeEnabled() and select(2, UnitClass("player") ~= "DEMONHUNTER")) then
+						self:Disable();
+					end
 			</OnShow>
 			<OnEvent>
-				Neuron.TalentButton_OnEvent(self, event, ...)
+					Neuron.TalentButton_OnEvent(self, event, ...)
 			</OnEvent>
 			<OnClick>
-				ToggleTalentFrame()
+					ToggleTalentFrame()
 			</OnClick>
 		</Scripts>
 	</Button>
@@ -108,29 +108,29 @@
 	<Button name="NeuronAchievementButton" inherits="MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				LoadMicroButtonTextures(self, "Achievement")
-				self:RegisterEvent("RECEIVED_ACHIEVEMENT_LIST")
-				self:RegisterEvent("ACHIEVEMENT_EARNED")
-				self:RegisterEvent("UPDATE_BINDINGS")
-				self:RegisterEvent("PLAYER_ENTERING_WORLD")
-				self.tooltipText = MicroButtonTooltipText(_G.ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
-				self.newbieText = _G.NEWBIE_TOOLTIP_ACHIEVEMENT
-				self.minLevel = 10	--Just used for display. But we know that it will become available by level 10 due to the level 10 achievement.
-				Neuron.AddMenuElement(self)
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
+					LoadMicroButtonTextures(self, "Achievement")
+					self:RegisterEvent("RECEIVED_ACHIEVEMENT_LIST")
+					self:RegisterEvent("ACHIEVEMENT_EARNED")
+					self:RegisterEvent("UPDATE_BINDINGS")
+					self:RegisterEvent("PLAYER_ENTERING_WORLD")
+					self.tooltipText = MicroButtonTooltipText(_G.ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
+					self.newbieText = _G.NEWBIE_TOOLTIP_ACHIEVEMENT
+					self.minLevel = 10	--Just used for display. But we know that it will become available by level 10 due to the level 10 achievement.
+					Neuron.AddMenuElement(self)
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
 			</OnLoad>
 			<OnShow>
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
 			</OnShow>
 			<OnEvent>
-				Neuron.AchievementButton_OnEvent(self, event, ...)
+					Neuron.AchievementButton_OnEvent(self, event, ...)
 			</OnEvent>
 			<OnClick>
-				ToggleAchievementFrame()
+					ToggleAchievementFrame()
 			</OnClick>
 
 		</Scripts>
@@ -139,16 +139,16 @@
 	<Button name="NeuronQuestLogButton" inherits="MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				LoadMicroButtonTextures(self, "Quest")
-				self.tooltipText = MicroButtonTooltipText(_G.QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
-				self.newbieText = _G.NEWBIE_TOOLTIP_QUESTLOG
-				Neuron.AddMenuElement(self)
+					LoadMicroButtonTextures(self, "Quest")
+					self.tooltipText = MicroButtonTooltipText(_G.QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
+					self.newbieText = _G.NEWBIE_TOOLTIP_QUESTLOG
+					Neuron.AddMenuElement(self)
 			</OnLoad>
 			<OnEvent>
-				self.tooltipText = MicroButtonTooltipText(_G.QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
+					self.tooltipText = MicroButtonTooltipText(_G.QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
 			</OnEvent>
 			<OnClick>
-				ToggleQuestLog()
+					ToggleQuestLog()
 			</OnClick>
 		</Scripts>
 	</Button>
@@ -182,64 +182,64 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				self:SetAttribute("type", "macro")
-				self:SetAttribute("*macrotext*", "/click GuildMicroButton")
+					self:SetAttribute("type", "macro")
+					self:SetAttribute("*macrotext*", "/click GuildMicroButton")
 
-				LoadMicroButtonTextures(self, "Socials")
-				self.tooltipText = MicroButtonTooltipText(_G.LOOKINGFORGUILD, "TOGGLEGUILDTAB")
-				self.newbieText = _G.NEWBIE_TOOLTIP_LOOKINGFORGUILDTAB
-				self:RegisterEvent("UPDATE_BINDINGS")
-				self:RegisterEvent("PLAYER_GUILD_UPDATE")
-				self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
-				Neuron.updateTabard(true)
-				if ( IsTrialAccount() or (IsVeteranTrialAccount() and not IsInGuild()) ) then
-					self:Disable()
-					self.disabledTooltip = _G.ERR_RESTRICTED_ACCOUNT_TRIAL
-				end
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
-				Neuron.AddMenuElement(self)
+					LoadMicroButtonTextures(self, "Socials")
+					self.tooltipText = MicroButtonTooltipText(_G.LOOKINGFORGUILD, "TOGGLEGUILDTAB")
+					self.newbieText = _G.NEWBIE_TOOLTIP_LOOKINGFORGUILDTAB
+					self:RegisterEvent("UPDATE_BINDINGS")
+					self:RegisterEvent("PLAYER_GUILD_UPDATE")
+					self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
+					Neuron.updateTabard(true)
+					if ( IsTrialAccount() or (IsVeteranTrialAccount() and not IsInGuild()) ) then
+						self:Disable()
+						self.disabledTooltip = _G.ERR_RESTRICTED_ACCOUNT_TRIAL
+					end
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
+					Neuron.AddMenuElement(self)
 			</OnLoad>
 			<OnShow>
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
 			</OnShow>
 			<OnEvent>
-				Neuron.GuildButton_OnEvent(self, event, ...)
+					Neuron.GuildButton_OnEvent(self, event, ...)
 			</OnEvent>
 		</Scripts>
 	</Button>
 	<Button name="NeuronLFDButton" inherits="MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				LoadMicroButtonTextures(self, "LFG")
-				SetDesaturation(self:GetDisabledTexture(), true)
-				self.tooltipText = MicroButtonTooltipText(_G.DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-				self.newbieText = _G.NEWBIE_TOOLTIP_LFGPARENT
-				self.minLevel = math.min(_G.SHOW_LFD_LEVEL, _G.SHOW_PVP_LEVEL)
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
-				Neuron.AddMenuElement(self)
+					LoadMicroButtonTextures(self, "LFG")
+					SetDesaturation(self:GetDisabledTexture(), true)
+					self.tooltipText = MicroButtonTooltipText(_G.DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
+					self.newbieText = _G.NEWBIE_TOOLTIP_LFGPARENT
+					self.minLevel = math.min(_G.SHOW_LFD_LEVEL, _G.SHOW_PVP_LEVEL)
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
+					Neuron.AddMenuElement(self)
 			</OnLoad>
 			<OnShow>
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
 			</OnShow>
 			<OnEvent>
-				if (IsKioskModeEnabled()) then
-					return;
-				end
-				self.tooltipText = MicroButtonTooltipText(_G.DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-				self.newbieText = _G.NEWBIE_TOOLTIP_LFGPARENT
+					if (IsKioskModeEnabled()) then
+						return;
+					end
+					self.tooltipText = MicroButtonTooltipText(_G.DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
+					self.newbieText = _G.NEWBIE_TOOLTIP_LFGPARENT
 
-				Neuron.updateMicroButtons()
+					Neuron.updateMicroButtons()
 			</OnEvent>
 			<OnClick>
-				PVEFrame_ToggleFrame()
+					PVEFrame_ToggleFrame()
 			</OnClick>
 		</Scripts>
 	</Button>
@@ -247,22 +247,22 @@
 	<Button name="NeuronCollectionsButton" inherits="SecureActionButtonTemplate, MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				self:SetAttribute("type", "macro")
-				self:SetAttribute("*macrotext*", "/click CollectionsMicroButton")
-				LoadMicroButtonTextures(self, "Mounts")
-				SetDesaturation(self:GetDisabledTexture(), true)
-				self.tooltipText = MicroButtonTooltipText(_G.COLLECTIONS, "TOGGLECOLLECTIONS")
-				self.newbieText = _G.NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+					self:SetAttribute("type", "macro")
+					self:SetAttribute("*macrotext*", "/click CollectionsMicroButton")
+					LoadMicroButtonTextures(self, "Mounts")
+					SetDesaturation(self:GetDisabledTexture(), true)
+					self.tooltipText = MicroButtonTooltipText(_G.COLLECTIONS, "TOGGLECOLLECTIONS")
+					self.newbieText = _G.NEWBIE_TOOLTIP_MOUNTS_AND_PETS
 
-				self:RegisterEvent("HEIRLOOMS_UPDATED")
-				self:RegisterEvent("PET_JOURNAL_NEW_BATTLE_SLOT")
-				self:RegisterEvent("TOYS_UPDATED")
+					self:RegisterEvent("HEIRLOOMS_UPDATED")
+					self:RegisterEvent("PET_JOURNAL_NEW_BATTLE_SLOT")
+					self:RegisterEvent("TOYS_UPDATED")
 
-				Neuron.AddMenuElement(self)
-				Neuron.CreateAnimationLayer(self)
+					Neuron.AddMenuElement(self)
+					Neuron.CreateAnimationLayer(self)
 			</OnLoad>
 			<OnEvent>
-				Neuron.CollectionsButton_OnEvent(self, event, ...)
+					Neuron.CollectionsButton_OnEvent(self, event, ...)
 			</OnEvent>
 		</Scripts>
 	</Button>
@@ -283,18 +283,18 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				Neuron.EJButton_OnLoad(self)
+					Neuron.EJButton_OnLoad(self)
 			</OnLoad>
 			<OnShow>
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
 			</OnShow>
 			<OnEvent>
-				Neuron.EJButton_OnEvent(self, event, ...)
+					Neuron.EJButton_OnEvent(self, event, ...)
 			</OnEvent>
 			<OnClick>
-				ToggleEncounterJournal()
+					ToggleEncounterJournal()
 			</OnClick>
 		</Scripts>
 	</Button>
@@ -302,24 +302,24 @@
 	<Button name="NeuronStoreButton" inherits="MainMenuBarMicroButton" parent="UIParent">
 		<Scripts>
 			<OnLoad>
-				LoadMicroButtonTextures(self, "BStore")
-				self.tooltipText = _G.BLIZZARD_STORE
-				self:RegisterEvent("STORE_STATUS_CHANGED")
-								if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
-				Neuron.AddMenuElement(self)
+					LoadMicroButtonTextures(self, "BStore")
+					self.tooltipText = _G.BLIZZARD_STORE
+					self:RegisterEvent("STORE_STATUS_CHANGED")
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
+					Neuron.AddMenuElement(self)
 			</OnLoad>
 			<OnShow>
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
 			</OnShow>
 			<OnEvent>
-				Neuron.updateMicroButtons()
-				if (IsKioskModeEnabled()) then
-					self:Disable();
-				end
+					Neuron.updateMicroButtons()
+					if (IsKioskModeEnabled()) then
+						self:Disable();
+					end
 			</OnEvent>
 			<OnClick function="ToggleStoreUI"/>
 		</Scripts>
@@ -358,72 +358,72 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				Neuron.LatencyButton_OnLoad(self)
+					Neuron.LatencyButton_OnLoad(self)
 			</OnLoad>
 			<OnEvent>
-				Neuron.LatencyButton_OnEvent(self, event, ...)
+					Neuron.LatencyButton_OnEvent(self, event, ...)
 			</OnEvent>
 			<OnClick>
-				Neuron.LatencyButton_OnClick(self, button, down)
+					Neuron.LatencyButton_OnClick(self, button, down)
 			</OnClick>
 			<OnEnter>
-				Neuron.LatencyButton_OnEnter(self)
+					Neuron.LatencyButton_OnEnter(self)
 			</OnEnter>
 			<OnLeave>
-				Neuron.LatencyButton_OnLeave(self)
+					Neuron.LatencyButton_OnLeave(self)
 			</OnLeave>
 			<OnUpdate>
-				if (self.updateInterval > 0) then
-					self.updateInterval = self.updateInterval - elapsed
-				else
-					self.updateInterval = PERFORMANCEBAR_UPDATE_INTERVAL
-					status = _G.GetFileStreamingStatus()
-					if(status==0) then
-						status = (GetBackgroundLoadingStatus()~=0) and 1 or 0
-					end
-					if(status == 0) then
-						NEURONMainMenuBarDownload:Hide()
-						--self:SetNormalTexture("Interface\\Buttons\\UI-MicroButton-MainMenu-Up")
-						--self:SetPushedTexture("Interface\\Buttons\\UI-MicroButton-MainMenu-Down")
-						--self:SetDisabledTexture("Interface\\Buttons\\UI-MicroButton-MainMenu-Disabled")
+					if (self.updateInterval > 0) then
+						self.updateInterval = self.updateInterval - elapsed
 					else
-						--self:SetNormalTexture("Interface\\Buttons\\UI-MicroButtonStreamDL-Up")
-						--self:SetPushedTexture("Interface\\Buttons\\UI-MicroButtonStreamDL-Down")
-						--self:SetDisabledTexture("Interface\\Buttons\\UI-MicroButtonStreamDL-Up")
-						if (status == 1) then
-							NEURONMainMenuBarDownload:SetTexture("Interface\\BUTTONS\\UI-MicroStream-Green")
-						elseif (status == 2) then
-							NEURONMainMenuBarDownload:SetTexture("Interface\\BUTTONS\\UI-MicroStream-Yellow")
-						elseif (status == 3) then
-							NEURONMainMenuBarDownload:SetTexture("Interface\\BUTTONS\\UI-MicroStream-Red")
+						self.updateInterval = PERFORMANCEBAR_UPDATE_INTERVAL
+						status = _G.GetFileStreamingStatus()
+						if(status==0) then
+							status = (GetBackgroundLoadingStatus()~=0) and 1 or 0
 						end
-						NEURONMainMenuBarDownload:SetDrawLayer("OVERLAY", 3)
-						NEURONMainMenuBarDownload:Show()
-					end
-					local bandwidthIn, bandwidthOut, latencyHome, latencyWorld = GetNetStats()
-					local latency = latencyHome > latencyWorld and latencyHome or latencyWorld
-					if (latency > _G.PERFORMANCEBAR_MEDIUM_LATENCY) then
-						self.overlay:SetVertexColor(1, 0, 0)
-					elseif (latency > _G.PERFORMANCEBAR_LOW_LATENCY) then
-						self.overlay:SetVertexColor(1, 1, 0)
-					else
-						self.overlay:SetVertexColor(0, 1, 0)
-					end
-					if (self.hover) then
-						MainMenuBarPerformanceBarFrame_OnEnter(self) --Neuron.LatencyButton_OnEnter(self)
-					end
-					if (self.enabled) then
+						if(status == 0) then
+							NEURONMainMenuBarDownload:Hide()
+							--self:SetNormalTexture("Interface\\Buttons\\UI-MicroButton-MainMenu-Up")
+							--self:SetPushedTexture("Interface\\Buttons\\UI-MicroButton-MainMenu-Down")
+							--self:SetDisabledTexture("Interface\\Buttons\\UI-MicroButton-MainMenu-Disabled")
+						else
+							--self:SetNormalTexture("Interface\\Buttons\\UI-MicroButtonStreamDL-Up")
+							--self:SetPushedTexture("Interface\\Buttons\\UI-MicroButtonStreamDL-Down")
+							--self:SetDisabledTexture("Interface\\Buttons\\UI-MicroButtonStreamDL-Up")
+							if (status == 1) then
+								NEURONMainMenuBarDownload:SetTexture("Interface\\BUTTONS\\UI-MicroStream-Green")
+							elseif (status == 2) then
+								NEURONMainMenuBarDownload:SetTexture("Interface\\BUTTONS\\UI-MicroStream-Yellow")
+							elseif (status == 3) then
+								NEURONMainMenuBarDownload:SetTexture("Interface\\BUTTONS\\UI-MicroStream-Red")
+							end
+							NEURONMainMenuBarDownload:SetDrawLayer("OVERLAY", 3)
+							NEURONMainMenuBarDownload:Show()
+						end
+						local bandwidthIn, bandwidthOut, latencyHome, latencyWorld = GetNetStats()
+						local latency = latencyHome > latencyWorld and latencyHome or latencyWorld
+						if (latency > _G.PERFORMANCEBAR_MEDIUM_LATENCY) then
+							self.overlay:SetVertexColor(1, 0, 0)
+						elseif (latency > _G.PERFORMANCEBAR_LOW_LATENCY) then
+							self.overlay:SetVertexColor(1, 1, 0)
+						else
+							self.overlay:SetVertexColor(0, 1, 0)
+						end
+						if (self.hover) then
+							MainMenuBarPerformanceBarFrame_OnEnter(self) --Neuron.LatencyButton_OnEnter(self)
+						end
+						if (self.enabled) then
 
-						UpdateAddOnCPUUsage()
-						UpdateAddOnMemoryUsage()
+							UpdateAddOnCPUUsage()
+							UpdateAddOnMemoryUsage()
 
-						self.lastUsage = self.currUsage or 0
+							self.lastUsage = self.currUsage or 0
 
-						self.currUsage = GetScriptCPUUsage()
+							self.currUsage = GetScriptCPUUsage()
 
-						self.usage = self.currUsage - self.lastUsage
+							self.usage = self.currUsage - self.lastUsage
+						end
 					end
-				end
 			</OnUpdate>
 		</Scripts>
 		<NormalTexture file="Interface\AddOns\Neuron-Menu\Images\MirageUI_LatencyMicroButton_Frame"/>
@@ -453,14 +453,14 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				_G.MicroButtonAlert_OnLoad(self)
-				self.Text:SetText(_G.TALENT_MICRO_BUTTON_SPEC_TUTORIAL)
+					_G.MicroButtonAlert_OnLoad(self)
+					self.Text:SetText(_G.TALENT_MICRO_BUTTON_SPEC_TUTORIAL)
 			</OnLoad>
 			<OnShow>
-				Neuron.CheckAlertPosition(self, NeuronTalentButton)
+					Neuron.CheckAlertPosition(self, NeuronTalentButton)
 			</OnShow>
 			<OnUpdate>
-				Neuron.CheckAlertPosition(self, NeuronTalentButton)
+					Neuron.CheckAlertPosition(self, NeuronTalentButton)
 			</OnUpdate>
 		</Scripts>
 	</Frame>
@@ -470,13 +470,13 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				_G.MicroButtonAlert_OnLoad(self)
+					_G.MicroButtonAlert_OnLoad(self)
 			</OnLoad>
 			<OnShow>
-				Neuron.CheckAlertPosition(self, NeuronCollectionsButton)
+					Neuron.CheckAlertPosition(self, NeuronCollectionsButton)
 			</OnShow>
 			<OnUpdate>
-				Neuron.CheckAlertPosition(self, NeuronCollectionsButton)
+					Neuron.CheckAlertPosition(self, NeuronCollectionsButton)
 			</OnUpdate>
 		</Scripts>
 	</Frame>
@@ -486,14 +486,14 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				MicroButtonAlert_OnLoad(self)
-				self.Text:SetText(_G.LFG_MICRO_BUTTON_SPEC_TUTORIAL)
+					MicroButtonAlert_OnLoad(self)
+					self.Text:SetText(_G.LFG_MICRO_BUTTON_SPEC_TUTORIAL)
 			</OnLoad>
 			<OnShow>
-				Neuron.CheckAlertPosition(self, NeuronLFDMicroButtonAlert)
+					Neuron.CheckAlertPosition(self, NeuronLFDMicroButtonAlert)
 			</OnShow>
 			<OnUpdate>
-				Neuron.CheckAlertPosition(self, NeuronLFDMicroButtonAlert)
+					Neuron.CheckAlertPosition(self, NeuronLFDMicroButtonAlert)
 			</OnUpdate>
 		</Scripts>
 	</Frame>
@@ -504,14 +504,14 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				MicroButtonAlert_OnLoad(self)
-				self.Text:SetText(_G.AJ_MICRO_BUTTON_ALERT_TEXT)
+					MicroButtonAlert_OnLoad(self)
+					self.Text:SetText(_G.AJ_MICRO_BUTTON_ALERT_TEXT)
 			</OnLoad>
 			<OnShow>
-				Neuron.CheckAlertPosition(self, NeuronEJButton)
+					Neuron.CheckAlertPosition(self, NeuronEJButton)
 			</OnShow>
 			<OnUpdate>
-				Neuron.CheckAlertPosition(self, NeuronEJButton)
+					Neuron.CheckAlertPosition(self, NeuronEJButton)
 			</OnUpdate>
 		</Scripts>
 	</Frame>
@@ -533,9 +533,9 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						self:GetParent():Hide()
-						self.wasShown = nil
-						NeuronLatencyButton.hover = nil
+							self:GetParent():Hide()
+							self.wasShown = nil
+							NeuronLatencyButton.hover = nil
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
@@ -545,15 +545,15 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-				GameTooltip_OnLoad(self)
-				self:SetPadding(16,16)
-				self:RegisterForDrag("LeftButton")
+					GameTooltip_OnLoad(self)
+					self:SetPadding(16,16)
+					self:RegisterForDrag("LeftButton")
 			</OnLoad>
 			<OnDragStart>
-				self:StartMoving()
+					self:StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-				self:StopMovingOrSizing()
+					self:StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</GameTooltip>
