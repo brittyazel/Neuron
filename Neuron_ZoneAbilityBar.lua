@@ -1,6 +1,7 @@
 --Neuron Zone Special Ability Bar, a World of Warcraft® user interface addon.
 
-local NEURON, GDB, CDB, PEW = Neuron
+local NEURON = Neuron
+local  GDB, CDB, PEW
 
 NEURON.ZONEABILITYRBTNIndex = {}
 
@@ -34,11 +35,12 @@ local gDef = {
 }
 
 
+
 local GetParentKeys = NEURON.GetParentKeys
 
 
 local configData = {
-	stored = false,
+	stored = false
 }
 
 local keyData = {
@@ -47,6 +49,8 @@ local keyData = {
 	hotKeyLock = false,
 	hotKeyPri = false,
 }
+
+local ZoneAbilitySpellID
 
 local alphaTimer, alphaDir = 0, 0
 
@@ -157,7 +161,6 @@ local function ZoneAbilityFrame_Update(self)
 	end
 end
 
-local ZoneSpellAbility = nil
 
 
 --function that runs whenever any of the below specifid events are registered
@@ -170,15 +173,13 @@ function ZONEABILITYRBTN:OnEvent(event, ...)
 		ZoneAbilitySpellID = spellID
 	end
 
-	if (not self.baseName) then
-		self:Hide();
-		return;
-	end
 
 	self.spellID = spellID;
 	local lastState = self.BuffSeen; --sets a flag to mark if we have seen the change in UNIT_AURA
 	self.BuffSeen = (spellID ~= 0);
 
+
+	local display
 
 	if (self.BuffSeen) then
 
@@ -195,9 +196,9 @@ function ZONEABILITYRBTN:OnEvent(event, ...)
 		display = false
 	end
 
-	if (not InCombatLockdown() and display) then
+	if (not InCombatLockdown() and display and spellID) then
 		self:Show();
-	elseif (not InCombatLockdown() and not display) then
+	elseif (not InCombatLockdown() and not display and not spellID) then
 		self:Hide();
 	end
 end

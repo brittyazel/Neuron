@@ -1,7 +1,8 @@
 --Neuron, a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local NEURON, GDB, CDB, PEW, SPEC, player, realm, btnGDB, btnCDB = Neuron
+local NEURON = Neuron
+local GDB, CDB, PEW, SPEC, player, realm, btnGDB, btnCDB
 
 NEURON.BUTTON = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
@@ -13,7 +14,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local	SKIN = LibStub("Masque", true)
 
-local MacroDrag, StartDrag, ItemCache = NEURON.MacroDrag, NEURON.StartDrag
+local MacroDrag, StartDrag = NEURON.MacroDrag, NEURON.StartDrag
 
 --local copies of often used globals
 local floor = math.floor
@@ -212,7 +213,7 @@ local alphaTimer, alphaDir = 0, 0
 
 local autoCast = { speeds = { 2, 4, 6, 8 }, timers = { 0, 0, 0, 0 }, circle = { 0, 22, 44, 66 }, shines = {}, r = 0.95, g = 0.95, b = 0.32 }
 
-local cooldowns, cdAlphas = {}, {}, {}
+local cooldowns, cdAlphas = {}, {}
 
 local function AutoCastStart(shine, r, g, b)
 	autoCast.shines[shine] = shine
@@ -259,7 +260,8 @@ local function controlOnUpdate(self, elapsed)
 	for shine in next, autoCast.shines do
 		cou_distance, cou_radius = shine:GetWidth(), shine:GetWidth()/2.7
 		for i=1,4 do
-			cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position = autoCast.timers[i], autoCast.speeds[i], autoCast.circle[i]
+			cou_timer, cou_speed, cou_degree = autoCast.timers[i], autoCast.speeds[i], autoCast.circle[i]
+
 			if ( cou_timer <= cou_speed ) then
 				if (shine.shape == "circle") then
 					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
@@ -361,11 +363,6 @@ local function controlOnUpdate(self, elapsed)
 		if (alphaTimer >= 1) then
 			alphaDir = 1; alphaTimer = 0
 		end
-	end
-
-	if (MacroDrag[0]) then
-		--local texture_path = GetFileName(MacroDrag.texture)
-		--SetCursor(texture_path)
 	end
 end
 
