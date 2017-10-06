@@ -24,6 +24,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
+latestVersionNum = "0.9.2" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+
 Neuron = {
 	SLASHCMDS = {},
 	SLASHHELP = {},
@@ -2112,7 +2114,14 @@ local function control_OnEvent(self, event, ...)
 			text = L.UPDATE_WARNING,
 			button1 = OKAY,
 			timeout = 0,
-			OnAccept = function() GDB.updateWarning = "0.9.0" end,
+			OnAccept = function() GDB.updateWarning = latestVersionNum end
+		}
+
+		StaticPopupDialogs["NEURON_INSTALL_MESSAGE"] = {
+			text = L.INSTALL_MESSAGE,
+			button1 = OKAY,
+			timeout = 0,
+			OnAccept = function() GDB.updateWarning = latestVersionNum end,
 		}
 
 	elseif (event == "VARIABLES_LOADED") then
@@ -2155,8 +2164,10 @@ local function control_OnEvent(self, event, ...)
 		--collectgarbage();
 		PEW = true
 
-		if (GDB.updateWarning ~= "0.9.0") then
+		if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning==nil) then
 			StaticPopup_Show("NEURON_UPDATE_WARNING")
+		elseif(GDB.updateWarning==nil) then
+			StaticPopup_Show("NEURON_INSTALL_MESSAGE")
 		end
 
 	elseif (event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_LOGOUT" or event == "PLAYER_LEAVING_WORLD") then

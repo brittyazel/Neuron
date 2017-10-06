@@ -411,7 +411,7 @@ L.BOUND_TOGGLE_MACRO_KEYBIND = "Toggle Macro Binding Mode"
 
 L.INSTALL_MESSAGE = [[Thank's for installing Neuron.
 
-Neuron is currently in a "|cffffff00beta release|r" state.
+Neuron is currently in a "|cffffff00release|r" state.
 
 If you have any questions or concerns please direct all inquirires our github page listed in the FAQ.
 

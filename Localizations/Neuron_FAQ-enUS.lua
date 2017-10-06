@@ -19,13 +19,13 @@ L.FAQ = [[
 Below you will find answers to various questions that may arise as you use Neuron. Though please note that not all answers may be found here.
 
 For questions not answered here, please direct them here:
-|cff33c7ffhttps://mods.curse.com/addons/wow/neuron |r
+|cff33c7ff https://mods.curse.com/addons/wow/279283-neuron |r
 
 Further, if you encounter any bugs or missing features, please direct all inquiries here:
-|cff33c7ffhttps://github.com/brittyazel/Neuron/issues |r
+|cff33c7ff https://github.com/brittyazel/Neuron/issues |r
 
 The source code can be found here:
-|cff33c7ffhttps://github.com/brittyazel/Neuron |r
+|cff33c7ff https://github.com/brittyazel/Neuron |r
 
 Thank you again for using Neuron.
 
