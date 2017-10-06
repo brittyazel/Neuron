@@ -1064,10 +1064,10 @@ end
 --- Checks to see if a one only bar type has been deleted.  If so it will allow the bar
 -- to be created
 -- @param bar: type of bar being checked
--- @rerurn allow : (boolean)
+-- @return allow : (boolean)
 local function MissingBarCheck(bar)
 	local allow = true
-	if (bar == "stancebar" and NeuronCDB.sbars[1]) or (bar == "extrabar" and NeuronCDB.xbars[1]) then
+	if (bar == "stancebar" and NeuronCDB.sbars[1]) or (bar == "extrabar" and NeuronCDB.xbars[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybars[1]) then
 		allow = false
 	end
 	return allow
