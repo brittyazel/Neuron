@@ -438,7 +438,8 @@ local function cooldownsOnUpdate(self, elapsed)
 	end
 end
 
-local uai__, uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID = 1
+local uai__ = 1
+local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID
 
 local function updateAuraInfo(unit)
 	uai_index = 1
@@ -488,9 +489,9 @@ end
 
 
 local function checkCursor(self, button)
-	if (MacroDrag[0]) then
+	if (MacroDrag[1]) then
 		if (button == "LeftButton" or button == "RightButton") then
-			MacroDrag[0] = false; SetCursor(nil); PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+			MacroDrag[1] = false; SetCursor(nil); PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
 			NEURON:ToggleButtonGrid(nil, true)
 			DeleteMacro("NeuronTemp")
@@ -753,10 +754,8 @@ function BUTTON:MACRO_SetItemIcon(item)
 		self.border:Hide()
 	end
 
-	Icon_Overwrite = false
-
 	--There is stored icon and dont want to update icon on fly
-	if (((type(self.data.macro_Icon) == "string" and #self.data.macro_Icon > 0) or type(self.data.macro_Icon) == "number" ) and Icon_Overwrite) then
+	if (((type(self.data.macro_Icon) == "string" and #self.data.macro_Icon > 0) or type(self.data.macro_Icon) == "number")) then
 		if (self.data.macro_Icon == "BLANK") then
 			self.iconframeicon:SetTexture("")
 		else
@@ -917,7 +916,7 @@ function BUTTON:MACRO_SetSpellState(spell)
 		self.count:SetText("")
 	end
 
-	count = GetSpellCount(spell)
+	local count = GetSpellCount(spell)
 	if (count and count > 0) then
 		self.count:SetText(count)
 	end
@@ -1632,20 +1631,20 @@ end
 
 
 function BUTTON:MACRO_PlaceMacro()
-	self.data.macro_Text = MacroDrag[2]
-	self.data.macro_Icon = MacroDrag[3]
-	self.data.macro_Name = MacroDrag[4]
-	self.data.macro_Auto = MacroDrag[5]
-	self.data.macro_Watch = MacroDrag[6]
-	self.data.macro_Equip = MacroDrag[7]
-	self.data.macro_Note = MacroDrag[8]
-	self.data.macro_UseNote = MacroDrag[9]
+	self.data.macro_Text = MacroDrag[3]
+	self.data.macro_Icon = MacroDrag[4]
+	self.data.macro_Name = MacroDrag[5]
+	self.data.macro_Auto = MacroDrag[6]
+	self.data.macro_Watch = MacroDrag[7]
+	self.data.macro_Equip = MacroDrag[8]
+	self.data.macro_Note = MacroDrag[9]
+	self.data.macro_UseNote = MacroDrag[10]
 
 	if (not self.cursor) then
 		self:SetType(true)
 	end
 
-	MacroDrag[0] = false
+	MacroDrag[1] = false
 	ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
 	self:UpdateFlyout()
 	NEURON:ToggleButtonGrid(nil, true)
@@ -1655,7 +1654,8 @@ end
 
 
 function BUTTON:MACRO_PlaceSpell(action1, action2, spellID, hasAction)
-	local _, modifier, spell, subName, texture = " "
+	local modifier, spell, subName, texture
+	local _ --ignored return value
 
 	if (action1 == 0) then
 		-- I am unsure under what conditions (if any) we wouldn't have a spell ID
@@ -1663,8 +1663,8 @@ function BUTTON:MACRO_PlaceSpell(action1, action2, spellID, hasAction)
 			return
 		end
 	else
-		spell, _ = GetSpellBookItemName(action1, action2)
-		_, spellID = GetSpellBookItemInfo(action1, action2)
+		spell,_= GetSpellBookItemName(action1, action2)
+		_,spellID = GetSpellBookItemInfo(action1, action2)
 	end
 	local spellInfoName , subName, icon, castTime, minRange, maxRange= GetSpellInfo(spellID)
 
@@ -1687,7 +1687,7 @@ function BUTTON:MACRO_PlaceSpell(action1, action2, spellID, hasAction)
 		self:SetType(true)
 	end
 
-	MacroDrag[0] = false
+	MacroDrag[1] = false
 
 	ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
 
@@ -1714,7 +1714,7 @@ function BUTTON:MACRO_PlaceItem(action1, action2, hasAction)
 	if (not self.cursor) then
 		self:SetType(true)
 	end
-	MacroDrag[0] = false
+	MacroDrag[1] = false
 	ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
 end
 
@@ -1748,7 +1748,7 @@ function BUTTON:MACRO_PlaceBlizzMacro(action1)
 			self:SetType(true)
 		end
 
-		MacroDrag[0] = false
+		MacroDrag[1] = false
 
 		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
 	end
@@ -1782,7 +1782,7 @@ function BUTTON:MACRO_PlaceBlizzEquipSet(action1)
 			self:SetType(true)
 		end
 
-		MacroDrag[0] = false
+		MacroDrag[1] = false
 
 		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
 	end
@@ -1792,7 +1792,7 @@ end
 --Hooks mount journal mount buttons on enter to pull spellid from tooltip--
 --Based on discusion thread http://www.wowinterface.com/forums/showthread.php?t=49599&page=2
 --More dynamic than the manual list that was originally implemented
-local CurrentMountSpellID = nil
+local CurrentMountSpellID
 local function HookOnEnter(self)
 	CurrentMountSpellID = self:GetParent().spellID
 end
@@ -1845,7 +1845,7 @@ function BUTTON:MACRO_PlaceMount(action1, action2, hasAction)
 			self:SetType(true)
 		end
 
-		MacroDrag[0] = false
+		MacroDrag[1] = false
 		CurrentMountSpellID = nil
 
 		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
@@ -1881,7 +1881,7 @@ function BUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 			self:SetType(true)
 		end
 
-		MacroDrag[0] = false
+		MacroDrag[1] = false
 
 		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
 	end
@@ -1940,7 +1940,7 @@ function BUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 			self:SetType(true)
 		end
 
-		MacroDrag[0] = false
+		MacroDrag[1] = false
 
 		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
 	end
@@ -1948,7 +1948,8 @@ end
 
 
 function BUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
-	local _, petName
+	local petName, petIcon
+	local _ --variable used to discard unwanted return values
 
 	if (action1 == 0) then
 		return
@@ -1968,20 +1969,23 @@ function BUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
 			self:SetType(true)
 		end
 
-		MacroDrag[0] = false
+		MacroDrag[1] = false
 
 		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
 	end
 end
 
---Workarround to getting icos to show when ourside of a ion frame.  Bascialy creates a blank
+--Workaround to getting icons to show when outside of a neuron frame.  Bascialy creates a blank
 --macro, sets its icon to what what picked up, and have the cursor pick up the macro. The temp
 --macro is then deleted when the item is placed.
-local macroIndex = nil
+
 local function macroFuss(MacroDrag)
 
-	if MacroDrag[6] then
-		PickupMacro(MacroDrag[6])
+    local macroIndex
+    local macroExists
+
+	if MacroDrag[7] then
+		PickupMacro(MacroDrag[7])
 	else
 		local texture = MacroDrag.texture or "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
 		macroExists = GetMacroInfo("NeuronTemp")
@@ -1991,12 +1995,12 @@ local function macroFuss(MacroDrag)
 			macroIndex = CreateMacro("NeuronTemp",texture, "")
 		end
 		PickupMacro("NeuronTemp")
-		MacroDrag[0] = "macro"
+		MacroDrag[1] = "macro"
 	end
 end
 
 function BUTTON:MACRO_PickUpMacro()
-	local pickup = nil
+	local pickup
 
 	if (not self.barLock) then
 		pickup = true
@@ -2008,11 +2012,11 @@ function BUTTON:MACRO_PickUpMacro()
 		pickup = true
 	end
 
-	if (pickup or currMacro[0]) then
+	if (pickup or currMacro[1]) then
 		local texture, move = self.iconframeicon:GetTexture()
 		wipe(MacroDrag)
 
-		if (currMacro[0]) then  --triggers when picking up an existing button with a button in the cursonr
+		if (currMacro[1]) then  --triggers when picking up an existing button with a button in the cursonr
 
 			for k,v in pairs(currMacro) do
 				MacroDrag[k] = v
@@ -2024,16 +2028,16 @@ function BUTTON:MACRO_PickUpMacro()
 			--SetCursor(texture_path)
 
 		elseif (self:MACRO_HasAction()) then
-			MacroDrag[0] = self:MACRO_GetDragAction()
-			MacroDrag[1] = self
-			MacroDrag[2] = self.data.macro_Text
-			MacroDrag[3] = self.data.macro_Icon
-			MacroDrag[4] = self.data.macro_Name
-			MacroDrag[5] = self.data.macro_Auto
-			MacroDrag[6] = self.data.macro_Watch
-			MacroDrag[7] = self.data.macro_Equip
-			MacroDrag[8] = self.data.macro_Note
-			MacroDrag[9] = self.data.macro_UseNote
+			MacroDrag[1] = self:MACRO_GetDragAction()
+			MacroDrag[2] = self
+			MacroDrag[3] = self.data.macro_Text
+			MacroDrag[4] = self.data.macro_Icon
+			MacroDrag[5] = self.data.macro_Name
+			MacroDrag[6] = self.data.macro_Auto
+			MacroDrag[7] = self.data.macro_Watch
+			MacroDrag[8] = self.data.macro_Equip
+			MacroDrag[9] = self.data.macro_Note
+			MacroDrag[10] = self.data.macro_UseNote
 			MacroDrag.texture = texture
 			self.data.macro_Text = ""
 			self.data.macro_Icon = false
@@ -2076,16 +2080,16 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 	if (self:MACRO_HasAction()) then
 		wipe(currMacro)
 
-		currMacro[0] = self:MACRO_GetDragAction()
-		currMacro[1] = self
-		currMacro[2] = self.data.macro_Text
-		currMacro[3] = self.data.macro_Icon
-		currMacro[4] = self.data.macro_Name
-		currMacro[5] = self.data.macro_Auto
-		currMacro[6] = self.data.macro_Watch
-		currMacro[7] = self.data.macro_Equip
-		currMacro[8] = self.data.macro_Note
-		currMacro[9] = self.data.macro_UseNote
+		currMacro[1] = self:MACRO_GetDragAction()
+		currMacro[2] = self
+		currMacro[3] = self.data.macro_Text
+		currMacro[4] = self.data.macro_Icon
+		currMacro[5] = self.data.macro_Name
+		currMacro[6] = self.data.macro_Auto
+		currMacro[7] = self.data.macro_Watch
+		currMacro[8] = self.data.macro_Equip
+		currMacro[9] = self.data.macro_Note
+		currMacro[10] = self.data.macro_UseNote
 
 		currMacro.texture = texture
 	end
@@ -2094,7 +2098,7 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 		-- do nothing for now
 	else
 
-		if (MacroDrag[0]) then
+		if (MacroDrag[1]) then
 			self:MACRO_PlaceMacro(); PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 		elseif (cursorType == "spell") then
 			self:MACRO_PlaceSpell(action1, action2, spellID, self:MACRO_HasAction())
@@ -2120,7 +2124,7 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 		--self:MACRO_SetTooltip()
 	end
 
-	if (StartDrag and currMacro[0]) then
+	if (StartDrag and currMacro[1]) then
 		self:MACRO_PickUpMacro(); NEURON:ToggleButtonGrid(true)
 	end
 
@@ -2157,10 +2161,10 @@ function BUTTON:MACRO_OnDragStart(button)
 		self.dragbutton = button
 		self:MACRO_PickUpMacro()
 
-		if (MacroDrag[0]) then
+		if (MacroDrag[1]) then
 			PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP); self.sound = true
 
-			if (MacroDrag[1] ~= self) then
+			if (MacroDrag[2] ~= self) then
 				self.dragbutton = nil
 			end
 
@@ -2210,7 +2214,7 @@ function BUTTON:MACRO_PreClick(button)
 	if (not InCombatLockdown() and MouseIsOver(self)) then
 		local cursorType = GetCursorInfo()
 
-		if (cursorType or MacroDrag[0]) then
+		if (cursorType or MacroDrag[1]) then
 			self.cursor = true
 
 			StartDrag = self:GetParent():GetAttribute("activestate")
@@ -3330,7 +3334,7 @@ end
 --subname: subname of spell to use (optional)
 --return: macro text
 function BUTTON:AutoWriteMacro(spell, subName)
-	local modifier, modkey = " ", nil
+	local modifier, modKey = " ", nil
 	local bar = Neuron.CurrentBar or self.bar
 
 	if (bar.cdata.mouseOverCast and NeuronCDB.mouseOverMod ~= "NONE" ) then
