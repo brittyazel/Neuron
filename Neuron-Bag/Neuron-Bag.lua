@@ -1,7 +1,8 @@
 ﻿--Neuron Bag Bar, a World of Warcraft® user interface addon.
 --Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local NEURON, GDB, CDB, PEW = Neuron
+local NEURON = Neuron
+local GDB, CDB, PEW
 
 NEURON.BAGIndex = {}
 
@@ -121,7 +122,8 @@ end
 
 local function updateFreeSlots(self)
 
-	local totalSlots, totalFree, freeSlots, bagFamily = 0, 0
+	local totalSlots, totalFree  = 0, 0
+	local freeSlots, bagFamily
 
 	for i=BACKPACK_CONTAINER, NUM_BAG_SLOTS do
 

@@ -26,7 +26,8 @@ local table = _G.table
 -------------------------------------------------------------------------------
 
 
-local NEURON, GDB, CDB, PEW = Neuron
+local NEURON = Neuron
+local GDB, CDB, PEW
 
 NEURON.MENUIndex = {}
 
@@ -1034,6 +1035,9 @@ end
 
 
 local function controlOnEvent(self, event, ...)
+
+	local object
+
 	if (event == "ADDON_LOADED" and ... == "Neuron-Menu") then
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 

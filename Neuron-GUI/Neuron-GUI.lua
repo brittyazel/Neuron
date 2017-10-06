@@ -865,7 +865,7 @@ function NEURON:BarEditor_OnLoad(frame)
 
 end
 
-function NEURON:BarList_OnLoad(self)
+function NEURON:BarList_OnLoad()
 
 	NEURON.SubFrameHoneycombBackdrop_OnLoad(self)
 
@@ -1176,7 +1176,7 @@ local function chkOptionOnClick(button)
 	end
 end
 
-function NEURON:BarOptions_OnLoad(frame)
+function NEURON.BarOptions_OnLoad(frame)
 
 	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
 

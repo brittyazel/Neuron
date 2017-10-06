@@ -693,7 +693,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron:BarList_OnLoad(self)
+							Neuron.BarList_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -719,7 +719,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron:BarOptions_OnLoad(self)
+									Neuron.BarOptions_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>

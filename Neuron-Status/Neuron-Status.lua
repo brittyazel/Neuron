@@ -140,7 +140,7 @@ local BarRepColors = {
 
 --FACTION_BAR_COLORS = BarRepColors
 
-local CastWatch, XPWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}, {}, {}
+local CastWatch, XPWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}, {}
 
 
 
@@ -311,17 +311,17 @@ local chkOptions = {
 
 local adjOptions = {
 
-	[1] = { [0] = "WIDTH", L.WIDTH, 1, "UpdateWidth", 0.5, 1, nil, nil, "%0.1f", 1, "" },
-	[2] = { [0] = "HEIGHT", L.HEIGHT, 1, "UpdateHeight", 0.5, 1, nil, nil, "%0.1f", 1, "" },
-	[3] = { [0] = "BARFILL", L.BARFILL, 2, "UpdateTexture", nil, nil, nil, BarTexturesData },
-	[4] = { [0] = "BORDER", L.BORDER, 2, "UpdateBorder", nil, nil, nil, BarBordersData },
-	[5] = { [0] = "ORIENT", L.ORIENT, 2, "UpdateOrientation", nil, nil, nil, BarOrientations },
-	[6] = { [0] = "UNIT_WATCH", L.UNIT_WATCH, 2, "UpdateUnit", nil, nil, nil, BarUnits  },
-	[7] = { [0] = "CENTER_TEXT", L.CENTER_TEXT, 2, "UpdateCenterText", nil, nil, nil, sbStrings },
-	[8] = { [0] = "LEFT_TEXT", L.LEFT_TEXT, 2, "UpdateLeftText", nil, nil, nil, sbStrings  },
-	[9] = { [0] = "RIGHT_TEXT", L.RIGHT_TEXT, 2, "UpdateRightText", nil, nil, nil, sbStrings  },
-	[10] = { [0] = "MOUSE_TEXT", L.MOUSE_TEXT, 2, "UpdateMouseover", nil, nil, nil, sbStrings  },
-	[11] = { [0] = "TOOLTIP_TEXT", L.TOOLTIP_TEXT, 2, "UpdateTooltip", nil, nil, nil, sbStrings  },
+	[1] = { "WIDTH", L.WIDTH, 1, "UpdateWidth", 0.5, 1, nil, nil, "%0.1f", 1, "" },
+	[2] = { "HEIGHT", L.HEIGHT, 1, "UpdateHeight", 0.5, 1, nil, nil, "%0.1f", 1, "" },
+	[3] = { "BARFILL", L.BARFILL, 2, "UpdateTexture", nil, nil, nil, BarTexturesData },
+	[4] = { "BORDER", L.BORDER, 2, "UpdateBorder", nil, nil, nil, BarBordersData },
+	[5] = { "ORIENT", L.ORIENT, 2, "UpdateOrientation", nil, nil, nil, BarOrientations },
+	[6] = { "UNIT_WATCH", L.UNIT_WATCH, 2, "UpdateUnit", nil, nil, nil, BarUnits  },
+	[7] = { "CENTER_TEXT", L.CENTER_TEXT, 2, "UpdateCenterText", nil, nil, nil, sbStrings },
+	[8] = { "LEFT_TEXT", L.LEFT_TEXT, 2, "UpdateLeftText", nil, nil, nil, sbStrings  },
+	[9] = { "RIGHT_TEXT", L.RIGHT_TEXT, 2, "UpdateRightText", nil, nil, nil, sbStrings  },
+	[10] = { "MOUSE_TEXT", L.MOUSE_TEXT, 2, "UpdateMouseover", nil, nil, nil, sbStrings  },
+	[11] = { "TOOLTIP_TEXT", L.TOOLTIP_TEXT, 2, "UpdateTooltip", nil, nil, nil, sbStrings  },
 }
 
 
@@ -330,7 +330,7 @@ local function xpstrings_Update() --handles updating all the strings for the pla
 
 	local currXP, nextXP, restedXP, percentXP, bubbles
 
-	if (NeuronStatusCDB.curXPType == nil) then
+	if (not NeuronStatusCDB.curXPType) then
 		NeuronStatusCDB.curXPType = "player_xp"
 	end
 
@@ -671,7 +671,7 @@ local function repDropDown_Initialize(frame) --Initialize the dropdown menu for 
 
 		wipe(info)
 
-		local data, order, ID, text, friends = {}
+		local data, order, ID, text, friends
 
 		for k,v in pairs(RepWatch) do
 
@@ -1077,7 +1077,8 @@ end
 
 function STATUS:CastBar_OnUpdate(elapsed)
 
-	local unit, sparkPosition, alpha = self.unit
+	local unit = self.unit
+	local sparkPosition, alpha
 
 	if (unit) then
 
@@ -1783,7 +1784,8 @@ function NEURON.StatusBarEditorUpdate(reset)
 
 		if (NeuronStatusBarEditor:IsVisible()) then
 
-			local yoff, anchor, last, adjHeight = -10
+			local yoff  = -10
+			local anchor, last, adjHeight
 			local editor = NeuronBarEditor.baropt.editor
 
 			adjHeight = 200
@@ -1811,7 +1813,8 @@ function NEURON.StatusBarEditorUpdate(reset)
 				end
 			end
 
-			local yoff1, yoff2, shape = (adjHeight)/5, (adjHeight)/5
+			local yoff1, yoff2= (adjHeight)/5, (adjHeight)/5
+			local shape
 
 			if (sb.config.sbType == "cast") then
 				yoff1 = (adjHeight)/6
@@ -2186,20 +2189,20 @@ function NEURON.SB_AdjustableOptions_OnLoad(frame)
 		f:SetScript("OnMouseWheel", function(self, delta) adjOptionOnMouseWheel(self, delta) end)
 		f:EnableMouseWheel(true)
 
-		f.text:SetText(options[1]..":")
-		f.method = options[2]
-		f["method"..options[2]]:Show()
-		f.edit = f["method"..options[2]].edit
+		f.text:SetText(options[2]..":")
+		f.method = options[3]
+		f["method"..options[3]]:Show()
+		f.edit = f["method"..options[3]].edit
 		f.edit.frame = f
-		f.option = options[0]
-		f.func = options[3]
-		f.inc = options[4]
-		f.min = options[5]
-		f.max = options[6]
-		f.optData = options[7]
-		f.format = options[8]
-		f.mult = options[9]
-		f.endtext = options[10]
+		f.option = options[1]
+		f.func = options[4]
+		f.inc = options[5]
+		f.min = options[6]
+		f.max = options[7]
+		f.optData = options[8]
+		f.format = options[9]
+		f.mult = options[10]
+		f.endtext = options[11]
 		f.parent = frame
 
 		if (f.optData == sbStrings) then
