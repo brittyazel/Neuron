@@ -1025,7 +1025,8 @@ function NEURON.EditBox_PopUpInitialize(popupFrame, data)
 end
 
 function NEURON.PopUp_Update(popupFrame)
-	local data, count, height, width, option, anchor, last, text = popupFrame.data, 1, 0, 0
+	local data, count, height, width = popupFrame.data, 1, 0, 0
+	local option, anchor, last, text
 
 	if (popupFrame.options) then
 		for k,v in pairs(popupFrame.options) do
@@ -2117,7 +2118,7 @@ local function control_OnEvent(self, event, ...)
 	elseif (event == "VARIABLES_LOADED") then
 
 		SlashCmdList["NEURON"] = slashHandler
-		SLASH_NEURON1 = L.SLASH1
+		SLASH_NEURON1 = L.SLASH1 --this follows the standard method of creating slash menus, ignore global creation warning.
 
 		InterfaceOptionsFrame:SetFrameStrata("HIGH")
 
