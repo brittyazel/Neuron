@@ -7,7 +7,6 @@ local NEURON = Neuron
 
 local BAR = NEURON.BAR
 
-local find = string.find
 local abs = math.abs
 
 local function frameIsDependentOnFrame(frame, otherFrame)

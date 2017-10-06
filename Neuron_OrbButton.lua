@@ -7,7 +7,8 @@
 -- Most of this code comes from or is inspired by one or both of these addons and the credit
 -- should go to them.
 
-local NEURON, GDB = Neuron
+local NEURON = Neuron
+local GDB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
