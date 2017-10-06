@@ -2164,7 +2164,7 @@ local function control_OnEvent(self, event, ...)
 		--collectgarbage();
 		PEW = true
 
-		if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning==nil) then
+		if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
 			StaticPopup_Show("NEURON_UPDATE_WARNING")
 		elseif(GDB.updateWarning==nil) then
 			StaticPopup_Show("NEURON_INSTALL_MESSAGE")
