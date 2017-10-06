@@ -1,7 +1,8 @@
 ﻿--Neuron GUI, a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local NEURON, GDB, CDB, IMM, IBE, IOE, IBTNE, MAS, PEW = Neuron
+local NEURON = Neuron
+local GDB, CDB, NMM, NBE, NOE, NBTNE, MAS, PEW
 
 local width, height = 775, 490
 
@@ -36,52 +37,52 @@ local barOpt = { chk = {}, adj = {}, pri = {}, sec = {}, swatch = {}, vis = {} }
 local popupData = {}
 
 local chkOptions = {
-	[1] = { [0] = "AUTOHIDE", L.AUTOHIDE, 1, "AutoHideBar" },
-	[2] = { [0] = "SHOWGRID", L.SHOWGRID, 1, "ShowGridSet" },
-	[3] = { [0] = "SNAPTO", L.SNAPTO, 1, "SnapToBar" },
-	[4] = { [0] = "UPCLICKS", L.UPCLICKS, 1, "UpClicksSet" },
-	[5] = { [0] = "DOWNCLICKS", L.DOWNCLICKS, 1, "DownClicksSet" },
-	[6] = { [0] = "DUALSPEC", L.DUALSPEC, 1, "DualSpecSet" },
-	[7] = { [0] = "HIDDEN", L.HIDDEN, 1, "ConcealBar" },
-	[8] = { [0] = "SPELLGLOW", L.SPELLGLOW, 1, "SpellGlowSet" },
-	[9] = { [0] = "SPELLGLOW", L.SPELLGLOW_DEFAULT, 1, "SpellGlowSet", "default" },
-	[10] = { [0] = "SPELLGLOW", L.SPELLGLOW_ALT, 1, "SpellGlowSet", "alt" },
-	[11] = { [0] = "LOCKBAR", L.LOCKBAR, 1, "LockSet" },
-	[12] = { [0] = "LOCKBAR", L.LOCKBAR_SHIFT, 0.9, "LockSet", "shift" },
-	[13] = { [0] = "LOCKBAR", L.LOCKBAR_CTRL, 0.9, "LockSet", "ctrl" },
-	[14] = { [0] = "LOCKBAR", L.LOCKBAR_ALT, 0.9, "LockSet", "alt" },
-	[15] = { [0] = "TOOLTIPS", L.TOOLTIPS_OPT, 1, "ToolTipSet" },
-	[16] = { [0] = "TOOLTIPS", L.TOOLTIPS_ENH, 0.9, "ToolTipSet", "enhanced" },
-	[17] = { [0] = "TOOLTIPS", L.TOOLTIPS_COMBAT, 0.9, "ToolTipSet", "combat" },
-	[18] = { [0] = "ZONEABILITY", L.ZONEABILITY_BAR_BORDER, 1, "HideZoneAbilityBorder"},
+	[1] = { "AUTOHIDE", L.AUTOHIDE, 1, "AutoHideBar" },
+	[2] = { "SHOWGRID", L.SHOWGRID, 1, "ShowGridSet" },
+	[3] = { "SNAPTO", L.SNAPTO, 1, "SnapToBar" },
+	[4] = { "UPCLICKS", L.UPCLICKS, 1, "UpClicksSet" },
+	[5] = { "DOWNCLICKS", L.DOWNCLICKS, 1, "DownClicksSet" },
+	[6] = { "DUALSPEC", L.DUALSPEC, 1, "DualSpecSet" },
+	[7] = { "HIDDEN", L.HIDDEN, 1, "ConcealBar" },
+	[8] = { "SPELLGLOW", L.SPELLGLOW, 1, "SpellGlowSet" },
+	[9] = { "SPELLGLOW", L.SPELLGLOW_DEFAULT, 1, "SpellGlowSet", "default" },
+	[10] = { "SPELLGLOW", L.SPELLGLOW_ALT, 1, "SpellGlowSet", "alt" },
+	[11] = { "LOCKBAR", L.LOCKBAR, 1, "LockSet" },
+	[12] = { "LOCKBAR", L.LOCKBAR_SHIFT, 0.9, "LockSet", "shift" },
+	[13] = { "LOCKBAR", L.LOCKBAR_CTRL, 0.9, "LockSet", "ctrl" },
+	[14] = { "LOCKBAR", L.LOCKBAR_ALT, 0.9, "LockSet", "alt" },
+	[15] = { "TOOLTIPS", L.TOOLTIPS_OPT, 1, "ToolTipSet" },
+	[16] = { "TOOLTIPS", L.TOOLTIPS_ENH, 0.9, "ToolTipSet", "enhanced" },
+	[17] = { "TOOLTIPS", L.TOOLTIPS_COMBAT, 0.9, "ToolTipSet", "combat" },
+	[18] = { "ZONEABILITY", L.ZONEABILITY_BAR_BORDER, 1, "HideZoneAbilityBorder"},
 }
 
 local adjOptions = {
-	[1] = { [0] = "SCALE", L.SCALE, 1, "ScaleBar", 0.01, 0.1, 4 },
-	[2] = { [0] = "SHAPE", L.SHAPE, 2, "ShapeBar", nil, nil, nil, NEURON.BarShapes },
-	[3] = { [0] = "COLUMNS", L.COLUMNS, 1, "ColumnsSet", 1 , 0},
-	[4] = { [0] = "ARCSTART", L.ARCSTART, 1, "ArcStartSet", 1, 0, 359 },
-	[5] = { [0] = "ARCLENGTH", L.ARCLENGTH, 1, "ArcLengthSet", 1, 0, 359 },
-	[6] = { [0] = "HPAD", L.HPAD, 1, "PadHSet", 0.1 },
-	[7] = { [0] = "VPAD", L.VPAD, 1, "PadVSet", 0.1 },
-	[8] = { [0] = "HVPAD", L.HVPAD, 1, "PadHVSet", 0.1 },
-	[9] = { [0] = "STRATA", L.STRATA, 2, "StrataSet", nil, nil, nil, NEURON.Stratas },
-	[10] = { [0] = "ALPHA", L.ALPHA, 1, "AlphaSet", 0.01, 0, 1 },
-	[11] = { [0] = "ALPHAUP", L.ALPHAUP, 2, "AlphaUpSet", nil, nil, nil, NEURON.AlphaUps },
-	[12] = { [0] = "ALPHAUP", L.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
-	[13] = { [0] = "XPOS", L.XPOS, 1, "XAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
-	[14] = { [0] = "YPOS", L.YPOS, 1, "YAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
+	[1] = { "SCALE", L.SCALE, 1, "ScaleBar", 0.01, 0.1, 4 },
+	[2] = { "SHAPE", L.SHAPE, 2, "ShapeBar", nil, nil, nil, NEURON.BarShapes },
+	[3] = { "COLUMNS", L.COLUMNS, 1, "ColumnsSet", 1 , 0},
+	[4] = { "ARCSTART", L.ARCSTART, 1, "ArcStartSet", 1, 0, 359 },
+	[5] = { "ARCLENGTH", L.ARCLENGTH, 1, "ArcLengthSet", 1, 0, 359 },
+	[6] = { "HPAD", L.HPAD, 1, "PadHSet", 0.1 },
+	[7] = { "VPAD", L.VPAD, 1, "PadVSet", 0.1 },
+	[8] = { "HVPAD", L.HVPAD, 1, "PadHVSet", 0.1 },
+	[9] = { "STRATA", L.STRATA, 2, "StrataSet", nil, nil, nil, NEURON.Stratas },
+	[10] = { "ALPHA", L.ALPHA, 1, "AlphaSet", 0.01, 0, 1 },
+	[11] = { "ALPHAUP", L.ALPHAUP, 2, "AlphaUpSet", nil, nil, nil, NEURON.AlphaUps },
+	[12] = { "ALPHAUP", L.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
+	[13] = { "XPOS", L.XPOS, 1, "XAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
+	[14] = { "YPOS", L.YPOS, 1, "YAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
 }
 
 local swatchOptions = {
-	[1] = { [0] = "BINDTEXT", L.BINDTEXT, 1, "BindTextSet", true, nil, "bindColor" },
-	[2] = { [0] = "MACROTEXT", L.MACROTEXT, 1, "MacroTextSet", true, nil, "macroColor" },
-	[3] = { [0] = "COUNTTEXT", L.COUNTTEXT, 1, "CountTextSet", true, nil, "countColor" },
-	[4] = { [0] = "RANGEIND", L.RANGEIND, 1, "RangeIndSet", true, nil, "rangecolor" },
-	[5] = { [0] = "CDTEXT", L.CDTEXT, 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
-	[6] = { [0] = "CDALPHA", L.CDALPHA, 1, "CDAlphaSet", nil, nil },
-	[7] = { [0] = "AURATEXT", L.AURATEXT, 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
-	[8] = { [0] = "AURAIND", L.AURAIND, 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
+	[1] = { "BINDTEXT", L.BINDTEXT, 1, "BindTextSet", true, nil, "bindColor" },
+	[2] = { "MACROTEXT", L.MACROTEXT, 1, "MacroTextSet", true, nil, "macroColor" },
+	[3] = { "COUNTTEXT", L.COUNTTEXT, 1, "CountTextSet", true, nil, "countColor" },
+	[4] = { "RANGEIND", L.RANGEIND, 1, "RangeIndSet", true, nil, "rangecolor" },
+	[5] = { "CDTEXT", L.CDTEXT, 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
+	[6] = { "CDALPHA", L.CDALPHA, 1, "CDAlphaSet", nil, nil },
+	[7] = { "AURATEXT", L.AURATEXT, 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
+	[8] = { "AURAIND", L.AURAIND, 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
 }
 
 local specoveride = GetActiveSpecGroup() or 1
@@ -101,33 +102,33 @@ local function insertLink(text)
 
 	local item = GetItemInfo(text)
 
-	--if (IBTNE.flyoutedit and IBTNE.flyoutedit.keyedit.edit:IsVisible()) then
+	--if (NBTNE.flyoutedit and NBTNE.flyoutedit.keyedit.edit:IsVisible()) then
 
-	--	IBTNE.flyoutedit.keyedit.edit:Insert(item or text)
+	--	NBTNE.flyoutedit.keyedit.edit:Insert(item or text)
 
 	--	return
 
 	--end
 
-	if (IBTNE.macroedit.edit:IsVisible()) then
+	if (NBTNE.macroedit.edit:IsVisible()) then
 
-		IBTNE.macroedit.edit:SetFocus()
+		NBTNE.macroedit.edit:SetFocus()
 
-		if (IBTNE.macroedit.edit:GetText() == "") then
+		if (NBTNE.macroedit.edit:GetText() == "") then
 
 			if (item) then
 
 				if (GetItemSpell(text)) then
-					IBTNE.macroedit.edit:Insert(SLASH_USE1.." "..item)
+					NBTNE.macroedit.edit:Insert(SLASH_USE1.." "..item)
 				else
-					IBTNE.macroedit.edit:Insert(SLASH_EQUIP1.." "..item)
+					NBTNE.macroedit.edit:Insert(SLASH_EQUIP1.." "..item)
 				end
 
 			else
-				IBTNE.macroedit.edit:Insert(SLASH_CAST1.." "..text)
+				NBTNE.macroedit.edit:Insert(SLASH_CAST1.." "..text)
 			end
 		else
-			IBTNE.macroedit.edit:Insert(item or text)
+			NBTNE.macroedit.edit:Insert(item or text)
 		end
 	end
 end
@@ -140,13 +141,13 @@ local function modifiedSpellClick(button)
 		return
 	end
 
-	if (CursorHasSpell() and IBTNE:IsVisible()) then
+	if (CursorHasSpell() and NBTNE:IsVisible()) then
 		ClearCursor()
 	end
 
 	if (IsModifiedClick("CHATLINK")) then
 
-		if (IBTNE:IsVisible()) then
+		if (NBTNE:IsVisible()) then
 
 			local spell, subName = GetSpellBookItemName(id, SpellBookFrame.bookType)
 
@@ -173,7 +174,7 @@ local function modifiedItemClick(link)
 
 	if (IsModifiedClick("CHATLINK")) then
 
-		if (IBTNE:IsVisible()) then
+		if (NBTNE:IsVisible()) then
 
 			local itemName = GetItemInfo(link)
 
@@ -190,13 +191,13 @@ local function modifiedMountClick(self, button)
 
 	local id = self:GetParent().spellID
 
-	if (CursorHasSpell() and IBTNE:IsVisible()) then
+	if (CursorHasSpell() and NBTNE:IsVisible()) then
 		ClearCursor()
 	end
 
 	if (IsModifiedClick("CHATLINK")) then
 
-		if (IBTNE:IsVisible()) then
+		if (NBTNE:IsVisible()) then
 
 			local mount = GetSpellInfo(id)
 
@@ -213,13 +214,13 @@ local function modifiedPetJournalClick(self, button)
 
 	local id = self:GetParent().petID
 
-	if (IBTNE:IsVisible()) then
+	if (NBTNE:IsVisible()) then
 		ClearCursor()
 	end
 
 	if (IsModifiedClick("CHATLINK")) then
 
-		if (IBTNE:IsVisible()) then
+		if (NBTNE:IsVisible()) then
 
 			local _, _, _, _, _, _, petName = C_PetJournal.GetPetInfoByPetID(id)
 
@@ -234,7 +235,7 @@ end
 
 local function openStackSplitFrame(...)
 
-	if (IBTNE:IsVisible()) then
+	if (NBTNE:IsVisible()) then
 		StackSplitFrame:Hide()
 	end
 end
@@ -277,7 +278,8 @@ end
 
 local function NeuronPanelTemplates_TabResize(tab, padding, absoluteSize, minWidth, maxWidth, absoluteTextSize)
 
-	local sideWidths, width, tabWidth, textWidth = 2 * tab.left:GetWidth()
+	local sideWidths= 2 * tab.left:GetWidth()
+	local  width, tabWidth, textWidth
 
 
 	if ( absoluteTextSize ) then
@@ -353,25 +355,26 @@ function NEURON:UpdateBarGUI(newBar)
 
 	if (bar and GUIData[bar.class]) then
 
-		if (IBE:IsVisible()) then
-			IBE.count.text:SetText(bar.objType.." "..L.COUNT..": |cffffffff"..bar.objCount.."|r")
-			IBE.barname:SetText(bar.gdata.name)
+		if (NBE:IsVisible()) then
+			NBE.count.text:SetText(bar.objType.." "..L.COUNT..": |cffffffff"..bar.objCount.."|r")
+			NBE.barname:SetText(bar.gdata.name)
 		end
 
-		if (IBE.baropt:IsVisible()) then
+		if (NBE.baropt:IsVisible()) then
 
-			local yoff, adjHeight, anchor, last = -10
+			local yoff = -10
+			local adjHeight, anchor, last
 
-			if (IBE.baropt.colorpicker:IsShown()) then
-				IBE.baropt.colorpicker:Hide()
+			if (NBE.baropt.colorpicker:IsShown()) then
+				NBE.baropt.colorpicker:Hide()
 			end
 
 			if (GUIData[bar.class].adjOpt) then
-				IBE.baropt.adjoptions:SetPoint("BOTTOMLEFT", IBE.baropt.chkoptions, "BOTTOMRIGHT", 0, GUIData[bar.class].adjOpt)
+				NBE.baropt.adjoptions:SetPoint("BOTTOMLEFT", NBE.baropt.chkoptions, "BOTTOMRIGHT", 0, GUIData[bar.class].adjOpt)
 
 				adjHeight = (height-85) - (GUIData[bar.class].adjOpt - 10)
 			else
-				IBE.baropt.adjoptions:SetPoint("BOTTOMLEFT", IBE.baropt.chkoptions, "BOTTOMRIGHT", 0, 30)
+				NBE.baropt.adjoptions:SetPoint("BOTTOMLEFT", NBE.baropt.chkoptions, "BOTTOMRIGHT", 0, 30)
 
 				adjHeight = (height-85) - 20
 			end
@@ -419,7 +422,8 @@ function NEURON:UpdateBarGUI(newBar)
 				end
 			end
 
-			local yoff1, yoff2, shape = (adjHeight)/7, (adjHeight)/7
+			local yoff1, yoff2= (adjHeight)/7, (adjHeight)/7
+			local shape
 
 			for i,f in ipairs(barOpt.adj) do
 
@@ -553,12 +557,12 @@ function NEURON:UpdateBarGUI(newBar)
 			end
 		end
 
-		if (IBE.barstates:IsVisible()) then
+		if (NBE.barstates:IsVisible()) then
 
-			local editor = IBE.barstates.actionedit
+			local editor = NBE.barstates.actionedit
 
-			if (IBE.baropt.colorpicker:IsShown()) then
-				IBE.baropt.colorpicker:Hide()
+			if (NBE.baropt.colorpicker:IsShown()) then
+				NBE.baropt.colorpicker:Hide()
 			end
 
 			if (editor:IsVisible()) then
@@ -572,7 +576,7 @@ function NEURON:UpdateBarGUI(newBar)
 
 					editor.tab1:Click()
 
-					editor:SetPoint("BOTTOMRIGHT", IBE.barstates, "TOPRIGHT", 0, -170)
+					editor:SetPoint("BOTTOMRIGHT", NBE.barstates, "TOPRIGHT", 0, -170)
 
 				else
 					editor.tab3:Click()
@@ -582,12 +586,12 @@ function NEURON:UpdateBarGUI(newBar)
 					editor.tab1.text:SetTextColor(0.4, 0.4, 0.4)
 					editor.tab2.text:SetTextColor(0.4, 0.4, 0.4)
 
-					editor:SetPoint("BOTTOMRIGHT", IBE.barstates, "TOPRIGHT", 0, -30)
+					editor:SetPoint("BOTTOMRIGHT", NBE.barstates, "TOPRIGHT", 0, -30)
 
 				end
 			end
 
- --Sets bar primaary options
+			--Sets bar primaary options
 			for i,f in ipairs(barOpt.pri) do
 				if (f.option == "stance" and (GetNumShapeshiftForms() < 1 or NEURON.class == "DEATHKNIGHT" or NEURON.class == "PALADIN" or NEURON.class == "HUNTER")) then
 					f:SetChecked(nil)
@@ -600,7 +604,7 @@ function NEURON:UpdateBarGUI(newBar)
 				end
 			end
 
---Sets bar secondary options
+			--Sets bar secondary options
 			for i,f in ipairs(barOpt.sec) do
 
 				if (f.stance ) then
@@ -642,28 +646,28 @@ function NEURON:UpdateBarGUI(newBar)
 			end
 		end
 
---Sets bar custom state options
+		--Sets bar custom state options
 		local customStateList = ""
 		if (bar and bar.cdata.customNames) then
 
-customStateList = generateCustomStateList(bar)
---[[
-for index,state in pairs(bar.cdata.customNames) do
-				if (index == "homestate") then
-					customStateList = state..";"
-				else
-					customStateList = customStateList..state..";"
-				end
-			end
-			--]]
+			customStateList = generateCustomStateList(bar)
+			--[[
+            for index,state in pairs(bar.cdata.customNames) do
+                            if (index == "homestate") then
+                                customStateList = state..";"
+                            else
+                                customStateList = customStateList..state..";"
+                            end
+                        end
+                        --]]
 		end
 
 		barOpt.customstate:SetText(customStateList)
 	end
---Set visisbility buttons
+	--Set visisbility buttons
 	NEURON.VisEditorScrollFrameUpdate()
 	Neuron.SecondaryPresetsScrollFrameUpdate()
-	LibStub("AceConfigDialog-3.0"):Open(addonName, IBE.ACEmenu , "moreoptions")
+	LibStub("AceConfigDialog-3.0"):Open(addonName, NBE.ACEmenu , "moreoptions")
 
 end
 
@@ -877,7 +881,7 @@ function NEURON.BarListScrollFrame_OnLoad(self)
 	self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	self:SetBackdropColor(0,0,0,0.5)
 
-	local button, lastButton, rowButton, count, script = false, false, false, 0
+	local button, lastButton, rowButton, count = false, false, false, 0
 
 	for i=1,numShown do
 
@@ -913,7 +917,7 @@ function NEURON.BarListScrollFrame_OnLoad(self)
 
 							NEURON:ChangeBar(self.bar)
 
-							if (IBE and IBE:IsVisible()) then
+							if (NBE and NBE:IsVisible()) then
 								NEURON:UpdateBarGUI()
 							end
 
@@ -994,7 +998,8 @@ function NEURON.BarListScrollFrameUpdate(frame, tableList, alt)
 		frame = NeuronBarEditorBarListScrollFrame
 	end
 
-	local dataOffset, count, data, button, text, datum = FauxScrollFrame_GetOffset(frame), 1, {}
+	local dataOffset, count, data = FauxScrollFrame_GetOffset(frame), 1, {}
+	local  button, text
 
 	for k in pairs(tableList) do
 		data[count] = k; count = count + 1
@@ -1189,9 +1194,9 @@ function NEURON:BarOptions_OnLoad(frame)
 		f:SetHitRectInsets(-100, 0, 0, 0)
 		f:SetCheckedTexture("Interface\\Addons\\Neuron\\Images\\RoundCheckGreen.tga")
 
-		f.option = options[0]
-		f.func = options[3]
-		f.modtext = options[4]
+		f.option = options[1]
+		f.func = options[4]
+		f.modtext = options[5]
 		f.parent = frame
 
 		if (f.modtext) then
@@ -1200,7 +1205,7 @@ function NEURON:BarOptions_OnLoad(frame)
 
 		f.text:ClearAllPoints()
 		f.text:SetPoint("LEFT", -120, 0)
-		f.text:SetText(options[1])
+		f.text:SetText(options[2])
 
 		if (f.modtext) then
 			f.primary = primary
@@ -1345,6 +1350,8 @@ function NEURON.AdjustableOptions_OnLoad(frame)
 
 	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
 
+	local f
+
 	for index, options in ipairs(adjOptions) do
 
 		f = CreateFrame("Frame", "NeuronGUIAdjOpt"..index, frame, "NeuronAdjustOptionTemplate")
@@ -1355,20 +1362,20 @@ function NEURON.AdjustableOptions_OnLoad(frame)
 		f:SetScript("OnMouseWheel", function(self, delta) adjOptionOnMouseWheel(self, delta) end)
 		f:EnableMouseWheel(true)
 
-		f.text:SetText(options[1]..":")
-		f.method = options[2]
-		f["method"..options[2]]:Show()
-		f.edit = f["method"..options[2]].edit
+		f.text:SetText(options[2]..":")
+		f.method = options[3]
+		f["method"..options[3]]:Show()
+		f.edit = f["method"..options[3]].edit
 		f.edit.frame = f
-		f.option = options[0]
-		f.func = options[3]
-		f.inc = options[4]
-		f.min = options[5]
-		f.max = options[6]
-		f.optData = options[7]
-		f.format = options[8]
-		f.mult = options[9]
-		f.endtext = options[10]
+		f.option = options[1]
+		f.func = options[4]
+		f.inc = options[5]
+		f.min = options[6]
+		f.max = options[7]
+		f.optData = options[8]
+		f.format = options[9]
+		f.mult = options[10]
+		f.endtext = options[11]
 		f.parent = frame
 
 		f.edit:SetScript("OnTextChanged", function(self) adjOptionOnTextChanged(self, self.frame) end)
@@ -1395,7 +1402,7 @@ local function colorPickerShow(self)
 
 	if (self.color) then
 
-		local frame  = IBE.baropt.colorpicker
+		local frame  = NBE.baropt.colorpicker
 
 		frame.updateFunc = function()
 
@@ -1454,21 +1461,21 @@ function NEURON.VisiualOptions_OnLoad(frame)
 		f:SetScript("OnClick", visOptionOnClick)
 		f:SetScale(1)
 
-		f.text:SetText(options[1]..":")
-		f.option = options[0]
-		f.func = options[3]
+		f.text:SetText(options[2]..":")
+		f.option = options[1]
+		f.func = options[4]
 		f.parent = frame
 
-		if (options[4]) then
+		if (options[5]) then
 			f.swatch1:Show()
 			f.swatch1:SetScript("OnClick", colorPickerShow)
-			f.swatch1.option = options[6]
+			f.swatch1.option = options[7]
 		end
 
-		if (options[5]) then
+		if (options[6]) then
 			f.swatch2:Show()
 			f.swatch2:SetScript("OnClick", colorPickerShow)
-			f.swatch2.option = options[7]
+			f.swatch2.option = options[8]
 		end
 
 		tinsert(barOpt.swatch, f)
@@ -1625,7 +1632,8 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f:Hide()
 	frame.tab3 = f; frame.tabs[f] = frame.hidden
 
-	local states, anchor, last, count, prowl = {}
+	local states = {}
+	local anchor, last, count, prowl
 
 	local MAS = NEURON.MANAGED_ACTION_STATES
 
@@ -1667,72 +1675,72 @@ function NEURON:ActionEditor_OnLoad(frame)
 	end
 
 	anchor, last, count = nil, nil, 1
---[[
-	for index,state in ipairs(states) do
+	--[[
+        for index,state in ipairs(states) do
 
-		if (not MAS[state].homestate and state ~= "custom" and state ~= "extrabar" and state ~= "prowl") then
+            if (not MAS[state].homestate and state ~= "custom" and state ~= "extrabar" and state ~= "prowl") then
 
-			f = CreateFrame("CheckButton", nil, frame.presets.secondary, "NeuronOptionsCheckButtonTemplate")
-			f:SetID(index)
-			f:SetWidth(18)
-			f:SetHeight(18)
-			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(L["GUI_"..state:upper()])
-			f.option = state
+                f = CreateFrame("CheckButton", nil, frame.presets.secondary, "NeuronOptionsCheckButtonTemplate")
+                f:SetID(index)
+                f:SetWidth(18)
+                f:SetHeight(18)
+                f:SetScript("OnClick", setBarActionState)
+                f.text:SetText(L["GUI_"..state:upper()])
+                f.option = state
 
-			if (not anchor) then
-				f:SetPoint("TOPLEFT", frame.presets.secondary, "TOPLEFT", 10, -8)
-				anchor = f; last = f
-			elseif (count == 5) then
-				f:SetPoint("LEFT", anchor, "RIGHT", 90, 0)
-				anchor = f; last = f; count = 1
-			else
-				f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
-				last = f
-			end
+                if (not anchor) then
+                    f:SetPoint("TOPLEFT", frame.presets.secondary, "TOPLEFT", 10, -8)
+                    anchor = f; last = f
+                elseif (count == 5) then
+                    f:SetPoint("LEFT", anchor, "RIGHT", 90, 0)
+                    anchor = f; last = f; count = 1
+                else
+                    f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
+                    last = f
+                end
 
-			count = count + 1
+                count = count + 1
 
-			tinsert(barOpt.sec, f)
+                tinsert(barOpt.sec, f)
 
-		elseif state == "custom" then
-			f = CreateFrame("CheckButton", nil, frame.custom, "NeuronOptionsCheckButtonTemplate")
-			f:SetID(index)
-			f:SetWidth(18)
-			f:SetHeight(18)
-			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(L["GUI_"..state:upper()])
-			f.option = state
-			f:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -10)
-			tinsert(barOpt.sec, f)
-		end
-	end
+            elseif state == "custom" then
+                f = CreateFrame("CheckButton", nil, frame.custom, "NeuronOptionsCheckButtonTemplate")
+                f:SetID(index)
+                f:SetWidth(18)
+                f:SetHeight(18)
+                f:SetScript("OnClick", setBarActionState)
+                f.text:SetText(L["GUI_"..state:upper()])
+                f.option = state
+                f:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -10)
+                tinsert(barOpt.sec, f)
+            end
+        end
 
-	if (prowl) then
+        if (prowl) then
 
-		f = CreateFrame("CheckButton", nil, frame.presets.secondary, "NeuronOptionsCheckButtonTemplate")
-		f:SetID(#states+1)
-		f:SetWidth(18)
-		f:SetHeight(18)
-		f:SetScript("OnClick", setBarActionState)
-		f.text:SetText(L.GUI_PROWL)
-		f.option = "prowl"
-		f.stance = prowl
-		f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
+            f = CreateFrame("CheckButton", nil, frame.presets.secondary, "NeuronOptionsCheckButtonTemplate")
+            f:SetID(#states+1)
+            f:SetWidth(18)
+            f:SetHeight(18)
+            f:SetScript("OnClick", setBarActionState)
+            f.text:SetText(L.GUI_PROWL)
+            f.option = "prowl"
+            f.stance = prowl
+            f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
 
-		tinsert(barOpt.sec, f)
-	end
-]]--
+            tinsert(barOpt.sec, f)
+        end
+    ]]--
 
-			f = CreateFrame("CheckButton", nil, frame.custom, "NeuronOptionsCheckButtonTemplate")
-			--f:SetID(index)
-			f:SetWidth(18)
-			f:SetHeight(18)
-			f:SetScript("OnClick", setBarActionState)
-			f.text:SetText(L["GUI_CUSTOM"])
-			f.option = "custom"
-			f:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -10)
-			tinsert(barOpt.sec, f)
+	f = CreateFrame("CheckButton", nil, frame.custom, "NeuronOptionsCheckButtonTemplate")
+	--f:SetID(index)
+	f:SetWidth(18)
+	f:SetHeight(18)
+	f:SetScript("OnClick", setBarActionState)
+	f.text:SetText(L["GUI_CUSTOM"])
+	f.option = "custom"
+	f:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -10)
+	tinsert(barOpt.sec, f)
 
 
 	f = CreateFrame("EditBox", "$parentRemap", frame.presets, "NeuronDropDownOptionFull")
@@ -1765,7 +1773,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f.popup:SetPoint("BOTTOMRIGHT")
 	barOpt.remapto = f
 
---Custom State Tabs
+	--Custom State Tabs
 	f = frame.custom
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
 	f.text:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -60)
@@ -1841,7 +1849,7 @@ function NEURON.VisEditorScrollFrame_OnLoad(self)
 	self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	self:SetBackdropColor(0,0,0,0.5)
 
-	local anchor, button, lastButton, rowButton, count, script = false, false, false, false, 1
+	local anchor, button, lastButton, rowButton, count = false, false, false, false, 1
 
 	for i=1,numVisShown do
 
@@ -1858,11 +1866,11 @@ function NEURON.VisEditorScrollFrame_OnLoad(self)
 				self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
 			end)
 
-			--f = CreateFrame("CheckButton", nil, frame.visscroll, "NeuronOptionsCheckButtonTemplate")
-			--f:SetID(index)
-			button:SetWidth(18)
-			button:SetHeight(18)
-			button:SetHitRectInsets(0, 0, 0, 0)
+		--f = CreateFrame("CheckButton", nil, frame.visscroll, "NeuronOptionsCheckButtonTemplate")
+		--f:SetID(index)
+		button:SetWidth(18)
+		button:SetHeight(18)
+		button:SetHitRectInsets(0, 0, 0, 0)
 
 		--button:SetID(i)
 		button:SetFrameLevel(self:GetFrameLevel()+2)
@@ -1901,7 +1909,8 @@ function NEURON.VisEditorScrollFrameUpdate(frame, tableList, alt)
 		frame = NeuronBarEditorBarStatesVisEditorScrollFrame
 	end
 
-	local dataOffset, count, data, button, text, datum = FauxScrollFrame_GetOffset(frame), 1, {}
+	local dataOffset, count, data = FauxScrollFrame_GetOffset(frame), 1, {}
+	local button, text
 
 	for k in pairs(tableList) do
 		local val = k:match("%d+$")
@@ -1919,18 +1928,18 @@ function NEURON.VisEditorScrollFrameUpdate(frame, tableList, alt)
 	table.sort(data)
 
 
-local customStateData = {}
---This adds cusom states to the visability menu,  currently disabled untill I get custom state visability to work
---[[
+	local customStateData = {}
+	--This adds cusom states to the visability menu,  currently disabled untill I get custom state visability to work
+	--[[
 
-	if (bar and bar.cdata.customNames) then
-			local i = 0
-			for index,state in pairs(bar.cdata.customNames) do
-			data[count] = state; count = count + 1
-			customStateData[state] = i; i=i+1
-			end
-		end
-]]--
+        if (bar and bar.cdata.customNames) then
+                local i = 0
+                for index,state in pairs(bar.cdata.customNames) do
+                data[count] = state; count = count + 1
+                customStateData[state] = i; i=i+1
+                end
+            end
+    ]]--
 	frame:Show()
 
 	for i=1,numVisShown do
@@ -1945,11 +1954,11 @@ local customStateData = {}
 			text = NEURON.STATES[data[count]] or data[count]
 
 			if customStateData[data[count]] then
-			button.msg ="custom "..customStateData[data[count]]
-			button:SetChecked(not bar.gdata.hidestates:find("custom"..customStateData[data[count]]))
+				button.msg ="custom "..customStateData[data[count]]
+				button:SetChecked(not bar.gdata.hidestates:find("custom"..customStateData[data[count]]))
 			else
-			button.msg = data[count]:match("%a+").." "..data[count]:match("%d+$")
-			button:SetChecked(not bar.gdata.hidestates:find(data[count]))
+				button.msg = data[count]:match("%a+").." "..data[count]:match("%d+$")
+				button:SetChecked(not bar.gdata.hidestates:find(data[count]))
 			end
 
 			--Renames rogues stance0 from Melee to No stealth for the view states list
@@ -1990,7 +1999,7 @@ function NEURON.SecondaryPresetsScrollFrame_OnLoad(self)
 	self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	self:SetBackdropColor(0,0,0,0.5)
 
-	local anchor, button, lastButton, rowButton, count, script = false, false, false, false, 1
+	local anchor, button, lastButton, rowButton, count = false, false, false, false, 1
 
 	for i=1,numStatesShown do
 		button = CreateFrame("CheckButton", "PresetsScrollFrameButton"..i, self:GetParent(), "NeuronOptionsCheckButtonTemplate")
@@ -2006,11 +2015,11 @@ function NEURON.SecondaryPresetsScrollFrame_OnLoad(self)
 				self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
 			end)
 
-			--f = CreateFrame("CheckButton", nil, frame.visscroll, "NeuronOptionsCheckButtonTemplate")
-			--f:SetID(index)
-			button:SetWidth(18)
-			button:SetHeight(18)
-			button:SetHitRectInsets(0, 0, 0, 0)
+		--f = CreateFrame("CheckButton", nil, frame.visscroll, "NeuronOptionsCheckButtonTemplate")
+		--f:SetID(index)
+		button:SetWidth(18)
+		button:SetHeight(18)
+		button:SetHitRectInsets(0, 0, 0, 0)
 
 		--button:SetID(i)
 		button:SetFrameLevel(self:GetFrameLevel()+2)
@@ -2049,7 +2058,8 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 		frame = NeuronBarEditorBarStatesActionEditorPresetsSecondaryScrollFrame
 	end
 
-	local dataOffset, count, data, button, text, datum = FauxScrollFrame_GetOffset(frame), 1, {}
+	local dataOffset, count, data = FauxScrollFrame_GetOffset(frame), 1, {}
+	local button, text
 
 	for k in pairs(tableList) do
 
@@ -2130,7 +2140,7 @@ end
 
 -- OnLoad event for Bar editor Spell Target Options frame
 function NEURON:FlyoutOptions_OnLoad(frame)
---NeuronButtonEditor.options
+	--NeuronButtonEditor.options
 	--Container Support
 	local content = CreateFrame("Frame",nil, NeuronButtonEditor.options)
 	content:SetPoint("TOPLEFT",10,-5 )
@@ -2180,8 +2190,8 @@ function NEURON:ObjectEditor_OnShow(frame)
 			editor:SetAllPoints(frame)
 			editor:Show()
 
-			IOE:SetWidth(NEURON.Editors[objType][2])
-			IOE:SetHeight(NEURON.Editors[objType][3])
+			NOE:SetWidth(NEURON.Editors[objType][2])
+			NOE:SetHeight(NEURON.Editors[objType][3])
 		end
 	end
 end
@@ -2204,7 +2214,7 @@ function NEURON:ActionListScrollFrame_OnLoad(frame)
 	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
 	frame:SetBackdropColor(0,0,0,0.5)
 
-	local button, lastButton, rowButton, count, script = false, false, false, 0
+	local button, lastButton, rowButton, count = false, false, false, 0
 
 	for i=1,numShown do
 
@@ -2302,7 +2312,7 @@ function NEURON.ActionListScrollFrameUpdate(frame)
 
 		wipe(stateList)
 
-		bar, i = NEURON.CurrentObject.bar
+		bar = NEURON.CurrentObject.bar
 
 		stateList["00"..L.HOMESTATE] = "homestate"
 
@@ -2339,7 +2349,8 @@ function NEURON.ActionListScrollFrameUpdate(frame)
 		frame = NeuronButtonEditorActionListScrollFrame
 	end
 
-	local dataOffset, count, data, button, text, datum = FauxScrollFrame_GetOffset(frame), 1, {}
+	local dataOffset, count, data = FauxScrollFrame_GetOffset(frame), 1, {}
+	local button, text
 
 	for k in pairs(stateList) do
 		data[count] = k; count = count + 1
@@ -2348,12 +2359,12 @@ function NEURON.ActionListScrollFrameUpdate(frame)
 	table.sort(data)
 
 	if (bar and bar.cdata.customNames) then
-			local i = 0
-			for index,state in pairs(bar.cdata.customNames) do
-				stateList[state] = index
-				data[count] = state; count = count + 1
-			end
+		local i = 0
+		for index,state in pairs(bar.cdata.customNames) do
+			stateList[state] = index
+			data[count] = state; count = count + 1
 		end
+	end
 
 	frame:Show()
 
@@ -2398,10 +2409,10 @@ end
 -- @param data:
 -- @returns: Button texture
 local function specUpdateIcon(button,state)
---data = button.specdata[buttonSpec][state]
---specUpdateIcon(button, data))--button.iconframeicon:GetTexture())
---((button.bar.cdata.dualSpec and specoveride) or 1)
---data.macro_Icon
+	--data = button.specdata[buttonSpec][state]
+	--specUpdateIcon(button, data))--button.iconframeicon:GetTexture())
+	--((button.bar.cdata.dualSpec and specoveride) or 1)
+	--data.macro_Icon
 	local texture = "" --"INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
 	local buttonSpec = button:GetSpec()
 	local data = button.specdata[specoveride][state]
@@ -2414,15 +2425,15 @@ local function specUpdateIcon(button,state)
 				or data.macro_Text
 
 		if (data.macro_Text:match("/cast%s+(%C+)")) then
-				spell = (spell):lower()
-				if (sIndex[spell]) then
-					local spell_id = sIndex[spell].spellID
-					texture = GetSpellTexture(spell_id)
-				elseif (cIndex[spell]) then
-					texture = cIndex[spell].icon
-				elseif (spell) then
-					texture = GetSpellTexture(spell)
-				end
+			spell = (spell):lower()
+			if (sIndex[spell]) then
+				local spell_id = sIndex[spell].spellID
+				texture = GetSpellTexture(spell_id)
+			elseif (cIndex[spell]) then
+				texture = cIndex[spell].icon
+			elseif (spell) then
+				texture = GetSpellTexture(spell)
+			end
 
 		elseif ItemCache[spell] then
 			texture = GetItemIcon("item:"..ItemCache[spell]..":0:0:0:0:0:0:0")
@@ -2437,7 +2448,7 @@ end
 
 function NEURON:MacroEditorUpdate()
 	if (NEURON.CurrentObject and NEURON.CurrentObject.objType == "ACTIONBUTTON") then
-		local button, IBTNE = NEURON.CurrentObject, NeuronButtonEditor
+		local button, NBTNE = NEURON.CurrentObject, NeuronButtonEditor
 		local state = button.bar.handler:GetAttribute("fauxstate")
 		local buttonSpec = button:GetSpec()
 
@@ -2445,41 +2456,41 @@ function NEURON:MacroEditorUpdate()
 			buttonSpec = specoveride--button:GetSpec()
 
 			--Sets spec tab to current spec
-			IBTNE.spec1:SetChecked(nil)
-			IBTNE.spec2:SetChecked(nil)
-			IBTNE["spec"..buttonSpec]:SetChecked(true)
+			NBTNE.spec1:SetChecked(nil)
+			NBTNE.spec2:SetChecked(nil)
+			NBTNE["spec"..buttonSpec]:SetChecked(true)
 
 			--Sets current spec marker to proper tab
-			IBTNE.activespc:SetParent(IBTNE["spec"..GetSpecialization()])
-			IBTNE.activespc:SetPoint("LEFT")
-			IBTNE.spec1:Show()
-			IBTNE.spec2:Show()
-			IBTNE.spec3:Show()
+			NBTNE.activespc:SetParent(NBTNE["spec"..GetSpecialization()])
+			NBTNE.activespc:SetPoint("LEFT")
+			NBTNE.spec1:Show()
+			NBTNE.spec2:Show()
+			NBTNE.spec3:Show()
 			local player_Class = select(2, UnitClass("player"))
 
 			if (player_Class == "DEMONHUNTER") then
-				IBTNE.spec1:SetWidth(104)
-				IBTNE.spec2:SetWidth(104)
-				IBTNE.savestate:SetPoint("LEFT", IBTNE.spec2, "RIGHT", 0, 0)
-				IBTNE.spec3:Hide()
-				IBTNE.spec4:Hide()
+				NBTNE.spec1:SetWidth(104)
+				NBTNE.spec2:SetWidth(104)
+				NBTNE.savestate:SetPoint("LEFT", NBTNE.spec2, "RIGHT", 0, 0)
+				NBTNE.spec3:Hide()
+				NBTNE.spec4:Hide()
 			elseif (player_Class == "DRUID") then
-				IBTNE.spec1:SetWidth(62)
-				IBTNE.spec2:SetWidth(62)
-				IBTNE.spec3:SetWidth(62)
-				IBTNE.spec4:SetWidth(62)
-				IBTNE.spec4:Show()
-				IBTNE.savestate:SetPoint("LEFT", IBTNE.spec4, "RIGHT", 0, 0)
-				IBTNE.savestate:SetWidth(62)
+				NBTNE.spec1:SetWidth(62)
+				NBTNE.spec2:SetWidth(62)
+				NBTNE.spec3:SetWidth(62)
+				NBTNE.spec4:SetWidth(62)
+				NBTNE.spec4:Show()
+				NBTNE.savestate:SetPoint("LEFT", NBTNE.spec4, "RIGHT", 0, 0)
+				NBTNE.savestate:SetWidth(62)
 			else
-				IBTNE.spec4:Hide()
+				NBTNE.spec4:Hide()
 			end
 		else
 			buttonSpec = 1
-			IBTNE.spec1:Hide()
-			IBTNE.spec2:Hide()
-			IBTNE.spec3:Hide()
-			IBTNE.spec4:Hide()
+			NBTNE.spec1:Hide()
+			NBTNE.spec2:Hide()
+			NBTNE.spec3:Hide()
+			NBTNE.spec4:Hide()
 		end
 
 		local data = button.specdata[buttonSpec][state]
@@ -2494,18 +2505,18 @@ function NEURON:MacroEditorUpdate()
 		end
 
 		if (data) then
-			IBTNE.macroedit.edit:SetText(data.macro_Text)
+			NBTNE.macroedit.edit:SetText(data.macro_Text)
 			if (not data.macro_Icon) then
-				IBTNE.macroicon.icon:SetTexture(specUpdateIcon(button, state))--button.iconframeicon:GetTexture())
+				NBTNE.macroicon.icon:SetTexture(specUpdateIcon(button, state))--button.iconframeicon:GetTexture())
 			elseif (data.macro_Icon == "BLANK") then
-				IBTNE.macroicon.icon:SetTexture("")
+				NBTNE.macroicon.icon:SetTexture("")
 			else
-				IBTNE.macroicon.icon:SetTexture(data.macro_Icon)
+				NBTNE.macroicon.icon:SetTexture(data.macro_Icon)
 			end
 			--print(data.macro_Name)
-			IBTNE.nameedit:SetText(data.macro_Name)
-			IBTNE.noteedit:SetText(data.macro_Note)
-			IBTNE.usenote:SetChecked(data.macro_UseNote)
+			NBTNE.nameedit:SetText(data.macro_Name)
+			NBTNE.noteedit:SetText(data.macro_Note)
+			NBTNE.usenote:SetChecked(data.macro_UseNote)
 
 		else
 			--print("notinghere")
@@ -2581,10 +2592,10 @@ local function macroText_OnTextChanged(self)
 				button.specdata[buttonSpec][state].macro_Text = self:GetText()
 				button.specdata[buttonSpec][state].macro_Watch = false
 			else
-			--print("notinghere")
-			--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
-			--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
-			--print(button.specdata[buttonSpec][state])
+				--print("notinghere")
+				--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
+				--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
+				--print(button.specdata[buttonSpec][state])
 			end
 
 		end
@@ -2598,10 +2609,10 @@ local function macroButton_Changed(self, button, down)
 	local object = NEURON.CurrentObject
 
 	local data = object.data
-		local buttonSpec = ((object.bar.cdata.dualSpec and specoveride) or 1)
-		local state = object.bar.handler:GetAttribute("fauxstate")
+	local buttonSpec = ((object.bar.cdata.dualSpec and specoveride) or 1)
+	local state = object.bar.handler:GetAttribute("fauxstate")
 
---handler to check if viewing non current spec button settings
+	--handler to check if viewing non current spec button settings
 	if (specoveride ~= object:GetSpec()) then
 		data = object.specdata[buttonSpec][state]
 	end
@@ -2744,7 +2755,7 @@ function updateIconList()
 		end
 	end
 
-	iconListTemp = {};
+	local iconListTemp = {};
 	for fileDataID in pairs(activeIcons) do
 		iconListTemp[#iconListTemp + 1] = fileDataID;
 	end
@@ -2766,27 +2777,27 @@ function updateIconList()
 	for index, icon in ipairs(iconListTemp) do
 		if (search) then
 
-	 		--I don't know what this does or why it is important, but we want to avoid GetFileName at all costs, and this doesn't appear to break anything.
-	 		local icon_path
+			--I don't know what this does or why it is important, but we want to avoid GetFileName at all costs, and this doesn't appear to break anything.
+			local icon_path
 			local x = GetItemInfo(icon)
 			local y = GetSpellInfo(icon)
 
 
-	 		if (x) then
-	 			icon_path = x
-	 		elseif(y) then
-	 			icon_path = y
+			if (x) then
+				icon_path = x
+			elseif(y) then
+				icon_path = y
 			else
 				icon_path = icon
-	 		end
-	 	if (icon_path and type(icon_path)~="number" and icon_path:lower():find(search:lower())) then
-			--if (icon_path:lower():find(search:lower()) or index == 1) then
+			end
+			if (icon_path and type(icon_path)~="number" and icon_path:lower():find(search:lower())) then
+				--if (icon_path:lower():find(search:lower()) or index == 1) then
+				tinsert(IconList, icon)
+			end
+		else
 			tinsert(IconList, icon)
 		end
-	else
-		tinsert(IconList, icon)
 	end
-end
 
 end
 
@@ -2838,7 +2849,7 @@ local function customPathOnShow(self)
 	if (button) then
 
 		if (button.data.macro_Icon) then
---Needs fixing
+			--Needs fixing
 			local text = button.data.macro_Icon:gsub("INTERFACE\\", "")
 
 			self:SetText(text)
@@ -2878,7 +2889,7 @@ end
 
 --Resets all the fields in the editor for the curently selected buttton
 local function ResetButtonFields()
-	local button, IBTNE = NEURON.CurrentObject, NeuronButtonEditor
+	local button, NBTNE = NEURON.CurrentObject, NeuronButtonEditor
 	local state = button.bar.handler:GetAttribute("fauxstate")
 	local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1) --specoveride --button:GetSpec()
 	local data = button.specdata[buttonSpec][state]
@@ -2892,12 +2903,12 @@ local function ResetButtonFields()
 	data.macro_Equip = false
 	data.macro_Note = ""
 
-	IBTNE.nameedit:SetText("")
-	IBTNE.noteedit:SetFocus()
-	IBTNE.noteedit:SetText("")
-	IBTNE.macroedit.edit:SetFocus()
-	IBTNE.macroedit.edit:SetText("")
-	IBTNE.macroedit.edit:ClearFocus()
+	NBTNE.nameedit:SetText("")
+	NBTNE.noteedit:SetFocus()
+	NBTNE.noteedit:SetText("")
+	NBTNE.macroedit.edit:SetFocus()
+	NBTNE.macroedit.edit:SetText("")
+	NBTNE.macroedit.edit:ClearFocus()
 end
 
 
@@ -2973,15 +2984,15 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	--f:SetScript("OnClick", function(self) SetActiveSpecGroup(GetActiveSpecGroup() == 1 and 2 or 1);  end)
 	f:SetScript("OnClick", ResetButtonFields)
 	f:SetScript("OnEnter", function(self)
-						if ( self.tooltipText ) then
-							GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-							GameTooltip:SetText(self.tooltipText)
-						end
-						GameTooltip:Show();
-						end)
+		if ( self.tooltipText ) then
+			GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+			GameTooltip:SetText(self.tooltipText)
+		end
+		GameTooltip:Show();
+	end)
 	f:SetScript("OnLeave", function(self)
-						GameTooltip:Hide();
-						end)
+		GameTooltip:Hide();
+	end)
 	f:SetNormalTexture("Interface\\AddOns\\Neuron\\Images\\UI-RotationRight-Button-Up")
 	f:SetPushedTexture("Interface\\AddOns\\Neuron\\Images\\UI-RotationRight-Button-Down")
 	f:SetHighlightTexture("Interface\\AddOns\\Neuron\\Images\\UI-Common-MouseHilight")
@@ -3061,10 +3072,10 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec3, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self)
-						frame.macroedit.edit:ClearFocus()
-						frame.nameedit:ClearFocus()
-						frame.noteedit:ClearFocus()
-						end)
+		frame.macroedit.edit:ClearFocus()
+		frame.nameedit:ClearFocus()
+		frame.noteedit:ClearFocus()
+	end)
 	f:SetText(_G.SAVE)
 	f.tooltipText = _G.SAVE
 	frame.savestate = f
@@ -3151,23 +3162,23 @@ function NEURON:ButtonEditor_OnLoad(frame)
 		f:SetFrameLevel(frame.iconlist:GetFrameLevel()+2)
 		f.slot:SetVertexColor(0.5,0.5,0.5,1)
 		f:SetScript("OnEnter", function(self)
-							self.fl = self:GetFrameLevel()
-							self:SetFrameLevel(self.fl+1)
-							self:GetNormalTexture():SetPoint("TOPLEFT", -7, 7)
-							self:GetNormalTexture():SetPoint("BOTTOMRIGHT", 7, -7)
-							self.slot:SetPoint("TOPLEFT", -10, 10)
-							self.slot:SetPoint("BOTTOMRIGHT", 10, -10)
-						end)
+			self.fl = self:GetFrameLevel()
+			self:SetFrameLevel(self.fl+1)
+			self:GetNormalTexture():SetPoint("TOPLEFT", -7, 7)
+			self:GetNormalTexture():SetPoint("BOTTOMRIGHT", 7, -7)
+			self.slot:SetPoint("TOPLEFT", -10, 10)
+			self.slot:SetPoint("BOTTOMRIGHT", 10, -10)
+		end)
 		f:SetScript("OnLeave", function(self)
-							self:SetFrameLevel(self.fl)
-							self:GetNormalTexture():SetPoint("TOPLEFT", 2, -2)
-							self:GetNormalTexture():SetPoint("BOTTOMRIGHT", -2, 2)
-							self.slot:SetPoint("TOPLEFT", -2, 2)
-							self.slot:SetPoint("BOTTOMRIGHT", 2, -2)
-						end)
+			self:SetFrameLevel(self.fl)
+			self:GetNormalTexture():SetPoint("TOPLEFT", 2, -2)
+			self:GetNormalTexture():SetPoint("BOTTOMRIGHT", -2, 2)
+			self.slot:SetPoint("TOPLEFT", -2, 2)
+			self.slot:SetPoint("BOTTOMRIGHT", 2, -2)
+		end)
 		f.onclick_func = function(self, button, down)
-						macroButton_Changed(self, button, down)
-					   end
+			macroButton_Changed(self, button, down)
+		end
 
 		count = count + 1
 
@@ -3291,41 +3302,41 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetPoint("TOPLEFT", frame.actionlist, "TOPRIGHT", 10, -25)
 	f:SetPoint("BOTTOMRIGHT", -10, 10)
 	f:SetScript("OnUpdate", function(self,elapsed) if (self.elapsed == 0) then NEURON:UpdateObjectGUI(true) end self.elapsed = elapsed end)
-	f:SetScript("OnShow", function(self) LibStub("AceConfigDialog-3.0"):Open(addonName, IBTNE.ACEmenu , "flyoutoptions") end)
+	f:SetScript("OnShow", function(self) LibStub("AceConfigDialog-3.0"):Open(addonName, NBTNE.ACEmenu , "flyoutoptions") end)
 	f:Hide()
 	f.elapsed = 0
 	frame.options = f
 
----  /flyout <types>:<keys>:<shape>:<attach point>:<relative point>:<columns|radius>:<click|mouse>
---[[
-	f = CreateFrame("EditBox", nil, frame.options)
-	f:SetMultiLine(false)
-	f:SetNumeric(false)
-	f:SetAutoFocus(false)
-	f:SetTextInsets(5,5,5,5)
-	f:SetFontObject("GameFontHighlight")
-	f:SetJustifyH("CENTER")
-	f:SetPoint("TOPLEFT", frame.options, "TOPRIGHT", 5, 3.5)
-	f:SetPoint("BOTTOMRIGHT", frame.options, "TOP", -18, 32)
-	--f:SetScript("OnTextChanged", macroNameEdit_OnTextChanged)
-	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
-	---f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
-	f:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-	f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
-	frame.flyoutKey = f
+	---  /flyout <types>:<keys>:<shape>:<attach point>:<relative point>:<columns|radius>:<click|mouse>
+	--[[
+        f = CreateFrame("EditBox", nil, frame.options)
+        f:SetMultiLine(false)
+        f:SetNumeric(false)
+        f:SetAutoFocus(false)
+        f:SetTextInsets(5,5,5,5)
+        f:SetFontObject("GameFontHighlight")
+        f:SetJustifyH("CENTER")
+        f:SetPoint("TOPLEFT", frame.options, "TOPRIGHT", 5, 3.5)
+        f:SetPoint("BOTTOMRIGHT", frame.options, "TOP", -18, 32)
+        --f:SetScript("OnTextChanged", macroNameEdit_OnTextChanged)
+        f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
+        ---f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
+        f:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+        f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
+        frame.flyoutKey = f
 
-	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
-	f.text:SetPoint("CENTER")
-	f.text:SetJustifyH("CENTER")
-	f.text:SetText("dsfgdfgsdf")
+        f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
+        f.text:SetPoint("CENTER")
+        f.text:SetJustifyH("CENTER")
+        f.text:SetText("dsfgdfgsdf")
 
-	f = CreateFrame("Frame", nil, frame.flyoutkey)
-	f:SetPoint("TOPLEFT", 0, 0)
-	f:SetPoint("BOTTOMRIGHT", 0, 0)
-	f:SetFrameLevel(frame.flyoutKey:GetFrameLevel()-1)
+        f = CreateFrame("Frame", nil, frame.flyoutkey)
+        f:SetPoint("TOPLEFT", 0, 0)
+        f:SetPoint("BOTTOMRIGHT", 0, 0)
+        f:SetFrameLevel(frame.flyoutKey:GetFrameLevel()-1)
 
-	NEURON.SubFrameBlackBackdrop_OnLoad(f)
-]]--
+        NEURON.SubFrameBlackBackdrop_OnLoad(f)
+    ]]--
 
 	local function TabsOnClick(cTab, silent)
 
@@ -3480,10 +3491,10 @@ local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Neuron-GUI") then
 
-		IMM = NeuronMainMenu
-		IBE = NeuronBarEditor
-		IOE = NeuronObjectEditor
-		IBTNE = NeuronButtonEditor
+		NMM = NeuronMainMenu
+		NBE = NeuronBarEditor
+		NOE = NeuronObjectEditor
+		NBTNE = NeuronButtonEditor
 
 		MAS = NEURON.MANAGED_ACTION_STATES
 
@@ -3499,21 +3510,21 @@ local function controlOnEvent(self, event, ...)
 			hookMountButtons(); hookPetJournalButtons()
 		end
 
-	local content = CreateFrame("Frame",nil, IBTNE.options)
-	content:SetPoint("TOPLEFT",10,-5 )
-	content:SetPoint("BOTTOMRIGHT",-10,5)
-	--This creats a cusomt AceGUI container which lets us imbed a AceGUI menu into our frame.
-	local widget = {
-		frame     = IBTNE.options,
-		content   = content,
-		type      = "NeuronContainer"
-	}
-	widget["OnRelease"] = function(self)
-		self.status = nil
-		wipe(self.localstatus)
-	end
-	NeuronButtonEditor.ACEmenu = widget
-	AceGUI:RegisterAsContainer(widget)
+		local content = CreateFrame("Frame",nil, NBTNE.options)
+		content:SetPoint("TOPLEFT",10,-5 )
+		content:SetPoint("BOTTOMRIGHT",-10,5)
+		--This creats a cusomt AceGUI container which lets us imbed a AceGUI menu into our frame.
+		local widget = {
+			frame     = NBTNE.options,
+			content   = content,
+			type      = "NeuronContainer"
+		}
+		widget["OnRelease"] = function(self)
+			self.status = nil
+			wipe(self.localstatus)
+		end
+		NeuronButtonEditor.ACEmenu = widget
+		AceGUI:RegisterAsContainer(widget)
 
 	elseif (event == "ADDON_LOADED" and ... == "Blizzard_PetJournal") then
 
@@ -3557,7 +3568,7 @@ end
 --/flyout s+,i+:teleport,!drake:linear:top:bottom:1:click
 local FLYOUTMACRO = {
 	["types"] = {
-	["item"] = "item"},
+		["item"] = "item"},
 	["keys"] = "",
 	["shape"] = "LINEAR",
 	["attach"] = "TOP",
@@ -3640,7 +3651,7 @@ local target_options = {
 					desc = L.SPELL_TARGETING_FOCUS_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return settingGetter(info) end, --getFunc,
 					set = function(info, value) SetBarCastTarget("focusCast", value) end,
-					},
+				},
 				setfocuscastmod = {
 					order = 60,
 					type = "select",
@@ -3662,7 +3673,7 @@ local target_options = {
 					desc = L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK_TOGGLE,
 					get = function(info)  return settingGetter(info) end, --getFunc,
 					set = function(info, value) SetBarCastTarget("rightClickTarget", value) end,
-					},
+				},
 				rightclickselfcast_nl = {
 					order = 90,
 					type = "description",
@@ -3675,7 +3686,7 @@ local target_options = {
 					desc = L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return settingGetter(info) end, --getFunc,
 					set = function(info, value) SetBarCastTarget("mouseOverCast", value) end,
-					},
+				},
 				mouseovermod = {
 					order = 301,
 					type = "select",
@@ -3770,13 +3781,13 @@ local target_options = {
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
 				--types = {
-					--order = 10,
-					--type = "multiselect",
-					--name = "Flyout Types",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--get = function(info)  return settingGetter(info) end, --getFunc,
-					--set = function(info, value) print(value) end,
-					--values = { ITEM = "Item", SPELL = "Spell", MOUNT = "Mount", COMPANION="Companion", TYPE = "Type", PROFESSION= "Profession", FUN = "Fun", FAVORITE = "Favorite" },
+				--order = 10,
+				--type = "multiselect",
+				--name = "Flyout Types",
+				--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
+				--get = function(info)  return settingGetter(info) end, --getFunc,
+				--set = function(info, value) print(value) end,
+				--values = { ITEM = "Item", SPELL = "Spell", MOUNT = "Mount", COMPANION="Companion", TYPE = "Type", PROFESSION= "Profession", FUN = "Fun", FAVORITE = "Favorite" },
 				--},
 				keys = {
 					order = 11,

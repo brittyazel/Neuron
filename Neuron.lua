@@ -1915,7 +1915,8 @@ end
 
 
 function NEURON:PrintStateList()
-	local data, list
+	local data = {}
+	local list
 
 	for k,v in pairs(NEURON.MANAGED_ACTION_STATES) do
 		if (NEURON.STATEINDEX[k]) then
