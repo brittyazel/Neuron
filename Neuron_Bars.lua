@@ -1,7 +1,8 @@
 --Neuron, a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local NEURON, GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB = Neuron
+local NEURON = Neuron
+local GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB
 
 
 NEURON.BAR = setmetatable({}, { __index = CreateFrame("CheckButton") })
@@ -1071,9 +1072,11 @@ end
 
 
 function BAR:SetObjectLoc()
-	local width, height, num, count, origCol, x, y, object, lastObj, placed = 0, 0, 0, self.objCount, self.gdata.columns
+	local width, height, num, count, origCol = 0, 0, 0, self.objCount, self.gdata.columns
+	local x, y, object, lastObj, placed
 	local shape, padH, padV, arcStart, arcLength = self.gdata.shape, self.gdata.padH, self.gdata.padV, self.gdata.arcStart, self.gdata.arcLength
-	local cAdjust, rAdjust, columns, rows = 0.5, 1
+	local cAdjust, rAdjust = 0.5, 1
+	local columns, rows
 
 	if (not origCol) then
 		origCol = count; rows = 1
@@ -1155,7 +1158,9 @@ end
 
 
 function BAR:SetPerimeter()
-	local num, count, object = 0, self.objCount
+	local num, count = 0, self.objCount
+	local object
+
 	self.objectCount = 0
 	self.top = nil; self.bottom = nil; self.left = nil; self.right = nil
 
@@ -2100,7 +2105,9 @@ function BAR:SetVisibility(msg, gui, checked, query)
 			end
 
 			if (not silent) then
-				local hidestates, desc, showhide = self.gdata.hidestates
+				local hidestates = self.gdata.hidestates
+				local desc, showhide
+
 				local highindex = 0
 
 				for state,desc in pairs(NEURON.STATES) do

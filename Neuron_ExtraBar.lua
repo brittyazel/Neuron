@@ -1,7 +1,8 @@
 --Neuron , a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local NEURON, GDB, CDB, PEW = Neuron
+local NEURON = Neuron
+local GDB, CDB, PEW
 
 NEURON.XBTNIndex = {}
 
