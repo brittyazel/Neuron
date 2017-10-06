@@ -671,7 +671,8 @@ local function repDropDown_Initialize(frame) --Initialize the dropdown menu for 
 
 		wipe(info)
 
-		local data, order, ID, text, friends
+		local data = {}
+		local order, ID, text, friends
 
 		for k,v in pairs(RepWatch) do
 
