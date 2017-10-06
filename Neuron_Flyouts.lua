@@ -24,7 +24,8 @@ local table = _G.table
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local NEURON, GDB, CDB, PEW, SPEC, btnGDB, btnCDB, control, A_UPDATE = Neuron
+local NEURON = Neuron
+local GDB, CDB, PEW, SPEC, btnGDB, btnCDB, control, A_UPDATE
 
 local BAR, BUTTON = NEURON.BAR, NEURON.BUTTON
 
@@ -225,7 +226,8 @@ end
 -- item:id will get all items of that itemID
 -- item:name will get all items that contain "name" in its name
 function BUTTON:filter_item(data)
-	local keys, found, mandatory, optional, excluded  = self.flyout.keys, 0, 0, 0
+	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	local excluded
 	for ckey in gmatch(keys, "[^,]+") do
 
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -256,7 +258,8 @@ end
 -- spell:id will get all spells of that spellID
 -- spell:name will get all spells that contain "name" in its name or its flyout parent
 function BUTTON:filter_spell(data)
-	local keys, found, mandatory, optional, excluded  = self.flyout.keys, 0, 0, 0
+	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -308,7 +311,8 @@ end
 -- type:quest will get all quest items in bags, or those on person with Quest in a type field
 -- type:name will get all items that have "name" in its type, subtype or slot name
 function BUTTON:filter_type(data)
-	local keys, found, mandatory, optional, excluded  = self.flyout.keys, 0, 0, 0
+	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -350,7 +354,8 @@ end
 -- mount:any, mount:flying, mount:land, mount:favorite, mount:fflying, mount:fland
 -- mount:arg filters mounts that include arg in the name or arg="flying" or arg="land" or arg=="any"
 function BUTTON:filter_mount(data)
-	local keys, found, mandatory, optional, excluded  = self.flyout.keys, 0, 0, 0
+	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -407,7 +412,8 @@ function BUTTON:filter_profession(data)
 	f.professions = f.professions or {}
 	wipe(f.professions)
 
-	local keys, found, mandatory, optional, excluded  = self.flyout.keys, 0, 0, 0
+	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	local excluded
 	local profSpells = {}
 
 	for ckey in gmatch(keys, "[^,]+") do
@@ -459,7 +465,8 @@ end
 --- Filter handler for companion pets
 -- pet:arg filters companion pets that include arg in the name or arg="any" or arg="favorite(s)"
 function BUTTON:filter_pet(data, arg, rtable)
-	local keys, found, mandatory, optional, excluded  = self.flyout.keys, 0, 0, 0
+	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	local excluded
 	for ckey in gmatch(keys, "[^,]+") do
 
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -497,7 +504,8 @@ end
 ---Filter handler for toy items
 -- toy:arg filters items from the toybox; arg="favorite" "any" or partial name
 function BUTTON:filter_toy(data)
-	local keys, found, mandatory, optional, excluded  = self.flyout.keys, 0, 0, 0
+	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -653,7 +661,9 @@ function BUTTON:Flyout_UpdateButtons(init)
 	local pet = false
 
 	if (self.flyout) then
-		local flyout, count, list, button, prefix, macroSet  = self.flyout, 0, ""
+		local flyout, count, list = self.flyout, 0, ""
+		local button, prefix, macroSet
+
 		local data = self:GetDataList(flyout.options)
 
 		for _,button in pairs(flyout.buttons) do
@@ -782,7 +792,8 @@ function BUTTON:Flyout_UpdateBar()
 	self.flyoutleft:Hide()
 	self.flyoutright:Hide()
 
-	local flyout, pointA, pointB, hideArrow, shape, columns, pad = self.flyout
+	local flyout = self.flyout
+	local pointA, pointB, hideArrow, shape, columns, pad
 
 	if (flyout.shape and flyout.shape:lower():find("^c")) then
 		shape = 2
@@ -1000,7 +1011,7 @@ end
 
 
 function BUTTON:Flyout_PostClick()
-	button = self.anchor
+	local button = self.anchor
 	button.data.macro_Text = self:GetAttribute("flyoutMacro")
 	button.data.macro_Icon = self:GetAttribute("macro_Icon") or false
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
@@ -1181,7 +1192,8 @@ function BUTTON:Anchor_UpdateChild()
 	local child = self.flyout.bar and self.flyout.bar.handler
 
 	if (child) then
-		local mode, delay = self.flyout.mode
+		local mode = self.flyout.mode
+		local delay
 
 		if (mode == "click") then
 			self:SetAttribute("click-show", "hide")
@@ -1272,7 +1284,7 @@ local function linkScanOnUpdate(self, elapsed)
 			local name = GetItemInfo(self.link)
 
 			if (name) then
-				local tooltip, text = " "
+				local tooltip, text = " ", " "
 				tooltipScan:SetOwner(control,"ANCHOR_NONE")
 				tooltipScan:SetHyperlink(self.link)
 

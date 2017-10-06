@@ -122,7 +122,8 @@ end
 
 function BAR:StickToEdge()
 
-	local point, x, y, changed = self:GetPosition()
+	local point, x, y= self:GetPosition()
+	local changed
 	local w, h, rTol = self:GetWidth()/2, self:GetHeight()/2, NeuronGDB.snapToTol
 
 	local function calcX(opt)

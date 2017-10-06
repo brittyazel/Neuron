@@ -1,12 +1,14 @@
 ﻿--Neuron, a World of Warcraft® user interface addon.
 
-local NEURON, DB, PEW = Neuron
+local NEURON = Neuron
+local PEW
 
 NEURON.OBJEDITOR = setmetatable({}, { __index = CreateFrame("Button") })
 
 NEURON.Editors = {}
 
-local BUTTON, OBJEDITOR = NEURON.BUTTON, NEURON.OBJEDITOR
+local BUTTON = NEURON.BUTTON
+local OBJEDITOR = NEURON.OBJEDITOR
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -33,8 +35,6 @@ function OBJEDITOR:OnHide()
 end
 
 function OBJEDITOR:OnEnter()
-
-	local object = self.object
 
 	self.select:Show()
 
@@ -83,7 +83,7 @@ function OBJEDITOR:OnClick(button)
 	end
 end
 
-function OBJEDITOR:ACTIONBAR_SHOWGRID(...)
+function OBJEDITOR:ACTIONBAR_SHOWGRID()
 
 	if (not InCombatLockdown() and self:IsVisible()) then
 		self:Hide(); self.showgrid = true
@@ -91,7 +91,7 @@ function OBJEDITOR:ACTIONBAR_SHOWGRID(...)
 
 end
 
-function OBJEDITOR:ACTIONBAR_HIDEGRID(...)
+function OBJEDITOR:ACTIONBAR_HIDEGRID()
 
 	if (not InCombatLockdown() and self.showgrid) then
 		self:Show(); self.showgrid = nil

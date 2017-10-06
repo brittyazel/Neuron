@@ -2068,6 +2068,9 @@ function BAR:SetState(msg, gui, checked, query)
 
 end
 
+
+--I have no clue what or how any of this works. I took out the annoying print statements, but for now I'll just leave it. -Soyier
+
 function BAR:SetVisibility(msg, gui, checked, query)
 	if (msg) then
 		wipe(statetable)
@@ -2137,16 +2140,16 @@ function BAR:SetVisibility(msg, gui, checked, query)
 				end
 
 				if (#statetable > 0) then
-					print("\n")
+					--print("\n")
 					if (statetable[0]) then
 						desc, showhide = (":"):split(statetable[0])
-						print("0: "..desc.." - "..showhide)
+						--print("0: "..desc.." - "..showhide)
 					end
 
 					for k,v in ipairs(statetable) do
 						if (v ~= "ignore") then
 							desc, showhide = (":"):split(v)
-							print(k..": "..desc.." - "..showhide)
+							--print(k..": "..desc.." - "..showhide)
 						end
 					end
 				end

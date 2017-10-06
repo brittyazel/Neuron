@@ -1,6 +1,7 @@
 ﻿--Neuron, a World of Warcraft® user interface addon.
 
-local NEURON, DB, PEW = Neuron
+local NEURON = Neuron
+local DB, PEW
 
 NEURON.BINDER = setmetatable({}, { __index = CreateFrame("Button") })
 

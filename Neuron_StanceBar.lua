@@ -1,7 +1,8 @@
 --Neuron Stance Action Bar, a World of Warcraft® user interface addon.
 --Copyright© 2006-2012 Connor H. Chenoweth, aka Maul - All rights reserved.
 
-local NEURON, GDB, CDB, PEW = Neuron
+local NEURON = Neuron
+local GDB, CDB, PEW
 
 NEURON.SBTNIndex = {}
 
@@ -124,6 +125,7 @@ function SBTN:STANCE_UpdateCooldown()
 	local texture, name, isActive, isCastable, spell, spellID;
 	local button, icon, cooldown;
 	local start, duration, enable;
+	local _ --place to hold unwanted return values
 	local display = false
 
 	if ( i <= numForms ) then
