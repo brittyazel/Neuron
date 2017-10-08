@@ -1496,8 +1496,12 @@ end
 
 
 function NEURON:ToggleBlizzBar(on)
-	if (InCombatLockdown()) then return end
-	if (NEURON.OpDep) then return end
+	if (InCombatLockdown()) then
+		return
+	end
+	if (NEURON.OpDep) then
+		return
+	end
 	if (on) then
 		local button
 
