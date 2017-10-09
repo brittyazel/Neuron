@@ -135,6 +135,8 @@ NEURON.Points = {R = "RIGHT", L = "LEFT", T = "TOP", B = "BOTTOM", TL = "TOPLEFT
 
 NEURON.Stratas = {"BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP"}
 
+
+--why are there two of some of these states?
 NEURON.STATES = {
 	homestate = L.HOMESTATE,
 	laststate = L.LASTSTATE,
@@ -197,25 +199,6 @@ NEURON.STATEINDEX = {
 	prowl = L.PROWL,
 	custom = L.CUSTOM,
 	target = L.TARGET,
-
-	[L.PAGED] = "paged",
-	[L.STANCE] = "stance",
-	[L.PET] = "pet",
-	[L.ALT] = "alt",
-	[L.CTRL] = "ctrl",
-	[L.SHIFT] = "shift",
-	[L.STEALTH] = "stealth",
-	[L.REACTION] = "reaction",
-	[L.COMBAT] = "combat",
-	[L.GROUP] = "group",
-	[L.FISHING] = "fishing",
-	[L.VEHICLE] = "vehicle",
-	[L.POSSESS] = "possess",
-	[L.OVERRIDE] = "override",
-	[L.EXTRABAR] = "extrabar",
-	[L.PROWL] = "prowl",
-	[L.CUSTOM] = "custom",
-	[L.TARGET] = "target",
 }
 
 local handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")

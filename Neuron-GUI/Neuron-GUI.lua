@@ -4,7 +4,7 @@
 local NEURON = Neuron
 local GDB, CDB, NMM, NBE, NOE, NBTNE, MAS, PEW
 
-local width, height = 775, 490
+local width, height = 1000, 600
 
 local barNames = {}
 
@@ -1675,62 +1675,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	end
 
 	anchor, last, count = nil, nil, 1
-	--[[
-        for index,state in ipairs(states) do
 
-            if (not MAS[state].homestate and state ~= "custom" and state ~= "extrabar" and state ~= "prowl") then
-
-                f = CreateFrame("CheckButton", nil, frame.presets.secondary, "NeuronOptionsCheckButtonTemplate")
-                f:SetID(index)
-                f:SetWidth(18)
-                f:SetHeight(18)
-                f:SetScript("OnClick", setBarActionState)
-                f.text:SetText(L["GUI_"..state:upper()])
-                f.option = state
-
-                if (not anchor) then
-                    f:SetPoint("TOPLEFT", frame.presets.secondary, "TOPLEFT", 10, -8)
-                    anchor = f; last = f
-                elseif (count == 5) then
-                    f:SetPoint("LEFT", anchor, "RIGHT", 90, 0)
-                    anchor = f; last = f; count = 1
-                else
-                    f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
-                    last = f
-                end
-
-                count = count + 1
-
-                tinsert(barOpt.sec, f)
-
-            elseif state == "custom" then
-                f = CreateFrame("CheckButton", nil, frame.custom, "NeuronOptionsCheckButtonTemplate")
-                f:SetID(index)
-                f:SetWidth(18)
-                f:SetHeight(18)
-                f:SetScript("OnClick", setBarActionState)
-                f.text:SetText(L["GUI_"..state:upper()])
-                f.option = state
-                f:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -10)
-                tinsert(barOpt.sec, f)
-            end
-        end
-
-        if (prowl) then
-
-            f = CreateFrame("CheckButton", nil, frame.presets.secondary, "NeuronOptionsCheckButtonTemplate")
-            f:SetID(#states+1)
-            f:SetWidth(18)
-            f:SetHeight(18)
-            f:SetScript("OnClick", setBarActionState)
-            f.text:SetText(L.GUI_PROWL)
-            f.option = "prowl"
-            f.stance = prowl
-            f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -8)
-
-            tinsert(barOpt.sec, f)
-        end
-    ]]--
 
 	f = CreateFrame("CheckButton", nil, frame.custom, "NeuronOptionsCheckButtonTemplate")
 	--f:SetID(index)
@@ -1801,17 +1746,6 @@ function NEURON:ActionEditor_OnLoad(frame)
 	NEURON.SubFrameBlackBackdrop_OnLoad(f)
 end
 
---	paged = 	paged1;	paged2;	paged3;	paged4;	paged5;	paged6;
-
---	stance =	stance0;	stance1;	stance2;	stance3;	stance4;	stance5;	stance6;
-
---	modkey =	alt0;		alt1;		ctrl0;	ctrl1;	shift0;	shift1;
-
---	sit1 =	reaction0;	reaction1;	combat0;	combat1;	group0;	group1;	group2;
-
---	sit2 = 	stealth0;	stealth1;	fishing0;	fishing1;	pet0;		pet1;
-
---	control = 	vehicle0;	vehicle1;	possess0;	possess1;	override0;	override1;	extrabar0;	extrabar1;
 
 function NEURON:VisEditor_OnLoad(frame)
 	local f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTabTemplate")
@@ -1989,10 +1923,10 @@ function NEURON:StateList_OnLoad(frame)
 end
 
 
-local numStatesShown = 12
+local numStatesShown = 20
 
 function NEURON.SecondaryPresetsScrollFrame_OnLoad(self)
-	--NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
+
 	self.offset = 0
 	self.scrollChild = _G[self:GetName().."ScrollChildFrame"]
 
@@ -2058,22 +1992,22 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 		frame = NeuronBarEditorBarStatesActionEditorPresetsSecondaryScrollFrame
 	end
 
-	local dataOffset, count, data = FauxScrollFrame_GetOffset(frame), 1, {}
+	local dataOffset, data = FauxScrollFrame_GetOffset(frame), {}
 	local button, text
 
-	for k in pairs(tableList) do
+	local count = 1
 
-		if (not MAS[k].homestate and (k ~= "prowl") and (k ~= "extrabar") and (k ~= "custom") or ((NEURON.class == "ROGUE") and k ~= "stealth")) then
-			data[count] = k; count = count + 1
+	for k,v in pairs(tableList) do
 
+		if (not MAS[k].homestate and (k ~= "extrabar") and (k ~= "custom") ) then --or ((NEURON.class == "ROGUE") and k ~= "stealth")
+			data[count] = k
+			count = count + 1
 		end
 	end
 
-	if(IsDruid ) then
-		data[count] = "prowl"; count = count + 1
-	end
+	--Might want to add some checks for states like stealth for classes that don't have stealth. But for now it doesn't break anything to have it show generically
 
-	table.sort(data)
+	--table.sort(data)
 
 	frame:Show()
 
@@ -2097,8 +2031,8 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 			button:SetHeight(18)
 
 			if(data[count] == "prowl" and IsDruid ) then
-				f.option = "prowl"
-				f.stance = IsDruid
+				frame.option = "prowl"
+				frame.stance = IsDruid
 			end
 			--else
 		else
@@ -2112,7 +2046,7 @@ end
 
 function NEURON:BarStates_OnLoad(frame)
 
-	--NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
+	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 end
 
@@ -2138,7 +2072,11 @@ function NEURON:TargetOptions_OnLoad(frame)
 	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
 end
 
+
+
+
 -- OnLoad event for Bar editor Spell Target Options frame
+-- This need a lot of work
 function NEURON:FlyoutOptions_OnLoad(frame)
 	--NeuronButtonEditor.options
 	--Container Support
@@ -2161,6 +2099,8 @@ function NEURON:FlyoutOptions_OnLoad(frame)
 	--NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 end
+
+
 
 function NEURON:ObjectEditor_OnLoad(frame)
 
@@ -3548,6 +3488,24 @@ frame:SetScript("OnEvent", controlOnEvent)
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 --- ACE GUI OPTION GET & SET FUnctions

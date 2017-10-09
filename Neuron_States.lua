@@ -118,12 +118,12 @@ Neuron.MANAGED_ACTION_STATES = {
 		order = 16,
 	},
 
-	prowl = {
+	--[[prowl = {
 		states = "[stance:KITTY,stealth] prowl1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 17
-	},
+	},]]
 	target = {
 		states = "[exists] target1; laststate",
 		rangeStart = 1,
@@ -297,12 +297,12 @@ Neuron.MANAGED_BAR_STATES = {
 		order = 16,
 	},
 
-	prowl = {
+	--[[prowl = {
 		states = "[nostance:KITTY,nostealth] prowl0; [stance:KITTY,stealth] prowl1",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 17,
-	},
+	},]]
 
 	target = {
 		states = "[noexists] target0; [exists] target1",

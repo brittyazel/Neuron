@@ -899,7 +899,7 @@
 															Neuron.SecondaryPresetsScrollFrameUpdate()
 													</OnShow>
 													<OnVerticalScroll>
-														FauxScrollFrame_OnVerticalScroll(self, offset, 18, Neuron.SecondaryPresetsScrollFrameUpdate)
+														--FauxScrollFrame_OnVerticalScroll(self, offset, 18, Neuron.SecondaryPresetsScrollFrameUpdate)
 													</OnVerticalScroll>
 												</Scripts>
 											</ScrollFrame>
