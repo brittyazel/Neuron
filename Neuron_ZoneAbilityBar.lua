@@ -168,6 +168,12 @@ function ZONEABILITYRBTN:OnEvent(event, ...)
 
 	local spellID, spellType = GetZoneAbilitySpellInfo();
 
+	if (not InCombatLockdown() and not spellID) then ---should keep the bar hidden when there is no Zone ability available
+		self:Hide()
+		return
+	end
+
+
 	if (event == "SPELLS_CHANGED" or event=="UNIT_AURA") then
 		self.baseName = GetSpellInfo(spellID);
 		ZoneAbilitySpellID = spellID
@@ -196,9 +202,9 @@ function ZONEABILITYRBTN:OnEvent(event, ...)
 		display = false
 	end
 
-	if (not InCombatLockdown() and display and spellID) then
+	if (not InCombatLockdown() and display) then
 		self:Show();
-	elseif (not InCombatLockdown() and not display and not spellID) then
+	elseif (not InCombatLockdown() and not display) then
 		self:Hide();
 	end
 end

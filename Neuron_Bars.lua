@@ -920,6 +920,11 @@ end
 
 
 function BAR:Update(show, hide)
+
+	if(InCombatLockdown()) then
+		return
+	end
+
 	local handler, driver = self.handler, self.driver
 
 	self.elapsed = 0;

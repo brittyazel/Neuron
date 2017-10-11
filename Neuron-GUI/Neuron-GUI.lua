@@ -2354,7 +2354,7 @@ local function specUpdateIcon(button,state)
 	--((button.bar.cdata.dualSpec and specoveride) or 1)
 	--data.macro_Icon
 	local texture = "" --"INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
-	local buttonSpec = button:GetSpec()
+	local buttonSpec = GetSpecialization()
 	local data = button.specdata[specoveride][state]
 
 	if (button.bar.cdata.dualSpec and specoveride ~= buttonSpec) then
@@ -2390,10 +2390,10 @@ function NEURON:MacroEditorUpdate()
 	if (NEURON.CurrentObject and NEURON.CurrentObject.objType == "ACTIONBUTTON") then
 		local button, NBTNE = NEURON.CurrentObject, NeuronButtonEditor
 		local state = button.bar.handler:GetAttribute("fauxstate")
-		local buttonSpec = button:GetSpec()
+		local buttonSpec = GetSpecialization()
 
 		if (button.bar.cdata.dualSpec) then
-			buttonSpec = specoveride--button:GetSpec()
+			buttonSpec = specoveride
 
 			--Sets spec tab to current spec
 			NBTNE.spec1:SetChecked(nil)
@@ -2524,7 +2524,7 @@ local function macroText_OnTextChanged(self)
 
 	if (self.hasfocus) then
 		local button = NEURON.CurrentObject
-		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1) --specoveride --button:GetSpec()
+		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1)
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
@@ -2553,7 +2553,7 @@ local function macroButton_Changed(self, button, down)
 	local state = object.bar.handler:GetAttribute("fauxstate")
 
 	--handler to check if viewing non current spec button settings
-	if (specoveride ~= object:GetSpec()) then
+	if (specoveride ~= GetSpecialization()) then
 		data = object.specdata[buttonSpec][state]
 	end
 
@@ -2589,7 +2589,7 @@ local function macroNameEdit_OnTextChanged(self)
 	if (self.hasfocus) then
 
 		local button = NEURON.CurrentObject
-		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1) --specoveride --button:GetSpec()
+		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1)
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
@@ -2616,7 +2616,7 @@ local function macroNoteEdit_OnTextChanged(self)
 	if (self.hasfocus) then
 
 		local button = NEURON.CurrentObject
-		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1) --specoveride --button:GetSpec()
+		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1)
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
@@ -2831,7 +2831,7 @@ end
 local function ResetButtonFields()
 	local button, NBTNE = NEURON.CurrentObject, NeuronButtonEditor
 	local state = button.bar.handler:GetAttribute("fauxstate")
-	local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1) --specoveride --button:GetSpec()
+	local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1)
 	local data = button.specdata[buttonSpec][state]
 
 	data.actionID = false

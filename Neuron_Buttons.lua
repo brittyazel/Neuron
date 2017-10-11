@@ -1505,6 +1505,11 @@ end
 
 
 function BUTTON:MACRO_ACTIVE_TALENT_GROUP_CHANGED(...)
+
+	if(InCombatLockdown()) then
+		return
+	end
+
 	local spec
 
 	if (self.dualSpec) then
@@ -1520,6 +1525,7 @@ function BUTTON:MACRO_ACTIVE_TALENT_GROUP_CHANGED(...)
 	self:UpdateFlyout()
 	self:SetType()
 	self:SetGrid()
+
 end
 
 
@@ -2807,18 +2813,8 @@ function BUTTON:SetData(bar)
 end
 
 
-function BUTTON:GetSpec()
-	if self.dualSpec then
-		--return GetActiveSpecGroup()
-		return GetSpecialization()
-	else
-		return 1
-	end
-end
-
-
 function BUTTON:SaveData(state)
-	local index, spec = self.id, self:GetSpec()
+	local index, spec = self.id, GetSpecialization()
 
 
 

@@ -50,7 +50,6 @@ Neuron = {
 	maxActionID = 132,
 	maxPetID = 10,
 	maxStanceID = _G.NUM_STANCE_SLOTS, --(10)
-	OpDep = false,
 }
 
 NeuronGDB = {
@@ -202,8 +201,6 @@ NEURON.STATEINDEX = {
 }
 
 local handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
-
-local opDepList = {"BarKeep", "Bartender4", "Dominos", "MagnetButtons", "nMainbar", "rActionBarStyler", "Orbs", "RazerNaga", "StellarBars", "Tukui", "XBar"}
 
 local level, stanceStringsUpdated, PEW
 
@@ -464,7 +461,6 @@ local slashFunctions = {
 	[45] = "",
 	[46] = "Animate",
 	[47] = "MoveSpecButtons",
-	--[50] = "MoveSpecButton",
 }
 
 
@@ -531,8 +527,8 @@ local function SetSpellInfo(index, bookType, spellName, altName, subName, spellI
 	return curSpell
 end
 
--- "()" indexes added because the Blizzard macro parser uses that to determine the difference of a spell versus a usable item if the two happen to have the same name.
--- I forgot this fact and removed using "()" and it made some macros not represent the right spell /sigh. This note is here so I do not forget again :P - Maul
+--- "()" indexes added because the Blizzard macro parser uses that to determine the difference of a spell versus a usable item if the two happen to have the same name.
+--- I forgot this fact and removed using "()" and it made some macros not represent the right spell /sigh. This note is here so I do not forget again :P - Maul
 
 
 --- Scans Character Spell Book and creates a table of all known spells.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
@@ -1482,9 +1478,6 @@ function NEURON:ToggleBlizzBar(on)
 	if (InCombatLockdown()) then
 		return
 	end
-	if (NEURON.OpDep) then
-		return
-	end
 	if (on) then
 		local button
 
@@ -2048,12 +2041,6 @@ local function control_OnEvent(self, event, ...)
 		BAR = NEURON.BAR
 
 		NEURON.player, NEURON.class, NEURON.level, NEURON.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
-
-		for k,v in pairs(opDepList) do
-			if (IsAddOnLoaded(v)) then
-				NEURON.OpDep = true
-			end
-		end
 
 		GDB = NeuronGDB; CDB = NeuronCDB; SPEC = NeuronSpec
 
