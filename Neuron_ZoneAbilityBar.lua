@@ -447,7 +447,7 @@ function ZONEABILITYRBTN:SetType(save)
 	self:RegisterEvent("SPELL_UPDATE_CHARGES");
 	self:RegisterEvent("SPELLS_CHANGED");
 	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED");
-
+	self:RegisterEvent("ZONE_CHANGED")
 	self:RegisterEvent("UNIT_SPELLCAST_FAILED")
 	--BUTTON.MACRO_UNIT_SPELLCAST_FAILED
 
@@ -554,6 +554,7 @@ frame:SetScript("OnUpdate", controlOnUpdate)
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
 
 ------Hiding the default blizzard ZoneAbilityFrame
 ZoneAbilityFrame:SetScript('OnEvent', nil)
