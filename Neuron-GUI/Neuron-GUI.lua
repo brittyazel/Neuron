@@ -85,7 +85,7 @@ local swatchOptions = {
 	[8] = { "AURAIND", L.AURAIND, 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
 }
 
-local specoveride = GetActiveSpecGroup() or 1
+local specoveride = GetSpecialization()
 
 local addonName = ...
 
@@ -2357,7 +2357,7 @@ local function specUpdateIcon(button,state)
 	local buttonSpec = GetSpecialization()
 	local data = button.specdata[specoveride][state]
 
-	if (button.bar.cdata.dualSpec and specoveride ~= buttonSpec) then
+	if (specoveride ~= GetSpecialization()) then
 		local spell = data.macro_Text:match("/cast%s+(%C+)") or
 				data.macro_Text:match("/use%s+(%C+)") or
 				data.macro_Text:match("/summonpet%s+(%C+)") or
@@ -2390,48 +2390,44 @@ function NEURON:MacroEditorUpdate()
 	if (NEURON.CurrentObject and NEURON.CurrentObject.objType == "ACTIONBUTTON") then
 		local button, NBTNE = NEURON.CurrentObject, NeuronButtonEditor
 		local state = button.bar.handler:GetAttribute("fauxstate")
+
 		local buttonSpec = GetSpecialization()
 
-		if (button.bar.cdata.dualSpec) then
+		if (specoveride ~= buttonSpec) then
 			buttonSpec = specoveride
+		end
 
-			--Sets spec tab to current spec
-			NBTNE.spec1:SetChecked(nil)
-			NBTNE.spec2:SetChecked(nil)
-			NBTNE["spec"..buttonSpec]:SetChecked(true)
+		--Sets spec tab to current spec
+		NBTNE.spec1:SetChecked(nil)
+		NBTNE.spec2:SetChecked(nil)
+		NBTNE["spec"..buttonSpec]:SetChecked(true)
 
-			--Sets current spec marker to proper tab
-			NBTNE.activespc:SetParent(NBTNE["spec"..GetSpecialization()])
-			NBTNE.activespc:SetPoint("LEFT")
-			NBTNE.spec1:Show()
-			NBTNE.spec2:Show()
-			NBTNE.spec3:Show()
-			local player_Class = select(2, UnitClass("player"))
+		--Sets current spec marker to proper tab
+		NBTNE.activespc:SetParent(NBTNE["spec"..GetSpecialization()])
+		NBTNE.activespc:SetPoint("LEFT")
+		NBTNE.spec1:Show()
+		NBTNE.spec2:Show()
+		NBTNE.spec3:Show()
+		local player_Class = select(2, UnitClass("player"))
 
-			if (player_Class == "DEMONHUNTER") then
-				NBTNE.spec1:SetWidth(104)
-				NBTNE.spec2:SetWidth(104)
-				NBTNE.savestate:SetPoint("LEFT", NBTNE.spec2, "RIGHT", 0, 0)
-				NBTNE.spec3:Hide()
-				NBTNE.spec4:Hide()
-			elseif (player_Class == "DRUID") then
-				NBTNE.spec1:SetWidth(62)
-				NBTNE.spec2:SetWidth(62)
-				NBTNE.spec3:SetWidth(62)
-				NBTNE.spec4:SetWidth(62)
-				NBTNE.spec4:Show()
-				NBTNE.savestate:SetPoint("LEFT", NBTNE.spec4, "RIGHT", 0, 0)
-				NBTNE.savestate:SetWidth(62)
-			else
-				NBTNE.spec4:Hide()
-			end
-		else
-			buttonSpec = 1
-			NBTNE.spec1:Hide()
-			NBTNE.spec2:Hide()
+		if (player_Class == "DEMONHUNTER") then
+			NBTNE.spec1:SetWidth(104)
+			NBTNE.spec2:SetWidth(104)
+			NBTNE.savestate:SetPoint("LEFT", NBTNE.spec2, "RIGHT", 0, 0)
 			NBTNE.spec3:Hide()
 			NBTNE.spec4:Hide()
+		elseif (player_Class == "DRUID") then
+			NBTNE.spec1:SetWidth(62)
+			NBTNE.spec2:SetWidth(62)
+			NBTNE.spec3:SetWidth(62)
+			NBTNE.spec4:SetWidth(62)
+			NBTNE.spec4:Show()
+			NBTNE.savestate:SetPoint("LEFT", NBTNE.spec4, "RIGHT", 0, 0)
+			NBTNE.savestate:SetWidth(62)
+		else
+			NBTNE.spec4:Hide()
 		end
+
 
 		local data = button.specdata[buttonSpec][state]
 
@@ -2444,7 +2440,7 @@ function NEURON:MacroEditorUpdate()
 			button:SetType()
 		end
 
-		if (data) then
+		if (data) then ---this is not working for some reason
 			NBTNE.macroedit.edit:SetText(data.macro_Text)
 			if (not data.macro_Icon) then
 				NBTNE.macroicon.icon:SetTexture(specUpdateIcon(button, state))--button.iconframeicon:GetTexture())
@@ -2457,7 +2453,6 @@ function NEURON:MacroEditorUpdate()
 			NBTNE.nameedit:SetText(data.macro_Name)
 			NBTNE.noteedit:SetText(data.macro_Note)
 			NBTNE.usenote:SetChecked(data.macro_UseNote)
-
 		else
 			--print("notinghere")
 			--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
@@ -2465,6 +2460,7 @@ function NEURON:MacroEditorUpdate()
 			---print(button.specdata[buttonSpec][state])
 			--end
 		end
+
 	end
 end
 
@@ -2478,7 +2474,7 @@ function NEURON.ButtonEditorUpdate(reset)
 
 		NeuronButtonEditor.macroicon.icon:SetTexture("")
 
-		specoveride = GetSpecialization() or 1 --GetActiveSpecGroup()
+		specoveride = GetSpecialization()
 	end
 
 	NEURON.ActionListScrollFrameUpdate()
@@ -2524,7 +2520,7 @@ local function macroText_OnTextChanged(self)
 
 	if (self.hasfocus) then
 		local button = NEURON.CurrentObject
-		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1)
+		local buttonSpec = specoveride
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
@@ -2549,7 +2545,7 @@ local function macroButton_Changed(self, button, down)
 	local object = NEURON.CurrentObject
 
 	local data = object.data
-	local buttonSpec = ((object.bar.cdata.dualSpec and specoveride) or 1)
+	local buttonSpec = specoveride
 	local state = object.bar.handler:GetAttribute("fauxstate")
 
 	--handler to check if viewing non current spec button settings
@@ -2589,7 +2585,7 @@ local function macroNameEdit_OnTextChanged(self)
 	if (self.hasfocus) then
 
 		local button = NEURON.CurrentObject
-		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1)
+		local buttonSpec = specoveride
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
@@ -2616,7 +2612,7 @@ local function macroNoteEdit_OnTextChanged(self)
 	if (self.hasfocus) then
 
 		local button = NEURON.CurrentObject
-		local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1)
+		local buttonSpec = specoveride
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
@@ -2831,7 +2827,7 @@ end
 local function ResetButtonFields()
 	local button, NBTNE = NEURON.CurrentObject, NeuronButtonEditor
 	local state = button.bar.handler:GetAttribute("fauxstate")
-	local buttonSpec = ((button.bar.cdata.dualSpec and specoveride) or 1)
+	local buttonSpec = specoveride
 	local data = button.specdata[buttonSpec][state]
 
 	data.actionID = false
