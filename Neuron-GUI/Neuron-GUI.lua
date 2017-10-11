@@ -2354,7 +2354,6 @@ local function specUpdateIcon(button,state)
 	--((button.bar.cdata.dualSpec and specoveride) or 1)
 	--data.macro_Icon
 	local texture = "" --"INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
-	local buttonSpec = GetSpecialization()
 	local data = button.specdata[specoveride][state]
 
 	if (specoveride ~= GetSpecialization()) then
@@ -2440,7 +2439,7 @@ function NEURON:MacroEditorUpdate()
 			button:SetType()
 		end
 
-		if (data) then ---this is not working for some reason
+		if (data) then
 			NBTNE.macroedit.edit:SetText(data.macro_Text)
 			if (not data.macro_Icon) then
 				NBTNE.macroicon.icon:SetTexture(specUpdateIcon(button, state))--button.iconframeicon:GetTexture())
@@ -2453,14 +2452,7 @@ function NEURON:MacroEditorUpdate()
 			NBTNE.nameedit:SetText(data.macro_Name)
 			NBTNE.noteedit:SetText(data.macro_Note)
 			NBTNE.usenote:SetChecked(data.macro_UseNote)
-		else
-			--print("notinghere")
-			--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
-			--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
-			---print(button.specdata[buttonSpec][state])
-			--end
 		end
-
 	end
 end
 
