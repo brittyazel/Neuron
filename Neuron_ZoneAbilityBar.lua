@@ -447,6 +447,7 @@ function ZONEABILITYRBTN:SetType(save)
 	self:RegisterEvent("SPELL_UPDATE_CHARGES");
 	self:RegisterEvent("SPELLS_CHANGED");
 	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED");
+    self:RegisterEvent("ZONE_CHANGED")
 
 	self:RegisterEvent("UNIT_SPELLCAST_FAILED")
 	--BUTTON.MACRO_UNIT_SPELLCAST_FAILED

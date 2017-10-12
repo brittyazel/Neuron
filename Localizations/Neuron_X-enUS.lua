@@ -336,7 +336,7 @@ L.SNAPTO = "Snap To"
 L.HIDDEN = "Hidden"
 L.UPCLICKS = "Up Clicks"
 L.DOWNCLICKS = "Down Clicks"
-L.DUALSPEC = "Dual Spec"
+L.MULTISPEC = "Multi Spec"
 L.SPELLGLOW = "Spell Alerts"
 L.SPELLGLOW_DEFAULT = " - Default Alert"
 L.SPELLGLOW_ALT = " - Subdued Alert"
@@ -421,17 +421,13 @@ Cheers,
 
 --NEW
 
-L.UPDATE_WARNING = [[Thank's for updating Neuron!
+L.UPDATE_WARNING = [[Thanks for updating Neuron!
 
-As with all updates, please be warned that some functionality may have changed.
+Today's update changed a bar option from being labeled "Dual Spec" to being known as "Multi Spec", to fit more in line with Legion.
 
-Please take a moment to look over the changelog to familiarize yourself with the changes.
+Unfortunately, you will need to manually re-enable Multi-Spec on all previously Dual-Spec bars, but don't worry, your button data should be saved.
 
-Enjoy!
-
--Soyier
-
-P.S. You might want to try right-clicking on the XP bar for a new secret feature]]
+-Soyier]]
 
 L.OPTIONS_BLIZZBAR = "Show Blizzard's Action Bar"
 L.OPTIONS_ANIMATE = "Enable Neuron's Orb Animation"

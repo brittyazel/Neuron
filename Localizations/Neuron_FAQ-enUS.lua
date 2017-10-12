@@ -68,7 +68,7 @@ Under the Bar Name Field are the display options for the bar. These options allo
 |cffffd200Snap To:|r  When enabled, repositioning a bar close to another bar will cause it to snap to so it will be centered with the other bar.
 |cffffd200Up Clicks:|r  When selected, actions will trigger when the bound key is released.
 |cffffd200Down Clicks:|r  When selected, actions will trigger when the bound key is pressed.
-|cffffd200Dual Spec:|r  When enabled, the bar will automatically swap when your character changes spec.
+|cffffd200Multi Spec:|r  When enabled, the bar will automatically swap when your character changes spec.
 |cffffd200Hidden:|r  When selected, the bar will be completely hidden. The only way to see the bar is to be in the edit mode. If a bar is set to be hidden, it will have a red tint to it when shown in the edit mode.
 |cffffd200Lock Actions:|r  When enabled, you will no longer be able to drag items from the bars.
 |cffffd200Unlock on <Shift, Ctrl, Alt> :|r  When Lock Actions is enabled, these options will be shown. Selecting any of these options will allow you to drag items from locked bars when the corresponding key is held.

@@ -415,7 +415,7 @@ local function controlOnEvent(self, event, ...)
 
 		NEURON:RegisterBarClass("bag", "Bag Bar", "Bag Button", bagbarsGDB, bagbarsCDB, BAGIndex, bagbtnsGDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, true, STORAGE, gDef, nil, true)
 
-		NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
+		NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then
 

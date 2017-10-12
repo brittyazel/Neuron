@@ -1062,7 +1062,7 @@ local function controlOnEvent(self, event, ...)
 		menubtnsCDB = CDB.menubtns
 
 		NEURON:RegisterBarClass("menu", "Menu Bar", "Menu Button", menubarsGDB, menubarsCDB, MENUIndex, menubtnsGDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, true)
-		NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, DUALSPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
+		NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
 		if (GDB.firstRun) then
 			local bar, object = NEURON:CreateNewBar("menu", 1, true)

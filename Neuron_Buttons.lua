@@ -1512,7 +1512,7 @@ function BUTTON:MACRO_ACTIVE_TALENT_GROUP_CHANGED(...)
 
 	local spec
 
-	if (self.dualSpec) then
+	if (self.multiSpec) then
 		--spec = select(2,...)
 		spec = GetSpecialization()
 	else
@@ -2701,7 +2701,7 @@ function BUTTON:SetData(bar)
 		self.downClicks = bar.cdata.downClicks
 
 		self.showGrid = bar.gdata.showGrid
-		self.dualSpec = bar.cdata.dualSpec
+		self.multiSpec = bar.cdata.multiSpec
 
 		self.bindColor = bar.gdata.bindColor
 		self.macroColor = bar.gdata.macroColor

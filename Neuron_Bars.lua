@@ -102,7 +102,7 @@ NEURON.barCDEF = {
 
 	conceal = false,
 
-	dualSpec = false,
+	multiSpec = false,
 
 	spellGlow = true,
 	spellGlowDef = true,
@@ -182,7 +182,7 @@ local gDef = {
 
 local cDef = {
 	[1] = {
-		dualSpec = true,
+		multiSpec = true,
 		vehicle = true,
 		possess = true,
 		override = true,
@@ -1051,7 +1051,7 @@ end
 function BAR:LoadObjects(init)
 	local object, spec
 
-	if (self.cdata.dualSpec) then
+	if (self.cdata.multiSpec) then
 		spec = SPEC.cSpec
 	else
 		spec = 1
@@ -1724,7 +1724,7 @@ function BAR:UpdateObjectSpec()
 		object = _G[self.objPrefix..objID]
 
 		if (object) then
-			if (self.cdata.dualSpec) then
+			if (self.cdata.multiSpec) then
 				spec = SPEC.cSpec
 			else
 				spec = 1
@@ -2367,24 +2367,24 @@ function BAR:DownClicksSet(msg, gui, checked, query)
 end
 
 
-function BAR:DualSpecSet(msg, gui, checked, query)
+function BAR:MultiSpecSet(msg, gui, checked, query)
 	if (query) then
-		return self.cdata.dualSpec
+		return self.cdata.multiSpec
 	end
 
 	if (gui) then
 		if (checked) then
-			self.cdata.dualSpec = true
+			self.cdata.multiSpec = true
 		else
-			self.cdata.dualSpec = false
+			self.cdata.multiSpec = false
 		end
 	else
-		local toggle = self.cdata.dualSpec
+		local toggle = self.cdata.multiSpec
 
 		if (toggle) then
-			self.cdata.dualSpec = false
+			self.cdata.multiSpec = false
 		else
-			self.cdata.dualSpec = true
+			self.cdata.multiSpec = true
 		end
 	end
 
@@ -3135,7 +3135,7 @@ local function controlOnEvent(self, event, ...)
 			SNAPTO = true,
 			UPCLICKS = true,
 			DOWNCLICKS = true,
-			DUALSPEC = true,
+			MULTISPEC = true,
 			HIDDEN = true,
 			LOCKBAR = true,
 			TOOLTIPS = true,
