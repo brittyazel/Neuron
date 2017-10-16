@@ -1261,10 +1261,8 @@ local function updateAnchors(self, elapsed)
 		if (anchor) then
 			anchor:Flyout_UpdateButtons(nil)
 		else
-			--collectgarbage() not really needed, but some users complain about memory usage and if they go wild in changing
-			--their inventory often and have an item-based flyout then see the huge memory usage spike, they will holler
-			--without this call, the Lua garbage collector takes care of the garbage in short time, but a user watching will see it
-			self:Hide(); --collectgarbage()
+
+			self:Hide();
 		end
 	end
 end

@@ -2007,7 +2007,7 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 
 	--Might want to add some checks for states like stealth for classes that don't have stealth. But for now it doesn't break anything to have it show generically
 
-	--table.sort(data)
+	table.sort(data)
 
 	frame:Show()
 

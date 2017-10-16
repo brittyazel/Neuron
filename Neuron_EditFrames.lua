@@ -211,8 +211,6 @@ function NEURON:ToggleEditFrames(show, hide)
 			NeuronObjectEditor:Hide()
 		end
 
-		--collectgarbage()
-
 	else
 
 		--NEURON:ToggleMainMenu(nil, true)

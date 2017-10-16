@@ -1993,11 +1993,11 @@ function BAR:SetState(msg, gui, checked, query)
 			end
 		end
 
-		if (state == "prowl") then
+		--[[if (state == "prowl") then
 			if (not self.cdata.stance and self.cdata.prowl) then
 				self.cdata.prowl = false
 			end
-		end
+		end]]
 
 		if (state == "custom") then
 			if (self.cdata.custom) then

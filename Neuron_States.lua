@@ -62,8 +62,8 @@ Neuron.MANAGED_ACTION_STATES = {
 		order = 8,
 	},
 
-	combat = {
-		states = "[combat] combat1; laststate",
+	vehicle = {
+		states = "[vehicleui] vehicle1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 9,
@@ -90,12 +90,13 @@ Neuron.MANAGED_ACTION_STATES = {
 		order = 12,
 	},
 
-	vehicle = {
-		states = "[vehicleui] vehicle1; laststate",
+	combat = {
+		states = "[combat] combat1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 13,
 	},
+
 
 	possess = {
 		states = "[possessbar] possess1; laststate",
@@ -241,11 +242,11 @@ Neuron.MANAGED_BAR_STATES = {
 		order = 8,
 	},
 
-	combat = {
-		states = "[nocombat] combat0; [combat] combat1",
+	vehicle = {
+		states = "[novehicleui] vehicle0; [vehicleui] vehicle1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 9,
+		order = 13,
 	},
 
 	group = {
@@ -269,12 +270,13 @@ Neuron.MANAGED_BAR_STATES = {
 		order = 12,
 	},
 
-	vehicle = {
-		states = "[novehicleui] vehicle0; [vehicleui] vehicle1",
+	combat = {
+		states = "[nocombat] combat0; [combat] combat1",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 13,
 	},
+
 
 	possess = {
 		states = "[nopossessbar] possess0; [possessbar] possess1",

@@ -1849,7 +1849,6 @@ function NEURON:ToggleBars(show, hide)
 				NeuronBarEditor:Hide()
 			end
 
-			--collectgarbage()
 		else
 
 			--NEURON:ToggleMainMenu(nil, true)
@@ -2135,7 +2134,6 @@ local function control_OnEvent(self, event, ...)
 
 		CDB.fix07312012 = true
 
-		--collectgarbage();
 		PEW = true
 
 		if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
