@@ -31,6 +31,7 @@ NeuronStatusCDB = {
 	statusbars = {},
 	statusbtns = {},
 	autoWatch = 0,
+	curXPType = "player_xp" ---sets the default state of the XP bar to be player_xp
 }
 
 local format = string.format
@@ -242,7 +243,6 @@ local dataDef = {
 	unit = 2,
 	repID = 0,
 	repAuto = 0,
-	curXPType='player_xp'
 }
 
 
@@ -330,11 +330,8 @@ local function xpstrings_Update() --handles updating all the strings for the pla
 
 	local currXP, nextXP, restedXP, percentXP, bubbles
 
-	if (not NeuronStatusCDB.curXPType) then
-		NeuronStatusCDB.curXPType = "player_xp"
-	end
 
-	local xpType = NeuronStatusCDB.curXPType
+	local xpType = CDB.curXPType
 
 
 	--player xp option
@@ -511,7 +508,7 @@ end
 
 local function XPBar_OnEvent(self, event, ...)
 
-	local xpType = NeuronStatusCDB.curXPType
+	local xpType = CDB.curXPType
 	local currXP, nextXP, restedXP
 	local hasChanged = false;
 
@@ -563,7 +560,7 @@ end
 
 
 local function switchCurXPType(self, newXPType, statusbar, checked)
-	NeuronStatusCDB.curXPType = newXPType
+	CDB.curXPType = newXPType
 	XPBar_OnEvent(statusbar.sb, "changed_curXPType")
 end
 
@@ -617,13 +614,15 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 			wipe(info)
 		end
 
-		info.arg1 = "honor_points"
-		info.arg2 = frame.statusbar
-		info.text = "Track Honor Points"
-		info.func = switchCurXPType
+		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
+			info.arg1 = "honor_points"
+			info.arg2 = frame.statusbar
+			info.text = "Track Honor Points"
+			info.func = switchCurXPType
 
-		UIDropDownMenu_AddButton(info)
-		wipe(info)
+			UIDropDownMenu_AddButton(info)
+			wipe(info)
+		end
 	end
 end
 
@@ -2723,7 +2722,6 @@ local function controlOnEvent(self, event, ...)
 
 				NEURON.RegisteredBarData["status"].gDef = nil
 			end
-
 
 			GDB.firstRun = false
 		else --loads previous bars from saved variable
