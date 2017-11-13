@@ -45,12 +45,12 @@ NeuronMenuGDB = {
 	menubars = {},
 	menubtns = {},
 	scriptProfile = false,
-	firstRun = true,
 }
 
 NeuronMenuCDB = {
 	menubars = {},
 	menubtns = {},
+	firstRun = true,
 }
 
 local gDef = {
@@ -1061,10 +1061,12 @@ local function controlOnEvent(self, event, ...)
 		menubtnsGDB = GDB.menubtns
 		menubtnsCDB = CDB.menubtns
 
-		NEURON:RegisterBarClass("menu", "Menu Bar", "Menu Button", menubarsGDB, menubarsCDB, MENUIndex, menubtnsGDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, true)
+
+		--for some reason the menu settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsCDB to be both the GDB and CDB in the RegisterBarClass
+		NEURON:RegisterBarClass("menu", "Menu Bar", "Menu Button", menubarsCDB, menubarsCDB, MENUIndex, menubtnsCDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, true)
 		NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
-		if (GDB.firstRun) then
+		if (CDB.firstRun) then
 			local bar, object = NEURON:CreateNewBar("menu", 1, true)
 
 			for i=1,#menuElements do
@@ -1072,18 +1074,18 @@ local function controlOnEvent(self, event, ...)
 				bar:AddObjectToList(object)
 			end
 
-			GDB.firstRun = false
+			CDB.firstRun = false
 
 		else
 			local count = 0
 
-			for id,data in pairs(menubarsGDB) do
+			for id,data in pairs(menubarsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewBar("menu", id)
 				end
 			end
 
-			for id,data in pairs(menubtnsGDB) do
+			for id,data in pairs(menubtnsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewObject("menu", id)
 				end

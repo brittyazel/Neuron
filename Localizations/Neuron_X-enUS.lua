@@ -423,9 +423,9 @@ Cheers,
 
 L.UPDATE_WARNING = [[Thanks for updating Neuron!
 
-Today's update changed a bar option from being labeled "Dual Spec" to being known as "Multi Spec", to fit more in line with Legion.
+Today's update is making it such that the menubar and the bagbar are finally saved per-character, rather than per account, which was hugely annoying.
 
-Unfortunately, you will need to manually re-enable Multi-Spec on all previously Dual-Spec bars, but don't worry, your button data should be saved.
+Unfortunately, you will need to manually re-position these bars.
 
 -Soyier]]
 

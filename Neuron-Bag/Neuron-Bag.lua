@@ -21,13 +21,13 @@ local	SKIN = LibStub("Masque", true)
 NeuronBagGDB = {
 	bagbars = {},
 	bagbtns = {},
-	freeSlots = 16,
-	firstRun = true,
 }
 
 NeuronBagCDB = {
 	bagbars = {},
 	bagbtns = {},
+	freeSlots = 16,
+	firstRun = true,
 }
 
 local gDef = {
@@ -136,7 +136,7 @@ local function updateFreeSlots(self)
 		end
 	end
 
-	local rgbValue, r, g = math.floor((totalFree/GDB.freeSlots)*100)
+	local rgbValue, r, g = math.floor((totalFree/NeuronBagCDB.freeSlots)*100)
 
 	if (rgbValue > 49) then
 		r=(1-(rgbValue/100))+(1-(rgbValue/100))
@@ -396,7 +396,7 @@ local function controlOnEvent(self, event, ...)
 		GDB = NeuronBagGDB; CDB = NeuronBagCDB
 
 		for k,v in pairs(defGDB) do
-			if (GDB[k] == nil) then
+			if (CDB[k] == nil) then
 				GDB[k] = v
 			end
 		end
@@ -413,30 +413,33 @@ local function controlOnEvent(self, event, ...)
 		bagbtnsGDB = GDB.bagbtns
 		bagbtnsCDB = CDB.bagbtns
 
-		NEURON:RegisterBarClass("bag", "Bag Bar", "Bag Button", bagbarsGDB, bagbarsCDB, BAGIndex, bagbtnsGDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, true, STORAGE, gDef, nil, true)
+
+		--for some reason the bag settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsCDB to be both the GDB and CDB in the RegisterBarClass
+		NEURON:RegisterBarClass("bag", "Bag Bar", "Bag Button", bagbarsCDB, bagbarsCDB, BAGIndex, bagbtnsCDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, true, STORAGE, gDef, nil, true)
 
 		NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
-		if (GDB.firstRun) then
+		if (CDB.firstRun) then
 
-			local bar, object = NEURON:CreateNewBar("bag", 1, true)
+			local bar = NEURON:CreateNewBar("bag", 1, true)
+			local object
 
 			for i=1,#bagElements do
 				object = NEURON:CreateNewObject("bag", i)
 				bar:AddObjectToList(object)
 			end
 
-			GDB.firstRun = false
+			CDB.firstRun = false
 
 		else
 
-			for id,data in pairs(bagbarsGDB) do
+			for id,data in pairs(bagbarsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewBar("bag", id)
 				end
 			end
 
-			for id,data in pairs(bagbtnsGDB) do
+			for id,data in pairs(bagbtnsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewObject("bag", id)
 				end
