@@ -1773,7 +1773,7 @@ function NEURON:VisEditor_OnLoad(frame)
 end
 
 
-local numVisShown = 21
+local numVisShown = 50
 
 function NEURON.VisEditorScrollFrame_OnLoad(self)
 
@@ -1812,7 +1812,7 @@ function NEURON.VisEditorScrollFrame_OnLoad(self)
 		if (not anchor) then
 			button:SetPoint("TOPLEFT", 10, -8)
 			anchor = button; lastButton = button
-		elseif (count == 8) then
+		elseif (count == 11) then
 			button:SetPoint("LEFT", anchor, "RIGHT", 125, 0)
 			anchor = button; lastButton = button; count = 1
 		else
