@@ -502,7 +502,7 @@ local function controlOnEvent(self, event, ...)
 				end
 			end
 
-			for id,data in pairs(xbtnsGDB) do
+			for id,data in pairs(xbtnsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewObject("extrabar", id)
 				end

@@ -1723,6 +1723,11 @@ function NEURON:CreateNewBar(class, id, firstRun)
 
 		if (newBar) then
 			bar:Load(); NEURON:ChangeBar(bar)
+			if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.gdata.hidestates = ":extrabar0:"
+				bar.vischanged = true
+				bar:Update()
+			end
 		end
 
 		return bar
