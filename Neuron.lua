@@ -145,8 +145,8 @@ NEURON.STATES = {
 	paged4 = L.PAGED4,
 	paged5 = L.PAGED5,
 	paged6 = L.PAGED6,
-	pet0 = L.PET0,
-	pet1 = L.PET1,
+	--pet0 = L.PET0,
+	--pet1 = L.PET1,
 	alt0 = L.ALT0,
 	alt1 = L.ALT1,
 	ctrl0 = L.CTRL0,
@@ -170,8 +170,8 @@ NEURON.STATES = {
 	possess1 = L.POSSESS1,
 	override0 = L.OVERRIDE0,
 	override1 = L.OVERRIDE1,
-	extrabar0 = L.EXTRABAR0,
-	extrabar1 = L.EXTRABAR1,
+	--extrabar0 = L.EXTRABAR0,
+	--extrabar1 = L.EXTRABAR1,
 	prowl0 = L.PROWL0,
 	prowl1 = L.PROWL1,
 	custom0 = L.CUSTOM0,
@@ -1723,12 +1723,20 @@ function NEURON:CreateNewBar(class, id, firstRun)
 
 		if (newBar) then
 			bar:Load(); NEURON:ChangeBar(bar)
-			if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+
+            ---------------------------------
+            if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
 				bar.gdata.hidestates = ":extrabar0:"
 				bar.vischanged = true
 				bar:Update()
-			end
-		end
+            end
+            if (class == "pet") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+                bar.gdata.hidestates = ":pet0:"
+                bar.vischanged = true
+                bar:Update()
+            end
+            -----------------------------------
+        end
 
 		return bar
 	else
