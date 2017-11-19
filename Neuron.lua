@@ -4,6 +4,8 @@
 -------------------------------------------------------------------------------
 -- Localized Lua globals.
 -------------------------------------------------------------------------------
+local addonName = ...
+
 local _G = getfenv(0)
 
 -- Functions
@@ -24,7 +26,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-latestVersionNum = "0.9.8" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.8" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 Neuron = {
 	SLASHCMDS = {},
@@ -2243,7 +2245,6 @@ function NeuronProfile:RefreshConfig()
 end
 
 
-local addonName = ...
 
 
 function NeuronProfile:OnInitialize()

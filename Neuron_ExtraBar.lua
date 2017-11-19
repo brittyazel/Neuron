@@ -434,7 +434,7 @@ function XBTN:SetType(save)
 
 	self:SetScript("OnEvent", BUTTON.MACRO_OnEvent)
 	self:SetScript("PostClick", BUTTON.MACRO_UpdateState)
-	self:SetScript("OnUpdate", BUTTON.MACRO_OnUpdate)
+	--self:SetScript("OnUpdate", BUTTON.MACRO_OnUpdate)
 	self:SetScript("OnShow", BUTTON.MACRO_OnShow)
 	self:SetScript("OnHide", BUTTON.MACRO_OnHide)
 
@@ -522,7 +522,7 @@ end
 
 local frame = CreateFrame("Frame", nil, UIParent)
 frame:SetScript("OnEvent", controlOnEvent)
-frame:SetScript("OnUpdate", controlOnUpdate)
+--frame:SetScript("OnUpdate", controlOnUpdate)
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")

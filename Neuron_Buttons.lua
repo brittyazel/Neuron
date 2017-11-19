@@ -1354,8 +1354,9 @@ function BUTTON:MACRO_UpdateButton(...)
 	end
 end
 
-
-function BUTTON:MACRO_OnUpdate(elapsed)
+---We need to figure out what this function did.
+--[[function BUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of resources
+	print("test")
 	if (self.mac_flash) then
 
 		self.mac_flashing = true
@@ -1387,7 +1388,7 @@ function BUTTON:MACRO_OnUpdate(elapsed)
 			self.auraQueue = nil; self:MACRO_UpdateAuraWatch(unit, spell)
 		end
 	end
-end
+end]]
 
 
 function BUTTON:MACRO_ShowGrid()
@@ -3066,7 +3067,7 @@ function BUTTON:SetType(save, kill, init)
 	if (kill) then
 
 		self:SetScript("OnEvent", function() end)
-		self:SetScript("OnUpdate", function() end)
+		--self:SetScript("OnUpdate", function() end)
 		self:SetScript("OnAttributeChanged", function() end)
 
 	else
@@ -3091,7 +3092,7 @@ function BUTTON:SetType(save, kill, init)
 		self:SetScript("OnReceiveDrag", BUTTON.MACRO_OnReceiveDrag)
 		self:SetScript("OnDragStart", BUTTON.MACRO_OnDragStart)
 		self:SetScript("OnDragStop", BUTTON.MACRO_OnDragStop)
-		self:SetScript("OnUpdate", BUTTON.MACRO_OnUpdate)
+		--self:SetScript("OnUpdate", BUTTON.MACRO_OnUpdate) --this function uses A LOT of CPU resources
 		self:SetScript("OnShow", BUTTON.MACRO_OnShow)
 		self:SetScript("OnHide", BUTTON.MACRO_OnHide)
 		self:SetScript("OnAttributeChanged", BUTTON.MACRO_OnAttributeChanged)
