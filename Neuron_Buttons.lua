@@ -1354,6 +1354,7 @@ function BUTTON:MACRO_UpdateButton(...)
 	end
 end
 
+---TODO:
 ---We need to figure out what this function did.
 --[[function BUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of resources
 	print("test")
@@ -3067,7 +3068,7 @@ function BUTTON:SetType(save, kill, init)
 	if (kill) then
 
 		self:SetScript("OnEvent", function() end)
-		--self:SetScript("OnUpdate", function() end)
+		self:SetScript("OnUpdate", function() end)
 		self:SetScript("OnAttributeChanged", function() end)
 
 	else
