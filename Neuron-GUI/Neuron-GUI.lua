@@ -1665,10 +1665,10 @@ function NEURON:ActionEditor_OnLoad(frame)
 				last = f
 			end
 
-			if (state == "stance" and NEURON.class == "DRUID") then
+			--[[if (state == "stance" and NEURON.class == "DRUID") then
 				prowl = f
 				IsDruid = f
-			end
+			end]]
 
 			tinsert(barOpt.pri, f)
 		end

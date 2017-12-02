@@ -1098,18 +1098,8 @@ function BUTTON:MACRO_SetSpellCooldown(spell)
 	if (sIndex[spell]) then
 		spell_id = sIndex[spell].spellID
 		local ZoneAbilityID = ZoneAbilityFrame.SpellButton.currentSpellID
-		local FairyFireID = 770
-		local FairySwarmID = 102355
 		local GarrisonAbilityID = 161691
 
-		--overwrites fairy fire cooldown to fairy swarm if talent is choesen
-		if (NEURON.class == "DRUID" and spell_id == FairyFireID) then
-			local _, _, _, selected, _ = GetTalentInfo(3,1,GetActiveSpecGroup())--Checks to see if Fairy Swarm talent is caken
-
-			if selected then
-				spell_id = FairySwarmID
-			end
-		end
 		--Needs work
 		if (spell_id == GarrisonAbilityID and ZoneAbilityID) then spell_id = ZoneAbilityID end
 	end

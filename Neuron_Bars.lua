@@ -580,9 +580,9 @@ function HANDLER:UpdateStates(bar)
 					statemap = self:BuildStateMap(bar, state)
 				end
 
-				if (state == "prowl" and bar.cdata.prowl and NEURON.kitty) then
+				--[[if (state == "prowl" and bar.cdata.prowl and NEURON.kitty) then
 					statemap = values.states:gsub("KITTY", NEURON.kitty)
-				end
+				end]]
 
 				if (state == "custom" and bar.cdata.custom) then
 
@@ -631,7 +631,7 @@ function BAR:CreateDriver()
 	setmetatable(driver, { __index = HANDLER })
 
 	driver:SetID(self:GetID())
-	--Dynamicly builds driver attributes based on stated in NEURON.STATEINDEX using localized attributt textfrom a aboe
+	--Dynamicly builds driver attributes based on stated in NEURON.STATEINDEX using localized attribute text from a above
 	for _, modifier in pairs(NEURON.STATEINDEX) do
 		local action = DRIVER_BASE_ACTION:gsub("<MODIFIER>", modifier)
 		driver:SetAttribute("_onstate-"..modifier, action)
@@ -1230,9 +1230,6 @@ function BAR:SetRemap_Paged()
 end
 
 
-local druidForms = { [1066] = true, [40120] = true, [783] = true, [114282] = true } -- aquatic, flight, travel ,treant
-
-
 function BAR:SetRemap_Stance()
 	local start = tonumber(MAS.stance.homestate:match("%d+"))
 
@@ -1245,13 +1242,6 @@ function BAR:SetRemap_Stance()
 
 		self.cdata.remap = gsub(self.cdata.remap, ";$", "")
 
-		if (NEURON.class == "DRUID") then
-			for i,id in pairs(NEURON.StanceIndex) do
-				if (druidForms[id]) then
-					self.cdata.remap = gsub(self.cdata.remap, i..":"..i, i..":0")
-				end
-			end
-		end
 
 		if (NEURON.class == "ROGUE") then
 			self.cdata.remap = self.cdata.remap..";2:2"
@@ -1978,9 +1968,10 @@ function BAR:SetState(msg, gui, checked, query)
 			self.cdata.paged = false
 			self.cdata.pet = false
 
-			if (not self.cdata.stance and self.cdata.prowl) then
+			--[[if (not self.cdata.stance and self.cdata.prowl) then
 				self.cdata.prowl = false
-			end
+			end]]
+
 
 			if (NEURON.class == "ROGUE" and self.cdata.stealth) then
 				self.cdata.stealth = false
@@ -1992,12 +1983,6 @@ function BAR:SetState(msg, gui, checked, query)
 				self.cdata.remap = false
 			end
 		end
-
-		--[[if (state == "prowl") then
-			if (not self.cdata.stance and self.cdata.prowl) then
-				self.cdata.prowl = false
-			end
-		end]]
 
 		if (state == "custom") then
 			if (self.cdata.custom) then

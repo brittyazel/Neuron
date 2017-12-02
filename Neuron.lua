@@ -890,9 +890,9 @@ function NEURON:UpdateStanceStrings()
 				if (spellID) then
 					NEURON.StanceIndex[i] = spellID
 
-					if (NEURON.class == "DRUID" and spellID == 768) then
+					--[[if (NEURON.class == "DRUID" and spellID == 768) then
 						NEURON.kitty = i
-					end
+					end]]
 				end
 
 				NEURON.STATES["stance"..i] = name
@@ -912,7 +912,7 @@ function NEURON:UpdateStanceStrings()
 		if (not stanceStringsUpdated) then
 			if (NEURON.class == "DRUID") then
 				NEURON.STATES.stance0 = L.DRUID_CASTER
-				NEURON.STATES.prowl = L.DRUID_PROWL
+				--NEURON.STATES.prowl = L.DRUID_PROWL
 			end
 
 			if (NEURON.class == "MONK") then
