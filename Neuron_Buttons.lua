@@ -1356,40 +1356,44 @@ end
 
 ---TODO:
 ---We need to figure out what this function did.
---[[function BUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of resources
-	print("test")
-	if (self.mac_flash) then
+function BUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of resources
 
-		self.mac_flashing = true
+	if (self.elapsed > GDB.throttle) then --throttle down this code to ease up on the CPU a bit
 
-		if (alphaDir == 1) then
-			if ((1-(alphaTimer)) >= 0) then
-				self.iconframeflash:Show()
+		if (self.mac_flash) then
+
+			self.mac_flashing = true
+
+			if (alphaDir == 1) then
+				if ((1 - (alphaTimer)) >= 0) then
+					self.iconframeflash:Show()
+				end
+			elseif (alphaDir == 0) then
+				if ((alphaTimer) <= 1) then
+					self.iconframeflash:Hide()
+				end
 			end
-		elseif (alphaDir == 0) then
-			if ((alphaTimer) <= 1) then
-				self.iconframeflash:Hide()
+
+		elseif (self.mac_flashing) then
+			self.iconframeflash:Hide()
+			self.mac_flashing = false
+		end
+
+		self:MACRO_UpdateButton()
+
+		if (self.auraQueue and not self.iconframecooldown.active) then
+			local unit, spell = (":"):split(self.auraQueue)
+			if (unit and spell) then
+				self.auraQueue = nil; self:MACRO_UpdateAuraWatch(unit, spell)
 			end
 		end
 
-	elseif (self.mac_flashing) then
-		self.iconframeflash:Hide()
-		self.mac_flashing = false
+		self.elapsed = 0
 	end
 
 	self.elapsed = self.elapsed + elapsed
 
-	if (self.elapsed > GDB.throttle) then
-		self:MACRO_UpdateButton()
-	end
-
-	if (self.auraQueue and not self.iconframecooldown.active) then
-		local unit, spell = (":"):split(self.auraQueue)
-		if (unit and spell) then
-			self.auraQueue = nil; self:MACRO_UpdateAuraWatch(unit, spell)
-		end
-	end
-end]]
+end
 
 
 function BUTTON:MACRO_ShowGrid()
@@ -3093,7 +3097,7 @@ function BUTTON:SetType(save, kill, init)
 		self:SetScript("OnReceiveDrag", BUTTON.MACRO_OnReceiveDrag)
 		self:SetScript("OnDragStart", BUTTON.MACRO_OnDragStart)
 		self:SetScript("OnDragStop", BUTTON.MACRO_OnDragStop)
-		--self:SetScript("OnUpdate", BUTTON.MACRO_OnUpdate) --this function uses A LOT of CPU resources
+		self:SetScript("OnUpdate", BUTTON.MACRO_OnUpdate) --this function uses A LOT of CPU resources
 		self:SetScript("OnShow", BUTTON.MACRO_OnShow)
 		self:SetScript("OnHide", BUTTON.MACRO_OnHide)
 		self:SetScript("OnAttributeChanged", BUTTON.MACRO_OnAttributeChanged)
