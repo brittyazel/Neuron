@@ -1649,7 +1649,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 			f:SetWidth(18)
 			f:SetHeight(18)
 			f:SetScript("OnClick", setBarActionState)
-			--Renames Stance for rogues to Stealth as that is what shoudl really be used
+			--Renames Stance for rogues to Stealth as that is what should really be used
 			if state == "stance" and (NEURON.class == "ROGUE") then
 				f.text:SetText(L["STEALTH1"])
 			else
@@ -2030,10 +2030,10 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 			button:SetWidth(18)
 			button:SetHeight(18)
 
-			if(data[count] == "prowl" and IsDruid ) then
+			--[[if(data[count] == "prowl" and IsDruid ) then
 				frame.option = "prowl"
 				frame.stance = IsDruid
-			end
+			end]]
 			--else
 		else
 
