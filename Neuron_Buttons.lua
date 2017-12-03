@@ -90,7 +90,7 @@ local currMacro = {}
 
 local cmdSlash
 
-local stealthStatus = IsStealthed()---this is a workaround variable for druid stealth being overwritten
+NEURON.stealthStatus = IsStealthed()---this is a workaround variable for druid stealth being overwritten
 
 local configData = {
 	btnType = "macro",
@@ -994,6 +994,7 @@ end
 function BUTTON:MACRO_UpdateState(...)
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
+
 
 	if (self.actionID) then
 		self:ACTION_UpdateState(self.actionID)
@@ -2531,8 +2532,6 @@ end
 
 function BUTTON:MACRO_OnAttributeChanged(name, value)
 
-	stealthStatus = IsStealthed()
-
 	if (value and self.data) then
 		if (name == "activestate") then
 
@@ -2548,12 +2547,12 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 				end
 
 
-				if(NEURON.class == "DRUID") then ---we need to to add a workaround for druid Stealth states getting immediately overwritten by Cat Form state
+				if(NEURON.class == "DRUID") then ---we need to to add a workaround for druid Stealth states getting immediately overwritten
 
-					if (value ~= "stealth1") then
-						if (stealthStatus==true) then
-							return
-						end
+					NEURON.stealthStatus = IsStealthed()
+
+					if (value ~= "stealth1" and NEURON.stealthStatus==true) then
+						return
 					end
 
 				end
@@ -2583,6 +2582,8 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 			self:MACRO_UpdateAll(true)
 		end
 	end
+
+
 end
 
 
@@ -3447,10 +3448,6 @@ end
 
 
 local function controlOnEvent(self, event, ...)
-	if (event == "UPDATE_STEALTH") then
-		stealthStatus = not stealthStatus ---this is necessary as a hack for druid stealth being overwritten.
-	end
-
 
 	if (event:find("UNIT_")) then
 
@@ -3552,7 +3549,6 @@ frame:RegisterEvent("UNIT_SPELLCAST_SENT")
 frame:RegisterEvent("UNIT_SPELLCAST_START")
 frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-frame:RegisterEvent("UPDATE_STEALTH")
 
 
 function NEURONButtonProfileUpdate()
