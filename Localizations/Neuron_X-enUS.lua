@@ -153,9 +153,6 @@ L.SLASH_CMD45_DESC = "Toggle Blizzard's Vehicle Bar"
 L.SLASH_CMD46 = "Animate"
 L.SLASH_CMD46_DESC = "Toggle Neuron's Orb Animation"
 
-L.SLASH_CMD48 = "Debug"
-L.SLASH_CMD48_DESC = "Degutool"
-
 L.SLASH_CMD47 = "MoveSpecButtons"
 L.SLASH_CMD47_DESC = "Copies the buttons from one spec to a second(|cffffff00/neuron MoveSpecButtons <Old_Spec#> <New_Spec#>|r)"
 
