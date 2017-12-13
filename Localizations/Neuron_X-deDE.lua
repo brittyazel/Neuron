@@ -1,339 +1,515 @@
 ﻿--Neuron, a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
 
--- German translations by:
--- http://www.curseforge.com/profiles/Murida/
--- http://www.curseforge.com/profiles/angel100780/
-
 local AddOnFolderName, private = ...
--- See http://wow.curseforge.com/addons/neuron-status-bars/localization/
+
 local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "deDE", false)
+
 if not L then return end
---@localization(locale="deDE", format="lua_additive_table", handle-unlocalized="comment")@
 
+L.NEURON = "Neuron"
 
-L.DEFAULT = "Default"
+L.DEFAULT = "Standard"
 
-L.ACTION = "Aktionsinformationen" -- Needs review
-L.ALPHA = "Alpha" -- Needs review
-L.ALPHAUP = "Einblenden" -- Needs review
-L.ALPHAUP_BATTLE = "Kampf"
-L.ALPHAUP_BATTLEMOUSE = "Kampf+Mouseover"
+L.SLASH1 = "/neuron"
+L.SLASH_HINT1 = "\n/neuron |cff00ff00<command>|r <optionen>"
+L.SLASH_HINT2 = "\nBefehlsliste -\n"
+
+L.SLASH_CMD1 = "Speisekarte"
+L.SLASH_CMD1_DESC = "Öffne das hauptmenü"
+
+L.SLASH_CMD2 = "Erstellen"
+L.SLASH_CMD2_DESC = "Erstellen Sie eine leere Leiste des angegebenen Typs (|cffffff00/neuron erstellen <art>|r)\n    Schreiben |cffffff00/neuron barart|r für verfügbare typen"
+
+L.SLASH_CMD3 = "Löschen"
+L.SLASH_CMD3_DESC = "Löschen Sie die aktuell ausgewählte Leiste"
+
+L.SLASH_CMD4 = "Konfig"
+L.SLASH_CMD4_DESC = "Wechseln Sie den Konfigurationsmodus für alle Bars"
+
+L.SLASH_CMD5 = "Hinzufügen"
+L.SLASH_CMD5_DESC = "Fügt der aktuell ausgewählten Leiste Schaltflächen hinzu (|cffffff00add|r oder |cffffff00add #|r)"
+
+L.SLASH_CMD6 = "Löschen"
+L.SLASH_CMD6_DESC = "Entfernen Sie Schaltflächen von der aktuell ausgewählten Leiste (|cffffff00remove|r oder |cffffff00remove #|r)"
+
+L.SLASH_CMD7 = "Bearbeiten"
+L.SLASH_CMD7_DESC = "Wechseln Sie den Bearbeitungsmodus für alle Schaltflächen"
+
+L.SLASH_CMD8 = "Binden"
+L.SLASH_CMD8_DESC = "Bindungsmodus für alle Schaltflächen umschalten"
+
+L.SLASH_CMD9 = "Rahmen"
+L.SLASH_CMD9_DESC = "Skalieren Sie einen Balken auf die gewünschte Größe"
+
+L.SLASH_CMD10 = "AnschnappenAuf"
+L.SLASH_CMD10_DESC = "Toggle AnschnappenAuf für den aktuellen Balken"
+
+L.SLASH_CMD11 = "AutomatischAusblenden"
+L.SLASH_CMD11_DESC = " Aktivieren Sie Automatisch Ausblenden für die aktuelle Leiste"
+
+L.SLASH_CMD12 = "Verbergen"
+L.SLASH_CMD12_DESC = "Umschalten, wenn der aktuelle Balken immer angezeigt oder verborgen ist"
+
+L.SLASH_CMD13 = "Gestalten"
+L.SLASH_CMD13_DESC = "Ändern Sie die Form des aktuellen Balkens"
+
+L.SLASH_CMD14 = "Name"
+L.SLASH_CMD14_DESC = "Ändere den Namen des aktuellen Balkens"
+
+L.SLASH_CMD15 = "Schichten"
+L.SLASH_CMD15_DESC = "Ändern Sie die Rahmenschichten des aktuellen Balkens"
+
+L.SLASH_CMD16 = "Alpha"
+L.SLASH_CMD16_DESC = "Ändere das Alpha des aktuellen Balkens (Transparenz)"
+
+L.SLASH_CMD17 = "AlphaOben"
+L.SLASH_CMD17_DESC = "Setze die aktuellen Balkenbedingungen auf 'Alpha Oben'"
+
+L.SLASH_CMD18 = "ArcStart"
+L.SLASH_CMD18_DESC = "Set current bar's starting arc location (in degrees)"
+
+L.SLASH_CMD19 = "ArcLen"
+L.SLASH_CMD19_DESC = "Set current bar's arc length (in degrees)"
+
+L.SLASH_CMD20 = "Columns"
+L.SLASH_CMD20_DESC = "Set the number of columns for the current bar (for shape Multi-Column)"
+
+L.SLASH_CMD21 = "PadH"
+L.SLASH_CMD21_DESC = "Set current bar's horizontal padding"
+
+L.SLASH_CMD22 = "PadV"
+L.SLASH_CMD22_DESC = "Set current bar's vertical padding"
+
+L.SLASH_CMD23 = "PadHV"
+L.SLASH_CMD23_DESC = "Adjust both horizontal and vertical padding of the current bar incrementally"
+
+L.SLASH_CMD24 = "X"
+L.SLASH_CMD24_DESC = "Change current bar's horizontal axis position"
+
+L.SLASH_CMD25 = "Y"
+L.SLASH_CMD25_DESC = "Change current bar's vertical axis position"
+
+L.SLASH_CMD26 = "State"
+L.SLASH_CMD26_DESC = "Toggle an action state for the current bar (|cffffff00/neuron state <state>|r).\n    Type |cffffff00/neuron statelist|r for valid states"
+
+L.SLASH_CMD27 = "Vis"
+L.SLASH_CMD27_DESC = "Toggle visibility states for the current bar (|cffffff00/neuron vis <state> <index>|r)\n|cffffff00<index>|r = \"show\" | \"hide\" | <num>.\nExample: |cffffff00/neuron vis paged hide|r will toggle hide for all paged states\nExample: |cffffff00/neuron vis paged 1|r will toggle show/hide for when the state manager is on page 1"
+
+L.SLASH_CMD28 = "ShowGrid"
+L.SLASH_CMD28_DESC = "Toggle the current bar's showgrid flag"
+
+L.SLASH_CMD29 = "Lock"
+L.SLASH_CMD29_DESC = "Toggle bar lock. |cffffff00/lock <mod key>|r to enable/disable removing abilities while that <mod key> is down (ex: |cffffff00/lock shift|r)"
+
+L.SLASH_CMD30 = "Tooltips"
+L.SLASH_CMD30_DESC = "Toggle tooltips for the current bar's action buttons"
+
+L.SLASH_CMD31 = "SpellGlow"
+L.SLASH_CMD31_DESC = "Toggle spell activation animations on the current bar"
+
+L.SLASH_CMD32 = "BindText"
+L.SLASH_CMD32_DESC = "Toggle keybind text on the current bar"
+
+L.SLASH_CMD33 = "MacroText"
+L.SLASH_CMD33_DESC = "Toggle macro name text on the current bar"
+
+L.SLASH_CMD34 = "CountText"
+L.SLASH_CMD34_DESC = "Toggle spell/item count text on the current bar"
+
+L.SLASH_CMD35 = "CDText"
+L.SLASH_CMD35_DESC = "Toggle cooldown counts text on the current bar"
+
+L.SLASH_CMD36 = "CDAlpha"
+L.SLASH_CMD36_DESC = "Toggle a button's transparancy while on cooldown"
+
+L.SLASH_CMD37 = "AuraText"
+L.SLASH_CMD37_DESC = "Toggle aura watch text on the current bar"
+
+L.SLASH_CMD38 = "AuraInd"
+L.SLASH_CMD38_DESC = "Toggle aura button indicators on the current bar"
+
+L.SLASH_CMD39 = "UpClick"
+L.SLASH_CMD39_DESC = "Toggle if buttons on the current bar respond to up clicks"
+
+L.SLASH_CMD40 = "DownClick"
+L.SLASH_CMD40_DESC = "Toggle if buttons on the current bar respond to down clicks"
+
+L.SLASH_CMD41 = "TimerLimit"
+L.SLASH_CMD41_DESC = "Sets the minimum time in seconds to begin showing text timers"
+
+L.SLASH_CMD42 = "StateList"
+L.SLASH_CMD42_DESC = "Print a list of valid states"
+
+L.SLASH_CMD43 = "BarArt"
+L.SLASH_CMD43_DESC = "Print a list of available bar types to make"
+
+L.SLASH_CMD44 = "BlizzBar"
+L.SLASH_CMD44_DESC = "Toggle Blizzard's Action Bar"
+
+L.SLASH_CMD45 = "VehicleBar"
+L.SLASH_CMD45_DESC = "Toggle Blizzard's Vehicle Bar"
+
+L.SLASH_CMD46 = "Animate"
+L.SLASH_CMD46_DESC = "Toggle Neuron's Orb Animation"
+
+L.SLASH_CMD48 = "Debug"
+L.SLASH_CMD48_DESC = "Degutool"
+
+L.SLASH_CMD47 = "MoveSpecButtons"
+L.SLASH_CMD47_DESC = "Copies the buttons from one spec to a second(|cffffff00/neuron MoveSpecButtons <Old_Spec#> <New_Spec#>|r)"
+
+L.BARTYPES_USAGE = "Usage: |cffffff00/neuron create <type>|r\n"
+L.BARTYPES_TYPES = "     Types -\n"
+L.BARTYPES_LINE = "Creates a bar for %ss"
+
+L.SELECT_BAR = "No bar selected or command invalid"
+
+L.CUSTOM_OPTION = "\n\nFor custom states, add a desired state string (|cffffff00/neuron state custom <state string>|r) where <state string> is a semicolon seperated list of state conditions\n\n|cff00ff00Example:|r [actionbar:1];[stance:1];[stance3,stealth];[mounted]\n\n|cff00ff00Note:|r the first state listed will be considered the \"home state\". If the state manager ever gets confused, that is the state it will default to."
+
+L.VALIDSTATES = "\n|cff00ff00Valid states:|r "
+L.INVALID_INDEX = "Invalid index"
+L.STATE_HIDE = "hide"
+L.STATE_SHOW = "show"
+
+L.HOMESTATE = "Home State"
+L.LASTSTATE = "Should not see!"
+
+L.PAGED = "paged" -- keep in lower case
+L.STANCE = "stance" -- keep in lower case
+L.PET = "pet" -- keep in lower case
+L.ALT = "alt" -- keep in lower case
+L.CTRL = "ctrl" -- keep in lower case
+L.SHIFT = "shift" -- keep in lower case
+L.STEALTH = "stealth" -- keep in lower case
+L.REACTION = "reaction" -- keep in lower case
+L.COMBAT = "combat" -- keep in lower case
+L.GROUP = "group" -- keep in lower case
+L.FISHING = "fishing" -- keep in lower case
+L.VEHICLE = "vehicle" -- keep in lower case
+L.CUSTOM = "custom" -- keep in lower case
+L.POSSESS = "possess" -- keep in lower case
+L.OVERRIDE = "override" -- keep in lower case
+L.EXTRABAR = "extrabar" -- keep in lower case
+
+L.PAGED1 = "Page 1"
+L.PAGED2 = "Page 2"
+L.PAGED3 = "Page 3"
+L.PAGED4 = "Page 4"
+L.PAGED5 = "Page 5"
+L.PAGED6 = "Page 6"
+
+L.PET0 = "No Pet"
+L.PET1 = "Pet Exists"
+
+L.ALT0 = "Alt Up"
+L.ALT1 = "Alt Down"
+L.CTRL0 = "Control Up"
+L.CTRL1 = "Control Down"
+L.SHIFT0 = "Shift Up"
+L.SHIFT1 = "Shift Down"
+
+L.STEALTH0 = "No Stealth"
+L.STEALTH1 = "Stealth"
+L.REACTION0 = "Friendly"
+L.REACTION1 = "Hostile"
+L.COMBAT0 = "No Combat"
+L.COMBAT1 = "Combat"
+
+L.GROUP0 = "No Group"
+L.GROUP1 = "Group: Raid"
+L.GROUP2 = "Group: Party"
+L.FISHING0 = "No Fishing Pole"
+L.FISHING1 = "Fishing Pole"
+
+L.VEHICLE0 = "No Vehicle"
+L.VEHICLE1 = "Vehicle"
+L.POSSESS0 = "No Possess"
+L.POSSESS1 = "Possess"
+L.OVERRIDE0 = "No Override Bar"
+L.OVERRIDE1 = "Override Bar"
+L.EXTRABAR0 = "No Extra Bar"
+L.EXTRABAR1 = "Extra Bar"
+
+L.CUSTOM0 = "Custom States"
+
+--class specific state names
+L.DRUID_CASTER = "Caster Form"
+L.PRIEST_HEALER = "Healer Form"
+L.ROGUE_MELEE = "Melee"
+L.WARLOCK_CASTER = "Caster Form"
+
+L.MINIMAP_TOOLTIP1 = "Left-Click to Configure Bars"
+L.MINIMAP_TOOLTIP2 = "Right-Click to Edit Buttons"
+L.MINIMAP_TOOLTIP3 = "Middle-Click or Alt-Click to Edit Key Bindings"
+L.MINIMAP_TOOLTIP4 = "Shift-Click for Main Menu"
+
+L.KEYBIND_TOOLTIP1 = "\nHit a key to bind it to"
+L.KEYBIND_TOOLTIP2 = "Left-Click to |cfff00000LOCK|r this %s's bindings\n\nRight-Click to make this %s's bindings a |cff00ff00PRIORITY|r bind\n\nHit |cfff00000ESC|r to clear this %s's current binding(s)"
+L.KEYBIND_TOOLTIP3 = "Current Binding(s):"
+
+L.EDITFRAME_EDIT = "edit"
+
+L.EMPTY_BUTTON = "Empty Button"
+L.EDIT_BINDINGS = "Edit Bindings"
+L.KEYBIND_NONE = "none"
+
+L.BINDFRAME_BIND = "bind"
+L.BINDFRAME_LOCKED = "locked"
+L.BINDFRAME_PRIORITY = "priority"
+L.BINDINGS_LOCKED	= "This button's bindings are locked.\nLeft-Click button to unlock."
+L.BINDER_NOTICE = "Neuron Key Binder\n|cffffffffThe Original Mouseover Binding System|r\nDeveloped by Maul"
+
+L.OFF = "Off"
+L.ALPHAUP_BATTLE = "Combat"
 L.ALPHAUP_MOUSEOVER = "Mouseover"
-L.ALPHAUP_RETREAT = "Rückzug"
-L.ALPHAUP_RETREATMOUSE = "Rückzug+Mouseover"
-L.ALPHAUP_SPEED = "Einblendungsgeschwindigkeit" -- Needs review
-L.ALT = "alt"
-L.ALT0 = "Alt losgelassen"
-L.ALT1 = "Alt gedrückt"
-L.APPLY = "Anwenden" -- Needs review
-L.ARCLENGTH = "Bogenlänge" -- Needs review
-L.ARCSTART = "Bogenanfang" -- Needs review
-L.AURAIND = "Aura Beobachtungsind." -- Needs review
-L.AURATEXT = "Aura Beobachtungstext" -- Needs review
-L.AUTOHIDE = "Automatisches Verbergen"
-L.BAR_ALPHA = "Alpha Wert muss zwischen Null(0) und Eins(1) liegen"
-L.BAR_ARCLENGTH = "Bogenlänge muss zwischen 0 und 359 liegen"
-L.BAR_ARCSTART = "Bogenanfang muss zwischen 0 und 359 liegen"
-L.BAR_COLUMNS = [=[Geben Sie die Anzahl größer als Null(0) der gewünschten Spalten für die Leiste ein
-Weglassen, um auf Spalten zu verzichten]=]
-L.BARLOCK_MOD = [=[Zulässige mod Tasten:
+L.ALPHAUP_BATTLEMOUSE = "Combat+Mouseover"
+L.ALPHAUP_RETREAT = "Retreat"
+L.ALPHAUP_RETREATMOUSE = "Retreat+Mouseover"
 
-|cff00ff00alt|r: entsperre Leiste wenn <alt> Taste gedrückt
-|cff00ff00ctrl|r: entsperre Leiste wenn <ctrl> Taste gedrückt
-|cff00ff00shift|r: entsperre Leiste wenn <shift> Taste gedrückt]=]
-L.BAR_PADH = "Geben Sie eine gültige Nummer für das gewünschte horizontale Tasten-padding ein"
-L.BAR_PADHV = "Geben Sie eine gültige Nummer ein, um das horizontale und vertikale Tasten-padding zu erhöhen/senken"
-L.BAR_PADV = "Geben Sie eine gültige Nummer für das gewünschte vertikale Tasten-padding ein"
-L.BAR_SHAPE1 = "Gerade"
-L.BAR_SHAPE2 = "Kreis"
-L.BAR_SHAPE3 = "Kreis+Eins"
-L.BAR_SHAPES = [=[1=Gerade
-2=Kreis
-3=Kreis+Eins]=]
-L.BAR_STATES = "Leistenzustände" -- Needs review
-L.BAR_STRATAS = [=[1=HINTERGRUND
-2=NIEDRIG
-3=MITTEL
-4=HOCH
-5=DIALOG]=]
-L.BARTYPES_LINE = "Erzeugt eine Leiste für %s"
-L.BARTYPES_TYPES = [=[     Typen -
-]=]
-L.BARTYPES_USAGE = [=[Gebrauch: |cffffff00/neuron create <Typ>|r
-]=]
-L.BAR_XPOS = "Gültige Zahl für das gewünschte x-Position Offset eingeben"
-L.BAR_YPOS = "Gültige Zahl für das gewünschte y-Position Offset eingeben"
-L.INSTALL_MESSAGE = [=[Danke, dass Sie Neuron installiert haben!!!
+L.BAR_SHAPES = "\n1=Linear\n2=Circle\n3=Circle+One"
+L.BAR_SHAPE1 = "Linear"
+L.BAR_SHAPE2 = "Circle"
+L.BAR_SHAPE3 = "Circle+One"
+L.BAR_STRATAS = "\n1=BACKGROUND\n2=LOW\n3=MEDIUM\n4=HIGH\n5=DIALOG"
+L.BAR_ALPHA = "Alpha value must be between zero(0) and one(1)"
+L.BAR_ARCSTART = "Arc start must be between 0 and 359"
+L.BAR_ARCLENGTH = "Arc length must be between 0 and 359"
+L.BAR_COLUMNS = "Enter a number of desired columns for the bar higher than zero(0)\nOmit number to turn off columns"
+L.BAR_PADH = "Enter a valid number for desired horizontal button padding"
+L.BAR_PADV = "Enter a valid number for desired vertical button padding"
+L.BAR_PADHV = "Enter a valid number to increase/decrease both the horizontal and vertical button padding"
+L.BAR_XPOS = "Enter a valid number for desired x position offset"
+L.BAR_YPOS = "Enter a valid number for desired y position offset"
 
-Neuron ist derzeit in einer "|cffffff00Betatest|r" Phase.
+L.BARLOCK_MOD = "Valid mod keys:\n\n|cff00ff00alt|r: unlock bar when the <alt> key is down\n|cff00ff00ctrl|r: unlock bar when the <ctrl> key is down\n|cff00ff00shift|r: unlock bar when the <shift> key is down"
+L.TOOLTIPS = "Valid options:\n\n|cff00ff00enhanced|r: display additional ability info\n|cff00ff00combat|r: hide/show tooltips while in combat"
+L.SPELLGLOWS = "Valid options:\n\n|cff00ff00default|r: use Blizzard default spell glow animation\n|cff00ff00alt|r: use alternate subdued spell glow animation"
+L.TIMERLIMIT_SET = "Timer limit set to %d seconds"
+L.TIMERLIMIT_INVALID = "Invalid timer limit"
 
-Leider habe ich es nicht geschafft, eine Release Version für Patch 5.0.4 fertig zu bekommen. Eine Release Version sollte allerdings bis zur Erweiterung Mists of Pandaria bereit sein!
+L.PETATTACK = "Attack"
+L.PETFOLLOW = "Follow"
+L.PETMOVETO = "Move To"
+L.PETASSIST = "Assist"
+L.PETDEFENSIVE = "Defensive"
+L.PETPASSIVE = "Passive"
 
-Das bedeutet, dass nicht alle Features vorhanden sind und es Bugs geben könnte. Aber größtenteils ist Neuron in einem nutzbaren und stabilen Zustand.
+L.APPLY = "Apply"
+L.CANCEL = "Cancel"
+L.DONE = "Done"
+L.CREATE_BAR = "Create New Bar"
+L.DELETE_BAR = "Delete Current Bar"
+L.SELECT_BAR_TYPE = "- Select Bar Type -"
+L.CONFIRM = "- Confirm -"
+L.CONFIRM_YES = "Yes"
+L.CONFIRM_NO = "No"
+L.GENERAL = "General Options"
+L.BAR_STATES = "Bar States"
+L.OBJECTS = "Object Editor"
+L.MACRO = "Macro Data"
+L.ACTION = "Action Data"
+L.OPTIONS = "Options"
 
-Benutze Neuron im Moment nur, wenn es nicht stört, dass gelegentlich Bugs auftreten oder nicht alles machbar ist wie mit Macaroon =)
+L.MACRO_NAME = "-macro name-"
+L.MACRO_EDITNOTE = "Click here to edit macro note"
+L.MACRO_USENOTE = "Use macro note as button tooltip"
 
--Maul]=]
-L.BINDER_NOTICE = [=[Neuron Tasten Zuweiser
-|cffffffffDas Originale Mouseover Zuweisungssystem|r
-Entwickelt von Maul]=] -- Needs review
-L.BINDFRAME_BIND = "zuweisen" -- Needs review
-L.BINDFRAME_LOCKED = "verriegelt" -- Needs review
-L.BINDFRAME_PRIORITY = "Priorität" -- Needs review
-L.BINDINGS_LOCKED = [=[Die Zuweisungen für diesen Knopf sind gesperrt.
-Links-Klick auf den Knopf zum Entsperren.]=] -- Needs review
-L.BINDTEXT = "Zuweisungstext" -- Needs review
-L.CANCEL = "Abbruch" -- Needs review
-L.CDALPHA = "Abklingzeiten Alpha" -- Needs review
-L.CDTEXT = "Abklingzeiten Text" -- Needs review
-L.COLUMNS = "Spalten" -- Needs review
-L.COMBAT = "Kampf" -- Needs review
-L.COMBAT0 = "kein Kampf" -- Needs review
-L.COMBAT1 = "Kampf" -- Needs review
-L.CONFIRM = "- Bestätigen -" -- Needs review
-L.CONFIRM_NO = "Nein" -- Needs review
-L.CONFIRM_YES = "Ja" -- Needs review
-L.COUNT = "Anzahl" -- Needs review
-L.COUNTTEXT = "Anzahl Beschriftung" -- Needs review
-L.CREATE_BAR = "Erstelle neue Leiste" -- Needs review
-L.CTRL = "STRG" -- Needs review
-L.CTRL0 = "STRG losgelassen" -- Needs review
-L.CTRL1 = "STRG gedrückt" -- Needs review
-L.CUSTOM = "Anpassungen" -- Needs review
-L.CUSTOM0 = "Eigene Zustände" -- Needs review
-L.CUSTOM_ICON = "Eigenes Symbol" -- Needs review
-L.CUSTOM_OPTION = [=[
-Für eigene Zustände, fügen Sie den gewünschten Zustandstext ein (|cffffff00/neuron state custom <Zustandstext>|r) wobei <Zustandstext> eine durch Semikolons getrennte Liste von Bedingungen ist
+L.COUNT = "Count"
+L.SEARCH = "Search"
+L.CUSTOM_ICON = "Custom Icon"
+L.PATH = "path"
 
-|cff00ff00Beispiel:|r [actionbar:1];[stance:1];[stance3,stealth];[mounted]
+L.AUTOHIDE = "Auto Hide"
+L.SHOWGRID = "Show Grid"
+L.SNAPTO = "Snap To"
+L.HIDDEN = "Hidden"
+L.UPCLICKS = "Up Clicks"
+L.DOWNCLICKS = "Down Clicks"
+L.MULTISPEC = "Multi Spec"
+L.SPELLGLOW = "Spell Alerts"
+L.SPELLGLOW_DEFAULT = " - Default Alert"
+L.SPELLGLOW_ALT = " - Subdued Alert"
+L.LOCKBAR = "Lock Actions"
+L.LOCKBAR_SHIFT = " - Unlock on SHIFT"
+L.LOCKBAR_CTRL = " - Unlock on CTRL"
+L.LOCKBAR_ALT = " - Unlock on ALT"
+L.TOOLTIPS_OPT = "Enable Tooltips"
+L.TOOLTIPS_ENH = " - Enhanced"
+L.TOOLTIPS_COMBAT = " - Hide in Combat"
 
-|cff00ff00Hinweis:|r die erste Bedingung der Liste wird zum "Heimzustand". Wenn der Zustandsverwalter durcheinander sein sollte, nimmt er diesen Zustand als Standard.]=] -- Needs review
-L.CUSTOM_STATES = "Eigene Aktionszustände" -- Needs review
-L.DELETE_BAR = "Lösche aktuelle Leiste" -- Needs review
-L.DONE = "Fertig" -- Needs review
-L.DOWNCLICKS = "Klick" -- Needs review
-L.DRUID_CASTER = "Normale Gestalt" -- Needs review
-L.DRUID_PROWL = "Schleichen" -- Needs review
-L.MULTISPEC = "Multi Spec" -- Needs review
-L.EDIT_BINDINGS = "Zuweisungen bearbeiten" -- Needs review
-L.EDITFRAME_EDIT = "bearbeiten" -- Needs review
-L.EMPTY_BUTTON = "leerer Knopf" -- Needs review
-L.EXTRABAR = "Zusatzleiste" -- Needs review
-L.EXTRABAR0 = "keine Zusatzleiste" -- Needs review
-L.EXTRABAR1 = "Zusatzleiste" -- Needs review
-L.FISHING = "Angeln" -- Needs review
-L.FISHING0 = "Keine Angelrute" -- Needs review
-L.FISHING1 = "Angelrute" -- Needs review
-L.GENERAL = "Allgemeine Einstellungen" -- Needs review
-L.GROUP = "Gruppe" -- Needs review
-L.GROUP0 = "keine Gruppe" -- Needs review
-L.GROUP1 = "Gruppe: Schlachtzug" -- Needs review
-L.GROUP2 = "Gruppe: Gruppe" -- Needs review
-L.HIDDEN = "Versteckt" -- Needs review
-L.HOMESTATE = "Heimzustand" -- Needs review
-L.HPAD = "Horiz Pad" -- Needs review
-L.HVPAD = "H + V Pad" -- Needs review
-L.INVALID_INDEX = "Ungültiger Index" -- Needs review
-L.NEURON = "Neuron" -- Needs review
-L.KEYBIND_NONE = "keine" -- Needs review
-L.KEYBIND_TOOLTIP1 = "Drücke eine Tase, um diese zuzuweisen" -- Needs review
-L.KEYBIND_TOOLTIP2 = [=[Links-Klick zum |cfff00000SPERREN|r der Zuweisungen von %s
+L.PRESET_STATES = "Preset Action States"
+L.CUSTOM_STATES = "Custom Action States"
 
-Rechts-Klick um aus dieser Zuweisung von %s eine |cff00ff00PRIORITÄTS|r Zuweisung zu machen
+L.GUI_PAGED = "Paged"
+L.GUI_STANCE = "Stance"
+L.GUI_PET = "Pet"
+L.GUI_ALT = "Alt"
+L.GUI_CTRL = "Ctrl"
+L.GUI_SHIFT = "Shift"
+L.GUI_STEALTH = "Stealth"
+L.GUI_REACTION = "Reaction"
+L.GUI_COMBAT = "Combat"
+L.GUI_GROUP = "Group"
+L.GUI_FISHING = "Fishing"
+L.GUI_VEHICLE = "Vehicle"
+L.GUI_POSSESS = "Possess"
+L.GUI_OVERRIDE = "Override"
+L.GUI_EXTRABAR = "Extra Bar"
+L.GUI_CUSTOM = "Custom"
 
-Drücke |cfff00000ESC|r um die aktuellen Zuweisungen von %s zu entfernen]=] -- Needs review
-L.KEYBIND_TOOLTIP3 = "Derzeitige Zuweisung(en):" -- Needs review
-L.LASTSTATE = "Sollte nicht gesehen werden!" -- Needs review
-L.LOCKBAR = "Sperre Aktionen" -- Needs review
-L.LOCKBAR_ALT = "- Entsperre mit ALT" -- Needs review
-L.LOCKBAR_CTRL = "- Entsperre mit STRG" -- Needs review
-L.LOCKBAR_SHIFT = "- Entsperre mit UMSCHALT" -- Needs review
-L.MACRO = "Makro Daten" -- Needs review
-L.MACRO_EDITNOTE = "Hier klicken, um Makro Notiz zu ändern" -- Needs review
-L.MACRO_NAME = "-Macro Name-" -- Needs review
-L.MACROTEXT = "Makro Text" -- Needs review
-L.MACRO_USENOTE = "Makro Notiz als Tooltip verwenden" -- Needs review
-L.MINIMAP_TOOLTIP1 = "Links-Klick um Leisten zu konfigurieren" -- Needs review
-L.MINIMAP_TOOLTIP2 = "Rechts-Klick um Knöpfe zu bearbeiten" -- Needs review
-L.MINIMAP_TOOLTIP3 = "Mittel-Klick oder Alt-Klick um Tastenzuweisungen zu bearbeiten" -- Needs review
-L.OBJECTS = "Objekt Editor" -- Needs review
-L.OFF = "Aus" -- Needs review
-L.OPTIONS = "Einstellungen" -- Needs review
-L.OVERRIDE = "Übergehen" -- Needs review
-L.OVERRIDE0 = "Keine Übergehungsleiste" -- Needs review
-L.OVERRIDE1 = "Übergehungsleiste" -- Needs review
-L.PAGED = "mit Seiten" -- Needs review
-L.PAGED1 = "Seite 1" -- Needs review
-L.PAGED2 = "Seite 2" -- Needs review
-L.PAGED3 = "Seite 3" -- Needs review
-L.PAGED4 = "Seite 4" -- Needs review
-L.PAGED5 = "Seite 5" -- Needs review
-L.PAGED6 = "Seite 6" -- Needs review
-L.PATH = "Pfad" -- Needs review
-L.PET = "Begleiter" -- Needs review
-L.PET0 = "Kein Begleiter" -- Needs review
-L.PET1 = "Begleiter Existiert" -- Needs review
-L.PETASSIST = "Assistieren" -- Needs review
-L.PETATTACK = "Angriff" -- Needs review
-L.PETDEFENSIVE = "Verteidigung" -- Needs review
-L.PETFOLLOW = "Folgen" -- Needs review
-L.PETMOVETO = "Bewegen zu" -- Needs review
-L.PETPASSIVE = "Passiv" -- Needs review
-L.POINT = "Punkt" -- Needs review
-L.POSSESS = "Besitz" -- Needs review
-L.POSSESS0 = "kein Besitz" -- Needs review
-L.POSSESS1 = "Besitz" -- Needs review
-L.PRESET_STATES = "Voreingestellte Aktionszustände" -- Needs review
-L.PRIEST_HEALER = "Heilergestalt" -- Needs review
-L.PROWL = "Schleichen" -- Needs review
-L.RANGEIND = "Reichweiten Ind." -- Needs review
-L.REACTION = "Reaktion" -- Needs review
-L.REACTION0 = "Freundlich" -- Needs review
-L.REACTION1 = "Feindlich" -- Needs review
-L.REMAP = "Primärer Zustand zum Neuzuweisen" -- Needs review
-L.REMAPTO = "Zustand zuweisen zu" -- Needs review
-L.ROGUE_MELEE = "Nahkampf" -- Needs review
-L.SCALE = "Skalierung" -- Needs review
-L.SEARCH = "Suche" -- Needs review
-L.SELECT_BAR = "Keine Leiste ausgewählt oder Befehl ungültig" -- Needs review
-L.SELECT_BAR_TYPE = "- Wähle Leisten Typ -" -- Needs review
-L.SHAPE = "Form" -- Needs review
-L.SHIFT = "Umschalttaste" -- Needs review
-L.SHIFT0 = "Umschalttaste losgelassen" -- Needs review
-L.SHIFT1 = "Umschalttaste gedrückt" -- Needs review
-L.SHOWGRID = "Zeige Raster" -- Needs review
-L.SLASH1 = "/neuron" -- Needs review
-L.SLASH_CMD1 = "Menü" -- Needs review
-L.SLASH_CMD10 = "Einrasten" -- Needs review
-L.SLASH_CMD10_DESC = "Einrasten für aktuelle Leiste umschalten" -- Needs review
-L.SLASH_CMD11 = "AutoVerstecken" -- Needs review
-L.SLASH_CMD11_DESC = "AutoVerstecken für aktuelle Leiste umschalten" -- Needs review
-L.SLASH_CMD12 = "Verbergen" -- Needs review
-L.SLASH_CMD12_DESC = "Umschalten, ob aktuelle Leiste immer sichtbar oder verborgen ist" -- Needs review
-L.SLASH_CMD13 = "Form" -- Needs review
-L.SLASH_CMD13_DESC = "Ändern der Form der aktuellen Leiste" -- Needs review
-L.SLASH_CMD14 = "Name" -- Needs review
-L.SLASH_CMD14_DESC = "Ändern des Namens der aktuellen Leiste" -- Needs review
-L.SLASH_CMD15 = "Ebene" -- Needs review
-L.SLASH_CMD15_DESC = "Ändert die Rahmenebene der aktuellen Leiste" -- Needs review
-L.SLASH_CMD16 = "Alpha" -- Needs review
-L.SLASH_CMD16_DESC = "Ändern des Alphawertes (Transparenz) der aktuellen Leiste" -- Needs review
-L.SLASH_CMD17 = "AlphaUp" -- Needs review
-L.SLASH_CMD17_DESC = "Setzt den Zustand der aktuellen Leiste auf 'alpha up'" -- Needs review
-L.SLASH_CMD18 = "Bogenanfang" -- Needs review
-L.SLASH_CMD18_DESC = "Setze die Bogenposition der aktuellen Leiste (in Grad)" -- Needs review
-L.SLASH_CMD19 = "ArcLen" -- Needs review
-L.SLASH_CMD19_DESC = "Setze die Bogenlänge der aktuellen Leiste (in Grad)" -- Needs review
-L.SLASH_CMD1_DESC = "Öffne das Hauptmenü" -- Needs review
-L.SLASH_CMD2 = "Erzeugen" -- Needs review
-L.SLASH_CMD20 = "Spalten" -- Needs review
-L.SLASH_CMD20_DESC = "Setze die Anzahl der Spalten für die aktuelle Leiste (für Form Mehrfachspalten)" -- Needs review
-L.SLASH_CMD21 = "PadH" -- Needs review
-L.SLASH_CMD21_DESC = "Setze das horizontale Padding der aktuellen Leiste" -- Needs review
-L.SLASH_CMD22 = "PadV" -- Needs review
-L.SLASH_CMD22_DESC = "Setze das vertikale Padding der aktuellen Leiste" -- Needs review
-L.SLASH_CMD23 = "PadHV" -- Needs review
-L.SLASH_CMD23_DESC = "Ändere das horizontale und vertikale Padding der aktuellen Leiste stufenweise" -- Needs review
-L.SLASH_CMD24 = "X" -- Needs review
-L.SLASH_CMD24_DESC = "Ändere die Position der aktuellen Leiste auf der horizontalen Achse" -- Needs review
-L.SLASH_CMD25 = "Y" -- Needs review
-L.SLASH_CMD25_DESC = "Ändere die Position der aktuellen Leiste auf der vertikalen Achse" -- Needs review
-L.SLASH_CMD26 = "Zustand" -- Needs review
-L.SLASH_CMD26_DESC = [=[Wechsle einen Aktionszustand für die Aktuelle Leiste (|cffffff00/neuron state <Zustand>|r).
-    Gebe |cffffff00/neuron statelist|r ein für gültige Zustände]=] -- Needs review
-L.SLASH_CMD27 = "Vis" -- Needs review
-L.SLASH_CMD27_DESC = [=[Wechsle Sichtbarkeitszustand für die aktuelle Leiste (|cffffff00/neuron vis <Zustand> <index>|r)
-|cffffff00<index>|r = "show" | "hide" | <num>.
-Beispiel: |cffffff00/neuron vis paged hide|r versteckt alle mit Seiten
-Beispiel: |cffffff00/neuron vis paged 1|r wechselt Sichtbarkeit wenn der Zustandsverwalter auf Seite 1 ist]=] -- Needs review
-L.SLASH_CMD28 = "RasterZeigen" -- Needs review
-L.SLASH_CMD28_DESC = "Wechselt das RasterZeigen flag der aktuellen Leiste" -- Needs review
-L.SLASH_CMD29 = "Sperren" -- Needs review
-L.SLASH_CMD29_DESC = "Schalte Leistensperre um. |cffffff00/lock <mod key>|r um umzuschalten, ob Fähigkeiten entfernt werden können während die Taste <mod key> gedrückt ist (Bsp: |cffffff00/lock shift|r)" -- Needs review
-L.SLASH_CMD2_DESC = [=[Erzeuge eine leere Leiste des angegebenen Typs (|cffffff00/neuron create <Typ>|r)
-    Gebe |cffffff00/neuron bartypes|r ein für eine Liste der verfügbaren Typen]=] -- Needs review
-L.SLASH_CMD3 = "Löschen" -- Needs review
-L.SLASH_CMD30 = "Tooltips" -- Needs review
-L.SLASH_CMD30_DESC = "Schalte Tooltips für die Aktionsknöpfe der aktuellen Leiste um" -- Needs review
-L.SLASH_CMD31 = "SpellGlow" -- Needs review
-L.SLASH_CMD31_DESC = "Schalte Zauberaktivierungsanimationen der aktuellen Leiste um" -- Needs review
-L.SLASH_CMD32 = "Zuweisungstext" -- Needs review
-L.SLASH_CMD32_DESC = "Schalte Tastenzuweisungstext für die aktuelle Leiste um" -- Needs review
-L.SLASH_CMD33 = "MakroText" -- Needs review
-L.SLASH_CMD33_DESC = "Schalte Makronamen-Text für die aktuelle Leiste um" -- Needs review
-L.SLASH_CMD34 = "Anzahlbeschriftung" -- Needs review
-L.SLASH_CMD34_DESC = "Schalte Anzahlbeschriftung für die aktuelle Leiste um" -- Needs review
-L.SLASH_CMD35 = "CDText" -- Needs review
-L.SLASH_CMD35_DESC = "Schalte Abklingzeitzähler für die aktuelle Leiste um" -- Needs review
-L.SLASH_CMD36 = "CDAlpha" -- Needs review
-L.SLASH_CMD36_DESC = "Schalte die Transparenz eines Kopfes um, während Abklingzeit" -- Needs review
-L.SLASH_CMD37 = "AuraText" -- Needs review
-L.SLASH_CMD37_DESC = "Schalte Aurenbeobachtungsbeschriftung auf der aktuellen Leiste um" -- Needs review
-L.SLASH_CMD38 = "AuraInd" -- Needs review
-L.SLASH_CMD38_DESC = "Schalte Aurenindikatoren für Knöpfe auf der aktuellen Leiste um" -- Needs review
-L.SLASH_CMD39 = "UpClick" -- Needs review
-L.SLASH_CMD39_DESC = "Schalte um, ob Knöpfe auf der aktuellen Leiste auf loslassen der Maustaste reagieren sollen" -- Needs review
-L.SLASH_CMD3_DESC = "Lösche die aktuell ausgewählte Leiste" -- Needs review
-L.SLASH_CMD4 = "Konfiguration" -- Needs review
-L.SLASH_CMD40 = "DownClick" -- Needs review
-L.SLASH_CMD40_DESC = "Schalte um, ob Knöpfe auf der aktuellen Leiste auf Runterklicken reagieren sollen" -- Needs review
-L.SLASH_CMD41 = "TimerLimit" -- Needs review
-L.SLASH_CMD41_DESC = "Setze die minimale Zeit in Sekunden ab der Timer Beschriftungen angezeigt werden sollen" -- Needs review
-L.SLASH_CMD42 = "StateList" -- Needs review
-L.SLASH_CMD42_DESC = "Gibt eine Liste der gültigen Zustände aus" -- Needs review
-L.SLASH_CMD43 = "BarTypes" -- Needs review
-L.SLASH_CMD43_DESC = "Gibt eine Liste der verfügbaren Leistentypen aus" -- Needs review
-L.SLASH_CMD44 = "BlizzBar" -- Needs review
-L.SLASH_CMD44_DESC = "Schaltet Sichtbarkeit der Blizzard Aktionsleisten um" -- Needs review
-L.SLASH_CMD45 = "VehicleBar" -- Needs review
-L.SLASH_CMD45_DESC = "Schaltet Sichtbarkeit der Blizzard Fahrzeugleisten um" -- Needs review
-L.SLASH_CMD4_DESC = "Wechselt Konfigurationsmodus für alle Leisten" -- Needs review
-L.SLASH_CMD5 = "Add" -- Needs review
-L.SLASH_CMD5_DESC = "Fügt Knöpfe zur aktuell ausgewählten Leiste hinzu (|cffffff00add|r oder |cffffff00add #|r)" -- Needs review
-L.SLASH_CMD6 = "Remove" -- Needs review
-L.SLASH_CMD6_DESC = "Entfernt Knöpfe der aktuell ausgewählten Leiste (|cffffff00remove|r oder |cffffff00remove #|r)" -- Needs review
-L.SLASH_CMD7 = "Edit" -- Needs review
-L.SLASH_CMD7_DESC = "Schaltet Bearbeitungsmodus für alle Knöpfe um" -- Needs review
-L.SLASH_CMD8 = "Bind" -- Needs review
-L.SLASH_CMD8_DESC = "Schaltet Zuweisungsmodus für alle Knöpfe um" -- Needs review
-L.SLASH_CMD9 = "Scale" -- Needs review
-L.SLASH_CMD9_DESC = "Skaliere eine Leiste zur gewünschten Größe" -- Needs review
-L.SLASH_HINT1 = [=[
-/neuron |cff00ff00<Befehl>|r <Optionen>]=] -- Needs review
-L.SLASH_HINT2 = [=[
-Befehlsliste -
-]=] -- Needs review
-L.SNAPTO = "Einrasten" -- Needs review
-L.SPELLGLOW = "Zauberbenachrichtigungen" -- Needs review
-L.SPELLGLOW_ALT = "- Gedämpfte Benachrichtigung" -- Needs review
-L.SPELLGLOW_DEFAULT = "- Standard Benachrichtigung" -- Needs review
-L.SPELLGLOWS = [=[Gültige Optionen:
+L.SHADOW_DANCE = "Shadow Dance"
 
-|cff00ff00default|r: benutze Blizzard standard Zauberleuchtanimationen
-|cff00ff00alt|r: benutze alternative gedämpfte Zauberleuchtanimationen]=] -- Needs review
-L.STANCE = "Haltung" -- Needs review
-L.STATE_HIDE = "verstecken" -- Needs review
-L.STATE_SHOW = "zeigen" -- Needs review
-L.STEALTH = "Tarnung" -- Needs review
-L.STEALTH0 = "keine Tarnung" -- Needs review
-L.STEALTH1 = "Tarnung" -- Needs review
-L.STRATA = "Ebene" -- Needs review
-L.TIMERLIMIT_INVALID = "Ungültiges Timer limit" -- Needs review
-L.TIMERLIMIT_SET = "Timer limit gesetzt auf %d Sekunden" -- Needs review
-L.TOOLTIPS = [=[Gültige Optionen:
 
-|cff00ff00enhanced|r: zeige zusätzliche Fähigkeiten-Informationen
-|cff00ff00combat|r: zeige/verstecke Tooltips während des Kampfes]=] -- Needs review
-L.TOOLTIPS_COMBAT = "- Im Kampf verstecken" -- Needs review
-L.TOOLTIPS_ENH = "- Erweitert" -- Needs review
-L.UPCLICKS = "Maustaste loslassen" -- Needs review
-L.VALIDSTATES = [=[
-|cff00ff00Zulässige Zustände:|r ]=] -- Needs review
-L.VEHICLE = "Fahrzeug" -- Needs review
-L.VEHICLE0 = "kein Fahrzeug" -- Needs review
-L.VEHICLE1 = "Fahrzeug" -- Needs review
-L.VPAD = "Vert Pad" -- Needs review
-L.WARLOCK_CASTER = "Normale Gestalt" -- Needs review
-L.XPOS = "X Pos" -- Needs review
-L.YPOS = "Y Pos" -- Needs review
+
+L.REMAP = "Primary State to Remap"
+L.REMAPTO = "Remap State To"
+
+L.SCALE = "Scale"
+L.ALPHA = "Alpha"
+L.ALPHAUP = "Alpha Up"
+L.ALPHAUP_SPEED = "A/U Speed"
+L.STRATA = "Strata"
+L.SHAPE = "Shape"
+L.HPAD = "Horiz Pad"
+L.VPAD = "Vert Pad"
+L.HVPAD = "H + V Pad"
+L.COLUMNS = "Columns"
+L.ARCSTART = "Arc Start"
+L.ARCLENGTH = "Arc Length"
+
+L.BINDTEXT = "Bind Text"
+L.MACROTEXT = "Macro Text"
+L.COUNTTEXT = "Count Text"
+L.RANGEIND = "Range Ind"
+L.CDTEXT = "Cooldown Text"
+L.CDALPHA = "Cooldown Alpha"
+L.AURATEXT = "Aura Watch Text"
+L.AURAIND = "Aura Watch Ind"
+
+L.POINT = "Point"
+L.XPOS = "X Pos"
+L.YPOS = "Y Pos"
+
+L.BOUND_SPELL_KEYBIND = "Enable Spell Binding Mode"
+L.BOUND_TOGGLE_SPELL_KEYBIND = "Toggle Spell Binding Mode"
+L.BOUND_MACRO_KEYBIND = "Enable Macro Binding Mode"
+L.BOUND_TOGGLE_MACRO_KEYBIND = "Toggle Macro Binding Mode"
+
+
+
+L.INSTALL_MESSAGE = [[Thank's for installing Neuron.
+
+Neuron is currently in a "|cffffff00release|r" state.
+
+If you have any questions or concerns please direct all inquirires our github page listed in the FAQ.
+
+Cheers,
+
+-Soyier]]
+
+--NEW
+
+L.UPDATE_WARNING = [[Thanks for updating Neuron!
+
+Today's update is making it such that the menubar and the bagbar are finally saved per-character, rather than per account, which was hugely annoying.
+
+Unfortunately, you will need to manually re-position these bars.
+
+-Soyier]]
+
+L.OPTIONS_BLIZZBAR = "Show Blizzard's Action Bar"
+L.OPTIONS_ANIMATE = "Enable Neuron's Orb Animation"
+L.OPTIONS_DRAENORBAR = "Show the Draenor Garrison Action Icon"
+
+L.BAR_VISABLE_STATES = "Bar Visibility Toggles"
+L.TARGET = "Target"
+L.TARGET1 = "Has Target"
+L.TARGET0 = "No Target"
+L.GUI_TARGET = "Target"
+L.GUI_INDOORS = "Indoors"
+L.GUI_OUTDOORS = "Outdoors"
+L.GUI_MOUNTED = "Mounted"
+L.GUI_FLYING = "Flying"
+L.GUI_RESTING = "Resting"
+L.GUI_SWIMMING = "Swimming"
+L.GUI_HARM = "Harm"
+L.GUI_HELP = "Help"
+L.GUI_SPEC1 = "Display button for spec 1"
+L.GUI_SPEC2 = "Display button for spec 2"
+L.GUI_SPEC3 = "Display button for spec 3"
+L.GUI_SPEC4 = "Display button for spec 4"
+
+
+L.SPELL_TARGETING_OPTIONS = "Spell Target Options"
+
+L.SPELL_TARGETING_SELF_CAST_MODIFIER = "Self-Cast by modifier"
+L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE = "Toggle the use of the modifier-based self-cast functionality."
+L.SPELL_TARGETING_SELF_CAST_MODIFIER_SELECT = "Select the Self-Cast Modifier"
+
+L.SPELL_TARGETING_FOCUS_CAST_MODIFIER ="Focus-Cast by modifier"
+L.SPELL_TARGETING_FOCUS_CAST_MODIFIER_TOGGLE = "Toggle the use of the modifier-based focus-cast functionality."
+L.SPELL_TARGETING_FOCUS_CAST_MODIFIER_SELECT = "Select the Focus-Cast Modifier"
+
+L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK = "Right-click Self-Cast"
+L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK_TOGGLE = "Toggle the use of the right-click self-cast functionality."
+
+L.SPELL_TARGETING_MOUSEOVER_CAST = "Mouse-Over Casting"
+L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER_TOGGLE = "Toggle the use of the modifier-based mouse-over cast functionality."
+L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER_SELECT = "Select a modifier for Mouse-Over Casting"
+L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER = "Mouse-Over Casting Modifier"
+
+L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK_SELECT = "Select the Self-Cast Modifier"
+
+L.SPELL_TARGETING_MODIFIER_NONE_REMINDER = "\"None\" as modifier for Self & Focus Casting means its disabled. \nFor Mouse-Over Casting it means its always active, and no modifier is required."
+
+L.ZONEABILITY_BAR_BORDER = "Show Bar Border"
+
+L.XP_BAR = "XP Bar"
+L.REP_BAR = "Rep Bar"
+L.CAST_BAR = "Cast Bar"
+L.MIRROR_BAR = "Mirror Bar"
+L.STATUSBAR_BAR = "Undefined Status Bar"
+
+L.WIDTH ="Width"
+L.HEIGHT = "Height"
+L.BARFILL = "Bar Fill"
+L.BORDER = "Border"
+L.ORIENT = "Orientation"
+
+L.CENTER_TEXT = "Center Text"
+L.LEFT_TEXT = "Left Text"
+L.RIGHT_TEXT = "Right Text"
+L.MOUSE_TEXT = "Mouseover Text"
+L.TOOLTIP_TEXT = "Tooltip Text"
+
+L.UNIT_WATCH = "Unit"
+L.CAST_ICON = "Cast Icon"
+
+L.TEXT_BLANK = "None"
+L.TEXT_SPELL = "Spell"
+L.TEXT_TIMER = "Timer"
+L.TEXT_CURRNEXT = "Current/Next"
+L.TEXT_RESTED = "Rested Levels"
+L.TEXT_PERCENT = "Percent"
+L.TEXT_BUBBLES = "Bubbles"
+L.TEXT_FACTION = "Faction & Standing"
+L.TEXT_TYPE = "Type"
+
+L.AUTO_SELECT = "Auto Select"
+
+L.BARFILL_DEFAULT = "Default"
+L.BARFILL_CONTRAST = "Contrast"
+L.BARFILL_CARPAINT = "Carpaint"
+L.BARFILL_GEL = "Gel"
+L.BARFILL_GLASSED = "Glassed"
+L.BARFILL_SOFT = "Soft"
+L.BARFILL_VELVET = "Velvet"
+
+L.BORDER_TOOLTIP = "Tooltip"
+L.BORDER_SLIDER = "Slider"
+L.BORDER_DIALOG = "Dialog"
+L.BORDER_NONE = "None"
+
+L.ORIENT_HORIZ = "Horizontal"
+L.ORIENT_VERT = "Vertical"

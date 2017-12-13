@@ -1633,7 +1633,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	frame.tab3 = f; frame.tabs[f] = frame.hidden
 
 	local states = {}
-	local anchor, last, count, prowl
+	local anchor, last, count
 
 	local MAS = NEURON.MANAGED_ACTION_STATES
 
@@ -1664,11 +1664,6 @@ function NEURON:ActionEditor_OnLoad(frame)
 				f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -18)
 				last = f
 			end
-
-			--[[if (state == "stance" and NEURON.class == "DRUID") then
-				prowl = f
-				IsDruid = f
-			end]]
 
 			tinsert(barOpt.pri, f)
 		end
@@ -2030,11 +2025,6 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 			button:SetWidth(18)
 			button:SetHeight(18)
 
-			--[[if(data[count] == "prowl" and IsDruid ) then
-				frame.option = "prowl"
-				frame.stance = IsDruid
-			end]]
-			--else
 		else
 
 			button:Hide()

@@ -130,7 +130,6 @@ NEURON.barCDEF = {
 	homestate = true,
 	paged = false,
 	stance = false,
-	prowl = false,
 	stealth = false,
 	reaction = false,
 	combat = false,
@@ -580,9 +579,6 @@ function HANDLER:UpdateStates(bar)
 					statemap = self:BuildStateMap(bar, state)
 				end
 
-				--[[if (state == "prowl" and bar.cdata.prowl and NEURON.kitty) then
-					statemap = values.states:gsub("KITTY", NEURON.kitty)
-				end]]
 
 				if (state == "custom" and bar.cdata.custom) then
 
@@ -1967,10 +1963,6 @@ function BAR:SetState(msg, gui, checked, query)
 		if (state == "stance") then
 			self.cdata.paged = false
 			self.cdata.pet = false
-
-			--[[if (not self.cdata.stance and self.cdata.prowl) then
-				self.cdata.prowl = false
-			end]]
 
 
 			if (NEURON.class == "ROGUE" and self.cdata.stealth) then

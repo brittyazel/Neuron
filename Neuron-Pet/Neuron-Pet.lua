@@ -255,40 +255,42 @@ end
 
 function PETBTN:OnUpdate(elapsed)
 
-	if (self.mac_flash) then
+	if (self.elapsed > NeuronGDB.throttle) then --throttle down this code to ease up on the CPU a bit
+		if (self.mac_flash) then
 
-		self.mac_flashing = true
+			self.mac_flashing = true
 
-		if (alphaDir == 1) then
-			if ((1-(alphaTimer)) >= 0) then
-				self.iconframeflash:Show()
+			if (alphaDir == 1) then
+				if ((1-(alphaTimer)) >= 0) then
+					self.iconframeflash:Show()
+				end
+			elseif (alphaDir == 0) then
+				if ((alphaTimer) <= 1) then
+					self.iconframeflash:Hide()
+				end
 			end
-		elseif (alphaDir == 0) then
-			if ((alphaTimer) <= 1) then
-				self.iconframeflash:Hide()
+
+		elseif (self.mac_flashing) then
+
+			self.iconframeflash:Hide()
+			self.mac_flashing = false
+		end
+
+		self:PET_UpdateButton(self.actionID)
+
+		if (self.updateRightClick and not InCombatLockdown()) then
+			local spell = GetPetActionInfo(self.actionID)
+
+			if (spell) then
+				self:SetAttribute("*macrotext2", "/petautocasttoggle "..spell)
+				self.updateRightClick = nil
 			end
 		end
 
-	elseif (self.mac_flashing) then
-
-		self.iconframeflash:Hide()
-		self.mac_flashing = false
+		self.elapsed = 0
 	end
 
 	self.elapsed = self.elapsed + elapsed
-
-	if (self.elapsed > NeuronGDB.throttle) then
-		self:PET_UpdateButton(self.actionID)
-	end
-
-	if (self.updateRightClick and not InCombatLockdown()) then
-		local spell = GetPetActionInfo(self.actionID)
-
-		if (spell) then
-			self:SetAttribute("*macrotext2", "/petautocasttoggle "..spell)
-			self.updateRightClick = nil
-		end
-	end
 end
 
 

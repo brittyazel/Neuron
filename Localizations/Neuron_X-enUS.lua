@@ -1,14 +1,11 @@
 ﻿--Neuron, a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
 
---English spelling validated by Eledryn
 local AddOnFolderName, private = ...
 
--- See http://wow.curseforge.com/addons/neuron-status-bars/localization/
 local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "enUS", true)
 
 if not L then return end
---@localization(locale="enUS", format="lua_additive_table", handle-unlocalized="comment")@
 
 L.NEURON = "Neuron"
 
@@ -156,9 +153,6 @@ L.SLASH_CMD45_DESC = "Toggle Blizzard's Vehicle Bar"
 L.SLASH_CMD46 = "Animate"
 L.SLASH_CMD46_DESC = "Toggle Neuron's Orb Animation"
 
---L.SLASH_CMD47 = "DraenorBar"
---L.SLASH_CMD47_DESC = "Toggle Draenor Garrison Bar"
-
 L.SLASH_CMD48 = "Debug"
 L.SLASH_CMD48_DESC = "Degutool"
 
@@ -188,7 +182,6 @@ L.ALT = "alt" -- keep in lower case
 L.CTRL = "ctrl" -- keep in lower case
 L.SHIFT = "shift" -- keep in lower case
 L.STEALTH = "stealth" -- keep in lower case
-L.PROWL = "prowl" -- keep in lower case
 L.REACTION = "reaction" -- keep in lower case
 L.COMBAT = "combat" -- keep in lower case
 L.GROUP = "group" -- keep in lower case
@@ -218,8 +211,6 @@ L.SHIFT1 = "Shift Down"
 
 L.STEALTH0 = "No Stealth"
 L.STEALTH1 = "Stealth"
-L.PROWL0 = "No Prowl"
-L.PROWL1 = "Prowl"
 L.REACTION0 = "Friendly"
 L.REACTION1 = "Hostile"
 L.COMBAT0 = "No Combat"
@@ -244,7 +235,6 @@ L.CUSTOM0 = "Custom States"
 
 --class specific state names
 L.DRUID_CASTER = "Caster Form"
-L.DRUID_PROWL = "Prowl"
 L.PRIEST_HEALER = "Healer Form"
 L.ROGUE_MELEE = "Melee"
 L.WARLOCK_CASTER = "Caster Form"
@@ -367,7 +357,6 @@ L.GUI_POSSESS = "Possess"
 L.GUI_OVERRIDE = "Override"
 L.GUI_EXTRABAR = "Extra Bar"
 L.GUI_CUSTOM = "Custom"
-L.GUI_PROWL = "Prowl"
 
 L.SHADOW_DANCE = "Shadow Dance"
 

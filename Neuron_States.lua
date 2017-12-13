@@ -97,7 +97,6 @@ Neuron.MANAGED_ACTION_STATES = {
 		order = 13,
 	},
 
-
 	possess = {
 		states = "[possessbar] possess1; laststate",
 		rangeStart = 1,
@@ -119,23 +118,17 @@ Neuron.MANAGED_ACTION_STATES = {
 		order = 16,
 	},
 
-	--[[prowl = {
-		states = "[stance:KITTY,stealth] prowl1; laststate",
-		rangeStart = 1,
-		rangeStop = 1,
-		order = 17
-	},]]
 	target = {
 		states = "[exists] target1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 18,
+		order = 17,
 	},
 	indoors = {
 		states = "[indoors] indoors1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 19,
+		order = 18,
 	},
 	outdoors = {
 		states = "[outdoors] outdoors1; laststate",
@@ -246,7 +239,7 @@ Neuron.MANAGED_BAR_STATES = {
 		states = "[novehicleui] vehicle0; [vehicleui] vehicle1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 13,
+		order = 9,
 	},
 
 	group = {
@@ -299,66 +292,59 @@ Neuron.MANAGED_BAR_STATES = {
 		order = 16,
 	},
 
-	--[[prowl = {
-		states = "[nostance:KITTY,nostealth] prowl0; [stance:KITTY,stealth] prowl1",
-		rangeStart = 1,
-		rangeStop = 1,
-		order = 17,
-	},]]
-
 	target = {
 		states = "[noexists] target0; [exists] target1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 18,
+		order = 17,
 	},
 
 	indoors = {
 		states = "[noindoors] indoors0; [indoors] indoors1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 19,
+		order = 18,
 	},
 	outdoors = {
 		states = "[nooutdoors] outdoors0; [outdoors] outdoors1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 20,
+		order = 19,
 	},
 	mounted = {
 		states = "[nomounted] mounted0; [mounted] mounted1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 21,
+		order = 20,
 	},
 	flying = {
 		states = "[noflying] flying0; [flying] flying1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 22,
+		order = 21,
 	},
 	help = {
 		states = "[nohelp] help0; [help] help1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 23,
+		order = 22,
 	},
 	harm = {
 		states = "[noharm] harm0; [harm] harm1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 24,
+		order = 23,
 	},
 	resting = {
 		states = "[noresting] resting0; [resting] resting1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 25,
+		order = 24,
 	},
 	swimming = {
 		states = "[noswimming] swimming0; [swimming] swimming1",
 		rangeStart = 1,
 		rangeStop = 1,
-		order = 26,
+		order = 25,
 	},
 }
