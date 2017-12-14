@@ -1,11 +1,7 @@
---Neuron Broker Plugin, a World of Warcraft® user interface addon.
+--Neuron , a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
+--Copyright© 2017 Britt W. Yazel, aka Soyier - All rights reserved.
 
--- Original Broker Macaroon Comments retained --
--- Broker_Macaroon : A simple Data Broker minimap button replacement by Lightbright@Alexstrasza
--- based on ideas by Macaroon (Maul) and Broker_Recount (Elsia).
--- Most of this code comes from or is inspired by one or both of these addons and the credit
--- should go to them.
 
 local NEURON = Neuron
 local GDB

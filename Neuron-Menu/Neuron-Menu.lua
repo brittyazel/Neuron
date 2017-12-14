@@ -1,8 +1,9 @@
 --Neuron Menu Bar, a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
+--Copyright© 2017 Britt W. Yazel, aka Soyier - All rights reserved.
 
 --Most of this code is based off of the 7.0 version of Blizzard's
--- MainMenuBarMicroButtons.lua & MainMenuBarMicroButtons.xml files
+--MainMenuBarMicroButtons.lua & MainMenuBarMicroButtons.xml files
 
 
 -------------------------------------------------------------------------------

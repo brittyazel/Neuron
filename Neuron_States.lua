@@ -1,5 +1,6 @@
-﻿--Neuron, a World of Warcraft® user interface addon.
+﻿--Neuron , a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
+--Copyright© 2017 Britt W. Yazel, aka Soyier - All rights reserved.
 
 Neuron.MANAGED_ACTION_STATES = {
 

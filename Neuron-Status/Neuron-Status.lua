@@ -1,5 +1,6 @@
 --Neuron Status Bars, a World of Warcraft® user interface addon.
 --Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
+--Copyright© 2017 Britt W. Yazel, aka Soyier - All rights reserved.
 
 local NEURON = Neuron
 
@@ -325,7 +326,7 @@ local adjOptions = {
 }
 
 
-
+---TODO: need to make the curXPType bar specific instead of global
 local function xpstrings_Update() --handles updating all the strings for the play XP watch bar
 
 	local currXP, nextXP, restedXP, percentXP, bubbles
@@ -419,12 +420,8 @@ end
 
 --These factions return fID but have 8 levels instead of 6
 local BrawlerGuildFactions = {
-	--[1691] = true, --Aliance Legion needs verification
-	--[1691] = true, --Aliance WoD
-	[1419] = true, --Aliance MoP
-	--[2010] = true, --Horde Legion  needs verification
-	--[1690] = true, --Horde WoD
-	[1374] = true, --Horde MoP
+	[1419] = true, --Aliance
+	[1374] = true, --Horde
 }
 
 --- Creates a table containing provided data
@@ -2758,17 +2755,6 @@ local function controlOnEvent(self, event, ...)
 
 		PEW = true
 
-		--[[elseif (event == "PLAYER_XP_UPDATE" or event == "UPDATE_EXHAUSTION") then
-
-            xpstrings_Update()
-
-        elseif (event == "ARTIFACT_XP_UPDATE") then
-
-            xpstrings_Update()
-
-        elseif(event == "HONOR_XP_UPDATE") then
-
-            pointstrings_Update()]]
 
 	elseif (event == "UPDATE_FACTION" or event == "CHAT_MSG_COMBAT_FACTION_CHANGE") then
 
@@ -2795,11 +2781,6 @@ frame:SetScript("OnEvent", controlOnEvent)
 frame:RegisterEvent("ADDON_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_ENTERING_WORLD")
---xp
---[[frame:RegisterEvent("PLAYER_XP_UPDATE")
-frame:RegisterEvent("UPDATE_EXHAUSTION")
-frame:RegisterEvent("HONOR_XP_UPDATE");
-frame:RegisterEvent("ARTIFACT_XP_UPDATE");]]
 
 --rep
 frame:RegisterEvent("UPDATE_FACTION")
