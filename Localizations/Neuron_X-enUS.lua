@@ -7,11 +7,11 @@ local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "enUS", true)
 
 if not L then return end
 
-L.NEURON = "Neuron"
+L.NEURON = "Neuron" --should not translate
 
 L.DEFAULT = "Default"
 
-L.SLASH1 = "/neuron"
+L.SLASH1 = "/neuron" --should not translate
 L.SLASH_HINT1 = "\n/neuron |cff00ff00<command>|r <options>"
 L.SLASH_HINT2 = "\nCommand List -\n"
 
