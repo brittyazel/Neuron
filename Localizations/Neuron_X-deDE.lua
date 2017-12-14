@@ -11,7 +11,7 @@ L.NEURON = "Neuron"
 
 L.DEFAULT = "Standard"
 
-L.SLASH1 = "/neuron"
+--L.SLASH1 = "/neuron"
 L.SLASH_HINT1 = "\n/neuron |cff00ff00<command>|r <optionen>"
 L.SLASH_HINT2 = "\nBefehlsliste -\n"
 
