@@ -595,7 +595,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 
 		info.arg1 = "player_xp"
 		info.arg2 = frame.statusbar
-		info.text = "Track Player XP"
+		info.text = L.TRACK_XP
 		info.func = switchCurXPType
 
 		UIDropDownMenu_AddButton(info)
@@ -604,7 +604,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 		if(HasArtifactEquipped("player")) then --only show this button if there's an artifact to show
 			info.arg1 = "artifact_xp"
 			info.arg2 = frame.statusbar
-			info.text = "Track Artifact XP"
+			info.text = L.TRACK_AP
 			info.func = switchCurXPType
 
 			UIDropDownMenu_AddButton(info)
@@ -614,7 +614,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
 			info.arg1 = "honor_points"
 			info.arg2 = frame.statusbar
-			info.text = "Track Honor Points"
+			info.text = L.TRACK_HONOR
 			info.func = switchCurXPType
 
 			UIDropDownMenu_AddButton(info)

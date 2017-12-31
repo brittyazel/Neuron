@@ -21,6 +21,8 @@ local string = _G.string
 local table = _G.table
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+NeuronProfile = LibStub("AceAddon-3.0"):NewAddon("NeuronProfile") --This should be merged into the "NeuronBase" addon eventually.
+NeuronBase = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0")
 
 
 -------------------------------------------------------------------------------
@@ -29,9 +31,26 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local latestVersionNum = "0.9.8" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
+local Install_Message = [[Thank's for installing Neuron.
+
+Neuron is currently in a "|cffffff00release|r" state.
+
+If you have any questions or concerns please direct all inquirires our github page listed in the FAQ.
+
+Cheers,
+
+-Soyier]]
+
+local Update_Message = [[Thanks for updating Neuron!
+
+Today's update is making it such that the menubar and the bagbar are finally saved per-character, rather than per account, which was hugely annoying.
+
+Unfortunately, you will need to manually re-position these bars.
+
+-Soyier]]
+
+
 Neuron = {
-	SLASHCMDS = {},
-	SLASHHELP = {},
 	sIndex = {},
 	iIndex = {[1] = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"},
 	cIndex = {},
@@ -205,8 +224,6 @@ local handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate"
 
 local level, stanceStringsUpdated, PEW
 
-
-NeuronProfile = LibStub("AceAddon-3.0"):NewAddon("Neuron")
 
 
 --ACE GUI OPTION TABLE
@@ -414,73 +431,111 @@ local defaults = {
 
 local defGDB, GDB, defCDB, CDB, defSPEC, SPEC = CopyTable(NeuronGDB), CopyTable(NeuronGDB), CopyTable(NeuronCDB), CopyTable(NeuronCDB), CopyTable(NeuronSpec), CopyTable(NeuronSpec)
 
+
+--------------------------------------------
+--------------Slash Functions --------------
+--------------------------------------------
+
 local slashFunctions = {
-	[1] = "ToggleMainMenu",
-	[2] = "CreateNewBar",
-	[3] = "DeleteBar",
-	[4] = "ToggleBars",
-	[5] = "AddObjects",
-	[6] = "RemoveObjects",
-	[7] = "ToggleEditFrames",
-	[8] = "ToggleBindings",
-	[9] = "ScaleBar",
-	[10] = "SnapToBar",
-	[11] = "AutoHideBar",
-	[12] = "ConcealBar",
-	[13] = "ShapeBar",
-	[14] = "NameBar",
-	[15] = "StrataSet",
-	[16] = "AlphaSet",
-	[17] = "AlphaUpSet",
-	[18] = "ArcStartSet",
-	[19] = "ArcLengthSet",
-	[20] = "ColumnsSet",
-	[21] = "PadHSet",
-	[22] = "PadVSet",
-	[23] = "PadHVSet",
-	[24] = "XAxisSet",
-	[25] = "YAxisSet",
-	[26] = "SetState",
-	[27] = "SetVisibility",
-	[28] = "ShowGridSet",
-	[29] = "LockSet",
-	[30] = "ToolTipSet",
-	[31] = "SpellGlowSet",
-	[32] = "BindTextSet",
-	[33] = "MacroTextSet",
-	[34] = "CountTextSet",
-	[35] = "CDTextSet",
-	[36] = "CDAlphaSet",
-	[37] = "AuraTextSet",
-	[38] = "AuraIndSet",
-	[39] = "UpClicksSet",
-	[40] = "DownClicksSet",
-	[41] = "SetTimerLimit",
-	[42] = "PrintStateList",
-	[43] = "PrintBarTypes",
-	[44] = "BlizzBar",
-	[45] = "",
-	[46] = "Animate",
-	[47] = "MoveSpecButtons",
+	{L["Menu"], L["Menu_Description"], "ToggleMainMenu"},
+	{L["Create"], L["Create_Description"], "CreateNewBar"},
+	{L["Delete"], L["Delete_Description"], "DeleteBar"},
+	{L["Config"], L["Config_Description"], "ToggleBars"},
+	{L["Add"], L["Add_Description"], "AddObjects"},
+	{L["Remove"], L["Remove_Description"], "RemoveObjects"},
+	{L["Edit"], L["Edit_Description"], "ToggleEditFrames"},
+	{L["Bind"], L["Bind_Description"], "ToggleBindings"},
+	{L["Scale"], L["Scale_Description"], "ScaleBar"},
+	{L["SnapTo"], L["SnapTo_Description"], "SnapToBar"},
+	{L["AutoHide"], L["AutoHide_Description"], "AutoHideBar"},
+	{L["Conceal"], L["Conceal_Description"], "ConcealBar"},
+	{L["Shape"], L["Shape_Description"], "ShapeBar"},
+	{L["Name"], L["Name_Description"], "NameBar"},
+	{L["Strata"], L["Strata_Description"], "StrataSet"},
+	{L["Alpha"], L["Alpha_Description"], "AlphaSet"},
+	{L["AlphaUp"], L["AlphaUp_Description"], "AlphaUpSet"},
+	{L["ArcStart"], L["ArcStart_Description"], "ArcStartSet"},
+	{L["ArcLen"], L["ArcLen_Description"], "ArcLengthSet"},
+	{L["Columns"], L["Columns_Description"], "ColumnsSet"},
+	{L["PadH"], L["PadH_Description"], "PadHSet"},
+	{L["PadV"], L["PadV_Description"], "PadVSet"},
+	{L["PadHV"], L["PadHV_Description"], "PadHVSet"},
+	{L["X"], L["X_Description"], "XAxisSet"},
+	{L["Y"], L["Y_Description"], "YAxisSet"},
+	{L["State"], L["State_Description"], "SetState"},
+	{L["StateList"], L["StateList_Description"], "PrintStateList"},
+	{L["Vis"], L["Vis_Description"], "SetVisibility"},
+	{L["ShowGrid"], L["ShowGrid_Description"], "ShowGridSet"},
+	{L["Lock"], L["Lock_Description"], "LockSet"},
+	{L["Tooltips"], L["Tooltips_Description"], "ToolTipSet"},
+	{L["SpellGlow"], L["SpellGlow_Description"], "SpellGlowSet"},
+	{L["BindText"], L["BindText_Description"], "BindTextSet"},
+	{L["MacroText"], L["MacroText_Description"], "MacroTextSet"},
+	{L["CountText"], L["CountText_Description"], "CountTextSet"},
+	{L["CDText"], L["CDText_Description"], "CDTextSet"},
+	{L["CDAlpha"], L["CDAlpha_Description"], "CDAlphaSet"},
+	{L["AuraText"], L["AuraText_Description"], "AuraTextSet"},
+	{L["AuraInd"], L["AuraInd_Description"], "AuraIndSet"},
+	{L["UpClick"], L["UpClick_Description"], "UpClicksSet"},
+	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
+	{L["TimerLimit"], L["TimerLimit_Description"], "SetTimerLimit"},
+	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
+	{L["BlizzBar"], L["BlizzBar_Description"], "BlizzBar"},
+	{L["Animate"], L["Animate_Description"], "Animate"},
+	--{L["MoveSpecButtons"], L["MoveSpecButtons_Description"], "MoveSpecButtons"},
 }
+---New Slash functionality using Ace3
+NeuronBase:RegisterChatCommand("neuron", "slashHandler")
 
+function NeuronBase:slashHandler(input)
 
-local count = 1
-for index,func in ipairs(slashFunctions) do
-	NEURON.SLASHCMDS[L["SLASH_CMD"..index]:lower()] = {L["SLASH_CMD"..index], L["SLASH_CMD"..index.."_DESC"], func}
-
-	if (func and #func > 0) then
-		NEURON.SLASHHELP[count] = "       |cff00ff00"..L["SLASH_CMD"..index].."|r: "..L["SLASH_CMD"..index.."_DESC"]
-		count = count + 1
+	if (strlen(input)==0 or input:lower() == "help") then
+		printSlashHelp()
+		return
 	end
+
+	local commandAndArgs = {strsplit(" ", input)} --split the input into the command and the arguments
+	local command = commandAndArgs[1]
+	local args = {}
+	for i = 2,#commandAndArgs do
+		args[i-1] = commandAndArgs[i]
+	end
+
+
+	for i = 1,#slashFunctions do
+
+		if (command == slashFunctions[i][1]:lower()) then
+			local func = slashFunctions[i][3]
+			local bar = NEURON.CurrentBar
+
+			if (NEURON[func]) then
+				NEURON[func](NEURON, args[1])
+			elseif (bar and bar[func]) then
+				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
+			else
+				print(L.SELECT_BAR)
+			end
+		end
+	end
+
+
+
+end
+
+function printSlashHelp()
+
+	NeuronBase:Print(L["Command List"]..":")
+	for i = 1,#slashFunctions do
+		--formats the output to be the command name and then the description
+		NeuronBase:Print(slashFunctions[i][1]:lower().." - " .."("..slashFunctions[i][2]..")")
+	end
+
 end
 
 
-
-
----------------------------------------------------------------------------------
---------Start of Functions
----------------------------------------------------------------------------------
+-------------------------------------------------------------------------
+--------------------Start of Functions-----------------------------------
+-------------------------------------------------------------------------
 
 function NEURON:GetParentKeys(frame)
 	if (frame == nil) then
@@ -876,7 +931,7 @@ function NEURON:UpdateStanceStrings()
 
 		--Adds Shadow Dance State for Subelty Rogues
 		if (NEURON.class == "ROGUE" and GetSpecialization() == 3 ) then
-			NEURON.STATES["stance2"] = L.SHADOW_DANCE
+			NEURON.STATES["stance2"] = L.ROGUE_SHADOW_DANCE
 			NEURON.StanceIndex[2] = 185313
 			states = states.."[stance:2] stance2; "
 		end
@@ -918,59 +973,6 @@ function NEURON:UpdateStanceStrings()
 end
 
 
-local function printSlashHelp()
-	print(L.SLASH_HINT1)
-	print(L.SLASH_HINT2)
-
-	for k,v in ipairs(NEURON.SLASHHELP) do
-		print(v)
-	end
-end
-
-local commands = {}
-
-local function slashHandler(msg)
-	wipe(commands)
-
-	if ((not msg) or (strlen(msg) <= 0)) then
-		printSlashHelp()
-
-		return
-	end
-
-	(msg):gsub("(%S+)", function(cmd) tinsert(commands, cmd) end)
-
-	if (NEURON.SLASHCMDS[commands[1]:lower()]) then
-		local command
-
-		for k,v in ipairs(commands) do
-			if (k ~= 1) then
-				if (not command) then
-					command = v
-				else
-					command = command.." "..v
-				end
-			end
-		end
-
-		if (commands) then
-			local func = NEURON.SLASHCMDS[commands[1]:lower()][3]
-			local bar = NEURON.CurrentBar
-
-			if (NEURON[func]) then
-				NEURON[func](NEURON, command)
-			elseif (bar and bar[func]) then
-				bar[func](bar, command)
-			else
-				print(L.SELECT_BAR)
-			end
-
-		end
-	else
-		printSlashHelp()
-	end
-
-end
 
 
 function NEURON.EditBox_PopUpInitialize(popupFrame, data)
@@ -1240,7 +1242,7 @@ end
 
 function NEURON:MinimapButton_OnEnter(minimap)
 	GameTooltip_SetDefaultAnchor(GameTooltip, minimap)
-	GameTooltip:SetText(L.NEURON, 1, 1, 1)
+	GameTooltip:SetText("Neuron", 1, 1, 1)
 	GameTooltip:AddLine(L.MINIMAP_TOOLTIP1, 1, 1, 1)
 	GameTooltip:AddLine(L.MINIMAP_TOOLTIP2, 1, 1, 1)
 	GameTooltip:AddLine(L.MINIMAP_TOOLTIP3, 1, 1, 1)
@@ -2072,23 +2074,20 @@ local function control_OnEvent(self, event, ...)
 		end)
 
 		StaticPopupDialogs["NEURON_UPDATE_WARNING"] = {
-			text = L.UPDATE_WARNING,
+			text = Update_Message,
 			button1 = OKAY,
 			timeout = 0,
 			OnAccept = function() GDB.updateWarning = latestVersionNum end
 		}
 
 		StaticPopupDialogs["NEURON_INSTALL_MESSAGE"] = {
-			text = L.INSTALL_MESSAGE,
+			text = Install_Message,
 			button1 = OKAY,
 			timeout = 0,
 			OnAccept = function() GDB.updateWarning = latestVersionNum end,
 		}
 
 	elseif (event == "VARIABLES_LOADED") then
-
-		SlashCmdList["NEURON"] = slashHandler
-		SLASH_NEURON1 = L.SLASH1 --this follows the standard method of creating slash menus, ignore global creation warning.
 
 		InterfaceOptionsFrame:SetFrameStrata("HIGH")
 
@@ -2223,7 +2222,7 @@ end
 function NeuronProfile:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", defaults)
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonName)
-	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)--, {"/myslash", "/my"})
+	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
 
 	options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)

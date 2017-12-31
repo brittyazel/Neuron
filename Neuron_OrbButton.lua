@@ -17,8 +17,8 @@ ORB.DataObj = LibStub:GetLibrary("LibDataBroker-1.1")
 ORB.DataObj:NewDataObject("NeuronBroker", {
 
 	type = "launcher",
-	text = " "..L.NEURON,
-	label = L.NEURON,
+	text = " ".."Neuron",
+	label = "Neuron",
 	icon = "Interface\\AddOns\\Neuron\\Images\\static_icon",
 	OnClick = function(self, button, down)
 
@@ -27,7 +27,7 @@ ORB.DataObj:NewDataObject("NeuronBroker", {
 	end,
 	OnTooltipShow = function(tooltip)
 		if not tooltip or not tooltip.AddLine then return end
-		tooltip:SetText(L.NEURON)
+		tooltip:SetText("Neuron")
 		tooltip:AddLine(L.MINIMAP_TOOLTIP1, 1, 1, 1)
 		tooltip:AddLine(L.MINIMAP_TOOLTIP2, 1, 1, 1)
 		tooltip:AddLine(L.MINIMAP_TOOLTIP3, 1, 1, 1)

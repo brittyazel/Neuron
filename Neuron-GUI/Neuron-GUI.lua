@@ -1654,7 +1654,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 			if state == "stance" and (NEURON.class == "ROGUE") then
 				f.text:SetText(L["STEALTH1"])
 			else
-				f.text:SetText(L["GUI_"..state:upper()])
+				f.text:SetText(L[state:upper()])
 			end
 			f.option = state
 
@@ -1678,7 +1678,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f:SetWidth(18)
 	f:SetHeight(18)
 	f:SetScript("OnClick", setBarActionState)
-	f.text:SetText(L["GUI_CUSTOM"])
+	f.text:SetText(L.CUSTOM)
 	f.option = "custom"
 	f:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -10)
 	tinsert(barOpt.sec, f)
@@ -2015,7 +2015,7 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 		count = dataOffset + i
 
 		if (data[count]) then
-			text = (L["GUI_"..data[count]:upper()])
+			text = (L[data[count]:upper()])
 
 			button.option = data[count]
 			button:SetChecked(bar.cdata[button.option ])
