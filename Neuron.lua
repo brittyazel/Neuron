@@ -831,37 +831,13 @@ function NEURON:UpdateIconIndex()
 	wipe(temp)
 	GetMacroIcons(temp)
 
-	--for k,v in ipairs(temp) do
 	for k,icon in ipairs(temp) do
 		if (not icons[icon]) then
 			ICONS[#ICONS+1] = icon; icons[icon] = true
 		end
-		--[[
-            if(type(v) == "number") then
-                TempTexture:SetToFileData(v);
-                icon = TempTexture:GetTexture()
-            else
-                icon = "INTERFACE\\ICONS\\"..v:upper()
-            end
 
-            if (not icons[icon:upper()]) then
-                ICONS[#ICONS+1] = icon:upper(); icons[icon:upper()] = true
-            end
-            --]]
 	end
 
-	--wipe(temp)
-
-	--GetMacroItemIcons(temp)
-
-	--for k,v in ipairs(temp) do
-
-	--	icon = "INTERFACE\\ICONS\\"..v:upper()
-
-	--	if (not icons[icon:upper()]) then
-	--		ICONS[#ICONS+1] = icon:upper(); icons[icon:upper()] = true
-	--	end
-	--end
 end
 
 function NEURON:UpdateStanceStrings()
@@ -882,7 +858,6 @@ function NEURON:UpdateStanceStrings()
 		end
 
 		for i=1,GetNumShapeshiftForms() do
-			--_, name = GetShapeshiftFormInfo(i)
 			icon, name, active, castable, spellID = GetShapeshiftFormInfo(i)
 
 			if (name) then
