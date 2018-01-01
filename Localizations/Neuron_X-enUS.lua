@@ -8,6 +8,9 @@ local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "enUS", true)
 
 if not L then return end
 
+--@localization(locale="enUS", same-key-is-true=true)@
+
+--@do-not-package@
 
 L["Command List"] = true
 
@@ -252,7 +255,6 @@ L["Keybind_Tooltip_2"] = "Left-Click to |cfff00000LOCK|r this %s's bindings\n\nR
 L["Keybind_Tooltip_3"] = "Current Binding(s):"
 
 
-L["edit"] = true
 L["Empty Button"] = true
 L["Edit Bindings"] = true
 L["None"] = true
@@ -719,3 +721,5 @@ This will show all items & spells that have "heal" in the name
 Most options may be abbreviated -
 /flyout i:bandage:c:c:c:15:c:h is the same as /flyout item:bandage:circular:center:center:15:click:hide
 ]]
+
+--@end-do-not-package@

@@ -13,6 +13,4 @@
 	<Script file="Neuron_X-zhCN.lua"/>
 	<Script file="Neuron_X-zhTW.lua"/>
 
-	<Script file="Neuron_FAQ-enUS.lua"/>
-
 </Ui>

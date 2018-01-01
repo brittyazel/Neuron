@@ -5,4 +5,12 @@
 local AddOnFolderName, private = ...
 
 local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "frFR", false)
-if not L then return end 
+
+if not L then return end
+
+--@localization(locale="frFR")@
+
+--@do-not-package@
+---exported translations go here:
+
+--@end-do-not-package@

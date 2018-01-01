@@ -129,7 +129,7 @@ function BUTTON:CreateEditFrame(index)
 	EDITOR:RegisterEvent("ACTIONBAR_SHOWGRID")
 	EDITOR:RegisterEvent("ACTIONBAR_HIDEGRID")
 
-	EDITOR.type:SetText(L["edit"])
+	EDITOR.type:SetText(L["Edit"])
 	EDITOR.object = self
 	EDITOR.editType = "button"
 
