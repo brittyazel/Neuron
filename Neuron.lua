@@ -30,7 +30,7 @@ NeuronBase = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0")
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.8" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.11" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thank's for installing Neuron.
@@ -45,9 +45,14 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-Today's update is making it such that the menubar and the bagbar are finally saved per-character, rather than per account, which was hugely annoying.
+Happy New Year! As a 2018 gift to you all, I have fully reworked the locale/language underpinnings of Neuron to fully make use of Ace3 and CurseForge (and hopefully fixed a few bugs along the way).
 
-Unfortunately, you will need to manually re-position these bars.
+As such, language translations can now be submitted easily and beautifully by any community members willing to help via the CurseForge project site!
+
+Let's get Neuron translated into your native language!
+
+(oh, and keep reporting bugs!)
+
 
 -Soyier]]
 
