@@ -53,7 +53,7 @@ end
 -- @return bindkeys: The current key that is bound to the selected button
 function BINDER:GetBindkeyList(button)
 
-	if (not button.data) then return L["none"] end
+	if (not button.data) then return L["None"] end
 
 	local bindkeys = button.keys.hotKeyText:gsub(":", ", ")
 
@@ -61,7 +61,7 @@ function BINDER:GetBindkeyList(button)
 	bindkeys = bindkeys:gsub(", $", "")
 
 	if (strlen(bindkeys) < 1) then
-		bindkeys = L["none"]
+		bindkeys = L["None"]
 	end
 
 	return bindkeys

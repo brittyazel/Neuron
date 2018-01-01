@@ -2585,7 +2585,20 @@ function STATUS:SetType(save)
 
 		end
 
-		self.fbframe.feedback.text:SetText(L[self.config.sbType:upper().."_BAR"])
+
+        local typeString
+
+        if (self.config.sbType == "xp") then
+            typeString = L["XP Bar"]
+        elseif (self.config.sbType == "rep") then
+            typeString = L["Rep Bar"]
+        elseif (self.config.sbType == "cast") then
+            typeString = L["Cast Bar"]
+        elseif (self.config.sbType == "mirror") then
+            typeString = L["Mirror Bar"]
+        end
+
+		self.fbframe.feedback.text:SetText(typeString)
 
 	end
 
