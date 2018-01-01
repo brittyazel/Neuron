@@ -190,12 +190,12 @@ NEURON.SpecialActions = { vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehi
 local SpecialActions = NEURON.SpecialActions
 
 NEURON.PetActions = {
-	petattack = { "Interface\\Icons\\Ability_GhoulFrenzy", L.PETATTACK, { 0, 1, 0, 1 }, "/petattack" },
-	petfollow = { "Interface\\Icons\\Ability_Tracking", L.PETFOLLOW, { 0, 1, 0, 1 }, "/petfollow" },
-	petmoveto = { "Interface\\Icons\\Ability_Hunter_Pet_Goto", L.PETMOVETO, { 0, 1, 0, 1 }, "/petmoveto" },
-	petassist = { "Interface\\Icons\\Ability_Hunter_Pet_Assist", L.PETASSIST, { 0, 1, 0, 1 }, "/petassist" },
-	petdefensive = { "Interface\\Icons\\Ability_Defend", L.PETDEFENSIVE, { 0, 1, 0, 1 }, "/petdefensive" },
-	petpassive = { "Interface\\Icons\\Ability_Seal", L.PETPASSIVE, { 0, 1, 0, 1 }, "/petpassive" },
+	petattack = { "Interface\\Icons\\Ability_GhoulFrenzy", L["Attack"], { 0, 1, 0, 1 }, "/petattack" },
+	petfollow = { "Interface\\Icons\\Ability_Tracking", L["Follow"], { 0, 1, 0, 1 }, "/petfollow" },
+	petmoveto = { "Interface\\Icons\\Ability_Hunter_Pet_Goto", L["Move To"], { 0, 1, 0, 1 }, "/petmoveto" },
+	petassist = { "Interface\\Icons\\Ability_Hunter_Pet_Assist", L["Assist"], { 0, 1, 0, 1 }, "/petassist" },
+	petdefensive = { "Interface\\Icons\\Ability_Defend", L["Defensive"], { 0, 1, 0, 1 }, "/petdefensive" },
+	petpassive = { "Interface\\Icons\\Ability_Seal", L["Passive"], { 0, 1, 0, 1 }, "/petpassive" },
 }
 
 local PetActions = NEURON.PetActions

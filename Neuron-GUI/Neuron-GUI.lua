@@ -38,52 +38,52 @@ local barOpt = { chk = {}, adj = {}, pri = {}, sec = {}, swatch = {}, vis = {} }
 local popupData = {}
 
 local chkOptions = {
-	[1] = { "AUTOHIDE", L.AUTOHIDE, 1, "AutoHideBar" },
-	[2] = { "SHOWGRID", L.SHOWGRID, 1, "ShowGridSet" },
-	[3] = { "SNAPTO", L.SNAPTO, 1, "SnapToBar" },
-	[4] = { "UPCLICKS", L.UPCLICKS, 1, "UpClicksSet" },
-	[5] = { "DOWNCLICKS", L.DOWNCLICKS, 1, "DownClicksSet" },
-	[6] = { "MULTISPEC", L.MULTISPEC, 1, "MultiSpecSet" },
-	[7] = { "HIDDEN", L.HIDDEN, 1, "ConcealBar" },
-	[8] = { "SPELLGLOW", L.SPELLGLOW, 1, "SpellGlowSet" },
-	[9] = { "SPELLGLOW", L.SPELLGLOW_DEFAULT, 1, "SpellGlowSet", "default" },
-	[10] = { "SPELLGLOW", L.SPELLGLOW_ALT, 1, "SpellGlowSet", "alt" },
-	[11] = { "LOCKBAR", L.LOCKBAR, 1, "LockSet" },
-	[12] = { "LOCKBAR", L.LOCKBAR_SHIFT, 0.9, "LockSet", "shift" },
-	[13] = { "LOCKBAR", L.LOCKBAR_CTRL, 0.9, "LockSet", "ctrl" },
-	[14] = { "LOCKBAR", L.LOCKBAR_ALT, 0.9, "LockSet", "alt" },
-	[15] = { "TOOLTIPS", L.TOOLTIPS_OPT, 1, "ToolTipSet" },
-	[16] = { "TOOLTIPS", L.TOOLTIPS_ENH, 0.9, "ToolTipSet", "enhanced" },
-	[17] = { "TOOLTIPS", L.TOOLTIPS_COMBAT, 0.9, "ToolTipSet", "combat" },
-	[18] = { "ZONEABILITY", L.ZONEABILITY_BAR_BORDER, 1, "HideZoneAbilityBorder"},
+	[1] = { "AUTOHIDE", L["Auto Hide"], 1, "AutoHideBar" },
+	[2] = { "SHOWGRID", L["Show Grid"], 1, "ShowGridSet" },
+	[3] = { "SNAPTO", L["Snap To"], 1, "SnapToBar" },
+	[4] = { "UPCLICKS", L["Up Clicks"], 1, "UpClicksSet" },
+	[5] = { "DOWNCLICKS", L["Down Clicks"], 1, "DownClicksSet" },
+	[6] = { "MULTISPEC", L["Multi Spec"], 1, "MultiSpecSet" },
+	[7] = { "HIDDEN", L["Hidden"], 1, "ConcealBar" },
+	[8] = { "SPELLGLOW", L["Spell Alerts"], 1, "SpellGlowSet" },
+	[9] = { "SPELLGLOW", L["Default Alert"], 1, "SpellGlowSet", "default" },
+	[10] = { "SPELLGLOW", L["Subdued Alert"], 1, "SpellGlowSet", "alt" },
+	[11] = { "LOCKBAR", L["Lock Actions"], 1, "LockSet" },
+	[12] = { "LOCKBAR", L["Unlock on SHIFT"], 0.9, "LockSet", "shift" },
+	[13] = { "LOCKBAR", L["Unlock on CTRL"], 0.9, "LockSet", "ctrl" },
+	[14] = { "LOCKBAR", L["Unlock on ALT"], 0.9, "LockSet", "alt" },
+	[15] = { "TOOLTIPS", L["Enable Tooltips"], 1, "ToolTipSet" },
+	[16] = { "TOOLTIPS", L["Enhanced"], 0.9, "ToolTipSet", "enhanced" },
+	[17] = { "TOOLTIPS", L["Hide in Combat"], 0.9, "ToolTipSet", "combat" },
+	[18] = { "ZONEABILITY", L["Show Bar Border"], 1, "HideZoneAbilityBorder"},
 }
 
 local adjOptions = {
-	[1] = { "SCALE", L.SCALE, 1, "ScaleBar", 0.01, 0.1, 4 },
-	[2] = { "SHAPE", L.SHAPE, 2, "ShapeBar", nil, nil, nil, NEURON.BarShapes },
-	[3] = { "COLUMNS", L.COLUMNS, 1, "ColumnsSet", 1 , 0},
-	[4] = { "ARCSTART", L.ARCSTART, 1, "ArcStartSet", 1, 0, 359 },
-	[5] = { "ARCLENGTH", L.ARCLENGTH, 1, "ArcLengthSet", 1, 0, 359 },
-	[6] = { "HPAD", L.HPAD, 1, "PadHSet", 0.1 },
-	[7] = { "VPAD", L.VPAD, 1, "PadVSet", 0.1 },
-	[8] = { "HVPAD", L.HVPAD, 1, "PadHVSet", 0.1 },
-	[9] = { "STRATA", L.STRATA, 2, "StrataSet", nil, nil, nil, NEURON.Stratas },
-	[10] = { "ALPHA", L.ALPHA, 1, "AlphaSet", 0.01, 0, 1 },
-	[11] = { "ALPHAUP", L.ALPHAUP, 2, "AlphaUpSet", nil, nil, nil, NEURON.AlphaUps },
-	[12] = { "ALPHAUP", L.ALPHAUP_SPEED, 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
-	[13] = { "XPOS", L.XPOS, 1, "XAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
-	[14] = { "YPOS", L.YPOS, 1, "YAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
+	[1] = { "SCALE", L["Scale"], 1, "ScaleBar", 0.01, 0.1, 4 },
+	[2] = { "SHAPE", L["Shape"], 2, "ShapeBar", nil, nil, nil, NEURON.BarShapes },
+	[3] = { "COLUMNS", L["Columns"], 1, "ColumnsSet", 1 , 0},
+	[4] = { "ARCSTART", L["Arc Start"], 1, "ArcStartSet", 1, 0, 359 },
+	[5] = { "ARCLENGTH", L["Arc Length"], 1, "ArcLengthSet", 1, 0, 359 },
+	[6] = { "HPAD",L["Horizontal Padding"], 1, "PadHSet", 0.1 },
+	[7] = { "VPAD", L["Vertical Padding"], 1, "PadVSet", 0.1 },
+	[8] = { "HVPAD", L["Horizontal & Vertical Padding"], 1, "PadHVSet", 0.1 },
+	[9] = { "STRATA", L["Strata"], 2, "StrataSet", nil, nil, nil, NEURON.Stratas },
+	[10] = { "ALPHA", L["Alpha"], 1, "AlphaSet", 0.01, 0, 1 },
+	[11] = { "ALPHAUP", L["AlphaUp"], 2, "AlphaUpSet", nil, nil, nil, NEURON.AlphaUps },
+	[12] = { "ALPHAUP", L["AlphaUp Speed"], 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
+	[13] = { "XPOS", L["X Position"], 1, "XAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
+	[14] = { "YPOS", L["Y Position"], 1, "YAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
 }
 
 local swatchOptions = {
-	[1] = { "BINDTEXT", L.BINDTEXT, 1, "BindTextSet", true, nil, "bindColor" },
-	[2] = { "MACROTEXT", L.MACROTEXT, 1, "MacroTextSet", true, nil, "macroColor" },
-	[3] = { "COUNTTEXT", L.COUNTTEXT, 1, "CountTextSet", true, nil, "countColor" },
-	[4] = { "RANGEIND", L.RANGEIND, 1, "RangeIndSet", true, nil, "rangecolor" },
-	[5] = { "CDTEXT", L.CDTEXT, 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
-	[6] = { "CDALPHA", L.CDALPHA, 1, "CDAlphaSet", nil, nil },
-	[7] = { "AURATEXT", L.AURATEXT, 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
-	[8] = { "AURAIND", L.AURAIND, 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
+	[1] = { "BINDTEXT", L["Bind Text"], 1, "BindTextSet", true, nil, "bindColor" },
+	[2] = { "MACROTEXT", L["Macro Text"], 1, "MacroTextSet", true, nil, "macroColor" },
+	[3] = { "COUNTTEXT", L["Count Text"], 1, "CountTextSet", true, nil, "countColor" },
+	[4] = { "RANGEIND", L["Range Indicator"], 1, "RangeIndSet", true, nil, "rangecolor" },
+	[5] = { "CDTEXT", L["Cooldown Text"], 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
+	[6] = { "CDALPHA", L["Cooldown Alpha"], 1, "CDAlphaSet", nil, nil },
+	[7] = { "AURATEXT", L["Aura Watch Text"], 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
+	[8] = { "AURAIND", L["Aura Watch Indicator"], 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
 }
 
 local specoveride = GetActiveSpecGroup() or 1
@@ -357,7 +357,7 @@ function NEURON:UpdateBarGUI(newBar)
 	if (bar and GUIData[bar.class]) then
 
 		if (NBE:IsVisible()) then
-			NBE.count.text:SetText(bar.objType.." "..L.COUNT..": |cffffffff"..bar.objCount.."|r")
+			NBE.count.text:SetText(bar.objType.." "..L["Count"]..": |cffffffff"..bar.objCount.."|r")
 			NBE.barname:SetText(bar.gdata.name)
 		end
 
@@ -434,7 +434,7 @@ function NEURON:UpdateBarGUI(newBar)
 
 					shape = bar[f.func](bar, nil, true, true)
 
-					if (shape ~= L.BAR_SHAPE1) then
+					if (shape ~= L["Linear"]) then
 						yoff1 = (adjHeight)/8
 					end
 				end
@@ -457,7 +457,7 @@ function NEURON:UpdateBarGUI(newBar)
 
 				if (f.option == "COLUMNS") then
 
-					if (shape == L.BAR_SHAPE1) then
+					if (shape == L["Linear"]) then
 
 						f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
 						f:Show()
@@ -467,7 +467,7 @@ function NEURON:UpdateBarGUI(newBar)
 
 				elseif (f.option == "ARCSTART" or f.option == "ARCLENGTH") then
 
-					if (shape ~= L.BAR_SHAPE1) then
+					if (shape ~= L["Linear"]) then
 
 						f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
 						f:Show()
@@ -797,7 +797,7 @@ function NEURON:BarEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(L.SPELL_TARGETING_OPTIONS)
+	f.text:SetText(L["Spell Target Options"])
 	frame.tab3 = f; frame.tabs[f] = frame.targetoptions
 
 	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
@@ -807,7 +807,7 @@ function NEURON:BarEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(L.BAR_STATES)
+	f.text:SetText(L["Bar States"])
 	frame.tab2 = f; frame.tabs[f] = frame.barstates
 
 	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
@@ -817,7 +817,7 @@ function NEURON:BarEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(1)
-	f.text:SetText(L.GENERAL)
+	f.text:SetText(L["General Options"])
 	frame.tab1 = f; frame.tabs[f] = frame.baropt
 
 	f = CreateFrame("EditBox", nil, frame, "NeuronEditBoxTemplateSmall")
@@ -1057,7 +1057,7 @@ end
 function NEURON:CreateButton_OnLoad(button)
 
 	button.type = "create"
-	button.text:SetText(L.CREATE_BAR)
+	button.text:SetText(L["Create New Bar"])
 
 end
 
@@ -1078,7 +1078,7 @@ end
 function NEURON:BarEditor_CreateNewBar(button)
 	if (button.type == "create") then
 
-		local data = { [L.SELECT_BAR_TYPE] = "none" }
+		local data = { [L["Select Bar Type"]] = "none" }
 
 		for class,info in pairs(NEURON.RegisteredBarData) do
 
@@ -1091,14 +1091,14 @@ function NEURON:BarEditor_CreateNewBar(button)
 
 		button.type = "cancel"
 
-		button.text:SetText(L.CANCEL)
+		button.text:SetText(L["Cancel"])
 	else
 
 		NEURON.BarListScrollFrameUpdate()
 
 		button.type = "create"
 
-		button.text:SetText(L.CREATE_BAR)
+		button.text:SetText(L["Create New Bar"])
 
 	end
 end
@@ -1108,7 +1108,7 @@ function NEURON:DeleteButton_OnLoad(button)
 	button.parent = button:GetParent()
 	button.parent.delete = button
 	button.type = "delete"
-	button.text:SetText(L.DELETE_BAR)
+	button.text:SetText(L["Delete Current Bar"])
 
 end
 
@@ -1133,7 +1133,7 @@ function NEURON:Confirm_OnLoad(button)
 
 	button.parent = button:GetParent()
 	button.parent.confirm = button
-	button.title:SetText(L.CONFIRM)
+	button.title:SetText(L["Confirm"])
 
 end
 
@@ -1141,7 +1141,7 @@ function NEURON:ConfirmYes_OnLoad(button)
 
 	button.parent = button:GetParent()
 	button.type = "yes"
-	_G[button:GetName().."Text"]:SetText(L.CONFIRM_YES)
+	_G[button:GetName().."Text"]:SetText(L["Yes"])
 
 end
 
@@ -1161,7 +1161,7 @@ function NEURON:ConfirmNo_OnLoad(button)
 
 	button.parent = button:GetParent()
 	button.type = "no"
-	_G[button:GetName().."Text"]:SetText(L.CONFIRM_NO)
+	_G[button:GetName().."Text"]:SetText(L["No"])
 end
 
 function NEURON:BarEditor_ConfirmNo(button)
@@ -1261,7 +1261,7 @@ local function adjOptionAdd(frame, onupdate)
 
 		local num = bar[frame.func](bar, nil, true, true)
 
-		if (num == L.OFF or num == "---") then
+		if (num == L["Off"] or num == "---") then
 			num = 0
 		else
 			num = tonumber(num)
@@ -1303,7 +1303,7 @@ local function adjOptionSub(frame, onupdate)
 
 		local num = bar[frame.func](bar, nil, true, true)
 
-		if (num == L.OFF or num == "---") then
+		if (num == L["Off"] or num == "---") then
 			num = 0
 		else
 			num = tonumber(num)
@@ -1611,7 +1611,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel())
 	f:SetBackdropColor(0.3,0.3,0.3,1)
-	f.text:SetText(L.PRESET_STATES)
+	f.text:SetText(L["Preset Action States"])
 	f.selected = true
 	frame.tab1 = f; frame.tabs[f] = frame.presets
 
@@ -1621,7 +1621,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT",-5,4)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel())
-	f.text:SetText(L.CUSTOM_STATES)
+	f.text:SetText(L["Custom Action States"])
 	frame.tab2 = f; frame.tabs[f] = frame.custom
 
 	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTabTemplate")
@@ -1652,9 +1652,9 @@ function NEURON:ActionEditor_OnLoad(frame)
 			f:SetScript("OnClick", setBarActionState)
 			--Renames Stance for rogues to Stealth as that is what should really be used
 			if state == "stance" and (NEURON.class == "ROGUE") then
-				f.text:SetText(L["STEALTH1"])
+				f.text:SetText(L["STEALTH"])
 			else
-				f.text:SetText(L[state:upper()])
+				f.text:SetText(state:upper())
 			end
 			f.option = state
 
@@ -1678,7 +1678,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f:SetWidth(18)
 	f:SetHeight(18)
 	f:SetScript("OnClick", setBarActionState)
-	f.text:SetText(L.CUSTOM)
+	f.text:SetText(L["Custom"])
 	f.option = "custom"
 	f:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -10)
 	tinsert(barOpt.sec, f)
@@ -1688,7 +1688,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f:SetWidth(165)
 	f:SetHeight(25)
 	f:SetTextInsets(7,3,0,0)
-	f.text:SetText(L.REMAP)
+	f.text:SetText(L["Select a stance to remap:"])
 	f:SetPoint("BOTTOMLEFT", frame.presets, "BOTTOMLEFT", 7, 8)
 	f:SetPoint("BOTTOMRIGHT", frame.presets.secondary, "BOTTOM", -70, -35)
 	f:SetScript("OnTextChanged", remapOnTextChanged)
@@ -1704,7 +1704,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f:SetWidth(160)
 	f:SetHeight(25)
 	f:SetTextInsets(7,3,0,0)
-	f.text:SetText(L.REMAPTO)
+	f.text:SetText(L["Remap selected stance to:"])
 	f:SetPoint("BOTTOMLEFT", barOpt.remap, "BOTTOMRIGHT", 25, 0)
 	f:SetPoint("BOTTOMRIGHT", frame.presets.secondary, "BOTTOMRIGHT", -23, -35)
 	f:SetScript("OnTextChanged", remapToOnTextChanged)
@@ -1720,7 +1720,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 	f.text:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -60)
 	f.text:SetPoint("TOPRIGHT", frame.custom, "TOPRIGHT", -10, -60)
 	f.text:SetJustifyH("CENTER")
-	f.text:SetText(L.CUSTOM_OPTION)
+	f.text:SetText(L["Custom_Option"])
 	f.text:SetWordWrap(true)
 
 	f = CreateFrame("EditBox", "$parentCostomStateEdit", frame.custom, "NeuronEditBoxTemplateSmall")
@@ -1762,7 +1762,7 @@ function NEURON:VisEditor_OnLoad(frame)
 	--f:SetBackdropColor(0.7,0.7,0.7,1)
 	f:SetBackdropColor(1,1,1,1)
 	--f:SetBackdropColor(0.3,0.3,0.3,1)
-	f.text:SetText(L.BAR_VISABLE_STATES)
+	f.text:SetText(L["Bar Visibility Toggles"])
 	f.selected = true
 
 	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
@@ -1893,7 +1893,7 @@ function NEURON.VisEditorScrollFrameUpdate(frame, tableList, alt)
 
 			--Renames rogues stance0 from Melee to No stealth for the view states list
 			if (data[count] == "stance0"  and NEURON.class == "ROGUE") then
-				text = L.STEALTH0
+				text = L["No Stealth"]
 			end
 
 			button.text:SetText(text)
@@ -2015,7 +2015,7 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 		count = dataOffset + i
 
 		if (data[count]) then
-			text = (L[data[count]:upper()])
+			text = data[count]:upper()
 
 			button.option = data[count]
 			button:SetChecked(bar.cdata[button.option ])
@@ -2245,7 +2245,7 @@ function NEURON.ActionListScrollFrameUpdate(frame)
 
 		bar = NEURON.CurrentObject.bar
 
-		stateList["00"..L.HOMESTATE] = "homestate"
+		stateList["00"..L["Home State"]] = "homestate"
 
 		for state, values in pairs(MAS) do
 			if (bar.cdata[state]) then
@@ -2261,7 +2261,7 @@ function NEURON.ActionListScrollFrameUpdate(frame)
 						end
 
 						if (values.homestate and index == values.homestate) then
-							stateList["00"..name] = "homestate"; stateList["00"..L.HOMESTATE] = nil
+							stateList["00"..name] = "homestate"; stateList["00"..L["Home State"]] = nil
 						elseif (values.order < 10) then
 							stateList["0"..i..name] = index
 						else
@@ -2954,7 +2954,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 1 ; NEURON.ButtonEditorUpdate() end)
 	f:SetChecked(nil)
 	f.text:SetText("Spec1")
-	f.tooltipText = L.GUI_SPEC1
+	f.tooltipText = L["Display button for specialization 1"]
 	frame.spec1 = f; frame.specs[f] = frame.spec1
 
 	f = CreateFrame("frame", nil, frame.spec1)
@@ -2975,7 +2975,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 2 ; NEURON.ButtonEditorUpdate() end)
 	f:SetChecked(nil)
 	f.text:SetText("Spec2")
-	f.tooltipText = L.GUI_SPEC2
+	f.tooltipText = L["Display button for specialization 2"]
 	frame.spec2 = f; frame.specs[f] = frame.spec2
 
 	f = CreateFrame("CheckButton", nil, frame.macro, "NeuronCheckButtonTemplate1")
@@ -2985,7 +2985,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 3 ; NEURON.ButtonEditorUpdate() end)
 	f:SetChecked(nil)
 	f.text:SetText("Spec3")
-	f.tooltipText = L.GUI_SPEC3
+	f.tooltipText = L["Display button for specialization 3"]
 	frame.spec3 = f; frame.specs[f] = frame.spec3
 
 	f = CreateFrame("CheckButton", nil, frame.macro, "NeuronCheckButtonTemplate1")
@@ -2995,7 +2995,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 4 ; NEURON.ButtonEditorUpdate() end)
 	f:SetChecked(nil)
 	f.text:SetText("Spec4")
-	f.tooltipText = L.GUI_SPEC4
+	f.tooltipText = L["Display button for specialization 4"]
 	frame.spec4 = f; frame.specs[f] = frame.spec4
 
 	f = CreateFrame("Button", nil, frame.macro, "UIPanelButtonTemplate")--"NeuronCheckButtonTemplate1")
@@ -3030,7 +3030,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
 	f.text:SetPoint("CENTER")
 	f.text:SetJustifyH("CENTER")
-	f.text:SetText(L.MACRO_NAME)
+	f.text:SetText(L["Macro Name"])
 
 	f = CreateFrame("Frame", nil, frame.nameedit)
 	f:SetPoint("TOPLEFT", 0, 0)
@@ -3060,7 +3060,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
 	f.text:SetPoint("CENTER", 10, 0)
 	f.text:SetJustifyH("CENTER")
-	f.text:SetText(L.MACRO_EDITNOTE)
+	f.text:SetText(L["Click here to edit macro note"])
 
 	f = CreateFrame("Frame", nil, frame.noteedit)
 	f:SetPoint("TOPLEFT", 0, 0)
@@ -3078,7 +3078,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetPoint("RIGHT", frame.noteedit, "RIGHT", 12, 0)
 	f:SetFrameLevel(frame.noteedit:GetFrameLevel()+1)
 	f:Hide()
-	f.tooltipText = L.MACRO_USENOTE
+	f.tooltipText = L["Use macro note as button tooltip"]
 	frame.usenote = f
 	frame.noteedit.cb = f
 
@@ -3161,14 +3161,14 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontDisable");
 	f.text:SetPoint("LEFT", 22, 0)
 	f.text:SetJustifyH("LEFT")
-	f.text:SetText(L.SEARCH)
+	f.text:SetText(L["Search"])
 
 	f = CreateFrame("Button", nil, frame.iconlist, "NeuronCheckButtonTemplate1")
 	f:SetWidth(122)
 	f:SetHeight(35)
 	f:SetPoint("TOPLEFT", frame.search, "TOPRIGHT", -1, 4)
 	f:SetScript("OnClick", function(self) self:Hide() self.frame.search:Hide() self.frame.customdone:Show() self.frame.customcancel:Show() self.frame.custompath:Show() end)
-	f.text:SetText(L.CUSTOM_ICON)
+	f.text:SetText(L["Custom Icon"])
 	f.frame = frame
 	frame.customicon = f
 
@@ -3179,7 +3179,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) self:Hide()  self.frame.customcancel:Hide() self.frame.custompath:Hide() self.frame.customicon:Show() self.frame.search:Show() customDoneOnClick(self) end)
 	f:SetFrameLevel(frame.customicon:GetFrameLevel()+1)
 	f:Hide()
-	f.text:SetText(L.DONE)
+	f.text:SetText(L["Done"])
 	f.frame = frame
 	frame.customdone = f
 
@@ -3190,7 +3190,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) self:Hide() self.frame.customdone:Hide() self.frame.custompath:Hide() self.frame.customicon:Show() self.frame.search:Show() end)
 	f:SetFrameLevel(frame.customicon:GetFrameLevel()+1)
 	f:Hide()
-	f.text:SetText(L.CANCEL)
+	f.text:SetText(L["Cancel"])
 	f.frame = frame
 	frame.customcancel = f
 
@@ -3216,7 +3216,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f.text = f:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
 	f.text:SetPoint("LEFT", 8, 0)
 	f.text:SetJustifyH("LEFT")
-	f.text:SetText(L.PATH..": INTERFACE\\")
+	f.text:SetText(L["Path"]..": INTERFACE\\")
 
 	f:SetTextInsets(f.text:GetWidth()+5, 0, 0, 0)
 
@@ -3294,7 +3294,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(L.OPTIONS)
+	f.text:SetText(L["Options"])
 	frame.tab3 = f; frame.tabs[f] = frame.options
 
 	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
@@ -3304,7 +3304,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(L.ACTION)
+	f.text:SetText(L["Action Data"])
 	frame.tab2 = f; frame.tabs[f] = frame.action
 
 	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
@@ -3314,7 +3314,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(1)
-	f.text:SetText(L.MACRO)
+	f.text:SetText(L["Macro Data"])
 	frame.tab1 = f; frame.tabs[f] = frame.macro
 
 
@@ -3336,8 +3336,8 @@ end
 function NEURON.ColorPicker_OnLoad(self)
 
 	self:SetFrameStrata("TOOLTIP")
-	self.apply.text:SetText(L.APPLY)
-	self.cancel.text:SetText(L.CANCEL)
+	self.apply.text:SetText(L["Apply"])
+	self.cancel.text:SetText(L["Cancel"])
 end
 
 
@@ -3574,16 +3574,16 @@ local target_options = {
 				selfCast = {
 					order = 10,
 					type = "toggle",
-					name = L.SPELL_TARGETING_SELF_CAST_MODIFIER,
-					desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
+					name = L["Self-Cast by modifier"],
+					desc = L["Toggle the use of the modifier-based self-cast functionality."],
 					get = function(info)  return settingGetter(info) end, --getFunc,
 					set = function(info, value) SetBarCastTarget("selfCast", value) end,
 				},
 				setselfcastmod = {
 					order = 20,
 					type = "select",
-					name = L.SPELL_TARGETING_SELF_CAST_MODIFIER,
-					desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_SELECT,
+					name = L["Self-Cast by modifier"],
+					desc = L["Select the Self-Cast Modifier"],
 					get = function(info) return GetModifiedClick("SELFCAST") end,
 					set = function(info, value) SetModifiedClick("SELFCAST", value); SaveBindings(GetCurrentBindingSet() or 1); NEURON.BUTTON:UpdateMacroCastTargets(true) end,
 					values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
@@ -3596,16 +3596,16 @@ local target_options = {
 				focusCast = {
 					order = 50,
 					type = "toggle",
-					name = L.SPELL_TARGETING_FOCUS_CAST_MODIFIER,
-					desc = L.SPELL_TARGETING_FOCUS_CAST_MODIFIER_TOGGLE,
+					name = L["Focus-Cast by modifier"],
+					desc = L["Toggle the use of the modifier-based focus-cast functionality."],
 					get = function(info)  return settingGetter(info) end, --getFunc,
 					set = function(info, value) SetBarCastTarget("focusCast", value) end,
 				},
 				setfocuscastmod = {
 					order = 60,
 					type = "select",
-					name = L.SPELL_TARGETING_FOCUS_CAST_MODIFIER,
-					desc = L.SPELL_TARGETING_FOCUS_CAST_MODIFIER_SELECT,
+					name = L["Focus-Cast by modifier"],
+					desc = L["Select the Focus-Cast Modifier"],
 					get = function(info) return GetModifiedClick("FOCUSCAST") end,
 					set = function(info, value) SetModifiedClick("FOCUSCAST", value); SaveBindings(GetCurrentBindingSet() or 1); NEURON.BUTTON:UpdateMacroCastTargets(true) end,
 					values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
@@ -3618,8 +3618,8 @@ local target_options = {
 				rightClickTarget = {
 					order = 80,
 					type = "toggle",
-					name = L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK,
-					desc = L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK_TOGGLE,
+					name = L["Right-click Self-Cast"],
+					desc = L["Toggle the use of the right-click self-cast functionality."],
 					get = function(info)  return settingGetter(info) end, --getFunc,
 					set = function(info, value) SetBarCastTarget("rightClickTarget", value) end,
 				},
@@ -3631,16 +3631,16 @@ local target_options = {
 				mouseOverCast = {
 					order = 180,
 					type = "toggle",
-					name = L.SPELL_TARGETING_MOUSEOVER_CAST,
-					desc = L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER_TOGGLE,
+					name = L["Mouse-Over Casting"],
+					desc = L["Toggle the use of the modifier-based mouse-over cast functionality."],
 					get = function(info)  return settingGetter(info) end, --getFunc,
 					set = function(info, value) SetBarCastTarget("mouseOverCast", value) end,
 				},
 				mouseovermod = {
 					order = 301,
 					type = "select",
-					name = L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER,
-					desc = L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER_SELECT,
+					name = L["Mouse-Over Casting Modifier"],
+					desc = L["Select a modifier for Mouse-Over Casting"],
 					get = function() return NeuronCDB.mouseOverMod end, --getFunc,
 					set = function(info, value) NeuronCDB.mouseOverMod = value; NEURON.BUTTON:UpdateMacroCastTargets(true) end,
 					values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
@@ -3648,7 +3648,7 @@ local target_options = {
 				mouseovermod_desc = {
 					order = 302,
 					type = "description",
-					name = "\n" .. L.SPELL_TARGETING_MODIFIER_NONE_REMINDER,
+					name = "\n" .. L["Spell_Targeting_Modifier_None_Reminder"],
 				},
 			},
 		},
@@ -3661,7 +3661,6 @@ local target_options = {
 					order = 10,
 					type = "toggle",
 					name = "Item",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 					--values = { ITEM = "Item", SPELL = "Spell", MOUNT = "Mount", COMPANION="Companion", TYPE = "Type", PROFESSION= "Profession", FUN = "Fun", FAVORITE = "Favorite" },
@@ -3670,8 +3669,6 @@ local target_options = {
 					order = 10,
 					type = "toggle",
 					name = "Spell",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
@@ -3679,8 +3676,6 @@ local target_options = {
 					order = 10,
 					type = "toggle",
 					name = "Mount",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
@@ -3688,8 +3683,6 @@ local target_options = {
 					order = 10,
 					type = "toggle",
 					name = " Companion",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
@@ -3697,8 +3690,6 @@ local target_options = {
 					order = 10,
 					type = "toggle",
 					name = "Type",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
@@ -3706,8 +3697,6 @@ local target_options = {
 					order = 10,
 					type = "toggle",
 					name = "Profession",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
@@ -3715,8 +3704,6 @@ local target_options = {
 					order = 10,
 					type = "toggle",
 					name = "Fun",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
@@ -3724,26 +3711,14 @@ local target_options = {
 					order = 10,
 					type = "toggle",
 					name = "Favoriates",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
-				--types = {
-				--order = 10,
-				--type = "multiselect",
-				--name = "Flyout Types",
-				--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-				--get = function(info)  return settingGetter(info) end, --getFunc,
-				--set = function(info, value) print(value) end,
-				--values = { ITEM = "Item", SPELL = "Spell", MOUNT = "Mount", COMPANION="Companion", TYPE = "Type", PROFESSION= "Profession", FUN = "Fun", FAVORITE = "Favorite" },
-				--},
+
 				keys = {
 					order = 11,
 					type = "input",
 					name = "Keys",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
 				},
@@ -3751,8 +3726,6 @@ local target_options = {
 					order = 12,
 					type = "select",
 					name = "Shape",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
 					values = { LINEAR = "Linear", CIRCULAR = "Circular" },
@@ -3761,8 +3734,6 @@ local target_options = {
 					order = 13,
 					type = "select",
 					name = "Attach Point",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
 					values = { LEFT = "left", RIGHT = "right",TOP = "top", BOTTOM = "bottom",TOPLEFT = "topleft", TOPRIGHT = "topright",BOTTOMLEFT = "bottomleft", BOTTOMRIGHT = "BottomRight", CENTER = "Center" },
@@ -3771,8 +3742,6 @@ local target_options = {
 					order = 14,
 					type = "select",
 					name = "Relative to",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
 					values = { LEFT = "left", RIGHT = "right",TOP = "top", BOTTOM = "bottom",TOPLEFT = "topleft", TOPRIGHT = "topright",BOTTOMLEFT = "bottomleft", BOTTOMRIGHT = "BottomRight", CENTER = "Center" },
@@ -3784,8 +3753,6 @@ local target_options = {
 					min = -25,
 					max = 25,
 					step = 1,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info) return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
 				},
@@ -3793,8 +3760,6 @@ local target_options = {
 					order = 16,
 					type = "select",
 					name = "Show on Click",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
 					values = { CLICK = "Click", MOUSE = "Mouse" },
@@ -3804,14 +3769,12 @@ local target_options = {
 					order = 17,
 					type = "execute",
 					name = "Save",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					func = function() createflyoutmacro() end,
 				},
 				output = {
 					order = 18,
 					type = "input",
 					name = "output",
-					--desc = L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE,
 					get = function(info) return finalmacro end,
 					width = "full"
 				},

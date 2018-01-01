@@ -22,6 +22,7 @@ local table = _G.table
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 NeuronProfile = LibStub("AceAddon-3.0"):NewAddon("NeuronProfile") --This should be merged into the "NeuronBase" addon eventually.
+---TODO: Port more of the addon to Ace3
 NeuronBase = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0")
 
 
@@ -31,6 +32,7 @@ NeuronBase = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0")
 
 local latestVersionNum = "0.9.8" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
+--I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thank's for installing Neuron.
 
 Neuron is currently in a "|cffffff00release|r" state.
@@ -157,46 +159,45 @@ NEURON.Points = {R = "RIGHT", L = "LEFT", T = "TOP", B = "BOTTOM", TL = "TOPLEFT
 NEURON.Stratas = {"BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP"}
 
 
---why are there two of some of these states?
 NEURON.STATES = {
-	homestate = L.HOMESTATE,
-	laststate = L.LASTSTATE,
-	paged1 = L.PAGED1,
-	paged2 = L.PAGED2,
-	paged3 = L.PAGED3,
-	paged4 = L.PAGED4,
-	paged5 = L.PAGED5,
-	paged6 = L.PAGED6,
-	--pet0 = L.PET0,
-	--pet1 = L.PET1,
-	alt0 = L.ALT0,
-	alt1 = L.ALT1,
-	ctrl0 = L.CTRL0,
-	ctrl1 = L.CTRL1,
-	shift0 = L.SHIFT0,
-	shift1 = L.SHIFT1,
-	stealth0 = L.STEALTH0,
-	stealth1 = L.STEALTH1,
-	reaction0 = L.REACTION0,
-	reaction1 = L.REACTION1,
-	combat0 = L.COMBAT0,
-	combat1 = L.COMBAT1,
-	group0 = L.GROUP0,
-	group1 = L.GROUP1,
-	group2 = L.GROUP2,
-	fishing0 = L.FISHING0,
-	fishing1 = L.FISHING1,
-	vehicle0 = L.VEHICLE0,
-	vehicle1 = L.VEHICLE1,
-	possess0 = L.POSSESS0,
-	possess1 = L.POSSESS1,
-	override0 = L.OVERRIDE0,
-	override1 = L.OVERRIDE1,
-	--extrabar0 = L.EXTRABAR0,
-	--extrabar1 = L.EXTRABAR1,
-	custom0 = L.CUSTOM0,
-	target0 = L.TARGET0,
-	target1 = L.TARGET1,
+	homestate = L["Home State"],
+	laststate = L["Last State"],
+	paged1 = L["Page 1"],
+	paged2 = L["Page 2"],
+	paged3 = L["Page 3"],
+	paged4 = L["Page 4"],
+	paged5 = L["Page 5"],
+	paged6 = L["Page 6"],
+	--pet0 = L["No Pet"],
+	--pet1 = L["Pet Exists"],
+	alt0 = L["Alt Up"],
+	alt1 = L["Alt Down"],
+	ctrl0 = L["Control Up"],
+	ctrl1 = L["Control Down"],
+	shift0 = L["Shift Up"],
+	shift1 = L["Shift Down"],
+	stealth0 = L["No Stealth"],
+	stealth1 = L["Stealth"],
+	reaction0 = L["Friendly"],
+	reaction1 = L["Hostile"],
+	combat0 = L["Out of Combat"],
+	combat1 = L["In Combat"],
+	group0 = L["No Group"],
+	group1 = L["Group: Raid"],
+	group2 = L["Group: Party"],
+	fishing0 = L["No Fishing Pole"],
+	fishing1 = L["Fishing Pole"],
+	vehicle0 = L["No Vehicle"],
+	vehicle1 = L["Vehicle"],
+	possess0 = L["No Possess"],
+	possess1 = L["Possess"],
+	override0 = L["No Override Bar"],
+	override1 = L["Override Bar"],
+	--extrabar0 = L["No Extra Bar"],
+	--extrabar1 = L["Extra Bar"],
+	custom0 = L["Custom States"],
+	target0 = L["Has Target"],
+	target1 = L["No Target"],
 }
 
 NEURON.STATEINDEX = {
@@ -225,7 +226,7 @@ local handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate"
 local level, stanceStringsUpdated, PEW
 
 
-
+---Need to localize these strings
 --ACE GUI OPTION TABLE
 local options = {
 	name = "Neuron",
@@ -267,49 +268,49 @@ local options = {
 		},
 
 		changelog = {
-			name = L.CHANGELOG_TITLE,
+			name = L["Changelog"],
 			type = "group",
 			order = 1000,
 			args = {
 				line1 = {
 					type = "description",
-					name = L.CHANGELOG,
+					name = L["Changelog_Latest_Version"],
 				},
 			},
 		},
 
 		faq = {
-			name = L.FAQ_TITLE,
-			desc = L.FAQ_TITLE_LONG,
+			name = L["F.A.Q."],
+			desc = L["Frequently Asked Questions"],
 			type = "group",
 			order = 1001,
 			args = {
 
 				line1 = {
 					type = "description",
-					name = L.FAQ,
+					name = L["FAQ_Intro"],
 				},
 
 				g1 = {
 					type = "group",
-					name =L.FAQ_BAR_CONFIGURE_TITLE,
+					name = L["Bar Configuration"],
 					order = 1,
 					args = {
 
 						line1 = {
 							type = "description",
-							name =L.FAQ_BAR_CONFIGURE,
+							name = L["Bar_Configuration_FAQ"],
 							order = 1,
 						},
 
 						g1 = {
 							type = "group",
-							name =L.FAQ_BAR_CONFIGURE_GENERAL_OPTIONS_TITLE,
+							name = L["General Options"],
 							order = 1,
 							args = {
 								line1 = {
 									type = "description",
-									name = L.FAQ_BAR_CONFIGURE_GENERAL_OPTIONS ,
+									name = L["General_Bar_Configuration_Option_FAQ"] ,
 									order = 1,
 								},
 							},
@@ -317,12 +318,12 @@ local options = {
 
 						g2 = {
 							type = "group",
-							name =L.FAQ_BAR_CONFIGURE_BAR_STATES_TITLE,
+							name = L["Bar States"],
 							order = 2,
 							args = {
 								line1 = {
 									type = "description",
-									name = L.FAQ_BAR_CONFIGURE_BAR_STATES ,
+									name = L["Bar_State_Configuration_FAQ"],
 									order = 1,
 								},
 							},
@@ -330,12 +331,12 @@ local options = {
 
 						g3 = {
 							type = "group",
-							name = L.FAQ_BAR_CONFIGURE_SPELL_TARGET_TITLE,
+							name = L["Spell Target Options"],
 							order = 3,
 							args = {
 								line1 = {
 									type = "description",
-									name = L.FAQ_BAR_CONFIGURE_SPELL_TARGET ,
+									name = L["Spell_Target_Options_FAQ"],
 									order = 1,
 								},
 							},
@@ -345,12 +346,12 @@ local options = {
 
 				g2 = {
 					type = "group",
-					name = L.FLYOUT,
+					name = L["Flyout"],
 					order = 3,
 					args = {
 						line1a = {
 							type = "description",
-							name = L.FLYOUT_FAQ ,
+							name = L["Flyout_FAQ"],
 							order = 1,
 						},
 					},
@@ -432,10 +433,12 @@ local defaults = {
 local defGDB, GDB, defCDB, CDB, defSPEC, SPEC = CopyTable(NeuronGDB), CopyTable(NeuronGDB), CopyTable(NeuronCDB), CopyTable(NeuronCDB), CopyTable(NeuronSpec), CopyTable(NeuronSpec)
 
 
+
 --------------------------------------------
 --------------Slash Functions --------------
 --------------------------------------------
 
+--large table that contains the localized name, localized description, and internal setting name for each slash function
 local slashFunctions = {
 	{L["Menu"], L["Menu_Description"], "ToggleMainMenu"},
 	{L["Create"], L["Create_Description"], "CreateNewBar"},
@@ -513,8 +516,9 @@ function NeuronBase:slashHandler(input)
 			elseif (bar and bar[func]) then
 				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
 			else
-				print(L.SELECT_BAR)
+				print(L["No bar selected or command invalid"])
 			end
+			return
 		end
 	end
 
@@ -524,10 +528,13 @@ end
 
 function printSlashHelp()
 
+	NeuronBase:Print(L["How to use"]..":   ".."/"..addonName:lower().." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
 	NeuronBase:Print(L["Command List"]..":")
+	NeuronBase:Print("---------------------------------------------------")
+
 	for i = 1,#slashFunctions do
 		--formats the output to be the command name and then the description
-		NeuronBase:Print(slashFunctions[i][1]:lower().." - " .."("..slashFunctions[i][2]..")")
+		NeuronBase:Print(slashFunctions[i][1].." - " .."("..slashFunctions[i][2]..")")
 	end
 
 end
@@ -931,7 +938,7 @@ function NEURON:UpdateStanceStrings()
 
 		--Adds Shadow Dance State for Subelty Rogues
 		if (NEURON.class == "ROGUE" and GetSpecialization() == 3 ) then
-			NEURON.STATES["stance2"] = L.ROGUE_SHADOW_DANCE
+			NEURON.STATES["stance2"] = L["Shadow Dance"]
 			NEURON.StanceIndex[2] = 185313
 			states = states.."[stance:2] stance2; "
 		end
@@ -940,7 +947,7 @@ function NEURON:UpdateStanceStrings()
 
 		if (not stanceStringsUpdated) then
 			if (NEURON.class == "DRUID") then
-				NEURON.STATES.stance0 = L.DRUID_CASTER
+				NEURON.STATES.stance0 = L["Caster Form"]
 			end
 
 			if (NEURON.class == "MONK") then
@@ -949,15 +956,15 @@ function NEURON:UpdateStanceStrings()
 			end
 
 			if (NEURON.class == "PRIEST") then
-				NEURON.STATES.stance0 = L.PRIEST_HEALER
+				NEURON.STATES.stance0 = L["Healer Form"]
 			end
 
 			if (NEURON.class == "ROGUE") then
-				NEURON.STATES.stance0 = L.ROGUE_MELEE
+				NEURON.STATES.stance0 = L["Melee"]
 			end
 
 			if (NEURON.class == "WARLOCK") then
-				NEURON.STATES.stance0 = L.WARLOCK_CASTER
+				NEURON.STATES.stance0 = L["Caster Form"]
 			end
 
 			if (NEURON.class == "WARRIOR") then
@@ -1243,10 +1250,10 @@ end
 function NEURON:MinimapButton_OnEnter(minimap)
 	GameTooltip_SetDefaultAnchor(GameTooltip, minimap)
 	GameTooltip:SetText("Neuron", 1, 1, 1)
-	GameTooltip:AddLine(L.MINIMAP_TOOLTIP1, 1, 1, 1)
-	GameTooltip:AddLine(L.MINIMAP_TOOLTIP2, 1, 1, 1)
-	GameTooltip:AddLine(L.MINIMAP_TOOLTIP3, 1, 1, 1)
-	GameTooltip:AddLine(L.MINIMAP_TOOLTIP4, 1, 1, 1)
+	GameTooltip:AddLine(L["Left-Click to Configure Bars"], 1, 1, 1)
+	GameTooltip:AddLine(L["Right-Click to Edit Buttons"], 1, 1, 1)
+	GameTooltip:AddLine(L["Middle-Click or Alt-Click to Edit Key Bindings"], 1, 1, 1)
+	GameTooltip:AddLine(L["Shift-Click for Main Menu"], 1, 1, 1)
 	GameTooltip:Show()
 end
 
@@ -1899,13 +1906,13 @@ function NEURON:PrintStateList()
 	for k,v in ipairs(data) do
 
 		if (not list) then
-			list = L.VALIDSTATES..v
+			list = L["Valid States"]..":"..v
 		else
 			list = list..", "..v
 		end
 	end
 
-	print(list..L.CUSTOM_OPTION)
+	print(list..L["Custom_Option"])
 end
 
 
@@ -1928,12 +1935,11 @@ function NEURON:PrintBarTypes()
 
 	for i=1,high do if (not data[i]) then data[i] = 0 end end
 
-	print(L.BARTYPES_USAGE)
-	print(L.BARTYPES_TYPES)
+	NeuronBase:Print("     "..L["How to use"]..":   ".."/"..addonName:lower().." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
 
 	for k,v in ipairs(data) do
 		if (type(v) == "table") then
-			print("       |cff00ff00"..v[1].."|r: "..format(L.BARTYPES_LINE, v[2]))
+			NeuronBase:Print("        |cff00ff00"..v[1])
 		end
 	end
 
@@ -1981,9 +1987,9 @@ function NEURON:SetTimerLimit(msg)
 
 	if (limit and limit > 0) then
 		GDB.timerLimit = limit
-		print(format(L.TIMERLIMIT_SET, GDB.timerLimit))
+		print(format(L["Timer_Limit_Set_Message"], GDB.timerLimit))
 	else
-		print(L.TIMERLIMIT_INVALID)
+		print(L["Timer_Limit_Invalid_Message"])
 	end
 end
 

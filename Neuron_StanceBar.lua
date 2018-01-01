@@ -261,7 +261,7 @@ function SBTN:STANCE_SetTooltip()
 			self.UpdateTooltip = self.STANCE_SetTooltip
 		end
 	elseif (edit) then
-		GameTooltip:SetText(L.EMPTY_PETBTN)
+		GameTooltip:SetText(L["Empty Button"])
 	end
 
 end

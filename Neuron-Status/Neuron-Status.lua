@@ -57,14 +57,14 @@ local CASTING_BAR_HOLD_TIME = CASTING_BAR_HOLD_TIME
 
 
 local BarTextures = {
-	[1] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_2", L.BARFILL_DEFAULT },
-	[2] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Contrast_2", L.BARFILL_CONTRAST },
+	[1] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_2", L["Default"] },
+	[2] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Contrast_2", L["Contrast"] },
 	-- Following textures by Tonedef of WoWInterface
-	[3] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Carpaint_2", L.BARFILL_CARPAINT },
-	[4] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Gel_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Gel_2", L.BARFILL_GEL },
-	[5] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Glassed_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Glassed_2", L.BARFILL_GLASSED },
-	[6] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Soft_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Soft_2", L.BARFILL_SOFT },
-	[7] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Velvet_3", L.BARFILL_VELVET },
+	[3] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Carpaint_2", L["Carpaint"] },
+	[4] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Gel_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Gel_2", L["Gel"] },
+	[5] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Glassed_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Glassed_2", L["Glassed"] },
+	[6] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Soft_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Soft_2", L["Soft"] },
+	[7] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Velvet_3", L["Velvet"] },
 }
 
 
@@ -82,10 +82,10 @@ end
 
 
 local BarBorders = {
-	[1] = { L.BORDER_TOOLTIP, "Interface\\Tooltips\\UI-Tooltip-Border", 2, 2, 3, 3, 12, 12, -2, 3, 2, -3 },
-	[2] = { L.BORDER_SLIDER, "Interface\\Buttons\\UI-SliderBar-Border", 3, 3, 6, 6, 8, 8 , -1, 5, 1, -5 },
-	[3] = { L.BORDER_DIALOG, "Interface\\AddOns\\Neuron-Status\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
-	[4] = { L.BORDER_NONE, "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+	[1] = { L["Tooltip"], "Interface\\Tooltips\\UI-Tooltip-Border", 2, 2, 3, 3, 12, 12, -2, 3, 2, -3 },
+	[2] = { L["Slider"], "Interface\\Buttons\\UI-SliderBar-Border", 3, 3, 6, 6, 8, 8 , -1, 5, 1, -5 },
+	[3] = { L["Dialog"], "Interface\\AddOns\\Neuron-Status\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
+	[4] = { L["None"], "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 }
 
 
@@ -103,8 +103,8 @@ end
 
 
 local BarOrientations = {
-	[1] = L.ORIENT_HORIZ,
-	[2] = L.ORIENT_VERT,
+	[1] = L["Horizontal"],
+	[2] = L["Vertical"],
 }
 
 
@@ -259,7 +259,7 @@ local configDefaults = {
 
 
 
-local sbTypes = { { "cast", L.CAST_BAR }, { "xp", L.XP_BAR }, { "rep", L.REP_BAR }, { "mirror", L.MIRROR_BAR } }
+local sbTypes = { { "cast", L["Cast Bar"] }, { "xp", L["XP Bar"] }, { "rep", L["Rep Bar"] }, { "mirror", L["Mirror Bar"] } }
 
 
 
@@ -274,28 +274,28 @@ local popupData = {}
 
 local sbStrings = {
 	cast = {
-		[1] = { L.TEXT_BLANK, function(sb) return "" end },
-		[2] = { L.TEXT_SPELL, function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].spell end end },
-		[3] = { L.TEXT_TIMER, function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].timer end end },
+		[1] = { L["None"], function(sb) return "" end },
+		[2] = { L["Spell"], function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].spell end end },
+		[3] = { L["Timer"], function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].timer end end },
 	},
 	xp = {
-		[1] = { L.TEXT_BLANK, function(sb) return "" end },
-		[2] = { L.TEXT_CURRNEXT, function(sb) if (XPWatch.current) then return XPWatch.current end end },
-		[3] = { L.TEXT_RESTED, function(sb) if (XPWatch.rested) then return XPWatch.rested end end },
-		[4] = { L.TEXT_PERCENT, function(sb) if (XPWatch.percent) then return XPWatch.percent end end },
-		[5] = { L.TEXT_BUBBLES, function(sb) if (XPWatch.bubbles) then return XPWatch.bubbles end end },
+		[1] = { L["None"], function(sb) return "" end },
+		[2] = { L["Current/Next"], function(sb) if (XPWatch.current) then return XPWatch.current end end },
+		[3] = { L["Rested Levels"], function(sb) if (XPWatch.rested) then return XPWatch.rested end end },
+		[4] = { L["Percent"], function(sb) if (XPWatch.percent) then return XPWatch.percent end end },
+		[5] = { L["Bubbles"], function(sb) if (XPWatch.bubbles) then return XPWatch.bubbles end end },
 	},
 	rep = {
-		[1] = { L.TEXT_BLANK, function(sb) return "" end },
-		[2] = { L.TEXT_FACTION, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end },
-		[3] = { L.TEXT_CURRNEXT, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
-		[4] = { L.TEXT_PERCENT, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
-		[5] = { L.TEXT_BUBBLES, function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
+		[1] = { L["None"], function(sb) return "" end },
+		[2] = { L["Faction & Standing"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end },
+		[3] = { L["Current/Next"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
+		[4] = { L["Percent"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
+		[5] = { L["Bubbles"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
 	},
 	mirror = {
-		[1] = { L.TEXT_BLANK, function(sb) return "" end },
-		[2] = { L.TEXT_TYPE, function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].label end end },
-		[3] = { L.TEXT_TIMER, function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].timer end end },
+		[1] = { L["None"], function(sb) return "" end },
+		[2] = { L["Type"], function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].label end end },
+		[3] = { L["Timer"], function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].timer end end },
 	},
 }
 
@@ -304,7 +304,7 @@ local sbStrings = {
 
 local chkOptions = {
 
-	[1] = { "cast", L.CAST_ICON, "UpdateCastIcon", "showIcon" }
+	[1] = { "cast", L["Cast Icon"], "UpdateCastIcon", "showIcon" }
 }
 
 
@@ -312,17 +312,17 @@ local chkOptions = {
 
 local adjOptions = {
 
-	[1] = { "WIDTH", L.WIDTH, 1, "UpdateWidth", 0.5, 1, nil, nil, "%0.1f", 1, "" },
-	[2] = { "HEIGHT", L.HEIGHT, 1, "UpdateHeight", 0.5, 1, nil, nil, "%0.1f", 1, "" },
-	[3] = { "BARFILL", L.BARFILL, 2, "UpdateTexture", nil, nil, nil, BarTexturesData },
-	[4] = { "BORDER", L.BORDER, 2, "UpdateBorder", nil, nil, nil, BarBordersData },
-	[5] = { "ORIENT", L.ORIENT, 2, "UpdateOrientation", nil, nil, nil, BarOrientations },
-	[6] = { "UNIT_WATCH", L.UNIT_WATCH, 2, "UpdateUnit", nil, nil, nil, BarUnits  },
-	[7] = { "CENTER_TEXT", L.CENTER_TEXT, 2, "UpdateCenterText", nil, nil, nil, sbStrings },
-	[8] = { "LEFT_TEXT", L.LEFT_TEXT, 2, "UpdateLeftText", nil, nil, nil, sbStrings  },
-	[9] = { "RIGHT_TEXT", L.RIGHT_TEXT, 2, "UpdateRightText", nil, nil, nil, sbStrings  },
-	[10] = { "MOUSE_TEXT", L.MOUSE_TEXT, 2, "UpdateMouseover", nil, nil, nil, sbStrings  },
-	[11] = { "TOOLTIP_TEXT", L.TOOLTIP_TEXT, 2, "UpdateTooltip", nil, nil, nil, sbStrings  },
+	[1] = { "WIDTH", L["Width"], 1, "UpdateWidth", 0.5, 1, nil, nil, "%0.1f", 1, "" },
+	[2] = { "HEIGHT", L["Height"], 1, "UpdateHeight", 0.5, 1, nil, nil, "%0.1f", 1, "" },
+	[3] = { "BARFILL", L["Bar Fill"], 2, "UpdateTexture", nil, nil, nil, BarTexturesData },
+	[4] = { "BORDER", L["Border"], 2, "UpdateBorder", nil, nil, nil, BarBordersData },
+	[5] = { "ORIENT", L["Orientation"], 2, "UpdateOrientation", nil, nil, nil, BarOrientations },
+	[6] = { "UNIT_WATCH", L["Unit"], 2, "UpdateUnit", nil, nil, nil, BarUnits  },
+	[7] = { "CENTER_TEXT", L["Center Text"], 2, "UpdateCenterText", nil, nil, nil, sbStrings },
+	[8] = { "LEFT_TEXT", L["Left Text"], 2, "UpdateLeftText", nil, nil, nil, sbStrings  },
+	[9] = { "RIGHT_TEXT", L["Right Text"], 2, "UpdateRightText", nil, nil, nil, sbStrings  },
+	[10] = { "MOUSE_TEXT", L["Mouseover Text"], 2, "UpdateMouseover", nil, nil, nil, sbStrings  },
+	[11] = { "TOOLTIP_TEXT", L["Tooltip Text"], 2, "UpdateTooltip", nil, nil, nil, sbStrings  },
 }
 
 
@@ -595,7 +595,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 
 		info.arg1 = "player_xp"
 		info.arg2 = frame.statusbar
-		info.text = L.TRACK_XP
+		info.text = L["Track Character XP"]
 		info.func = switchCurXPType
 
 		UIDropDownMenu_AddButton(info)
@@ -604,7 +604,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 		if(HasArtifactEquipped("player")) then --only show this button if there's an artifact to show
 			info.arg1 = "artifact_xp"
 			info.arg2 = frame.statusbar
-			info.text = L.TRACK_AP
+			info.text = L["Track Artifact Power"]
 			info.func = switchCurXPType
 
 			UIDropDownMenu_AddButton(info)
@@ -614,7 +614,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
 			info.arg1 = "honor_points"
 			info.arg2 = frame.statusbar
-			info.text = L.TRACK_HONOR
+			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
 
 			UIDropDownMenu_AddButton(info)
@@ -635,7 +635,7 @@ local function repDropDown_Initialize(frame) --Initialize the dropdown menu for 
 
 		info.arg1 = frame.statusbar
 		info.arg2 = repbar_OnEvent
-		info.text = L.AUTO_SELECT
+		info.text = L["Auto Select"]
 		info.func = function(self, statusbar, func, checked)
 			local faction = sbStrings.rep[2][2](statusbar.sb)
 			statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb, nil, faction)
@@ -2073,7 +2073,7 @@ local function adjOptionAdd(frame, onupdate)
 
 		local num = sb[frame.func](sb, nil, true, true)
 
-		if (num == L.OFF or num == "---") then
+		if (num == L["Off"] or num == "---") then
 			num = 0
 		else
 			num = tonumber(num)
@@ -2118,7 +2118,7 @@ local function adjOptionSub(frame, onupdate)
 
 		local num = sb[frame.func](sb, nil, true, true)
 
-		if (num == L.OFF or num == "---") then
+		if (num == L["Off"] or num == "---") then
 			num = 0
 		else
 			num = tonumber(num)

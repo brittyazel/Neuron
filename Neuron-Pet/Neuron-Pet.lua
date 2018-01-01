@@ -414,7 +414,7 @@ function PETBTN:PET_SetTooltip()
 			self.UpdateTooltip = self.PET_SetTooltip
 		end
 	elseif (edit) then
-		GameTooltip:SetText(L.EMPTY_PETBTN)
+		GameTooltip:SetText(L["Empty Button"])
 	end
 end
 

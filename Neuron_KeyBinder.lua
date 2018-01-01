@@ -53,7 +53,7 @@ end
 -- @return bindkeys: The current key that is bound to the selected button
 function BINDER:GetBindkeyList(button)
 
-	if (not button.data) then return L.KEYBIND_NONE end
+	if (not button.data) then return L["none"] end
 
 	local bindkeys = button.keys.hotKeyText:gsub(":", ", ")
 
@@ -61,7 +61,7 @@ function BINDER:GetBindkeyList(button)
 	bindkeys = bindkeys:gsub(", $", "")
 
 	if (strlen(bindkeys) < 1) then
-		bindkeys = L.KEYBIND_NONE
+		bindkeys = L["none"]
 	end
 
 	return bindkeys
@@ -181,7 +181,7 @@ end
 -- @param key: The key to be used
 function BINDER:ProcessBinding(key, button)
 	if (button and button.keys and button.keys.hotKeyLock) then
-		UIErrorsFrame:AddMessage(L.BINDINGS_LOCKED, 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME)
+		UIErrorsFrame:AddMessage(L["Bindings_Locked_Notice"], 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME)
 		return
 	end
 
@@ -218,13 +218,13 @@ function BINDER:OnShow()
 		local priority = ""
 
 		if (button.keys.hotKeyPri) then
-			priority = "|cff00ff00"..L.BINDFRAME_PRIORITY.."|r\n"
+			priority = "|cff00ff00"..L["priority"].."|r\n"
 		end
 
 		if (button.keys.hotKeyLock) then
-			self.type:SetText(priority.."|cfff00000"..L.BINDFRAME_LOCKED.."|r")
+			self.type:SetText(priority.."|cfff00000"..L["locked"].."|r")
 		else
-			self.type:SetText(priority.."|cffffffff"..L.BINDFRAME_BIND.."|r")
+			self.type:SetText(priority.."|cffffffff"..L["bind"].."|r")
 		end
 	end
 end
@@ -242,12 +242,12 @@ function BINDER:OnEnter()
 	self.select:Show()
 
 	NeuronBindingsEditor:ClearLines()
-	NeuronBindingsEditor:SetText(L.BINDER_NOTICE)
-	NeuronBindingsEditor:AddDoubleLine(L.KEYBIND_TOOLTIP1, self.bindType:gsub("^%l", string.upper).." "..button.id, 1.0, 1.0, 1.0, 0, 1, 0)
+	NeuronBindingsEditor:SetText(L["Keybind_Credits"])
+	NeuronBindingsEditor:AddDoubleLine(L["Keybind_Tooltip_1"], self.bindType:gsub("^%l", string.upper).." "..button.id, 1.0, 1.0, 1.0, 0, 1, 0)
 	NeuronBindingsEditor:AddLine(" ")
-	NeuronBindingsEditor:AddLine(format(L.KEYBIND_TOOLTIP2, self.bindType, self.bindType, self.bindType), 1.0, 1.0, 1.0)
+	NeuronBindingsEditor:AddLine(format(L["Keybind_Tooltip_2"], self.bindType, self.bindType, self.bindType), 1.0, 1.0, 1.0)
 	NeuronBindingsEditor:AddLine(" ")
-	NeuronBindingsEditor:AddDoubleLine(L.KEYBIND_TOOLTIP3, self:GetBindkeyList(button), 1.0, 1.0, 1.0, 0, 1, 0)
+	NeuronBindingsEditor:AddDoubleLine(L["Keybind_Tooltip_3"], self:GetBindkeyList(button), 1.0, 1.0, 1.0, 0, 1, 0)
 	NeuronBindingsEditor:AddLine(" ")
 
 	NeuronBindingsEditor:Show()
@@ -258,7 +258,7 @@ end
 --- OnLeave Event handler
 function BINDER:OnLeave()
 	NeuronBindingsEditor:ClearLines()
-	NeuronBindingsEditor:SetText(L.BINDER_NOTICE)
+	NeuronBindingsEditor:SetText(L["Keybind_Credits"])
 
 	self.select:Hide()
 
@@ -379,7 +379,7 @@ function BUTTON:CreateBindFrame(index)
 	binder:SetScript("OnMouseWheel", BINDER.OnMouseWheel)
 	binder:SetScript("OnUpdate", BINDER.OnUpdate)
 
-	binder.type:SetText(L.BINDFRAME_BIND)
+	binder.type:SetText(L["bind"])
 	binder.button = self
 	binder.bindType = "button"
 
@@ -466,7 +466,7 @@ function NEURON:ToggleBindings(show, hide)
 		end
 
 		NeuronBindingsEditor:SetOwner(UIParent, "ANCHOR_PRESERVE")
-		NeuronBindingsEditor:SetText(L.BINDER_NOTICE)
+		NeuronBindingsEditor:SetText(L["Keybind_Credits"])
 		NeuronBindingsEditor:Show()
 
 		--for i = 1, select("#", NeuronBindingsEditor:GetRegions()) do

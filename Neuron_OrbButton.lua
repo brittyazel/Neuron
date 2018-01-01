@@ -28,10 +28,10 @@ ORB.DataObj:NewDataObject("NeuronBroker", {
 	OnTooltipShow = function(tooltip)
 		if not tooltip or not tooltip.AddLine then return end
 		tooltip:SetText("Neuron")
-		tooltip:AddLine(L.MINIMAP_TOOLTIP1, 1, 1, 1)
-		tooltip:AddLine(L.MINIMAP_TOOLTIP2, 1, 1, 1)
-		tooltip:AddLine(L.MINIMAP_TOOLTIP3, 1, 1, 1)
-		tooltip:AddLine(L.MINIMAP_TOOLTIP4, 1, 1, 1)
+		tooltip:AddLine(L["Left-Click to Configure Bars"], 1, 1, 1)
+		tooltip:AddLine(L["Right-Click to Edit Buttons"], 1, 1, 1)
+		tooltip:AddLine(L["Middle-Click or Alt-Click to Edit Key Bindings"], 1, 1, 1)
+		tooltip:AddLine(L["Shift-Click for Main Menu"], 1, 1, 1)
 	end,
 })
 

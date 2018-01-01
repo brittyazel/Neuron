@@ -29,20 +29,20 @@ local alphaDir, alphaTimer = 0, 0
 local autoHideIndex, alphaupIndex = {}, {}
 
 NEURON.AlphaUps = {
-	L.OFF,
-	L.ALPHAUP_MOUSEOVER,
-	L.ALPHAUP_BATTLE,
-	L.ALPHAUP_BATTLEMOUSE,
-	L.ALPHAUP_RETREAT,
-	L.ALPHAUP_RETREATMOUSE,
+	L["Off"],
+	L["Mouseover"],
+	L["Combat"],
+	L["Combat + Mouseover"],
+	L["Retreat"],
+	L["Retreat + Mouseover"],
 }
 
 local alphaUps = NEURON.AlphaUps
 
 NEURON.BarShapes = {
-	L.BAR_SHAPE1,
-	L.BAR_SHAPE2,
-	L.BAR_SHAPE3,
+	L["Linear"],
+	L["Circle"],
+	L["Circle + One"],
 }
 
 local barShapes = NEURON.BarShapes
@@ -422,7 +422,7 @@ function HANDLER:SetAutoHide(bar)
 		autoHideIndex[bar] = nil
 	end
 
-	if (bar.gdata.alphaUp == L.OFF) then
+	if (bar.gdata.alphaUp == L["Off"]) then
 		alphaupIndex[bar] = nil
 	else
 		alphaupIndex[bar] = self; self.fadeSpeed = (bar.gdata.fadeSpeed*bar.gdata.fadeSpeed)
@@ -2073,13 +2073,13 @@ function BAR:SetVisibility(msg, gui, checked, query)
 							self.gdata.hidestates = self.gdata.hidestates..hidestate..":"
 						end
 					else
-						print(L.INVALID_INDEX); return
+						print(L["Invalid index"]); return
 					end
 
-				elseif (index == L.STATE_SHOW) then
+				elseif (index == L["Show"]) then
 					local hidestate = NEURON.STATEINDEX[toggle].."%d+"
 					self.gdata.hidestates = self.gdata.hidestates:gsub(hidestate..":", "")
-				elseif (index == L.STATE_HIDE) then
+				elseif (index == L["Hide"]) then
 					local hidestate = NEURON.STATEINDEX[toggle]
 
 					for state in pairs(NEURON.STATES) do
@@ -2225,7 +2225,7 @@ local function spellGlowMod(self, msg, gui)
 		end
 
 	elseif (not gui) then
-		print(L.SPELLGLOWS)
+		print(L["Spellglow_Instructions"])
 	end
 end
 
@@ -2436,7 +2436,7 @@ local function barLockMod(self, msg, gui)
 		end
 
 	elseif (not gui) then
-		print(L.BARLOCK_MOD)
+		print(L["Bar_Lock_Modifier_Instructions"])
 	end
 end
 
@@ -2495,7 +2495,7 @@ local function toolTipMod(self, msg, gui)
 		end
 
 	elseif (not gui) then
-		print(L.TOOLTIPS)
+		print(L["Tooltip_Instructions"])
 	end
 end
 
@@ -2559,7 +2559,7 @@ function BAR:ShapeBar(shape, gui, query)
 		self:SetSize()
 		self:Update()
 	elseif (not gui) then
-		print(L.BAR_SHAPES)
+		print(L["Bar_Shapes_List"])
 	end
 end
 
@@ -2569,7 +2569,7 @@ function BAR:ColumnsSet(command, gui, query, skipupdate)
 		if (self.gdata.columns) then
 			return self.gdata.columns
 		else
-			return L.OFF
+			return L["Off"]
 		end
 	end
 
@@ -2596,7 +2596,7 @@ function BAR:ColumnsSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		print(L.BAR_COLUMNS)
+		print(L["Bar_Columnm_Instructions"])
 	end
 end
 
@@ -2619,7 +2619,7 @@ function BAR:ArcStartSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		print(L.BAR_ARCSTART)
+		print(L["Bar_ArcStart_Instructions"])
 	end
 end
 
@@ -2642,7 +2642,7 @@ function BAR:ArcLengthSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		print(L.BAR_ARCLENGTH)
+		print(L["Bar_ArcLength_Instructions"])
 	end
 end
 
@@ -2665,7 +2665,7 @@ function BAR:PadHSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		print(L.BAR_PADH)
+		print(L["Horozontal_Padding_Instructions"])
 	end
 end
 
@@ -2688,7 +2688,7 @@ function BAR:PadVSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		print(L.BAR_PADV)
+		print(L["Vertical_Padding_Instructions"])
 	end
 end
 
@@ -2713,7 +2713,7 @@ function BAR:PadHVSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		print(L.BAR_PADHV)
+		print(L["Horozontal_and_Vertical_Padding_Instructions"])
 	end
 end
 
@@ -2754,7 +2754,7 @@ function BAR:StrataSet(command, gui, query)
 		self:Update()
 
 	elseif (not gui) then
-		print(L.BAR_STRATAS)
+		print(L["Bar_Strata_List"])
 	end
 end
 
@@ -2775,7 +2775,7 @@ function BAR:AlphaSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		print(L.BAR_ALPHA)
+		print(L["Bar_Alpha_Instructions"])
 	end
 end
 
@@ -2855,7 +2855,7 @@ function BAR:XAxisSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		print(L.BAR_XPOS)
+		print(L["X_Position_Instructions"])
 	end
 end
 
@@ -2884,7 +2884,7 @@ function BAR:YAxisSet(command, gui, query, skipupdate)
 			self:Update()
 		end
 	elseif (not gui) then
-		print(L.BAR_YPOS)
+		print(L["Y_Position_Instructions"])
 	end
 end
 

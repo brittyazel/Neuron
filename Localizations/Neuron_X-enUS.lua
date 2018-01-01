@@ -9,7 +9,7 @@ local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "enUS", true)
 if not L then return end
 
 
-L["Command List"] = true
+L["Command list"] = true
 
 L["Menu"] = true
 L["Menu_Description"] = "Open the main menu"
@@ -154,327 +154,329 @@ L["MoveSpecButtons_Description"] = "Copies the buttons from one spec to a second
 ------------------General----------------------
 -----------------------------------------------
 
-L.BARTYPES_USAGE = "Usage: |cffffff00/neuron create <type>|r\n"
-L.BARTYPES_TYPES = "     Types -\n"
-L.BARTYPES_LINE = "Creates a bar for %ss"
+L["How to use"] = true
+L["Command"] = true
+L["Option"] = true
 
-L.SELECT_BAR = "No bar selected or command invalid"
+L["No bar selected or command invalid"] = true
 
-L.CUSTOM_OPTION = "\n\nFor custom states, add a desired state string (|cffffff00/neuron state custom <state string>|r) where <state string> is a semicolon seperated list of state conditions\n\n|cff00ff00Example:|r [actionbar:1];[stance:1];[stance3,stealth];[mounted]\n\n|cff00ff00Note:|r the first state listed will be considered the \"home state\". If the state manager ever gets confused, that is the state it will default to."
+L["Custom_Option"] = "For custom states, add a desired state string (|cffffff00/neuron state custom <state string>|r) where <state string> is a semicolon seperated list of state conditions"
 
-L.VALIDSTATES = "\n|cff00ff00Valid states:|r "
-L.INVALID_INDEX = "Invalid index"
-L.STATE_HIDE = "hide"
-L.STATE_SHOW = "show"
 
-L.HOMESTATE = "Home State"
-L.LASTSTATE = "Should not see!"
+L["Valid States"]=true
+L["Invalid index"] = true
 
-L.PAGED = "Paged"
-L.STANCE = "Stance"
-L.PET = "Pet"
-L.ALT = "Alt"
-L.CTRL = "Ctrl"
-L.SHIFT = "Shift"
-L.STEALTH = "Stealth"
-L.REACTION = "Reaction"
-L.COMBAT = "Combat"
-L.GROUP = "Group"
-L.FISHING = "Fishing"
-L.VEHICLE = "Vehicle"
-L.CUSTOM = "Custom"
-L.POSSESS = "Possess"
-L.OVERRIDE = "Override"
-L.EXTRABAR = "Extrabar"
 
-L.PAGED1 = "Page 1"
-L.PAGED2 = "Page 2"
-L.PAGED3 = "Page 3"
-L.PAGED4 = "Page 4"
-L.PAGED5 = "Page 5"
-L.PAGED6 = "Page 6"
+L["Hide"] = true
+L["Show"] = true
 
-L.PET0 = "No Pet"
-L.PET1 = "Pet Exists"
+L["Home State"] = true
+L["Last State"] = true
 
-L.ALT0 = "Alt Up"
-L.ALT1 = "Alt Down"
-L.CTRL0 = "Control Up"
-L.CTRL1 = "Control Down"
-L.SHIFT0 = "Shift Up"
-L.SHIFT1 = "Shift Down"
 
-L.STEALTH0 = "No Stealth"
-L.STEALTH1 = "Stealth"
-L.REACTION0 = "Friendly"
-L.REACTION1 = "Hostile"
-L.COMBAT0 = "No Combat"
-L.COMBAT1 = "Combat"
+L["Paged"] = true
+L["Stance"] = true
+L["Pet"] = true
+L["Alt"] = true
+L["Ctrl"] = true
+L["Shift"] = true
+L["Stealth"] = true
+L["Reaction"] = true
+L["Combat"]  = true
+L["Group"] = true
+L["Fishing"] = true
+L["Vehicle"] = true
+L["Custom"] = true
+L["Possess"] = true
+L["Override"] = true
+L["Extrabar"] = true
 
-L.GROUP0 = "No Group"
-L.GROUP1 = "Group: Raid"
-L.GROUP2 = "Group: Party"
-L.FISHING0 = "No Fishing Pole"
-L.FISHING1 = "Fishing Pole"
 
-L.VEHICLE0 = "No Vehicle"
-L.VEHICLE1 = "Vehicle"
-L.POSSESS0 = "No Possess"
-L.POSSESS1 = "Possess"
-L.OVERRIDE0 = "No Override Bar"
-L.OVERRIDE1 = "Override Bar"
-L.EXTRABAR0 = "No Extra Bar"
-L.EXTRABAR1 = "Extra Bar"
+L["Page 1"] = true
+L["Page 2"] = true
+L["Page 3"] = true
+L["Page 4"] = true
+L["Page 5"] = true
+L["Page 6"] = true
 
-L.CUSTOM0 = "Custom States"
+
+L["No Pet"] = true
+L["Pet Exists"] = true
+
+L["Alt Up"] = true
+L["Alt Down"] = true
+L["Control Up"] = true
+L["Control Down"] = true
+L["Shift Up"] = true
+L["Shift Down"] = true
+
+L["No Stealth"] = true
+L["Stealth"] = true
+L["Friendly"] = true
+L["Hostile"] = true
+L["Out of Combat"] = true
+L["In Combat"] = true
+
+L["No Group"] = true
+L["Group: Raid"] = true
+L["Group: Party"] = true
+L["No Fishing Pole"] = true
+L["Fishing Pole"] = true
+
+L["No Vehicle"] = true
+L["Vehicle"] = true
+L["No Possess"] = true
+L["Possess"] = true
+L["No Override Bar"] = true
+L["Override Bar"] = true
+L["No Extra Bar"] = true
+L["Extra Bar"] = true
+
+L["Custom States"] = true
 
 
 ---class specific state names
-L.DRUID_CASTER = "Caster Form"
-L.PRIEST_HEALER = "Healer Form"
-L.ROGUE_MELEE = "Melee"
-L.WARLOCK_CASTER = "Caster Form"
-L.ROGUE_SHADOW_DANCE = "Shadow Dance"
+L["Caster Form"] = true
+L["Healer Form"] = true
+L["Melee"] = true
+L["Shadow Dance"] = true
 
-L.MINIMAP_TOOLTIP1 = "Left-Click to Configure Bars"
-L.MINIMAP_TOOLTIP2 = "Right-Click to Edit Buttons"
-L.MINIMAP_TOOLTIP3 = "Middle-Click or Alt-Click to Edit Key Bindings"
-L.MINIMAP_TOOLTIP4 = "Shift-Click for Main Menu"
-
-L.KEYBIND_TOOLTIP1 = "\nHit a key to bind it to"
-L.KEYBIND_TOOLTIP2 = "Left-Click to |cfff00000LOCK|r this %s's bindings\n\nRight-Click to make this %s's bindings a |cff00ff00PRIORITY|r bind\n\nHit |cfff00000ESC|r to clear this %s's current binding(s)"
-L.KEYBIND_TOOLTIP3 = "Current Binding(s):"
-
-L.EDITFRAME_EDIT = "edit"
-
-L.EMPTY_BUTTON = "Empty Button"
-L.EDIT_BINDINGS = "Edit Bindings"
-L.KEYBIND_NONE = "none"
-
-L.BINDFRAME_BIND = "bind"
-L.BINDFRAME_LOCKED = "locked"
-L.BINDFRAME_PRIORITY = "priority"
-L.BINDINGS_LOCKED	= "This button's bindings are locked.\nLeft-Click button to unlock."
-L.BINDER_NOTICE = "Neuron Key Binder\n|cffffffffThe Original Mouseover Binding System|r\nDeveloped by Maul"
-
-L.OFF = "Off"
-L.ALPHAUP_BATTLE = "Combat"
-L.ALPHAUP_MOUSEOVER = "Mouseover"
-L.ALPHAUP_BATTLEMOUSE = "Combat+Mouseover"
-L.ALPHAUP_RETREAT = "Retreat"
-L.ALPHAUP_RETREATMOUSE = "Retreat+Mouseover"
-
-L.BAR_SHAPES = "\n1=Linear\n2=Circle\n3=Circle+One"
-L.BAR_SHAPE1 = "Linear"
-L.BAR_SHAPE2 = "Circle"
-L.BAR_SHAPE3 = "Circle+One"
-L.BAR_STRATAS = "\n1=BACKGROUND\n2=LOW\n3=MEDIUM\n4=HIGH\n5=DIALOG"
-L.BAR_ALPHA = "Alpha value must be between zero(0) and one(1)"
-L.BAR_ARCSTART = "Arc start must be between 0 and 359"
-L.BAR_ARCLENGTH = "Arc length must be between 0 and 359"
-L.BAR_COLUMNS = "Enter a number of desired columns for the bar higher than zero(0)\nOmit number to turn off columns"
-L.BAR_PADH = "Enter a valid number for desired horizontal button padding"
-L.BAR_PADV = "Enter a valid number for desired vertical button padding"
-L.BAR_PADHV = "Enter a valid number to increase/decrease both the horizontal and vertical button padding"
-L.BAR_XPOS = "Enter a valid number for desired x position offset"
-L.BAR_YPOS = "Enter a valid number for desired y position offset"
-
-L.BARLOCK_MOD = "Valid mod keys:\n\n|cff00ff00alt|r: unlock bar when the <alt> key is down\n|cff00ff00ctrl|r: unlock bar when the <ctrl> key is down\n|cff00ff00shift|r: unlock bar when the <shift> key is down"
-L.TOOLTIPS = "Valid options:\n\n|cff00ff00enhanced|r: display additional ability info\n|cff00ff00combat|r: hide/show tooltips while in combat"
-L.SPELLGLOWS = "Valid options:\n\n|cff00ff00default|r: use Blizzard default spell glow animation\n|cff00ff00alt|r: use alternate subdued spell glow animation"
-L.TIMERLIMIT_SET = "Timer limit set to %d seconds"
-L.TIMERLIMIT_INVALID = "Invalid timer limit"
-
-L.PETATTACK = "Attack"
-L.PETFOLLOW = "Follow"
-L.PETMOVETO = "Move To"
-L.PETASSIST = "Assist"
-L.PETDEFENSIVE = "Defensive"
-L.PETPASSIVE = "Passive"
+L["Left-Click to Configure Bars"] = true
+L["Right-Click to Edit Buttons"] = true
+L["Middle-Click or Alt-Click to Edit Key Bindings"] = true
+L["Shift-Click for Main Menu"] = true
 
 
-L["Command"] = true
-L.APPLY = "Apply"
-L.CANCEL = "Cancel"
-L.DONE = "Done"
-L.CREATE_BAR = "Create New Bar"
-L.DELETE_BAR = "Delete Current Bar"
-L.SELECT_BAR_TYPE = "- Select Bar Type -"
-L.CONFIRM = "- Confirm -"
-L.CONFIRM_YES = "Yes"
-L.CONFIRM_NO = "No"
-L.GENERAL = "General Options"
-L.BAR_STATES = "Bar States"
-L.OBJECTS = "Object Editor"
-L.MACRO = "Macro Data"
-L.ACTION = "Action Data"
-L.OPTIONS = "Options"
-
-L.MACRO_NAME = "-macro name-"
-L.MACRO_EDITNOTE = "Click here to edit macro note"
-L.MACRO_USENOTE = "Use macro note as button tooltip"
-
-L.COUNT = "Count"
-L.SEARCH = "Search"
-L.CUSTOM_ICON = "Custom Icon"
-L.PATH = "path"
-
-L.AUTOHIDE = "Auto Hide"
-L.SHOWGRID = "Show Grid"
-L.SNAPTO = "Snap To"
-L.HIDDEN = "Hidden"
-L.UPCLICKS = "Up Clicks"
-L.DOWNCLICKS = "Down Clicks"
-L.MULTISPEC = "Multi Spec"
-L.SPELLGLOW = "Spell Alerts"
-L.SPELLGLOW_DEFAULT = " - Default Alert"
-L.SPELLGLOW_ALT = " - Subdued Alert"
-L.LOCKBAR = "Lock Actions"
-L.LOCKBAR_SHIFT = " - Unlock on SHIFT"
-L.LOCKBAR_CTRL = " - Unlock on CTRL"
-L.LOCKBAR_ALT = " - Unlock on ALT"
-L.TOOLTIPS_OPT = "Enable Tooltips"
-L.TOOLTIPS_ENH = " - Enhanced"
-L.TOOLTIPS_COMBAT = " - Hide in Combat"
-
-L.PRESET_STATES = "Preset Action States"
-L.CUSTOM_STATES = "Custom Action States"
+L["Keybind_Tooltip_1"] = "\nHit a key to bind it to"
+L["Keybind_Tooltip_2"] = "Left-Click to |cfff00000LOCK|r this %s's bindings\n\nRight-Click to make this %s's bindings a |cff00ff00PRIORITY|r bind\n\nHit |cfff00000ESC|r to clear this %s's current binding(s)"
+L["Keybind_Tooltip_3"] = "Current Binding(s):"
 
 
-L.REMAP = "Select a stance to remap:"
-L.REMAPTO = "Remap selected stance to:"
+L["edit"] = true
+L["Empty Button"] = true
+L["Edit Bindings"] = true
+L["none"] = true
+
+L["bind"] = true
+L["locked"] = true
+L["priority"] = true
+L["Bindings_Locked_Notice"]	= "This button's bindings are locked.\nLeft-Click button to unlock."
+L["Keybind_Credits"] = "Neuron Key Binder\n|cffffffffThe Original Mouseover Binding System|r\nDeveloped by Maul"
+
+L["Off"] = true
+L["Combat"] = true
+L[ "Mouseover"] = true
+L["Combat + Mouseover"] = true
+L["Retreat"] = true
+L["Retreat + Mouseover"] = true
+
+L["Bar_Shapes_List"] = "\n1=Linear\n2=Circle\n3=Circle + One"
+L["Linear"] = true
+L["Circle"] = true
+L["Circle + One"] = true
+L["Bar_Strata_List"] = "\n1=BACKGROUND\n2=LOW\n3=MEDIUM\n4=HIGH\n5=DIALOG"
+L["Bar_Alpha_Instructions"] = "Alpha value must be between zero(0) and one(1)"
+L["Bar_ArcStart_Instructions"] = "Arc start must be between 0 and 359"
+L["Bar_ArcLength_Instructions"] = "Arc length must be between 0 and 359"
+L["Bar_Column_Instructions"] = "Enter a number of desired columns for the bar higher than zero(0)\nOmit number to turn off columns"
+L["Horozontal_Padding_Instructions"] = "Enter a valid number for desired horizontal button padding"
+L["Vertical_Padding_Instructions"] = "Enter a valid number for desired vertical button padding"
+L["Horozontal_and_Vertical_Padding_Instructions"] = "Enter a valid number to increase/decrease both the horizontal and vertical button padding"
+L["X_Position_Instructions"] = "Enter a valid number for desired x position offset"
+L["Y_Position_Instructions"] = "Enter a valid number for desired y position offset"
+
+L["Bar_Lock_Modifier_Instructions"] = "Valid mod keys:\n\n|cff00ff00alt|r: unlock bar when the <alt> key is down\n|cff00ff00ctrl|r: unlock bar when the <ctrl> key is down\n|cff00ff00shift|r: unlock bar when the <shift> key is down"
+L["Tooltip_Instructions"] = "Valid options:\n\n|cff00ff00enhanced|r: display additional ability info\n|cff00ff00combat|r: hide/show tooltips while in combat"
+L["Spellglow_Instructions"] = "Valid options:\n\n|cff00ff00default|r: use Blizzard default spell glow animation\n|cff00ff00alt|r: use alternate subdued spell glow animation"
+
+L["Timer_Limit_Set_Message"] = "Timer limit set to %d seconds"
+L["Timer_Limit_Invalid_Message"] = "Invalid timer limit"
 
 
-L.SCALE = "Scale"
-L.ALPHA = "Alpha"
-L.ALPHAUP = "Alpha Up"
-L.ALPHAUP_SPEED = "A/U Speed"
-L.STRATA = "Strata"
-L.SHAPE = "Shape"
-L.HPAD = "Horiz Pad"
-L.VPAD = "Vert Pad"
-L.HVPAD = "H + V Pad"
-L.COLUMNS = "Columns"
-L.ARCSTART = "Arc Start"
-L.ARCLENGTH = "Arc Length"
-
-L.BINDTEXT = "Bind Text"
-L.MACROTEXT = "Macro Text"
-L.COUNTTEXT = "Count Text"
-L.RANGEIND = "Range Ind"
-L.CDTEXT = "Cooldown Text"
-L.CDALPHA = "Cooldown Alpha"
-L.AURATEXT = "Aura Watch Text"
-L.AURAIND = "Aura Watch Ind"
-
-L.POINT = "Point"
-L.XPOS = "X Pos"
-L.YPOS = "Y Pos"
-
-L.BOUND_SPELL_KEYBIND = "Enable Spell Binding Mode"
-L.BOUND_TOGGLE_SPELL_KEYBIND = "Toggle Spell Binding Mode"
-L.BOUND_MACRO_KEYBIND = "Enable Macro Binding Mode"
-L.BOUND_TOGGLE_MACRO_KEYBIND = "Toggle Macro Binding Mode"
+L["Attack"] = true
+L["Follow"] = true
+L["Move To"] = true
+L["Assist"] = true
+L["Defensive"] = true
+L["Passive"] = true
 
 
-L.OPTIONS_BLIZZBAR = "Show Blizzard's Action Bar"
-L.OPTIONS_ANIMATE = "Enable Neuron's Orb Animation"
-L.OPTIONS_DRAENORBAR = "Show the Draenor Garrison Action Icon"
+L["Apply"] = true
+L["Cancel"] = true
+L["Done"] = true
+L["Create New Bar"] = true
+L["Delete Current Bar"] = true
+L["Select Bar Type"] = true
+L["Confirm"] = true
+L["Yes"] = true
+L["No"] = true
+L["General Options"] = true
+L["Bar States"] = true
+L["Object Editor"] = true
+L["Macro Data"] = true
+L["Action Data"] = true
+L["Options"] = true
 
-L.BAR_VISABLE_STATES = "Bar Visibility Toggles"
-L.TARGET = "Target"
-L.TARGET1 = "Has Target"
-L.TARGET0 = "No Target"
-L.INDOORS = "Indoors"
-L.OUTDOORS = "Outdoors"
-L.MOUNTED = "Mounted"
-L.FLYING = "Flying"
-L.RESTING = "Resting"
-L.SWIMMING = "Swimming"
-L.HARM = "Harm"
-L.HELP = "Help"
-L.GUI_SPEC1 = "Display button for spec 1"
-L.GUI_SPEC2 = "Display button for spec 2"
-L.GUI_SPEC3 = "Display button for spec 3"
-L.GUI_SPEC4 = "Display button for spec 4"
+L["Macro Name"] = true
+L["Click here to edit macro note"] = true
+L["Use macro note as button tooltip"] = true
+
+L["Count"] = true
+L["Search"] = true
+L["Custom Icon"] = true
+L["Path"] = true
+
+L["Auto Hide"] = true
+L["Show Grid"] = true
+L["Snap To"] = true
+L["Hidden"] = true
+L["Up Clicks"] = true
+L["Down Clicks"] = true
+L["Multi Spec"] = true
+L["Spell Alerts"] = true
+L["Default Alert"] = true
+L["Subdued Alert"] = true
+L["Lock Actions"] = true
+L["Unlock on SHIFT"] = true
+L["Unlock on CTRL"] = true
+L["Unlock on ALT"] = true
+L["Enable Tooltips"] = true
+L["Enhanced"] = true
+L["Hide in Combat"] = true
+L["Show Bar Border"] = true
+
+L["Preset Action States"] = true
+L["Custom Action States"] = true
 
 
-L.SPELL_TARGETING_OPTIONS = "Spell Target Options"
+L["Select a stance to remap:"] = true
+L["Remap selected stance to:"] = true
 
-L.SPELL_TARGETING_SELF_CAST_MODIFIER = "Self-Cast by modifier"
-L.SPELL_TARGETING_SELF_CAST_MODIFIER_TOGGLE = "Toggle the use of the modifier-based self-cast functionality."
-L.SPELL_TARGETING_SELF_CAST_MODIFIER_SELECT = "Select the Self-Cast Modifier"
 
-L.SPELL_TARGETING_FOCUS_CAST_MODIFIER ="Focus-Cast by modifier"
-L.SPELL_TARGETING_FOCUS_CAST_MODIFIER_TOGGLE = "Toggle the use of the modifier-based focus-cast functionality."
-L.SPELL_TARGETING_FOCUS_CAST_MODIFIER_SELECT = "Select the Focus-Cast Modifier"
+L["Scale"] = true
+L["Alpha"] = true
+L["AlphaUp Speed"] = true
+L["Strata"] = true
+L["Shape"] = true
+L["Horizontal Padding"] = true
+L["Vertical Padding"] = true
+L["Horizontal & Vertical Padding"] = true
+L["Columns"] = true
+L["Arc Start"] = true
+L["Arc Length"] = true
 
-L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK = "Right-click Self-Cast"
-L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK_TOGGLE = "Toggle the use of the right-click self-cast functionality."
+L["Bind Text"] = true
+L["Macro Text"] = true
+L["Count Text"] = true
+L["Range Indicator"] = true
+L["Cooldown Text"] = true
+L["Cooldown Alpha"] = true
+L["Aura Watch Text"] = true
+L["Aura Watch Indicator"] = true
 
-L.SPELL_TARGETING_MOUSEOVER_CAST = "Mouse-Over Casting"
-L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER_TOGGLE = "Toggle the use of the modifier-based mouse-over cast functionality."
-L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER_SELECT = "Select a modifier for Mouse-Over Casting"
-L.SPELL_TARGETING_MOUSEOVER_CAST_MODIFIER = "Mouse-Over Casting Modifier"
+L["Point"] = true
+L["X Position"] = true
+L["Y Position"] = true
 
-L.SPELL_TARGETING_SELF_CAST_RIGHTCLICK_SELECT = "Select the Self-Cast Modifier"
+--[[L["Enable Spell Binding Mode"] = true
+L["Toggle Spell Binding Mode"] = true
+L["Enable Macro Binding Mode"] = true
+L["Toggle Macro Binding Mode"] = true]]
 
-L.SPELL_TARGETING_MODIFIER_NONE_REMINDER = "\"None\" as modifier for Self & Focus Casting means its disabled. \nFor Mouse-Over Casting it means its always active, and no modifier is required."
 
-L.ZONEABILITY_BAR_BORDER = "Show Bar Border"
+L["Show Blizzard's Action Bar"] = true
+L["Enable Neuron's Orb Animation"] = true
 
-L.XP_BAR = "XP Bar"
-L.REP_BAR = "Rep Bar"
-L.CAST_BAR = "Cast Bar"
-L.MIRROR_BAR = "Mirror Bar"
-L.STATUSBAR_BAR = "Undefined Status Bar"
+L["Bar Visibility Toggles"] = true
+L["Target"] = true
+L["Has Target"] = true
+L["No Target"] = true
+L["Indoors"] = true
+L[ "Outdoors"] = true
+L["Mounted"] = true
+L["Flying"] = true
+L["Resting"] = true
+L["Swimming"] = true
+L["Harm"] = true
+L["Help"] = true
+L["Display button for specialization 1"] = true
+L["Display button for specialization 2"] = true
+L["Display button for specialization 3"] = true
+L["Display button for specialization 4"] = true
 
-L.TRACK_XP = "Track Character XP"
-L.TRACK_AP = "Track Artifact Power"
-L.TRACK_HONOR = "Track Honor Points"
 
-L.WIDTH ="Width"
-L.HEIGHT = "Height"
-L.BARFILL = "Bar Fill"
-L.BORDER = "Border"
-L.ORIENT = "Orientation"
+L["Spell Target Options"] = true
 
-L.CENTER_TEXT = "Center Text"
-L.LEFT_TEXT = "Left Text"
-L.RIGHT_TEXT = "Right Text"
-L.MOUSE_TEXT = "Mouseover Text"
-L.TOOLTIP_TEXT = "Tooltip Text"
+L["Self-Cast by modifier"] = true
+L["Toggle the use of the modifier-based self-cast functionality."] = true
+L["Select the Self-Cast Modifier"] = true
 
-L.UNIT_WATCH = "Unit"
-L.CAST_ICON = "Cast Icon"
+L["Focus-Cast by modifier"] = true
+L["Toggle the use of the modifier-based focus-cast functionality."] = true
+L["Select the Focus-Cast Modifier"] = true
 
-L.TEXT_BLANK = "None"
-L.TEXT_SPELL = "Spell"
-L.TEXT_TIMER = "Timer"
-L.TEXT_CURRNEXT = "Current/Next"
-L.TEXT_RESTED = "Rested Levels"
-L.TEXT_PERCENT = "Percent"
-L.TEXT_BUBBLES = "Bubbles"
-L.TEXT_FACTION = "Faction & Standing"
-L.TEXT_TYPE = "Type"
+L["Right-click Self-Cast"] = true
+L["Toggle the use of the right-click self-cast functionality."] = true
 
-L.AUTO_SELECT = "Auto Select"
+L["Mouse-Over Casting"] = true
+L["Toggle the use of the modifier-based mouse-over cast functionality."] = true
+L["Select a modifier for Mouse-Over Casting"] = true
+L["Mouse-Over Casting Modifier"] = true
 
-L.BARFILL_DEFAULT = "Default"
-L.BARFILL_CONTRAST = "Contrast"
-L.BARFILL_CARPAINT = "Carpaint"
-L.BARFILL_GEL = "Gel"
-L.BARFILL_GLASSED = "Glassed"
-L.BARFILL_SOFT = "Soft"
-L.BARFILL_VELVET = "Velvet"
+L["Select the Self-Cast Modifier"] = true
 
-L.BORDER_TOOLTIP = "Tooltip"
-L.BORDER_SLIDER = "Slider"
-L.BORDER_DIALOG = "Dialog"
-L.BORDER_NONE = "None"
+L["Spell_Targeting_Modifier_None_Reminder"] = "\"None\" as modifier for Self & Focus Casting means its disabled. \nFor Mouse-Over Casting it means its always active, and no modifier is required."
 
-L.ORIENT_HORIZ = "Horizontal"
-L.ORIENT_VERT = "Vertical"
+
+L["XP Bar"] = true
+L["Rep Bar"] = true
+L["Cast Bar"] = true
+L["Mirror Bar"] = true
+
+L["Track Character XP"] = true
+L["Track Artifact Power"] = true
+L["Track Honor Points"] = true
+
+L["Width"] = true
+L["Height"] = true
+L["Bar Fill"] = true
+L["Border"] = true
+L["Orientation"] = true
+
+L["Center Text"] = true
+L["Left Text"] = true
+L["Right Text"] = true
+L["Mouseover Text"] = true
+L["Tooltip Text"] = true
+
+L["Unit"] = true
+L["Cast Icon"] = true
+
+L["Spell"] = true
+L["Timer"] = true
+L["Current/Next"] = true
+L["Rested Levels"] = true
+L["Percent"] = true
+L["Bubbles"] = true
+L["Faction & Standing"] = true
+L["Type"] = true
+
+L["Auto Select"] = true
+
+L["Default"] = true
+L["Contrast"] = true
+L["Carpaint"] = true
+L["Gel"] = true
+L["Glassed"] = true
+L["Soft"] = true
+L["Velvet"] = true
+
+L["Tooltip"] = true
+L["Slider"] = true
+L["Dialog"] = true
+
+L["Horizontal"] = true
+L["Vertical"] = true
 
 
 
@@ -484,9 +486,9 @@ L.ORIENT_VERT = "Vertical"
 ----------------------FAQ Strings---------------------------
 ------------------------------------------------------------
 
-L.FAQ_TITLE = "F.A.Q."
-L.FAQ_TITLE_LONG = "Frequently Asked Questions"
-L.FAQ = [[
+L["F.A.Q."] = true
+L["Frequently Asked Questions"] = true
+L["FAQ_Intro"] = [[
 |cffffd200Neuron F.A.Q:|r
 
 Below you will find answers to various questions that may arise as you use Neuron. Though please note that not all answers may be found here.
@@ -504,8 +506,9 @@ Thank you again for using Neuron.
 
 ]]
 
-L.CHANGELOG_TITLE = "Changelog"
-L.CHANGELOG = [[
+L["Changelog"] = true
+
+L["Changelog_Latest_Version"] = [[
 |cffffd200Changelog:|r
 
 Neuron 0.9.0 Update Changes:
@@ -514,8 +517,8 @@ Neuron 0.9.0 Update Changes:
 
 ]]
 
-L.FAQ_BAR_CONFIGURE_TITLE = "Bar Configuration"
-L.FAQ_BAR_CONFIGURE = [[
+L["Bar Configuration"] = true
+L["Bar_Configuration_FAQ"] = [[
 |cffffd200Bar Editor Mode|r
 To enter the Bar Editor, left click on the NEURON icon or type "/neuron config" into the chat window. You will know that the mode is enabled because any hidden bars (IE the Pet or Extra Action Bars) will be displayed and the bars will display a highlight & name on mouse over.
 
@@ -525,8 +528,8 @@ To exit the Bar Editor Mode, left click the NEURON icon, enter the text line com
 To open the Bar Configuration Menu, right click on any bar when the Bar Editor Mode is enabled. The first time the menu is opened it will be on the general options tab. If it is opened a second time after being closed, it will open to the last displayed tab.
 ]]
 
-L.FAQ_BAR_CONFIGURE_GENERAL_OPTIONS_TITLE = "General Options"
-L.FAQ_BAR_CONFIGURE_GENERAL_OPTIONS = [[
+L["General Options"] = true
+L["General_Bar_Configuration_Option_FAQ"] = [[
 |cffffd200Bar Listing Section|r
 To the far left of the menu there will be a section that lists all of the bars that have been created. Clicking on a name will select that bar and update the menu to display the options for the selected bar.
 
@@ -579,9 +582,9 @@ At the bottom left of the option menu is the Delete Current Bar Button. When pre
 
 
 
-L.FAQ_BAR_CONFIGURE_BAR_STATES_TITLE = "Bar States"
+L["Bar States"] = true
 
-L.FAQ_BAR_CONFIGURE_BAR_STATES = [[
+L["Bar_State_Configuration_FAQ"] = [[
 |cffffd200Bar States Selector|r
 The Bar States options allows for custom states and visibility triggers to be added to a bar.  A bar state is what items are currently shown on it. Adding additional states will allow you to automatically change what is displayed when a set state is triggered.  The default state is called the home state.
 
@@ -602,8 +605,9 @@ These options allow you to customize when a bar should be displayed or hidden.  
 
 
 
-L.FAQ_BAR_CONFIGURE_SPELL_TARGET_TITLE = "Spell Target Options"
-L.FAQ_BAR_CONFIGURE_SPELL_TARGET = [[
+L["Spell Target Options"] = true
+L["Spell_Target_Options_FAQ"]= [[
+
 |cffffd200Spell Target Options|r
 Spell target options allow you to automatically add certain cast modifiers to spells added to the bar.  Only spells dragged to the bar from the spell book will have these modifiers added.  A way to check to see if a spell will be affected is to look at the button using the macro editor.  If the macro has "#autowrite" at the beginning, then it can use the targeting options.
 
@@ -616,8 +620,8 @@ Spell target options allow you to automatically add certain cast modifiers to sp
 |cffffd200Mouse-Over Casting:|r  When enabled, any spell cast while holding the selected modifier key will try to be cast on the mob that the mouse cursor is currently over.  If the modifier for this option is set to "None" then it will always be on.]]
 
 
-L.FLYOUT = "Flyout"
-L.FLYOUT_FAQ = [[
+L["Flyout"] = true
+L["Flyout_FAQ"] = [[
 |cffffd200Flyout Menus|r
 
 Neuron allows for the creation of flyout menus of spells, items or companions. It accomplishes this by adding a new macro command and building the menu based on several options. The following are the instructions on how to go about making a custom flyout menu via the NEURON Button Macro Editor:
