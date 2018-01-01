@@ -226,21 +226,20 @@ local handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate"
 local level, stanceStringsUpdated, PEW
 
 
----Need to localize these strings
 --ACE GUI OPTION TABLE
 local options = {
 	name = "Neuron",
 	type = 'group',
 	args = {
 		moreoptions={
-			name = "Options",
+			name = L["Options"],
 			type = "group",
 			order = 0,
 			args={
 				AnimateIcon = {
 					order = 0,
-					name = "Animate Icon",
-					desc = "Toggles the Animation of the Neuron Icon",
+					name = L["Animate Icon"],
+					desc = L["Toggles the Animation of the Neuron Orb Icon"],
 					type = "toggle",
 					set = function() NEURON:Animate() end,
 					get = function() return NeuronGDB.animate end,
@@ -248,8 +247,8 @@ local options = {
 				},
 				BlizzardBar = {
 					order = 1,
-					name = "Display Blizzard Bar",
-					desc = "Shows / Hides the Default Blizzard Bar",
+					name = L["Display the Blizzard Bar"],
+					desc = L["Shows / Hides the Default Blizzard Bar"],
 					type = "toggle",
 					set = function() NEURON:BlizzBar() end,
 					get = function() return NeuronGDB.mainbar end,
@@ -257,8 +256,8 @@ local options = {
 				},
 				MMbutton = {
 					order = 2,
-					name = "Display Minimap Button",
-					desc = "Toggles the minimap button.",
+					name = L["Display Minimap Button"],
+					desc = L["Toggles the minimap button."],
 					type = "toggle",
 					set =  function() NEURON:toggleMMB() end,
 					get = function() return NeuronGDB.showmmb end,

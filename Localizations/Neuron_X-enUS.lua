@@ -9,7 +9,7 @@ local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "enUS", true)
 if not L then return end
 
 
-L["Command list"] = true
+L["Command List"] = true
 
 L["Menu"] = true
 L["Menu_Description"] = "Open the main menu"
@@ -383,9 +383,14 @@ L["Toggle Spell Binding Mode"] = true
 L["Enable Macro Binding Mode"] = true
 L["Toggle Macro Binding Mode"] = true]]
 
+L["Display the Blizzard Bar"] = true
+L["Shows / Hides the Default Blizzard Bar"] = true
 
-L["Show Blizzard's Action Bar"] = true
-L["Enable Neuron's Orb Animation"] = true
+L["Animate Icon"] = true
+L["Toggles the Animation of the Neuron Orb Icon"] = true
+
+L["Display Minimap Button"] = true
+L["Toggles the minimap button."] = true
 
 L["Bar Visibility Toggles"] = true
 L["Target"] = true
