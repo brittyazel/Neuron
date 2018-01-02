@@ -324,9 +324,7 @@ L["Search"] = true
 L["Custom Icon"] = true
 L["Path"] = true
 
-L["Auto Hide"] = true
 L["Show Grid"] = true
-L["Snap To"] = true
 L["Hidden"] = true
 L["Up Clicks"] = true
 L["Down Clicks"] = true

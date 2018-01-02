@@ -38,9 +38,9 @@ local barOpt = { chk = {}, adj = {}, pri = {}, sec = {}, swatch = {}, vis = {} }
 local popupData = {}
 
 local chkOptions = {
-	[1] = { "AUTOHIDE", L["Auto Hide"], 1, "AutoHideBar" },
+	[1] = { "AUTOHIDE", L["AutoHide"], 1, "AutoHideBar" },
 	[2] = { "SHOWGRID", L["Show Grid"], 1, "ShowGridSet" },
-	[3] = { "SNAPTO", L["Snap To"], 1, "SnapToBar" },
+	[3] = { "SNAPTO", L["SnapTo"], 1, "SnapToBar" },
 	[4] = { "UPCLICKS", L["Up Clicks"], 1, "UpClicksSet" },
 	[5] = { "DOWNCLICKS", L["Down Clicks"], 1, "DownClicksSet" },
 	[6] = { "MULTISPEC", L["Multi Spec"], 1, "MultiSpecSet" },

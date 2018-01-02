@@ -28,6 +28,8 @@ Libs\AceEvent-3.0\AceEvent-3.0.xml
 
 Localizations\Neuron_Localizations.xml
 
+Libs\embeds.xml
+
 Neuron.lua
 
 Neuron_States.lua
