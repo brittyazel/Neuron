@@ -1651,7 +1651,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 			f:SetScript("OnClick", setBarActionState)
 			--Renames Stance for rogues to Stealth as that is what should really be used
 			if state == "stance" and (NEURON.class == "ROGUE") then
-				f.text:SetText(L["Stealth"])
+				f.text:SetText(L["Stealth"]:upper())
 			else
 				f.text:SetText(state:upper())
 			end
