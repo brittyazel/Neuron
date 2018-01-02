@@ -7,7 +7,7 @@ local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "frFR", false)
 
 if not L then return end
 
---@localization(locale="frFR", format="lua_table")@
+--@localization(locale="frFR", format="lua_additive_table")@
 
 --@do-not-package@
 ---exported translations go here:
