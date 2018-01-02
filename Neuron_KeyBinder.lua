@@ -217,13 +217,13 @@ function BINDER:OnShow()
 		local priority = ""
 
 		if (button.keys.hotKeyPri) then
-			priority = "|cff00ff00"..L["priority"].."|r\n"
+			priority = "|cff00ff00"..L["Priority"].."|r\n"
 		end
 
 		if (button.keys.hotKeyLock) then
-			self.type:SetText(priority.."|cfff00000"..L["locked"].."|r")
+			self.type:SetText(priority.."|cfff00000"..L["Locked"].."|r")
 		else
-			self.type:SetText(priority.."|cffffffff"..L["bind"].."|r")
+			self.type:SetText(priority.."|cffffffff"..L["Bind"].."|r")
 		end
 	end
 end
@@ -378,7 +378,7 @@ function BUTTON:CreateBindFrame(index)
 	binder:SetScript("OnMouseWheel", BINDER.OnMouseWheel)
 	binder:SetScript("OnUpdate", BINDER.OnUpdate)
 
-	binder.type:SetText(L["bind"])
+	binder.type:SetText(L["Bind"])
 	binder.button = self
 	binder.bindType = "button"
 

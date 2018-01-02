@@ -253,9 +253,8 @@ L["Empty Button"] = true
 L["Edit Bindings"] = true
 L["None"] = true
 
-L["bind"] = true
-L["locked"] = true
-L["priority"] = true
+L["Locked"] = true
+L["Priority"] = true
 L["Bindings_Locked_Notice"]	= "This button's bindings are locked.\nLeft-Click button to unlock."
 L["Keybind_Credits"] = "Neuron Key Binder\nThe Original Mouseover Binding System\nDeveloped by Maul"
 
@@ -391,7 +390,7 @@ L["Target"] = true
 L["Has Target"] = true
 L["No Target"] = true
 L["Indoors"] = true
-L[ "Outdoors"] = true
+L["Outdoors"] = true
 L["Mounted"] = true
 L["Flying"] = true
 L["Resting"] = true
