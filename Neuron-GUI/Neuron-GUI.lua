@@ -2444,16 +2444,16 @@ function NEURON:MacroEditorUpdate()
 			else
 				NBTNE.macroicon.icon:SetTexture(data.macro_Icon)
 			end
-			--print(data.macro_Name)
+			--NeuronBase:Print(data.macro_Name)
 			NBTNE.nameedit:SetText(data.macro_Name)
 			NBTNE.noteedit:SetText(data.macro_Note)
 			NBTNE.usenote:SetChecked(data.macro_UseNote)
 
 		else
-			--print("notinghere")
+			--NeuronBase:Print("notinghere")
 			--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
 			--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
-			---print(button.specdata[buttonSpec][state])
+			---NeuronBase:Print(button.specdata[buttonSpec][state])
 			--end
 		end
 	end
@@ -2523,10 +2523,10 @@ local function macroText_OnTextChanged(self)
 				button.specdata[buttonSpec][state].macro_Text = self:GetText()
 				button.specdata[buttonSpec][state].macro_Watch = false
 			else
-				--print("notinghere")
+				--NeuronBase:Print("notinghere")
 				--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
 				--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
-				--print(button.specdata[buttonSpec][state])
+				--NeuronBase:Print(button.specdata[buttonSpec][state])
 			end
 
 		end

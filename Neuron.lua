@@ -20,10 +20,9 @@ local type = _G.type
 local string = _G.string
 local table = _G.table
 
-local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-NeuronProfile = LibStub("AceAddon-3.0"):NewAddon("NeuronProfile") --This should be merged into the "NeuronBase" addon eventually.
----TODO: Port more of the addon to Ace3
 NeuronBase = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0")
+local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+
 
 
 -------------------------------------------------------------------------------
@@ -520,7 +519,7 @@ function NeuronBase:slashHandler(input)
 			elseif (bar and bar[func]) then
 				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
 			else
-				print(L["No bar selected or command invalid"])
+				NeuronBase:Print(L["No bar selected or command invalid"])
 			end
 			return
 		end
@@ -532,6 +531,7 @@ end
 
 function printSlashHelp()
 
+	NeuronBase:Print("---------------------------------------------------")
 	NeuronBase:Print(L["How to use"]..":   ".."/"..addonName:lower().." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
 	NeuronBase:Print(L["Command List"]..":")
 	NeuronBase:Print("---------------------------------------------------")
@@ -1583,7 +1583,7 @@ function  NEURON:MoveSpecButtons(msg)
 	if (not is_valid_spec_id(spec_1_id, num_specs)
 			or not is_valid_spec_id(spec_2_id, num_specs)) then
 
-		return print(string.format("%s <spec 1 id> <spec 2 id>", "/neuron MoveSpecButtons"))
+		return NeuronBase:Print(string.format("%s <spec 1 id> <spec 2 id>", "/neuron MoveSpecButtons"))
 	end
 
 	local char_db = _G.NeuronCDB
@@ -1595,7 +1595,7 @@ function  NEURON:MoveSpecButtons(msg)
 
 	_G.NeuronCDB = char_db
 	profile.NeuronCDB = char_db
-	print("Buttons for layout "..spec_1_id.." copied to layout "..spec_2_id)
+	NeuronBase:Print("Buttons for layout "..spec_1_id.." copied to layout "..spec_2_id)
 end
 
 
@@ -1916,7 +1916,7 @@ function NEURON:PrintStateList()
 		end
 	end
 
-	print(list..L["Custom_Option"])
+	NeuronBase:Print(list..L["Custom_Option"])
 end
 
 
@@ -1939,11 +1939,14 @@ function NEURON:PrintBarTypes()
 
 	for i=1,high do if (not data[i]) then data[i] = 0 end end
 
+
+	NeuronBase:Print("---------------------------------------------------")
 	NeuronBase:Print("     "..L["How to use"]..":   ".."/"..addonName:lower().." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
+	NeuronBase:Print("---------------------------------------------------")
 
 	for k,v in ipairs(data) do
 		if (type(v) == "table") then
-			NeuronBase:Print("        |cff00ff00"..v[1])
+			NeuronBase:Print("    |cff00ff00"..v[1]..":|r "..v[2])
 		end
 	end
 
@@ -1991,9 +1994,9 @@ function NEURON:SetTimerLimit(msg)
 
 	if (limit and limit > 0) then
 		GDB.timerLimit = limit
-		print(format(L["Timer_Limit_Set_Message"], GDB.timerLimit))
+		NeuronBase:Print(format(L["Timer_Limit_Set_Message"], GDB.timerLimit))
 	else
-		print(L["Timer_Limit_Invalid_Message"])
+		NeuronBase:Print(L["Timer_Limit_Invalid_Message"])
 	end
 end
 
@@ -2216,7 +2219,7 @@ StaticPopupDialogs["ReloadUI"] = {
 }
 
 
-function NeuronProfile:RefreshConfig()
+function NeuronBase:RefreshConfig()
 	NeuronCDB = self.db.profile["NeuronCDB"]
 	NeuronGDB = self.db.profile["NeuronGDB"]
 	NeuronSpec = {cSpec = GetSpecialization()}
@@ -2229,7 +2232,7 @@ end
 
 
 
-function NeuronProfile:OnInitialize()
+function NeuronBase:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", defaults)
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonName)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)

@@ -91,14 +91,14 @@
 
 						elseif (edit and self.value) then
 
-							print("hit2")
+							NeuronBase:Print("hit2")
 
 							edit:SetText("")
 							edit:SetText(self.value)
 
 						elseif (edit) then
 
-							print("hit3")
+							NeuronBase:Print("hit3")
 
 							edit:SetText("")
 							edit:SetText(text)

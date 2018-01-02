@@ -22,7 +22,7 @@
 --
 -- For more details on how to use AceDB-3.0, see the [[AceDB-3.0 Tutorial]].
 --
--- You may also be interested in [[libdualspec-1-0|LibMultiSpec-1.0]] to do profile switching automatically when switching specs.
+-- You may also be interested in [[libdualspec-1-0|LibDualSpec-1.0]] to do profile switching automatically when switching specs.
 --
 -- @usage
 -- MyAddon = LibStub("AceAddon-3.0"):NewAddon("DBExample")

@@ -1302,7 +1302,7 @@ local function linkScanOnUpdate(self, elapsed)
 		self.index = next(itemLinks, self.index)
 
 		if not (self.index) then
-			--print("Scanned "..self.count.." items in "..self.elapsed.." seconds")
+			--NeuronBase:Print("Scanned "..self.count.." items in "..self.elapsed.." seconds")
 			self:Hide(); anchorUpdater:Show()
 		end
 	end
