@@ -565,10 +565,11 @@ function BUTTON:MACRO_GetDragAction()
 end
 
 
-local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__
-
-
 function BUTTON:MACRO_UpdateData(...)
+
+	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__
+
+
 	if (self.macroparse) then
 		ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__ = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
 
@@ -877,7 +878,16 @@ function BUTTON:MACRO_UpdateIcon(...)
 		self.border:Hide()
 	end
 
+
+	--druid fix for thrash glow not showing for feral druids.
+	--Thrash Guardian: 77758
+	--Thrash Feral: 106832
+	--But the joint thrash is 106830 (this is the one that results true when the ability is procced)
+
+
 	if (self.spellID and IsSpellOverlayed(self.spellID)) then
+		self:MACRO_StartGlow()
+	elseif (spell == "Thrash()" and IsSpellOverlayed(106830)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
 		self:MACRO_StartGlow()
 	elseif (self.glowing) then
 		self:MACRO_StopGlow()

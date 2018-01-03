@@ -599,8 +599,9 @@ end
 ---	If a spell is not displaying its tooltip or cooldown, then the spell in the macro probably is not in the database
 function NEURON:UpdateSpellIndex()
 	local sIndexMax = 0
+    local numTabs = GetNumSpellTabs()
 
-	for i=1,8 do
+	for i=1,numTabs do
 		local _, _, _, numSlots = GetSpellTabInfo(i)
 
 		sIndexMax = sIndexMax + numSlots
