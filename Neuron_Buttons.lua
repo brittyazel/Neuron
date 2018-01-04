@@ -16,14 +16,15 @@ local	SKIN = LibStub("Masque", true)
 
 local MacroDrag, StartDrag = NEURON.MacroDrag, NEURON.StartDrag
 
---local copies of often used globals
-local floor = math.floor
+
+local pi = math.pi
+-- -- local copies of often used globals
+--[[local floor = math.floor
 local ceil = math.ceil
 local select = _G.select
 local tonumber = _G.tonumber
 local unpack = _G.unpack
 local next = _G.next
-local pi, cos, sin = math.pi, cos, sin
 
 local HasAction = _G.HasAction
 local GetTime = _G.GetTime
@@ -68,23 +69,20 @@ local IsEquippableItem = _G.IsEquippableItem
 local GetEquipmentSetInfoByName = _G.GetEquipmentSetInfoByName
 
 local GetPossessInfo = _G.GetPossessInfo
-local GetCompanionInfo = _G.GetCompanionInfo
+local GetCompanionInfo = _G.GetCompanionInfo]]
 
-local ShowOverlayGlow = ActionButton_ShowOverlayGlow
-local HideOverlayGlow = ActionButton_HideOverlayGlow
-local IsSpellOverlayed = _G.IsSpellOverlayed
+--local ShowOverlayGlow = ActionButton_ShowOverlayGlow
+--local HideOverlayGlow = ActionButton_HideOverlayGlow
+--local IsSpellOverlayed = _G.IsSpellOverlayed
+--local STANDARD_TEXT_FONT = STANDARD_TEXT_FONT
+
 
 local sIndex = NEURON.sIndex  --Spell index
 local cIndex = NEURON.cIndex  --Battle pet & Mount index
 local iIndex = NEURON.iIndex  --Items Index
 local tIndex = NEURON.tIndex  --Toys Index
 
-local ItemCache = NeuronItemCache
-
-local STANDARD_TEXT_FONT = STANDARD_TEXT_FONT
-
-local tooltipScan = NeuronTooltipScan
-local tooltipScanTextLeft2 = NeuronTooltipScanTextLeft2
+local ItemCache
 
 local currMacro = {}
 
@@ -239,10 +237,10 @@ local function AutoCastStop(shine)
 end
 
 
-local cou_distance, cou_radius, cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position
-
 
 local function controlOnUpdate(self, elapsed)
+    local cou_distance, cou_radius, cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position
+
 	for i in next,autoCast.timers do
 		autoCast.timers[i] = autoCast.timers[i] + elapsed
 
@@ -399,13 +397,13 @@ local function cooldownsOnUpdate(self, elapsed)
 
 		elseif (cd.timer:IsShown() and coolDown ~= cd.timerCD) then
 			if (coolDown >= 86400) then
-				formatted = ceil(coolDown/86400)
+				formatted = math.ceil(coolDown/86400)
 				formatted = formatted.."d"; size = cd.button:GetWidth()*0.3
 			elseif (coolDown >= 3600) then
-				formatted = ceil(coolDown/3600)
+				formatted = math.ceil(coolDown/3600)
 				formatted = formatted.."h"; size = cd.button:GetWidth()*0.3
 			elseif (coolDown >= 60) then
-				formatted = ceil(coolDown/60)
+				formatted = math.ceil(coolDown/60)
 				formatted = formatted.."m"; size = cd.button:GetWidth()*0.3
 			elseif (coolDown < 6) then
 				size = cd.button:GetWidth()*0.6
@@ -440,10 +438,12 @@ local function cooldownsOnUpdate(self, elapsed)
 	end
 end
 
-local uai__ = 1
-local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID
+
 
 local function updateAuraInfo(unit)
+
+    local uai__ = 1
+    local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID
 	uai_index = 1
 
 	wipe(unitAuras[unit])
@@ -884,11 +884,16 @@ function BUTTON:MACRO_UpdateIcon(...)
 	--Thrash Feral: 106832
 	--But the joint thrash is 106830 (this is the one that results true when the ability is procced)
 
+    --Swipe(Bear): 213771
+    --Swipe(Cat): 106785
+    --Swipe(NoForm): 213764
 
 	if (self.spellID and IsSpellOverlayed(self.spellID)) then
 		self:MACRO_StartGlow()
 	elseif (spell == "Thrash()" and IsSpellOverlayed(106830)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
 		self:MACRO_StartGlow()
+    elseif (spell == "Swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+        self:MACRO_StartGlow()
 	elseif (self.glowing) then
 		self:MACRO_StopGlow()
 	end
@@ -900,7 +905,7 @@ end
 function BUTTON:MACRO_StartGlow()
 
 	if (self.spellGlowDef) then
-		ShowOverlayGlow(self)
+		ActionButton_ShowOverlayGlow(self)
 	elseif (self.spellGlowAlt) then
 		AutoCastStart(self.shine)
 	end
@@ -911,7 +916,7 @@ end
 
 function BUTTON:MACRO_StopGlow()
 	if (self.spellGlowDef) then
-		HideOverlayGlow(self)
+		ActionButton_HideOverlayGlow(self)
 	elseif (self.spellGlowAlt) then
 		AutoCastStop(self.shine)
 	end
@@ -1040,9 +1045,11 @@ function BUTTON:MACRO_UpdateState(...)
 	end
 end
 
-local uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count, uaw_color
+
 
 function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
+
+    local uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count, uaw_color
 
 	if (spell and (unit == self.unit or unit == "player")) then
 		spell = spell:gsub("%s*%(.+%)", ""):lower()
@@ -1359,6 +1366,7 @@ end
 
 ---TODO:
 ---We need to figure out what this function did.
+---Update: Seems to be important for range indication (i.e. button going red)
 function BUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of resources
 
 	if (self.elapsed > GDB.throttle) then --throttle down this code to ease up on the CPU a bit
