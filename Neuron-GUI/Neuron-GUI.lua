@@ -1569,6 +1569,7 @@ end
 
 local IsDruid = false
 
+
 function NEURON:ActionEditor_OnLoad(frame)
 
 	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
@@ -1637,6 +1638,7 @@ function NEURON:ActionEditor_OnLoad(frame)
 
 	local MAS = NEURON.MANAGED_ACTION_STATES
 
+	--this is confusing, but states comes out to just be a list of the names of the states
 	for state, values in pairs(MAS) do
 		states[values.order] = state
 	end
@@ -1651,9 +1653,9 @@ function NEURON:ActionEditor_OnLoad(frame)
 			f:SetScript("OnClick", setBarActionState)
 			--Renames Stance for rogues to Stealth as that is what should really be used
 			if state == "stance" and (NEURON.class == "ROGUE") then
-				f.text:SetText(L["Stealth"]:upper())
+				f.text:SetText(L["Stealth"])--:upper())
 			else
-				f.text:SetText(state:upper())
+				f.text:SetText(MAS[state].localizedName)--:upper())
 			end
 			f.option = state
 
@@ -1971,38 +1973,38 @@ end
 
 local SecondaryPresetsList = {}
 
-function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
+function NEURON.SecondaryPresetsScrollFrameUpdate(frame, stateList, alt)
 
 	if (not NeuronBarEditorBarStatesActionEditor:IsVisible()) then return end
 	local bar = Neuron.CurrentBar
 
-	if (not tableList) then
+	if (not stateList) then
 
 		wipe(SecondaryPresetsList)
 
-		tableList = NEURON.MANAGED_ACTION_STATES
+		stateList = NEURON.MANAGED_ACTION_STATES
 	end
 
 	if (not frame) then
 		frame = NeuronBarEditorBarStatesActionEditorPresetsSecondaryScrollFrame
 	end
 
-	local dataOffset, data = FauxScrollFrame_GetOffset(frame), {}
+	local statesOffset, states = FauxScrollFrame_GetOffset(frame), {}
 	local button, text
 
 	local count = 1
 
-	for k,v in pairs(tableList) do
+	for k,v in pairs(stateList) do
 
 		if (not MAS[k].homestate and (k ~= "extrabar") and (k ~= "custom") ) then --or ((NEURON.class == "ROGUE") and k ~= "stealth")
-			data[count] = k
+			states[count] = k
 			count = count + 1
 		end
 	end
 
 	--Might want to add some checks for states like stealth for classes that don't have stealth. But for now it doesn't break anything to have it show generically
 
-	table.sort(data)
+	table.sort(states)
 
 	frame:Show()
 
@@ -2011,12 +2013,12 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 		button = _G["PresetsScrollFrameButton"..i] --"NeuronBarEditorBarStatesSecondaryPresetsScrollFrameButton"..i]
 		button:SetChecked(nil)
 
-		count = dataOffset + i
+		count = statesOffset + i
 
-		if (data[count]) then
-			text = data[count]:upper()
+		if (states[count]) then
+			text = MAS[states[count]].localizedName --:upper()
 
-			button.option = data[count]
+			button.option = states[count]
 			button:SetChecked(bar.cdata[button.option ])
 			button.text:SetText(text)
 
@@ -2031,7 +2033,7 @@ function NEURON.SecondaryPresetsScrollFrameUpdate(frame, tableList, alt)
 		end
 	end
 
-	FauxScrollFrame_Update(frame, #data, numStatesShown, 18)
+	FauxScrollFrame_Update(frame, #states, numStatesShown, 18)
 end
 
 function NEURON:BarStates_OnLoad(frame)

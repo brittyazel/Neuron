@@ -1,5 +1,6 @@
 ﻿--Neuron , a World of Warcraft® user interface addon.
 
+local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 Neuron.MANAGED_ACTION_STATES = {
 
@@ -9,6 +10,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 2,
 		rangeStop = 6,
 		order = 1,
+		localizedName = L["Paged"];
 	},
 
 	stance = {
@@ -17,6 +19,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 8,
 		order = 2,
+		localizedName = L["Stance"];
 	},
 
 	pet = {
@@ -25,6 +28,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 2,
 		rangeStop = 3,
 		order = 3,
+		localizedName = L["Pet"];
 	},
 
 	alt = {
@@ -32,6 +36,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 4,
+		localizedName = L["Alt"];
 	},
 
 	ctrl = {
@@ -39,6 +44,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 5,
+		localizedName = L["Ctrl"];
 	},
 
 	shift = {
@@ -46,6 +52,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 6,
+		localizedName = L["Shift"];
 	},
 
 	stealth = {
@@ -53,6 +60,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 7,
+		localizedName = L["Stealth"];
 	},
 
 	reaction = {
@@ -60,6 +68,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 8,
+		localizedName = L["Reaction"];
 	},
 
 	vehicle = {
@@ -67,6 +76,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 9,
+		localizedName = L["Vehicle"];
 	},
 
 	group = {
@@ -74,6 +84,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 2,
 		order = 10,
+		localizedName = L["Group"];
 	},
 
 	fishing = {
@@ -81,6 +92,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 11,
+		localizedName = L["Fishing"];
 	},
 
 	custom = {
@@ -88,6 +100,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 12,
+		localizedName = L["Custom"];
 	},
 
 	combat = {
@@ -95,6 +108,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 13,
+		localizedName = L["Combat"];
 	},
 
 	possess = {
@@ -102,6 +116,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 14,
+		localizedName = L["Possess"];
 	},
 
 	override = {
@@ -109,6 +124,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 15,
+		localizedName = L["Override"];
 	},
 
 	extrabar = {
@@ -116,6 +132,7 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 16,
+		localizedName = L["Extrabar"];
 	},
 
 	target = {
@@ -123,54 +140,64 @@ Neuron.MANAGED_ACTION_STATES = {
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 17,
+		localizedName = L["Target"];
 	},
 	indoors = {
 		states = "[indoors] indoors1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 18,
+		localizedName = L["Indoors"];
 	},
 	outdoors = {
 		states = "[outdoors] outdoors1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 20,
+		localizedName = L["Outdoors"];
 	},
 	mounted = {
 		states = "[mounted] mounted1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 21,
+		localizedName = L["Mounted"];
 	},
 	flying = {
 		states = "[flying] flying1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 22,
+		localizedName = L["Flying"];
 	},
 	help = {
 		states = "[help] help1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 23,
+		localizedName = L["Help"];
 	},
 	harm = {
 		states = "[harm] harm1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 24,
+		localizedName = L["Harm"];
 	},
 	resting = {
 		states = "[resting] resting1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 25,
+		localizedName = L["Resting"];
 	},
 	swimming = {
 		states = "[swimming] swimming1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 26,
+		localizedName = L["Swimming"];
+
 	},
 }
 
