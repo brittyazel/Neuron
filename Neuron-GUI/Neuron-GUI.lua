@@ -75,14 +75,14 @@ local adjOptions = {
 }
 
 local swatchOptions = {
-	[1] = { "BINDTEXT", L["Bind Text"], 1, "BindTextSet", true, nil, "bindColor" },
-	[2] = { "MACROTEXT", L["Macro Text"], 1, "MacroTextSet", true, nil, "macroColor" },
-	[3] = { "COUNTTEXT", L["Count Text"], 1, "CountTextSet", true, nil, "countColor" },
-	[4] = { "RANGEIND", L["Range Indicator"], 1, "RangeIndSet", true, nil, "rangecolor" },
-	[5] = { "CDTEXT", L["Cooldown Text"], 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
-	[6] = { "CDALPHA", L["Cooldown Alpha"], 1, "CDAlphaSet", nil, nil },
-	[7] = { "AURATEXT", L["Aura Watch Text"], 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
-	[8] = { "AURAIND", L["Aura Watch Indicator"], 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
+	[1] = { "BINDTEXT", L["Keybind Label"], 1, "BindTextSet", true, nil, "bindColor" },
+	[2] = { "MACROTEXT", L["Macro Name"], 1, "MacroTextSet", true, nil, "macroColor" },
+	[3] = { "COUNTTEXT", L["Stack Count Label"], 1, "CountTextSet", true, nil, "countColor" },
+	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "RangeIndSet", true, nil, "rangecolor" },
+	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
+	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "CDAlphaSet", nil, nil },
+	[7] = { "AURATEXT", L["Buff/Debuff Aura Countdown"], 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
+	[8] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
 }
 
 local specoveride = GetActiveSpecGroup() or 1
@@ -356,7 +356,7 @@ function NEURON:UpdateBarGUI(newBar)
 	if (bar and GUIData[bar.class]) then
 
 		if (NBE:IsVisible()) then
-			NBE.count.text:SetText(bar.objType.." "..L["Count"]..": |cffffffff"..bar.objCount.."|r")
+			NBE.count.text:SetText(L["Number of Buttons"]..": |cffffffff"..bar.objCount.."|r")
 			NBE.barname:SetText(bar.gdata.name)
 		end
 

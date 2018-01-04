@@ -356,14 +356,14 @@ L["Columns"] = true
 L["Arc Start"] = true
 L["Arc Length"] = true
 
-L["Bind Text"] = true
-L["Macro Text"] = true
-L["Count Text"] = true
-L["Range Indicator"] = true
-L["Cooldown Text"] = true
-L["Cooldown Alpha"] = true
-L["Aura Watch Text"] = true
-L["Aura Watch Indicator"] = true
+L["Keybind Label"] = true
+L["Macro Name"] = true
+L["Stack Count Label"] = true
+L["Out-of-Range Indicator"] = true
+L["Cooldown Countdown"] = true
+L["Cooldown Transparency"] = true
+L["Buff/Debuff Aura Countdown"] = true
+L["Buff/Debuff Aura Border"] = true
 
 L["Point"] = true
 L["X Position"] = true
@@ -473,6 +473,8 @@ L["Dialog"] = true
 
 L["Horizontal"] = true
 L["Vertical"] = true
+
+L["Number of Buttons"] = true
 
 
 
