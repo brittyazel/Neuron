@@ -358,7 +358,7 @@ L["Arc Length"] = true
 
 L["Keybind Label"] = true
 L["Macro Name"] = true
-L["Stack Count Label"] = true
+L["Stack/Charge Count Label"] = true
 L["Out-of-Range Indicator"] = true
 L["Cooldown Countdown"] = true
 L["Cooldown Transparency"] = true
