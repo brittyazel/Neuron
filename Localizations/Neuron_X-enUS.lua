@@ -369,11 +369,6 @@ L["Point"] = true
 L["X Position"] = true
 L["Y Position"] = true
 
---[[L["Enable Spell Binding Mode"] = true
-L["Toggle Spell Binding Mode"] = true
-L["Enable Macro Binding Mode"] = true
-L["Toggle Macro Binding Mode"] = true]]
-
 L["Display the Blizzard Bar"] = true
 L["Shows / Hides the Default Blizzard Bar"] = true
 
