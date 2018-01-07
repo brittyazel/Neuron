@@ -436,7 +436,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 		self.XPWatch = {}
 	end
 
-	self.XPWatch.current = BreakUpLargeNumbers(currXP).."/"..BreakUpLargeNumbers(nextXP)
+	self.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
 	self.XPWatch.rested = restedXP
 	self.XPWatch.percent = percentXP
 	self.XPWatch.bubbles = bubbles
