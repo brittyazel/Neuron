@@ -140,7 +140,7 @@ local BarRepColors = {
 
 --FACTION_BAR_COLORS = BarRepColors
 
-local CastWatch, XPWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}, {}
+local CastWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}
 
 
 
@@ -278,7 +278,7 @@ local sbStrings = {
 	},
 	xp = {
 		[1] = { L["None"], function(sb) return "" end },
-		[2] = { L["Current/Next"], function(sb) if (sb.XPWatch) then return sb.XPWatch.current end end },
+		[2] = { L["Current/Next"], function(sb) if (sb.XPWatch) then return sb.XPWatch.current end end }, --since there's the chance that there can be multiple XP bars up, we need to store XPWatch per bar, rather than globally
 		[3] = { L["Rested Levels"], function(sb) if (sb.XPWatch) then return sb.XPWatch.rested end end },
 		[4] = { L["Percent"], function(sb) if (sb.XPWatch) then return sb.XPWatch.percent end end },
 		[5] = { L["Bubbles"], function(sb) if (sb.XPWatch) then return sb.XPWatch.bubbles end end },
@@ -286,7 +286,7 @@ local sbStrings = {
 	},
 	rep = {
 		[1] = { L["None"], function(sb) return "" end },
-		[2] = { L["Faction"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end },
+		[2] = { L["Faction"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end }, ---TODO:should probably do the same as above here, just in case people have more than 1 rep bar
 		[3] = { L["Current/Next"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
 		[4] = { L["Percent"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
 		[5] = { L["Bubbles"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
@@ -345,7 +345,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 
 	local id = self.parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = self.parent.GDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = self.parent.CDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
@@ -368,9 +368,9 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 
 
 		if (restedXP) then
-			restedXP = (tostring(restedXP/nextXP))
+			restedXP = (tostring(restedXP/nextXP)).." "..L["Levels"]
 		else
-			restedXP = "0"
+			restedXP = "0".." "..L["Levels"]
 		end
 
 		rank = L["Level"].." "..tostring(playerLevel)
@@ -390,16 +390,16 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 				nextXP = currXP;
 			end
 
-			restedXP = "0";
+			restedXP = "0".." "..L["Levels"]
 
-			percentXP = (currXP/nextXP)*100;
-			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
+			percentXP = (currXP/nextXP)*100
+			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"]
 			rank = tostring(pointsSpent).." "..L["Points"]
 		else
 			currXP = 0;
 			nextXP = 0;
 			percentXP = 0;
-			bubbles = tostring(0).." / 20 "..L["Bubbles"];
+			bubbles = tostring(0).." / 20 "..L["Bubbles"]
 			rank = tostring(0).." "..L["Points"]
 		end
 
@@ -410,7 +410,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 	elseif(thisBar.curXPType == "honor_points") then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
-		restedXP = GetHonorRestState();
+		restedXP = tostring(GetHonorRestState()).." "..L["Levels"]
 
 		local level = UnitHonorLevel("player");
 		local levelmax = GetMaxPlayerHonorLevel();
@@ -432,12 +432,12 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 		end
 	end
 
-	if (not self.XPWatch) then
+	if (not self.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
 		self.XPWatch = {}
 	end
 
 	self.XPWatch.current = BreakUpLargeNumbers(currXP).."/"..BreakUpLargeNumbers(nextXP)
-	self.XPWatch.rested = restedXP.." "..L["Levels"]
+	self.XPWatch.rested = restedXP
 	self.XPWatch.percent = percentXP
 	self.XPWatch.bubbles = bubbles
 	self.XPWatch.rank = rank
@@ -459,7 +459,7 @@ local function XPBar_OnEvent(self, event, ...)
 
 	local id = self.parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = self.parent.GDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = self.parent.CDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 	if (not thisBar.curXPType) then
 		thisBar.curXPType = "player_xp" ---sets the default state of the XP bar to be player_xp
@@ -520,7 +520,7 @@ end
 local function switchCurXPType(_, newXPType, self)
 
 	local id = self.id
-	self.GDB[id].curXPType = newXPType
+	self.CDB[id].curXPType = newXPType
 	XPBar_OnEvent(self.sb, "changed_curXPType")
 end
 
@@ -541,7 +541,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 		info.text = L["Track Character XP"]
 		info.func = switchCurXPType
 
-		if (frame.statusbar.GDB[id].curXPType == "player_xp") then
+		if (frame.statusbar.CDB[id].curXPType == "player_xp") then
 			info.checked = 1
 		else
 			info.checked = nil
@@ -556,7 +556,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 			info.text = L["Track Artifact Power"]
 			info.func = switchCurXPType
 
-			if (frame.statusbar.GDB[id].curXPType == "artifact_xp") then
+			if (frame.statusbar.CDB[id].curXPType == "artifact_xp") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -572,7 +572,7 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
 
-			if (frame.statusbar.GDB[id].curXPType == "honor_points") then
+			if (frame.statusbar.CDB[id].curXPType == "honor_points") then
 				info.checked = 1
 			else
 				info.checked = nil
