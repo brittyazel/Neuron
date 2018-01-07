@@ -345,13 +345,19 @@ local BrawlerGuildFactions = {
 --parent has a few important indicies, sb, id, CDB, and dropdown (along with a bunch of other crap)
 
 
+---note: I think parent.cdb is actually statusbtnsCDB
+---parent.gdb is statusbtnsGDB
+
+
 ---TODO: need to make the curXPType bar specific instead of global
 local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
+
+	testVar = self
 
     local parent = self.parent
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = parent.CDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = statusbtnsCDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
@@ -467,10 +473,10 @@ local function XPBar_OnEvent(self, event, ...)
 
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = parent.CDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = statusbtnsCDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 	if (not thisBar.curXPType) then
-		thisBar.curXPType = "player_xp" ---sets the default state of the XP bar to be player_xp
+		thisBar.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
 	end
 
 	local currXP, nextXP, isRested
@@ -526,7 +532,7 @@ end
 
 local function switchCurXPType(_, parent, newXPType)
 	local id = parent.id
-	parent.CDB[id].curXPType = newXPType
+	statusbtnsCDB[id].curXPType = newXPType
 	XPBar_OnEvent(parent.sb, "changed_curXPType")
 end
 
@@ -546,7 +552,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 		info.text = L["Track Character XP"]
 		info.func = switchCurXPType
 
-		if (parent.CDB[id].curXPType == "player_xp") then
+		if (statusbtnsCDB[id].curXPType == "player_xp") then
 			info.checked = 1
 		else
 			info.checked = nil
@@ -561,7 +567,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.text = L["Track Artifact Power"]
 			info.func = switchCurXPType
 
-			if (parent.CDB[id].curXPType == "artifact_xp") then
+			if (statusbtnsCDB[id].curXPType == "artifact_xp") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -577,7 +583,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
 
-			if (parent.CDB[id].curXPType == "honor_points") then
+			if (statusbtnsCDB[id] == "honor_points") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -2430,33 +2436,30 @@ function STATUS:LoadData(spec, state)
 
 	local id = self.id
 
-	self.GDB = statusbtnsGDB
-	self.CDB = statusbtnsCDB
+	if (statusbtnsGDB and statusbtnsCDB) then
 
-	if (self.GDB and self.CDB) then
-
-		if (not self.GDB[id]) then
-			self.GDB[id] = {}
+		if (not statusbtnsGDB[id]) then
+			statusbtnsGDB[id] = {}
 		end
 
-		if (not self.GDB[id].config) then
-			self.GDB[id].config = CopyTable(configDef)
+		if (not statusbtnsGDB[id].config) then
+			statusbtnsGDB[id].config = CopyTable(configDef)
 		end
 
-		if (not self.CDB[id]) then
-			self.CDB[id] = {}
+		if (not statusbtnsGDB[id]) then
+			statusbtnsGDB[id] = {}
 		end
 
-		if (not self.CDB[id].data) then
-			self.CDB[id].data = CopyTable(dataDef)
+		if (not statusbtnsGDB[id].data) then
+			statusbtnsGDB[id].data = CopyTable(dataDef)
 		end
 
-		NEURON:UpdateData(self.GDB[id].config, configDef)
-		NEURON:UpdateData(self.CDB[id].data, dataDef)
+		NEURON:UpdateData(statusbtnsGDB[id].config, configDef)
+		NEURON:UpdateData(statusbtnsGDB[id].data, dataDef)
 
-		self.config = self.GDB [id].config
+		self.config = statusbtnsGDB[id].config
 
-		self.data = self.CDB[id].data
+		self.data =statusbtnsGDB[id].data
 	end
 end
 
@@ -2760,7 +2763,8 @@ local function controlOnEvent(self, event, ...)
 		MirrorTimer2:UnregisterAllEvents()
 		MirrorTimer3:UnregisterAllEvents()
 
-		GDB = NeuronStatusGDB; CDB = NeuronStatusCDB
+		GDB = NeuronStatusGDB
+		CDB = NeuronStatusCDB
 
 		for k,v in pairs(defGDB) do
 			if (GDB[k] == nil) then
