@@ -340,12 +340,18 @@ local BrawlerGuildFactions = {
 --------XP Bar--------------------
 ----------------------------------
 
+--for this section: self is actually parent.sb
+--self.parent is pointer back to the parent, it's the same as calling self:GetParent()
+--parent has a few important indicies, sb, id, CDB, and dropdown (along with a bunch of other crap)
+
+
 ---TODO: need to make the curXPType bar specific instead of global
 local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
 
-	local id = self.parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
+    local parent = self.parent
+	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = self.parent.CDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = parent.CDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
@@ -457,9 +463,11 @@ end
 
 local function XPBar_OnEvent(self, event, ...)
 
-	local id = self.parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
+    local parent = self.parent
 
-	local thisBar = self.parent.CDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
+
+	local thisBar = parent.CDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 	if (not thisBar.curXPType) then
 		thisBar.curXPType = "player_xp" ---sets the default state of the XP bar to be player_xp
@@ -505,7 +513,6 @@ local function XPBar_OnEvent(self, event, ...)
 	if (hasChanged == true) then
 		self:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
 		self:SetValue((currXP/nextXP)*100)
-
 
 		self.cText:SetText(self.cFunc(self))
 		self.lText:SetText(self.lFunc(self))
