@@ -13,22 +13,8 @@
 ## X-Email: bwyazel@gmail.com
 
 
-Libs\LibStub\LibStub.lua
-Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
-Libs\AceLocale-3.0\AceLocale-3.0.xml
-Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
-
-
-Libs\AceAddon-3.0\AceAddon-3.0.xml
-Libs\AceGUI-3.0\AceGUI-3.0.xml
-Libs\AceConfig-3.0\AceConfig-3.0.xml
-Libs\AceDB-3.0\AceDB-3.0.xml
-Libs\AceDBOptions-3.0\AceDBOptions-3.0.xml
-Libs\AceEvent-3.0\AceEvent-3.0.xml
-
-Localizations\Neuron_Localizations.xml
-
 Libs\embeds.xml
+Localizations\Neuron_Localizations.xml
 
 Neuron.lua
 
@@ -39,7 +25,6 @@ Neuron_EditFrames.lua
 Neuron_KeyBinder.lua
 Neuron_Flyouts.lua
 Neuron_SnapTo.lua
-
 Neuron_ExtraBar.lua
 Neuron_StanceBar.lua
 Neuron_ZoneAbilityBar.lua

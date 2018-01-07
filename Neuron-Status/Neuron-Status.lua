@@ -31,7 +31,6 @@ NeuronStatusCDB = {
 	statusbars = {},
 	statusbtns = {},
 	autoWatch = 0,
-	curXPType = "player_xp" ---sets the default state of the XP bar to be player_xp
 }
 
 local format = string.format
@@ -325,17 +324,29 @@ local adjOptions = {
 }
 
 
+--These factions return fID but have 8 levels instead of 6
+local BrawlerGuildFactions = {
+	[1419] = true, --Aliance
+	[1374] = true, --Horde
+}
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+
+
+----------------------------------
+--------XP Bar--------------------
+----------------------------------
+
 ---TODO: need to make the curXPType bar specific instead of global
-local function xpstrings_Update() --handles updating all the strings for the play XP watch bar
+local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
 
 	local currXP, nextXP, restedXP, percentXP, bubbles
 
 
-	local xpType = CDB.curXPType
-
 
 	--player xp option
-	if (xpType == "player_xp") then
+	if (self.curXPType == "player_xp") then
 
 		currXP, nextXP, restedXP = UnitXP("player"), UnitXPMax("player"), GetXPExhaustion()
 
@@ -355,7 +366,7 @@ local function xpstrings_Update() --handles updating all the strings for the pla
 		end
 
 		--artifact xp option
-	elseif(xpType == "artifact_xp") then
+	elseif(self.curXPType == "artifact_xp") then
 
 		--when first logging in for some reason this check fails, even if the player is wearing an artifact weapon
 		if(HasArtifactEquipped("player")) then
@@ -384,7 +395,7 @@ local function xpstrings_Update() --handles updating all the strings for the pla
 		percentXP = format("%.1f", percentXP); --format
 
 		--honor xp option
-	elseif(xpType == "honor_points") then
+	elseif(self.curXPType == "honor_points") then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
 		restedXP = GetHonorRestState();
@@ -417,11 +428,120 @@ local function xpstrings_Update() --handles updating all the strings for the pla
 end
 
 
---These factions return fID but have 8 levels instead of 6
-local BrawlerGuildFactions = {
-	[1419] = true, --Aliance
-	[1374] = true, --Horde
-}
+
+local function XPBar_OnEvent(self, event, ...)
+
+	if (not self.curXPType) then
+		self.curXPType = "player_xp" ---sets the default state of the XP bar to be player_xp
+	end
+
+	local currXP, nextXP, restedXP
+	local hasChanged = false;
+
+
+	if(self.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
+
+		currXP, nextXP, restedXP = xpstrings_Update(self)
+
+		if (restedXP) then
+			self:SetStatusBarColor(self.restColor[1], self.restColor[2], self.restColor[3], self.restColor[4])
+		else
+			self:SetStatusBarColor(self.norestColor[1], self.norestColor[2], self.norestColor[3], self.norestColor[4])
+		end
+
+		hasChanged = true;
+	end
+
+
+	if(self.curXPType == "artifact_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
+
+		currXP, nextXP, restedXP = xpstrings_Update(self)
+
+		self:SetStatusBarColor(1, 1, 0); --set to yellow?
+
+		hasChanged = true;
+
+	end
+
+	if(self.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
+
+		currXP, nextXP, restedXP = xpstrings_Update(self)
+
+		self:SetStatusBarColor(1, .4, .4);
+
+		hasChanged = true;
+	end
+
+	if (hasChanged == true) then
+		self:SetMinMaxValues(0, nextXP)
+		self:SetValue(currXP)
+
+		self.cText:SetText(self.cFunc(self))
+		self.lText:SetText(self.lFunc(self))
+		self.rText:SetText(self.rFunc(self))
+		self.mText:SetText(self.mFunc(self))
+	end
+
+end
+
+
+
+local function switchCurXPType(_, newXPType, self)
+	self.curXPType = newXPType
+	XPBar_OnEvent(self, "changed_curXPType")
+end
+
+
+
+local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
+
+	frame.statusbar = frame:GetParent()
+
+	if (frame.statusbar) then
+
+		local info = UIDropDownMenu_CreateInfo()
+
+
+		info.arg1 = "player_xp"
+		info.arg2 = frame.statusbar.sb
+		info.text = L["Track Character XP"]
+		info.func = switchCurXPType
+
+		UIDropDownMenu_AddButton(info)
+		wipe(info)
+
+		if(HasArtifactEquipped("player")) then --only show this button if there's an artifact to show
+			info.arg1 = "artifact_xp"
+			info.arg2 = frame.statusbar.sb
+			info.text = L["Track Artifact Power"]
+			info.func = switchCurXPType
+
+			UIDropDownMenu_AddButton(info)
+			wipe(info)
+		end
+
+		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
+			info.arg1 = "honor_points"
+			info.arg2 = frame.statusbar.sb
+			info.text = L["Track Honor Points"]
+			info.func = switchCurXPType
+
+			UIDropDownMenu_AddButton(info)
+			wipe(info)
+		end
+	end
+end
+
+
+function STATUS:XPBar_DropDown_OnLoad()
+	UIDropDownMenu_Initialize(self.dropdown, xpDropDown_Initialize, "MENU")
+	self.dropdown_init = true
+end
+
+----------------------------------------------
+----------------Rep Bar-----------------------
+----------------------------------------------
+
 
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
@@ -502,63 +622,7 @@ local function repstrings_Update(line)
 end
 
 
-local function XPBar_OnEvent(self, event, ...)
 
-	local xpType = CDB.curXPType
-	local currXP, nextXP, restedXP
-	local hasChanged = false;
-
-
-	if(xpType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
-
-		currXP, nextXP, restedXP = xpstrings_Update()
-
-		if (restedXP) then
-			self:SetStatusBarColor(self.restColor[1], self.restColor[2], self.restColor[3], self.restColor[4])
-		else
-			self:SetStatusBarColor(self.norestColor[1], self.norestColor[2], self.norestColor[3], self.norestColor[4])
-		end
-
-		hasChanged = true;
-	end
-
-
-	if(xpType == "artifact_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
-
-		currXP, nextXP, restedXP = xpstrings_Update()
-
-		self:SetStatusBarColor(1, 1, 0); --set to yellow?
-
-		hasChanged = true;
-
-	end
-
-	if(xpType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
-
-		currXP, nextXP, restedXP = xpstrings_Update()
-
-		self:SetStatusBarColor(1, .4, .4);
-
-		hasChanged = true;
-	end
-
-	if (hasChanged == true) then
-		self:SetMinMaxValues(0, nextXP)
-		self:SetValue(currXP)
-
-		self.cText:SetText(self.cFunc(self))
-		self.lText:SetText(self.lFunc(self))
-		self.rText:SetText(self.rFunc(self))
-		self.mText:SetText(self.mFunc(self))
-	end
-
-end
-
-
-local function switchCurXPType(self, newXPType, statusbar, checked)
-	CDB.curXPType = newXPType
-	XPBar_OnEvent(statusbar.sb, "changed_curXPType")
-end
 
 
 local function repbar_OnEvent(self, event,...)
@@ -579,47 +643,6 @@ local function repbar_OnEvent(self, event,...)
 	self.lText:SetText(self.lFunc(self))
 	self.rText:SetText(self.rFunc(self))
 	self.mText:SetText(self.mFunc(self))
-end
-
-
-
-local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
-
-	frame.statusbar = frame:GetParent()
-
-	if (frame.statusbar) then
-
-		local info = UIDropDownMenu_CreateInfo()
-
-
-		info.arg1 = "player_xp"
-		info.arg2 = frame.statusbar
-		info.text = L["Track Character XP"]
-		info.func = switchCurXPType
-
-		UIDropDownMenu_AddButton(info)
-		wipe(info)
-
-		if(HasArtifactEquipped("player")) then --only show this button if there's an artifact to show
-			info.arg1 = "artifact_xp"
-			info.arg2 = frame.statusbar
-			info.text = L["Track Artifact Power"]
-			info.func = switchCurXPType
-
-			UIDropDownMenu_AddButton(info)
-			wipe(info)
-		end
-
-		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
-			info.arg1 = "honor_points"
-			info.arg2 = frame.statusbar
-			info.text = L["Track Honor Points"]
-			info.func = switchCurXPType
-
-			UIDropDownMenu_AddButton(info)
-			wipe(info)
-		end
-	end
 end
 
 
@@ -747,7 +770,16 @@ local function repDropDown_Initialize(frame) --Initialize the dropdown menu for 
 end
 
 
+function STATUS:RepBar_DropDown_OnLoad()
+	UIDropDownMenu_Initialize(self.dropdown, repDropDown_Initialize, "MENU")
+	self.dropdown_init = true
+end
 
+
+
+----------------------------------------------------
+-------------------Mirror Bar-----------------------
+----------------------------------------------------
 
 
 local function mirrorbar_Start(mirror, value, maxvalue, scale, paused, label)
@@ -1195,18 +1227,6 @@ function STATUS:CastBarTimer_OnEvent(event, ...)
 end
 
 
-
-
-
-function STATUS:XPBar_DropDown_OnLoad()
-	UIDropDownMenu_Initialize(self.dropdown, xpDropDown_Initialize, "MENU")
-	self.dropdown_init = true
-end
-
-function STATUS:RepBar_DropDown_OnLoad()
-	UIDropDownMenu_Initialize(self.dropdown, repDropDown_Initialize, "MENU")
-	self.dropdown_init = true
-end
 
 
 function STATUS:MirrorBar_OnUpdate(elapsed)
