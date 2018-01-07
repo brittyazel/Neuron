@@ -278,11 +278,11 @@ local sbStrings = {
 	},
 	xp = {
 		[1] = { L["None"], function(sb) return "" end },
-		[2] = { L["Current/Next"], function(sb) if (XPWatch.current) then return XPWatch.current end end },
-		[3] = { L["Rested Levels"], function(sb) if (XPWatch.rested) then return XPWatch.rested end end },
-		[4] = { L["Percent"], function(sb) if (XPWatch.percent) then return XPWatch.percent end end },
-		[5] = { L["Bubbles"], function(sb) if (XPWatch.bubbles) then return XPWatch.bubbles end end },
-		[6] = { L["Current Level/Rank"], function(sb) if (XPWatch.rank) then return XPWatch.rank end end },
+		[2] = { L["Current/Next"], function(sb) if (sb.XPWatch) then return sb.XPWatch.current end end },
+		[3] = { L["Rested Levels"], function(sb) if (sb.XPWatch) then return sb.XPWatch.rested end end },
+		[4] = { L["Percent"], function(sb) if (sb.XPWatch) then return sb.XPWatch.percent end end },
+		[5] = { L["Bubbles"], function(sb) if (sb.XPWatch) then return sb.XPWatch.bubbles end end },
+		[6] = { L["Current Level/Rank"], function(sb) if (sb.XPWatch) then return sb.XPWatch.rank end end },
 	},
 	rep = {
 		[1] = { L["None"], function(sb) return "" end },
@@ -341,7 +341,12 @@ local BrawlerGuildFactions = {
 ----------------------------------
 
 ---TODO: need to make the curXPType bar specific instead of global
-local function xpstrings_Update(thisBar) --handles updating all the strings for the play XP watch bar
+local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
+
+	local id = self.parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
+
+	local thisBar = self.parent.GDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+
 
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
 
@@ -427,13 +432,15 @@ local function xpstrings_Update(thisBar) --handles updating all the strings for 
 		end
 	end
 
+	if (not self.XPWatch) then
+		self.XPWatch = {}
+	end
 
-
-	XPWatch.current = BreakUpLargeNumbers(currXP).."/"..BreakUpLargeNumbers(nextXP)
-	XPWatch.rested = restedXP.." "..L["Levels"]
-	XPWatch.percent = percentXP
-	XPWatch.bubbles = bubbles
-	XPWatch.rank = rank
+	self.XPWatch.current = BreakUpLargeNumbers(currXP).."/"..BreakUpLargeNumbers(nextXP)
+	self.XPWatch.rested = restedXP.." "..L["Levels"]
+	self.XPWatch.percent = percentXP
+	self.XPWatch.bubbles = bubbles
+	self.XPWatch.rank = rank
 
 
 	local isRested
@@ -464,7 +471,7 @@ local function XPBar_OnEvent(self, event, ...)
 
 	if(thisBar.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
 
-		currXP, nextXP, isRested = xpstrings_Update(thisBar)
+		currXP, nextXP, isRested = xpstrings_Update(self)
 
 		if (isRested) then
 			self:SetStatusBarColor(self.restColor[1], self.restColor[2], self.restColor[3], self.restColor[4])
@@ -478,7 +485,7 @@ local function XPBar_OnEvent(self, event, ...)
 
 	if(thisBar.curXPType == "artifact_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
 
-		currXP, nextXP = xpstrings_Update(thisBar)
+		currXP, nextXP = xpstrings_Update(self)
 
 		self:SetStatusBarColor(1, 1, 0); --set to yellow?
 
@@ -488,7 +495,7 @@ local function XPBar_OnEvent(self, event, ...)
 
 	if(thisBar.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
 
-		currXP, nextXP = xpstrings_Update(thisBar)
+		currXP, nextXP = xpstrings_Update(self)
 
 		self:SetStatusBarColor(1, .4, .4);
 
@@ -1633,6 +1640,8 @@ function STATUS:UpdateCenterText(command, gui, query)
 	if (not sbStrings[self.config.sbType]) then
 		return "---"
 	end
+
+	testVar = self.sb
 
 	if (query) then
 		return sbStrings[self.config.sbType][self.config.cIndex][1]
