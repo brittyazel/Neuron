@@ -517,31 +517,29 @@ end
 
 
 
-local function switchCurXPType(_, newXPType, self)
-
-	local id = self.id
-	self.CDB[id].curXPType = newXPType
-	XPBar_OnEvent(self.sb, "changed_curXPType")
+local function switchCurXPType(_, parent, newXPType)
+	local id = parent.id
+	parent.CDB[id].curXPType = newXPType
+	XPBar_OnEvent(parent.sb, "changed_curXPType")
 end
 
 
 
-local function xpDropDown_Initialize(frame) -- initialize the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
+local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
 
-	frame.statusbar = frame:GetParent()
-	local id = frame.statusbar.id
+    local parent = dropdown:GetParent()
+	local id = parent.id
 
-	if (frame.statusbar) then
+	if (parent) then
 
 		local info = UIDropDownMenu_CreateInfo()
 
-
-		info.arg1 = "player_xp"
-		info.arg2 = frame.statusbar
+		info.arg1 = parent
+		info.arg2 = "player_xp"
 		info.text = L["Track Character XP"]
 		info.func = switchCurXPType
 
-		if (frame.statusbar.CDB[id].curXPType == "player_xp") then
+		if (parent.CDB[id].curXPType == "player_xp") then
 			info.checked = 1
 		else
 			info.checked = nil
@@ -551,12 +549,12 @@ local function xpDropDown_Initialize(frame) -- initialize the dropdown menu for 
 		wipe(info)
 
 		if(HasArtifactEquipped("player")) then --only show this button if there's an artifact to show
-			info.arg1 = "artifact_xp"
-			info.arg2 = frame.statusbar
+			info.arg1 = parent
+			info.arg2 = "artifact_xp"
 			info.text = L["Track Artifact Power"]
 			info.func = switchCurXPType
 
-			if (frame.statusbar.CDB[id].curXPType == "artifact_xp") then
+			if (parent.CDB[id].curXPType == "artifact_xp") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -567,12 +565,12 @@ local function xpDropDown_Initialize(frame) -- initialize the dropdown menu for 
 		end
 
 		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
-			info.arg1 = "honor_points"
-			info.arg2 = frame.statusbar
+			info.arg1 = parent
+			info.arg2 = "honor_points"
 			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
 
-			if (frame.statusbar.CDB[id].curXPType == "honor_points") then
+			if (parent.CDB[id].curXPType == "honor_points") then
 				info.checked = 1
 			else
 				info.checked = nil
