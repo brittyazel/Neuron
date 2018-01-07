@@ -282,13 +282,15 @@ local sbStrings = {
 		[3] = { L["Rested Levels"], function(sb) if (XPWatch.rested) then return XPWatch.rested end end },
 		[4] = { L["Percent"], function(sb) if (XPWatch.percent) then return XPWatch.percent end end },
 		[5] = { L["Bubbles"], function(sb) if (XPWatch.bubbles) then return XPWatch.bubbles end end },
+		[6] = { L["Current Level/Rank"], function(sb) if (XPWatch.rank) then return XPWatch.rank end end },
 	},
 	rep = {
 		[1] = { L["None"], function(sb) return "" end },
-		[2] = { L["Faction & Standing"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end },
+		[2] = { L["Faction"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end },
 		[3] = { L["Current/Next"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
 		[4] = { L["Percent"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
 		[5] = { L["Bubbles"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
+		[6] = { L["Current Level/Rank"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rank end end },
 	},
 	mirror = {
 		[1] = { L["None"], function(sb) return "" end },
@@ -339,14 +341,12 @@ local BrawlerGuildFactions = {
 ----------------------------------
 
 ---TODO: need to make the curXPType bar specific instead of global
-local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
+local function xpstrings_Update(thisBar) --handles updating all the strings for the play XP watch bar
 
-	local currXP, nextXP, restedXP, percentXP, bubbles
-
-
+	local currXP, nextXP, restedXP, percentXP, bubbles, rank
 
 	--player xp option
-	if (self.curXPType == "player_xp") then
+	if (thisBar.curXPType == "player_xp") then
 
 		currXP, nextXP, restedXP = UnitXP("player"), UnitXPMax("player"), GetXPExhaustion()
 
@@ -356,17 +356,22 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 			currXP = nextXP
 		end
 
-		percentXP = (currXP/nextXP)*100; percentXP = format("%.1f", percentXP)
-		bubbles = tostring(currXP/(nextXP/20)); bubbles = (bubbles):gsub("(%d*)(%.)(%d*)","%1")
+		percentXP = (currXP/nextXP)*100;
+
+		bubbles = tostring(math.floor(currXP/(nextXP/20))).." / 20 "..L["Bubbles"]
+		percentXP = format("%.1f", (percentXP)).."%"
+
 
 		if (restedXP) then
-			restedXP = tostring(restedXP/nextXP); restedXP = (restedXP):gsub("(%d*)(%.)(%d%d)(%d*)","%1%2%3")
+			restedXP = (tostring(restedXP/nextXP))
 		else
 			restedXP = "0"
 		end
 
-		--artifact xp option
-	elseif(self.curXPType == "artifact_xp") then
+		rank = L["Level"].." "..tostring(playerLevel)
+
+	--artifact xp option
+	elseif(thisBar.curXPType == "artifact_xp") then
 
 		--when first logging in for some reason this check fails, even if the player is wearing an artifact weapon
 		if(HasArtifactEquipped("player")) then
@@ -383,19 +388,21 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 			restedXP = "0";
 
 			percentXP = (currXP/nextXP)*100;
-			bubbles = tostring(percentXP/5);
+			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
+			rank = tostring(pointsSpent).." "..L["Points"]
 		else
 			currXP = 0;
 			nextXP = 0;
 			percentXP = 0;
-			bubbles = tostring(0);
+			bubbles = tostring(0).." / 20 "..L["Bubbles"];
+			rank = tostring(0).." "..L["Points"]
 		end
 
-		bubbles = (bubbles):gsub("(%d*)(%.)(%d*)","%1")
-		percentXP = format("%.1f", percentXP); --format
+		percentXP = format("%.1f", percentXP).."%"; --format
 
-		--honor xp option
-	elseif(self.curXPType == "honor_points") then
+
+	--honor points option
+	elseif(thisBar.curXPType == "honor_points") then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
 		restedXP = GetHonorRestState();
@@ -409,41 +416,57 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 			percentXP = 100
 		end
 
-		bubbles = tostring(percentXP/5); bubbles = (bubbles):gsub("(%d*)(%.)(%d*)","%1")
-		percentXP = format("%.1f", percentXP); --format
+		bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
+		percentXP = format("%.1f", percentXP).."%"; --format
+
+
+		if (UnitPrestige("player")) then
+		rank = L["Level"].." "..tostring(UnitHonorLevel("player")).." - "..L["Prestige"].." "..tostring(UnitPrestige("Player"))
+		else
+		rank = tostring(UnitHonorLevel("player"))
+		end
 	end
 
 
 
 	XPWatch.current = BreakUpLargeNumbers(currXP).."/"..BreakUpLargeNumbers(nextXP)
-
-	if(restedXP) then
-		XPWatch.rested = restedXP.." lvls"
-	end
-	XPWatch.percent = percentXP.."%"
+	XPWatch.rested = restedXP.." "..L["Levels"]
+	XPWatch.percent = percentXP
 	XPWatch.bubbles = bubbles
+	XPWatch.rank = rank
 
-	return currXP, nextXP, restedXP
 
+	local isRested
+	if(restedXP ~= "0") then
+		isRested = true
+	else
+		isRested = false
+	end
+
+	return currXP, nextXP, isRested
 end
 
 
 
 local function XPBar_OnEvent(self, event, ...)
 
-	if (not self.curXPType) then
-		self.curXPType = "player_xp" ---sets the default state of the XP bar to be player_xp
+	local id = self.parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
+
+	local thisBar = self.parent.GDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+
+	if (not thisBar.curXPType) then
+		thisBar.curXPType = "player_xp" ---sets the default state of the XP bar to be player_xp
 	end
 
-	local currXP, nextXP, restedXP
+	local currXP, nextXP, isRested
 	local hasChanged = false;
 
 
-	if(self.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
+	if(thisBar.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
 
-		currXP, nextXP, restedXP = xpstrings_Update(self)
+		currXP, nextXP, isRested = xpstrings_Update(thisBar)
 
-		if (restedXP) then
+		if (isRested) then
 			self:SetStatusBarColor(self.restColor[1], self.restColor[2], self.restColor[3], self.restColor[4])
 		else
 			self:SetStatusBarColor(self.norestColor[1], self.norestColor[2], self.norestColor[3], self.norestColor[4])
@@ -453,9 +476,9 @@ local function XPBar_OnEvent(self, event, ...)
 	end
 
 
-	if(self.curXPType == "artifact_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
+	if(thisBar.curXPType == "artifact_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
 
-		currXP, nextXP, restedXP = xpstrings_Update(self)
+		currXP, nextXP = xpstrings_Update(thisBar)
 
 		self:SetStatusBarColor(1, 1, 0); --set to yellow?
 
@@ -463,9 +486,9 @@ local function XPBar_OnEvent(self, event, ...)
 
 	end
 
-	if(self.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
+	if(thisBar.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
 
-		currXP, nextXP, restedXP = xpstrings_Update(self)
+		currXP, nextXP = xpstrings_Update(thisBar)
 
 		self:SetStatusBarColor(1, .4, .4);
 
@@ -473,8 +496,9 @@ local function XPBar_OnEvent(self, event, ...)
 	end
 
 	if (hasChanged == true) then
-		self:SetMinMaxValues(0, nextXP)
-		self:SetValue(currXP)
+		self:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
+		self:SetValue((currXP/nextXP)*100)
+
 
 		self.cText:SetText(self.cFunc(self))
 		self.lText:SetText(self.lFunc(self))
@@ -487,8 +511,10 @@ end
 
 
 local function switchCurXPType(_, newXPType, self)
-	self.curXPType = newXPType
-	XPBar_OnEvent(self, "changed_curXPType")
+
+	local id = self.id
+	self.GDB[id].curXPType = newXPType
+	XPBar_OnEvent(self.sb, "changed_curXPType")
 end
 
 
@@ -496,6 +522,7 @@ end
 local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
 
 	frame.statusbar = frame:GetParent()
+	local id = frame.statusbar.id
 
 	if (frame.statusbar) then
 
@@ -503,11 +530,11 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 
 
 		info.arg1 = "player_xp"
-		info.arg2 = frame.statusbar.sb
+		info.arg2 = frame.statusbar
 		info.text = L["Track Character XP"]
 		info.func = switchCurXPType
 
-		if (frame.statusbar.sb.curXPType == "player_xp") then
+		if (frame.statusbar.GDB[id].curXPType == "player_xp") then
 			info.checked = 1
 		else
 			info.checked = nil
@@ -518,11 +545,11 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 
 		if(HasArtifactEquipped("player")) then --only show this button if there's an artifact to show
 			info.arg1 = "artifact_xp"
-			info.arg2 = frame.statusbar.sb
+			info.arg2 = frame.statusbar
 			info.text = L["Track Artifact Power"]
 			info.func = switchCurXPType
 
-			if (frame.statusbar.sb.curXPType == "artifact_xp") then
+			if (frame.statusbar.GDB[id].curXPType == "artifact_xp") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -534,11 +561,11 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 
 		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
 			info.arg1 = "honor_points"
-			info.arg2 = frame.statusbar.sb
+			info.arg2 = frame.statusbar
 			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
 
-			if (frame.statusbar.sb.curXPType == "honor_points") then
+			if (frame.statusbar.GDB[id].curXPType == "honor_points") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -566,10 +593,11 @@ end
 -- @return reptable:  Table containing provided data
 local function SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, value, colors)
 	local reptable = {}
-	reptable.rep = name.." - "..standing
+	reptable.rep = name
+	reptable.rank = standing
 	reptable.current = (value-minrep).."/"..(maxrep-minrep)
 	reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
-	reptable.bubbles = tostring(((((value-minrep)/(maxrep-minrep))*100)/5)):gsub("(%d*)(%.)(%d*)","%1")
+	reptable.bubbles = tostring(math.floor(((((value-minrep)/(maxrep-minrep))*100)/5))).." / 20 "..L["Bubbles"]
 	reptable.rephour = "---"
 	reptable.min = minrep
 	reptable.max = maxrep
@@ -2778,6 +2806,7 @@ local function controlOnEvent(self, event, ...)
 					NEURON:CreateNewBar("status", id)
 				end
 			end
+
 
 			for id,data in pairs(statusbtnsGDB) do
 				if (data ~= nil) then

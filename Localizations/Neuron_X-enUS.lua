@@ -449,8 +449,14 @@ L["Current/Next"] = true
 L["Rested Levels"] = true
 L["Percent"] = true
 L["Bubbles"] = true
-L["Faction & Standing"] = true
+L["Faction"] = true
+L["Current Level/Rank"] = true
 L["Type"] = true
+L["Levels"] = true
+L["Level"] = true
+L["Points"] = true
+L["Prestige"] = true
+
 
 L["Auto Select"] = true
 
