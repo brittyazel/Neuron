@@ -507,6 +507,12 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 		info.text = L["Track Character XP"]
 		info.func = switchCurXPType
 
+		if (frame.statusbar.sb.curXPType == "player_xp") then
+			info.checked = 1
+		else
+			info.checked = nil
+		end
+
 		UIDropDownMenu_AddButton(info)
 		wipe(info)
 
@@ -515,6 +521,12 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 			info.arg2 = frame.statusbar.sb
 			info.text = L["Track Artifact Power"]
 			info.func = switchCurXPType
+
+			if (frame.statusbar.sb.curXPType == "artifact_xp") then
+				info.checked = 1
+			else
+				info.checked = nil
+			end
 
 			UIDropDownMenu_AddButton(info)
 			wipe(info)
@@ -525,6 +537,12 @@ local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for
 			info.arg2 = frame.statusbar.sb
 			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
+
+			if (frame.statusbar.sb.curXPType == "honor_points") then
+				info.checked = 1
+			else
+				info.checked = nil
+			end
 
 			UIDropDownMenu_AddButton(info)
 			wipe(info)
