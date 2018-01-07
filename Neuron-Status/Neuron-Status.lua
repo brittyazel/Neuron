@@ -526,7 +526,7 @@ end
 
 
 
-local function xpDropDown_Initialize(frame) -- initiazlise the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
+local function xpDropDown_Initialize(frame) -- initialize the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
 
 	frame.statusbar = frame:GetParent()
 	local id = frame.statusbar.id
@@ -602,7 +602,7 @@ local function SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, valu
 	local reptable = {}
 	reptable.rep = name
 	reptable.rank = standing
-	reptable.current = (value-minrep).."/"..(maxrep-minrep)
+	reptable.current = (value-minrep).." / "..(maxrep-minrep)
 	reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
 	reptable.bubbles = tostring(math.floor(((((value-minrep)/(maxrep-minrep))*100)/5))).." / 20 "..L["Bubbles"]
 	reptable.rephour = "---"
