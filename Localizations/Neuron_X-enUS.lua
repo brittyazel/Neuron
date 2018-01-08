@@ -477,6 +477,8 @@ L["Vertical"] = true
 
 L["Number of Buttons"] = true
 
+L["Reward"] = true
+
 
 
 

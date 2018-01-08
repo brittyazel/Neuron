@@ -580,7 +580,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
 
-			if (statusbtnsCDB[id] == "honor_points") then
+			if (statusbtnsCDB[id].curXPType == "honor_points") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -597,6 +597,10 @@ function STATUS:XPBar_DropDown_OnLoad()
 	UIDropDownMenu_Initialize(self.dropdown, xpDropDown_Initialize, "MENU")
 	self.dropdown_init = true
 end
+
+
+
+
 
 ----------------------------------------------
 ----------------Rep Bar-----------------------
@@ -665,8 +669,8 @@ local function repstrings_Update(line)
 					local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
 					value = para_value % para_max;
 					max = para_max
-					if hasRewardPending then
-						name = name.."**"
+					if not hasRewardPending then
+						name = name.." ("..L["Reward"]:upper()..")"
 					end
 					min = 0
 					colors = BarRepColors[11]
@@ -709,24 +713,25 @@ local function repbar_OnEvent(self, event,...)
 end
 
 
-local function repDropDown_Initialize(frame) --Initialize the dropdown menu for choosing a rep
+local function repDropDown_Initialize(dropdown) --Initialize the dropdown menu for choosing a rep
 
-	frame.statusbar = frame:GetParent()
+    local parent = dropdown:GetParent()
+    local id = parent.id
 
-	if (frame.statusbar) then
+	if (parent) then
 
 		local info = UIDropDownMenu_CreateInfo()
 		local checked, repLine, repIndex
 
-		info.arg1 = frame.statusbar
+		info.arg1 = parent
 		info.arg2 = repbar_OnEvent
 		info.text = L["Auto Select"]
-		info.func = function(self, statusbar, func, checked)
+		info.func = function(self, statusbar, func, checked) --statusbar is arg1, func is arg2
 			local faction = sbStrings.rep[2][2](statusbar.sb)
 			statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb, nil, faction)
 		end
 
-		if (frame.statusbar.data.repID == 0) then
+		if (parent.data.repID == 0) then
 			checked = 1
 		else
 			checked = nil
@@ -807,14 +812,14 @@ local function repDropDown_Initialize(frame) --Initialize the dropdown menu for 
 
 			ID = tonumber(ID)
 
-			info.arg1 = frame.statusbar
+			info.arg1 = parent
 			info.arg2 = repbar_OnEvent
 			info.text = text
 			info.func = function(self, statusbar, func, checked)
 				statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb)
 			end
 
-			if (frame.statusbar.data.repID == ID) then
+			if (parent.data.repID == ID) then
 				checked = 1
 			else
 				checked = nil
@@ -1651,8 +1656,6 @@ function STATUS:UpdateCenterText(command, gui, query)
 		return "---"
 	end
 
-	testVar = self.sb
-
 	if (query) then
 		return sbStrings[self.config.sbType][self.config.cIndex][1]
 	end
@@ -2479,8 +2482,6 @@ function STATUS:SetGrid(show, hide)
 		self.fbframe:Hide()
 	end
 
-	--empty
-
 end
 
 
@@ -2498,8 +2499,6 @@ end
 function STATUS:LoadAux()
 
 	self:CreateEditFrame(self.objTIndex)
-
-	-- empty
 
 end
 
