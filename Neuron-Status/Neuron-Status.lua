@@ -637,9 +637,6 @@ end
 
 local function repstrings_Update(line)
 
-	if (not statusbtnsCDB.autoWatch) then
-		statusbtnsCDB.autoWatch = 0
-	end
 
 	if (GetNumFactions() > 0) then
 		wipe(RepWatch)
@@ -669,7 +666,7 @@ local function repstrings_Update(line)
 					local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
 					value = para_value % para_max;
 					max = para_max
-					if not hasRewardPending then
+					if hasRewardPending then
 						name = name.." ("..L["Reward"]:upper()..")"
 					end
 					min = 0
