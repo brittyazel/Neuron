@@ -477,7 +477,7 @@ local function controlOnEvent(self, event, ...)
 		SBTN.GetSkinned = BUTTON.GetSkinned
 		SBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
-		NEURON:RegisterBarClass("stancebar", "Stance Bar", "Stance Button", sbarsGDB, sbarsCDB, SBTNIndex, sbtnsGDB, "CheckButton", "NeuronStanceButtonTemplate", { __index = SBTN }, NEURON.maxStanceID, false, STORAGE, gDef, nil, false)
+		NEURON:RegisterBarClass("stancebar", "StanceBar", L["Stance Bar"], "Stance Button", sbarsGDB, sbarsCDB, SBTNIndex, sbtnsGDB, "CheckButton", "NeuronStanceButtonTemplate", { __index = SBTN }, NEURON.maxStanceID, false, STORAGE, gDef, nil, false)
 
 		NEURON:RegisterGUIOptions("stancebar", {
 			AUTOHIDE = true,

@@ -666,7 +666,7 @@ local function controlOnEvent(self, event, ...)
 		petbtnsGDB = GDB.petbtns
 		petbtnsCDB = CDB.petbtns
 
-		NEURON:RegisterBarClass("pet", "Pet Bar", "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false, STORAGE, gDef, nil, true)
+		NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false, STORAGE, gDef, nil, true)
 
 		NEURON:RegisterGUIOptions("pet", {
 			AUTOHIDE = true,

@@ -1952,29 +1952,29 @@ function NEURON:PrintBarTypes()
 end
 
 
-function NEURON:RegisterBarClass(class, ...)
+function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barCDB, objTable, objGDB, objFrameType, objTemplate, objMetaTable, objMax, barReverse, objStorage, gDef, cDef, barCreateMore)
 
 	NEURON.ModuleIndex = NEURON.ModuleIndex + 1
 
 	NEURON.RegisteredBarData[class] = {
-		barType = select(1,...):gsub("%s+", ""),
-		barLabel = select(1,...),
-		barReverse = select(11,...),
-		barCreateMore = select(15,...),
-		GDB = select(3,...),
-		CDB = select(4,...),
-		gDef = select(13,...),
-		cDef = select(14,...),
-		objTable = select(5,...),
-		objGDB = select(6,...),
-		objPrefix = "Neuron"..select(2,...):gsub("%s+", ""),
-		objFrameT = select(7,...),
-		objTemplate = select(8,...),
-		objMetaT = select(9,...),
-		objType = select(2,...),
-		objMax = select(10,...),
-		objStorage = select(12,...),
-		createMsg = NEURON.ModuleIndex..select(2,...),
+		barType = barType,
+		barLabel = barLabel,
+		barReverse = barReverse,
+		barCreateMore = barCreateMore,
+		GDB = barGDB,
+		CDB = barCDB,
+		gDef = gDef,
+		cDef = cDef,
+		objTable = objTable,
+		objGDB = objGDB,
+		objPrefix = "Neuron"..objType:gsub("%s+", ""),
+		objFrameT = objFrameType,
+		objTemplate = objTemplate,
+		objMetaT = objMetaTable,
+		objType = objType,
+		objMax = objMax,
+		objStorage = objStorage,
+		createMsg = NEURON.ModuleIndex..objType,
 	}
 end
 

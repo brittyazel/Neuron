@@ -3103,7 +3103,7 @@ local function controlOnEvent(self, event, ...)
 		barGDB = GDB.bars
 		barCDB = CDB.bars
 
-		NEURON:RegisterBarClass("bar", "Action Bar", "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
+		NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
 
 		NEURON:RegisterGUIOptions("bar",	{ AUTOHIDE = true,
 			SHOWGRID = true,

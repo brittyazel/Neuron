@@ -495,7 +495,7 @@ local function controlOnEvent(self, event, ...)
 		ZONEABILITYRBTN.GetSkinned = BUTTON.GetSkinned
 		ZONEABILITYRBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
-		NEURON:RegisterBarClass("zoneabilitybar", "Zone Action Bar", "Zone Action Button", zoneabilitybarsGDB, zoneabilitybarsCDB, ZONEABILITYRBTNIndex, zoneabilitybtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, false, STORAGE, gDef, nil, false)
+		NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsGDB, zoneabilitybarsCDB, ZONEABILITYRBTNIndex, zoneabilitybtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, false, STORAGE, gDef, nil, false)
 
 		NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 			SHOWGRID = false,

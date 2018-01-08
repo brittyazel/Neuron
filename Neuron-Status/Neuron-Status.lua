@@ -2779,7 +2779,7 @@ local function controlOnEvent(self, event, ...)
 		statusbtnsGDB = GDB.statusbtns
 		statusbtnsCDB = CDB.statusbtns
 
-		NEURON:RegisterBarClass("status", "Status Bar Group", "Status Bar", statusbarsGDB, statusbarsCDB, STATUSIndex, statusbtnsGDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
+		NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsGDB, statusbarsCDB, STATUSIndex, statusbtnsGDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
 
 		NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
 			SNAPTO = true,

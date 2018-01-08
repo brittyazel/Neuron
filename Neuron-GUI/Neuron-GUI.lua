@@ -1005,7 +1005,7 @@ function NEURON.BarListScrollFrameUpdate(frame, tableList, alt)
 		data[count] = k; count = count + 1
 	end
 
-	table.sort(data)
+	--table.sort(data)
 
 	frame:Show()
 
@@ -1032,8 +1032,8 @@ function NEURON.BarListScrollFrameUpdate(frame, tableList, alt)
 			button:Enable()
 			button:Show()
 
-			if (alt) then
-				if (i>1) then
+			if (alt) then --this is for the create bar menu list
+				if (i>0) then
 					button.name:SetTextColor(0,1,0)
 					button.name:SetJustifyH("CENTER")
 				else
@@ -1077,7 +1077,7 @@ end
 function NEURON:BarEditor_CreateNewBar(button)
 	if (button.type == "create") then
 
-		local data = { [L["Select Bar Type"]] = "none" }
+		local data = {}--{ [L["Select Bar Type"]] = "none" }
 
 		for class,info in pairs(NEURON.RegisteredBarData) do
 

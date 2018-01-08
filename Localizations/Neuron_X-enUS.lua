@@ -424,6 +424,15 @@ L["Rep Bar"] = true
 L["Cast Bar"] = true
 L["Mirror Bar"] = true
 
+L["Action Bar"] = true
+L["Zone Action Bar"] = true
+L["Status Bar"] = true
+L["Stance Bar"] = true
+L["Extra Action Bar"] = true
+L["Bag Bar"] = true
+L["Pet Bar"] = true
+L["Menu Bar"] = true
+
 L["Track Character XP"] = true
 L["Track Artifact Power"] = true
 L["Track Honor Points"] = true
