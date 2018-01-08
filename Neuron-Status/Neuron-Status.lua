@@ -30,7 +30,6 @@ NeuronStatusGDB = {
 NeuronStatusCDB = {
 	statusbars = {},
 	statusbtns = {},
-	autoWatch = 0,
 }
 
 local format = string.format
@@ -57,7 +56,6 @@ local CASTING_BAR_HOLD_TIME = CASTING_BAR_HOLD_TIME
 local BarTextures = {
 	[1] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_2", L["Default"] },
 	[2] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Contrast_2", L["Contrast"] },
-	-- Following textures by Tonedef of WoWInterface
 	[3] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Carpaint_2", L["Carpaint"] },
 	[4] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Gel_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Gel_2", L["Gel"] },
 	[5] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Glassed_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Glassed_2", L["Glassed"] },
@@ -340,9 +338,10 @@ local BrawlerGuildFactions = {
 --------XP Bar--------------------
 ----------------------------------
 
+--parent appears to be the bar object
 --for this section: self is actually parent.sb
 --self.parent is pointer back to the parent, it's the same as calling self:GetParent()
---parent has a few important indicies, sb, id, CDB, and dropdown (along with a bunch of other crap)
+--parent has a few important indicies, sb, id, and dropdown (along with a bunch of other crap)
 
 
 ---note: I think parent.cdb is actually statusbtnsCDB
@@ -351,8 +350,6 @@ local BrawlerGuildFactions = {
 
 ---TODO: need to make the curXPType bar specific instead of global
 local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
-
-	testVar = self
 
     local parent = self.parent
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
@@ -636,6 +633,10 @@ end
 
 local function repstrings_Update(line)
 
+	if (not statusbtnsCDB.autoWatch) then
+		statusbtnsCDB.autoWatch = 0
+	end
+
 	if (GetNumFactions() > 0) then
 		wipe(RepWatch)
 
@@ -674,11 +675,9 @@ local function repstrings_Update(line)
 				local repData = SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
 				RepWatch[i] = repData --set current reptable into growing RepWatch table
 
-
-
-				if (((line and type(line)~= "boolean") and line:find(name)) or CDB.autoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
+				if (((line and type(line)~= "boolean") and line:find(name)) or statusbtnsCDB.autoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
 					RepWatch[0] = repData
-					CDB.autoWatch = i
+					statusbtnsCDB.autoWatch = i
 				end
 			end
 		end
