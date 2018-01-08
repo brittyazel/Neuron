@@ -27,14 +27,14 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.11" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.13" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thank's for installing Neuron.
 
 Neuron is currently in a "|cffffff00release|r" state.
 
-If you have any questions or concerns please direct all inquirires our github page listed in the FAQ.
+If you have any questions or concerns please direct all inquirires our Github page or through Curseforge, which are listed in the F.A.Q.
 
 Cheers,
 
@@ -42,14 +42,15 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-Happy New Year! As a 2018 gift to you all, I have fully reworked the locale/language underpinnings of Neuron to fully make use of Ace3 and CurseForge (and hopefully fixed a few bugs along the way).
+Today's update brings substantial changes to to Status bars (XP/Rep bar). You can now have multiple XP bars, each tracking a different resource, i.e. one for XP, one for Artifact Power, and one for Honor Points.
 
-As such, language translations can now be submitted easily and beautifully by any community members willing to help via the CurseForge project site!
+In addition, you now have more display options, such as showing the current level/rank/standing for whichever resource a bar is tracking, check it out!
 
-Let's get Neuron translated into your native language!
 
-(oh, and keep reporting bugs!)
+Lastly, Neuron now has full French translations, thanks Cinedelle! If you'd like to see your language supported, head over to Curseforge and translate away!
 
+
+As a fun side note, please submit screenshots of your UI to our Github or through Curseforge. I'd like to showcase the cool designs of our community!
 
 -Soyier]]
 
