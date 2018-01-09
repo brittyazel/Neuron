@@ -1067,7 +1067,7 @@ end
 -- @return allow : (boolean)
 local function MissingBarCheck(bar)
 	local allow = true
-	if (bar == "stancebar" and NeuronCDB.sbars[1]) or (bar == "extrabar" and NeuronCDB.xbars[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybars[1]) then
+	if ((bar == "stancebar" and NeuronCDB.sbars[1]) or (bar == "extrabar" and NeuronCDB.xbars[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybars[1]))then
 		allow = false
 	end
 	return allow
@@ -1077,7 +1077,7 @@ end
 function NEURON:BarEditor_CreateNewBar(button)
 	if (button.type == "create") then
 
-		local data = {}--{ [L["Select Bar Type"]] = "none" }
+		local data = {} --{ [L["Select Bar Type"]] = "none" }
 
 		for class,info in pairs(NEURON.RegisteredBarData) do
 
