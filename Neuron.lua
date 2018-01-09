@@ -499,10 +499,10 @@ function NeuronBase:slashHandler(input)
 	end
 
 	local commandAndArgs = {strsplit(" ", input)} --split the input into the command and the arguments
-	local command = commandAndArgs[1]
+	local command = commandAndArgs[1]:lower()
 	local args = {}
 	for i = 2,#commandAndArgs do
-		args[i-1] = commandAndArgs[i]
+		args[i-1] = commandAndArgs[i]:lower()
 	end
 
 
