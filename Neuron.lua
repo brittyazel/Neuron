@@ -1951,7 +1951,7 @@ function NEURON:PrintBarTypes()
 
 end
 
-
+--updated this function to make use of the real data type instead of importing them in as ... and then using select(2, ..._) to pull the write data out.
 function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barCDB, objTable, objGDB, objFrameType, objTemplate, objMetaTable, objMax, barReverse, objStorage, gDef, cDef, barCreateMore)
 
 	NEURON.ModuleIndex = NEURON.ModuleIndex + 1
