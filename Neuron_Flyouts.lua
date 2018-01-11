@@ -19,11 +19,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local GetContainerNumSlots = _G.GetContainerNumSlots
-local GetContainerItemLink = _G.GetContainerItemLink
-local GetSpellBookItemName = _G.GetSpellBookItemName
-local GetItemInfo = _G.GetItemInfo
-
 local sIndex = NEURON.sIndex
 local cIndex = NEURON.cIndex
 local iIndex = NEURON.iIndex

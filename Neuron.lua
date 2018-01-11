@@ -61,7 +61,7 @@ Neuron = {
 	StartDrag = false,
 	maxActionID = 132,
 	maxPetID = 10,
-	maxStanceID = _G.NUM_STANCE_SLOTS, --(10)
+	maxStanceID = NUM_STANCE_SLOTS, --(10)
 }
 
 NeuronGDB = {
@@ -815,16 +815,16 @@ end
 --- Compiles a list of battle pets & mounts a player has.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
 ---	If a companion is not displaying its tooltip or cooldown, then the item in the macro probably is not in the database
 function NEURON:UpdateCompanionData()
-	--_G.C_PetJournal.ClearAllPetSourcesFilter()
-	--_G.C_PetJournal.ClearAllPetTypesFilter()
+	--.C_PetJournal.ClearAllPetSourcesFilter()
+	--.C_PetJournal.ClearAllPetTypesFilter()
 
-	_G.C_PetJournal.ClearSearchFilter()
+	C_PetJournal.ClearSearchFilter()
 
-	--_G.C_PetJournal.AddAllPetSourcesFilter()
-	--_G.C_PetJournal.AddAllPetTypesFilter()
+	--.C_PetJournal.AddAllPetSourcesFilter()
+	--.C_PetJournal.AddAllPetTypesFilter()
 
-	_G.C_PetJournal.SetAllPetSourcesChecked(true)
-	_G.C_PetJournal.SetAllPetTypesChecked(true)
+	C_PetJournal.SetAllPetSourcesChecked(true)
+	C_PetJournal.SetAllPetTypesChecked(true)
 	local numpet = select(1, C_PetJournal.GetNumPets())
 
 	for i=1,numpet do
@@ -1562,8 +1562,8 @@ local function get_profile()
 	local realm_name = GetRealmName()
 	local char_and_realm_name = string.format("%s - %s", char_name, realm_name)
 
-	local profile_key = _G.NeuronProfilesDB.profileKeys[char_and_realm_name]
-	local profile = _G.NeuronProfilesDB.profiles[profile_key]
+	local profile_key = NeuronProfilesDB.profileKeys[char_and_realm_name]
+	local profile = NeuronProfilesDB.profiles[profile_key]
 
 	return profile
 end
@@ -1581,14 +1581,14 @@ function  NEURON:MoveSpecButtons(msg)
 		return NeuronBase:Print(string.format("%s <spec 1 id> <spec 2 id>", "/neuron MoveSpecButtons"))
 	end
 
-	local char_db = _G.NeuronCDB
+	local char_db = NeuronCDB
 	local profile = get_profile(profile_name)
 
 	for idx, val in ipairs(char_db['buttons']) do
 		val[spec_2_id] = val[spec_1_id]
 	end
 
-	_G.NeuronCDB = char_db
+	NeuronCDB = char_db
 	profile.NeuronCDB = char_db
 	NeuronBase:Print("Buttons for layout "..spec_1_id.." copied to layout "..spec_2_id)
 end

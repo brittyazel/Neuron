@@ -63,7 +63,7 @@
 					Neuron.AddMenuElement(self)
 			</OnLoad>
 			<OnEnter>
-					self.tooltipText = MicroButtonTooltipText(_G.SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
+					self.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
 					GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0, _G.NEWBIE_TOOLTIP_SPELLBOOK)
 			</OnEnter>
 		</Scripts>
@@ -77,8 +77,8 @@
 					--self:SetAttribute("type", "macro")
 					--self:SetAttribute("*macrotext*", "/click TalentMicroButton")
 
-					self.tooltipText = MicroButtonTooltipText(_G.TALENTS_BUTTON, "TOGGLETALENTS")
-					self.newbieText = _G.NEWBIE_TOOLTIP_TALENTS
+					self.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
+					self.newbieText = NEWBIE_TOOLTIP_TALENTS
 
 					self.minLevel = SHOW_SPEC_LEVEL
 					self:RegisterEvent("PLAYER_LEVEL_UP")
@@ -114,8 +114,8 @@
 					self:RegisterEvent("ACHIEVEMENT_EARNED")
 					self:RegisterEvent("UPDATE_BINDINGS")
 					self:RegisterEvent("PLAYER_ENTERING_WORLD")
-					self.tooltipText = MicroButtonTooltipText(_G.ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
-					self.newbieText = _G.NEWBIE_TOOLTIP_ACHIEVEMENT
+					self.tooltipText = MicroButtonTooltipText(ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
+					self.newbieText = NEWBIE_TOOLTIP_ACHIEVEMENT
 					self.minLevel = 10	--Just used for display. But we know that it will become available by level 10 due to the level 10 achievement.
 					Neuron.AddMenuElement(self)
 					if (IsKioskModeEnabled()) then
@@ -141,12 +141,12 @@
 		<Scripts>
 			<OnLoad>
 					LoadMicroButtonTextures(self, "Quest")
-					self.tooltipText = MicroButtonTooltipText(_G.QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
-					self.newbieText = _G.NEWBIE_TOOLTIP_QUESTLOG
+					self.tooltipText = MicroButtonTooltipText(QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
+					self.newbieText = NEWBIE_TOOLTIP_QUESTLOG
 					Neuron.AddMenuElement(self)
 			</OnLoad>
 			<OnEvent>
-					self.tooltipText = MicroButtonTooltipText(_G.QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
+					self.tooltipText = MicroButtonTooltipText(QUESTLOG_BUTTON, "TOGGLEQUESTLOG")
 			</OnEvent>
 			<OnClick>
 					ToggleQuestLog()
@@ -187,15 +187,15 @@
 					self:SetAttribute("*macrotext*", "/click GuildMicroButton")
 
 					LoadMicroButtonTextures(self, "Socials")
-					self.tooltipText = MicroButtonTooltipText(_G.LOOKINGFORGUILD, "TOGGLEGUILDTAB")
-					self.newbieText = _G.NEWBIE_TOOLTIP_LOOKINGFORGUILDTAB
+					self.tooltipText = MicroButtonTooltipText(LOOKINGFORGUILD, "TOGGLEGUILDTAB")
+					self.newbieText = NEWBIE_TOOLTIP_LOOKINGFORGUILDTAB
 					self:RegisterEvent("UPDATE_BINDINGS")
 					self:RegisterEvent("PLAYER_GUILD_UPDATE")
 					self:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 					Neuron.updateTabard(true)
 					if ( IsTrialAccount() or (IsVeteranTrialAccount() and not IsInGuild()) ) then
 						self:Disable()
-						self.disabledTooltip = _G.ERR_RESTRICTED_ACCOUNT_TRIAL
+						self.disabledTooltip = ERR_RESTRICTED_ACCOUNT_TRIAL
 					end
 					if (IsKioskModeEnabled()) then
 						self:Disable();
@@ -217,9 +217,9 @@
 			<OnLoad>
 					LoadMicroButtonTextures(self, "LFG")
 					SetDesaturation(self:GetDisabledTexture(), true)
-					self.tooltipText = MicroButtonTooltipText(_G.DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-					self.newbieText = _G.NEWBIE_TOOLTIP_LFGPARENT
-					self.minLevel = math.min(_G.SHOW_LFD_LEVEL, _G.SHOW_PVP_LEVEL)
+					self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
+					self.newbieText = NEWBIE_TOOLTIP_LFGPARENT
+					self.minLevel = math.min(SHOW_LFD_LEVEL, SHOW_PVP_LEVEL)
 					if (IsKioskModeEnabled()) then
 						self:Disable();
 					end
@@ -234,8 +234,8 @@
 					if (IsKioskModeEnabled()) then
 						return;
 					end
-					self.tooltipText = MicroButtonTooltipText(_G.DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
-					self.newbieText = _G.NEWBIE_TOOLTIP_LFGPARENT
+					self.tooltipText = MicroButtonTooltipText(DUNGEONS_BUTTON, "TOGGLEGROUPFINDER")
+					self.newbieText = NEWBIE_TOOLTIP_LFGPARENT
 
 					Neuron.updateMicroButtons()
 			</OnEvent>
@@ -252,8 +252,8 @@
 					self:SetAttribute("*macrotext*", "/click CollectionsMicroButton")
 					LoadMicroButtonTextures(self, "Mounts")
 					SetDesaturation(self:GetDisabledTexture(), true)
-					self.tooltipText = MicroButtonTooltipText(_G.COLLECTIONS, "TOGGLECOLLECTIONS")
-					self.newbieText = _G.NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+					self.tooltipText = MicroButtonTooltipText(COLLECTIONS, "TOGGLECOLLECTIONS")
+					self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
 
 					self:RegisterEvent("HEIRLOOMS_UPDATED")
 					self:RegisterEvent("PET_JOURNAL_NEW_BATTLE_SLOT")
@@ -304,7 +304,7 @@
 		<Scripts>
 			<OnLoad>
 					LoadMicroButtonTextures(self, "BStore")
-					self.tooltipText = _G.BLIZZARD_STORE
+					self.tooltipText = BLIZZARD_STORE
 					self:RegisterEvent("STORE_STATUS_CHANGED")
 					if (IsKioskModeEnabled()) then
 						self:Disable();
@@ -378,7 +378,7 @@
 						self.updateInterval = self.updateInterval - elapsed
 					else
 						self.updateInterval = PERFORMANCEBAR_UPDATE_INTERVAL
-						status = _G.GetFileStreamingStatus()
+						status = GetFileStreamingStatus()
 						if(status==0) then
 							status = (GetBackgroundLoadingStatus()~=0) and 1 or 0
 						end
@@ -403,9 +403,9 @@
 						end
 						local bandwidthIn, bandwidthOut, latencyHome, latencyWorld = GetNetStats()
 						local latency = latencyHome > latencyWorld and latencyHome or latencyWorld
-						if (latency > _G.PERFORMANCEBAR_MEDIUM_LATENCY) then
+						if (latency > PERFORMANCEBAR_MEDIUM_LATENCY) then
 							self.overlay:SetVertexColor(1, 0, 0)
-						elseif (latency > _G.PERFORMANCEBAR_LOW_LATENCY) then
+						elseif (latency > PERFORMANCEBAR_LOW_LATENCY) then
 							self.overlay:SetVertexColor(1, 1, 0)
 						else
 							self.overlay:SetVertexColor(0, 1, 0)
@@ -437,8 +437,8 @@
 		<Scripts>
 			<OnLoad>
 				LoadMicroButtonTextures(self, "Help")
-				self.tooltipText = _G.HELP_BUTTON
-				self.newbieText = _G.NEWBIE_TOOLTIP_HELP
+				self.tooltipText = HELP_BUTTON
+				self.newbieText = NEWBIE_TOOLTIP_HELP
 				Neuron.AddMenuElement(self)
 				if (IsKioskModeEnabled()) then
 					self:Disable();

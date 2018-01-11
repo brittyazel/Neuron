@@ -51,10 +51,6 @@ local GetParentKeys = NEURON.GetParentKeys
 
 local defGDB, defCDB = CopyTable(NeuronPetGDB), CopyTable(NeuronPetCDB)
 
-local GetPetActionInfo = _G.GetPetActionInfo
-local GetPetActionsUsable = _G.GetPetActionsUsable
-local GetPetActionSlotUsable = _G.GetPetActionSlotUsable
-local GetPetActionCooldown = _G.GetPetActionCooldown
 local AutoCastStart = NEURON.AutoCastStart
 local AutoCastStop = NEURON.AutoCastStop
 
