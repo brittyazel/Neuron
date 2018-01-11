@@ -12,7 +12,7 @@ local BTNIndex, SKINIndex = NEURON.BTNIndex, NEURON.SKINIndex
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local	SKIN = LibStub("Masque", true)
+local SKIN = LibStub("Masque", true)
 
 local MacroDrag, StartDrag = NEURON.MacroDrag, NEURON.StartDrag
 

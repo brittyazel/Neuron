@@ -1,6 +1,6 @@
 ﻿--Neuron, a World of Warcraft® user interface addon.
 
-local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "deDE", false)
+local L = LibStub("AceLocale-3.0"):NewLocale("Neuron", "deDE", false)
 
 if not L then return end
 

@@ -3,7 +3,7 @@
 
 local AddOnFolderName, private = ...
 
-local L = _G.LibStub("AceLocale-3.0"):NewLocale("Neuron", "esMX", false)
+local L = LibStub("AceLocale-3.0"):NewLocale("Neuron", "esMX", false)
 
 if not L then return end
 
