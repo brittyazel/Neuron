@@ -2,24 +2,6 @@
 
 
 --/flyout command based on Gello's addon "Select"
-
--------------------------------------------------------------------------------
--- Localized Lua globals.
--------------------------------------------------------------------------------
-local _G = getfenv(0)
-
--- Functions
-local next = _G.next
-local pairs = _G.pairs
-local tonumber = _G.tonumber
-local tostring = _G.tostring
-local type = _G.type
-
--- Libraries
-local string = _G.string
-local table = _G.table
-
-
 -------------------------------------------------------------------------------
 -- AddOn namespace.
 -------------------------------------------------------------------------------
@@ -51,9 +33,6 @@ local ItemCache = NeuronItemCache
 local tooltipScan = NeuronTooltipScan
 local tooltipScanTextLeft2 = NeuronTooltipScanTextLeft2
 local tooltipStrings = {}
-
-local BOOKTYPE_SPELL = _G.BOOKTYPE_SPELL
-local BOOKTYPE_PET = _G.BOOKTYPE_PET
 
 local itemTooltips, itemLinks, spellTooltips, companionTooltips = {}, {}, {}, {}
 local needsUpdate, scanData = {}, {}

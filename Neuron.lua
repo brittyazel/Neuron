@@ -5,23 +5,8 @@
 -------------------------------------------------------------------------------
 local addonName = ...
 
-local _G = getfenv(0)
-
--- Functions
-local next = _G.next
-local pairs = _G.pairs
-local tonumber = _G.tonumber
-local tostring = _G.tostring
-local type = _G.type
-
--- Libraries
-local string = _G.string
-local table = _G.table
-
 NeuronBase = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
-
 
 -------------------------------------------------------------------------------
 -- AddOn namespace.
@@ -1074,6 +1059,10 @@ function NEURON.PopUp_Update(popupFrame)
 end
 
 
+-------------------------------------------------------------------
+-------------------------Minimap Icon------------------------------
+-------------------------------------------------------------------
+
 --From http://www.wowpedia.org/GetMinimapShape
 local minimapShapes = {
 	-- quadrant booleans (same order as SetTexCoord)
@@ -1095,6 +1084,8 @@ local minimapShapes = {
 	["TRICORNER-BOTTOMRIGHT"]	= {false, true, true, true},
 }
 
+
+--this is for the minimap icon I think
 local function updatePoint(self, elapsed)
 	if (GDB.animate) then
 		self.elapsed = self.elapsed + elapsed
@@ -1295,6 +1286,11 @@ function NEURON:toggleMMB()
 	end
 	NeuronGDB.showmmb = not NeuronGDB.showmmb
 end
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+
 
 function NEURON.SubFramePlainBackdrop_OnLoad(self)
 	self:SetBackdrop({
@@ -1979,11 +1975,11 @@ function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barC
 end
 
 
-function NEURON:RegisterGUIOptions(class, ...)
+function NEURON:RegisterGUIOptions(class, chkOpt, stateOpt, adjOpt)
 	NEURON.RegisteredGUIData[class] = {
-		chkOpt = select(1,...),
-		stateOpt = select(2,...),
-		adjOpt = select(3,...),
+		chkOpt = chkOpt,
+		stateOpt = stateOpt,
+		adjOpt = adjOpt,
 	}
 end
 

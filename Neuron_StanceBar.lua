@@ -19,7 +19,7 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local	SKIN = LibStub("Masque", true)
+local SKIN = LibStub("Masque", true)
 
 local sIndex = NEURON.sIndex
 

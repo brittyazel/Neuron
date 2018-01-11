@@ -1,13 +1,9 @@
 ﻿--Neuron , a World of Warcraft® user interface addon.
-
-
 --SnapTo code is a modified version of FlyPaper by Tuller
 
 local NEURON = Neuron
 
 local BAR = NEURON.BAR
-
-local abs = math.abs
 
 local function frameIsDependentOnFrame(frame, otherFrame)
 
@@ -129,14 +125,14 @@ function BAR:StickToEdge()
 	local function calcX(opt)
 		if (opt == 1) then if (x <= w+rTol) then x = w; changed = true end
 		elseif (opt == 2) then if (x >= -(w+rTol)) then x = -(w); changed = true end
-		elseif (opt == 3) then if (abs(x) <= rTol) then x = 0; changed = true end
+		elseif (opt == 3) then if (math.abs(x) <= rTol) then x = 0; changed = true end
 		end
 	end
 
 	local function calcY(opt)
 		if (opt == 1) then if (y <= h+rTol) then y = h; changed = true end
 		elseif (opt == 2) then if (y >= -(h+rTol)) then y = -(h); changed = true end
-		elseif (opt == 3) then if (abs(y) <= rTol) then y = 0; changed = true end
+		elseif (opt == 3) then if (math.abs(y) <= rTol) then y = 0; changed = true end
 		end
 	end
 
@@ -191,24 +187,24 @@ function BAR:Stick(oFrame, tolerance, xOff, yOff)
 
 	if ((oLeft - tolerance <= left and oRight + tolerance >= right) or (left - tolerance <= oLeft and right + tolerance >= oRight)) then
 
-		local distCenter, distLeft, distRight = abs(oCenterX - centerX), abs(oLeft - left), abs(right - oRight)
+		local distCenter, distLeft, distRight = math.abs(oCenterX - centerX), math.abs(oLeft - left), math.abs(right - oRight)
 
-		if (abs(oTop - bottom) <= tolerance) then
+		if (math.abs(oTop - bottom) <= tolerance) then
 			return attachToTop(self, oFrame, distLeft, distRight, distCenter, yOff)
-		elseif abs(oBottom - top) <= tolerance then
+		elseif math.abs(oBottom - top) <= tolerance then
 			return attachToBottom(self, oFrame, distLeft, distRight, distCenter, yOff)
 		end
 	end
 
 	if ((oTop + tolerance >= top and oBottom - tolerance <= bottom) or (top + tolerance >= oTop and bottom - tolerance <= oBottom)) then
 
-		local distCenter, distTop, distBottom = abs(oCenterY - centerY), abs(oTop - top), abs(oBottom - bottom)
+		local distCenter, distTop, distBottom = math.abs(oCenterY - centerY), math.abs(oTop - top), math.abs(oBottom - bottom)
 
-		if (abs(oLeft - right) <= tolerance) then
+		if (math.abs(oLeft - right) <= tolerance) then
 			return attachToLeft(self, oFrame, distTop, distBottom, distCenter, xOff)
 		end
 
-		if (abs(oRight - left) <= tolerance) then
+		if (math.abs(oRight - left) <= tolerance) then
 			return attachToRight(self, oFrame, distTop, distBottom, distCenter, xOff)
 		end
 	end

@@ -19,9 +19,6 @@ local BARIndex, BARNameIndex, BTNIndex = NEURON.BARIndex, NEURON.BARNameIndex, N
 local MAS = NEURON.MANAGED_ACTION_STATES
 local MBS = NEURON.MANAGED_BAR_STATES
 
-local InCombatLockdown = _G.InCombatLockdown
-local tsort = table.sort
-
 local alphaDir, alphaTimer = 0, 0
 
 local autoHideIndex, alphaupIndex = {}, {}
@@ -194,7 +191,6 @@ local cDef = {
 local function round(num, idp)
 	local mult = 10^(idp or 0)
 	return math.floor(num * mult + 0.5) / mult
-
 end
 
 
@@ -2040,7 +2036,7 @@ function BAR:SetState(msg, gui, checked, query)
 			end
 		end
 
-		tsort(statetable)
+		table.sort(statetable)
 
 		for k,v in ipairs(statetable) do
 			NeuronBase:Print(v)
@@ -3292,7 +3288,7 @@ function BAR:SetCastingTarget(value, gui, checked, query)
                     end
                 end
 
-                tsort(statetable)
+                table.sort(statetable)
 
                 for k,v in ipairs(statetable) do
                     NeuronBase:Print(v)

@@ -16,67 +16,6 @@ local	SKIN = LibStub("Masque", true)
 
 local MacroDrag, StartDrag = NEURON.MacroDrag, NEURON.StartDrag
 
-
-local pi = math.pi
--- -- local copies of often used globals
---[[local floor = math.floor
-local ceil = math.ceil
-local select = _G.select
-local tonumber = _G.tonumber
-local unpack = _G.unpack
-local next = _G.next
-
-local HasAction = _G.HasAction
-local GetTime = _G.GetTime
-local UnitAura = _G.UnitAura
-local UnitMana = _G.UnitMana
-local UnitHasVehicleUI = _G.UnitHasVehicleUI
-local InCombatLockdown = _G.InCombatLockdown
-local SecureCmdOptionParse = _G.SecureCmdOptionParse
-local QueryCastSequence = _G.QueryCastSequence
-local SetCVar = _G.SetCVar
-local UIErrorsFrame = _G.UIErrorsFrame
-
-local GetNumShapeshiftForms = _G.GetNumShapeshiftForms
-local GetShapeshiftFormInfo = _G.GetShapeshiftFormInfo
-local GetContainerNumSlots = _G.GetContainerNumSlots
-local GetComboPoints = _G.GetComboPoints
-
-local GetCursorInfo = _G.GetCursorInfo
-
-local GetActionInfo = _G.GetActionInfo
-local IsActionInRange = _G.IsActionInRange
-
-local GetMacroInfo = _G.GetMacroInfo
-
-local GetSpellCooldown = _G.GetSpellCooldown
-local GetSpellTexture = _G.GetSpellTexture
-local GetSpellCount = _G.GetSpellCount
-local GetSpellCharges = _G.GetSpellCharges
-local IsCurrentSpell = _G.IsCurrentSpell
-local IsAutoRepeatSpell = _G.IsAutoRepeatSpell
-local IsAttackSpell = _G.IsAttackSpell
-local IsSpellInRange = _G.IsSpellInRange
-
-local GetInventoryItemLink = _G.GetInventoryItemLink
-local GetItemCooldown = _G.GetItemCooldown
-local GetItemInfo = _G.GetItemInfo
-local GetItemCount = _G.GetItemCount
-local GetItemIcon = _G.GetItemIcon
-local IsCurrentItem = _G.IsCurrentItem
-local IsItemInRange = _G.IsItemInRange
-local IsEquippableItem = _G.IsEquippableItem
-local GetEquipmentSetInfoByName = _G.GetEquipmentSetInfoByName
-
-local GetPossessInfo = _G.GetPossessInfo
-local GetCompanionInfo = _G.GetCompanionInfo]]
-
---local ShowOverlayGlow = ActionButton_ShowOverlayGlow
---local HideOverlayGlow = ActionButton_HideOverlayGlow
---local IsSpellOverlayed = _G.IsSpellOverlayed
---local STANDARD_TEXT_FONT = STANDARD_TEXT_FONT
-
-
 local sIndex = NEURON.sIndex  --Spell index
 local cIndex = NEURON.cIndex  --Battle pet & Mount index
 local iIndex = NEURON.iIndex  --Items Index
@@ -264,16 +203,16 @@ local function controlOnUpdate(self, elapsed)
 
 			if ( cou_timer <= cou_speed ) then
 				if (shine.shape == "circle") then
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
 					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree-90)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree-90))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-90))
 					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree-180)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree-180))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-180))
 					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree-270)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree-270))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-270))
 					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 				else
 					cou_position = cou_timer/cou_speed*cou_distance
@@ -286,16 +225,16 @@ local function controlOnUpdate(self, elapsed)
 
 			elseif (cou_timer <= cou_speed*2) then
 				if (shine.shape == "circle") then
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
 					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+90))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
 					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+180))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
 					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+270))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
 					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 				else
 					cou_position = (cou_timer-cou_speed)/cou_speed*cou_distance
@@ -308,16 +247,16 @@ local function controlOnUpdate(self, elapsed)
 
 			elseif (cou_timer <= cou_speed*3) then
 				if (shine.shape == "circle") then
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
 					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+90))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
 					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+180))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
 					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+270))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
 					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 				else
 					cou_position = (cou_timer-cou_speed*2)/cou_speed*cou_distance
@@ -329,16 +268,16 @@ local function controlOnUpdate(self, elapsed)
 				end
 			else
 				if (shine.shape == "circle") then
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
 					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+90))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
 					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+180))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
 					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 
-					cou_x = ((cou_radius)*(4/pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/pi))*(sin(cou_degree+270))
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
 					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
 				else
 					cou_position = (cou_timer-cou_speed*3)/cou_speed*cou_distance

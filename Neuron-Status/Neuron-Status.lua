@@ -20,7 +20,6 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-
 NeuronStatusGDB = {
 	statusbars = {},
 	statusbtns = {},
@@ -32,26 +31,9 @@ NeuronStatusCDB = {
 	statusbtns = {},
 }
 
-local format = string.format
-
 local GetParentKeys = NEURON.GetParentKeys
 
 local defGDB, defCDB = CopyTable(NeuronStatusGDB), CopyTable(NeuronStatusCDB)
-
-local tsort = table.sort
-
-local GetMirrorTimerProgress = _G.GetMirrorTimerProgress
-local UnitCastingInfo = _G.UnitCastingInfo
-local GetTime = _G.GetTime
-local UIDropDownMenu_AddButton = UIDropDownMenu_AddButton
-local UIDropDownMenu_CreateInfo = UIDropDownMenu_CreateInfo
-local MirrorTimerColors = MirrorTimerColors
-
-local CASTING_BAR_ALPHA_STEP = CASTING_BAR_ALPHA_STEP
-local CASTING_BAR_FLASH_STEP = CASTING_BAR_FLASH_STEP
-local CASTING_BAR_HOLD_TIME = CASTING_BAR_HOLD_TIME
-
-
 
 local BarTextures = {
 	[1] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_2", L["Default"] },
@@ -63,19 +45,12 @@ local BarTextures = {
 	[7] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Velvet_3", L["Velvet"] },
 }
 
-
-
 local BarTexturesData = {}
 
 
-
-do
-	for i,data in ipairs(BarTextures) do
-		BarTexturesData[i] = data[3]
-	end
+for i,data in ipairs(BarTextures) do
+	BarTexturesData[i] = data[3]
 end
-
-
 
 local BarBorders = {
 	[1] = { L["Tooltip"], "Interface\\Tooltips\\UI-Tooltip-Border", 2, 2, 3, 3, 12, 12, -2, 3, 2, -3 },
@@ -84,27 +59,16 @@ local BarBorders = {
 	[4] = { L["None"], "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 }
 
-
-
 local BarBordersData = {}
 
-
-
-do
-	for i,data in ipairs(BarBorders) do
-		BarBordersData[i] = data[1]
-	end
+for i,data in ipairs(BarBorders) do
+	BarBordersData[i] = data[1]
 end
-
-
 
 local BarOrientations = {
 	[1] = L["Horizontal"],
 	[2] = L["Vertical"],
 }
-
-
-
 local BarUnits = {
 	[1] = "-none-",
 	[2] = "player",
@@ -118,8 +82,6 @@ local BarUnits = {
 	[10] = "party3",
 	[11] = "party4",
 }
-
-
 
 local BarRepColors = {
 	[0] = { l="a_Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
@@ -139,8 +101,6 @@ local BarRepColors = {
 --FACTION_BAR_COLORS = BarRepColors
 
 local CastWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}
-
-
 
 
 local gDef = {
@@ -253,20 +213,11 @@ local configDefaults = {
 	[6] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3 },
 }
 
-
-
 local sbTypes = { { "cast", L["Cast Bar"] }, { "xp", L["XP Bar"] }, { "rep", L["Rep Bar"] }, { "mirror", L["Mirror Bar"] } }
-
-
 
 local sbOpt = { types = {}, chk = {}, adj = {} }
 
-
-
 local popupData = {}
-
-
-
 
 local sbStrings = {
 	cast = {
@@ -298,14 +249,10 @@ local sbStrings = {
 }
 
 
-
-
 local chkOptions = {
 
 	[1] = { "cast", L["Cast Icon"], "UpdateCastIcon", "showIcon" }
 }
-
-
 
 
 local adjOptions = {
@@ -373,7 +320,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 		percentXP = (currXP/nextXP)*100;
 
 		bubbles = tostring(math.floor(currXP/(nextXP/20))).." / 20 "..L["Bubbles"]
-		percentXP = format("%.1f", (percentXP)).."%"
+		percentXP = string.format("%.1f", (percentXP)).."%"
 
 
 		if (restedXP) then
@@ -412,7 +359,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 			rank = tostring(0).." "..L["Points"]
 		end
 
-		percentXP = format("%.1f", percentXP).."%"; --format
+		percentXP = string.format("%.1f", percentXP).."%"; --format
 
 
 	--honor points option
@@ -431,7 +378,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 		end
 
 		bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
-		percentXP = format("%.1f", percentXP).."%"; --format
+		percentXP = string.format("%.1f", percentXP).."%"; --format
 
 
 		if (UnitPrestige("player")) then
@@ -621,7 +568,7 @@ local function SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, valu
 	reptable.min = minrep
 	reptable.max = maxrep
 	reptable.value = value
-	reptable.hex = format("%02x%02x%02x", colors.r*255, colors.g*255, colors.b*255)
+	reptable.hex = string.format("%02x%02x%02x", colors.r*255, colors.g*255, colors.b*255)
 	reptable.r = colors.r
 	reptable.g = colors.g
 	reptable.b = colors.b
@@ -771,7 +718,7 @@ local function repDropDown_Initialize(dropdown) --Initialize the dropdown menu f
 			end
 		end
 
-		tsort(data)
+		table.sort(data)
 
 		for k,v in ipairs(data) do
 
@@ -1180,9 +1127,9 @@ function STATUS:CastBar_OnUpdate(elapsed)
 			local displayName, numFormat = self.cbtimer.castInfo[unit][1], self.cbtimer.castInfo[unit][2]
 
 			if (self.maxValue) then
-				CastWatch[self.unit].timer = format(numFormat, self.value).."/"..format(numFormat, self.maxValue)
+				CastWatch[self.unit].timer = string.format(numFormat, self.value).."/"..format(numFormat, self.maxValue)
 			else
-				CastWatch[self.unit].timer = format(numFormat, self.value)
+				CastWatch[self.unit].timer = string.format(numFormat, self.value)
 			end
 		end
 
@@ -1315,10 +1262,10 @@ function STATUS:MirrorBar_OnUpdate(elapsed)
 			self:SetValue(self.value)
 
 			if (self.value >= 60) then
-				self.value = format("%0.1f", self.value/60)
+				self.value = string.format("%0.1f", self.value/60)
 				self.value = self.value.."m"
 			else
-				self.value = format("%0.0f", self.value)
+				self.value = string.format("%0.0f", self.value)
 				self.value = self.value.."s"
 			end
 
@@ -1961,7 +1908,7 @@ function NEURON.StatusBarEditorUpdate(reset)
 
 				if (sb[f.func]) then
 					if (f.format) then
-						f.edit:SetText(format(f.format, sb[f.func](sb, nil, true, true)*f.mult)..f.endtext)
+						f.edit:SetText(string.format(f.format, sb[f.func](sb, nil, true, true)*f.mult)..f.endtext)
 					else
 						f.edit:SetText(sb[f.func](sb, nil, true, true) or "")
 					end
@@ -2171,7 +2118,7 @@ local function adjOptionAdd(frame, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
-						frame.edit:SetText(format(frame.format, frame.max*frame.mult)..frame.endtext)
+						frame.edit:SetText(string.format(frame.format, frame.max*frame.mult)..frame.endtext)
 					else
 						frame.edit:SetText(frame.max)
 					end
@@ -2181,7 +2128,7 @@ local function adjOptionAdd(frame, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
-						frame.edit:SetText(format(frame.format, (num+frame.inc)*frame.mult)..frame.endtext)
+						frame.edit:SetText(string.format(frame.format, (num+frame.inc)*frame.mult)..frame.endtext)
 					else
 						frame.edit:SetText(num+frame.inc)
 					end
@@ -2216,7 +2163,7 @@ local function adjOptionSub(frame, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
-						frame.edit:SetText(format(frame.format, frame.min*frame.mult)..frame.endtext)
+						frame.edit:SetText(string.format(frame.format, frame.min*frame.mult)..frame.endtext)
 					else
 						frame.edit:SetText(frame.min)
 					end
@@ -2226,7 +2173,7 @@ local function adjOptionSub(frame, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
-						frame.edit:SetText(format(frame.format, (num-frame.inc)*frame.mult)..frame.endtext)
+						frame.edit:SetText(string.format(frame.format, (num-frame.inc)*frame.mult)..frame.endtext)
 					else
 						frame.edit:SetText(num-frame.inc)
 					end

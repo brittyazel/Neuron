@@ -1,31 +1,11 @@
 --Neuron Menu Bar, a World of Warcraft® user interface addon.
 
-
 --Most of this code is based off of the 7.0 version of Blizzard's
 --MainMenuBarMicroButtons.lua & MainMenuBarMicroButtons.xml files
-
-
--------------------------------------------------------------------------------
--- Localized Lua globals.
--------------------------------------------------------------------------------
-local _G = getfenv(0)
-
--- Functions
-local next = _G.next
-local pairs = _G.pairs
-local tonumber = _G.tonumber
-local tostring = _G.tostring
-local type = _G.type
-
--- Libraries
-local string = _G.string
-local table = _G.table
 
 -------------------------------------------------------------------------------
 -- AddOn namespace.
 -------------------------------------------------------------------------------
-
-
 local NEURON = Neuron
 local GDB, CDB, PEW
 
@@ -65,15 +45,6 @@ local gDef = {
 local menuElements = {}
 local addonData, sortData = {}, {}
 
-local sort = table.sort
-local format = string.format
-
-local GetAddOnInfo = _G.GetAddOnInfo
-local GetAddOnMemoryUsage = _G.GetAddOnMemoryUsage
-local GetAddOnCPUUsage = _G.GetAddOnCPUUsage
-local GetScriptCPUUsage = _G.GetScriptCPUUsage
-local UpdateAddOnMemoryUsage = _G.UpdateAddOnMemoryUsage
-local UpdateAddOnCPUUsage = _G.UpdateAddOnCPUUsage
 
 local GetParentKeys = NEURON.GetParentKeys
 
@@ -816,7 +787,7 @@ function NEURON.LatencyButton_OnEnter(self)
 					if (mem > 1000) then
 						mem = mem / 1000
 					end
-					GameTooltip:AddLine(format(ADDON_MEM_MB_ABBR, mem, select(1,GetAddOnInfo(i))), 1.0, 1.0, 1.0)
+					GameTooltip:AddLine(string.format(ADDON_MEM_MB_ABBR, mem, select(1,GetAddOnInfo(i))), 1.0, 1.0, 1.0)
 				end
 			end
 		end
@@ -879,7 +850,7 @@ function NEURON.LatencyButton_AltOnEnter(self)
 		end
 
 		if (self.usage) then
-			NeuronMenuBarTooltip:AddLine("|cffffffff("..format("%.2f",(self.usage) / 2.5).."ms)|r Total Script CPU Time\n", NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
+			NeuronMenuBarTooltip:AddLine("|cffffffff("..string.format("%.2f",(self.usage) / 2.5).."ms)|r Total Script CPU Time\n", NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
 		end
 
 		wipe(sortData)
@@ -889,7 +860,7 @@ function NEURON.LatencyButton_AltOnEnter(self)
 				local addLine = ""
 
 				if (addonData[i].currCPU and addonData[i].currCPU > 0) then
-					addLine = addLine..format("%.2f", addonData[i].currCPU).."ms/"..format("%.1f", addonData[i].percentCPU).."%)|r "
+					addLine = addLine..string.format("%.2f", addonData[i].currCPU).."ms/"..string.format("%.1f", addonData[i].percentCPU).."%)|r "
 
 					local num = tonumber(addLine:match("^%d+"))
 
@@ -906,7 +877,7 @@ function NEURON.LatencyButton_AltOnEnter(self)
 			end
 		end
 
-		sort(sortData, function(a,b) return a>b end)
+		table.sort(sortData, function(a,b) return a>b end)
 
 		for i,v in ipairs(sortData) do
 			NeuronMenuBarTooltip:AddLine(v, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)

@@ -1,7 +1,5 @@
 --Neuron , a World of Warcraft® user interface addon.
 
-
-
 local NEURON = Neuron
 local GDB
 
