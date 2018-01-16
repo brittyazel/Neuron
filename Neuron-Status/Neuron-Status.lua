@@ -295,7 +295,8 @@ local BrawlerGuildFactions = {
 ---parent.gdb is statusbtnsGDB
 
 
----TODO: need to make the curXPType bar specific instead of global
+
+---TODO: right now we are using statusbtnsCDB to assign settins ot the status buttons, but I think our indexes are bar specific
 local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
 
     local parent = self.parent
@@ -417,7 +418,7 @@ local function XPBar_OnEvent(self, event, ...)
 
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = statusbtnsCDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = statusbtnsCDB[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 	if (not thisBar.curXPType) then
 		thisBar.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp

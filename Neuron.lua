@@ -471,7 +471,6 @@ local slashFunctions = {
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
 	{L["BlizzBar"], L["BlizzBar_Description"], "BlizzBar"},
 	{L["Animate"], L["Animate_Description"], "Animate"},
-	--{L["MoveSpecButtons"], L["MoveSpecButtons_Description"], "MoveSpecButtons"},
 }
 ---New Slash functionality using Ace3
 NeuronBase:RegisterChatCommand("neuron", "slashHandler")
@@ -871,7 +870,7 @@ end
 
 local temp = {}
 
-local TempTexture = (CreateFrame("Button", nil, UIParent)):CreateTexture()
+--local TempTexture = (CreateFrame("Button", nil, UIParent)):CreateTexture()
 --textf:Hide()
 
 --- Creates a table of the available spell icon filenames for use in macros
@@ -1566,31 +1565,6 @@ local function get_profile()
 	local profile = NeuronProfilesDB.profiles[profile_key]
 
 	return profile
-end
-
-
-function  NEURON:MoveSpecButtons(msg)
-	local num_specs = GetNumSpecializations()
-	local spec_1_id, spec_2_id = msg:match("^(%d+)%s+(%d+)")
-	spec_1_id = tonumber(spec_1_id)
-	spec_2_id = tonumber(spec_2_id)
-
-	if (not is_valid_spec_id(spec_1_id, num_specs)
-			or not is_valid_spec_id(spec_2_id, num_specs)) then
-
-		return NeuronBase:Print(string.format("%s <spec 1 id> <spec 2 id>", "/neuron MoveSpecButtons"))
-	end
-
-	local char_db = NeuronCDB
-	local profile = get_profile(profile_name)
-
-	for idx, val in ipairs(char_db['buttons']) do
-		val[spec_2_id] = val[spec_1_id]
-	end
-
-	NeuronCDB = char_db
-	profile.NeuronCDB = char_db
-	NeuronBase:Print("Buttons for layout "..spec_1_id.." copied to layout "..spec_2_id)
 end
 
 

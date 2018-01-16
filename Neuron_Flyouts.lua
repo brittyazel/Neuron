@@ -45,7 +45,7 @@ local rtable = f.rtable
 
 f.filter = {} -- table of search:keyword search functions (f.filter.item(arg))
 
--- adds a type/value attribute pair to rtable if it's not already there
+-- ad ds a type/value attribute pair to rtable if it's not already there
 local function addToTable(actionType,actionValue)
 	--for i=1,#rtable,2 do
 	--if rtable[i]==actionType and rtable[i+1]==actionValue then

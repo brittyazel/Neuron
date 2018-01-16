@@ -27,7 +27,7 @@ local currMacro = {}
 
 local cmdSlash
 
-local stealthStatus = IsStealthed()---this is a workaround variable for druid stealth being overwritten
+local stealthStatus = IsStealthed() ---this is a workaround variable for druid stealth being overwritten
 
 local configData = {
 	btnType = "macro",
@@ -3094,12 +3094,13 @@ function BUTTON:SetType(save, kill, init)
 
 		self:SetAttribute("overrideID_Offset", 156)
 		self:SetAttribute("vehicleID_Offset", 132)
-		self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
+		--self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
+		self:SetAttribute("vehicleExit_Macro", "/leavevehicle")
 		self:SetAttribute("possessExit_Macro", "/stopcasting")  --kind of a hack to make the command /stopcasting. It used to be /click PossessButton2 which was super broken
 
 		self:SetAttribute("_childupdate", [[
 
-				if (message)  then
+				if (message) then
 
 					local msg = (":"):split(message)
 
@@ -3110,16 +3111,12 @@ function BUTTON:SetType(save, kill, init)
 						else
 
 							if (self:GetAttribute("lastPos")) then
-
 								self:SetAttribute("type", "macro")
-
-								self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
+								self:SetAttribute("*macrotext1", self:GetAttribute("vehicleExit_Macro"))
 								self:SetAttribute("*action*", 0)
 
 							else
 								self:SetAttribute("type", "action")
-
 								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 							end
 						end
