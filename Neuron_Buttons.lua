@@ -2219,11 +2219,16 @@ end
 
 
 function BUTTON:MACRO_SetSpellTooltip(spell)
+
 	if (sIndex[spell]) then
+
 		local spell_id = sIndex[spell].spellID
+
 		local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
 
-		if spell_id == 161691 and zoneability_id then spell_id = zoneability_id end
+		if spell_id == 161691 and zoneability_id then
+			spell_id = zoneability_id
+		end
 
 
 		if (self.UberTooltips) then

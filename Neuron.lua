@@ -689,6 +689,36 @@ function NEURON:UpdateSpellIndex()
 			end
 		end
 	end
+
+
+	-- a lot of work to associate the Call Pet spell with the pet's name so that tooltips work on Call Pet spells. /sigh
+	if(NEURON.class == "HUNTER") then
+		local _, _, numSlots, isKnown = GetFlyoutInfo(9)
+		--local petIndex, petName
+
+		for i=1, numSlots do
+			local spellID, isKnown = GetFlyoutSlotInfo(9, i)
+			local petIndex, petName = GetCallPetSpellInfo(spellID)
+
+			if (isKnown and petIndex and petName and #petName > 0) then
+				local spellName = GetSpellInfo(spellID)
+
+				local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
+
+				for k,v in pairs(NEURON.sIndex) do
+
+					if (v.spellName:find(petName.."$")) then
+                        local spellData = SetSpellInfo(v.index, v.booktype, v.spellName, nil, v.subName, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
+
+                        NEURON.sIndex[(spellName):lower()] = spellData
+                        NEURON.sIndex[(spellName):lower().."()"] = spellData
+                        NEURON.sIndex[spellID] = spellData
+                    end
+				end
+			end
+		end
+	end
+
 end
 
 
@@ -727,30 +757,6 @@ function NEURON:UpdatePetSpellIndex()
 		end
 
 		i = i + 1
-	end
-
-	-- a lot of work to associate the Call Pet spell with the pet's name so that tooltips work on Call Pet spells. /sigh
-	local _, _, numSlots, isKnown = GetFlyoutInfo(9)
-	--local petIndex, petName
-
-	for i=1, numSlots do
-		local spellID, isKnown = GetFlyoutSlotInfo(9, i)
-		local petIndex, petName = GetCallPetSpellInfo(spellID)
-
-		if (isKnown and petIndex and petName and #petName > 0) then
-			local spellName = GetSpellInfo(spellID)
-			--local spellData = SetSpellInfo(v.index, v.booktype, v.spellName, nil, v.subName, spellID, spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
-
-			for k,v in pairs(NEURON.sIndex) do
-				if (v.spellName:find(petName.."$")) then
-					local spellData = SetSpellInfo(v.index, v.booktype, v.spellName, nil, v.subName, spellID, spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
-
-					NEURON.sIndex[(spellName):lower()] = spellData
-					NEURON.sIndex[(spellName):lower().."()"] = spellData
-					NEURON.sIndex[spellID] = spellData
-				end
-			end
-		end
 	end
 end
 

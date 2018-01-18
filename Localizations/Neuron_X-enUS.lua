@@ -488,8 +488,35 @@ L["Number of Buttons"] = true
 
 L["Reward"] = true
 
+L["Item"] = true
+L["Spell"] = true
+L["Mount"] = true
+L["Companion"] = true
+L["Profession"] = true
+L["Fun"] = true
+L["Favorite"] = true
+L["Keys"] = true
+L["Attach Point"] = true
+L["Relative To"] = true
+L["Radius"] = true
+L["Show On"] = true
+L["Save"] = true
+L["Output"] = true
+L["Flyout Options"] = true
 
+L["Left"] = true
+L["Right"] = true
+L["Top"] = true
+L["Bottom"] = true
+L["Top-Left"] = true
+L["Top-Right"] = true
+L["Bottom-Left"] = true
+L["Bottom-Right"] = true
+L["Center"] = true
 
+L["Click"] = true
+L["Generate Macro"] = true
+L["Copy and Paste the text below"] = true
 
 
 ------------------------------------------------------------

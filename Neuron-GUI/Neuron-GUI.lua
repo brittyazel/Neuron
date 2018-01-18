@@ -2867,7 +2867,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetPoint("TOPLEFT", frame.macro, "TOPLEFT", 2, -95)
 	f:SetPoint("BOTTOMRIGHT", -2, 20)
 	f.edit:SetWidth(350)
-	f.edit:SetHeight(200)
+	f.edit:SetHeight(300)
 	f.edit:SetScript("OnTextChanged", macroText_OnTextChanged)
 	f.edit:SetScript("OnEditFocusGained", function(self) self.hasfocus = true self:SetText(self:GetText():gsub("#autowrite\n", "")) end)
 	f.edit:SetScript("OnEditFocusLost", macroText_OnEditFocusLost)
@@ -2877,7 +2877,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetPoint("TOPLEFT", frame.macroedit, "TOPLEFT", -10, 10)
 	f:SetPoint("BOTTOMRIGHT", -18, 0)
 	f:SetWidth(350)
-	f:SetHeight(200)
+	f:SetHeight(300)
 	f:SetScript("OnClick", function(self) self.macroedit.edit:SetFocus() end)
 	f.macroedit = frame.macroedit
 	frame.macrofocus = f
@@ -3288,17 +3288,29 @@ function NEURON:ButtonEditor_OnLoad(frame)
 		end
 	end
 
-	local f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
-	f:SetWidth(125)
+
+	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
+	f:SetWidth(150)
 	f:SetHeight(28)
-	f:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -28, -8.5)
+	f:SetPoint("TOPRIGHT", frame, "TOPLEFT", 287, -10)
+	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
+	f:SetFrameLevel(frame:GetFrameLevel()+1)
+	f:SetChecked(1)
+	f.text:SetText(L["Macro Data"])
+	frame.tab1 = f; frame.tabs[f] = frame.macro
+
+
+	local f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
+	f:SetWidth(150)
+	f:SetHeight(28)
+	f:SetPoint("RIGHT", frame.tab1, "RIGHT", 150, 0)
 	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(L["Options"])
-	frame.tab3 = f; frame.tabs[f] = frame.options
+	f.text:SetText(L["Flyout Options"])
+	frame.tab2 = f; frame.tabs[f] = frame.options
 
-	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
+	--[[f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
 	f:SetWidth(125)
 	f:SetHeight(28)
 	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)
@@ -3306,17 +3318,7 @@ function NEURON:ButtonEditor_OnLoad(frame)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
 	f.text:SetText(L["Action Data"])
-	frame.tab2 = f; frame.tabs[f] = frame.action
-
-	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
-	f:SetWidth(125)
-	f:SetHeight(28)
-	f:SetPoint("RIGHT", frame.tab2, "LEFT", -5, 0)
-	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
-	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(1)
-	f.text:SetText(L["Macro Data"])
-	frame.tab1 = f; frame.tabs[f] = frame.macro
+	frame.tab2 = f; frame.tabs[f] = frame.action]]
 
 
 
@@ -3661,57 +3663,56 @@ local target_options = {
 				item = {
 					order = 10,
 					type = "toggle",
-					name = "Item",
+					name = L["Item"],
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
-					--values = { ITEM = "Item", SPELL = "Spell", MOUNT = "Mount", COMPANION="Companion", TYPE = "Type", PROFESSION= "Profession", FUN = "Fun", FAVORITE = "Favorite" },
 				},
 				spell = {
 					order = 10,
 					type = "toggle",
-					name = "Spell",
+					name = L["Spell"],
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
 				mount = {
 					order = 10,
 					type = "toggle",
-					name = "Mount",
+					name = L["Mount"],
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
 				companion = {
 					order = 10,
 					type = "toggle",
-					name = " Companion",
+					name = L["Companion"],
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
 				types = {
 					order = 10,
 					type = "toggle",
-					name = "Type",
+					name = L["Type"],
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
 				profession = {
 					order = 10,
 					type = "toggle",
-					name = "Profession",
+					name = L["Profession"],
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
 				fun = {
 					order = 10,
 					type = "toggle",
-					name = "Fun",
+					name = L["Fun"],
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
-				favoriate = {
+				favorite = {
 					order = 10,
 					type = "toggle",
-					name = "Favoriates",
+					name = L["Favorite"],
 					get = function(info)  return flyouttypegitter(info) end, --getFunc,
 					set = function(info, value) flyouttypesetter(info, value) end,
 				},
@@ -3719,14 +3720,14 @@ local target_options = {
 				keys = {
 					order = 11,
 					type = "input",
-					name = "Keys",
+					name = L["Keys"],
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
 				},
 				shape = {
 					order = 12,
 					type = "select",
-					name = "Shape",
+					name = L["Shape"],
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
 					values = { LINEAR = "Linear", CIRCULAR = "Circular" },
@@ -3734,23 +3735,23 @@ local target_options = {
 				attach = {
 					order = 13,
 					type = "select",
-					name = "Attach Point",
+					name = L["Attach Point"],
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
-					values = { LEFT = "left", RIGHT = "right",TOP = "top", BOTTOM = "bottom",TOPLEFT = "topleft", TOPRIGHT = "topright",BOTTOMLEFT = "bottomleft", BOTTOMRIGHT = "BottomRight", CENTER = "Center" },
+					values = { LEFT = L["Left"], RIGHT = L["Right"],TOP = L["Top"], BOTTOM = L["Bottom"],TOPLEFT = L["Top-Left"], TOPRIGHT = L["Top-Right"], BOTTOMLEFT = L["Bottom-Left"], BOTTOMRIGHT = L["Bottom-Right"], CENTER = L["Center"] },
 				},
 				relative = {
 					order = 14,
 					type = "select",
-					name = "Relative to",
+					name = L["Relative To"]..":",
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
-					values = { LEFT = "left", RIGHT = "right",TOP = "top", BOTTOM = "bottom",TOPLEFT = "topleft", TOPRIGHT = "topright",BOTTOMLEFT = "bottomleft", BOTTOMRIGHT = "BottomRight", CENTER = "Center" },
+					values = { LEFT = L["Left"], RIGHT = L["Right"],TOP = L["Top"], BOTTOM = L["Bottom"],TOPLEFT = L["Top-Left"], TOPRIGHT = L["Top-Right"], BOTTOMLEFT = L["Bottom-Left"], BOTTOMRIGHT = L["Bottom-Right"], CENTER = L["Center"] },
 				},
 				columns = {
 					order = 15,
 					type = "range",
-					name = "Columns/Radius",
+					name = L["Columns"].."/"..L["Radius"],
 					min = -25,
 					max = 25,
 					step = 1,
@@ -3760,22 +3761,22 @@ local target_options = {
 				mouse = {
 					order = 16,
 					type = "select",
-					name = "Show on Click",
+					name = L["Show On"]..":",
 					get = function(info)  return flyoutgetter(info) end, --getFunc,
 					set = function(info, value) flyoutsetter(info, value) end,
-					values = { CLICK = "Click", MOUSE = "Mouse" },
+					values = { CLICK = L["Click"], MOUSE = L["Mouseover"] },
 
 				},
 				generate = {
 					order = 17,
 					type = "execute",
-					name = "Save",
+					name = L["Generate Macro"],
 					func = function() createflyoutmacro() end,
 				},
 				output = {
 					order = 18,
 					type = "input",
-					name = "output",
+					name = L["Copy and Paste the text below"]..":",
 					get = function(info) return finalmacro end,
 					width = "full"
 				},
