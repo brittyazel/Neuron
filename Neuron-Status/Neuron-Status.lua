@@ -296,13 +296,13 @@ local BrawlerGuildFactions = {
 
 
 
----TODO: right now we are using statusbtnsCDB to assign settins ot the status buttons, but I think our indexes are bar specific
+---TODO: right now we are using statusbtnsGDB to assign settins ot the status buttons, but I think our indexes are bar specific
 local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
 
     local parent = self.parent
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = statusbtnsCDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = statusbtnsGDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
@@ -418,7 +418,7 @@ local function XPBar_OnEvent(self, event, ...)
 
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = statusbtnsCDB[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = statusbtnsGDB[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 	if (not thisBar.curXPType) then
 		thisBar.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
@@ -477,10 +477,9 @@ end
 
 local function switchCurXPType(_, parent, newXPType)
 	local id = parent.id
-	statusbtnsCDB[id].curXPType = newXPType
+	statusbtnsGDB[id].curXPType = newXPType
 	XPBar_OnEvent(parent.sb, "changed_curXPType")
 end
-
 
 
 local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
@@ -497,7 +496,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 		info.text = L["Track Character XP"]
 		info.func = switchCurXPType
 
-		if (statusbtnsCDB[id].curXPType == "player_xp") then
+		if (statusbtnsGDB[id].curXPType == "player_xp") then
 			info.checked = 1
 		else
 			info.checked = nil
@@ -512,7 +511,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.text = L["Track Artifact Power"]
 			info.func = switchCurXPType
 
-			if (statusbtnsCDB[id].curXPType == "artifact_xp") then
+			if (statusbtnsGDB[id].curXPType == "artifact_xp") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -528,7 +527,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
 
-			if (statusbtnsCDB[id].curXPType == "honor_points") then
+			if (statusbtnsGDB[id].curXPType == "honor_points") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -624,9 +623,9 @@ local function repstrings_Update(line)
 				local repData = SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
 				RepWatch[i] = repData --set current reptable into growing RepWatch table
 
-				if (((line and type(line)~= "boolean") and line:find(name)) or statusbtnsCDB.autoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
+				if (((line and type(line)~= "boolean") and line:find(name)) or CDB.autoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
 					RepWatch[0] = repData
-					statusbtnsCDB.autoWatch = i
+					CDB.autoWatch = i
 				end
 			end
 		end

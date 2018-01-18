@@ -691,7 +691,7 @@ function NEURON:UpdateSpellIndex()
 	end
 
 
-	-- a lot of work to associate the Call Pet spell with the pet's name so that tooltips work on Call Pet spells. /sigh
+	---This code collects the data for the Hunter's "Call Pet" Flyout. It is a mystery why it works, but it does
 	if(NEURON.class == "HUNTER") then
 		local _, _, numSlots, isKnown = GetFlyoutInfo(9)
 		--local petIndex, petName
