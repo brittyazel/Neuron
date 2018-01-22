@@ -119,10 +119,6 @@ NeuronCDB = {
 	layOut = 1,
 
 	perCharBinds = false,
-
-	fix07312012 = false,
-	fix03312014 = false,
-
 	firstRun = true,
 
 }
@@ -405,9 +401,6 @@ local defaults = {
 			layOut = 1,
 
 			perCharBinds = false,
-
-			fix07312012 = false,
-			fix03312014 = false,
 
 			firstRun = true,
 
@@ -1284,12 +1277,12 @@ function NEURON:MinimapMenuClose()
 end
 
 function NEURON:toggleMMB()
-	if not NeuronGDB.showmmb then
+	if not GDB.showmmb then
 		NeuronMinimapButton:Hide()
 	else
 		NeuronMinimapButton:Show()
 	end
-	NeuronGDB.showmmb = not NeuronGDB.showmmb
+	GDB.showmmb = not GDB.showmmb
 end
 
 --------------------------------------------------------------------
@@ -1450,13 +1443,11 @@ function NEURON:UpdateData(data, defaults)
 
 	-- Kill old vars
 	for key,value in pairs(data) do
+
 		if (defaults[key] == nil) then
 			data[key] = nil
 		end
 
-		if (not CDB.fix07312012 and key == "actionID") then
-			data.actionID = false
-		end
 	end
 	-- Kill old vars
 end
@@ -2100,14 +2091,17 @@ local function control_OnEvent(self, event, ...)
 		NEURON:UpdateCompanionData()
 		NEURON:UpdateToyData()
 		NEURON:UpdateIconIndex()
+
 		--Fix for Titan causing the Main Bar to not be hidden
-		if (IsAddOnLoaded("Titan")) then TitanUtils_AddonAdjust("MainMenuBar", true) end
+		if (IsAddOnLoaded("Titan")) then
+			TitanUtils_AddonAdjust("MainMenuBar", true)
+		end
+
 		NEURON:ToggleBlizzBar(GDB.mainbar)
+
 		if not GDB.showmmb then
 			NeuronMinimapButton:Hide()
 		end
-
-		CDB.fix07312012 = true
 
 		PEW = true
 

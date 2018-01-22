@@ -477,7 +477,7 @@ function BUTTON:SetTimer(cd, start, duration, enable, timer, color1, color2, cdA
 
 	else
 		cd.duration = 0; cd.start = 0;
-		CooldownFrame_Set(cd, 0, 0, 0)--_G.CooldownFrame_SetTimer(cd, 0, 0, 0)
+		CooldownFrame_Set(cd, 0, 0, 0)
 	end
 end
 

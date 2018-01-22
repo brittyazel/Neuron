@@ -105,8 +105,8 @@ end
 --- Updates the microbuttons and sets the textures or if it is currently unavailable.
 --   The :Enable() & :Disable() blocks have CombatLockdown tests to prevent taint.
 local function updateMicroButtons()
-	local playerLevel = _G.UnitLevel("player")
-	local factionGroup = _G.UnitFactionGroup("player")
+	local playerLevel = UnitLevel("player")
+	local factionGroup = UnitFactionGroup("player")
 
 	if ( factionGroup == "Neutral" ) then
 		NeuronGuildButton.factionGroup = factionGroup
@@ -135,8 +135,7 @@ local function updateMicroButtons()
 		IMicroButtonPulse(NeuronTalentButton, "Stop")
 		NeuronTalentMicroButtonAlert:Hide()
 	else
-		--if ( playerLevel < _G.SHOW_SPEC_LEVEL ) then
-		if ( playerLevel < _G.SHOW_SPEC_LEVEL or (IsKioskModeEnabled() and select(2, UnitClass("player")) ~= "DEMONHUNTER") ) then
+		if ( playerLevel < SHOW_SPEC_LEVEL or (IsKioskModeEnabled() and NEURON.class ~= "DEMONHUNTER") ) then
 
 			if not InCombatLockdown() then
 				NeuronTalentButton:Disable()
@@ -168,11 +167,10 @@ local function updateMicroButtons()
 	end
 
 	NEURON.updateTabard()
-	--if ( _G.IsTrialAccount() or (_G.IsVeteranTrialAccount() and not _G.IsInGuild()) or factionGroup == "Neutral" ) then
-	if ( _G.IsTrialAccount() or (_G.IsVeteranTrialAccount() and not _G.IsInGuild()) or factionGroup == "Neutral" or _G.IsKioskModeEnabled() ) then
+	if ( IsTrialAccount() or (IsVeteranTrialAccount() and not IsInGuild()) or factionGroup == "Neutral" or IsKioskModeEnabled() ) then
 		NeuronGuildButton:Disable()
-		if (_G.IsKioskModeEnabled()) then
-			_G.SetKioskTooltip(GuildMicroButton);--Check
+		if (IsKioskModeEnabled()) then
+			SetKioskTooltip(GuildMicroButton);--Check
 		end
 	elseif ( ( GuildFrame and GuildFrame:IsShown() ) or ( LookingForGuildFrame and LookingForGuildFrame:IsShown() ) ) then
 		if not InCombatLockdown() then
@@ -188,12 +186,12 @@ local function updateMicroButtons()
 		NeuronGuildButton:SetButtonState("NORMAL")
 		NeuronGuildButtonTabard:SetPoint("TOPLEFT", 0, 0)
 		NeuronGuildButtonTabard:SetAlpha(1)
-		if ( _G.IsInGuild() ) then
-			NeuronGuildButton.tooltipText = MicroButtonTooltipText(_G.GUILD, "TOGGLEGUILDTAB")
-			NeuronGuildButton.newbieText = _G.NEWBIE_TOOLTIP_GUILDTAB
+		if ( IsInGuild() ) then
+			NeuronGuildButton.tooltipText = MicroButtonTooltipText(GUILD, "TOGGLEGUILDTAB")
+			NeuronGuildButton.newbieText = NEWBIE_TOOLTIP_GUILDTAB
 		else
-			NeuronGuildButton.tooltipText = MicroButtonTooltipText(_G.LOOKINGFORGUILD, "TOGGLEGUILDTAB")
-			NeuronGuildButton.newbieText = _G.NEWBIE_TOOLTIP_LOOKINGFORGUILDTAB
+			NeuronGuildButton.tooltipText = MicroButtonTooltipText(LOOKINGFORGUILD, "TOGGLEGUILDTAB")
+			NeuronGuildButton.newbieText = NEWBIE_TOOLTIP_LOOKINGFORGUILDTAB
 		end
 	end
 
@@ -201,7 +199,7 @@ local function updateMicroButtons()
 		NeuronLFDButton:SetButtonState("PUSHED", true)
 	else
 		--if ( playerLevel < NeuronLFDButton.minLevel or factionGroup == "Neutral" ) then
-		if ( _G.IsKioskModeEnabled() or playerLevel < LFDMicroButton.minLevel or factionGroup == "Neutral" ) then
+		if (IsKioskModeEnabled() or playerLevel < LFDMicroButton.minLevel or factionGroup == "Neutral" ) then
 			if (IsKioskModeEnabled()) then
 				SetKioskTooltip(LFDMicroButton);
 			end
@@ -221,7 +219,7 @@ local function updateMicroButtons()
 	if ( AchievementFrame and AchievementFrame:IsShown() ) then
 		NeuronAchievementButton:SetButtonState("PUSHED", true)
 	else
-		if ( ( _G.HasCompletedAnyAchievement() or _G.IsInGuild() ) and _G.CanShowAchievementUI() ) then
+		if ( ( HasCompletedAnyAchievement() or IsInGuild() ) and CanShowAchievementUI() ) then
 			if not InCombatLockdown() then NeuronAchievementButton:Enable() end
 			NeuronAchievementButton:SetButtonState("NORMAL")
 		else
@@ -273,11 +271,11 @@ local function updateMicroButtons()
 	end]]
 
 
-	if (  _G.GameLimitedMode_IsActive() ) then
-		NeuronStoreButton.disabledTooltip = _G.ERR_FEATURE_RESTRICTED_TRIAL
+	if (  GameLimitedMode_IsActive() ) then
+		NeuronStoreButton.disabledTooltip = ERR_FEATURE_RESTRICTED_TRIAL
 		if not InCombatLockdown() then NeuronStoreButton:Disable() end
-	elseif (  _G.C_StorePublic.IsDisabledByParentalControls() ) then
-		NeuronStoreButton.disabledTooltip =  _G.BLIZZARD_STORE_ERROR_PARENTAL_CONTROLS
+	elseif (  C_StorePublic.IsDisabledByParentalControls() ) then
+		NeuronStoreButton.disabledTooltip =  BLIZZARD_STORE_ERROR_PARENTAL_CONTROLS
 		if not InCombatLockdown() then NeuronStoreButton:Disable() end
 	else
 		NeuronStoreButton.disabledTooltip = nil
@@ -292,7 +290,7 @@ function NEURON.AchievementButton_OnEvent(self, event, ...)
 		return;
 	end
 	if ( event == "UPDATE_BINDINGS" ) then
-		self.tooltipText = MicroButtonTooltipText(_G.ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
+		self.tooltipText = MicroButtonTooltipText(ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
 	else
 		updateMicroButtons()
 	end
@@ -306,9 +304,9 @@ function NEURON.GuildButton_OnEvent(self, event, ...)
 
 	if ( event == "UPDATE_BINDINGS" ) then
 		if ( IsInGuild() ) then
-			NeuronGuildButton.tooltipText = MicroButtonTooltipText(_G.GUILD, "TOGGLEGUILDTAB")
+			NeuronGuildButton.tooltipText = MicroButtonTooltipText(GUILD, "TOGGLEGUILDTAB")
 		else
-			NeuronGuildButton.tooltipText = MicroButtonTooltipText(_G.LOOKINGFORGUILD, "TOGGLEGUILDTAB")
+			NeuronGuildButton.tooltipText = MicroButtonTooltipText(LOOKINGFORGUILD, "TOGGLEGUILDTAB")
 		end
 	elseif ( event == "PLAYER_GUILD_UPDATE" or event == "NEUTRAL_FACTION_SELECT_RESULT" ) then
 		NeuronGuildButtonTabard.needsUpdate = true
@@ -355,8 +353,8 @@ function NEURON.CharacterButton_OnLoad(self)
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE")
 	self:RegisterEvent("UPDATE_BINDINGS")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self.tooltipText = MicroButtonTooltipText(_G.CHARACTER_BUTTON, "TOGGLECHARACTER0")
-	self.newbieText = _G.NEWBIE_TOOLTIP_CHARACTER
+	self.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
+	self.newbieText = NEWBIE_TOOLTIP_CHARACTER
 
 	menuElements[#menuElements+1] = self
 end
@@ -366,13 +364,13 @@ function NEURON.CharacterButton_OnEvent(self, event, ...)
 	if ( event == "UNIT_PORTRAIT_UPDATE" ) then
 		local unit = ...
 		if ( not unit or unit == "player" ) then
-			_G.SetPortraitTexture(NeuronCharacterButtonPortrait, "player")
+			SetPortraitTexture(NeuronCharacterButtonPortrait, "player")
 		end
 		return
 	elseif ( event == "PLAYER_ENTERING_WORLD" ) then
-		_G.SetPortraitTexture(NeuronCharacterButtonPortrait, "player")
+		SetPortraitTexture(NeuronCharacterButtonPortrait, "player")
 	elseif ( event == "UPDATE_BINDINGS" ) then
-		self.tooltipText = MicroButtonTooltipText(_G.CHARACTER_BUTTON, "TOGGLECHARACTER0")
+		self.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
 	end
 end
 
@@ -408,41 +406,41 @@ function NEURON.TalentButton_OnEvent(self, event, ...)
 	end
 	if (event == "PLAYER_LEVEL_UP") then
 		local level = ...
-		if (level == _G.SHOW_SPEC_LEVEL) then
+		if (level == SHOW_SPEC_LEVEL) then
 			IMicroButtonPulse(self)
-			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, _G.TALENT_MICRO_BUTTON_SPEC_TUTORIAL)
-		elseif (level == _G.SHOW_TALENT_LEVEL) then
+			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_SPEC_TUTORIAL)
+		elseif (level == SHOW_TALENT_LEVEL) then
 			IMicroButtonPulse(self)
-			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, _G.TALENT_MICRO_BUTTON_TALENT_TUTORIAL)
+			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_TALENT_TUTORIAL)
 		end
 	elseif ( event == "PLAYER_SPECIALIZATION_CHANGED") then
 		-- If we just unspecced, and we have unspent talent points, it's probably spec-specific talents that were just wiped.  Show the tutorial box.
 		local unit = ...
-		if(unit == "player" and _G.GetSpecialization() == nil and _G.GetNumUnspentTalents() > 0) then
-			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, _G.TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
+		if(unit == "player" and GetSpecialization() == nil and GetNumUnspentTalents() > 0) then
+			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
 		end
 	elseif ( event == "PLAYER_TALENT_UPDATE" or event == "NEUTRAL_FACTION_SELECT_RESULT" ) then
 		updateMicroButtons()
 
 		-- On the first update from the server, flash the button if there are unspent points
 		-- Small hack: GetNumSpecializations should return 0 if talents haven't been initialized yet
-		if (not self.receivedUpdate and _G.GetNumSpecializations(false) > 0) then
+		if (not self.receivedUpdate and GetNumSpecializations(false) > 0) then
 			self.receivedUpdate = true
-			local shouldPulseForTalents = _G.GetNumUnspentTalents() > 0 and not _G.AreTalentsLocked()
-			if (UnitLevel("player") >= _G.SHOW_SPEC_LEVEL and (not _G.GetSpecialization() or shouldPulseForTalents)) then
+			local shouldPulseForTalents = GetNumUnspentTalents() > 0 and not AreTalentsLocked()
+			if (UnitLevel("player") >= SHOW_SPEC_LEVEL and (not GetSpecialization() or shouldPulseForTalents)) then
 				IMicroButtonPulse(self)
 			end
 		end
 	elseif ( event == "UPDATE_BINDINGS" ) then
-		self.tooltipText =  MicroButtonTooltipText(_G.TALENTS_BUTTON, "TOGGLETALENTS")
+		self.tooltipText =  MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
 	elseif ( event == "PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED" ) then
 		local prev, current = ...
 		if ( prev == 0 and current > 0 ) then
 			IMicroButtonPulse(self)
-			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert,_G. TALENT_MICRO_BUTTON_TALENT_TUTORIAL)
+			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_TALENT_TUTORIAL)
 		elseif ( prev ~= current ) then
 			IMicroButtonPulse(self)
-			NEURON.MainMenuMicroButton_ShowAlert	(NeuronTalentMicroButtonAlert, _G.TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
+			NEURON.MainMenuMicroButton_ShowAlert	(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") then
 		updateMicroButtons()
@@ -465,26 +463,26 @@ do
 		if ( event == "HEIRLOOMS_UPDATED" ) then
 			local itemID, updateReason = ...
 			if itemID and updateReason == "NEW" then
-				if _G.MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, _G.HEIRLOOMS_MICRO_BUTTON_SPEC_TUTORIAL, _G.LE_FRAME_TUTORIAL_HEIRLOOM_JOURNAL) then
+				if MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, HEIRLOOMS_MICRO_BUTTON_SPEC_TUTORIAL, LE_FRAME_TUTORIAL_HEIRLOOM_JOURNAL) then
 					IMicroButtonPulse(self)
 					SafeSetCollectionJournalTab(4)
 				end
 			end
 		elseif ( event == "PET_JOURNAL_NEW_BATTLE_SLOT" ) then
 			IMicroButtonPulse(self)
-			_G.MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, _G.COMPANIONS_MICRO_BUTTON_NEW_BATTLE_SLOT)
+			MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, COMPANIONS_MICRO_BUTTON_NEW_BATTLE_SLOT)
 			SafeSetCollectionJournalTab(2)
 		elseif ( event == "TOYS_UPDATED" ) then
 			local itemID, new = ...
 			if itemID and new then
-				if _G.MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, _G.TOYBOX_MICRO_BUTTON_SPEC_TUTORIAL, _G.LE_FRAME_TUTORIAL_TOYBOX) then
+				if MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, TOYBOX_MICRO_BUTTON_SPEC_TUTORIAL, LE_FRAME_TUTORIAL_TOYBOX) then
 					IMicroButtonPulse(self)
 					SafeSetCollectionJournalTab(3)
 				end
 			end
 		else
-			self.tooltipText = MicroButtonTooltipText(_G.COLLECTIONS, "TOGGLECOLLECTIONS")
-			self.newbieText = _G.NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+			self.tooltipText = MicroButtonTooltipText(COLLECTIONS, "TOGGLECOLLECTIONS")
+			self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
 			updateMicroButtons()
 		end
 	end
@@ -495,14 +493,14 @@ end
 -- Encounter Journal
 function NEURON.EJButton_OnLoad(self)
 	LoadMicroButtonTextures(self, "EJ")
-	_G.SetDesaturation(self:GetDisabledTexture(), true)
-	self.tooltipText = MicroButtonTooltipText(_G.ENCOUNTER_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
-	self.newbieText = _G.NEWBIE_TOOLTIP_ENCOUNTER_JOURNAL
+	SetDesaturation(self:GetDisabledTexture(), true)
+	self.tooltipText = MicroButtonTooltipText(ENCOUNTER_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
+	self.newbieText = NEWBIE_TOOLTIP_ENCOUNTER_JOURNAL
 	if (IsKioskModeEnabled()) then
 		self:Disable();
 	end
 
-	self.minLevel = math.min(_G.SHOW_LFD_LEVEL, _G.SHOW_PVP_LEVEL);
+	self.minLevel = math.min(SHOW_LFD_LEVEL, SHOW_PVP_LEVEL);
 
 	--events that can trigger a refresh of the adventure journal
 	self:RegisterEvent("VARIABLES_LOADED")
@@ -519,8 +517,8 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 
 	local arg1 = ...
 	if( event == "UPDATE_BINDINGS" ) then
-		self.tooltipText = MicroButtonTooltipText(_G.ADVENTURE_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
-		self.newbieText = _G.NEWBIE_TOOLTIP_ENCOUNTER_JOURNAL
+		self.tooltipText = MicroButtonTooltipText(ADVENTURE_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
+		self.newbieText = NEWBIE_TOOLTIP_ENCOUNTER_JOURNAL
 		updateMicroButtons()
 	elseif( event == "VARIABLES_LOADED" ) then
 		self:UnregisterEvent("VARIABLES_LOADED");
@@ -529,8 +527,8 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 		local showAlert = GetCVarBool("showAdventureJournalAlerts")
 		if( showAlert ) then
 			local lastTimeOpened = tonumber(GetCVar("advJournalLastOpened"))
-			if ( UnitLevel("player") >= NeuronEJButton.minLevel and _G.UnitFactionGroup("player") ~= "Neutral" ) then
-				if ( _G.GetServerTime() - lastTimeOpened > _G.EJ_ALERT_TIME_DIFF ) then
+			if ( UnitLevel("player") >= NeuronEJButton.minLevel and UnitFactionGroup("player") ~= "Neutral" ) then
+				if ( GetServerTime() - lastTimeOpened > EJ_ALERT_TIME_DIFF ) then
 					NeuronEJMicroButtonAlert:Show()
 					IMicroButtonPulse(NeuronEJButton)
 				end
@@ -546,12 +544,11 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 	elseif ( event == "PLAYER_ENTERING_WORLD" ) then
 		self:UnregisterEvent("PLAYER_ENTERING_WORLD");
 		self.playerEntered = true;
-		-- _G.C_AdventureJournal.UpdateSuggestions()
 	elseif ( event == "UNIT_LEVEL" and arg1 == "player" ) then
 		EJMicroButton_UpdateNewAdventureNotice(true)  --Check
 	elseif event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" then
-		local playerLevel = _G.UnitLevel("player")
-		if ( playerLevel == _G.MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]) then
+		local playerLevel = UnitLevel("player")
+		if ( playerLevel == MAX_PLAYER_LEVEL_TABLE[GetExpansionLevel()]) then
 			EJMicroButton_UpdateNewAdventureNotice(false)--Check
 		end
 	elseif ( event == "ZONE_CHANGED_NEW_AREA" ) then
@@ -587,7 +584,7 @@ end
 
 
 local function EJMicroButton_UpdateNewAdventureNotice(levelUp)
-	if ( NeuronEJButton:IsEnabled() and _G.C_AdventureJournal.UpdateSuggestions(levelUp) ) then
+	if ( NeuronEJButton:IsEnabled() and C_AdventureJournal.UpdateSuggestions(levelUp) ) then
 		if( not EncounterJournal or not EncounterJournal:IsShown() ) then
 			NeuronEJButton.Flash:Show()
 			NeuronEJButton.NewAdventureNotice:Show()
@@ -657,8 +654,8 @@ function NEURON.LatencyButton_OnLoad(self)
 	self.overlay:SetWidth(self:GetWidth()+1)
 	self.overlay:SetHeight(self:GetHeight())
 
-	self.tooltipText = MicroButtonTooltipText(_G.MAINMENU_BUTTON, "TOGGLEGAMEMENU")
-	self.newbieText = _G.NEWBIE_TOOLTIP_MAINMENU
+	self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
+	self.newbieText = NEWBIE_TOOLTIP_MAINMENU
 
 	self.hover = nil
 	self.updateInterval = 0
@@ -683,7 +680,7 @@ function NEURON.LatencyButton_OnEvent(self, event, ...)
 		GameMenuFrame:HookScript("OnHide", NEURON.LatencyButton_SetNormal)
 	end
 
-	self.tooltipText = MicroButtonTooltipText(_G.MAINMENU_BUTTON, "TOGGLEGAMEMENU")
+	self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
 end
 
 
@@ -756,7 +753,6 @@ function NEURON.LatencyButton_OnEnter(self)
 
 	if (self.alt_tooltip and not NeuronMenuBarTooltip.wasShown) then
 		NEURON.LatencyButton_AltOnEnter(self)
-		NeuronMenuBarTooltip:AddLine("\nLatency Button by LedMirage of MirageUI")
 		GameTooltip:Hide()
 		NeuronMenuBarTooltip:Show()
 
@@ -787,7 +783,6 @@ function NEURON.LatencyButton_OnEnter(self)
 			end
 		end
 
-		GameTooltip:AddLine("\nLatency Button by LedMirage of MirageUI")
 		NeuronMenuBarTooltip:Hide()
 		GameTooltip:Show()
 	end
