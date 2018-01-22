@@ -577,7 +577,7 @@ end
 ---	If a spell is not displaying its tooltip or cooldown, then the spell in the macro probably is not in the database
 function NEURON:UpdateSpellIndex()
 	local sIndexMax = 0
-    local numTabs = GetNumSpellTabs()
+	local numTabs = GetNumSpellTabs()
 
 	for i=1,numTabs do
 		local _, _, _, numSlots = GetSpellTabInfo(i)
@@ -685,9 +685,9 @@ function NEURON:UpdateSpellIndex()
 
 
 	---This code collects the data for the Hunter's "Call Pet" Flyout. It is a mystery why it works, but it does
-	if(NEURON.class == "HUNTER") then
+
+	if(NEURON.class == 'HUNTER') then
 		local _, _, numSlots, isKnown = GetFlyoutInfo(9)
-		--local petIndex, petName
 
 		for i=1, numSlots do
 			local spellID, isKnown = GetFlyoutSlotInfo(9, i)
@@ -701,55 +701,52 @@ function NEURON:UpdateSpellIndex()
 				for k,v in pairs(NEURON.sIndex) do
 
 					if (v.spellName:find(petName.."$")) then
-                        local spellData = SetSpellInfo(v.index, v.booktype, v.spellName, nil, v.subName, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
+						local spellData = SetSpellInfo(v.index, v.booktype, v.spellName, nil, v.subName, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
 
-                        NEURON.sIndex[(spellName):lower()] = spellData
-                        NEURON.sIndex[(spellName):lower().."()"] = spellData
-                        NEURON.sIndex[spellID] = spellData
-                    end
+						NEURON.sIndex[(spellName):lower()] = spellData
+						NEURON.sIndex[(spellName):lower().."()"] = spellData
+						NEURON.sIndex[spellID] = spellData
+					end
 				end
 			end
 		end
 	end
+
 
 end
 
 
 --- Adds pet spells & abilities to the spell list index
 function NEURON:UpdatePetSpellIndex()
-	local numPetSpells = HasPetSpells() or 0
 
-	for i=1,numPetSpells do
-		local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_PET)
-		local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
-		local spellID_Alt = spellID
-		local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_PET)
-		local icon = GetSpellBookItemTexture(i, BOOKTYPE_PET)
-		local isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
+	if (HasPetSpells()) then
+		for i=1,HasPetSpells() do
+			local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_PET)
+			local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
+			local spellID_Alt = spellID
+			local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_PET)
+			local icon = GetSpellBookItemTexture(i, BOOKTYPE_PET)
+			local isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
 
-		if (spellName and spellType ~= "FUTURESPELL") then
-			local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
-			local spellData = SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
-			if (subName and #subName > 0) then
-				NEURON.sIndex[(spellName.."("..subName..")"):lower()] = spellData
-			else
-				NEURON.sIndex[(spellName):lower()] = spellData
-				NEURON.sIndex[(spellName):lower().."()"] = spellData
+			if (spellName and spellType ~= "FUTURESPELL") then
+				local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
+				local spellData = SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+				if (subName and #subName > 0) then
+					NEURON.sIndex[(spellName.."("..subName..")"):lower()] = spellData
+				else
+					NEURON.sIndex[(spellName):lower()] = spellData
+					NEURON.sIndex[(spellName):lower().."()"] = spellData
+				end
+
+				if (spellID) then
+					NEURON.sIndex[spellID] = spellData
+				end
+
+				if (icon and not icons[icon]) then
+					ICONS[#ICONS+1] = icon; icons[icon] = true
+				end
 			end
-
-			if (spellID) then
-				NEURON.sIndex[spellID] = spellData
-			end
-
-			if (icon and not icons[icon]) then
-				ICONS[#ICONS+1] = icon; icons[icon] = true
-			end
-			--if (icon and not icons[icon:upper()]) then
-			--	ICONS[#ICONS+1] = icon:upper(); icons[icon:upper()] = true
-			--end
 		end
-
-		i = i + 1
 	end
 end
 
@@ -1678,19 +1675,19 @@ function NEURON:CreateNewBar(class, id, firstRun)
 		if (newBar) then
 			bar:Load(); NEURON:ChangeBar(bar)
 
-            ---------------------------------
-            if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+			---------------------------------
+			if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
 				bar.gdata.hidestates = ":extrabar0:"
 				bar.vischanged = true
 				bar:Update()
-            end
-            if (class == "pet") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
-                bar.gdata.hidestates = ":pet0:"
-                bar.vischanged = true
-                bar:Update()
-            end
-            -----------------------------------
-        end
+			end
+			if (class == "pet") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.gdata.hidestates = ":pet0:"
+				bar.vischanged = true
+				bar:Update()
+			end
+			-----------------------------------
+		end
 
 		return bar
 	else

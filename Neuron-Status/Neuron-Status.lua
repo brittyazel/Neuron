@@ -224,7 +224,7 @@ local sbStrings = {
 	},
 	xp = {
 		[1] = { L["None"], function(sb) return "" end },
-		[2] = { L["Current/Next"], function(sb) if (sb.XPWatch) then return sb.XPWatch.current end end }, --since there's the chance that there can be multiple XP bars up, we need to store XPWatch per bar, rather than globally
+		[2] = { L["Current/Next"], function(sb) if (sb.XPWatch) then return sb.XPWatch.current end end },
 		[3] = { L["Rested Levels"], function(sb) if (sb.XPWatch) then return sb.XPWatch.rested end end },
 		[4] = { L["Percent"], function(sb) if (sb.XPWatch) then return sb.XPWatch.percent end end },
 		[5] = { L["Bubbles"], function(sb) if (sb.XPWatch) then return sb.XPWatch.bubbles end end },
