@@ -12,7 +12,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.13" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.16" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thank's for installing Neuron.
@@ -27,15 +27,15 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-Today's update brings substantial changes to to Status bars (XP/Rep bar). You can now have multiple XP bars, each tracking a different resource, i.e. one for XP, one for Artifact Power, and one for Honor Points.
+*****IMPORTANT, PLEASE READ!*****
 
-In addition, you now have more display options, such as showing the current level/rank/standing for whichever resource a bar is tracking, check it out!
+Unforutanely, today's update brings an unavoidable change. The data for your Bag, Pet, Status, and Menu bars has been reset, and you will have to readjust these four sets of bars manually. I'm very sorry for this inconvenience.
 
+Why did this happen? An overwhelming number of you have asked for these bars to be configurable as character specific, instead of account wide, just the way the action bars are. However, in order to make this work I had to switch the bars to read from the per-character config (which until now din't exist), instead of the global config.
 
-Lastly, Neuron now has full French translations, thanks Cinedelle! If you'd like to see your language supported, head over to Curseforge and translate away!
+From this point on, all of your bar settings are stored PET CHARACTER, aside from the profiles, which are saved globally.
 
-
-As a fun side note, please submit screenshots of your UI to our Github or through Curseforge. I'd like to showcase the cool designs of our community!
+Again, I'm sorry for the disruption. If you have any issues or encounter any strange bugs, you can delete the associated Neuron-(*bar type*).lua files out of the savedvariable folders in your WTF folder.
 
 -Soyier]]
 

@@ -3,7 +3,7 @@
 
 local NEURON = Neuron
 
-local GDB, CDB, PEW
+local DB, PEW
 
 NEURON.STATUSIndex = {}
 
@@ -11,7 +11,7 @@ local STATUSIndex = NEURON.STATUSIndex
 
 local EDITIndex, OBJEDITOR = NEURON.EDITIndex, NEURON.OBJEDITOR
 
-local statusbarsGDB, statusbarsCDB, statusbtnsGDB, statusbtnsCDB
+local statusbarsDB, statusbtnsDB
 
 local STATUS = setmetatable({}, { __index = CreateFrame("Button") })
 
@@ -20,20 +20,17 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-NeuronStatusGDB = {
+NeuronStatusDB = {
 	statusbars = {},
 	statusbtns = {},
 	firstRun = true,
 }
 
-NeuronStatusCDB = {
-	statusbars = {},
-	statusbtns = {},
-}
+AutoWatch = 1
 
 local GetParentKeys = NEURON.GetParentKeys
 
-local defGDB, defCDB = CopyTable(NeuronStatusGDB), CopyTable(NeuronStatusCDB)
+local defDB = CopyTable(NeuronStatusDB)
 
 local BarTextures = {
 	[1] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_2", L["Default"] },
@@ -291,18 +288,18 @@ local BrawlerGuildFactions = {
 --parent has a few important indicies, sb, id, and dropdown (along with a bunch of other crap)
 
 
----note: I think parent.cdb is actually statusbtnsCDB
----parent.gdb is statusbtnsGDB
+---note: I think parent.DB is actually statusbtnsDB
+---parent.DB is statusbtnsDB
 
 
 
----TODO: right now we are using statusbtnsGDB to assign settins ot the status buttons, but I think our indexes are bar specific
+---TODO: right now we are using statusbtnsDB to assign settins ot the status buttons, but I think our indexes are bar specific
 local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
 
     local parent = self.parent
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = statusbtnsGDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = statusbtnsDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
@@ -418,7 +415,7 @@ local function XPBar_OnEvent(self, event, ...)
 
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-	local thisBar = statusbtnsGDB[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+	local thisBar = statusbtnsDB[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 	if (not thisBar.curXPType) then
 		thisBar.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
@@ -477,7 +474,7 @@ end
 
 local function switchCurXPType(_, parent, newXPType)
 	local id = parent.id
-	statusbtnsGDB[id].curXPType = newXPType
+	statusbtnsDB[id].curXPType = newXPType
 	XPBar_OnEvent(parent.sb, "changed_curXPType")
 end
 
@@ -496,7 +493,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 		info.text = L["Track Character XP"]
 		info.func = switchCurXPType
 
-		if (statusbtnsGDB[id].curXPType == "player_xp") then
+		if (statusbtnsDB[id].curXPType == "player_xp") then
 			info.checked = 1
 		else
 			info.checked = nil
@@ -511,7 +508,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.text = L["Track Artifact Power"]
 			info.func = switchCurXPType
 
-			if (statusbtnsGDB[id].curXPType == "artifact_xp") then
+			if (statusbtnsDB[id].curXPType == "artifact_xp") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -527,7 +524,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.text = L["Track Honor Points"]
 			info.func = switchCurXPType
 
-			if (statusbtnsGDB[id].curXPType == "honor_points") then
+			if (statusbtnsDB[id].curXPType == "honor_points") then
 				info.checked = 1
 			else
 				info.checked = nil
@@ -623,9 +620,9 @@ local function repstrings_Update(line)
 				local repData = SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
 				RepWatch[i] = repData --set current reptable into growing RepWatch table
 
-				if (((line and type(line)~= "boolean") and line:find(name)) or CDB.autoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
+				if (((line and type(line)~= "boolean") and line:find(name)) or AutoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
 					RepWatch[0] = repData
-					CDB.autoWatch = i
+					AutoWatch = i
 				end
 			end
 		end
@@ -2382,30 +2379,30 @@ function STATUS:LoadData(spec, state)
 
 	local id = self.id
 
-	if (statusbtnsGDB and statusbtnsCDB) then
+	if (statusbtnsDB) then
 
-		if (not statusbtnsGDB[id]) then
-			statusbtnsGDB[id] = {}
+		if (not statusbtnsDB[id]) then
+			statusbtnsDB[id] = {}
 		end
 
-		if (not statusbtnsGDB[id].config) then
-			statusbtnsGDB[id].config = CopyTable(configDef)
+		if (not statusbtnsDB[id].config) then
+			statusbtnsDB[id].config = CopyTable(configDef)
 		end
 
-		if (not statusbtnsGDB[id]) then
-			statusbtnsGDB[id] = {}
+		if (not statusbtnsDB[id]) then
+			statusbtnsDB[id] = {}
 		end
 
-		if (not statusbtnsGDB[id].data) then
-			statusbtnsGDB[id].data = CopyTable(dataDef)
+		if (not statusbtnsDB[id].data) then
+			statusbtnsDB[id].data = CopyTable(dataDef)
 		end
 
-		NEURON:UpdateData(statusbtnsGDB[id].config, configDef)
-		NEURON:UpdateData(statusbtnsGDB[id].data, dataDef)
+		NEURON:UpdateData(statusbtnsDB[id].config, configDef)
+		NEURON:UpdateData(statusbtnsDB[id].data, dataDef)
 
-		self.config = statusbtnsGDB[id].config
+		self.config = statusbtnsDB[id].config
 
-		self.data =statusbtnsGDB[id].data
+		self.data =statusbtnsDB[id].data
 	end
 end
 
@@ -2705,35 +2702,25 @@ local function controlOnEvent(self, event, ...)
 		MirrorTimer2:UnregisterAllEvents()
 		MirrorTimer3:UnregisterAllEvents()
 
-		GDB = NeuronStatusGDB
-		CDB = NeuronStatusCDB
+		DB = NeuronStatusDB
 
-		for k,v in pairs(defGDB) do
-			if (GDB[k] == nil) then
-				GDB[k] = v
+		for k,v in pairs(defDB) do
+			if (DB[k] == nil) then
+				DB[k] = v
 			end
 		end
 
-		for k,v in pairs(defCDB) do
-			if (CDB[k] == nil) then
-				CDB[k] = v
-			end
-		end
+		statusbarsDB = DB.statusbars
+		statusbtnsDB = DB.statusbtns
 
-		statusbarsGDB = GDB.statusbars
-		statusbarsCDB = CDB.statusbars
-
-		statusbtnsGDB = GDB.statusbtns
-		statusbtnsCDB = CDB.statusbtns
-
-		NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsGDB, statusbarsCDB, STATUSIndex, statusbtnsGDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
+		NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, STATUSIndex, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
 
 		NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
 			SNAPTO = true,
 			HIDDEN = true,
 			TOOLTIPS = true }, false, false)
 
-		if (GDB.firstRun) then --makes the initial 4 status bars
+		if (DB.firstRun) then --makes the initial 4 status bars
 
 			local oid, offset = 1, 0
 
@@ -2758,17 +2745,17 @@ local function controlOnEvent(self, event, ...)
 				NEURON.RegisteredBarData["status"].gDef = nil
 			end
 
-			GDB.firstRun = false
+			DB.firstRun = false
 		else --loads previous bars from saved variable
 
-			for id,data in pairs(statusbarsGDB) do
+			for id,data in pairs(statusbarsDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewBar("status", id)
 				end
 			end
 
 
-			for id,data in pairs(statusbtnsGDB) do
+			for id,data in pairs(statusbtnsDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewObject("status", id)
 				end

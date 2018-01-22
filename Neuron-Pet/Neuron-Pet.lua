@@ -2,13 +2,13 @@
 
 
 local NEURON = Neuron
-local GDB, CDB, PEW
+local DB, PEW
 
 NEURON.PETIndex = {}
 
 local PETIndex = NEURON.PETIndex
 
-local petbarsGDB, petbarsCDB, petbtnsGDB, petbtnsCDB
+local petbarsDB, petbtnsDB
 
 local BUTTON = NEURON.BUTTON
 
@@ -22,15 +22,10 @@ local SKIN = LibStub("Masque", true)
 
 local sIndex = NEURON.sIndex
 
-NeuronPetGDB = {
+NeuronPetDB = {
 	petbars = {},
 	petbtns = {},
 	firstRun = true,
-}
-
-NeuronPetCDB = {
-	petbars = {},
-	petbtns = {},
 }
 
 local gDef = {
@@ -49,7 +44,7 @@ local format = string.format
 
 local GetParentKeys = NEURON.GetParentKeys
 
-local defGDB, defCDB = CopyTable(NeuronPetGDB), CopyTable(NeuronPetCDB)
+local defDB = CopyTable(NeuronPetDB)
 
 local AutoCastStart = NEURON.AutoCastStart
 local AutoCastStop = NEURON.AutoCastStop
@@ -183,7 +178,7 @@ function PETBTN:PET_UpdateCooldown()
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
-		if (duration and duration >= NeuronGDB.timerLimit and self.iconframeaurawatch.active) then
+		if (duration and duration >= NeuronDB.timerLimit and self.iconframeaurawatch.active) then
 			self.auraQueue = self.iconframeaurawatch.queueinfo
 			self.iconframeaurawatch.duration = 0
 			self.iconframeaurawatch:Hide()
@@ -512,47 +507,46 @@ function PETBTN:LoadData(spec, state)
 
 	local id = self.id
 
-	self.GDB = petbtnsGDB
-	self.CDB = petbtnsCDB
+	self.DB = petbtnsDB
 
-	if (self.GDB and self.CDB) then
+	if (self.DB and self.DB) then
 
-		if (not self.GDB[id]) then
-			self.GDB[id] = {}
+		if (not self.DB[id]) then
+			self.DB[id] = {}
 		end
 
-		if (not self.GDB[id].config) then
-			self.GDB[id].config = CopyTable(configData)
+		if (not self.DB[id].config) then
+			self.DB[id].config = CopyTable(configData)
 		end
 
-		if (not self.GDB[id].keys) then
-			self.GDB[id].keys = CopyTable(keyData)
+		if (not self.DB[id].keys) then
+			self.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not self.CDB[id]) then
-			self.CDB[id] = {}
+		if (not self.DB[id]) then
+			self.DB[id] = {}
 		end
 
-		if (not self.CDB[id].keys) then
-			self.CDB[id].keys = CopyTable(keyData)
+		if (not self.DB[id].keys) then
+			self.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not self.CDB[id].data) then
-			self.CDB[id].data = {}
+		if (not self.DB[id].data) then
+			self.DB[id].data = {}
 		end
 
-		NEURON:UpdateData(self.GDB[id].config, configData)
-		NEURON:UpdateData(self.GDB[id].keys, keyData)
+		NEURON:UpdateData(self.DB[id].config, configData)
+		NEURON:UpdateData(self.DB[id].keys, keyData)
 
-		self.config = self.GDB [id].config
+		self.config = self.DB [id].config
 
-		if (CDB.perCharBinds) then
-			self.keys = self.CDB[id].keys
+		if (DB.perCharBinds) then
+			self.keys = self.DB[id].keys
 		else
-			self.keys = self.GDB[id].keys
+			self.keys = self.DB[id].keys
 		end
 
-		self.data = self.CDB[id].data
+		self.data = self.DB[id].data
 	end
 end
 
@@ -642,27 +636,18 @@ local function controlOnEvent(self, event, ...)
 		PETBTN.GetSkinned = BUTTON.GetSkinned
 		PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
-		GDB = NeuronPetGDB; CDB = NeuronPetCDB
+		DB = NeuronPetDB
 
-		for k,v in pairs(defGDB) do
-			if (GDB[k] == nil) then
-				GDB[k] = v
+		for k,v in pairs(defDB) do
+			if (DB[k] == nil) then
+				DB[k] = v
 			end
 		end
 
-		for k,v in pairs(defCDB) do
-			if (CDB[k] == nil) then
-				CDB[k] = v
-			end
-		end
+		petbarsDB = DB.petbars
+		petbtnsDB = DB.petbtns
 
-		petbarsGDB = GDB.petbars
-		petbarsCDB = CDB.petbars
-
-		petbtnsGDB = GDB.petbtns
-		petbtnsCDB = CDB.petbtns
-
-		NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsGDB, petbarsCDB, PETIndex, petbtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false, STORAGE, gDef, nil, true)
+		NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, PETIndex, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false, STORAGE, gDef, nil, false)
 
 		NEURON:RegisterGUIOptions("pet", {
 			AUTOHIDE = true,
@@ -678,7 +663,7 @@ local function controlOnEvent(self, event, ...)
 			CDTEXT = true,
 			CDALPHA = true }, false, 65)
 
-		if (GDB.firstRun) then
+		if (DB.firstRun) then
 
 			local bar, object = NEURON:CreateNewBar("pet", 1, true)
 
@@ -687,17 +672,17 @@ local function controlOnEvent(self, event, ...)
 				bar:AddObjectToList(object)
 			end
 
-			GDB.firstRun = false
+			DB.firstRun = false
 
 		else
 
-			for id,data in pairs(petbarsGDB) do
+			for id,data in pairs(petbarsDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewBar("pet", id)
 				end
 			end
 
-			for id,data in pairs(petbtnsGDB) do
+			for id,data in pairs(petbtnsDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewObject("pet", id)
 				end
