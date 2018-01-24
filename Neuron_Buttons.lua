@@ -2224,21 +2224,24 @@ function BUTTON:MACRO_SetSpellTooltip(spell)
 
 		local spell_id = sIndex[spell].spellID
 
-		local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
+		if(spell_id) then
 
-		if spell_id == 161691 and zoneability_id then
-			spell_id = zoneability_id
+			local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
+
+			if spell_id == 161691 and zoneability_id then
+				spell_id = zoneability_id
+			end
+
+
+			if (self.UberTooltips) then
+				GameTooltip:SetSpellByID(spell_id)
+			else
+				local spell = GetSpellInfo(spell_id)
+				GameTooltip:SetText(spell, 1, 1, 1)
+			end
+
+			self.UpdateTooltip = macroButton_SetTooltip
 		end
-
-
-		if (self.UberTooltips) then
-			GameTooltip:SetSpellByID(spell_id)
-		else
-			local spell = GetSpellInfo(spell_id)
-			GameTooltip:SetText(spell, 1, 1, 1)
-		end
-
-		self.UpdateTooltip = macroButton_SetTooltip
 
 	elseif (cIndex[spell]) then
 
