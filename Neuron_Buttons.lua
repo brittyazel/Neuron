@@ -27,7 +27,7 @@ local currMacro = {}
 
 local cmdSlash
 
-local stealthStatus = IsStealthed() ---this is a workaround variable for druid stealth being overwritten
+--local stealthStatus = IsStealthed() ---this is a workaround variable for druid stealth being overwritten
 
 local configData = {
 	btnType = "macro",
@@ -2514,7 +2514,7 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 
 
 				---we need to to add a workaround for druid Stealth states getting immediately overwritten
-				if(NEURON.class == "DRUID") then
+--[[				if(NEURON.class == "DRUID") then
 
 					if (value == "stealth1") then
 						stealthStatus = true
@@ -2526,7 +2526,7 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 
 
 
-				end
+				end]]
 
 				self.data = self.statedata[value]
 
@@ -3417,10 +3417,10 @@ end
 
 local function controlOnEvent(self, event, ...)
 
-	---part of the druid stealth overwrite fix
+--[[	---part of the druid stealth overwrite fix
 	if (event == "UPDATE_STEALTH") then
 		stealthStatus = IsStealthed()
-	end
+	end]]
 
 	if (event:find("UNIT_")) then
 
