@@ -322,7 +322,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 
 
 		if (restedXP) then
-			restedXP = (tostring(restedXP/nextXP)).." "..L["Levels"]
+			restedXP = string.format("%.1f", (tostring(restedXP/nextXP))).." "..L["Levels"]
 		else
 			restedXP = "0".." "..L["Levels"]
 		end
