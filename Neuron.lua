@@ -908,10 +908,6 @@ function NEURON:UpdateStanceStrings()
 			if (name) then
 				if (spellID) then
 					NEURON.StanceIndex[i] = spellID
-
-					if (NEURON.class == "DRUID" and spellID == 768) then
-						NEURON.kitty = i
-					end
 				end
 
 				NEURON.STATES["stance"..i] = name
