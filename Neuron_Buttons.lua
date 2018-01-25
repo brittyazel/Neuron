@@ -2224,7 +2224,7 @@ function BUTTON:MACRO_SetSpellTooltip(spell)
 
 		local spell_id = sIndex[spell].spellID
 
-		if(spell_id) then
+		if(spell_id) then --double check that the spell_id is valid (for switching specs, other specs abilities won't be valid even though a bar might be bound to one)
 
 			local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
 

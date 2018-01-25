@@ -88,7 +88,7 @@ Neuron.MANAGED_ACTION_STATES = {
 	},
 
 	fishing = {
-		states = "[worn:fishing pole] fishing1; laststate",
+		states = "[worn:fishing poles] fishing1; laststate",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 11,
@@ -277,7 +277,7 @@ Neuron.MANAGED_BAR_STATES = {
 	},
 
 	fishing = {
-		states = "[noworn:fishing pole] fishing0; [worn:fishing pole] fishing1",
+		states = "[noworn:fishing poles] fishing0; [worn:fishing poles] fishing1",
 		rangeStart = 1,
 		rangeStop = 1,
 		order = 11,
