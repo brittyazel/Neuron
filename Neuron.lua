@@ -14,7 +14,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.16" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.17" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thank's for installing Neuron.
@@ -30,14 +30,11 @@ Cheers,
 local Update_Message = [[Thanks for updating Neuron!
 
 *****IMPORTANT, PLEASE READ!*****
+Three of your bars have had their data reset: the stance bar, the extra action button, and the zone ability button.
 
-Unforutanely, today's update brings an unavoidable change. The data for your Bag, Pet, Status, and Menu bars has been reset, and you will have to readjust these four sets of bars manually. I'm very sorry for this inconvenience.
+Sorry, again, for the disruption, but it was due to some major changes behind the scenes that will help tremendously going forward.
 
-Why did this happen? An overwhelming number of you have asked for these bars to be configurable as character specific, instead of account wide, just the way the action bars are. However, in order to make this work I had to switch the bars to read from the per-character config (which until now din't exist), instead of the global config.
-
-From this point on, all of your bar settings are stored PET CHARACTER, aside from the profiles, which are saved globally.
-
-Again, I'm sorry for the disruption. If you have any issues or encounter any strange bugs, you can delete the associated Neuron-(*bar type*).lua files out of the savedvariable folders in your WTF folder.
+Also, all bar types are now taken into account in the Neuron Profile's option. So saving profiles will store all your bars and buttons, not just the core ones.
 
 -Soyier]]
 
@@ -139,8 +136,7 @@ NeuronItemCache = {}
 
 ---this is the Default profile when you "load defaults" in the ace profile window
 NeuronDefaults = {
-	profile = {
-	}
+	profile = {},
 }
 
 NeuronDefaults.profile['NeuronCDB'] = NeuronCDB
@@ -2164,9 +2160,6 @@ function NeuronBase:RefreshConfig()
 end
 
 
-
-
-
 function NeuronBase:OnInitialize()
 	self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonName)
@@ -2174,6 +2167,7 @@ function NeuronBase:OnInitialize()
 
 	options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
+
 	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
