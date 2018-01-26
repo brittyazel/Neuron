@@ -5,6 +5,8 @@
 -------------------------------------------------------------------------------
 local addonName = ...
 
+local GDB, CDB, Spec
+
 NeuronBase = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -64,7 +66,7 @@ Neuron = {
 	maxStanceID = NUM_STANCE_SLOTS, --(10)
 }
 
-NeuronGDB = {
+local defGDB = {
 	bars = {},
 	buttons = {},
 
@@ -89,9 +91,6 @@ NeuronGDB = {
 	vehicle = false,
 
 	firstRun = true,
-	xbarFirstRun = true,
-	sbarFirstRun = true,
-	zoneabilitybarFirstRun = true,
 
 	betaWarning = false,
 
@@ -99,7 +98,9 @@ NeuronGDB = {
 	showmmb = true,
 }
 
-NeuronCDB = {
+
+
+local defCDB = {
 	bars = {},
 	buttons = {},
 
@@ -121,11 +122,30 @@ NeuronCDB = {
 	perCharBinds = false,
 	firstRun = true,
 
+	xbarFirstRun = true,
+	sbarFirstRun = true,
+	zoneabilitybarFirstRun = true,
+
 }
 
-NeuronSpec = {cSpec = 1}
+local defSpec = {cSpec = 1}
+
+
+NeuronCDB = CopyTable(defCDB)
+NeuronGDB = CopyTable(defGDB)
+NeuronSpec = CopyTable(defSpec)
 
 NeuronItemCache = {}
+
+---this is the Default profile when you "load defaults" in the ace profile window
+NeuronDefaults = {
+	profile = {
+	}
+}
+
+NeuronDefaults.profile['NeuronCDB'] = NeuronCDB
+NeuronDefaults.profile['NeuronGDB'] = NeuronGDB
+NeuronDefaults.profile['NeuronSpec'] = NeuronSpec
 
 local NEURON = Neuron
 local BAR --gets set to NEURON.BAR in the OnEvent method
@@ -343,73 +363,6 @@ local options = {
 		},
 	},
 }
-
-local defaults = {
-	profile = {
-		NeuronGDB = {
-			bars = {},
-			buttons = {},
-
-			xbars = {},
-			xbtns = {},
-
-			sbars = {},
-			sbtns = {},
-
-			zoneabilitybars = {},
-			zoneabilitybtns = {},
-
-			buttonLoc = {-0.85, -111.45},
-			buttonRadius = 87.5,
-
-			throttle = 0.2,
-			timerLimit = 4,
-			snapToTol = 28,
-
-			mainbar = false,
-			zoneabilitybar = true,
-			vehicle = false,
-
-			firstRun = true,
-			xbarFirstRun = true,
-			sbarFirstRun = true,
-			zoneabilitybarFirstRun = true,
-
-			betaWarning = true,
-
-			animate = true,
-			showmmb = true,
-		},
-		NeuronCDB = {
-
-			bars = {},
-			buttons = {},
-
-			xbars = {},
-			xbtns = {},
-
-			sbars = {},
-			sbtns = {},
-
-			zoneabilitybars = {},
-			zoneabilitybtns = {},
-
-			selfCast = false,
-			focusCast = false,
-			mouseOverMod= "NONE",
-
-			layOut = 1,
-
-			perCharBinds = false,
-
-			firstRun = true,
-
-		},
-		NeuronSpec = {cSpec = 1},
-	},
-}
-
-local defGDB, GDB, defCDB, CDB, defSPEC, SPEC = CopyTable(NeuronGDB), CopyTable(NeuronGDB), CopyTable(NeuronCDB), CopyTable(NeuronCDB), CopyTable(NeuronSpec), CopyTable(NeuronSpec)
 
 
 
@@ -2003,7 +1956,7 @@ local function control_OnEvent(self, event, ...)
 
 		NEURON.player, NEURON.class, NEURON.level, NEURON.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
 
-		GDB = NeuronGDB; CDB = NeuronCDB; SPEC = NeuronSpec
+		GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
 
 		for k,v in pairs(defGDB) do
 			if (GDB[k] == nil) then
@@ -2017,9 +1970,9 @@ local function control_OnEvent(self, event, ...)
 			end
 		end
 
-		for k,v in pairs(defSPEC) do
-			if (SPEC[k] == nil) then
-				SPEC[k] = v
+		for k,v in pairs(defSpec) do
+			if (Spec[k] == nil) then
+				Spec[k] = v
 			end
 		end
 
@@ -2062,6 +2015,7 @@ local function control_OnEvent(self, event, ...)
 	elseif (event == "VARIABLES_LOADED") then
 
 		InterfaceOptionsFrame:SetFrameStrata("HIGH")
+
 
 	elseif (event == "PLAYER_LOGIN") then
 		local function hideAlerts(frame)
@@ -2184,18 +2138,37 @@ StaticPopupDialogs["ReloadUI"] = {
 function NeuronBase:RefreshConfig()
 	NeuronCDB = self.db.profile["NeuronCDB"]
 	NeuronGDB = self.db.profile["NeuronGDB"]
-	NeuronSpec = {cSpec = GetSpecialization()}
-	defGDB, GDB, defCDB, CDB, defSPEC, SPEC = CopyTable(NeuronGDB), CopyTable(NeuronGDB), CopyTable(NeuronCDB), CopyTable(NeuronCDB), CopyTable(NeuronSpec), CopyTable(NeuronSpec)
-	NEURONButtonProfileUpdate()
-	--IONBarProfileUpdate()
+	NeuronSpec = {cSpec = GetSpecialization() }
+
+	GDB, CDB, SPEC =  NeuronGDB, NeuronCDB, NeuronSpec
+	ButtonProfileUpdate()
+
+	if(self.db.profile["NeuronBagDB"]) then
+		NeuronBagDB = self.db.profile["NeuronBagDB"]
+		BagProfileUpdate()
+	end
+	if(self.db.profile["NeuronMenuDB"]) then
+		NeuronMenuDB = self.db.profile["NeuronMenuDB"]
+		MenuProfileUpdate()
+	end
+	if(self.db.profile["NeuronPetDB"]) then
+		NeuronPetDB = self.db.profile["NeuronPetDB"]
+		PetProfileUpdate()
+	end
+	if(self.db.profile["NeuronStatusDB"]) then
+		NeuronStatusDB = self.db.profile["NeuronStatusDB"]
+		StatusProfileUpdate()
+	end
+
 	StaticPopup_Show("ReloadUI")
 end
 
 
 
 
+
 function NeuronBase:OnInitialize()
-	self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", defaults)
+	self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonName)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
 
@@ -2206,23 +2179,7 @@ function NeuronBase:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnDatabaseReset", "RefreshConfig")
 
-	--Check to see if character has stored bars/buttons that need to be imported to profile
-	if not NeuronProfilesDB["Saved"] then
-		NeuronProfilesDB["Saved"] = CopyTable(NeuronGDB)
-	end
 
-	if not self.db.char.firstrun then
-		self.db.profile["NeuronCDB"] = CopyTable(NeuronCDB)
-		self.db.profile["NeuronGDB"] = CopyTable(NeuronProfilesDB["Saved"])
-
-		self.db.char.firstrun = true
-	end
-	--if not GDB.firstRun and not CDB.firstRun then
-
-	--defaults.profile["NeuronSpec"] = CopyTable(NeuronSpec)
-	NeuronCDB = self.db.profile["NeuronCDB"]
-	NeuronGDB = self.db.profile["NeuronGDB"]
-	NeuronSpec = self.db.profile["NeuronSpec"]
-
-	defGDB, GDB, defCDB, CDB, defSPEC, SPEC = CopyTable(NeuronGDB), CopyTable(NeuronGDB), CopyTable(NeuronCDB), CopyTable(NeuronCDB), CopyTable(NeuronSpec), CopyTable(NeuronSpec)
+	self.db.profile["NeuronCDB"] = NeuronCDB
+	self.db.profile["NeuronGDB"] = NeuronGDB
 end

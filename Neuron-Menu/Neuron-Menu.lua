@@ -21,20 +21,24 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-NeuronMenuDB = {
+local defDB = {
 	menubars = {},
 	menubtns = {},
 	scriptProfile = false,
 	firstRun = true,
 }
 
+NeuronMenuDB = CopyTable(defDB)
+
+NeuronDefaults.profile['NeuronMenuDB'] = NeuronMenuDB
+
 local gDef = {
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,
 	point = "BOTTOMRIGHT",
-	x = -154.5,
-	y = 33,
+	x = -335,
+	y = 23,
 }
 
 local menuElements = {}
@@ -42,8 +46,6 @@ local addonData, sortData = {}, {}
 
 
 local GetParentKeys = NEURON.GetParentKeys
-
-local defDB = CopyTable(NeuronMenuDB)
 
 local configData = {
 	stored = false,
@@ -994,6 +996,12 @@ function ANCHOR:SetType(save)
 end
 
 
+function MenuProfileUpdate()
+    menubarsDB = NeuronMenuDB.menubars
+    menubtnsDB = NeuronMenuDB.menubtns
+end
+
+
 local function controlOnEvent(self, event, ...)
 
 	local object
@@ -1001,6 +1009,7 @@ local function controlOnEvent(self, event, ...)
 	if (event == "ADDON_LOADED" and ... == "Neuron-Menu") then
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 
+        NeuronBase.db.profile["NeuronMenuDB"] = NeuronMenuDB
 		DB = NeuronMenuDB
 
 		for k,v in pairs(defDB) do
@@ -1053,6 +1062,8 @@ local function controlOnEvent(self, event, ...)
 		end
 		STORAGE:Hide()
 	elseif (event == "PLAYER_LOGIN") then
+
+    elseif (event == "VARIABLES_LOADED") then
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 		PEW = true

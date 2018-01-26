@@ -2,13 +2,13 @@
 
 
 local NEURON = Neuron
-local GDB, CDB, PEW
+local CDB, PEW
 
 NEURON.XBTNIndex = {}
 
 local XBTNIndex, SKINIndex = NEURON.XBTNIndex, NEURON.SKINIndex
 
-local xbarsGDB, xbarsCDB, xbtnsGDB, xbtnsCDB
+local xbarsCDB, xbtnsCDB
 
 local BUTTON = NEURON.BUTTON
 
@@ -29,7 +29,7 @@ local gDef = {
 	snapToPoint = false,
 	point = "BOTTOM",
 	x = 0,
-	y = 226,
+	y = 205,
 }
 
 local GetParentKeys = NEURON.GetParentKeys
@@ -215,21 +215,20 @@ function XBTN:LoadData(spec, state)
 
 	local id = self.id
 
-	self.GDB = xbtnsGDB
 	self.CDB = xbtnsCDB
 
-	if (self.GDB and self.CDB) then
+	if (self.CDB) then
 
-		if (not self.GDB[id]) then
-			self.GDB[id] = {}
+		if (not self.CDB[id]) then
+			self.CDB[id] = {}
 		end
 
-		if (not self.GDB[id].config) then
-			self.GDB[id].config = CopyTable(configData)
+		if (not self.CDB[id].config) then
+			self.CDB[id].config = CopyTable(configData)
 		end
 
-		if (not self.GDB[id].keys) then
-			self.GDB[id].keys = CopyTable(keyData)
+		if (not self.CDB[id].keys) then
+			self.CDB[id].keys = CopyTable(keyData)
 		end
 
 		if (not self.CDB[id]) then
@@ -244,15 +243,15 @@ function XBTN:LoadData(spec, state)
 			self.CDB[id].data = {}
 		end
 
-		NEURON:UpdateData(self.GDB[id].config, configData)
-		NEURON:UpdateData(self.GDB[id].keys, keyData)
+		NEURON:UpdateData(self.CDB[id].config, configData)
+		NEURON:UpdateData(self.CDB[id].keys, keyData)
 
-		self.config = self.GDB [id].config
+		self.config = self.CDB [id].config
 
 		if (CDB.perCharBinds) then
 			self.keys = self.CDB[id].keys
 		else
-			self.keys = self.GDB[id].keys
+			self.keys = self.CDB[id].keys
 		end
 
 		self.data = self.CDB[id].data
@@ -462,15 +461,12 @@ local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Neuron") then
 
-		GDB = NeuronGDB; CDB = NeuronCDB
+		CDB = NeuronCDB
 
-		xbarsGDB = GDB.xbars
 		xbarsCDB = CDB.xbars
-
-		xbtnsGDB = GDB.xbtns
 		xbtnsCDB = CDB.xbtns
 
-		NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsGDB, xbarsCDB, XBTNIndex, xbtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, false, STORAGE, gDef, nil, false)
+		NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, XBTNIndex, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, false, STORAGE, gDef, nil, false)
 
 		NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 			SHOWGRID = true,
@@ -485,18 +481,18 @@ local function controlOnEvent(self, event, ...)
 			CDTEXT = true,
 			CDALPHA = true }, false, 65)
 
-		if (GDB.xbarFirstRun) then
+		if (CDB.xbarFirstRun) then
 
 			local bar = NEURON:CreateNewBar("extrabar", 1, true)
 			local object = NEURON:CreateNewObject("extrabar", 1)
 
 			bar:AddObjectToList(object)
 
-			GDB.xbarFirstRun = false
+			CDB.xbarFirstRun = false
 
 		else
 
-			for id,data in pairs(xbarsGDB) do
+			for id,data in pairs(xbarsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewBar("extrabar", id)
 				end

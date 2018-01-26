@@ -20,17 +20,19 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-NeuronStatusDB = {
+local defDB = {
 	statusbars = {},
 	statusbtns = {},
 	firstRun = true,
 }
 
+NeuronStatusDB = CopyTable(defDB)
+
+NeuronDefaults.profile['NeuronStatusDB'] = NeuronStatusDB
+
 AutoWatch = 1
 
 local GetParentKeys = NEURON.GetParentKeys
-
-local defDB = CopyTable(NeuronStatusDB)
 
 local BarTextures = {
 	[1] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_2", L["Default"] },
@@ -109,7 +111,7 @@ local gDef = {
 		snapToPoint = false,
 		point = "BOTTOM",
 		x = 0,
-		y = 185,
+		y = 385,
 	},
 
 	[2] = {
@@ -118,8 +120,8 @@ local gDef = {
 		snapToFrame = false,
 		snapToPoint = false,
 		point = "BOTTOM",
-		x = -130,
-		y = 20,
+		x = 0,
+		y = 24,
 	},
 
 	[3] = {
@@ -128,8 +130,8 @@ local gDef = {
 		snapToFrame = false,
 		snapToPoint = false,
 		point = "BOTTOM",
-		x = 130,
-		y = 20,
+		x = 0,
+		y = 7,
 	},
 
 	[4] = {
@@ -151,13 +153,13 @@ local configDef = {
 
 	sbType = "statusbar",
 
-	width = 200,
+	width = 250,
 	height = 18,
 	scale = 1,
 	XOffset = 0,
 	YOffset = 0
 	,
-	texture = 1,
+	texture = 7,
 	border = 1,
 
 	orientation = 1,
@@ -202,12 +204,12 @@ local dataDef = {
 
 
 local configDefaults = {
-	[1] = { sbType = "cast", cIndex = 1, lIndex = 2, rIndex = 3 },
-	[2] = { sbType = "xp", cIndex = 2, lIndex = 1, rIndex = 1, width = 250 },
-	[3] = { sbType = "rep", cIndex = 2, lIndex = 1, rIndex = 1, width = 250 },
-	[4] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3 },
-	[5] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3 },
-	[6] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3 },
+	[1] = { sbType = "cast", cIndex = 1, lIndex = 2, rIndex = 3, showIcon = true},
+	[2] = { sbType = "xp", cIndex = 2, lIndex = 6, rIndex = 4, mIndex = 3, width = 450},
+	[3] = { sbType = "rep", cIndex = 3, lIndex = 2, rIndex = 4, mIndex = 6, width = 450},
+	[4] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
+	[5] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
+	[6] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
 }
 
 local sbTypes = { { "cast", L["Cast Bar"] }, { "xp", L["XP Bar"] }, { "rep", L["Rep Bar"] }, { "mirror", L["Mirror Bar"] } }
@@ -2685,7 +2687,10 @@ function STATUS:CreateEditFrame(index)
 
 end
 
-
+function StatusProfileUpdate()
+	statusbarsDB = NeuronStatusDB.statusbars
+	statusbtnsDB = NeuronStatusDB.statusbtns
+end
 
 ----------------------------------------------------------------------
 -------Main Event Handler---------------------------------------------
@@ -2702,6 +2707,7 @@ local function controlOnEvent(self, event, ...)
 		MirrorTimer2:UnregisterAllEvents()
 		MirrorTimer3:UnregisterAllEvents()
 
+		NeuronBase.db.profile["NeuronStatusDB"] = NeuronStatusDB
 		DB = NeuronStatusDB
 
 		for k,v in pairs(defDB) do
@@ -2765,6 +2771,8 @@ local function controlOnEvent(self, event, ...)
 		STORAGE:Hide()
 
 	elseif (event == "PLAYER_LOGIN") then
+
+	elseif (event == "VARIABLES_LOADED") then
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 

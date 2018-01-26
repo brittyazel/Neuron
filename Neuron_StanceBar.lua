@@ -2,14 +2,14 @@
 
 
 local NEURON = Neuron
-local GDB, CDB, PEW
+local CDB, PEW
 
 NEURON.SBTNIndex = {}
 
 local SBTNIndex = NEURON.SBTNIndex
 
 
-local sbarsGDB, sbarsCDB, sbtnsGDB, sbtnsCDB
+local sbarsCDB, sbtnsCDB
 
 local BUTTON = NEURON.BUTTON
 
@@ -357,21 +357,20 @@ function SBTN:LoadData(spec, state)
 
 	local id = self.id
 
-	self.GDB = sbtnsGDB
 	self.CDB = sbtnsCDB
 
-	if (self.GDB and self.CDB) then
+	if (self.CDB) then
 
-		if (not self.GDB[id]) then
-			self.GDB[id] = {}
+		if (not self.CDB[id]) then
+			self.CDB[id] = {}
 		end
 
-		if (not self.GDB[id].config) then
-			self.GDB[id].config = CopyTable(configData)
+		if (not self.CDB[id].config) then
+			self.CDB[id].config = CopyTable(configData)
 		end
 
-		if (not self.GDB[id].keys) then
-			self.GDB[id].keys = CopyTable(keyData)
+		if (not self.CDB[id].keys) then
+			self.CDB[id].keys = CopyTable(keyData)
 		end
 
 		if (not self.CDB[id]) then
@@ -386,15 +385,15 @@ function SBTN:LoadData(spec, state)
 			self.CDB[id].data = {}
 		end
 
-		NEURON:UpdateData(self.GDB[id].config, configData)
-		NEURON:UpdateData(self.GDB[id].keys, keyData)
+		NEURON:UpdateData(self.CDB[id].config, configData)
+		NEURON:UpdateData(self.CDB[id].keys, keyData)
 
-		self.config = self.GDB [id].config
+		self.config = self.CDB [id].config
 
 		if (CDB.perCharBinds) then
 			self.keys = self.CDB[id].keys
 		else
-			self.keys = self.GDB[id].keys
+			self.keys = self.CDB[id].keys
 		end
 
 		self.data = self.CDB[id].data
@@ -464,12 +463,9 @@ local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Neuron") then
 
-		GDB = NeuronGDB; CDB = NeuronCDB
+		CDB = NeuronCDB
 
-		sbarsGDB = GDB.sbars
 		sbarsCDB = CDB.sbars
-
-		sbtnsGDB = GDB.sbtns
 		sbtnsCDB = CDB.sbtns
 
 		SBTN.SetTimer = BUTTON.SetTimer
@@ -477,7 +473,7 @@ local function controlOnEvent(self, event, ...)
 		SBTN.GetSkinned = BUTTON.GetSkinned
 		SBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
-		NEURON:RegisterBarClass("stancebar", "StanceBar", L["Stance Bar"], "Stance Button", sbarsGDB, sbarsCDB, SBTNIndex, sbtnsGDB, "CheckButton", "NeuronStanceButtonTemplate", { __index = SBTN }, NEURON.maxStanceID, false, STORAGE, gDef, nil, false)
+		NEURON:RegisterBarClass("stancebar", "StanceBar", L["Stance Bar"], "Stance Button", sbarsCDB, sbarsCDB, SBTNIndex, sbtnsCDB, "CheckButton", "NeuronStanceButtonTemplate", { __index = SBTN }, NEURON.maxStanceID, false, STORAGE, gDef, nil, false)
 
 		NEURON:RegisterGUIOptions("stancebar", {
 			AUTOHIDE = true,
@@ -493,7 +489,7 @@ local function controlOnEvent(self, event, ...)
 			CDTEXT = true,
 			CDALPHA = true }, false, 65)
 
-		if (GDB.sbarFirstRun) then
+		if (CDB.sbarFirstRun) then
 
 			local bar, object = NEURON:CreateNewBar("stancebar", 1, true)
 
@@ -502,17 +498,17 @@ local function controlOnEvent(self, event, ...)
 				bar:AddObjectToList(object)
 			end
 
-			GDB.sbarFirstRun = false
+			CDB.sbarFirstRun = false
 
 		else
 
-			for id,data in pairs(sbarsGDB) do
+			for id,data in pairs(sbarsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewBar("stancebar", id)
 				end
 			end
 
-			for id,data in pairs(sbtnsGDB) do
+			for id,data in pairs(sbtnsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewObject("stancebar", id)
 				end

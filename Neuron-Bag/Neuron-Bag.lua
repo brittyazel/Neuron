@@ -18,23 +18,28 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local SKIN = LibStub("Masque", true)
 
 
-NeuronBagDB = {
+local defDB = {
 	bagbars = {},
 	bagbtns = {},
 	freeSlots = 16,
 	firstRun = true,
 }
 
+NeuronBagDB = CopyTable(defDB)
+
+NeuronDefaults.profile['NeuronBagDB'] = NeuronBagDB
+
+
 local gDef = {
 
 	padH = -1,
-	scale = 1.25,
+	scale = 1.1,
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,
 	point = "BOTTOMRIGHT",
-	x = -110,
-	y = 77,
+	x = -100,
+	y = 23,
 }
 
 local bagElements = {}
@@ -42,8 +47,6 @@ local bagElements = {}
 local format = string.format
 
 local GetParentKeys = NEURON.GetParentKeys
-
-local defDB = CopyTable(NeuronBagDB)
 
 local configData = {
 
@@ -355,6 +358,11 @@ function ANCHOR:SetType(save)
 	end
 end
 
+function BagProfileUpdate()
+    bagbarsDB = NeuronBagDB.bagbars
+    bagbtnsDB = NeuronBagDB.bagbtns
+end
+
 local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Neuron-Bag") then
@@ -387,6 +395,7 @@ local function controlOnEvent(self, event, ...)
 			frame:HookScript("OnHide", containerFrame_OnHide)
 		end
 
+        NeuronBase.db.profile["NeuronBagDB"] = NeuronBagDB
 		DB = NeuronBagDB
 
 		for k,v in pairs(defDB) do
@@ -435,6 +444,8 @@ local function controlOnEvent(self, event, ...)
 		STORAGE:Hide()
 
 	elseif (event == "PLAYER_LOGIN") then
+
+    elseif (event == "VARIABLES_LOADED") then
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 

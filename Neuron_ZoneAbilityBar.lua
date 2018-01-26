@@ -2,14 +2,14 @@
 
 
 local NEURON = Neuron
-local  GDB, CDB, PEW
+local CDB, PEW
 
 NEURON.ZONEABILITYRBTNIndex = {}
 
 local ZONEABILITYRBTNIndex = NEURON.ZONEABILITYRBTNIndex
 
 
-local zoneabilitybarsGDB, zoneabilitybarsCDB, zoneabilitybtnsGDB, zoneabilitybtnsCDB
+local zoneabilitybarsCDB, zoneabilitybtnsCDB
 
 local BUTTON = NEURON.BUTTON
 local BAR = NEURON.BAR
@@ -30,8 +30,8 @@ local gDef = {
 	snapToFrame = false,
 	snapToPoint = false,
 	point = "BOTTOM",
-	x = 0,
-	y = 226,
+	x = 350,
+	y = 75,
 	border = true,
 }
 
@@ -120,7 +120,7 @@ local function ZoneAbilityFrame_Update(self)
 	--self.SpellButton.Icon:SetTexture(tex);
 
 
-	if zoneabilitybarsGDB[1].border then
+	if zoneabilitybarsCDB[1].border then
 
 		self.style:Show()
 	else
@@ -327,21 +327,20 @@ function ZONEABILITYRBTN:LoadData(spec, state)
 
 	local id = self.id
 
-	self.GDB = zoneabilitybtnsGDB
 	self.CDB = zoneabilitybtnsCDB
 
-	if (self.GDB and self.CDB) then
+	if (self.CDB and self.CDB) then
 
-		if (not self.GDB[id]) then
-			self.GDB[id] = {}
+		if (not self.CDB[id]) then
+			self.CDB[id] = {}
 		end
 
-		if (not self.GDB[id].config) then
-			self.GDB[id].config = CopyTable(configData)
+		if (not self.CDB[id].config) then
+			self.CDB[id].config = CopyTable(configData)
 		end
 
-		if (not self.GDB[id].keys) then
-			self.GDB[id].keys = CopyTable(keyData)
+		if (not self.CDB[id].keys) then
+			self.CDB[id].keys = CopyTable(keyData)
 		end
 
 		if (not self.CDB[id]) then
@@ -356,15 +355,15 @@ function ZONEABILITYRBTN:LoadData(spec, state)
 			self.CDB[id].data = {}
 		end
 
-		NEURON:UpdateData(self.GDB[id].config, configData)
-		NEURON:UpdateData(self.GDB[id].keys, keyData)
+		NEURON:UpdateData(self.CDB[id].config, configData)
+		NEURON:UpdateData(self.CDB[id].keys, keyData)
 
-		self.config = self.GDB [id].config
+		self.config = self.CDB [id].config
 
 		if (CDB.perCharBinds) then
 			self.keys = self.CDB[id].keys
 		else
-			self.keys = self.GDB[id].keys
+			self.keys = self.CDB[id].keys
 		end
 
 		self.data = self.CDB[id].data
@@ -419,7 +418,7 @@ end
 
 
 function ZONEABILITYRBTN:UpdateFrame()
-	if zoneabilitybarsGDB[1].border then
+	if zoneabilitybarsCDB[1].border then
 
 		NeuronZoneActionButton1.style:Show()
 	else
@@ -482,12 +481,9 @@ local function controlOnEvent(self, event, ...)
 	if (event == "ADDON_LOADED" and ... == "Neuron") then
 
 		--it seems like this code is meant to extract out working copies of the necessary elements form the addon-wide NeuronGDB and NeuronCDB tables
-		GDB = NeuronGDB; CDB = NeuronCDB
+        CDB = NeuronCDB
 
-		zoneabilitybarsGDB = GDB.zoneabilitybars
 		zoneabilitybarsCDB = CDB.zoneabilitybars
-
-		zoneabilitybtnsGDB = GDB.zoneabilitybtns
 		zoneabilitybtnsCDB = CDB.zoneabilitybtns
 
 		ZONEABILITYRBTN.SetTimer = BUTTON.SetTimer
@@ -495,7 +491,7 @@ local function controlOnEvent(self, event, ...)
 		ZONEABILITYRBTN.GetSkinned = BUTTON.GetSkinned
 		ZONEABILITYRBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
-		NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsGDB, zoneabilitybarsCDB, ZONEABILITYRBTNIndex, zoneabilitybtnsGDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, false, STORAGE, gDef, nil, false)
+		NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, ZONEABILITYRBTNIndex, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, false, STORAGE, gDef, nil, false)
 
 		NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 			SHOWGRID = false,
@@ -511,24 +507,24 @@ local function controlOnEvent(self, event, ...)
 			CDALPHA = true,
 			ZONEABILITY = true}, false, 65)
 
-		if (GDB.zoneabilitybarFirstRun) then
+		if (CDB.zoneabilitybarFirstRun) then
 
 			local bar = NEURON:CreateNewBar("zoneabilitybar", 1, true)
 			local object = NEURON:CreateNewObject("zoneabilitybar", 1)
 
 			bar:AddObjectToList(object)
 
-			GDB.zoneabilitybarFirstRun = false
+			CDB.zoneabilitybarFirstRun = false
 
 		else
 
-			for id,data in pairs(zoneabilitybarsGDB) do
+			for id,data in pairs(zoneabilitybarsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewBar("zoneabilitybar", id)
 				end
 			end
 
-			for id,data in pairs(zoneabilitybtnsGDB) do
+			for id,data in pairs(zoneabilitybtnsCDB) do
 				if (data ~= nil) then
 					NEURON:CreateNewObject("zoneabilitybar", id)
 				end

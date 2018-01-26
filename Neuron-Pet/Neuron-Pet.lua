@@ -22,29 +22,33 @@ local SKIN = LibStub("Masque", true)
 
 local sIndex = NEURON.sIndex
 
-NeuronPetDB = {
+local defDB = {
 	petbars = {},
 	petbtns = {},
 	firstRun = true,
 }
 
+NeuronPetDB = CopyTable(defDB)
+
+NeuronDefaults.profile['NeuronPetDB'] = NeuronPetDB
+
 local gDef = {
 
 	hidestates = ":pet0:",
 
+    scale = 0.8,
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,
 	point = "BOTTOM",
-	x = 0,
-	y = 146,
+	x = -440,
+	y = 75,
 }
 
 local format = string.format
 
 local GetParentKeys = NEURON.GetParentKeys
 
-local defDB = CopyTable(NeuronPetDB)
 
 local AutoCastStart = NEURON.AutoCastStart
 local AutoCastStop = NEURON.AutoCastStop
@@ -627,6 +631,12 @@ function PETBTN:SetType(save)
 
 end
 
+
+function PetProfileUpdate()
+    petbarsDB = NeuronPetDB.petbars
+    petbtnsDB = NeuronPetDB.petbtns
+end
+
 local function controlOnEvent(self, event, ...)
 
 	if (event == "ADDON_LOADED" and ... == "Neuron-Pet") then
@@ -636,6 +646,7 @@ local function controlOnEvent(self, event, ...)
 		PETBTN.GetSkinned = BUTTON.GetSkinned
 		PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
+        NeuronBase.db.profile["NeuronPetDB"] = NeuronPetDB
 		DB = NeuronPetDB
 
 		for k,v in pairs(defDB) do
@@ -692,6 +703,8 @@ local function controlOnEvent(self, event, ...)
 		STORAGE:Hide()
 
 	elseif (event == "PLAYER_LOGIN") then
+
+    elseif (event == "VARIABLES_LOADED") then
 
 	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
 

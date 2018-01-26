@@ -3525,7 +3525,7 @@ frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 frame:RegisterEvent("UPDATE_STEALTH")
 
 
-function NEURONButtonProfileUpdate()
+function ButtonProfileUpdate()
 	GDB, CDB = NeuronGDB, NeuronCDB
 
 	btnGDB = GDB.buttons
