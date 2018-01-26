@@ -646,8 +646,12 @@ local function controlOnEvent(self, event, ...)
 		PETBTN.GetSkinned = BUTTON.GetSkinned
 		PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
-        NeuronBase.db.profile["NeuronPetDB"] = NeuronPetDB
-		DB = NeuronPetDB
+
+        if (not NeuronBase.db.profile["NeuronPetDB"]) then
+            NeuronBase.db.profile["NeuronPetDB"] = NeuronPetDB
+        end
+
+		DB = NeuronBase.db.profile["NeuronPetDB"]
 
 		for k,v in pairs(defDB) do
 			if (DB[k] == nil) then

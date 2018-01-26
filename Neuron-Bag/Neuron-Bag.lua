@@ -134,7 +134,7 @@ local function updateFreeSlots(self)
 		end
 	end
 
-	local rgbValue, r, g = math.floor((totalFree/NeuronBagDB.freeSlots)*100)
+	local rgbValue, r, g = math.floor((totalFree/DB.freeSlots)*100)
 
 	if (rgbValue > 49) then
 		r=(1-(rgbValue/100))+(1-(rgbValue/100))
@@ -395,8 +395,12 @@ local function controlOnEvent(self, event, ...)
 			frame:HookScript("OnHide", containerFrame_OnHide)
 		end
 
-        NeuronBase.db.profile["NeuronBagDB"] = NeuronBagDB
-		DB = NeuronBagDB
+
+		if (not NeuronBase.db.profile["NeuronBagDB"]) then
+			NeuronBase.db.profile["NeuronBagDB"] = NeuronBagDB
+		end
+
+		DB = NeuronBase.db.profile["NeuronBagDB"]
 
 		for k,v in pairs(defDB) do
 			if (DB[k] == nil) then

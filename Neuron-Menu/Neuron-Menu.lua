@@ -1009,8 +1009,11 @@ local function controlOnEvent(self, event, ...)
 	if (event == "ADDON_LOADED" and ... == "Neuron-Menu") then
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 
-        NeuronBase.db.profile["NeuronMenuDB"] = NeuronMenuDB
-		DB = NeuronMenuDB
+		if (not NeuronBase.db.profile["NeuronMenuDB"]) then
+        	NeuronBase.db.profile["NeuronMenuDB"] = NeuronMenuDB
+		end
+
+		DB = NeuronBase.db.profile["NeuronMenuDB"]
 
 		for k,v in pairs(defDB) do
 			if (DB[k] == nil) then

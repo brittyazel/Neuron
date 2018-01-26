@@ -2055,7 +2055,7 @@ local function control_OnEvent(self, event, ...)
 		end
 
 	elseif (event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_LOGOUT" or event == "PLAYER_LEAVING_WORLD") then
-		SPEC.cSpec = GetSpecialization()
+		Spec.cSpec = GetSpecialization()
 
 	elseif (event == "ACTIVE_TALENT_GROUP_CHANGED" or
 			event == "LEARNED_SPELL_IN_TAB" or
@@ -2136,7 +2136,7 @@ function NeuronBase:RefreshConfig()
 	NeuronGDB = self.db.profile["NeuronGDB"]
 	NeuronSpec = {cSpec = GetSpecialization() }
 
-	GDB, CDB, SPEC =  NeuronGDB, NeuronCDB, NeuronSpec
+	GDB, CDB, Spec =  NeuronGDB, NeuronCDB, NeuronSpec
 	ButtonProfileUpdate()
 
 	if(self.db.profile["NeuronBagDB"]) then
@@ -2173,7 +2173,19 @@ function NeuronBase:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnDatabaseReset", "RefreshConfig")
 
+	if (not NeuronBase.db.profile["NeuronCDB"]) then
+		self.db.profile["NeuronCDB"] = NeuronCDB
+	end
+	if (not NeuronBase.db.profile["NeuronGDB"]) then
+		self.db.profile["NeuronGDB"] = NeuronGDB
+	end
+	if (not NeuronBase.db.profile["NeuronSpec"]) then
+		self.db.profile["NeuronSpec"] = NeuronSpec
+	end
 
-	self.db.profile["NeuronCDB"] = NeuronCDB
-	self.db.profile["NeuronGDB"] = NeuronGDB
+	NeuronCDB = self.db.profile["NeuronCDB"]
+	NeuronGDB = self.db.profile["NeuronGDB"]
+	NeuronSpec = self.db.profile["NeuronSpec"]
+
+	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
 end
