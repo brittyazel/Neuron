@@ -67,15 +67,6 @@ local defGDB = {
 	bars = {},
 	buttons = {},
 
-	xbars = {},
-	xbtns = {},
-
-	sbars = {},
-	sbtns = {},
-
-	zoneabilitybars = {},
-	zoneabilitybtns = {},
-
 	buttonLoc = {-0.85, -111.45},
 	buttonRadius = 87.5,
 
@@ -88,8 +79,6 @@ local defGDB = {
 	vehicle = false,
 
 	firstRun = true,
-
-	betaWarning = false,
 
 	animate = true,
 	showmmb = true,
@@ -1928,7 +1917,6 @@ updater.elapsed = 0
 updater:Hide()
 
 local function control_OnEvent(self, event, ...)
-	NEURON.CurrEvent = event
 
 	if (event == "PLAYER_REGEN_DISABLED") then
 
