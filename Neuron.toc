@@ -6,8 +6,8 @@
 ## Version: @project-version@
 ## DefaultState: enabled
 ## OptionalDeps: Masque
-## SavedVariables: NeuronGDB, NeuronItemCache, NeuronProfilesDB
-## SavedVariablesPerCharacter: NeuronCDB, NeuronSpec,
+## SavedVariables: NeuronProfilesDB
+## SavedVariablesPerCharacter:
 ## X-Copyright: Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
 ## X-Permissions: AI-Art Visual Elements used with Author Permission (Quokka@WoWInterface)
 ## X-Email: bwyazel@gmail.com

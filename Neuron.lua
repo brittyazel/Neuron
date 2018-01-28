@@ -118,7 +118,6 @@ local defCDB = {
 
 local defSpec = {cSpec = 1}
 
-
 NeuronCDB = CopyTable(defCDB)
 NeuronGDB = CopyTable(defGDB)
 NeuronSpec = CopyTable(defSpec)
@@ -126,10 +125,8 @@ NeuronSpec = CopyTable(defSpec)
 NeuronItemCache = {}
 
 ---this is the Default profile when you "load defaults" in the ace profile window
-NeuronDefaults = {
-	profile = {},
-}
-
+NeuronDefaults = {}
+NeuronDefaults['profile'] = {}
 NeuronDefaults.profile['NeuronCDB'] = NeuronCDB
 NeuronDefaults.profile['NeuronGDB'] = NeuronGDB
 NeuronDefaults.profile['NeuronSpec'] = NeuronSpec
@@ -215,152 +212,19 @@ local handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate"
 
 local level, stanceStringsUpdated, PEW
 
+local interfaceOptions
 
----TODO: Move this to a GUI specific element with the GUI rewrite
---ACE GUI OPTION TABLE
-local options = {
-	name = "Neuron",
-	type = 'group',
-	args = {
-		moreoptions={
-			name = L["Options"],
-			type = "group",
-			order = 0,
-			args={
-				AnimateIcon = {
-					order = 0,
-					name = L["Animate Icon"],
-					desc = L["Toggles the Animation of the Neuron Orb Icon"],
-					type = "toggle",
-					set = function() NEURON:Animate() end,
-					get = function() return NeuronGDB.animate end,
-					width = "full",
-				},
-				BlizzardBar = {
-					order = 1,
-					name = L["Display the Blizzard Bar"],
-					desc = L["Shows / Hides the Default Blizzard Bar"],
-					type = "toggle",
-					set = function() NEURON:BlizzBar() end,
-					get = function() return NeuronGDB.mainbar end,
-					width = "full",
-				},
-				MMbutton = {
-					order = 2,
-					name = L["Display Minimap Button"],
-					desc = L["Toggles the minimap button."],
-					type = "toggle",
-					set =  function() NEURON:toggleMMB() end,
-					get = function() return NeuronGDB.showmmb end,
-					width = "full"
-				},
-			},
-		},
-
-		changelog = {
-			name = L["Changelog"],
-			type = "group",
-			order = 1000,
-			args = {
-				line1 = {
-					type = "description",
-					name = L["Changelog_Latest_Version"],
-				},
-			},
-		},
-
-		faq = {
-			name = L["F.A.Q."],
-			desc = L["Frequently Asked Questions"],
-			type = "group",
-			order = 1001,
-			args = {
-
-				line1 = {
-					type = "description",
-					name = L["FAQ_Intro"],
-				},
-
-				g1 = {
-					type = "group",
-					name = L["Bar Configuration"],
-					order = 1,
-					args = {
-
-						line1 = {
-							type = "description",
-							name = L["Bar_Configuration_FAQ"],
-							order = 1,
-						},
-
-						g1 = {
-							type = "group",
-							name = L["General Options"],
-							order = 1,
-							args = {
-								line1 = {
-									type = "description",
-									name = L["General_Bar_Configuration_Option_FAQ"] ,
-									order = 1,
-								},
-							},
-						},
-
-						g2 = {
-							type = "group",
-							name = L["Bar States"],
-							order = 2,
-							args = {
-								line1 = {
-									type = "description",
-									name = L["Bar_State_Configuration_FAQ"],
-									order = 1,
-								},
-							},
-						},
-
-						g3 = {
-							type = "group",
-							name = L["Spell Target Options"],
-							order = 3,
-							args = {
-								line1 = {
-									type = "description",
-									name = L["Spell_Target_Options_FAQ"],
-									order = 1,
-								},
-							},
-						},
-					},
-				},
-
-				g2 = {
-					type = "group",
-					name = L["Flyout"],
-					order = 3,
-					args = {
-						line1a = {
-							type = "description",
-							name = L["Flyout_FAQ"],
-							order = 1,
-						},
-					},
-				},
-
-			},
-		},
-	},
-}
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
 
 function NeuronBase:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
-    LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonName)
-    LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, options)
+	self:SetupInterfaceOptions()
+    LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(interfaceOptions, addonName)
+    LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, interfaceOptions)
 
-    options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+    interfaceOptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
 
     self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
@@ -376,13 +240,16 @@ function NeuronBase:OnInitialize()
     end
     if (not NeuronBase.db.profile["NeuronSpec"]) then
         self.db.profile["NeuronSpec"] = NeuronSpec
-    end
+	end
+	if (not NeuronBase.db.profile["NeuronItemCache"]) then
+		self.db.profile["NeuronItemCache"] = NeuronItemCache
+	end
 
 	---load saved variables into working variable containers
     NeuronCDB = self.db.profile["NeuronCDB"]
     NeuronGDB = self.db.profile["NeuronGDB"]
     NeuronSpec = self.db.profile["NeuronSpec"]
-    GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
+	NeuronItemCache = self.db.profile["NeuronItemCache"]
 
 	self:NeuronSetup()
 
@@ -417,24 +284,9 @@ function NeuronBase:OnInitialize()
 
 end
 
-function NeuronBase:PLAYER_REGEN_DISABLED()
-
-	if (NEURON.EditFrameShown) then
-		NEURON:ToggleEditFrames(nil, true)
-	end
-
-	if (NEURON.BindingMode) then
-		NEURON:ToggleBindings(nil, true)
-	end
-
-	if (NEURON.BarsShown) then
-		NEURON:ToggleBars(nil, true)
-	end
-
-end
-
-
 function NeuronBase:NeuronSetup()
+
+	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
 
 	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
 	NEURON.MBS = Neuron.MANAGED_BAR_STATES
@@ -442,8 +294,6 @@ function NeuronBase:NeuronSetup()
 	BAR = NEURON.BAR
 
 	NEURON.player, NEURON.class, NEURON.level, NEURON.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
-
-	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
 
 	for k,v in pairs(defGDB) do
 		if (GDB[k] == nil) then
@@ -500,6 +350,23 @@ function NeuronBase:NeuronSetup()
 	}
 
 end
+
+function NeuronBase:PLAYER_REGEN_DISABLED()
+
+	if (NEURON.EditFrameShown) then
+		NEURON:ToggleEditFrames(nil, true)
+	end
+
+	if (NEURON.BindingMode) then
+		NEURON:ToggleBindings(nil, true)
+	end
+
+	if (NEURON.BarsShown) then
+		NEURON:ToggleBars(nil, true)
+	end
+
+end
+
 
 function NeuronBase:PLAYER_LOGIN()
 
@@ -2227,4 +2094,149 @@ function NEURON:SetTimerLimit(msg)
 	else
 		NeuronBase:Print(L["Timer_Limit_Invalid_Message"])
 	end
+end
+
+
+
+
+
+
+function NeuronBase:SetupInterfaceOptions()
+
+	---TODO: Move this to a GUI specific element with the GUI rewrite
+	--ACE GUI OPTION TABLE
+	interfaceOptions = {
+		name = "Neuron",
+		type = 'group',
+		args = {
+			moreoptions={
+				name = L["Options"],
+				type = "group",
+				order = 0,
+				args={
+					AnimateIcon = {
+						order = 0,
+						name = L["Animate Icon"],
+						desc = L["Toggles the Animation of the Neuron Orb Icon"],
+						type = "toggle",
+						set = function() NEURON:Animate() end,
+						get = function() return NeuronGDB.animate end,
+						width = "full",
+					},
+					BlizzardBar = {
+						order = 1,
+						name = L["Display the Blizzard Bar"],
+						desc = L["Shows / Hides the Default Blizzard Bar"],
+						type = "toggle",
+						set = function() NEURON:BlizzBar() end,
+						get = function() return NeuronGDB.mainbar end,
+						width = "full",
+					},
+					MMbutton = {
+						order = 2,
+						name = L["Display Minimap Button"],
+						desc = L["Toggles the minimap button."],
+						type = "toggle",
+						set =  function() NEURON:toggleMMB() end,
+						get = function() return NeuronGDB.showmmb end,
+						width = "full"
+					},
+				},
+			},
+
+			changelog = {
+				name = L["Changelog"],
+				type = "group",
+				order = 1000,
+				args = {
+					line1 = {
+						type = "description",
+						name = L["Changelog_Latest_Version"],
+					},
+				},
+			},
+
+			faq = {
+				name = L["F.A.Q."],
+				desc = L["Frequently Asked Questions"],
+				type = "group",
+				order = 1001,
+				args = {
+
+					line1 = {
+						type = "description",
+						name = L["FAQ_Intro"],
+					},
+
+					g1 = {
+						type = "group",
+						name = L["Bar Configuration"],
+						order = 1,
+						args = {
+
+							line1 = {
+								type = "description",
+								name = L["Bar_Configuration_FAQ"],
+								order = 1,
+							},
+
+							g1 = {
+								type = "group",
+								name = L["General Options"],
+								order = 1,
+								args = {
+									line1 = {
+										type = "description",
+										name = L["General_Bar_Configuration_Option_FAQ"] ,
+										order = 1,
+									},
+								},
+							},
+
+							g2 = {
+								type = "group",
+								name = L["Bar States"],
+								order = 2,
+								args = {
+									line1 = {
+										type = "description",
+										name = L["Bar_State_Configuration_FAQ"],
+										order = 1,
+									},
+								},
+							},
+
+							g3 = {
+								type = "group",
+								name = L["Spell Target Options"],
+								order = 3,
+								args = {
+									line1 = {
+										type = "description",
+										name = L["Spell_Target_Options_FAQ"],
+										order = 1,
+									},
+								},
+							},
+						},
+					},
+
+					g2 = {
+						type = "group",
+						name = L["Flyout"],
+						order = 3,
+						args = {
+							line1a = {
+								type = "description",
+								name = L["Flyout_FAQ"],
+								order = 1,
+							},
+						},
+					},
+
+				},
+			},
+		},
+	}
+
 end
