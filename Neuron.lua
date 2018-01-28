@@ -351,8 +351,6 @@ local options = {
 		},
 	},
 }
-
-
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
@@ -386,196 +384,256 @@ function NeuronBase:OnInitialize()
     NeuronSpec = self.db.profile["NeuronSpec"]
     GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
 
+	self:NeuronSetup()
 
-	NeuronBase.elapsed = 0
-	NeuronBase:RegisterEvent("ADDON_LOADED", "control_OnEvent")
-	NeuronBase:RegisterEvent("VARIABLES_LOADED", "control_OnEvent")
-	NeuronBase:RegisterEvent("PLAYER_LOGIN", "control_OnEvent")
-	NeuronBase:RegisterEvent("PLAYER_LOGOUT", "control_OnEvent")
-	NeuronBase:RegisterEvent("PLAYER_ENTERING_WORLD", "control_OnEvent")
-	NeuronBase:RegisterEvent("PLAYER_LEAVING_WORLD", "control_OnEvent")
-	NeuronBase:RegisterEvent("PLAYER_REGEN_DISABLED", "control_OnEvent")
-	NeuronBase:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED", "control_OnEvent")
-	NeuronBase:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", "control_OnEvent")
-	NeuronBase:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", "control_OnEvent")
-	NeuronBase:RegisterEvent("SPELLS_CHANGED", "control_OnEvent")
-	NeuronBase:RegisterEvent("CHARACTER_POINTS_CHANGED", "control_OnEvent")
-	NeuronBase:RegisterEvent("LEARNED_SPELL_IN_TAB", "control_OnEvent")
-	NeuronBase:RegisterEvent("CURSOR_UPDATE", "control_OnEvent")
-	NeuronBase:RegisterEvent("PET_UI_CLOSE", "control_OnEvent")
-	NeuronBase:RegisterEvent("COMPANION_LEARNED", "control_OnEvent")
-	NeuronBase:RegisterEvent("COMPANION_UPDATE", "control_OnEvent")
-	NeuronBase:RegisterEvent("PET_JOURNAL_LIST_UPDATE", "control_OnEvent")
-	NeuronBase:RegisterEvent("UNIT_LEVEL", "control_OnEvent")
-	NeuronBase:RegisterEvent("UNIT_PET", "control_OnEvent")
-	NeuronBase:RegisterEvent("SPELL_UPDATE_COOLDOWN", "control_OnEvent")
-	NeuronBase:RegisterEvent("SPELL_UPDATE_USABLE", "control_OnEvent")
-	NeuronBase:RegisterEvent("SPELL_UPDATE_CHARGES", "control_OnEvent")
-	NeuronBase:RegisterEvent("ACTIONBAR_SLOT_CHANGED", "control_OnEvent")
-	NeuronBase:RegisterEvent("TOYS_UPDATED", "control_OnEvent")
+	self.updater = CreateFrame("Frame", nil, UIParent)
+	self.updater:SetScript("OnUpdate", RunUpdater)
+	self.updater.elapsed = 0
+	self.updater:Hide()
 
+	InterfaceOptionsFrame:SetFrameStrata("HIGH")
+
+	self.elapsed = 0
+
+	self:RegisterEvent("PLAYER_LOGIN")
+	self:RegisterEvent("PLAYER_REGEN_DISABLED")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("PLAYER_LOGOUT")
+	self:RegisterEvent("PLAYER_LEAVING_WORLD")
+	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+	self:RegisterEvent("PLAYER_TALENT_UPDATE")
+	self:RegisterEvent("SPELLS_CHANGED")
+	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
+	self:RegisterEvent("LEARNED_SPELL_IN_TAB")
+	self:RegisterEvent("PET_UI_CLOSE")
+	self:RegisterEvent("COMPANION_LEARNED")
+	self:RegisterEvent("COMPANION_UPDATE")
+	self:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+	self:RegisterEvent("UNIT_LEVEL")
+	self:RegisterEvent("UNIT_PET")
+	self:RegisterEvent("TOYS_UPDATED")
 
 
 end
 
+function NeuronBase:PLAYER_REGEN_DISABLED()
 
-function NeuronBase:control_OnEvent(self, event, ...)
-	NEURON.CurrEvent = event
+	if (NEURON.EditFrameShown) then
+		NEURON:ToggleEditFrames(nil, true)
+	end
 
-	if (event == "PLAYER_REGEN_DISABLED") then
+	if (NEURON.BindingMode) then
+		NEURON:ToggleBindings(nil, true)
+	end
 
-		if (NEURON.EditFrameShown) then
-			NEURON:ToggleEditFrames(nil, true)
-		end
-
-		if (NEURON.BindingMode) then
-			NEURON:ToggleBindings(nil, true)
-		end
-
-		if (NEURON.BarsShown) then
-			NEURON:ToggleBars(nil, true)
-		end
-
-	elseif (event == "ADDON_LOADED" and ... == "Neuron") then
-		NEURON.MAS = Neuron.MANAGED_ACTION_STATES
-		NEURON.MBS = Neuron.MANAGED_BAR_STATES
-
-		BAR = NEURON.BAR
-
-		NEURON.player, NEURON.class, NEURON.level, NEURON.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
-
-		GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
-
-		for k,v in pairs(defGDB) do
-			if (GDB[k] == nil) then
-				GDB[k] = v
-			end
-		end
-
-		for k,v in pairs(defCDB) do
-			if (CDB[k] == nil) then
-				CDB[k] = v
-			end
-		end
-
-		for k,v in pairs(defSpec) do
-			if (Spec[k] == nil) then
-				Spec[k] = v
-			end
-		end
-
-		NEURON:UpdateStanceStrings()
-
-		GameMenuFrame:HookScript("OnShow", function(self)
-
-			--if (NeuronMainMenu and NeuronMainMenu:IsShown()) then
-			--HideUIPanel(self); NEURON:ToggleMainMenu(nil, true)
-			--end
-
-			if (NEURON.BarsShown) then
-				HideUIPanel(self); NEURON:ToggleBars(nil, true)
-			end
-
-			if (NEURON.EditFrameShown) then
-				HideUIPanel(self); NEURON:ToggleEditFrames(nil, true)
-			end
-
-			if (NEURON.BindingMode) then
-				HideUIPanel(self); NEURON:ToggleBindings(nil, true)
-			end
-
-		end)
-
-		StaticPopupDialogs["NEURON_UPDATE_WARNING"] = {
-			text = Update_Message,
-			button1 = OKAY,
-			timeout = 0,
-			OnAccept = function() GDB.updateWarning = latestVersionNum end
-		}
-
-		StaticPopupDialogs["NEURON_INSTALL_MESSAGE"] = {
-			text = Install_Message,
-			button1 = OKAY,
-			timeout = 0,
-			OnAccept = function() GDB.updateWarning = latestVersionNum end,
-		}
-
-	elseif (event == "VARIABLES_LOADED") then
-
-		InterfaceOptionsFrame:SetFrameStrata("HIGH")
-
-
-	elseif (event == "PLAYER_LOGIN") then
-		local function hideAlerts(frame)
-			if (not GDB.mainbar) then
-				frame:Hide()
-			end
-		end
-
-		if (CompanionsMicroButtonAlert) then
-			CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
-		end
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-		GDB.firstRun = false
-		CDB.firstRun = false
-
-		NEURON:UpdateSpellIndex()
-		NEURON:UpdatePetSpellIndex()
-		NEURON:UpdateStanceStrings()
-		NEURON:UpdateCompanionData()
-		NEURON:UpdateToyData()
-		NEURON:UpdateIconIndex()
-
-		--Fix for Titan causing the Main Bar to not be hidden
-		if (IsAddOnLoaded("Titan")) then
-			TitanUtils_AddonAdjust("MainMenuBar", true)
-		end
-
-		NEURON:ToggleBlizzBar(GDB.mainbar)
-
-		if not GDB.showmmb then
-			NeuronMinimapButton:Hide()
-		end
-
-		PEW = true
-
-		if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
-			StaticPopup_Show("NEURON_UPDATE_WARNING")
-		elseif(GDB.updateWarning==nil) then
-			StaticPopup_Show("NEURON_INSTALL_MESSAGE")
-		end
-
-	elseif (event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_LOGOUT" or event == "PLAYER_LEAVING_WORLD") then
-		Spec.cSpec = GetSpecialization()
-
-	elseif (event == "ACTIVE_TALENT_GROUP_CHANGED" or
-			event == "LEARNED_SPELL_IN_TAB" or
-			event == "CHARACTER_POINTS_CHANGED" or
-			event == "SPELLS_CHANGED") then
-
-		updater.elapsed = 0
-		updater:Show()
-
-	elseif (event == "PET_UI_CLOSE" or event == "COMPANION_LEARNED" or event == "COMPANION_UPDATE" or event =="PET_JOURNAL_LIST_UPDATE") then
-		if not CollectionsJournal or not CollectionsJournal:IsShown() then NEURON:UpdateCompanionData()end
-	elseif (event == "UNIT_PET" and ... == "player") then
-
-		if (PEW) then
-			NEURON:UpdatePetSpellIndex()
-		end
-
-	elseif (event == "UNIT_LEVEL" and ... == "player") then
-		NEURON.level = UnitLevel("player")
-
-	elseif ( event == "TOYS_UPDATED" )then
-
-		if not ToyBox or not ToyBox:IsShown() then NEURON:UpdateToyData() end
+	if (NEURON.BarsShown) then
+		NEURON:ToggleBars(nil, true)
 	end
 
 end
 
 
+function NeuronBase:NeuronSetup()
+
+	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
+	NEURON.MBS = Neuron.MANAGED_BAR_STATES
+
+	BAR = NEURON.BAR
+
+	NEURON.player, NEURON.class, NEURON.level, NEURON.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
+
+	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
+
+	for k,v in pairs(defGDB) do
+		if (GDB[k] == nil) then
+			GDB[k] = v
+		end
+	end
+
+	for k,v in pairs(defCDB) do
+		if (CDB[k] == nil) then
+			CDB[k] = v
+		end
+	end
+
+	for k,v in pairs(defSpec) do
+		if (Spec[k] == nil) then
+			Spec[k] = v
+		end
+	end
+
+	NEURON:UpdateStanceStrings()
+
+	GameMenuFrame:HookScript("OnShow", function(self)
+
+		--if (NeuronMainMenu and NeuronMainMenu:IsShown()) then
+		--HideUIPanel(self); NEURON:ToggleMainMenu(nil, true)
+		--end
+
+		if (NEURON.BarsShown) then
+			HideUIPanel(self); NEURON:ToggleBars(nil, true)
+		end
+
+		if (NEURON.EditFrameShown) then
+			HideUIPanel(self); NEURON:ToggleEditFrames(nil, true)
+		end
+
+		if (NEURON.BindingMode) then
+			HideUIPanel(self); NEURON:ToggleBindings(nil, true)
+		end
+
+	end)
+
+	StaticPopupDialogs["NEURON_UPDATE_WARNING"] = {
+		text = Update_Message,
+		button1 = OKAY,
+		timeout = 0,
+		OnAccept = function() GDB.updateWarning = latestVersionNum end
+	}
+
+	StaticPopupDialogs["NEURON_INSTALL_MESSAGE"] = {
+		text = Install_Message,
+		button1 = OKAY,
+		timeout = 0,
+		OnAccept = function() GDB.updateWarning = latestVersionNum end,
+	}
+
+end
+
+function NeuronBase:PLAYER_LOGIN()
+
+	local function hideAlerts(frame)
+		if (not GDB.mainbar) then
+			frame:Hide()
+		end
+	end
+
+	if (CompanionsMicroButtonAlert) then
+		CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
+	end
+
+end
+
+
+function NeuronBase:PLAYER_ENTERING_WORLD()
+	GDB.firstRun = false
+	CDB.firstRun = false
+
+	NEURON:UpdateSpellIndex()
+	NEURON:UpdatePetSpellIndex()
+	NEURON:UpdateStanceStrings()
+	NEURON:UpdateCompanionData()
+	NEURON:UpdateToyData()
+	NEURON:UpdateIconIndex()
+
+	--Fix for Titan causing the Main Bar to not be hidden
+	if (IsAddOnLoaded("Titan")) then
+		TitanUtils_AddonAdjust("MainMenuBar", true)
+	end
+
+	NEURON:ToggleBlizzBar(GDB.mainbar)
+
+	if not GDB.showmmb then
+		NeuronMinimapButton:Hide()
+	end
+
+	PEW = true
+
+	if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
+		StaticPopup_Show("NEURON_UPDATE_WARNING")
+	elseif(GDB.updateWarning==nil) then
+		StaticPopup_Show("NEURON_INSTALL_MESSAGE")
+	end
+end
+
+function NeuronBase:PLAYER_SPECIALIZATION_CHANGED()
+	Spec.cSpec = GetSpecialization()
+end
+function NeuronBase:PLAYER_TALENT_UPDATE()
+	Spec.cSpec = GetSpecialization()
+end
+function NeuronBase:PLAYER_LOGOUT()
+	Spec.cSpec = GetSpecialization()
+end
+function NeuronBase:PLAYER_LEAVING_WORLD()
+	Spec.cSpec = GetSpecialization()
+end
+
+function NeuronBase:ACTIVE_TALENT_GROUP_CHANGED()
+	self.updater.elapsed = 0
+	self.updater:Show()
+end
+function NeuronBase:LEARNED_SPELL_IN_TAB()
+	self.updater.elapsed = 0
+	self.updater:Show()
+end
+function NeuronBase:CHARACTER_POINTS_CHANGED()
+	self.updater.elapsed = 0
+	self.updater:Show()
+end
+function NeuronBase:SPELLS_CHANGED()
+	self.updater.elapsed = 0
+	self.updater:Show()
+end
+
+function NeuronBase:PET_UI_CLOSE()
+	if not CollectionsJournal or not CollectionsJournal:IsShown() then
+		NEURON:UpdateCompanionData()
+	end
+end
+function NeuronBase:COMPANION_LEARNED()
+	if not CollectionsJournal or not CollectionsJournal:IsShown() then
+		NEURON:UpdateCompanionData()
+	end
+end
+function NeuronBase:COMPANION_UPDATE()
+	if not CollectionsJournal or not CollectionsJournal:IsShown() then
+		NEURON:UpdateCompanionData()
+	end
+end
+function NeuronBase:PET_JOURNAL_LIST_UPDATE()
+	if not CollectionsJournal or not CollectionsJournal:IsShown() then
+		NEURON:UpdateCompanionData()
+	end
+end
+
+
+function NeuronBase:UNIT_PET(eventName, ...)
+	if ... == "player" then
+		if (PEW) then
+			NEURON:UpdatePetSpellIndex()
+		end
+	end
+end
+
+function NeuronBase:UNIT_LEVEL(eventName, ...)
+	if ... == "player" then
+		NEURON.level = UnitLevel("player")
+	end
+end
+
+function NeuronBase:TOYS_UPDATED()
+	if not ToyBox or not ToyBox:IsShown() then
+		NEURON:UpdateToyData()
+	end
+end
+
+local function RunUpdater(self, elapsed)
+
+	self.elapsed = elapsed
+
+	if (self.elapsed > 0) then
+
+		NEURON:UpdateSpellIndex()
+		NEURON:UpdateStanceStrings()
+
+		self:Hide()
+	end
+end
+
+
+---TODO:figure out what to do with this
 frame = CreateFrame("GameTooltip", "NeuronTooltipScan", UIParent, "GameTooltipTemplate")
 frame:SetOwner(UIParent, "ANCHOR_NONE")
 frame:SetFrameStrata("TOOLTIP")
@@ -2170,22 +2228,3 @@ function NEURON:SetTimerLimit(msg)
 		NeuronBase:Print(L["Timer_Limit_Invalid_Message"])
 	end
 end
-
-
-local function runUpdater(self, elapsed)
-
-	self.elapsed = elapsed
-
-	if (self.elapsed > 0) then
-
-		NEURON:UpdateSpellIndex()
-		NEURON:UpdateStanceStrings()
-
-		self:Hide()
-	end
-end
-
-local updater = CreateFrame("Frame", nil, UIParent)
-updater:SetScript("OnUpdate", runUpdater)
-updater.elapsed = 0
-updater:Hide()
