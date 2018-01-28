@@ -260,8 +260,6 @@ function NeuronBase:OnInitialize()
 
 	InterfaceOptionsFrame:SetFrameStrata("HIGH")
 
-	self.elapsed = 0
-
 	self:RegisterEvent("PLAYER_LOGIN")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -417,12 +415,15 @@ end
 function NeuronBase:PLAYER_SPECIALIZATION_CHANGED()
 	Spec.cSpec = GetSpecialization()
 end
+
 function NeuronBase:PLAYER_TALENT_UPDATE()
 	Spec.cSpec = GetSpecialization()
 end
+
 function NeuronBase:PLAYER_LOGOUT()
 	Spec.cSpec = GetSpecialization()
 end
+
 function NeuronBase:PLAYER_LEAVING_WORLD()
 	Spec.cSpec = GetSpecialization()
 end
@@ -431,14 +432,17 @@ function NeuronBase:ACTIVE_TALENT_GROUP_CHANGED()
 	self.updater.elapsed = 0
 	self.updater:Show()
 end
+
 function NeuronBase:LEARNED_SPELL_IN_TAB()
 	self.updater.elapsed = 0
 	self.updater:Show()
 end
+
 function NeuronBase:CHARACTER_POINTS_CHANGED()
 	self.updater.elapsed = 0
 	self.updater:Show()
 end
+
 function NeuronBase:SPELLS_CHANGED()
 	self.updater.elapsed = 0
 	self.updater:Show()
@@ -449,16 +453,19 @@ function NeuronBase:PET_UI_CLOSE()
 		NEURON:UpdateCompanionData()
 	end
 end
+
 function NeuronBase:COMPANION_LEARNED()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		NEURON:UpdateCompanionData()
 	end
 end
+
 function NeuronBase:COMPANION_UPDATE()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		NEURON:UpdateCompanionData()
 	end
 end
+
 function NeuronBase:PET_JOURNAL_LIST_UPDATE()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		NEURON:UpdateCompanionData()
