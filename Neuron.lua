@@ -282,7 +282,7 @@ function NeuronBase:OnInitialize()
 
 end
 
-function NeuronBase:NeuronSetup()
+function NeuronBase:NeuronSetup() ---this funtions sets up much of the working space, and is called by the OnInitialize function
 
 	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
 
@@ -666,6 +666,9 @@ end
 
 
 
+------------------------------------------------------------
+--------------------Intermediate Functions------------------
+------------------------------------------------------------
 
 function NEURON:GetParentKeys(frame)
 	if (frame == nil) then
