@@ -38,7 +38,7 @@ Also, all bar types are now taken into account in the Neuron Profile's option. S
 
 -Soyier]]
 
-
+--initializes the main worker Global variable that is passed between the addons
 Neuron = {
 	sIndex = {},
 	iIndex = {[1] = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"},
@@ -121,15 +121,15 @@ local defSpec = {cSpec = 1}
 NeuronCDB = CopyTable(defCDB)
 NeuronGDB = CopyTable(defGDB)
 NeuronSpec = CopyTable(defSpec)
-
 NeuronItemCache = {}
 
 ---this is the Default profile when you "load defaults" in the ace profile window
 NeuronDefaults = {}
-NeuronDefaults['profile'] = {}
+NeuronDefaults['profile'] = {} --populate the Default profile with globals
 NeuronDefaults.profile['NeuronCDB'] = NeuronCDB
 NeuronDefaults.profile['NeuronGDB'] = NeuronGDB
 NeuronDefaults.profile['NeuronSpec'] = NeuronSpec
+NeuronDefaults.profile['NeuronItemCache'] = NeuronItemCache
 
 local NEURON = Neuron
 local BAR --gets set to NEURON.BAR in the OnEvent method
