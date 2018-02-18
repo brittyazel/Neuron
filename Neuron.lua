@@ -253,11 +253,6 @@ function NeuronBase:OnInitialize()
 
 	self:NeuronSetup()
 
-	self.updater = CreateFrame("Frame", nil, UIParent)
-	self.updater:SetScript("OnUpdate", RunUpdater)
-	self.updater.elapsed = 0
-	self.updater:Hide()
-
 	InterfaceOptionsFrame:SetFrameStrata("HIGH")
 
 	self:RegisterEvent("PLAYER_LOGIN")
@@ -429,23 +424,23 @@ function NeuronBase:PLAYER_LEAVING_WORLD()
 end
 
 function NeuronBase:ACTIVE_TALENT_GROUP_CHANGED()
-	self.updater.elapsed = 0
-	self.updater:Show()
+	NEURON:UpdateSpellIndex()
+	NEURON:UpdateStanceStrings()
 end
 
 function NeuronBase:LEARNED_SPELL_IN_TAB()
-	self.updater.elapsed = 0
-	self.updater:Show()
+	NEURON:UpdateSpellIndex()
+	NEURON:UpdateStanceStrings()
 end
 
 function NeuronBase:CHARACTER_POINTS_CHANGED()
-	self.updater.elapsed = 0
-	self.updater:Show()
+	NEURON:UpdateSpellIndex()
+	NEURON:UpdateStanceStrings()
 end
 
 function NeuronBase:SPELLS_CHANGED()
-	self.updater.elapsed = 0
-	self.updater:Show()
+	NEURON:UpdateSpellIndex()
+	NEURON:UpdateStanceStrings()
 end
 
 function NeuronBase:PET_UI_CLOSE()
@@ -490,19 +485,6 @@ end
 function NeuronBase:TOYS_UPDATED()
 	if not ToyBox or not ToyBox:IsShown() then
 		NEURON:UpdateToyData()
-	end
-end
-
-local function RunUpdater(self, elapsed)
-
-	self.elapsed = elapsed
-
-	if (self.elapsed > 0) then
-
-		NEURON:UpdateSpellIndex()
-		NEURON:UpdateStanceStrings()
-
-		self:Hide()
 	end
 end
 
