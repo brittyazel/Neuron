@@ -665,7 +665,7 @@ function BUTTON:MACRO_SetSpellIcon(spell)
 	else
 		if (self.data.macro_Watch) then
 			--for i=1,select("#",GetMacroInfo(self.data.macro_Watch)) do
-			--	NeuronBase:Print(select(i,GetMacroInfo(self.data.macro_Watch)))
+			--	Neuron:Print(select(i,GetMacroInfo(self.data.macro_Watch)))
 			--end
 
 			_, texture = GetMacroInfo(self.data.macro_Watch)
@@ -2035,7 +2035,7 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 	local cursorType, action1, action2, spellID = GetCursorInfo()
 
 	--for i=1,select("#",GetCursorInfo()) do
-	--	NeuronBase:Print(i..": "..select(i,GetCursorInfo()))
+	--	Neuron:Print(i..": "..select(i,GetCursorInfo()))
 	--end
 
 	local texture = self.iconframeicon:GetTexture()
@@ -2856,10 +2856,10 @@ function BUTTON:SaveData(state)
 		self:BuildStateData()
 
 	else
-		NeuronBase:Print("DEBUG: Bad Save Data for "..self:GetName().." ?")
-		--NeuronBase:Print(debugstack())
-		--NeuronBase:Print(self:GetParent():GetName())
-		NeuronBase:Print(index); NeuronBase:Print(spec); NeuronBase:Print(state)
+		Neuron:Print("DEBUG: Bad Save Data for "..self:GetName().." ?")
+		--Neuron:Print(debugstack())
+		--Neuron:Print(self:GetParent():GetName())
+		Neuron:Print(index); Neuron:Print(spec); Neuron:Print(state)
 	end
 end
 

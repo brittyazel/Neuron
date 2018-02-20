@@ -2707,11 +2707,11 @@ local function controlOnEvent(self, event, ...)
 		MirrorTimer2:UnregisterAllEvents()
 		MirrorTimer3:UnregisterAllEvents()
 
-		if (not NeuronBase.db.profile["NeuronStatusDB"]) then
-			NeuronBase.db.profile["NeuronStatusDB"] = NeuronStatusDB
+		if (not Neuron.db.profile["NeuronStatusDB"]) then
+			Neuron.db.profile["NeuronStatusDB"] = NeuronStatusDB
 		end
 
-		DB = NeuronBase.db.profile["NeuronStatusDB"]
+		DB = Neuron.db.profile["NeuronStatusDB"]
 
 		for k,v in pairs(defDB) do
 			if (DB[k] == nil) then

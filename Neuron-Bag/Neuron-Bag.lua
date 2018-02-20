@@ -396,11 +396,11 @@ local function controlOnEvent(self, event, ...)
 		end
 
 
-		if (not NeuronBase.db.profile["NeuronBagDB"]) then
-			NeuronBase.db.profile["NeuronBagDB"] = NeuronBagDB
+		if (not Neuron.db.profile["NeuronBagDB"]) then
+			Neuron.db.profile["NeuronBagDB"] = NeuronBagDB
 		end
 
-		DB = NeuronBase.db.profile["NeuronBagDB"]
+		DB = Neuron.db.profile["NeuronBagDB"]
 
 		for k,v in pairs(defDB) do
 			if (DB[k] == nil) then

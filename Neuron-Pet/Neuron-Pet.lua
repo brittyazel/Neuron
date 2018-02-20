@@ -647,11 +647,11 @@ local function controlOnEvent(self, event, ...)
 		PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
 
-        if (not NeuronBase.db.profile["NeuronPetDB"]) then
-            NeuronBase.db.profile["NeuronPetDB"] = NeuronPetDB
+        if (not Neuron.db.profile["NeuronPetDB"]) then
+            Neuron.db.profile["NeuronPetDB"] = NeuronPetDB
         end
 
-		DB = NeuronBase.db.profile["NeuronPetDB"]
+		DB = Neuron.db.profile["NeuronPetDB"]
 
 		for k,v in pairs(defDB) do
 			if (DB[k] == nil) then

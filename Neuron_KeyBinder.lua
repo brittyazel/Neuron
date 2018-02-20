@@ -471,7 +471,7 @@ function NEURON:ToggleBindings(show, hide)
 		--for i = 1, select("#", NeuronBindingsEditor:GetRegions()) do
 		--	local region = select(i, NeuronBindingsEditor:GetRegions())
 		--	if (region) then
-		--		NeuronBase:Print(region:GetName())
+		--		Neuron:Print(region:GetName())
 		--	end
 		--end
 	end

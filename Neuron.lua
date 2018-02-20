@@ -7,8 +7,14 @@ local addonName = ...
 
 local GDB, CDB, Spec
 
-NeuronBase = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0", "AceEvent-3.0")
+Neuron = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+
+local NEURON = Neuron
+
+local BAR --gets set to NEURON.BAR in the OnEvent method
+
+local icons = {}
 
 -------------------------------------------------------------------------------
 -- AddOn namespace.
@@ -38,30 +44,34 @@ Also, all bar types are now taken into account in the Neuron Profile's option. S
 
 -Soyier]]
 
---initializes the main worker Global variable that is passed between the addons
-Neuron = {
-	sIndex = {},
-	iIndex = {[1] = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"},
-	cIndex = {},
-	tIndex = {},
-	StanceIndex = {},
-	ShowGrids = {},
-	HideGrids = {},
-	BARIndex = {},
-	BARNameIndex = {},
-	BTNIndex = {},
-	EDITIndex = {},
-	BINDIndex = {},
-	SKINIndex = {},
-	ModuleIndex = 0,
-	RegisteredBarData = {},
-	RegisteredGUIData = {},
-	MacroDrag = {},
-	StartDrag = false,
-	maxActionID = 132,
-	maxPetID = 10,
-	maxStanceID = NUM_STANCE_SLOTS, --(10)
-}
+
+NEURON['sIndex'] = {}
+NEURON['iIndex'] = {[1] = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK" }
+NEURON['cIndex'] = {}
+NEURON['tIndex'] = {}
+NEURON['StanceIndex'] = {}
+NEURON['ShowGrids'] = {}
+NEURON['HideGrids'] = {}
+NEURON['BARIndex'] = {}
+NEURON['BARNameIndex'] = {}
+NEURON['BTNIndex'] = {}
+NEURON['EDITIndex'] = {}
+NEURON['BINDIndex'] = {}
+NEURON['SKINIndex'] = {}
+NEURON['ModuleIndex'] = 0
+NEURON['RegisteredBarData'] = {}
+NEURON['RegisteredGUIData'] = {}
+NEURON['MacroDrag'] = {}
+NEURON['StartDrag'] = false
+NEURON['maxActionID'] = 132
+NEURON['maxPetID'] = 10
+NEURON['maxStanceID'] = NUM_STANCE_SLOTS
+
+local BARIndex = NEURON.BARIndex
+local BARNameIndex = NEURON.BARNameIndex
+local BTNIndex = NEURON.BTNIndex
+local ICONS = NEURON.iIndex
+
 
 local defGDB = {
 	bars = {},
@@ -131,12 +141,6 @@ NeuronDefaults.profile['NeuronGDB'] = NeuronGDB
 NeuronDefaults.profile['NeuronSpec'] = NeuronSpec
 NeuronDefaults.profile['NeuronItemCache'] = NeuronItemCache
 
-local NEURON = Neuron
-local BAR --gets set to NEURON.BAR in the OnEvent method
-
-local BARIndex, BARNameIndex, BTNIndex, ICONS = NEURON.BARIndex, NEURON.BARNameIndex, NEURON.BTNIndex, NEURON.iIndex
-
-local icons = {}
 
 NEURON.GameVersion, NEURON.GameBuild, NEURON.GameDate, NEURON.TOCVersion = GetBuildInfo()
 
@@ -218,7 +222,7 @@ local interfaceOptions
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
 
-function NeuronBase:OnInitialize()
+function NEURON:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
 	self:SetupInterfaceOptions()
     LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(interfaceOptions, addonName)
@@ -232,16 +236,16 @@ function NeuronBase:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
     self.db.RegisterCallback(self, "OnDatabaseReset", "RefreshConfig")
 
-    if (not NeuronBase.db.profile["NeuronCDB"]) then
+    if (not Neuron.db.profile["NeuronCDB"]) then
         self.db.profile["NeuronCDB"] = NeuronCDB
     end
-    if (not NeuronBase.db.profile["NeuronGDB"]) then
+    if (not Neuron.db.profile["NeuronGDB"]) then
         self.db.profile["NeuronGDB"] = NeuronGDB
     end
-    if (not NeuronBase.db.profile["NeuronSpec"]) then
+    if (not Neuron.db.profile["NeuronSpec"]) then
         self.db.profile["NeuronSpec"] = NeuronSpec
 	end
-	if (not NeuronBase.db.profile["NeuronItemCache"]) then
+	if (not Neuron.db.profile["NeuronItemCache"]) then
 		self.db.profile["NeuronItemCache"] = NeuronItemCache
 	end
 
@@ -277,7 +281,7 @@ function NeuronBase:OnInitialize()
 
 end
 
-function NeuronBase:NeuronSetup() ---this funtions sets up much of the working space, and is called by the OnInitialize function
+function NEURON:NeuronSetup() ---this funtions sets up much of the working space, and is called by the OnInitialize function
 
 	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
 
@@ -344,7 +348,7 @@ function NeuronBase:NeuronSetup() ---this funtions sets up much of the working s
 
 end
 
-function NeuronBase:PLAYER_REGEN_DISABLED()
+function NEURON:PLAYER_REGEN_DISABLED()
 
 	if (NEURON.EditFrameShown) then
 		NEURON:ToggleEditFrames(nil, true)
@@ -361,7 +365,7 @@ function NeuronBase:PLAYER_REGEN_DISABLED()
 end
 
 
-function NeuronBase:PLAYER_LOGIN()
+function NEURON:PLAYER_LOGIN()
 
 	local function hideAlerts(frame)
 		if (not GDB.mainbar) then
@@ -376,7 +380,7 @@ function NeuronBase:PLAYER_LOGIN()
 end
 
 
-function NeuronBase:PLAYER_ENTERING_WORLD()
+function NEURON:PLAYER_ENTERING_WORLD()
 	GDB.firstRun = false
 	CDB.firstRun = false
 
@@ -407,68 +411,68 @@ function NeuronBase:PLAYER_ENTERING_WORLD()
 	end
 end
 
-function NeuronBase:PLAYER_SPECIALIZATION_CHANGED()
+function NEURON:PLAYER_SPECIALIZATION_CHANGED()
 	Spec.cSpec = GetSpecialization()
 end
 
-function NeuronBase:PLAYER_TALENT_UPDATE()
+function NEURON:PLAYER_TALENT_UPDATE()
 	Spec.cSpec = GetSpecialization()
 end
 
-function NeuronBase:PLAYER_LOGOUT()
+function NEURON:PLAYER_LOGOUT()
 	Spec.cSpec = GetSpecialization()
 end
 
-function NeuronBase:PLAYER_LEAVING_WORLD()
+function NEURON:PLAYER_LEAVING_WORLD()
 	Spec.cSpec = GetSpecialization()
 end
 
-function NeuronBase:ACTIVE_TALENT_GROUP_CHANGED()
+function NEURON:ACTIVE_TALENT_GROUP_CHANGED()
 	NEURON:UpdateSpellIndex()
 	NEURON:UpdateStanceStrings()
 end
 
-function NeuronBase:LEARNED_SPELL_IN_TAB()
+function NEURON:LEARNED_SPELL_IN_TAB()
 	NEURON:UpdateSpellIndex()
 	NEURON:UpdateStanceStrings()
 end
 
-function NeuronBase:CHARACTER_POINTS_CHANGED()
+function NEURON:CHARACTER_POINTS_CHANGED()
 	NEURON:UpdateSpellIndex()
 	NEURON:UpdateStanceStrings()
 end
 
-function NeuronBase:SPELLS_CHANGED()
+function NEURON:SPELLS_CHANGED()
 	NEURON:UpdateSpellIndex()
 	NEURON:UpdateStanceStrings()
 end
 
-function NeuronBase:PET_UI_CLOSE()
+function NEURON:PET_UI_CLOSE()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		NEURON:UpdateCompanionData()
 	end
 end
 
-function NeuronBase:COMPANION_LEARNED()
+function NEURON:COMPANION_LEARNED()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		NEURON:UpdateCompanionData()
 	end
 end
 
-function NeuronBase:COMPANION_UPDATE()
+function NEURON:COMPANION_UPDATE()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		NEURON:UpdateCompanionData()
 	end
 end
 
-function NeuronBase:PET_JOURNAL_LIST_UPDATE()
+function NEURON:PET_JOURNAL_LIST_UPDATE()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		NEURON:UpdateCompanionData()
 	end
 end
 
 
-function NeuronBase:UNIT_PET(eventName, ...)
+function NEURON:UNIT_PET(eventName, ...)
 	if ... == "player" then
 		if (PEW) then
 			NEURON:UpdatePetSpellIndex()
@@ -476,13 +480,13 @@ function NeuronBase:UNIT_PET(eventName, ...)
 	end
 end
 
-function NeuronBase:UNIT_LEVEL(eventName, ...)
+function NEURON:UNIT_LEVEL(eventName, ...)
 	if ... == "player" then
 		NEURON.level = UnitLevel("player")
 	end
 end
 
-function NeuronBase:TOYS_UPDATED()
+function NEURON:TOYS_UPDATED()
 	if not ToyBox or not ToyBox:IsShown() then
 		NEURON:UpdateToyData()
 	end
@@ -500,7 +504,7 @@ frame:Hide()
 --------------------Profiles---------------------------------------------
 -------------------------------------------------------------------------
 
-function NeuronBase:RefreshConfig()
+function NEURON:RefreshConfig()
     NeuronCDB = self.db.profile["NeuronCDB"]
     NeuronGDB = self.db.profile["NeuronGDB"]
     NeuronSpec = {cSpec = GetSpecialization() }
@@ -593,9 +597,9 @@ local slashFunctions = {
 	{L["Animate"], L["Animate_Description"], "Animate"},
 }
 ---New Slash functionality using Ace3
-NeuronBase:RegisterChatCommand("neuron", "slashHandler")
+NEURON:RegisterChatCommand("neuron", "slashHandler")
 
-function NeuronBase:slashHandler(input)
+function NEURON:slashHandler(input)
 
 	if (strlen(input)==0 or input:lower() == "help") then
 		printSlashHelp()
@@ -621,7 +625,7 @@ function NeuronBase:slashHandler(input)
 			elseif (bar and bar[func]) then
 				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
 			else
-				NeuronBase:Print(L["No bar selected or command invalid"])
+				Neuron:Print(L["No bar selected or command invalid"])
 			end
 			return
 		end
@@ -633,14 +637,14 @@ end
 
 function printSlashHelp()
 
-	NeuronBase:Print("---------------------------------------------------")
-	NeuronBase:Print(L["How to use"]..":   ".."/"..addonName:lower().." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
-	NeuronBase:Print(L["Command List"]..":")
-	NeuronBase:Print("---------------------------------------------------")
+	Neuron:Print("---------------------------------------------------")
+	Neuron:Print(L["How to use"]..":   ".."/"..addonName:lower().." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
+	Neuron:Print(L["Command List"]..":")
+	Neuron:Print("---------------------------------------------------")
 
 	for i = 1,#slashFunctions do
 		--formats the output to be the command name and then the description
-		NeuronBase:Print(slashFunctions[i][1].." - " .."("..slashFunctions[i][2]..")")
+		Neuron:Print(slashFunctions[i][1].." - " .."("..slashFunctions[i][2]..")")
 	end
 
 end
@@ -2004,7 +2008,7 @@ function NEURON:PrintStateList()
 		end
 	end
 
-	NeuronBase:Print(list..L["Custom_Option"])
+	Neuron:Print(list..L["Custom_Option"])
 end
 
 
@@ -2028,13 +2032,13 @@ function NEURON:PrintBarTypes()
 	for i=1,high do if (not data[i]) then data[i] = 0 end end
 
 
-	NeuronBase:Print("---------------------------------------------------")
-	NeuronBase:Print("     "..L["How to use"]..":   ".."/"..addonName:lower().." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
-	NeuronBase:Print("---------------------------------------------------")
+	Neuron:Print("---------------------------------------------------")
+	Neuron:Print("     "..L["How to use"]..":   ".."/"..addonName:lower().." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
+	Neuron:Print("---------------------------------------------------")
 
 	for k,v in ipairs(data) do
 		if (type(v) == "table") then
-			NeuronBase:Print("    |cff00ff00"..v[1]..":|r "..v[2])
+			Neuron:Print("    |cff00ff00"..v[1]..":|r "..v[2])
 		end
 	end
 
@@ -2082,9 +2086,9 @@ function NEURON:SetTimerLimit(msg)
 
 	if (limit and limit > 0) then
 		GDB.timerLimit = limit
-		NeuronBase:Print(format(L["Timer_Limit_Set_Message"], GDB.timerLimit))
+		Neuron:Print(format(L["Timer_Limit_Set_Message"], GDB.timerLimit))
 	else
-		NeuronBase:Print(L["Timer_Limit_Invalid_Message"])
+		Neuron:Print(L["Timer_Limit_Invalid_Message"])
 	end
 end
 
@@ -2093,7 +2097,7 @@ end
 
 
 
-function NeuronBase:SetupInterfaceOptions()
+function Neuron:SetupInterfaceOptions()
 
 	---TODO: Move this to a GUI specific element with the GUI rewrite
 	--ACE GUI OPTION TABLE
