@@ -8,9 +8,9 @@ local addonName = ...
 local GDB, CDB, Spec
 
 Neuron = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0", "AceEvent-3.0")
-local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+local NEURON = Neuron ---this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
 
-local NEURON = Neuron
+local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local BAR --gets set to NEURON.BAR in the OnEvent method
 
@@ -222,44 +222,55 @@ local interfaceOptions
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
 
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
 function NEURON:OnInitialize()
-    self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
+	self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
 	self:SetupInterfaceOptions()
-    LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(interfaceOptions, addonName)
-    LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, interfaceOptions)
+	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(interfaceOptions, addonName)
+	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, interfaceOptions)
 
-    interfaceOptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-    LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
+	interfaceOptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
 
-    self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
-    self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
-    self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
-    self.db.RegisterCallback(self, "OnDatabaseReset", "RefreshConfig")
+	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
+	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
+	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
+	self.db.RegisterCallback(self, "OnDatabaseReset", "RefreshConfig")
 
-    if (not Neuron.db.profile["NeuronCDB"]) then
-        self.db.profile["NeuronCDB"] = NeuronCDB
-    end
-    if (not Neuron.db.profile["NeuronGDB"]) then
-        self.db.profile["NeuronGDB"] = NeuronGDB
-    end
-    if (not Neuron.db.profile["NeuronSpec"]) then
-        self.db.profile["NeuronSpec"] = NeuronSpec
+	if (not Neuron.db.profile["NeuronCDB"]) then
+		self.db.profile["NeuronCDB"] = NeuronCDB
+	end
+	if (not Neuron.db.profile["NeuronGDB"]) then
+		self.db.profile["NeuronGDB"] = NeuronGDB
+	end
+	if (not Neuron.db.profile["NeuronSpec"]) then
+		self.db.profile["NeuronSpec"] = NeuronSpec
 	end
 	if (not Neuron.db.profile["NeuronItemCache"]) then
 		self.db.profile["NeuronItemCache"] = NeuronItemCache
 	end
 
 	---load saved variables into working variable containers
-    NeuronCDB = self.db.profile["NeuronCDB"]
-    NeuronGDB = self.db.profile["NeuronGDB"]
-    NeuronSpec = self.db.profile["NeuronSpec"]
+	NeuronCDB = self.db.profile["NeuronCDB"]
+	NeuronGDB = self.db.profile["NeuronGDB"]
+	NeuronSpec = self.db.profile["NeuronSpec"]
 	NeuronItemCache = self.db.profile["NeuronItemCache"]
 
 	self:NeuronSetup()
 
 	InterfaceOptionsFrame:SetFrameStrata("HIGH")
 
-	self:RegisterEvent("PLAYER_LOGIN")
+	NEURON:RegisterChatCommand("neuron", "slashHandler")
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NEURON:OnEnable()
+
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("PLAYER_LOGOUT")
@@ -279,7 +290,27 @@ function NEURON:OnInitialize()
 	self:RegisterEvent("TOYS_UPDATED")
 
 
+	local function hideAlerts(frame)
+		if (not GDB.mainbar) then
+			frame:Hide()
+		end
+	end
+
+	if (CompanionsMicroButtonAlert) then
+		CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
+	end
+
 end
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NEURON:OnDisable()
+
+end
+
+
 
 function NEURON:NeuronSetup() ---this function sets up much of the working space, and is called by the OnInitialize function
 
@@ -356,21 +387,6 @@ function NEURON:PLAYER_REGEN_DISABLED()
 
 	if (NEURON.BarsShown) then
 		NEURON:ToggleBars(nil, true)
-	end
-
-end
-
-
-function NEURON:PLAYER_LOGIN()
-
-	local function hideAlerts(frame)
-		if (not GDB.mainbar) then
-			frame:Hide()
-		end
-	end
-
-	if (CompanionsMicroButtonAlert) then
-		CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
 	end
 
 end
@@ -501,41 +517,41 @@ frame:Hide()
 -------------------------------------------------------------------------
 
 function NEURON:RefreshConfig()
-    NeuronCDB = self.db.profile["NeuronCDB"]
-    NeuronGDB = self.db.profile["NeuronGDB"]
-    NeuronSpec = {cSpec = GetSpecialization() }
+	NeuronCDB = self.db.profile["NeuronCDB"]
+	NeuronGDB = self.db.profile["NeuronGDB"]
+	NeuronSpec = {cSpec = GetSpecialization() }
 
-    GDB, CDB, Spec =  NeuronGDB, NeuronCDB, NeuronSpec
-    ButtonProfileUpdate()
+	GDB, CDB, Spec =  NeuronGDB, NeuronCDB, NeuronSpec
+	ButtonProfileUpdate()
 
-    if(self.db.profile["NeuronBagDB"]) then
-        NeuronBagDB = self.db.profile["NeuronBagDB"]
-        BagProfileUpdate()
-    end
-    if(self.db.profile["NeuronMenuDB"]) then
-        NeuronMenuDB = self.db.profile["NeuronMenuDB"]
-        MenuProfileUpdate()
-    end
-    if(self.db.profile["NeuronPetDB"]) then
-        NeuronPetDB = self.db.profile["NeuronPetDB"]
-        PetProfileUpdate()
-    end
-    if(self.db.profile["NeuronStatusDB"]) then
-        NeuronStatusDB = self.db.profile["NeuronStatusDB"]
-        StatusProfileUpdate()
-    end
+	if(self.db.profile["NeuronBagDB"]) then
+		NeuronBagDB = self.db.profile["NeuronBagDB"]
+		BagProfileUpdate()
+	end
+	if(self.db.profile["NeuronMenuDB"]) then
+		NeuronMenuDB = self.db.profile["NeuronMenuDB"]
+		MenuProfileUpdate()
+	end
+	if(self.db.profile["NeuronPetDB"]) then
+		NeuronPetDB = self.db.profile["NeuronPetDB"]
+		PetProfileUpdate()
+	end
+	if(self.db.profile["NeuronStatusDB"]) then
+		NeuronStatusDB = self.db.profile["NeuronStatusDB"]
+		StatusProfileUpdate()
+	end
 
-    StaticPopup_Show("ReloadUI")
+	StaticPopup_Show("ReloadUI")
 end
 
 
 StaticPopupDialogs["ReloadUI"] = {
-    text = "ReloadUI",
-    button1 = "Yes",
-    OnAccept = function()
-        ReloadUI()
-    end,
-    preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+	text = "ReloadUI",
+	button1 = "Yes",
+	OnAccept = function()
+		ReloadUI()
+	end,
+	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
 }
 
 
@@ -593,7 +609,6 @@ local slashFunctions = {
 	{L["Animate"], L["Animate_Description"], "Animate"},
 }
 ---New Slash functionality using Ace3
-NEURON:RegisterChatCommand("neuron", "slashHandler")
 
 function NEURON:slashHandler(input)
 
