@@ -23,7 +23,7 @@ local icons = {}
 local latestVersionNum = "0.9.17" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
-local Install_Message = [[Thank's for installing Neuron.
+local Install_Message = [[Thanks for installing Neuron.
 
 Neuron is currently in a "|cffffff00release|r" state.
 
@@ -281,7 +281,7 @@ function NEURON:OnInitialize()
 
 end
 
-function NEURON:NeuronSetup() ---this funtions sets up much of the working space, and is called by the OnInitialize function
+function NEURON:NeuronSetup() ---this function sets up much of the working space, and is called by the OnInitialize function
 
 	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
 
@@ -313,10 +313,6 @@ function NEURON:NeuronSetup() ---this funtions sets up much of the working space
 	NEURON:UpdateStanceStrings()
 
 	GameMenuFrame:HookScript("OnShow", function(self)
-
-		--if (NeuronMainMenu and NeuronMainMenu:IsShown()) then
-		--HideUIPanel(self); NEURON:ToggleMainMenu(nil, true)
-		--end
 
 		if (NEURON.BarsShown) then
 			HideUIPanel(self); NEURON:ToggleBars(nil, true)
