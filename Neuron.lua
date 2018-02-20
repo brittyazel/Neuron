@@ -72,8 +72,8 @@ local BARNameIndex = NEURON.BARNameIndex
 local BTNIndex = NEURON.BTNIndex
 local ICONS = NEURON.iIndex
 
-
-local defGDB = {
+---these are the database tables that are going to hold our data
+NeuronGDB = {
 	bars = {},
 	buttons = {},
 
@@ -96,9 +96,7 @@ local defGDB = {
 	showmmb = true,
 }
 
-
-
-local defCDB = {
+ NeuronCDB = {
 	bars = {},
 	buttons = {},
 
@@ -124,14 +122,11 @@ local defCDB = {
 	sbarFirstRun = true,
 	zoneabilitybarFirstRun = true,
 
-}
+ }
 
-local defSpec = {cSpec = 1}
-
-NeuronCDB = CopyTable(defCDB)
-NeuronGDB = CopyTable(defGDB)
-NeuronSpec = CopyTable(defSpec)
+NeuronSpec = {cSpec = 1}
 NeuronItemCache = {}
+
 
 ---this is the Default profile when you "load defaults" in the ace profile window
 NeuronDefaults = {}
@@ -258,11 +253,19 @@ function NEURON:OnInitialize()
 	NeuronSpec = self.db.profile["NeuronSpec"]
 	NeuronItemCache = self.db.profile["NeuronItemCache"]
 
-	self:NeuronSetup()
-
 	InterfaceOptionsFrame:SetFrameStrata("HIGH")
 
 	NEURON:RegisterChatCommand("neuron", "slashHandler")
+
+	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
+
+	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
+	NEURON.MBS = Neuron.MANAGED_BAR_STATES
+
+	BAR = NEURON.BAR
+
+	NEURON.player, NEURON.class, NEURON.level, NEURON.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -300,46 +303,6 @@ function NEURON:OnEnable()
 		CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
 	end
 
-end
-
---- **OnDisable**, which is only called when your addon is manually being disabled.
---- Unhook, Unregister Events, Hide frames that you created.
---- You would probably only use an OnDisable if you want to
---- build a "standby" mode, or be able to toggle modules on/off.
-function NEURON:OnDisable()
-
-end
-
-
-
-function NEURON:NeuronSetup() ---this function sets up much of the working space, and is called by the OnInitialize function
-
-	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
-
-	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
-	NEURON.MBS = Neuron.MANAGED_BAR_STATES
-
-	BAR = NEURON.BAR
-
-	NEURON.player, NEURON.class, NEURON.level, NEURON.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
-
-	for k,v in pairs(defGDB) do
-		if (GDB[k] == nil) then
-			GDB[k] = v
-		end
-	end
-
-	for k,v in pairs(defCDB) do
-		if (CDB[k] == nil) then
-			CDB[k] = v
-		end
-	end
-
-	for k,v in pairs(defSpec) do
-		if (Spec[k] == nil) then
-			Spec[k] = v
-		end
-	end
 
 	NEURON:UpdateStanceStrings()
 
@@ -374,6 +337,16 @@ function NEURON:NeuronSetup() ---this function sets up much of the working space
 	}
 
 end
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NEURON:OnDisable()
+
+end
+
+-------------------------------------------------
 
 function NEURON:PLAYER_REGEN_DISABLED()
 
