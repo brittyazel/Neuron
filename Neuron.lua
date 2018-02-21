@@ -1001,11 +1001,7 @@ end
 
 function NEURON:UpdateStanceStrings()
 	if (NEURON.class == "DRUID" or
-			NEURON.class == "MONK" or
-			NEURON.class == "PRIEST" or
-			NEURON.class == "ROGUE" or
-			NEURON.class == "WARRIOR" or
-			NEURON.class == "WARLOCK") then
+			NEURON.class == "ROGUE") then
 
 		wipe(NEURON.StanceIndex)
 
@@ -1043,26 +1039,8 @@ function NEURON:UpdateStanceStrings()
 				NEURON.STATES.stance0 = L["Caster Form"]
 			end
 
-			if (NEURON.class == "MONK") then
-				NEURON.STATES.stance0 = ATTRIBUTE_NOOP
-				NEURON.MAS.stance.homestate = "stance1"
-			end
-
-			if (NEURON.class == "PRIEST") then
-				NEURON.STATES.stance0 = L["Healer Form"]
-			end
-
 			if (NEURON.class == "ROGUE") then
 				NEURON.STATES.stance0 = L["Melee"]
-			end
-
-			if (NEURON.class == "WARLOCK") then
-				NEURON.STATES.stance0 = L["Caster Form"]
-			end
-
-			if (NEURON.class == "WARRIOR") then
-				NEURON.STATES.stance0 = ATTRIBUTE_NOOP
-				NEURON.MAS.stance.homestate = "stance1"
 			end
 
 			stanceStringsUpdated = true
