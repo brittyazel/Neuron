@@ -4,17 +4,24 @@ local NEURON = Neuron
 local GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB
 
 
-NEURON.BAR = setmetatable({}, { __index = CreateFrame("CheckButton") })
+NEURON.BAR = LibStub("AceAddon-3.0"):NewAddon("Bar", "AceEvent-3.0")
+
+setmetatable(NEURON.BAR, {__index = CreateFrame("CheckButton")})
+test = NEURON.BAR
 
 NEURON.HANDLER = setmetatable({}, { __index = CreateFrame("Frame") })
 
-local BAR, BUTTON, HANDLER = NEURON.BAR, NEURON.BUTTON, NEURON.HANDLER
+local BAR = NEURON.BAR
+local BUTTON = NEURON.BUTTON
+local HANDLER = NEURON.HANDLER
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BARIndex, BARNameIndex, BTNIndex = NEURON.BARIndex, NEURON.BARNameIndex, NEURON.BTNIndex
+local BARIndex = NEURON.BARIndex
+local BARNameIndex = NEURON.BARNameIndex
+local BTNIndex = NEURON.BTNIndex
 
 local MAS = NEURON.MANAGED_ACTION_STATES
 local MBS = NEURON.MANAGED_BAR_STATES

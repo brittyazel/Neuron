@@ -7,7 +7,7 @@ local addonName = ...
 
 local GDB, CDB, Spec
 
-Neuron = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0", "AceEvent-3.0")
+Neuron = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
 local NEURON = Neuron ---this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -103,9 +103,6 @@ NeuronGDB = {
 	xbars = {},
 	xbtns = {},
 
-	sbars = {},
-	sbtns = {},
-
 	zoneabilitybars = {},
 	zoneabilitybtns = {},
 
@@ -119,7 +116,6 @@ NeuronGDB = {
 	firstRun = true,
 
 	xbarFirstRun = true,
-	sbarFirstRun = true,
 	zoneabilitybarFirstRun = true,
 
  }
@@ -139,7 +135,8 @@ NeuronDefaults.profile['NeuronItemCache'] = NeuronItemCache
 
 NEURON.GameVersion, NEURON.GameBuild, NEURON.GameDate, NEURON.TOCVersion = GetBuildInfo()
 
-NEURON.GameVersion = tonumber(NEURON.GameVersion); NEURON.TOCVersion = tonumber(NEURON.TOCVersion)
+NEURON.GameVersion = tonumber(NEURON.GameVersion);
+NEURON.TOCVersion = tonumber(NEURON.TOCVersion)
 
 NEURON.Points = {R = "RIGHT", L = "LEFT", T = "TOP", B = "BOTTOM", TL = "TOPLEFT", TR = "TOPRIGHT", BL = "BOTTOMLEFT", BR = "BOTTOMRIGHT", C = "CENTER", RIGHT = "RIGHT", LEFT = "LEFT", TOP = "TOP", BOTTOM = "BOTTOM", TOPLEFT = "TOPLEFT", TOPRIGHT = "TOPRIGHT", BOTTOMLEFT = "BOTTOMLEFT", BOTTOMRIGHT = "BOTTOMRIGHT", CENTER = "CENTER"}
 

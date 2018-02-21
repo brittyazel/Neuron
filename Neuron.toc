@@ -26,7 +26,6 @@ Neuron_KeyBinder.lua
 Neuron_Flyouts.lua
 Neuron_SnapTo.lua
 Neuron_ExtraBar.lua
-Neuron_StanceBar.lua
 Neuron_ZoneAbilityBar.lua
 Neuron_OrbButton.lua
 

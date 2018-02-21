@@ -1067,7 +1067,7 @@ end
 -- @return allow : (boolean)
 local function MissingBarCheck(bar)
 	local allow = true
-	if ((bar == "stancebar" and NeuronCDB.sbars[1]) or (bar == "extrabar" and NeuronCDB.xbars[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybars[1]))then
+	if ((bar == "extrabar" and NeuronCDB.xbars[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybars[1]))then
 		allow = false
 	end
 	return allow
