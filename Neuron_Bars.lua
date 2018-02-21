@@ -4,9 +4,12 @@ local NEURON = Neuron
 local GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB
 
 
-NEURON.BAR = LibStub("AceAddon-3.0"):NewAddon("Bar", "AceEvent-3.0")
+NEURON.NeuronBar = NEURON:NewModule("Bar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronBar = NEURON.NeuronBar
+
+NEURON.BAR = setmetatable({}, {__index = CreateFrame("CheckButton")})
 local BAR = NEURON.BAR
-setmetatable(BAR, {__index = CreateFrame("CheckButton")})
+
 
 
 
@@ -204,7 +207,7 @@ local cDef = {
 --- **OnInitialize**, which is called directly after the addon is fully loaded.
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
-function BAR:OnInitialize()
+function NeuronBar:OnInitialize()
 
 	GDB, CDB, SPEC = NeuronGDB, NeuronCDB, NeuronSpec
 	barGDB = GDB.bars
@@ -236,9 +239,10 @@ end
 --- Do more initialization here, that really enables the use of your addon.
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
-function BAR:OnEnable()
+function NeuronBar:OnEnable()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	NEURON:SetScript("OnUpdate", controlOnUpdate)
 
 	if (GDB.firstRun) then
 		local oid, offset = 1, 0
@@ -292,14 +296,14 @@ end
 --- Unhook, Unregister Events, Hide frames that you created.
 --- You would probably only use an OnDisable if you want to
 --- build a "standby" mode, or be able to toggle modules on/off.
-function BAR:OnDisable()
+function NeuronBar:OnDisable()
 
 end
 
 
 ------------------------------------------------------------------------------
 
-function BAR:PLAYER_ENTERING_WORLD()
+function NeuronBar:PLAYER_ENTERING_WORLD()
 	PEW = true
 	self.elapsed = 0
 end

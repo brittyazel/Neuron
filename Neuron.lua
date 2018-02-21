@@ -7,7 +7,8 @@ local addonName = ...
 
 local GDB, CDB, Spec
 
-Neuron = LibStub("AceAddon-3.0"):NewAddon("Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
+local NeuronFrame = CreateFrame("Frame", nil, UIParent)
+Neuron = LibStub("AceAddon-3.0"):NewAddon(NeuronFrame, "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
 local NEURON = Neuron ---this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")

@@ -4,9 +4,12 @@
 local NEURON = Neuron
 local GDB, CDB, PEW, SPEC, player, realm, btnGDB, btnCDB
 
-NEURON.BUTTON = setmetatable({}, { __index = CreateFrame("CheckButton") })
+NEURON.NeuronButton = NEURON:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
+local NeuronButton = NEURON.NeuronButton
 
+NEURON.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")})
 local BUTTON = NEURON.BUTTON
+
 
 local BTNIndex, SKINIndex = NEURON.BTNIndex, NEURON.SKINIndex
 
@@ -27,7 +30,6 @@ local currMacro = {}
 
 local cmdSlash
 
---local stealthStatus = IsStealthed() ---this is a workaround variable for druid stealth being overwritten
 
 local configData = {
 	btnType = "macro",
@@ -153,6 +155,174 @@ local alphaTimer, alphaDir = 0, 0
 local autoCast = { speeds = { 2, 4, 6, 8 }, timers = { 0, 0, 0, 0 }, circle = { 0, 22, 44, 66 }, shines = {}, r = 0.95, g = 0.95, b = 0.32 }
 
 local cooldowns, cdAlphas = {}, {}
+
+
+
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronButton:OnInitialize()
+	GDB, CDB = NeuronGDB, NeuronCDB
+
+	btnGDB = GDB.buttons
+
+	btnCDB = CDB.buttons
+
+	ItemCache = NeuronItemCache
+
+	cmdSlash = {
+		[SLASH_CAST1] = true,
+		[SLASH_CAST2] = true,
+		[SLASH_CAST3] = true,
+		[SLASH_CAST4] = true,
+		[SLASH_CASTRANDOM1] = true,
+		[SLASH_CASTRANDOM2] = true,
+		[SLASH_CASTSEQUENCE1] = true,
+		[SLASH_CASTSEQUENCE2] = true,
+		[SLASH_EQUIP1] = true,
+		[SLASH_EQUIP2] = true,
+		[SLASH_EQUIP3] = true,
+		[SLASH_EQUIP4] = true,
+		[SLASH_EQUIP_TO_SLOT1] = true,
+		[SLASH_EQUIP_TO_SLOT2] = true,
+		[SLASH_USE1] = true,
+		[SLASH_USE2] = true,
+		[SLASH_USERANDOM1] = true,
+		[SLASH_USERANDOM2] = true,
+		["/cast"] = true,
+		["/castrandom"] = true,
+		["/castsequence"] = true,
+		["/spell"] = true,
+		["/equip"] = true,
+		["/eq"] = true,
+		["/equipslot"] = true,
+		["/use"] = true,
+		["/userandom"] = true,
+		["/summonpet"] = true,
+		["/click"] = true,
+	}
+
+	NEURON.AutoCastStart = AutoCastStart
+	NEURON.AutoCastStop = AutoCastStop
+
+	if (SKIN) then
+		SKIN:Register("Neuron", NEURON.SKINCallback, true)
+	end
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronButton:OnEnable()
+
+	NEURON:SetScript("OnUpdate", controlOnUpdate)
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("PLAYER_TARGET_CHANGED")
+	self:RegisterEvent("ACTIONBAR_SHOWGRID")
+	self:RegisterEvent("UNIT_AURA")
+	self:RegisterEvent("UNIT_SPELLCAST_SENT")
+	self:RegisterEvent("UNIT_SPELLCAST_START")
+	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+
+	SPEC = NeuronSpec
+
+	for k in pairs(unitAuras) do
+		self:updateAuraInfo(k)
+	end
+
+	self:SecureHookScript(WorldFrame, "OnMouseUp", "checkCursor")
+	self:SecureHookScript(WorldFrame, "OnMouseDown", "checkCursor")
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronButton:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+function NeuronButton:PLAYER_ENTERING_WORLD()
+	PEW = true
+end
+
+function NeuronButton:PLAYER_TARGET_CHANGED()
+	for k in pairs(unitAuras) do
+		self:updateAuraInfo(k)
+	end
+end
+
+function NeuronButton:ACTIONBAR_SHOWGRID()
+	StartDrag = true
+end
+
+function NeuronButton:UNIT_AURA(eventname, ...)
+	if (unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		self:updateAuraInfo(select(1,...))
+	end
+end
+
+function NeuronButton:UNIT_SPELLCAST_SENT(eventname, ...)
+	if (unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		self:updateAuraInfo(select(1,...))
+	end
+end
+
+function NeuronButton:UNIT_SPELLCAST_START(eventname, ...)
+	if (unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		self:updateAuraInfo(select(1,...))
+	end
+end
+
+function NeuronButton:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
+	if (unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		self:updateAuraInfo(select(1,...))
+	end
+end
+
+function NeuronButton:UNIT_SPELLCAST_CHANNEL_START(eventname, ...)
+	if (unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		self:updateAuraInfo(select(1,...))
+	end
+end
+
+function NeuronButton:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
+	if (unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		self:updateAuraInfo(select(1,...))
+	end
+end
+
+
+-------------------------------------------------------------------------------
+
+------------------------------------------------------------
+--------------------Intermediate Functions------------------
+------------------------------------------------------------
+
+
+
 
 local function AutoCastStart(shine, r, g, b)
 	autoCast.shines[shine] = shine
@@ -379,7 +549,7 @@ end
 
 
 
-local function updateAuraInfo(unit)
+function NeuronButton:updateAuraInfo(unit)
 
     local uai__ = 1
     local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID
@@ -429,7 +599,7 @@ local function isActiveShapeshiftSpell(spell)
 end
 
 
-local function checkCursor(self, button)
+function NeuronButton:checkCursor(button)
 	if (MacroDrag[1]) then
 		if (button == "LeftButton" or button == "RightButton") then
 			MacroDrag[1] = false; SetCursor(nil); PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
@@ -2648,6 +2818,7 @@ end
 
 function BUTTON:SetData(bar)
 	if (bar) then
+
 		self.bar = bar
 
 		self.barLock = bar.cdata.barLock
@@ -3415,114 +3586,9 @@ function NEURON:SKINCallback(group,...)
 end
 
 
-local function controlOnEvent(self, event, ...)
-
---[[	---part of the druid stealth overwrite fix
-	if (event == "UPDATE_STEALTH") then
-		stealthStatus = IsStealthed()
-	end]]
-
-	if (event:find("UNIT_")) then
-
-		if (unitAuras[select(1,...)]) then
-			if (... == "player") then
-			end
-			updateAuraInfo(select(1,...))
-		end
-
-	elseif (event == "PLAYER_TARGET_CHANGED") then
-		for k in pairs(unitAuras) do
-			updateAuraInfo(k)
-		end
-
-	elseif (event == "ADDON_LOADED" and ... == "Neuron") then
-
-		GDB, CDB = NeuronGDB, NeuronCDB
-
-		btnGDB = GDB.buttons
-
-		btnCDB = CDB.buttons
-
-		ItemCache = NeuronItemCache
-
-		cmdSlash = {
-			[SLASH_CAST1] = true,
-			[SLASH_CAST2] = true,
-			[SLASH_CAST3] = true,
-			[SLASH_CAST4] = true,
-			[SLASH_CASTRANDOM1] = true,
-			[SLASH_CASTRANDOM2] = true,
-			[SLASH_CASTSEQUENCE1] = true,
-			[SLASH_CASTSEQUENCE2] = true,
-			[SLASH_EQUIP1] = true,
-			[SLASH_EQUIP2] = true,
-			[SLASH_EQUIP3] = true,
-			[SLASH_EQUIP4] = true,
-			[SLASH_EQUIP_TO_SLOT1] = true,
-			[SLASH_EQUIP_TO_SLOT2] = true,
-			[SLASH_USE1] = true,
-			[SLASH_USE2] = true,
-			[SLASH_USERANDOM1] = true,
-			[SLASH_USERANDOM2] = true,
-			["/cast"] = true,
-			["/castrandom"] = true,
-			["/castsequence"] = true,
-			["/spell"] = true,
-			["/equip"] = true,
-			["/eq"] = true,
-			["/equipslot"] = true,
-			["/use"] = true,
-			["/userandom"] = true,
-			["/summonpet"] = true,
-			["/click"] = true,
-		}
-
-		NEURON.AutoCastStart = AutoCastStart
-		NEURON.AutoCastStop = AutoCastStop
-
-		if (SKIN) then
-			SKIN:Register("Neuron", NEURON.SKINCallback, true)
-		end
-
-	elseif (event == "VARIABLES_LOADED") then
-
-	elseif (event == "PLAYER_LOGIN") then
-		SPEC = NeuronSpec
-
-		for k in pairs(unitAuras) do
-			updateAuraInfo(k)
-		end
-
-		WorldFrame:HookScript("OnMouseUp", checkCursor)
-		WorldFrame:HookScript("OnMouseDown", checkCursor)
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-		PEW = true
-
-	elseif (event == "ACTIONBAR_SHOWGRID") then
-		StartDrag = true
-	end
-end
-
 
 local frame = CreateFrame("Frame", nil, UIParent)
 frame:SetScript("OnUpdate", cooldownsOnUpdate)
-
-frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
-frame:SetScript("OnUpdate", controlOnUpdate)
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("VARIABLES_LOADED")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-frame:RegisterEvent("PLAYER_TARGET_CHANGED")
-frame:RegisterEvent("ACTIONBAR_SHOWGRID")
-frame:RegisterEvent("UNIT_AURA")
-frame:RegisterEvent("UNIT_SPELLCAST_SENT")
-frame:RegisterEvent("UNIT_SPELLCAST_START")
-frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-frame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-frame:RegisterEvent("UPDATE_STEALTH")
 
 
 function ButtonProfileUpdate()
