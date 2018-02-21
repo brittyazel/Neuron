@@ -978,16 +978,14 @@ function NEURON:UpdateCompanionData()
 	end
 end
 
-local temp = {}
 
---local TempTexture = (CreateFrame("Button", nil, UIParent)):CreateTexture()
---textf:Hide()
+
 
 --- Creates a table of the available spell icon filenames for use in macros
 function NEURON:UpdateIconIndex()
 	local icon
+	local temp = {}
 
-	wipe(temp)
 	GetMacroIcons(temp)
 
 	for k,icon in ipairs(temp) do

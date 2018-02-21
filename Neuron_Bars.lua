@@ -5,14 +5,17 @@ local GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB
 
 
 NEURON.BAR = LibStub("AceAddon-3.0"):NewAddon("Bar", "AceEvent-3.0")
+local BAR = NEURON.BAR
+setmetatable(BAR, {__index = CreateFrame("CheckButton")})
 
-setmetatable(NEURON.BAR, {__index = CreateFrame("CheckButton")})
-test = NEURON.BAR
+
 
 NEURON.HANDLER = setmetatable({}, { __index = CreateFrame("Frame") })
 
-local BAR = NEURON.BAR
+
 local BUTTON = NEURON.BUTTON
+
+
 local HANDLER = NEURON.HANDLER
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
@@ -38,16 +41,16 @@ NEURON.AlphaUps = {
 	L["Retreat"],
 	L["Retreat + Mouseover"],
 }
-
 local alphaUps = NEURON.AlphaUps
+
 
 NEURON.BarShapes = {
 	L["Linear"],
 	L["Circle"],
 	L["Circle + One"],
 }
-
 local barShapes = NEURON.BarShapes
+
 
 NEURON.barGDEF = {
 	name = "",
@@ -194,6 +197,117 @@ local cDef = {
 	},
 }
 
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function BAR:OnInitialize()
+
+	GDB, CDB, SPEC = NeuronGDB, NeuronCDB, NeuronSpec
+	barGDB = GDB.bars
+	barCDB = CDB.bars
+
+	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
+
+	NEURON:RegisterGUIOptions("bar",	{ AUTOHIDE = true,
+		SHOWGRID = true,
+		SPELLGLOW = true,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		MULTISPEC = true,
+		HIDDEN = true,
+		LOCKBAR = true,
+		TOOLTIPS = true,
+		BINDTEXT = true,
+		MACROTEXT = true,
+		COUNTTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true,
+		AURATEXT = true,
+		AURAIND = true }, true, 115)
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function BAR:OnEnable()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+	if (GDB.firstRun) then
+		local oid, offset = 1, 0
+
+		for id, defaults in ipairs(gDef) do
+			NEURON.RegisteredBarData["bar"].gDef = defaults
+
+			local bar, object = NEURON:CreateNewBar("bar", id, true)
+
+			for i=oid+offset,oid+11+offset do
+				object = NEURON:CreateNewObject("bar", i, true)
+				bar:AddObjectToList(object)
+			end
+
+			NEURON.RegisteredBarData["bar"].gDef = nil
+
+			offset = offset + 12
+		end
+
+	else
+		for id,data in pairs(barGDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewBar("bar", id)
+			end
+		end
+
+		for id,data in pairs(GDB.buttons) do
+			if (data ~= nil) then
+				NEURON:CreateNewObject("bar", id)
+			end
+		end
+	end
+
+	STORAGE:Hide()
+
+	for _,bar in pairs(BARIndex) do
+		if (CDB.firstRun) then
+			for id, cdefaults in ipairs(cDef) do
+				if (id == bar:GetID()) then
+					bar:SetDefaults(nil, cdefaults)
+				end
+			end
+		end
+
+		bar:Load()
+	end
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function BAR:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+
+function BAR:PLAYER_ENTERING_WORLD()
+	PEW = true
+	self.elapsed = 0
+end
+-------------------------------------------------------------------------------
+
+------------------------------------------------------------
+--------------------Intermediate Functions------------------
+------------------------------------------------------------
 
 local function round(num, idp)
 	local mult = 10^(idp or 0)
@@ -3100,96 +3214,7 @@ function BAR:Load()
 	self:Update()
 end
 
-local function controlOnEvent(self, event, ...)
-	if (event == "ADDON_LOADED" and ... == "Neuron") then
-		GDB, CDB, SPEC = NeuronGDB, NeuronCDB, NeuronSpec
-		barGDB = GDB.bars
-		barCDB = CDB.bars
 
-		NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
-
-		NEURON:RegisterGUIOptions("bar",	{ AUTOHIDE = true,
-			SHOWGRID = true,
-			SPELLGLOW = true,
-			SNAPTO = true,
-			UPCLICKS = true,
-			DOWNCLICKS = true,
-			MULTISPEC = true,
-			HIDDEN = true,
-			LOCKBAR = true,
-			TOOLTIPS = true,
-			BINDTEXT = true,
-			MACROTEXT = true,
-			COUNTTEXT = true,
-			RANGEIND = true,
-			CDTEXT = true,
-			CDALPHA = true,
-			AURATEXT = true,
-			AURAIND = true }, true, 115)
-
-		if (GDB.firstRun) then
-			local oid, offset = 1, 0
-
-			for id, defaults in ipairs(gDef) do
-				NEURON.RegisteredBarData["bar"].gDef = defaults
-
-				local bar, object = NEURON:CreateNewBar("bar", id, true)
-
-				for i=oid+offset,oid+11+offset do
-					object = NEURON:CreateNewObject("bar", i, true)
-					bar:AddObjectToList(object)
-				end
-
-				NEURON.RegisteredBarData["bar"].gDef = nil
-
-				offset = offset + 12
-			end
-
-		else
-			for id,data in pairs(barGDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewBar("bar", id)
-				end
-			end
-
-			for id,data in pairs(GDB.buttons) do
-				if (data ~= nil) then
-					NEURON:CreateNewObject("bar", id)
-				end
-			end
-		end
-
-		STORAGE:Hide()
-	elseif (event == "PLAYER_LOGIN") then
-		for _,bar in pairs(BARIndex) do
-			if (CDB.firstRun) then
-				for id, cdefaults in ipairs(cDef) do
-					if (id == bar:GetID()) then
-						bar:SetDefaults(nil, cdefaults)
-					end
-				end
-			end
-
-			bar:Load()
-		end
-
-	elseif (event == "PLAYER_LOGOUT") then
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-		PEW = true; self.elapsed = 0
-	elseif (event == "PLAYER_REGEN_DISABLED") then
-	end
-end
-
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
-frame:SetScript("OnUpdate", controlOnUpdate)
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("PLAYER_LOGOUT")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-frame.elapsed = 0
 
 
 function NEURONBarProfileUpdate()
@@ -3249,17 +3274,6 @@ end
 -- @param query: N/A
 function BAR:SetCastingTarget(value, gui, checked, query)
 	if (value) then
-		--[[
-            if (not MAS[state]) then
-                if (not gui) then
-                    NEURON:PrintStateList()
-                else
-                    Neuron:Print("GUI option error")
-                end
-
-                return
-            end
-    --]]
 		if (gui) then
 
 			if (checked) then
@@ -3279,28 +3293,7 @@ function BAR:SetCastingTarget(value, gui, checked, query)
 			end
 		end
 
-		--self.stateschanged = true
 		BUTTON:UpdateMacroCastTargets()
 		self:Update()
-	elseif (not gui) then
-		--[[
-                wipe(statetable)
-
-                for k,v in pairs(NEURON.STATEINDEX) do
-
-                    if (self.cdata[k]) then
-                        tinsert(statetable, k..": on")
-                    else
-                        tinsert(statetable, k..": off")
-                    end
-                end
-
-                table.sort(statetable)
-
-                for k,v in ipairs(statetable) do
-                    Neuron:Print(v)
-                end
-
-                --]]
 	end
 end
