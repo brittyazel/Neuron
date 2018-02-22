@@ -220,7 +220,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronButton:OnEnable()
 
-	NEURON:SetScript("OnUpdate", controlOnUpdate)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("ACTIONBAR_SHOWGRID")
@@ -346,9 +345,9 @@ local function AutoCastStop(shine)
 end
 
 
-
-local function controlOnUpdate(self, elapsed)
-    local cou_distance, cou_radius, cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position
+--this function gets called via controlOnUpdate in the main Neuron.lua
+function NeuronButton.controlOnUpdate(self, elapsed)
+	local cou_distance, cou_radius, cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position
 
 	for i in next,autoCast.timers do
 		autoCast.timers[i] = autoCast.timers[i] + elapsed
@@ -475,8 +474,8 @@ local function controlOnUpdate(self, elapsed)
 	end
 end
 
-
-local function cooldownsOnUpdate(self, elapsed)
+--this function gets called via controlOnUpdate in the main Neuron.lua
+function NeuronButton.cooldownsOnUpdate(self, elapsed)
 	local coolDown, formatted, size
 
 	for cd in next,cooldowns do
@@ -599,7 +598,7 @@ local function isActiveShapeshiftSpell(spell)
 end
 
 
-function NeuronButton:checkCursor(button)
+function NeuronButton.checkCursor(button)
 	if (MacroDrag[1]) then
 		if (button == "LeftButton" or button == "RightButton") then
 			MacroDrag[1] = false; SetCursor(nil); PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
@@ -3585,10 +3584,6 @@ function NEURON:SKINCallback(group,...)
 	end
 end
 
-
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnUpdate", cooldownsOnUpdate)
 
 
 function ButtonProfileUpdate()

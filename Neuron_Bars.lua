@@ -3,14 +3,11 @@
 local NEURON = Neuron
 local GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB
 
-
-NEURON.NeuronBar = NEURON:NewModule("Bar", "AceEvent-3.0", "AceHook-3.0")
+NEURON.NeuronBar = NEURON:NewModule("Bar", frame, "AceEvent-3.0", "AceHook-3.0")
 local NeuronBar = NEURON.NeuronBar
 
 NEURON.BAR = setmetatable({}, {__index = CreateFrame("CheckButton")})
 local BAR = NEURON.BAR
-
-
 
 
 NEURON.HANDLER = setmetatable({}, { __index = CreateFrame("Frame") })
@@ -242,7 +239,6 @@ end
 function NeuronBar:OnEnable()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	NEURON:SetScript("OnUpdate", controlOnUpdate)
 
 	if (GDB.firstRun) then
 		local oid, offset = 1, 0
@@ -305,7 +301,6 @@ end
 
 function NeuronBar:PLAYER_ENTERING_WORLD()
 	PEW = true
-	self.elapsed = 0
 end
 -------------------------------------------------------------------------------
 
@@ -335,8 +330,8 @@ local function IsMouseOverSelfOrWatchFrame(frame)
 	return false
 end
 
-
-local function controlOnUpdate(self, elapsed)
+--this function gets called via controlOnUpdate in the main Neuron.lua
+function NeuronBar.controlOnUpdate(self, elapsed)
 	for k,v in pairs(autoHideIndex) do
 		if (v~=nil) then
 
@@ -353,7 +348,7 @@ local function controlOnUpdate(self, elapsed)
 						end
 					else
 						k.seen = 1;
-					end
+						end
 
 				end
 

@@ -290,6 +290,7 @@ function NEURON:OnEnable()
 	self:RegisterEvent("UNIT_PET")
 	self:RegisterEvent("TOYS_UPDATED")
 
+	NEURON:SetScript("OnUpdate", NEURON.controlOnUpdate)
 
 	local function hideAlerts(frame)
 		if (not GDB.mainbar) then
@@ -477,7 +478,7 @@ end
 
 
 ---TODO:figure out what to do with this
-frame = CreateFrame("GameTooltip", "NeuronTooltipScan", UIParent, "GameTooltipTemplate")
+local frame = CreateFrame("GameTooltip", "NeuronTooltipScan", UIParent, "GameTooltipTemplate")
 frame:SetOwner(UIParent, "ANCHOR_NONE")
 frame:SetFrameStrata("TOOLTIP")
 frame:Hide()
@@ -579,8 +580,9 @@ local slashFunctions = {
 	{L["BlizzBar"], L["BlizzBar_Description"], "BlizzBar"},
 	{L["Animate"], L["Animate_Description"], "Animate"},
 }
----New Slash functionality using Ace3
 
+
+---New Slash functionality using Ace3
 function NEURON:slashHandler(input)
 
 	if (strlen(input)==0 or input:lower() == "help") then
@@ -637,6 +639,27 @@ end
 ------------------------------------------------------------
 --------------------Intermediate Functions------------------
 ------------------------------------------------------------
+
+
+---this is the new controlOnUpdate function that will control all the other onUpdate functions.
+function NEURON.controlOnUpdate(self, elapsed)
+	if not self.elapsed then
+		self.elapsed = elapsed
+	end
+
+	if (self.elapsed > GDB.throttle) then
+
+		NEURON.NeuronBar.controlOnUpdate(self, elapsed)
+		NEURON.NeuronButton.controlOnUpdate(self, elapsed)
+		NEURON.NeuronButton.cooldownsOnUpdate(self, elapsed)
+
+
+
+		self.elapsed = 0;
+	end
+	self.elapsed = self.elapsed + elapsed
+end
+
 
 function NEURON:GetParentKeys(frame)
 	if (frame == nil) then
