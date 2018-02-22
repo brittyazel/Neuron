@@ -4,15 +4,21 @@
 local NEURON = Neuron
 local CDB, PEW
 
-NEURON.XBTNIndex = {}
+NEURON.NeuronExtraBar = NEURON:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronExtraBar = NEURON.NeuronExtraBar
 
-local XBTNIndex, SKINIndex = NEURON.XBTNIndex, NEURON.SKINIndex
-
-local xbarsCDB, xbtnsCDB
 
 local BUTTON = NEURON.BUTTON
 
-local XBTN = setmetatable({}, { __index = BUTTON })
+NEURON.XBTN = setmetatable({}, { __index = BUTTON })
+local XBTN = NEURON.XBTN
+
+
+
+local SKINIndex = NEURON.SKINIndex
+
+local xbarsCDB
+local xbtnsCDB
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -47,6 +53,95 @@ local keyData = {
 	hotKeyLock = false,
 	hotKeyPri = true,
 }
+
+
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronExtraBar:OnInitialize()
+
+	CDB = NeuronCDB
+
+	xbarsCDB = CDB.xbars
+	xbtnsCDB = CDB.xbtns
+
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, false, STORAGE, gDef, nil, false)
+
+	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
+		SHOWGRID = true,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		HIDDEN = true,
+		LOCKBAR = true,
+		TOOLTIPS = true,
+		BINDTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true }, false, 65)
+
+	if (CDB.xbarFirstRun) then
+
+		local bar = NEURON:CreateNewBar("extrabar", 1, true)
+		local object = NEURON:CreateNewObject("extrabar", 1)
+
+		bar:AddObjectToList(object)
+
+		CDB.xbarFirstRun = false
+
+	else
+
+		for id,data in pairs(xbarsCDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewBar("extrabar", id)
+			end
+		end
+
+		for id,data in pairs(xbtnsCDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewObject("extrabar", id)
+			end
+		end
+	end
+
+
+	STORAGE:Hide()
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronExtraBar:OnEnable()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronExtraBar:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+
+function NeuronExtraBar:PLAYER_ENTERING_WORLD()
+	PEW = true
+end
+
+-------------------------------------------------------------------------------
+
+
 
 
 function XBTN:GetSkinned()
@@ -456,69 +551,3 @@ function XBTN:SetType(save)
 					]])
 
 end
-
-local function controlOnEvent(self, event, ...)
-
-	if (event == "ADDON_LOADED" and ... == "Neuron") then
-
-		CDB = NeuronCDB
-
-		xbarsCDB = CDB.xbars
-		xbtnsCDB = CDB.xbtns
-
-		NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, XBTNIndex, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, false, STORAGE, gDef, nil, false)
-
-		NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
-			SHOWGRID = true,
-			SNAPTO = true,
-			UPCLICKS = true,
-			DOWNCLICKS = true,
-			HIDDEN = true,
-			LOCKBAR = true,
-			TOOLTIPS = true,
-			BINDTEXT = true,
-			RANGEIND = true,
-			CDTEXT = true,
-			CDALPHA = true }, false, 65)
-
-		if (CDB.xbarFirstRun) then
-
-			local bar = NEURON:CreateNewBar("extrabar", 1, true)
-			local object = NEURON:CreateNewObject("extrabar", 1)
-
-			bar:AddObjectToList(object)
-
-			CDB.xbarFirstRun = false
-
-		else
-
-			for id,data in pairs(xbarsCDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewBar("extrabar", id)
-				end
-			end
-
-			for id,data in pairs(xbtnsCDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewObject("extrabar", id)
-				end
-			end
-		end
-
-
-		STORAGE:Hide()
-
-	elseif (event == "PLAYER_LOGIN") then
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-
-		PEW = true
-	end
-end
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
---frame:SetScript("OnUpdate", controlOnUpdate)
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
