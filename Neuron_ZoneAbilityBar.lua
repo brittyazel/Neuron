@@ -93,6 +93,7 @@ function ZONEABILITYRBTN:OnUpdate(elapsed)
 
 	if (self.elapsed > NeuronGDB.throttle) then
 		self:STANCE_UpdateButton(self.actionID)
+		self.elapsed = 0
 	end
 end
 
