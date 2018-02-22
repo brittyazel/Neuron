@@ -17,6 +17,8 @@ local BAR --gets set to NEURON.BAR in the OnEvent method
 
 local icons = {}
 
+local PEW = false
+
 -------------------------------------------------------------------------------
 -- AddOn namespace.
 -------------------------------------------------------------------------------
@@ -207,7 +209,7 @@ NEURON.STATEINDEX = {
 
 local handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
 
-local level, stanceStringsUpdated, PEW
+local level, stanceStringsUpdated
 
 local interfaceOptions
 
@@ -644,20 +646,19 @@ end
 ---this is the new controlOnUpdate function that will control all the other onUpdate functions.
 function NEURON.controlOnUpdate(self, elapsed)
 	if not self.elapsed then
-		self.elapsed = elapsed
+		self.elapsed = 0
 	end
 
-	if (self.elapsed > GDB.throttle) then
+	self.elapsed = self.elapsed + elapsed
+
+	if (self.elapsed > GDB.throttle and PEW) then --might want to add some logic to postpone this from going off until fully logged in, like checking for PEW
 
 		NEURON.NeuronBar.controlOnUpdate(self, elapsed)
 		NEURON.NeuronButton.controlOnUpdate(self, elapsed)
 		NEURON.NeuronButton.cooldownsOnUpdate(self, elapsed)
 
-
-
 		self.elapsed = 0;
 	end
-	self.elapsed = self.elapsed + elapsed
 end
 
 
