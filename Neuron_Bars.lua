@@ -3,7 +3,7 @@
 local NEURON = Neuron
 local GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB
 
-NEURON.NeuronBar = NEURON:NewModule("Bar", frame, "AceEvent-3.0", "AceHook-3.0")
+NEURON.NeuronBar = NEURON:NewModule("Bar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBar = NEURON.NeuronBar
 
 NEURON.BAR = setmetatable({}, {__index = CreateFrame("CheckButton")})

@@ -468,11 +468,5 @@ function NEURON:ToggleBindings(show, hide)
 		NeuronBindingsEditor:SetText(L["Keybind_Credits"])
 		NeuronBindingsEditor:Show()
 
-		--for i = 1, select("#", NeuronBindingsEditor:GetRegions()) do
-		--	local region = select(i, NeuronBindingsEditor:GetRegions())
-		--	if (region) then
-		--		Neuron:Print(region:GetName())
-		--	end
-		--end
 	end
 end
