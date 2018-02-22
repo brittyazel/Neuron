@@ -405,7 +405,7 @@ function XBTN:SetExtraButtonTex()
 	end
 end
 
-
+---TODO: This should get roped into Ace Event
 local function VehicleLeave_OnEvent(self, event, ...)
 	if (event == "UPDATE_EXTRA_ACTIONBAR") then
 		self:Hide(); return
@@ -528,7 +528,6 @@ function XBTN:SetType(save)
 
 	self:SetScript("OnEvent", BUTTON.MACRO_OnEvent)
 	self:SetScript("PostClick", BUTTON.MACRO_UpdateState)
-	--self:SetScript("OnUpdate", BUTTON.MACRO_OnUpdate)
 	self:SetScript("OnShow", BUTTON.MACRO_OnShow)
 	self:SetScript("OnHide", BUTTON.MACRO_OnHide)
 

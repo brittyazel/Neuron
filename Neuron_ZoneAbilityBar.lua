@@ -65,7 +65,6 @@ local alphaTimer, alphaDir = 0, 0
 --- or setting up slash commands.
 function NeuronZoneAbilityBar:OnInitialize()
 
-	--it seems like this code is meant to extract out working copies of the necessary elements form the addon-wide NeuronGDB and NeuronCDB tables
 	CDB = NeuronCDB
 
 	zoneabilitybarsCDB = CDB.zoneabilitybars
@@ -196,13 +195,6 @@ function ZONEABILITYRBTN:OnUpdate(elapsed)
 end
 
 
-function ZONEABILITYRBTN:PLAYER_ENTERING_WORLD(event, ...)
-	self.binder:ApplyBindings(self)
-	self.updateRightClick = false
-	--self:STANCE_UpdateCooldown()
-end
-
-
 local function ZoneAbilityFrame_Update(self)
 	if (not self.baseName) then
 		return;
@@ -243,13 +235,7 @@ local function ZoneAbilityFrame_Update(self)
 		StartChargeCooldown(self, chargeStart, chargeDuration, enable);
 	end
 
-	--if (duration and duration >= NeuronGDB.timerLimit and self.iconframeaurawatch.active) then
-	--self.auraQueue = self.iconframeaurawatch.queueinfo
-	--self.iconframeaurawatch.duration = 0
-	--self.iconframeaurawatch:Hide()
-	--end
 	if (start) then
-		--CooldownFrame_SetTimer(self.SpellButton.Cooldown, start, duration, enable);
 		self:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 
@@ -263,7 +249,7 @@ end
 
 
 
---function that runs whenever any of the below specifid events are registered
+---TODO: This should get roped into AceEvent
 function ZONEABILITYRBTN:OnEvent(event, ...)
 
 	local spellID, spellType = GetZoneAbilitySpellInfo();
