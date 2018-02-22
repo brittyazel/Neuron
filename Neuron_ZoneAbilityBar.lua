@@ -4,17 +4,17 @@
 local NEURON = Neuron
 local CDB, PEW
 
-NEURON.ZONEABILITYRBTNIndex = {}
+NEURON.NeuronZoneAbilityBar = NEURON:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronZoneAbilityBar = NEURON.NeuronZoneAbilityBar
 
-local ZONEABILITYRBTNIndex = NEURON.ZONEABILITYRBTNIndex
-
-
-local zoneabilitybarsCDB, zoneabilitybtnsCDB
+local zoneabilitybarsCDB
+local zoneabilitybtnsCDB
 
 local BUTTON = NEURON.BUTTON
 local BAR = NEURON.BAR
 
-local ZONEABILITYRBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+NEURON.ZONEABILITYRBTN = setmetatable({}, { __index = BUTTON })
+local ZONEABILITYRBTN = NEURON.ZONEABILITYRBTN
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -55,7 +55,105 @@ local ZoneAbilitySpellID
 
 local alphaTimer, alphaDir = 0, 0
 
-local function controlOnUpdate(self, elapsed)
+
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronZoneAbilityBar:OnInitialize()
+
+	--it seems like this code is meant to extract out working copies of the necessary elements form the addon-wide NeuronGDB and NeuronCDB tables
+	CDB = NeuronCDB
+
+	zoneabilitybarsCDB = CDB.zoneabilitybars
+	zoneabilitybtnsCDB = CDB.zoneabilitybtns
+
+	ZONEABILITYRBTN.SetTimer = BUTTON.SetTimer
+	ZONEABILITYRBTN.SetSkinned = BUTTON.SetSkinned
+	ZONEABILITYRBTN.GetSkinned = BUTTON.GetSkinned
+	ZONEABILITYRBTN.CreateBindFrame = BUTTON.CreateBindFrame
+
+	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, false, STORAGE, gDef, nil, false)
+
+	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
+		SHOWGRID = false,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		HIDDEN = true,
+		LOCKBAR = false,
+		TOOLTIPS = true,
+		BINDTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true,
+		ZONEABILITY = true}, false, 65)
+
+	if (CDB.zoneabilitybarFirstRun) then
+
+		local bar = NEURON:CreateNewBar("zoneabilitybar", 1, true)
+		local object = NEURON:CreateNewObject("zoneabilitybar", 1)
+
+		bar:AddObjectToList(object)
+
+		CDB.zoneabilitybarFirstRun = false
+
+	else
+
+		for id,data in pairs(zoneabilitybarsCDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewBar("zoneabilitybar", id)
+			end
+		end
+
+		for id,data in pairs(zoneabilitybtnsCDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewObject("zoneabilitybar", id)
+			end
+		end
+	end
+
+	STORAGE:Hide()
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronZoneAbilityBar:OnEnable()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+	------Hiding the default blizzard ZoneAbilityFrame
+	ZoneAbilityFrame:SetScript('OnEvent', nil)
+	ZoneAbilityFrame:Hide()
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronZoneAbilityBar:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+
+function NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD()
+	PEW = true
+end
+
+-------------------------------------------------------------------------------
+
+
+function NeuronZoneAbilityBar.controlOnUpdate(self, elapsed)
 
 	alphaTimer = alphaTimer + elapsed * 2.5
 
@@ -476,88 +574,6 @@ function ZONEABILITYRBTN:SetType(save)
 	self:SetScript("OnUpdate", ZONEABILITYRBTN.OnUpdate)
 	self:SetScript("OnAttributeChanged", nil)
 end
-
-local function controlOnEvent(self, event, ...)
-
-	if (event == "ADDON_LOADED" and ... == "Neuron") then
-
-		--it seems like this code is meant to extract out working copies of the necessary elements form the addon-wide NeuronGDB and NeuronCDB tables
-        CDB = NeuronCDB
-
-		zoneabilitybarsCDB = CDB.zoneabilitybars
-		zoneabilitybtnsCDB = CDB.zoneabilitybtns
-
-		ZONEABILITYRBTN.SetTimer = BUTTON.SetTimer
-		ZONEABILITYRBTN.SetSkinned = BUTTON.SetSkinned
-		ZONEABILITYRBTN.GetSkinned = BUTTON.GetSkinned
-		ZONEABILITYRBTN.CreateBindFrame = BUTTON.CreateBindFrame
-
-		NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, ZONEABILITYRBTNIndex, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, false, STORAGE, gDef, nil, false)
-
-		NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
-			SHOWGRID = false,
-			SNAPTO = true,
-			UPCLICKS = true,
-			DOWNCLICKS = true,
-			HIDDEN = true,
-			LOCKBAR = false,
-			TOOLTIPS = true,
-			BINDTEXT = true,
-			RANGEIND = true,
-			CDTEXT = true,
-			CDALPHA = true,
-			ZONEABILITY = true}, false, 65)
-
-		if (CDB.zoneabilitybarFirstRun) then
-
-			local bar = NEURON:CreateNewBar("zoneabilitybar", 1, true)
-			local object = NEURON:CreateNewObject("zoneabilitybar", 1)
-
-			bar:AddObjectToList(object)
-
-			CDB.zoneabilitybarFirstRun = false
-
-		else
-
-			for id,data in pairs(zoneabilitybarsCDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewBar("zoneabilitybar", id)
-				end
-			end
-
-			for id,data in pairs(zoneabilitybtnsCDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewObject("zoneabilitybar", id)
-				end
-			end
-		end
-
-		STORAGE:Hide()
-
-	elseif (event == "PLAYER_LOGIN") then
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-
-		PEW = true
-	end
-end
-
-
----------------------------------
---This is where the action starts
----------------------------------
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
-frame:SetScript("OnUpdate", controlOnUpdate)
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-------Hiding the default blizzard ZoneAbilityFrame
-ZoneAbilityFrame:SetScript('OnEvent', nil)
-ZoneAbilityFrame:Hide()
-
 
 function BAR:HideZoneAbilityBorder(msg, gui, checked, query)
 	if (query) then
