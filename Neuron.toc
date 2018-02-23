@@ -25,8 +25,10 @@ Neuron_EditFrames.lua
 Neuron_KeyBinder.lua
 Neuron_Flyouts.lua
 Neuron_SnapTo.lua
-Neuron_ExtraBar.lua
-Neuron_ZoneAbilityBar.lua
 Neuron_OrbButton.lua
+
+BarTypes/Neuron_ExtraBar.lua
+BarTypes/Neuron_ZoneAbilityBar.lua
+
 
 Neuron.xml
