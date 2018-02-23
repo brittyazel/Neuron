@@ -30,8 +30,6 @@ NeuronStatusDB = CopyTable(defDB)
 
 NeuronDefaults.profile['NeuronStatusDB'] = NeuronStatusDB
 
-AutoWatch = 1
-
 local GetParentKeys = NEURON.GetParentKeys
 
 local BarTextures = {
@@ -622,9 +620,9 @@ local function repstrings_Update(line)
 				local repData = SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
 				RepWatch[i] = repData --set current reptable into growing RepWatch table
 
-				if (((line and type(line)~= "boolean") and line:find(name)) or AutoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
+				if (((line and type(line)~= "boolean") and line:find(name)) or DB.AutoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
 					RepWatch[0] = repData
-					AutoWatch = i
+					DB.AutoWatch = i
 				end
 			end
 		end
@@ -2712,6 +2710,10 @@ local function controlOnEvent(self, event, ...)
 		end
 
 		DB = Neuron.db.profile["NeuronStatusDB"]
+
+		if not DB.AutoWatch then
+			DB.AutoWatch = 1
+		end
 
 		for k,v in pairs(defDB) do
 			if (DB[k] == nil) then

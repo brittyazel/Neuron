@@ -184,6 +184,10 @@ end
 
 function NEURON:ChangeObject(object)
 
+	if not NEURON.CurrentObject then --fix for CurentObject error thrown by Neuron-GUI
+		NEURON.CurrentObject = object
+	end
+
 	local newObj, newEditor = false, false
 
 	if (PEW) then
