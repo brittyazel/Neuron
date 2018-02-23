@@ -123,6 +123,7 @@ NeuronCDB = {
 
 	xbarFirstRun = true,
 	zoneabilitybarFirstRun = true,
+	bagbarFirstRun = true,
 
 }
 

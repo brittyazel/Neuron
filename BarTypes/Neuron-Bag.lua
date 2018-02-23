@@ -390,13 +390,14 @@ local function controlOnEvent(self, event, ...)
 		end
 
 
+		DB = NeuronCDB
+
 		if (Neuron.db.profile["NeuronBagDB"]) then --migrate old settings to new location
 			NeuronCDB.bagbars = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbars)
 			NeuronCDB.bagbtns = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbtns)
 			Neuron.db.profile["NeuronBagDB"] = nil
+			DB.bagbarFirstRun = false
 		end
-
-		DB = NeuronCDB
 
 
 		bagbarsDB = DB.bagbars
@@ -408,7 +409,7 @@ local function controlOnEvent(self, event, ...)
 
 		NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
-		if (DB.firstRun) then
+		if (DB.bagbarFirstRun) then
 
 			local bar = NEURON:CreateNewBar("bag", 1, true)
 			local object
@@ -418,7 +419,7 @@ local function controlOnEvent(self, event, ...)
 				bar:AddObjectToList(object)
 			end
 
-			DB.firstRun = false
+			DB.bagbarFirstRun = false
 
 		else
 
