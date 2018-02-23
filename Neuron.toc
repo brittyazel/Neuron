@@ -29,6 +29,8 @@ Neuron_OrbButton.lua
 
 BarTypes/Neuron_ExtraBar.lua
 BarTypes/Neuron_ZoneAbilityBar.lua
+BarTypes/Neuron-Bag.lua
+BarTypes/Neuron-Bag.xml
 
 
 Neuron.xml

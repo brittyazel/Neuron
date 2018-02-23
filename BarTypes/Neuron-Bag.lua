@@ -18,16 +18,14 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local SKIN = LibStub("Masque", true)
 
 
-local defDB = {
+--[[NeuronBagDB = {
 	bagbars = {},
 	bagbtns = {},
 	freeSlots = 16,
 	firstRun = true,
 }
 
-NeuronBagDB = CopyTable(defDB)
-
-NeuronDefaults.profile['NeuronBagDB'] = NeuronBagDB
+NeuronDefaults.profile['NeuronBagDB'] = NeuronBagDB]]
 
 
 local gDef = {
@@ -134,7 +132,7 @@ local function updateFreeSlots(self)
 		end
 	end
 
-	local rgbValue, r, g = math.floor((totalFree/DB.freeSlots)*100)
+	local rgbValue, r, g = math.floor((totalFree/freeSlots)*100)
 
 	if (rgbValue > 49) then
 		r=(1-(rgbValue/100))+(1-(rgbValue/100))
@@ -358,10 +356,6 @@ function ANCHOR:SetType(save)
 	end
 end
 
-function BagProfileUpdate()
-    bagbarsDB = NeuronBagDB.bagbars
-    bagbtnsDB = NeuronBagDB.bagbtns
-end
 
 local function controlOnEvent(self, event, ...)
 
@@ -396,17 +390,13 @@ local function controlOnEvent(self, event, ...)
 		end
 
 
-		if (not Neuron.db.profile["NeuronBagDB"]) then
-			Neuron.db.profile["NeuronBagDB"] = NeuronBagDB
+		if (Neuron.db.profile["NeuronBagDB"]) then --migrate old settings to new location
+			NeuronCDB.bagbars = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbars)
+			NeuronCDB.bagbtns = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbtns)
+			Neuron.db.profile["NeuronBagDB"] = nil
 		end
 
-		DB = Neuron.db.profile["NeuronBagDB"]
-
-		for k,v in pairs(defDB) do
-			if (DB[k] == nil) then
-				DB[k] = v
-			end
-		end
+		DB = NeuronCDB
 
 
 		bagbarsDB = DB.bagbars

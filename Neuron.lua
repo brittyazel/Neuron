@@ -99,12 +99,15 @@ NeuronGDB = {
 	showmmb = true,
 }
 
- NeuronCDB = {
+NeuronCDB = {
 	bars = {},
 	buttons = {},
 
 	xbars = {},
 	xbtns = {},
+
+	bagbars = {},
+	bagbtns = {},
 
 	zoneabilitybars = {},
 	zoneabilitybtns = {},
@@ -121,7 +124,7 @@ NeuronGDB = {
 	xbarFirstRun = true,
 	zoneabilitybarFirstRun = true,
 
- }
+}
 
 NeuronSpec = {cSpec = 1}
 NeuronItemCache = {}
@@ -498,10 +501,6 @@ function NEURON:RefreshConfig()
 	GDB, CDB, Spec =  NeuronGDB, NeuronCDB, NeuronSpec
 	ButtonProfileUpdate()
 
-	if(self.db.profile["NeuronBagDB"]) then
-		NeuronBagDB = self.db.profile["NeuronBagDB"]
-		BagProfileUpdate()
-	end
 	if(self.db.profile["NeuronMenuDB"]) then
 		NeuronMenuDB = self.db.profile["NeuronMenuDB"]
 		MenuProfileUpdate()
