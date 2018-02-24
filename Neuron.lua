@@ -5,7 +5,7 @@
 -------------------------------------------------------------------------------
 local addonName = ...
 
-local GDB, CDB, Spec
+local GDB, CDB
 
 local NeuronFrame = CreateFrame("Frame", nil, UIParent) --this is a frame mostly used to assign OnEvent functions
 Neuron = LibStub("AceAddon-3.0"):NewAddon(NeuronFrame, "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
@@ -141,7 +141,6 @@ NeuronCDB = {
 
 }
 
-NeuronSpec = {cSpec = 1}
 NeuronItemCache = {}
 
 
@@ -150,7 +149,6 @@ NeuronDefaults = {}
 NeuronDefaults['profile'] = {} --populate the Default profile with globals
 NeuronDefaults.profile['NeuronCDB'] = NeuronCDB
 NeuronDefaults.profile['NeuronGDB'] = NeuronGDB
-NeuronDefaults.profile['NeuronSpec'] = NeuronSpec
 NeuronDefaults.profile['NeuronItemCache'] = NeuronItemCache
 
 
@@ -258,9 +256,6 @@ function NEURON:OnInitialize()
 	if (not Neuron.db.profile["NeuronGDB"]) then
 		self.db.profile["NeuronGDB"] = NeuronGDB
 	end
-	if (not Neuron.db.profile["NeuronSpec"]) then
-		self.db.profile["NeuronSpec"] = NeuronSpec
-	end
 	if (not Neuron.db.profile["NeuronItemCache"]) then
 		self.db.profile["NeuronItemCache"] = NeuronItemCache
 	end
@@ -268,14 +263,13 @@ function NEURON:OnInitialize()
 	---load saved variables into working variable containers
 	NeuronCDB = self.db.profile["NeuronCDB"]
 	NeuronGDB = self.db.profile["NeuronGDB"]
-	NeuronSpec = self.db.profile["NeuronSpec"]
 	NeuronItemCache = self.db.profile["NeuronItemCache"]
 
 	InterfaceOptionsFrame:SetFrameStrata("HIGH")
 
 	NEURON:RegisterChatCommand("neuron", "slashHandler")
 
-	GDB = NeuronGDB; CDB = NeuronCDB; Spec = NeuronSpec
+	GDB = NeuronGDB; CDB = NeuronCDB;
 
 	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
 	NEURON.MBS = Neuron.MANAGED_BAR_STATES
@@ -294,11 +288,6 @@ function NEURON:OnEnable()
 
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("PLAYER_LOGOUT")
-	self:RegisterEvent("PLAYER_LEAVING_WORLD")
-	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-	self:RegisterEvent("PLAYER_TALENT_UPDATE")
 	self:RegisterEvent("SPELLS_CHANGED")
 	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB")
@@ -415,22 +404,6 @@ function NEURON:PLAYER_ENTERING_WORLD()
 	end
 end
 
-function NEURON:PLAYER_SPECIALIZATION_CHANGED()
-	Spec.cSpec = GetSpecialization()
-end
-
-function NEURON:PLAYER_TALENT_UPDATE()
-	Spec.cSpec = GetSpecialization()
-end
-
-function NEURON:PLAYER_LOGOUT()
-	Spec.cSpec = GetSpecialization()
-end
-
-function NEURON:PLAYER_LEAVING_WORLD()
-	Spec.cSpec = GetSpecialization()
-end
-
 function NEURON:ACTIVE_TALENT_GROUP_CHANGED()
 	NEURON:UpdateSpellIndex()
 	NEURON:UpdateStanceStrings()
@@ -511,10 +484,9 @@ frame:Hide()
 function NEURON:RefreshConfig()
 	NeuronCDB = self.db.profile["NeuronCDB"]
 	NeuronGDB = self.db.profile["NeuronGDB"]
-	NeuronSpec = {cSpec = GetSpecialization() }
 
-	GDB, CDB, Spec =  NeuronGDB, NeuronCDB, NeuronSpec
-	ButtonProfileUpdate()
+	GDB, CDB =  NeuronGDB, NeuronCDB
+	NEURON.NeuronButton.ButtonProfileUpdate()
 
 	StaticPopup_Show("ReloadUI")
 end

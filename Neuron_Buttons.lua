@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local GDB, CDB, PEW, SPEC, player, realm, btnGDB, btnCDB
+local GDB, CDB, PEW, player, realm, btnGDB, btnCDB
 
 NEURON.NeuronButton = NEURON:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
 local NeuronButton = NEURON.NeuronButton
@@ -225,8 +225,6 @@ function NeuronButton:OnEnable()
 	self:RegisterEvent("UNIT_SPELLCAST_START")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-
-	SPEC = NeuronSpec
 
 	for k in pairs(unitAuras) do
 		self:updateAuraInfo(k)
@@ -1637,7 +1635,6 @@ function BUTTON:MACRO_ACTIVE_TALENT_GROUP_CHANGED(...)
 	local spec
 
 	if (self.multiSpec) then
-		--spec = select(2,...)
 		spec = GetSpecialization()
 	else
 		spec = 1
@@ -3584,7 +3581,7 @@ end
 
 
 
-function ButtonProfileUpdate()
+function NeuronButton.ButtonProfileUpdate()
 	GDB, CDB = NeuronGDB, NeuronCDB
 
 	btnGDB = GDB.buttons

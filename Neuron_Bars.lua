@@ -206,7 +206,7 @@ local cDef = {
 --- or setting up slash commands.
 function NeuronBar:OnInitialize()
 
-	GDB, CDB, SPEC = NeuronGDB, NeuronCDB, NeuronSpec
+	GDB, CDB= NeuronGDB, NeuronCDB
 	barGDB = GDB.bars
 	barCDB = CDB.bars
 
@@ -1163,7 +1163,7 @@ function BAR:LoadObjects(init)
 	local object, spec
 
 	if (self.cdata.multiSpec) then
-		spec = SPEC.cSpec
+		spec = GetSpecialization()
 	else
 		spec = 1
 	end
@@ -1826,7 +1826,7 @@ function BAR:UpdateObjectSpec()
 
 		if (object) then
 			if (self.cdata.multiSpec) then
-				spec = SPEC.cSpec
+				spec = GetSpecialization()
 			else
 				spec = 1
 			end
@@ -3217,7 +3217,7 @@ end
 
 
 function NEURONBarProfileUpdate()
-	GDB, CDB, SPEC = NeuronGDB, NeuronCDB, NeuronSpec
+	GDB, CDB = NeuronGDB, NeuronCDB
 	barGDB = GDB.bars
 	barCDB = CDB.bars
 
