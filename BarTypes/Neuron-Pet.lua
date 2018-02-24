@@ -639,9 +639,14 @@ local function controlOnEvent(self, event, ...)
 
 		DB = NeuronCDB
 
+		---TODO: Remove this in the future. This is just temp code.
 		if (Neuron.db.profile["NeuronPetDB"]) then --migrate old settings to new location
-			NeuronCDB.petbars = CopyTable(Neuron.db.profile["NeuronPetDB"].petbars)
-			NeuronCDB.petbtns = CopyTable(Neuron.db.profile["NeuronPetDB"].petbtns)
+			if(Neuron.db.profile["NeuronPetDB"].petbars) then
+				NeuronCDB.petbars = CopyTable(Neuron.db.profile["NeuronPetDB"].petbars)
+			end
+			if(Neuron.db.profile["NeuronPetDB"].petbtns) then
+				NeuronCDB.petbtns = CopyTable(Neuron.db.profile["NeuronPetDB"].petbtns)
+			end
 			Neuron.db.profile["NeuronPetDB"] = nil
 			DB.petbarFirstRun = false
 		end

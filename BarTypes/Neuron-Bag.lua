@@ -382,9 +382,14 @@ local function controlOnEvent(self, event, ...)
 
 		DB = NeuronCDB
 
+		---TODO: Remove this in the future. This is just temp code.
 		if (Neuron.db.profile["NeuronBagDB"]) then --migrate old settings to new location
-			NeuronCDB.bagbars = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbars)
-			NeuronCDB.bagbtns = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbtns)
+			if(Neuron.db.profile["NeuronBagDB"].bagbars) then
+				NeuronCDB.bagbars = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbars)
+			end
+			if(Neuron.db.profile["NeuronBagDB"].bagbtns) then
+				NeuronCDB.bagbtns = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbtns)
+			end
 			Neuron.db.profile["NeuronBagDB"] = nil
 			DB.bagbarFirstRun = false
 		end

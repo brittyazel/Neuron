@@ -18,6 +18,7 @@ Localizations\Neuron_Localizations.xml
 
 Neuron.lua
 
+
 Neuron_States.lua
 Neuron_Buttons.lua
 Neuron_Bars.lua
@@ -27,6 +28,8 @@ Neuron_Flyouts.lua
 Neuron_SnapTo.lua
 Neuron_OrbButton.lua
 
+Neuron.xml
+
 BarTypes/Neuron-Extra.lua
 BarTypes/Neuron-ZoneAbility.lua
 BarTypes/Neuron-Bag.lua
@@ -34,6 +37,5 @@ BarTypes/Neuron-Bag.xml
 BarTypes/Neuron-Menu.lua
 BarTypes/Neuron-Menu.xml
 BarTypes/Neuron-Pet.lua
-
-
-Neuron.xml
+BarTypes/Neuron-Status.lua
+BarTypes/Neuron-Status.xml

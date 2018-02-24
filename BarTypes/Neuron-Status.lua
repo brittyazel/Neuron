@@ -20,26 +20,16 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-local defDB = {
-	statusbars = {},
-	statusbtns = {},
-	firstRun = true,
-}
-
-NeuronStatusDB = CopyTable(defDB)
-
-NeuronDefaults.profile['NeuronStatusDB'] = NeuronStatusDB
-
 local GetParentKeys = NEURON.GetParentKeys
 
 local BarTextures = {
-	[1] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Default_2", L["Default"] },
-	[2] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Contrast_2", L["Contrast"] },
-	[3] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Carpaint_2", L["Carpaint"] },
-	[4] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Gel_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Gel_2", L["Gel"] },
-	[5] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Glassed_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Glassed_2", L["Glassed"] },
-	[6] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Soft_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Soft_2", L["Soft"] },
-	[7] = { "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Neuron-Status\\Images\\BarFill_Velvet_3", L["Velvet"] },
+	[1] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_2", L["Default"] },
+	[2] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_2", L["Contrast"] },
+	[3] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Carpaint_2", L["Carpaint"] },
+	[4] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Gel_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Gel_2", L["Gel"] },
+	[5] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Glassed_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Glassed_2", L["Glassed"] },
+	[6] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Soft_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Soft_2", L["Soft"] },
+	[7] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Velvet_3", L["Velvet"] },
 }
 
 local BarTexturesData = {}
@@ -52,7 +42,7 @@ end
 local BarBorders = {
 	[1] = { L["Tooltip"], "Interface\\Tooltips\\UI-Tooltip-Border", 2, 2, 3, 3, 12, 12, -2, 3, 2, -3 },
 	[2] = { L["Slider"], "Interface\\Buttons\\UI-SliderBar-Border", 3, 3, 6, 6, 8, 8 , -1, 5, 1, -5 },
-	[3] = { L["Dialog"], "Interface\\AddOns\\Neuron-Status\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
+	[3] = { L["Dialog"], "Interface\\AddOns\\Neuron\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
 	[4] = { L["None"], "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 }
 
@@ -912,7 +902,7 @@ function STATUS:CastBar_OnEvent(event, ...)
 		self:SetStatusBarColor(self.castColor[1], self.castColor[2], self.castColor[3], self.castColor[4])
 
 		if (self.spark) then
-			self.spark:SetTexture("Interface\\AddOns\\Neuron-Status\\Images\\CastingBar_Spark_"..self.orientation)
+			self.spark:SetTexture("Interface\\AddOns\\Neuron\\Images\\CastingBar_Spark_"..self.orientation)
 			self.spark:Show()
 		end
 
@@ -2695,7 +2685,7 @@ end
 ----------------------------------------------------------------------
 local function controlOnEvent(self, event, ...)
 
-	if (event == "ADDON_LOADED" and ... == "Neuron-Status") then
+	if (event == "ADDON_LOADED" and ... == "Neuron") then
 
 		CastingBarFrame:UnregisterAllEvents()
 		CastingBarFrame:Hide()
@@ -2705,20 +2695,22 @@ local function controlOnEvent(self, event, ...)
 		MirrorTimer2:UnregisterAllEvents()
 		MirrorTimer3:UnregisterAllEvents()
 
-		if (not Neuron.db.profile["NeuronStatusDB"]) then
-			Neuron.db.profile["NeuronStatusDB"] = NeuronStatusDB
-		end
+		DB = NeuronCDB
 
-		DB = Neuron.db.profile["NeuronStatusDB"]
+        ---TODO: Remove this in the future. This is just temp code.
+		if (Neuron.db.profile["NeuronStatusDB"]) then --migrate old settings to new location
+            if(Neuron.db.profile["NeuronStatusDB"].statusbars) then
+			    NeuronCDB.statusbars = CopyTable(Neuron.db.profile["NeuronStatusDB"].statusbars)
+            end
+            if(Neuron.db.profile["NeuronStatusDB"].statusbtns) then
+			    NeuronCDB.statusbtns = CopyTable(Neuron.db.profile["NeuronStatusDB"].statusbtns)
+            end
+			Neuron.db.profile["NeuronStatusDB"] = nil
+			DB.statusbarFirstRun = false
+		end
 
 		if not DB.AutoWatch then
 			DB.AutoWatch = 1
-		end
-
-		for k,v in pairs(defDB) do
-			if (DB[k] == nil) then
-				DB[k] = v
-			end
 		end
 
 		statusbarsDB = DB.statusbars
@@ -2731,7 +2723,7 @@ local function controlOnEvent(self, event, ...)
 			HIDDEN = true,
 			TOOLTIPS = true }, false, false)
 
-		if (DB.firstRun) then --makes the initial 4 status bars
+		if (DB.statusbarFirstRun) then --makes the initial 4 status bars
 
 			local oid, offset = 1, 0
 
@@ -2756,7 +2748,7 @@ local function controlOnEvent(self, event, ...)
 				NEURON.RegisteredBarData["status"].gDef = nil
 			end
 
-			DB.firstRun = false
+			DB.statusbarFirstRun = false
 		else --loads previous bars from saved variable
 
 			for id,data in pairs(statusbarsDB) do

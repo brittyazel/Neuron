@@ -118,6 +118,9 @@ NeuronCDB = {
     petbars = {},
     petbtns = {},
 
+	statusbars = {},
+	statusbtns = {},
+
 	selfCast = false,
 	focusCast = false,
 	mouseOverMod= "NONE",
@@ -127,11 +130,14 @@ NeuronCDB = {
 	perCharBinds = false,
 	firstRun = true,
 
+	AutoWatch = 1,
+
 	xbarFirstRun = true,
 	zoneabilitybarFirstRun = true,
 	bagbarFirstRun = true,
 	menubarFirstRun = true,
     petbarFirstRun = true,
+	statusbarFirstRun = true,
 
 }
 
@@ -510,15 +516,6 @@ function NEURON:RefreshConfig()
 	GDB, CDB, Spec =  NeuronGDB, NeuronCDB, NeuronSpec
 	ButtonProfileUpdate()
 
-	if(self.db.profile["NeuronPetDB"]) then
-		NeuronPetDB = self.db.profile["NeuronPetDB"]
-		PetProfileUpdate()
-	end
-	if(self.db.profile["NeuronStatusDB"]) then
-		NeuronStatusDB = self.db.profile["NeuronStatusDB"]
-		StatusProfileUpdate()
-	end
-
 	StaticPopup_Show("ReloadUI")
 end
 
@@ -655,7 +652,7 @@ function NEURON.controlOnUpdate(self, elapsed)
 
 	self.elapsed = self.elapsed + elapsed
 
-    ---Throttle for OnUpdate calls
+    ---Throttled OnUpdate calls
 	if (self.elapsed > GDB.throttle and PEW) then
 
 		NEURON.NeuronBar.controlOnUpdate(self, elapsed)
