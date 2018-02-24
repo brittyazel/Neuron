@@ -631,6 +631,7 @@ function NEURON.controlOnUpdate(self, elapsed)
 		NEURON.NeuronBar.controlOnUpdate(self, elapsed)
 		NEURON.NeuronButton.cooldownsOnUpdate(self, elapsed)
 		NEURON.NeuronZoneAbilityBar.controlOnUpdate(self, elapsed)
+		NEURON.NeuronPetBar.controlOnUpdate(self, elapsed)
 
 		self.elapsed = 0;
     end
