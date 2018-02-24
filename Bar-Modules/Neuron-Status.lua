@@ -2784,9 +2784,9 @@ end
 
 
 
-local OBJEDITOR_MT = { __index = OBJEDITOR }
-
 function STATUS:CreateEditFrame(index)
+
+	local OBJEDITOR_MT = { __index = OBJEDITOR }
 
 	local OBJEDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
 
