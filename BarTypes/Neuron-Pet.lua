@@ -22,16 +22,6 @@ local SKIN = LibStub("Masque", true)
 
 local sIndex = NEURON.sIndex
 
-local defDB = {
-	petbars = {},
-	petbtns = {},
-	firstRun = true,
-}
-
-NeuronPetDB = CopyTable(defDB)
-
-NeuronDefaults.profile['NeuronPetDB'] = NeuronPetDB
-
 local gDef = {
 
 	hidestates = ":pet0:",
@@ -50,8 +40,8 @@ local format = string.format
 local GetParentKeys = NEURON.GetParentKeys
 
 
-local AutoCastStart = NEURON.AutoCastStart
-local AutoCastStop = NEURON.AutoCastStop
+local AutoCastStart = NEURON.NeuronButton.AutoCastStart
+local AutoCastStop = NEURON.NeuronButton.AutoCastStop
 
 local configData = {
 
@@ -639,7 +629,7 @@ end
 
 local function controlOnEvent(self, event, ...)
 
-	if (event == "ADDON_LOADED" and ... == "Neuron-Pet") then
+	if (event == "ADDON_LOADED" and ... == "Neuron") then
 
 		PETBTN.SetTimer = BUTTON.SetTimer
 		PETBTN.SetSkinned = BUTTON.SetSkinned
@@ -647,17 +637,15 @@ local function controlOnEvent(self, event, ...)
 		PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
 
-        if (not Neuron.db.profile["NeuronPetDB"]) then
-            Neuron.db.profile["NeuronPetDB"] = NeuronPetDB
-        end
+		DB = NeuronCDB
 
-		DB = Neuron.db.profile["NeuronPetDB"]
-
-		for k,v in pairs(defDB) do
-			if (DB[k] == nil) then
-				DB[k] = v
-			end
+		if (Neuron.db.profile["NeuronPetDB"]) then --migrate old settings to new location
+			NeuronCDB.petbars = CopyTable(Neuron.db.profile["NeuronPetDB"].petbars)
+			NeuronCDB.petbtns = CopyTable(Neuron.db.profile["NeuronPetDB"].petbtns)
+			Neuron.db.profile["NeuronPetDB"] = nil
+			DB.petbarFirstRun = false
 		end
+
 
 		petbarsDB = DB.petbars
 		petbtnsDB = DB.petbtns
@@ -678,16 +666,20 @@ local function controlOnEvent(self, event, ...)
 			CDTEXT = true,
 			CDALPHA = true }, false, 65)
 
-		if (DB.firstRun) then
+		if (DB.petbarFirstRun) then
 
-			local bar, object = NEURON:CreateNewBar("pet", 1, true)
+			if(NEURON.class == 'HUNTER' or NEURON.class == 'WARLOCK' or NEURON.class == 'DEATHKNIGHT' or NEURON.class == 'MAGE') then
 
-			for i=1,NEURON.maxPetID do
-				object = NEURON:CreateNewObject("pet", i)
-				bar:AddObjectToList(object)
+				local bar, object = NEURON:CreateNewBar("pet", 1, true)
+
+				for i=1,NEURON.maxPetID do
+					object = NEURON:CreateNewObject("pet", i)
+					bar:AddObjectToList(object)
+				end
+
 			end
 
-			DB.firstRun = false
+			DB.petbarFirstRun = false
 
 		else
 

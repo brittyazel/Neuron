@@ -206,9 +206,6 @@ function NeuronButton:OnInitialize()
 		["/click"] = true,
 	}
 
-	NEURON.AutoCastStart = AutoCastStart
-	NEURON.AutoCastStop = AutoCastStop
-
 	if (SKIN) then
 		SKIN:Register("Neuron", NEURON.SKINCallback, true)
 	end
@@ -323,7 +320,7 @@ end
 
 
 
-local function AutoCastStart(shine, r, g, b)
+function NeuronButton.AutoCastStart(shine, r, g, b)
 	autoCast.shines[shine] = shine
 
 	if (not r) then
@@ -336,7 +333,7 @@ local function AutoCastStart(shine, r, g, b)
 end
 
 
-local function AutoCastStop(shine)
+function NeuronButton.AutoCastStop(shine)
 	autoCast.shines[shine] = nil
 
 	for _,sparkle in pairs(shine.sparkles) do
@@ -346,6 +343,7 @@ end
 
 
 --this function gets called via controlOnUpdate in the main Neuron.lua
+---this function controlls the sparkley effects around abilities, if throttled then those effects are throttled down super slow. Be careful.
 function NeuronButton.controlOnUpdate(self, elapsed)
 	local cou_distance, cou_radius, cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position
 
@@ -1016,7 +1014,7 @@ function BUTTON:MACRO_StartGlow()
 	if (self.spellGlowDef) then
 		ActionButton_ShowOverlayGlow(self)
 	elseif (self.spellGlowAlt) then
-		AutoCastStart(self.shine)
+		NeuronButton.AutoCastStart(self.shine)
 	end
 
 	self.glowing = true
@@ -1027,7 +1025,7 @@ function BUTTON:MACRO_StopGlow()
 	if (self.spellGlowDef) then
 		ActionButton_HideOverlayGlow(self)
 	elseif (self.spellGlowAlt) then
-		AutoCastStop(self.shine)
+		NeuronButton.AutoCastStop(self.shine)
 	end
 
 	self.glowing = nil

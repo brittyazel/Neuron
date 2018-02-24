@@ -27,12 +27,13 @@ Neuron_Flyouts.lua
 Neuron_SnapTo.lua
 Neuron_OrbButton.lua
 
-BarTypes/Neuron_ExtraBar.lua
-BarTypes/Neuron_ZoneAbilityBar.lua
+BarTypes/Neuron-Extra.lua
+BarTypes/Neuron-ZoneAbility.lua
 BarTypes/Neuron-Bag.lua
 BarTypes/Neuron-Bag.xml
 BarTypes/Neuron-Menu.lua
 BarTypes/Neuron-Menu.xml
+BarTypes/Neuron-Pet.lua
 
 
 Neuron.xml

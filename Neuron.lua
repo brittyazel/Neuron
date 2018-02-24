@@ -115,6 +115,9 @@ NeuronCDB = {
 	menubars = {},
 	menubtns = {},
 
+    petbars = {},
+    petbtns = {},
+
 	selfCast = false,
 	focusCast = false,
 	mouseOverMod= "NONE",
@@ -128,6 +131,7 @@ NeuronCDB = {
 	zoneabilitybarFirstRun = true,
 	bagbarFirstRun = true,
 	menubarFirstRun = true,
+    petbarFirstRun = true,
 
 }
 
@@ -651,15 +655,19 @@ function NEURON.controlOnUpdate(self, elapsed)
 
 	self.elapsed = self.elapsed + elapsed
 
-	if (self.elapsed > GDB.throttle and PEW) then --might want to add some logic to postpone this from going off until fully logged in, like checking for PEW
+    ---Throttle for OnUpdate calls
+	if (self.elapsed > GDB.throttle and PEW) then
 
 		NEURON.NeuronBar.controlOnUpdate(self, elapsed)
-		NEURON.NeuronButton.controlOnUpdate(self, elapsed)
 		NEURON.NeuronButton.cooldownsOnUpdate(self, elapsed)
 		NEURON.NeuronZoneAbilityBar.controlOnUpdate(self, elapsed)
 
 		self.elapsed = 0;
-	end
+    end
+
+    ---UnThrottled OnUpdate calls
+    NEURON.NeuronButton.controlOnUpdate(self, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+
 end
 
 

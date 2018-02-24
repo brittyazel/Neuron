@@ -40,8 +40,8 @@ local gDef = {
 
 local GetParentKeys = NEURON.GetParentKeys
 
-local AutoCastStart = NEURON.AutoCastStart
-local AutoCastStop = NEURON.AutoCastStop
+local AutoCastStart = NEURON.NeuronButton.AutoCastStart
+local AutoCastStop = NEURON.NeuronButton.AutoCastStop
 
 local configData = {
 	stored = false,

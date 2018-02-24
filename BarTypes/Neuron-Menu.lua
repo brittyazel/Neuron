@@ -21,17 +21,6 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
---[[local defDB = {
-	menubars = {},
-	menubtns = {},
-	scriptProfile = false,
-	firstRun = true,
-}
-
-NeuronMenuDB = CopyTable(defDB)]]
-
-NeuronDefaults.profile['NeuronMenuDB'] = NeuronMenuDB
-
 local gDef = {
 	snapTo = false,
 	snapToFrame = false,

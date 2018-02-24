@@ -30,5 +30,5 @@ move-folders:
   Neuron/Neuron-GUI: Neuron-GUI
   Neuron/Deprecated/Neuron-Bag: Neuron-Bag
   Neuron/Deprecated/Neuron-Menu: Neuron-Menu
-  Neuron/Neuron-Pet: Neuron-Pet
+  Neuron/Deprecated/Neuron-Pet: Neuron-Pet
   Neuron/Neuron-Status: Neuron-Status
