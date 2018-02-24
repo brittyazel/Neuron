@@ -113,8 +113,8 @@ NeuronCDB = {
 	menubars = {},
 	menubtns = {},
 
-    petbars = {},
-    petbtns = {},
+	petbars = {},
+	petbtns = {},
 
 	statusbars = {},
 	statusbtns = {},
@@ -134,7 +134,7 @@ NeuronCDB = {
 	zoneabilitybarFirstRun = true,
 	bagbarFirstRun = true,
 	menubarFirstRun = true,
-    petbarFirstRun = true,
+	petbarFirstRun = true,
 	statusbarFirstRun = true,
 
 }
@@ -623,7 +623,7 @@ function NEURON.controlOnUpdate(self, elapsed)
 
 	self.elapsed = self.elapsed + elapsed
 
-    ---Throttled OnUpdate calls
+	---Throttled OnUpdate calls
 	if (self.elapsed > GDB.throttle and PEW) then
 
 		NEURON.NeuronBar.controlOnUpdate(self, elapsed)
@@ -632,10 +632,10 @@ function NEURON.controlOnUpdate(self, elapsed)
 		NEURON.NeuronPetBar.controlOnUpdate(self, elapsed)
 
 		self.elapsed = 0;
-    end
+	end
 
-    ---UnThrottled OnUpdate calls
-    NEURON.NeuronButton.controlOnUpdate(self, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+	---UnThrottled OnUpdate calls
+	NEURON.NeuronButton.controlOnUpdate(self, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 
 end
 

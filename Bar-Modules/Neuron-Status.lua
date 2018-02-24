@@ -441,7 +441,7 @@ end
 ---TODO: right now we are using statusbtnsDB to assign settins ot the status buttons, but I think our indexes are bar specific
 local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
 
-    local parent = self.parent
+	local parent = self.parent
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
 	local thisBar = statusbtnsDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
@@ -474,7 +474,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 
 		rank = L["Level"].." "..tostring(playerLevel)
 
-	--artifact xp option
+		--artifact xp option
 	elseif(thisBar.curXPType == "artifact_xp") then
 
 		--when first logging in for some reason this check fails, even if the player is wearing an artifact weapon
@@ -505,7 +505,7 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 		percentXP = string.format("%.1f", percentXP).."%"; --format
 
 
-	--honor points option
+		--honor points option
 	elseif(thisBar.curXPType == "honor_points") then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
@@ -525,9 +525,9 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 
 
 		if (UnitPrestige("player")) then
-		rank = L["Level"].." "..tostring(UnitHonorLevel("player")).." - "..L["Prestige"].." "..tostring(UnitPrestige("Player"))
+			rank = L["Level"].." "..tostring(UnitHonorLevel("player")).." - "..L["Prestige"].." "..tostring(UnitPrestige("Player"))
 		else
-		rank = tostring(UnitHonorLevel("player"))
+			rank = tostring(UnitHonorLevel("player"))
 		end
 	end
 
@@ -556,7 +556,7 @@ end
 
 local function XPBar_OnEvent(self, event, ...)
 
-    local parent = self.parent
+	local parent = self.parent
 
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
@@ -626,7 +626,7 @@ end
 
 local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
 
-    local parent = dropdown:GetParent()
+	local parent = dropdown:GetParent()
 	local id = parent.id
 
 	if (parent) then
@@ -801,8 +801,8 @@ end
 
 local function repDropDown_Initialize(dropdown) --Initialize the dropdown menu for choosing a rep
 
-    local parent = dropdown:GetParent()
-    local id = parent.id
+	local parent = dropdown:GetParent()
+	local id = parent.id
 
 	if (parent) then
 
@@ -2752,17 +2752,17 @@ function STATUS:SetType(save)
 		end
 
 
-        local typeString
+		local typeString
 
-        if (self.config.sbType == "xp") then
-            typeString = L["XP Bar"]
-        elseif (self.config.sbType == "rep") then
-            typeString = L["Rep Bar"]
-        elseif (self.config.sbType == "cast") then
-            typeString = L["Cast Bar"]
-        elseif (self.config.sbType == "mirror") then
-            typeString = L["Mirror Bar"]
-        end
+		if (self.config.sbType == "xp") then
+			typeString = L["XP Bar"]
+		elseif (self.config.sbType == "rep") then
+			typeString = L["Rep Bar"]
+		elseif (self.config.sbType == "cast") then
+			typeString = L["Cast Bar"]
+		elseif (self.config.sbType == "mirror") then
+			typeString = L["Mirror Bar"]
+		end
 
 		self.fbframe.feedback.text:SetText(typeString)
 

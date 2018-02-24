@@ -1521,7 +1521,7 @@ function NeuronFlyouts.linkScanOnUpdate(self, elapsed)
 	self.elapsed = self.elapsed + elapsed
 
 	if (self.elapsed > GDB.throttle and PEW) then
-	-- scan X items per frame draw, where X is the for limit
+		-- scan X items per frame draw, where X is the for limit
 		for i=1,2 do
 			self.link = itemLinks[self.index]
 			if (self.link) then

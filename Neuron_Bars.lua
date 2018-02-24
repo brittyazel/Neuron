@@ -348,7 +348,7 @@ function NeuronBar.controlOnUpdate(self, elapsed)
 						end
 					else
 						k.seen = 1;
-						end
+					end
 
 				end
 

@@ -546,8 +546,8 @@ end
 
 function NeuronButton:updateAuraInfo(unit)
 
-    local uai__ = 1
-    local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID
+	local uai__ = 1
+	local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID
 	uai_index = 1
 
 	wipe(unitAuras[unit])
@@ -989,16 +989,16 @@ function BUTTON:MACRO_UpdateIcon(...)
 	--Thrash Feral: 106832
 	--But the joint thrash is 106830 (this is the one that results true when the ability is procced)
 
-    --Swipe(Bear): 213771
-    --Swipe(Cat): 106785
-    --Swipe(NoForm): 213764
+	--Swipe(Bear): 213771
+	--Swipe(Cat): 106785
+	--Swipe(NoForm): 213764
 
 	if (self.spellID and IsSpellOverlayed(self.spellID)) then
 		self:MACRO_StartGlow()
 	elseif (spell == "Thrash()" and IsSpellOverlayed(106830)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
 		self:MACRO_StartGlow()
-    elseif (spell == "Swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
-        self:MACRO_StartGlow()
+	elseif (spell == "Swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+		self:MACRO_StartGlow()
 	elseif (self.glowing) then
 		self:MACRO_StopGlow()
 	end
@@ -1154,7 +1154,7 @@ end
 
 function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
 
-    local uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count, uaw_color
+	local uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count, uaw_color
 
 	if (spell and (unit == self.unit or unit == "player")) then
 		spell = spell:gsub("%s*%(.+%)", ""):lower()
@@ -2108,8 +2108,8 @@ end
 
 local function macroFuss(MacroDrag)
 
-    local macroIndex
-    local macroExists
+	local macroIndex
+	local macroExists
 
 	if MacroDrag[7] then
 		PickupMacro(MacroDrag[7])
@@ -2678,19 +2678,19 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 
 
 				---we need to to add a workaround for druid Stealth states getting immediately overwritten
---[[				if(NEURON.class == "DRUID") then
+				--[[				if(NEURON.class == "DRUID") then
 
-					if (value == "stealth1") then
-						stealthStatus = true
-					end
+                                    if (value == "stealth1") then
+                                        stealthStatus = true
+                                    end
 
-					if (value ~= "stealth1" and stealthStatus==true) then
-						return
-					end
+                                    if (value ~= "stealth1" and stealthStatus==true) then
+                                        return
+                                    end
 
 
 
-				end]]
+                                end]]
 
 				self.data = self.statedata[value]
 

@@ -25,7 +25,7 @@ local gDef = {
 
 	hidestates = ":pet0:",
 
-    scale = 0.8,
+	scale = 0.8,
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,

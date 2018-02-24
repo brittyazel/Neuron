@@ -127,18 +127,18 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronBagBar:OnEnable()
 
-    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    NeuronBagBar:SecureHook("ContainerFrame_OnShow", NeuronBagBar.containerFrame_OnShow)
-    NeuronBagBar:SecureHook("ContainerFrame_OnHide", NeuronBagBar.containerFrame_OnHide)
-    NeuronBagBar:SecureHook("ToggleBag", NeuronBagBar.toggleBag)
-    NeuronBagBar:SecureHook("ToggleBackpack", NeuronBagBar.toggleBackpack)
+	NeuronBagBar:SecureHook("ContainerFrame_OnShow", NeuronBagBar.containerFrame_OnShow)
+	NeuronBagBar:SecureHook("ContainerFrame_OnHide", NeuronBagBar.containerFrame_OnHide)
+	NeuronBagBar:SecureHook("ToggleBag", NeuronBagBar.toggleBag)
+	NeuronBagBar:SecureHook("ToggleBackpack", NeuronBagBar.toggleBackpack)
 
-    for i=1,13 do
-        local frame = _G["ContainerFrame"..i]
-        NeuronBagBar:HookScript(frame, "OnShow", NeuronBagBar.containerFrame_OnShow)
-        NeuronBagBar:HookScript(frame, "OnHide", NeuronBagBar.containerFrame_OnHide)
-    end
+	for i=1,13 do
+		local frame = _G["ContainerFrame"..i]
+		NeuronBagBar:HookScript(frame, "OnShow", NeuronBagBar.containerFrame_OnShow)
+		NeuronBagBar:HookScript(frame, "OnHide", NeuronBagBar.containerFrame_OnHide)
+	end
 
 end
 
@@ -209,7 +209,7 @@ function NeuronBagBar.toggleBackpack()
 	end
 end
 
- function NeuronBagBar.containerFrame_OnShow(self)
+function NeuronBagBar.containerFrame_OnShow(self)
 
 	local index = self:GetID() + 1
 
