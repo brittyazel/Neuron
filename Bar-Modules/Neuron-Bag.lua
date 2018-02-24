@@ -3,9 +3,8 @@
 local NEURON = Neuron
 local  DB, PEW
 
-NEURON.BAGIndex = {}
-
-local BAGIndex = NEURON.BAGIndex
+NEURON.NeuronBagBar = NEURON:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronBagBar = NEURON.NeuronBagBar
 
 local  bagbarsDB, bagbtnsDB
 
@@ -41,7 +40,129 @@ local configData = {
 	stored = false,
 }
 
-local function toggleBag(id)
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronBagBar:OnInitialize()
+
+	bagElements[1] = NeuronBackpackButton
+	bagElements[2] = Neuron___Bag0Slot
+	bagElements[3] = Neuron___Bag1Slot
+	bagElements[4] = Neuron___Bag2Slot
+	bagElements[5] = Neuron___Bag3Slot
+
+	for k,v in pairs(bagElements) do
+		v:SetWidth(32)
+		v:SetHeight(32)
+		v:GetNormalTexture():SetWidth(55)
+		v:GetNormalTexture():SetHeight(55)
+		v:GetNormalTexture():SetPoint("CENTER",0,0)
+		_G[v:GetName().."IconTexture"]:ClearAllPoints()
+		_G[v:GetName().."IconTexture"]:SetPoint("TOPLEFT", -1, 1)
+		_G[v:GetName().."IconTexture"]:SetPoint("BOTTOMRIGHT")
+	end
+
+	DB = NeuronCDB
+
+	---TODO: Remove this in the future. This is just temp code.
+	if (Neuron.db.profile["NeuronBagDB"]) then --migrate old settings to new location
+		if(Neuron.db.profile["NeuronBagDB"].bagbars) then
+			NeuronCDB.bagbars = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbars)
+		end
+		if(Neuron.db.profile["NeuronBagDB"].bagbtns) then
+			NeuronCDB.bagbtns = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbtns)
+		end
+		Neuron.db.profile["NeuronBagDB"] = nil
+		DB.bagbarFirstRun = false
+	end
+
+
+	bagbarsDB = DB.bagbars
+	bagbtnsDB = DB.bagbtns
+
+
+	--for some reason the bag settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsDB to be both the GDB and DB in the RegisterBarClass
+	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, true, STORAGE, gDef, nil, true)
+
+	NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
+
+	if (DB.bagbarFirstRun) then
+
+		local bar = NEURON:CreateNewBar("bag", 1, true)
+		local object
+
+		for i=1,#bagElements do
+			object = NEURON:CreateNewObject("bag", i)
+			bar:AddObjectToList(object)
+		end
+
+		DB.bagbarFirstRun = false
+
+	else
+
+		for id,data in pairs(bagbarsDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewBar("bag", id)
+			end
+		end
+
+		for id,data in pairs(bagbtnsDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewObject("bag", id)
+			end
+		end
+	end
+
+	STORAGE:Hide()
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronBagBar:OnEnable()
+
+    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+    NeuronBagBar:SecureHook("ContainerFrame_OnShow", NeuronBagBar.containerFrame_OnShow)
+    NeuronBagBar:SecureHook("ContainerFrame_OnHide", NeuronBagBar.containerFrame_OnHide)
+    NeuronBagBar:SecureHook("ToggleBag", NeuronBagBar.toggleBag)
+    NeuronBagBar:SecureHook("ToggleBackpack", NeuronBagBar.toggleBackpack)
+
+    for i=1,13 do
+        local frame = _G["ContainerFrame"..i]
+        NeuronBagBar:HookScript(frame, "OnShow", NeuronBagBar.containerFrame_OnShow)
+        NeuronBagBar:HookScript(frame, "OnHide", NeuronBagBar.containerFrame_OnHide)
+    end
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronBagBar:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+
+function NeuronBagBar:PLAYER_ENTERING_WORLD()
+	PEW = true
+end
+
+-------------------------------------------------------------------------------
+
+
+
+function NeuronBagBar.toggleBag(id)
 
 	if (not InCombatLockdown() and IsOptionFrameOpen()) then
 
@@ -62,7 +183,7 @@ local function toggleBag(id)
 	end
 end
 
-local function toggleBackpack()
+function NeuronBagBar.toggleBackpack()
 
 	if (not InCombatLockdown() and IsOptionFrameOpen()) then
 
@@ -88,7 +209,7 @@ local function toggleBackpack()
 	end
 end
 
-local function containerFrame_OnShow(self)
+ function NeuronBagBar.containerFrame_OnShow(self)
 
 	local index = self:GetID() + 1
 
@@ -97,7 +218,7 @@ local function containerFrame_OnShow(self)
 	end
 end
 
-local function containerFrame_OnHide(self)
+function NeuronBagBar.containerFrame_OnHide(self)
 
 	local index = abs(self:GetID()-5)
 
@@ -345,106 +466,3 @@ function ANCHOR:SetType(save)
 		self:SetSkinned()
 	end
 end
-
-
-local function controlOnEvent(self, event, ...)
-
-	if (event == "ADDON_LOADED" and ... == "Neuron") then
-
-		bagElements[1] = NeuronBackpackButton
-		bagElements[2] = Neuron___Bag0Slot
-		bagElements[3] = Neuron___Bag1Slot
-		bagElements[4] = Neuron___Bag2Slot
-		bagElements[5] = Neuron___Bag3Slot
-
-		for k,v in pairs(bagElements) do
-			v:SetWidth(32)
-			v:SetHeight(32)
-			v:GetNormalTexture():SetWidth(55)
-			v:GetNormalTexture():SetHeight(55)
-			v:GetNormalTexture():SetPoint("CENTER",0,0)
-			_G[v:GetName().."IconTexture"]:ClearAllPoints()
-			_G[v:GetName().."IconTexture"]:SetPoint("TOPLEFT", -1, 1)
-			_G[v:GetName().."IconTexture"]:SetPoint("BOTTOMRIGHT")
-		end
-
-		hooksecurefunc("ContainerFrame_OnShow", containerFrame_OnShow)
-		hooksecurefunc("ContainerFrame_OnHide", containerFrame_OnHide)
-		hooksecurefunc("ToggleBag", toggleBag)
-		hooksecurefunc("ToggleBackpack", toggleBackpack)
-
-		for i=1,13 do
-			local frame = _G["ContainerFrame"..i]
-			frame:HookScript("OnShow", containerFrame_OnShow)
-			frame:HookScript("OnHide", containerFrame_OnHide)
-		end
-
-
-		DB = NeuronCDB
-
-		---TODO: Remove this in the future. This is just temp code.
-		if (Neuron.db.profile["NeuronBagDB"]) then --migrate old settings to new location
-			if(Neuron.db.profile["NeuronBagDB"].bagbars) then
-				NeuronCDB.bagbars = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbars)
-			end
-			if(Neuron.db.profile["NeuronBagDB"].bagbtns) then
-				NeuronCDB.bagbtns = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbtns)
-			end
-			Neuron.db.profile["NeuronBagDB"] = nil
-			DB.bagbarFirstRun = false
-		end
-
-
-		bagbarsDB = DB.bagbars
-		bagbtnsDB = DB.bagbtns
-
-
-		--for some reason the bag settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsDB to be both the GDB and DB in the RegisterBarClass
-		NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, BAGIndex, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, true, STORAGE, gDef, nil, true)
-
-		NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
-
-		if (DB.bagbarFirstRun) then
-
-			local bar = NEURON:CreateNewBar("bag", 1, true)
-			local object
-
-			for i=1,#bagElements do
-				object = NEURON:CreateNewObject("bag", i)
-				bar:AddObjectToList(object)
-			end
-
-			DB.bagbarFirstRun = false
-
-		else
-
-			for id,data in pairs(bagbarsDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewBar("bag", id)
-				end
-			end
-
-			for id,data in pairs(bagbtnsDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewObject("bag", id)
-				end
-			end
-		end
-
-		STORAGE:Hide()
-
-	elseif (event == "PLAYER_LOGIN") then
-
-    elseif (event == "VARIABLES_LOADED") then
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-
-		PEW = true
-	end
-end
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
