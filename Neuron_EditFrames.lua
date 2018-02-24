@@ -1,23 +1,65 @@
 ﻿--Neuron, a World of Warcraft® user interface addon.
 
-
 local NEURON = Neuron
 local PEW
 
+NEURON.NeuronEditor = NEURON:NewModule("Editor", "AceEvent-3.0", "AceHook-3.0")
+local NeuronEditor = NEURON.NeuronEditor
+
 NEURON.OBJEDITOR = setmetatable({}, { __index = CreateFrame("Button") })
+local OBJEDITOR = NEURON.OBJEDITOR
 
 NEURON.Editors = {}
 
 local BUTTON = NEURON.BUTTON
-local OBJEDITOR = NEURON.OBJEDITOR
+local BARIndex = NEURON.BARIndex
+local BTNIndex = NEURON.BTNIndex
+local EDITIndex = NEURON.EDITIndex
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BARIndex, BTNIndex, EDITIndex = NEURON.BARIndex, NEURON.BTNIndex, NEURON.EDITIndex
 
-local sIndex = NEURON.sIndex
-local cIndex = NEURON.cIndex
 
+
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronEditor:OnInitialize()
+
+	NEURON.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronEditor:OnEnable()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronEditor:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+function NeuronEditor:PLAYER_ENTERING_WORLD()
+	PEW = true
+end
+
+-------------------------------------------------------------------------------
 function OBJEDITOR:OnShow()
 
 	local object = self.object
@@ -142,6 +184,10 @@ end
 
 function NEURON:ChangeObject(object)
 
+	if not NEURON.CurrentObject then --fix for CurentObject error thrown by Neuron-GUI
+		NEURON.CurrentObject = object
+	end
+
 	local newObj, newEditor = false, false
 
 	if (PEW) then
@@ -208,9 +254,9 @@ function NEURON:ToggleEditFrames(show, hide)
 
 		NEURON:ChangeObject()
 
-		if (IsAddOnLoaded("Neuron-GUI")) then
+		--[[if (IsAddOnLoaded("Neuron-GUI")) then
 			NeuronObjectEditor:Hide()
-		end
+		end]]
 
 	else
 
@@ -234,20 +280,3 @@ function NEURON:ToggleEditFrames(show, hide)
 		end
 	end
 end
-
-local function controlOnEvent(self, event, ...)
-
-	if (event == "ADDON_LOADED" and ... == "Neuron") then
-
-		NEURON.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-
-		PEW = true
-	end
-end
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")

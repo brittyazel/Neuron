@@ -7,12 +7,8 @@
 ## DefaultState: enabled
 ## Dependencies: Neuron
 ## SavedVariables:
-## SavedVariablesPerCharacter: NeuronPetDB
+## SavedVariablesPerCharacter:
 ## X-Child-Of: Neuron
 ## X-Copyright: Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
 ## X-Permissions: AI-Art Visual Elements used with Author Permission (Quokka@WoWInterface)
 ## X-Email: bwyazel@gmail.com
-
-
-Neuron-Pet.lua
-Neuron-Pet.xml

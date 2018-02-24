@@ -1067,7 +1067,7 @@ end
 -- @return allow : (boolean)
 local function MissingBarCheck(bar)
 	local allow = true
-	if ((bar == "stancebar" and NeuronCDB.sbars[1]) or (bar == "extrabar" and NeuronCDB.xbars[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybars[1]))then
+	if ((bar == "extrabar" and NeuronCDB.xbars[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybars[1]))then
 		allow = false
 	end
 	return allow
@@ -2445,16 +2445,16 @@ function NEURON:MacroEditorUpdate()
 			else
 				NBTNE.macroicon.icon:SetTexture(data.macro_Icon)
 			end
-			--NeuronBase:Print(data.macro_Name)
+			--Neuron:Print(data.macro_Name)
 			NBTNE.nameedit:SetText(data.macro_Name)
 			NBTNE.noteedit:SetText(data.macro_Note)
 			NBTNE.usenote:SetChecked(data.macro_UseNote)
 
 		else
-			--NeuronBase:Print("notinghere")
+			--Neuron:Print("notinghere")
 			--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
 			--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
-			---NeuronBase:Print(button.specdata[buttonSpec][state])
+			---Neuron:Print(button.specdata[buttonSpec][state])
 			--end
 		end
 	end
@@ -2524,10 +2524,10 @@ local function macroText_OnTextChanged(self)
 				button.specdata[buttonSpec][state].macro_Text = self:GetText()
 				button.specdata[buttonSpec][state].macro_Watch = false
 			else
-				--NeuronBase:Print("notinghere")
+				--Neuron:Print("notinghere")
 				--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
 				--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
-				--NeuronBase:Print(button.specdata[buttonSpec][state])
+				--Neuron:Print(button.specdata[buttonSpec][state])
 			end
 
 		end

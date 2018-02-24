@@ -67,7 +67,7 @@
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<Texture name="$parentSpark" parentKey="spark" file="Interface\AddOns\Neuron-Status\Images\CastingBar_Spark_1" alphaMode="ADD" hidden="true">
+						<Texture name="$parentSpark" parentKey="spark" file="Interface\AddOns\Neuron\Images\CastingBar_Spark_1" alphaMode="ADD" hidden="true">
 							<Size x="32" y="32"/>
 							<Anchors>
 								<Anchor point="CENTER">

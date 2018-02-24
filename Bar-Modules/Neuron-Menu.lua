@@ -9,9 +9,8 @@
 local NEURON = Neuron
 local DB, PEW
 
-NEURON.MENUIndex = {}
-
-local MENUIndex = NEURON.MENUIndex
+NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronMenuBar = NEURON.NeuronMenuBar
 
 local menubarsDB, menubtnsDB
 
@@ -20,17 +19,6 @@ local ANCHOR = setmetatable({}, { __index = CreateFrame("Frame") })
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
-local defDB = {
-	menubars = {},
-	menubtns = {},
-	scriptProfile = false,
-	firstRun = true,
-}
-
-NeuronMenuDB = CopyTable(defDB)
-
-NeuronDefaults.profile['NeuronMenuDB'] = NeuronMenuDB
 
 local gDef = {
 	snapTo = false,
@@ -44,17 +32,128 @@ local gDef = {
 local menuElements = {}
 local addonData, sortData = {}, {}
 
-
-local GetParentKeys = NEURON.GetParentKeys
-
 local configData = {
 	stored = false,
 }
 
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronMenuBar:OnInitialize()
+
+	local object
+
+	DB = NeuronCDB
+
+	---TODO: Remove this in the future. This is just temp code.
+	if (Neuron.db.profile["NeuronMenuDB"]) then --migrate old settings to new location
+		if(Neuron.db.profile["NeuronMenuDB"].menubars) then
+			NeuronCDB.menubars = CopyTable(Neuron.db.profile["NeuronMenuDB"].menubars)
+		end
+		if(Neuron.db.profile["NeuronMenuDB"].menubtns) then
+			NeuronCDB.menubtns = CopyTable(Neuron.db.profile["NeuronMenuDB"].menubtns)
+		end
+		Neuron.db.profile["NeuronMenuDB"] = nil
+		DB.menubarFirstRun = false
+	end
+
+
+	menubarsDB = DB.menubars
+	menubtnsDB = DB.menubtns
+
+
+	if (not DB.scriptProfile) then
+		DB.scriptProfile = false
+	end
+
+	--for some reason the menu settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsDB to be both the GDB and DB in the RegisterBarClass
+	NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, false)
+	NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
+
+	if (DB.menubarFirstRun) then
+		local bar, object = NEURON:CreateNewBar("menu", 1, true)
+
+		for i=1,#menuElements do
+			object = NEURON:CreateNewObject("menu", i)
+			bar:AddObjectToList(object)
+		end
+
+		DB.menubarFirstRun = false
+
+	else
+		local count = 0
+
+		for id,data in pairs(menubarsDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewBar("menu", id)
+			end
+		end
+
+		for id,data in pairs(menubtnsDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewObject("menu", id)
+			end
+
+			count = count + 1
+		end
+
+		if (count < #menuElements) then
+			for i=count+1, #menuElements do
+				object = NEURON:CreateNewObject("menu", i)
+			end
+		end
+	end
+	STORAGE:Hide()
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronMenuBar:OnEnable()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+	NeuronMenuBar:SecureHook("UpdateMicroButtons", NeuronMenuBar.updateMicroButtons)
+
+	-- Hooks the Microbutton alerts that don't trigger of events  ie closing the talent frame
+	NeuronMenuBar:SecureHook("MainMenuMicroButton_ShowAlert", NeuronMenuBar.MainMenuMicroButton_ShowAlert)
+
+	-- Forces the default alert frames to auto hide if something tries to show them
+	TalentMicroButtonAlert:SetScript("OnShow", function() end)
+	CollectionsMicroButtonAlert:SetScript("OnShow", function()  end)
+	EJMicroButtonAlert:SetScript("OnShow", function() end)
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronMenuBar:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+
+function NeuronMenuBar:PLAYER_ENTERING_WORLD()
+	PEW = true
+end
+
+-------------------------------------------------------------------------------
+
+
 
 ---  This replaces the Blizzard Flash function that causes massive taint when used.
 -- pram: self  - the frame to create animation layer.  This layer should have a "$parentFlash" texture layer to it
-function NEURON.CreateAnimationLayer(self)
+function NeuronMenuBar.CreateAnimationLayer(self)
 	local frame = _G[self:GetName().."Flash"]
 	frame:SetAlpha(0)
 	frame:Show()
@@ -92,21 +191,9 @@ function NEURON.CreateAnimationLayer(self)
 end
 
 
---- Toggle for the flash animation layer
--- pram: self - Layer contining the animation layer
--- pram: control - Stop- stops the animation, any other command start it
-function IMicroButtonPulse(self, control)
-	if control == "Stop" then
-		self.Animate:Stop()
-	else
-		self.Animate:Play()
-	end
-end
-
-
 --- Updates the microbuttons and sets the textures or if it is currently unavailable.
 --   The :Enable() & :Disable() blocks have CombatLockdown tests to prevent taint.
-local function updateMicroButtons()
+function NeuronMenuBar.updateMicroButtons()
 	local playerLevel = UnitLevel("player")
 	local factionGroup = UnitFactionGroup("player")
 
@@ -120,10 +207,10 @@ local function updateMicroButtons()
 
 	if (NeuronCharacterButton and CharacterFrame:IsShown()) then
 		NeuronCharacterButton:SetButtonState("PUSHED", true)
-		NEURON.CharacterButton_SetPushed(NeuronCharacterButton)
+		NeuronMenuBar.CharacterButton_SetPushed(NeuronCharacterButton)
 	else
 		NeuronCharacterButton:SetButtonState("NORMAL")
-		NEURON.CharacterButton_SetNormal(NeuronCharacterButton)
+		NeuronMenuBar.CharacterButton_SetNormal(NeuronCharacterButton)
 	end
 
 	if (SpellBookFrame and SpellBookFrame:IsShown()) then
@@ -134,7 +221,7 @@ local function updateMicroButtons()
 
 	if (PlayerTalentFrame and PlayerTalentFrame:IsShown()) then
 		NeuronTalentButton:SetButtonState("PUSHED", true)
-		IMicroButtonPulse(NeuronTalentButton, "Stop")
+		NeuronMenuBar.IMicroButtonPulse(NeuronTalentButton, "Stop")
 		NeuronTalentMicroButtonAlert:Hide()
 	else
 		if ( playerLevel < SHOW_SPEC_LEVEL or (IsKioskModeEnabled() and NEURON.class ~= "DEMONHUNTER") ) then
@@ -162,13 +249,13 @@ local function updateMicroButtons()
 			or ( KeyBindingFrame and KeyBindingFrame:IsShown())
 			or ( MacroFrame and MacroFrame:IsShown()) ) then
 		NeuronLatencyButton:SetButtonState("PUSHED", true)
-		NEURON.LatencyButton_SetPushed(NeuronLatencyButton)
+		NeuronMenuBar.LatencyButton_SetPushed(NeuronLatencyButton)
 	else
 		NeuronLatencyButton:SetButtonState("NORMAL")
-		NEURON.LatencyButton_SetNormal(NeuronLatencyButton)
+		NeuronMenuBar.LatencyButton_SetNormal(NeuronLatencyButton)
 	end
 
-	NEURON.updateTabard()
+	NeuronMenuBar.updateTabard()
 	if ( IsTrialAccount() or (IsVeteranTrialAccount() and not IsInGuild()) or factionGroup == "Neutral" or IsKioskModeEnabled() ) then
 		NeuronGuildButton:Disable()
 		if (IsKioskModeEnabled()) then
@@ -212,12 +299,6 @@ local function updateMicroButtons()
 		end
 	end
 
-	--[[if ( HelpFrame and HelpFrame:IsShown() ) then
-		NeuronHelpButton:SetButtonState("PUSHED", true)
-	else
-		NeuronHelpButton:SetButtonState("NORMAL")
-	end]]
-
 	if ( AchievementFrame and AchievementFrame:IsShown() ) then
 		NeuronAchievementButton:SetButtonState("PUSHED", true)
 	else
@@ -229,12 +310,9 @@ local function updateMicroButtons()
 		end
 	end
 
-
-	--	EJMicroButton_UpdateDisplay();  --New??
-
 	if ( EncounterJournal and EncounterJournal:IsShown() ) then
 		NeuronEJButton:SetButtonState("PUSHED", true)
-		IMicroButtonPulse(NeuronEJButton, "Stop")
+		NeuronMenuBar.IMicroButtonPulse(NeuronEJButton, "Stop")
 		NeuronLFDMicroButtonAlert:Hide()
 	else
 		if ( playerLevel < NeuronEJButton.minLevel or factionGroup == "Neutral" ) then
@@ -249,7 +327,7 @@ local function updateMicroButtons()
 	if ( CollectionsJournal and CollectionsJournal:IsShown() ) then
 		if not InCombatLockdown() then NeuronCollectionsButton:Enable() end
 		NeuronCollectionsButton:SetButtonState("PUSHED", true)
-		IMicroButtonPulse(NeuronCollectionsButton, "Stop")
+		NeuronMenuBar.IMicroButtonPulse(NeuronCollectionsButton, "Stop")
 		NeuronCollectionsMicroButtonAlert:Hide()
 	else
 		if not InCombatLockdown() then NeuronCollectionsButton:Enable() end
@@ -261,16 +339,6 @@ local function updateMicroButtons()
 	else
 		NeuronStoreButton:SetButtonState("NORMAL")
 	end
-
-	--[[if ( C_StorePublic.IsEnabled() ) then
-		NeuronLatencyButton:SetPoint("BOTTOMLEFT", NeuronStoreButton, "BOTTOMRIGHT", -3, 0)
-		NeuronHelpButton:Hide()
-		NeuronStoreButton:Show()
-	else
-		NeuronLatencyButton:SetPoint("BOTTOMLEFT", NeuronEJButton, "BOTTOMRIGHT", -3, 0)
-		NeuronHelpButton:Show()
-		NeuronStoreButton:Hide()
-	end]]
 
 
 	if (  GameLimitedMode_IsActive() ) then
@@ -284,22 +352,21 @@ local function updateMicroButtons()
 		if not InCombatLockdown() then NeuronStoreButton:Enable() end
 	end
 end
-NEURON.updateMicroButtons = updateMicroButtons
 
 
-function NEURON.AchievementButton_OnEvent(self, event, ...)
+function NeuronMenuBar.AchievementButton_OnEvent(self, event, ...)
 	if (IsKioskModeEnabled()) then
 		return;
 	end
 	if ( event == "UPDATE_BINDINGS" ) then
 		self.tooltipText = MicroButtonTooltipText(ACHIEVEMENT_BUTTON, "TOGGLEACHIEVEMENT")
 	else
-		updateMicroButtons()
+		NeuronMenuBar.updateMicroButtons()
 	end
 end
 
 
-function NEURON.GuildButton_OnEvent(self, event, ...)
+function NeuronMenuBar.GuildButton_OnEvent(self, event, ...)
 	if (IsKioskModeEnabled()) then
 		return;
 	end
@@ -312,14 +379,14 @@ function NEURON.GuildButton_OnEvent(self, event, ...)
 		end
 	elseif ( event == "PLAYER_GUILD_UPDATE" or event == "NEUTRAL_FACTION_SELECT_RESULT" ) then
 		NeuronGuildButtonTabard.needsUpdate = true
-		updateMicroButtons()
+		NeuronMenuBar.updateMicroButtons()
 	end
 end
 
 
 --- Updates the guild tabard icon on the menu bar
 -- params: forceUpdate - (boolean) True- forces an update reguardless if has been set to need updateing
-function NEURON.updateTabard(forceUpdate)
+function NeuronMenuBar.updateTabard(forceUpdate)
 	local tabard = NeuronGuildButtonTabard
 	if ( not tabard.needsUpdate and not forceUpdate ) then
 		return
@@ -348,7 +415,7 @@ function NEURON.updateTabard(forceUpdate)
 end
 
 
-function NEURON.CharacterButton_OnLoad(self)
+function NeuronMenuBar.CharacterButton_OnLoad(self)
 	self:SetNormalTexture("Interface\\Buttons\\UI-MicroButtonCharacter-Up")
 	self:SetPushedTexture("Interface\\Buttons\\UI-MicroButtonCharacter-Down")
 	self:SetHighlightTexture("Interface\\Buttons\\UI-MicroButton-Hilight")
@@ -362,7 +429,7 @@ function NEURON.CharacterButton_OnLoad(self)
 end
 
 
-function NEURON.CharacterButton_OnEvent(self, event, ...)
+function NeuronMenuBar.CharacterButton_OnEvent(self, event, ...)
 	if ( event == "UNIT_PORTRAIT_UPDATE" ) then
 		local unit = ...
 		if ( not unit or unit == "player" ) then
@@ -377,52 +444,39 @@ function NEURON.CharacterButton_OnEvent(self, event, ...)
 end
 
 
-function NEURON.CharacterButton_SetPushed(self)
+function NeuronMenuBar.CharacterButton_SetPushed(self)
 	NeuronCharacterButtonPortrait:SetTexCoord(0.2666, 0.8666, 0, 0.8333)
 	NeuronCharacterButtonPortrait:SetAlpha(0.5)
 end
 
 
-function NEURON.CharacterButton_SetNormal(self)
+function NeuronMenuBar.CharacterButton_SetNormal(self)
 	NeuronCharacterButtonPortrait:SetTexCoord(0.2, 0.8, 0.0666, 0.9)
 	NeuronCharacterButtonPortrait:SetAlpha(1.0)
 end
 
 
-
-
---[[New
-
-function MainMenuMicroButton_SetPushed()
-	MainMenuMicroButton:SetButtonState("PUSHED", true);
-end
-
-function MainMenuMicroButton_SetNormal()
-	MainMenuMicroButton:SetButtonState("NORMAL");
-end
---]]
-
-function NEURON.TalentButton_OnEvent(self, event, ...)
+function NeuronMenuBar.TalentButton_OnEvent(self, event, ...)
 	if (IsKioskModeEnabled()) then
 		return;
 	end
 	if (event == "PLAYER_LEVEL_UP") then
 		local level = ...
 		if (level == SHOW_SPEC_LEVEL) then
-			IMicroButtonPulse(self)
-			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_SPEC_TUTORIAL)
+			NeuronMenuBar.IMicroButtonPulse(self)
+			NeuronMenuBar.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_SPEC_TUTORIAL)
 		elseif (level == SHOW_TALENT_LEVEL) then
-			IMicroButtonPulse(self)
-			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_TALENT_TUTORIAL)
+			NeuronMenuBar.IMicroButtonPulse(self)
+			NeuronMenuBar.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_TALENT_TUTORIAL)
 		end
 	elseif ( event == "PLAYER_SPECIALIZATION_CHANGED") then
 		-- If we just unspecced, and we have unspent talent points, it's probably spec-specific talents that were just wiped.  Show the tutorial box.
 		local unit = ...
 		if(unit == "player" and GetSpecialization() == nil and GetNumUnspentTalents() > 0) then
-			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
+			NeuronMenuBar.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
 		end
 	elseif ( event == "PLAYER_TALENT_UPDATE" or event == "NEUTRAL_FACTION_SELECT_RESULT" ) then
-		updateMicroButtons()
+		NeuronMenuBar.updateMicroButtons()
 
 		-- On the first update from the server, flash the button if there are unspent points
 		-- Small hack: GetNumSpecializations should return 0 if talents haven't been initialized yet
@@ -430,7 +484,7 @@ function NEURON.TalentButton_OnEvent(self, event, ...)
 			self.receivedUpdate = true
 			local shouldPulseForTalents = GetNumUnspentTalents() > 0 and not AreTalentsLocked()
 			if (UnitLevel("player") >= SHOW_SPEC_LEVEL and (not GetSpecialization() or shouldPulseForTalents)) then
-				IMicroButtonPulse(self)
+				NeuronMenuBar.IMicroButtonPulse(self)
 			end
 		end
 	elseif ( event == "UPDATE_BINDINGS" ) then
@@ -438,62 +492,61 @@ function NEURON.TalentButton_OnEvent(self, event, ...)
 	elseif ( event == "PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED" ) then
 		local prev, current = ...
 		if ( prev == 0 and current > 0 ) then
-			IMicroButtonPulse(self)
-			NEURON.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_TALENT_TUTORIAL)
+			NeuronMenuBar.IMicroButtonPulse(self)
+			NeuronMenuBar.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_TALENT_TUTORIAL)
 		elseif ( prev ~= current ) then
-			IMicroButtonPulse(self)
-			NEURON.MainMenuMicroButton_ShowAlert	(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
+			NeuronMenuBar.IMicroButtonPulse(self)
+			NeuronMenuBar.MainMenuMicroButton_ShowAlert	(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") then
-		updateMicroButtons()
+		NeuronMenuBar.updateMicroButtons()
+	end
+end
+
+function NeuronMenuBar.SafeSetCollectionJournalTab(tab)
+	if  InCombatLockdown() then return end
+	if CollectionsJournal_SetTab then
+		CollectionsJournal_SetTab(CollectionsJournal, tab)
+	else
+		SetCVar("petJournalTab", tab)
 	end
 end
 
 
-do
-	local function SafeSetCollectionJournalTab(tab)
-		if  InCombatLockdown() then return end
-		if CollectionsJournal_SetTab then
-			CollectionsJournal_SetTab(CollectionsJournal, tab)
-		else
-			SetCVar("petJournalTab", tab)
-		end
-	end
 
-
-	function NEURON.CollectionsButton_OnEvent(self, event, ...)
-		if ( event == "HEIRLOOMS_UPDATED" ) then
-			local itemID, updateReason = ...
-			if itemID and updateReason == "NEW" then
-				if MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, HEIRLOOMS_MICRO_BUTTON_SPEC_TUTORIAL, LE_FRAME_TUTORIAL_HEIRLOOM_JOURNAL) then
-					IMicroButtonPulse(self)
-					SafeSetCollectionJournalTab(4)
-				end
+function NeuronMenuBar.CollectionsButton_OnEvent(self, event, ...)
+	if ( event == "HEIRLOOMS_UPDATED" ) then
+		local itemID, updateReason = ...
+		if itemID and updateReason == "NEW" then
+			if MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, HEIRLOOMS_MICRO_BUTTON_SPEC_TUTORIAL, LE_FRAME_TUTORIAL_HEIRLOOM_JOURNAL) then
+				NeuronMenuBar.IMicroButtonPulse(self)
+				NeuronMenuBar.SafeSetCollectionJournalTab(4)
 			end
-		elseif ( event == "PET_JOURNAL_NEW_BATTLE_SLOT" ) then
-			IMicroButtonPulse(self)
-			MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, COMPANIONS_MICRO_BUTTON_NEW_BATTLE_SLOT)
-			SafeSetCollectionJournalTab(2)
-		elseif ( event == "TOYS_UPDATED" ) then
-			local itemID, new = ...
-			if itemID and new then
-				if MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, TOYBOX_MICRO_BUTTON_SPEC_TUTORIAL, LE_FRAME_TUTORIAL_TOYBOX) then
-					IMicroButtonPulse(self)
-					SafeSetCollectionJournalTab(3)
-				end
-			end
-		else
-			self.tooltipText = MicroButtonTooltipText(COLLECTIONS, "TOGGLECOLLECTIONS")
-			self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
-			updateMicroButtons()
 		end
+	elseif ( event == "PET_JOURNAL_NEW_BATTLE_SLOT" ) then
+		NeuronMenuBar.IMicroButtonPulse(self)
+		MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, COMPANIONS_MICRO_BUTTON_NEW_BATTLE_SLOT)
+		NeuronMenuBar.SafeSetCollectionJournalTab(2)
+	elseif ( event == "TOYS_UPDATED" ) then
+		local itemID, new = ...
+		if itemID and new then
+			if MainMenuMicroButton_ShowAlert(NeuronCollectionsMicroButtonAlert, TOYBOX_MICRO_BUTTON_SPEC_TUTORIAL, LE_FRAME_TUTORIAL_TOYBOX) then
+				NeuronMenuBar.IMicroButtonPulse(self)
+				NeuronMenuBar.SafeSetCollectionJournalTab(3)
+			end
+		end
+	else
+		self.tooltipText = MicroButtonTooltipText(COLLECTIONS, "TOGGLECOLLECTIONS")
+		self.newbieText = NEWBIE_TOOLTIP_MOUNTS_AND_PETS
+		NeuronMenuBar.updateMicroButtons()
 	end
-
 end
+
+
 
 
 -- Encounter Journal
-function NEURON.EJButton_OnLoad(self)
+function NeuronMenuBar.EJButton_OnLoad(self)
 	LoadMicroButtonTextures(self, "EJ")
 	SetDesaturation(self:GetDisabledTexture(), true)
 	self.tooltipText = MicroButtonTooltipText(ENCOUNTER_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
@@ -507,12 +560,12 @@ function NEURON.EJButton_OnLoad(self)
 	--events that can trigger a refresh of the adventure journal
 	self:RegisterEvent("VARIABLES_LOADED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	NEURON.CreateAnimationLayer(self)
+	NeuronMenuBar.CreateAnimationLayer(self)
 	menuElements[#menuElements+1] = self
 end
 
 
-function NEURON.EJButton_OnEvent(self, event, ...)
+function NeuronMenuBar.EJButton_OnEvent(self, event, ...)
 	if (IsKioskModeEnabled()) then
 		return;
 	end
@@ -521,7 +574,7 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 	if( event == "UPDATE_BINDINGS" ) then
 		self.tooltipText = MicroButtonTooltipText(ADVENTURE_JOURNAL, "TOGGLEENCOUNTERJOURNAL")
 		self.newbieText = NEWBIE_TOOLTIP_ENCOUNTER_JOURNAL
-		updateMicroButtons()
+		NeuronMenuBar.updateMicroButtons()
 	elseif( event == "VARIABLES_LOADED" ) then
 		self:UnregisterEvent("VARIABLES_LOADED");
 		self.varsLoaded = true;
@@ -532,7 +585,7 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 			if ( UnitLevel("player") >= NeuronEJButton.minLevel and UnitFactionGroup("player") ~= "Neutral" ) then
 				if ( GetServerTime() - lastTimeOpened > EJ_ALERT_TIME_DIFF ) then
 					NeuronEJMicroButtonAlert:Show()
-					IMicroButtonPulse(NeuronEJButton)
+					NeuronMenuBar.IMicroButtonPulse(NeuronEJButton)
 				end
 
 				if ( lastTimeOpened ~= 0 ) then
@@ -540,7 +593,7 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 				end
 			end
 
-			EJMicroButton_UpdateAlerts(true)
+			NeuronMenuBar.EJMicroButton_UpdateAlerts(true)
 		end
 
 	elseif ( event == "PLAYER_ENTERING_WORLD" ) then
@@ -560,7 +613,7 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 
 	if( event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED" or event == "ZONE_CHANGED_NEW_AREA" ) then
 		if( self.playerEntered and self.varsLoaded and self.zoneEntered) then
-			EJMicroButton_UpdateDisplay();
+			NeuronMenuBar.EJMicroButton_UpdateDisplay();
 			if( self:IsEnabled() ) then
 				C_AdventureJournal.UpdateSuggestions();
 
@@ -570,14 +623,14 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 					local lastTimeOpened = tonumber(GetCVar("advJournalLastOpened"));
 					if ( GetServerTime() - lastTimeOpened > EJ_ALERT_TIME_DIFF ) then
 						NeuronEJMicroButtonAlert:Show();
-						IMicroButtonPulse(NeuronEJButton);
+						NeuronMenuBar.IMicroButtonPulse(NeuronEJButton);
 					end
 
 					if ( lastTimeOpened ~= 0 ) then
 						SetCVar("advJournalLastOpened", GetServerTime() );
 					end
 
-					EJMicroButton_UpdateAlerts(true);
+					NeuronMenuBar.EJMicroButton_UpdateAlerts(true);
 				end
 			end
 		end
@@ -585,7 +638,7 @@ function NEURON.EJButton_OnEvent(self, event, ...)
 end
 
 
-local function EJMicroButton_UpdateNewAdventureNotice(levelUp)
+function NeuronMenuBar.EJMicroButton_UpdateNewAdventureNotice(levelUp)
 	if ( NeuronEJButton:IsEnabled() and C_AdventureJournal.UpdateSuggestions(levelUp) ) then
 		if( not EncounterJournal or not EncounterJournal:IsShown() ) then
 			NeuronEJButton.Flash:Show()
@@ -595,12 +648,12 @@ local function EJMicroButton_UpdateNewAdventureNotice(levelUp)
 end
 
 
-local function EJMicroButton_ClearNewAdventureNotice()
+function NeuronMenuBar.EJMicroButton_ClearNewAdventureNotice()
 	NeuronEJButton.Flash:Hide()
 	NeuronEJButton.NewAdventureNotice:Hide()
 end
 
-local function EJMicroButton_UpdateDisplay()
+function NeuronMenuBar.EJMicroButton_UpdateDisplay()
 	local frame = EJMicroButton;
 	if ( EncounterJournal and EncounterJournal:IsShown() ) then
 		frame:SetButtonState("PUSHED", true);
@@ -613,7 +666,7 @@ local function EJMicroButton_UpdateDisplay()
 			elseif ( disabled ) then
 				frame.disabledTooltip = FEATURE_NOT_YET_AVAILABLE;
 			end
-			EJMicroButton_ClearNewAdventureNotice();
+			NeuronMenuBar.EJMicroButton_ClearNewAdventureNotice();
 		else
 			frame:Enable();
 			frame:SetButtonState("NORMAL");
@@ -621,26 +674,26 @@ local function EJMicroButton_UpdateDisplay()
 	end
 end
 
-local function EJMicroButton_UpdateAlerts( flag )
+function NeuronMenuBar.EJMicroButton_UpdateAlerts( flag )
 	if ( flag ) then
 		NeuronEJButton:RegisterEvent("UNIT_LEVEL")
 		NeuronEJButton:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
-		EJMicroButton_UpdateNewAdventureNotice(false)
+		NeuronMenuBar.EJMicroButton_UpdateNewAdventureNotice(false)
 	else
 		NeuronEJButton:UnregisterEvent("UNIT_LEVEL")
 		NeuronEJButton:UnregisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
-		EJMicroButton_ClearNewAdventureNotice()
+		NeuronMenuBar.EJMicroButton_ClearNewAdventureNotice()
 	end
 end
 
 
 --- This adds a frame element to the table.
-function NEURON.AddMenuElement(self)
+function NeuronMenuBar.AddMenuElement(self)
 	menuElements[#menuElements+1] = self
 end
 
 
-function NEURON.MainMenuMicroButton_ShowAlert(alert, text, tutorialIndex)
+function NeuronMenuBar.MainMenuMicroButton_ShowAlert(alert, text, tutorialIndex)
 	if alert == TalentMicroButtonAlert then alert = NeuronTalentMicroButtonAlert end
 
 	alert.Text:SetText(text)
@@ -651,7 +704,7 @@ function NEURON.MainMenuMicroButton_ShowAlert(alert, text, tutorialIndex)
 end
 
 
-function NEURON.LatencyButton_OnLoad(self)
+function NeuronMenuBar.LatencyButton_OnLoad(self)
 	self.overlay = _G[self:GetName().."Overlay"]
 	self.overlay:SetWidth(self:GetWidth()+1)
 	self.overlay:SetHeight(self:GetHeight())
@@ -672,21 +725,21 @@ function NEURON.LatencyButton_OnLoad(self)
 end
 
 
-function NEURON.LatencyButton_OnEvent(self, event, ...)
-	if (event == "ADDON_LOADED" and ...=="Neuron-Menu") then
+function NeuronMenuBar.LatencyButton_OnEvent(self, event, ...)
+	if (event == "ADDON_LOADED" and ...=="Neuron") then
 		self.lastStart = 0
 		if (DB) then
 			self.enabled = DB.scriptProfile
 		end
-		GameMenuFrame:HookScript("OnShow", NEURON.LatencyButton_SetPushed)
-		GameMenuFrame:HookScript("OnHide", NEURON.LatencyButton_SetNormal)
+		GameMenuFrame:HookScript("OnShow", NeuronMenuBar.LatencyButton_SetPushed)
+		GameMenuFrame:HookScript("OnHide", NeuronMenuBar.LatencyButton_SetNormal)
 	end
 
 	self.tooltipText = MicroButtonTooltipText(MAINMENU_BUTTON, "TOGGLEGAMEMENU")
 end
 
 
-function NEURON.LatencyButton_OnClick(self, button, down)
+function NeuronMenuBar.LatencyButton_OnClick(self, button, down)
 	if (button == "RightButton") then
 		if (IsShiftKeyDown()) then
 			if (DB.scriptProfile) then
@@ -708,12 +761,12 @@ function NEURON.LatencyButton_OnClick(self, button, down)
 				self.alt_tooltip = true
 			end
 
-			NEURON.LatencyButton_SetNormal()
+			NeuronMenuBar.LatencyButton_SetNormal()
 		else
-			NEURON.LatencyButton_SetPushed()
+			NeuronMenuBar.LatencyButton_SetPushed()
 		end
 
-		NEURON.LatencyButton_OnEnter(self)
+		NeuronMenuBar.LatencyButton_OnEnter(self)
 
 	elseif (IsShiftKeyDown()) then
 		ReloadUI()
@@ -729,7 +782,7 @@ function NEURON.LatencyButton_OnClick(self, button, down)
 			else
 				PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
 				HideUIPanel(GameMenuFrame)
-				NEURON.LatencyButton_SetNormal()
+				NeuronMenuBar.LatencyButton_SetNormal()
 			end
 
 			if (InterfaceOptionsFrame:IsShown()) then
@@ -740,7 +793,7 @@ function NEURON.LatencyButton_OnClick(self, button, down)
 		end
 
 		if (self:GetButtonState() == "NORMAL") then
-			NEURON.LatencyButton_SetPushed()
+			NeuronMenuBar.LatencyButton_SetPushed()
 			self.down = 1
 		else
 			self.down = 1
@@ -749,12 +802,12 @@ function NEURON.LatencyButton_OnClick(self, button, down)
 end
 
 
-function NEURON.LatencyButton_OnEnter(self)
+function NeuronMenuBar.LatencyButton_OnEnter(self)
 	self.hover = 1
 	self.updateInterval = 0
 
 	if (self.alt_tooltip and not NeuronMenuBarTooltip.wasShown) then
-		NEURON.LatencyButton_AltOnEnter(self)
+		NeuronMenuBar.LatencyButton_AltOnEnter(self)
 		GameTooltip:Hide()
 		NeuronMenuBarTooltip:Show()
 
@@ -791,7 +844,7 @@ function NEURON.LatencyButton_OnEnter(self)
 end
 
 
-function NEURON.LatencyButton_AltOnEnter(self)
+function NeuronMenuBar.LatencyButton_AltOnEnter(self)
 	if (not NeuronMenuBarTooltip:IsVisible()) then
 		NeuronMenuBarTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE")
 	end
@@ -882,18 +935,18 @@ function NEURON.LatencyButton_AltOnEnter(self)
 end
 
 
-function NEURON.LatencyButton_OnLeave(self)
+function NeuronMenuBar.LatencyButton_OnLeave(self)
 	self.hover = nil
 	GameTooltip:Hide()
 end
 
 
-function NEURON.LatencyButton_SetPushed()
+function NeuronMenuBar.LatencyButton_SetPushed()
 	NeuronLatencyButtonOverlay:SetPoint("CENTER", NeuronLatencyButton, "CENTER", -1, -2)
 end
 
 
-function NEURON.LatencyButton_SetNormal()
+function NeuronMenuBar.LatencyButton_SetNormal()
 	NeuronLatencyButtonOverlay:SetPoint("CENTER", NeuronLatencyButton, "CENTER", 0, -0.5)
 end
 
@@ -996,89 +1049,13 @@ function ANCHOR:SetType(save)
 end
 
 
-function MenuProfileUpdate()
-    menubarsDB = NeuronMenuDB.menubars
-    menubtnsDB = NeuronMenuDB.menubtns
-end
-
-
-local function controlOnEvent(self, event, ...)
-
-	local object
-
-	if (event == "ADDON_LOADED" and ... == "Neuron-Menu") then
-		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
-
-		if (not NeuronBase.db.profile["NeuronMenuDB"]) then
-        	NeuronBase.db.profile["NeuronMenuDB"] = NeuronMenuDB
-		end
-
-		DB = NeuronBase.db.profile["NeuronMenuDB"]
-
-		for k,v in pairs(defDB) do
-			if (DB[k] == nil) then
-				DB[k] = v
-			end
-		end
-
-
-		menubarsDB = DB.menubars
-		menubtnsDB = DB.menubtns
-
-
-		--for some reason the menu settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsDB to be both the GDB and DB in the RegisterBarClass
-		NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, MENUIndex, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, false)
-		NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
-
-		if (DB.firstRun) then
-			local bar, object = NEURON:CreateNewBar("menu", 1, true)
-
-			for i=1,#menuElements do
-				object = NEURON:CreateNewObject("menu", i)
-				bar:AddObjectToList(object)
-			end
-
-			DB.firstRun = false
-
-		else
-			local count = 0
-
-			for id,data in pairs(menubarsDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewBar("menu", id)
-				end
-			end
-
-			for id,data in pairs(menubtnsDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewObject("menu", id)
-				end
-
-				count = count + 1
-			end
-
-			if (count < #menuElements) then
-				for i=count+1, #menuElements do
-					object = NEURON:CreateNewObject("menu", i)
-				end
-			end
-		end
-		STORAGE:Hide()
-	elseif (event == "PLAYER_LOGIN") then
-
-    elseif (event == "VARIABLES_LOADED") then
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-		PEW = true
-	end
-end
 
 
 --- This will check the position of the menu bar and move the alert below bar if
 -- to close to the top of the screen
 -- Prams: self  - alert frame to be repositioned
 -- Prams: parent - frame to be moved in relation to
-function NEURON.CheckAlertPosition(self, parent)
+function NeuronMenuBar.CheckAlertPosition(self, parent)
 	if not parent:GetTop() then return end
 
 	if ( self:GetHeight() > UIParent:GetTop() - parent:GetTop() ) then
@@ -1086,23 +1063,19 @@ function NEURON.CheckAlertPosition(self, parent)
 		self:SetPoint("TOP", parent, "BOTTOM", 0, -16)
 		self.Arrow:ClearAllPoints()
 		self.Arrow:SetPoint("BOTTOM", self, "TOP", 0, -4)
-		self.Arrow.Arrow:SetTexture("Interface\\AddOns\\Neuron-Menu\\Images\\UpIndicator")
+		self.Arrow.Arrow:SetTexture("Interface\\AddOns\\Neuron\\Images\\UpIndicator")
 		self.Arrow.Arrow:SetTexCoord(0, 1, 0, 1)
 		self.Arrow.Glow:Hide()
 	end
 end
 
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-
--- Hooks the Microbutton alerts that don't trigger of events  ie closing the talent frame
-hooksecurefunc("MainMenuMicroButton_ShowAlert", NEURON.MainMenuMicroButton_ShowAlert)
-
--- Forces the default alert frames to auto hide if something tries to show them
-TalentMicroButtonAlert:SetScript("OnShow", function() end)
-CollectionsMicroButtonAlert:SetScript("OnShow", function()  end)
-EJMicroButtonAlert:SetScript("OnShow", function() end)
+--- Toggle for the flash animation layer
+-- pram: self - Layer contining the animation layer
+-- pram: control - Stop- stops the animation, any other command start it
+function NeuronMenuBar.IMicroButtonPulse(self, control)
+	if control == "Stop" then
+		self.Animate:Stop()
+	else
+		self.Animate:Play()
+	end
+end

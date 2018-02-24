@@ -7,9 +7,12 @@
 -------------------------------------------------------------------------------
 
 local NEURON = Neuron
-local GDB, CDB, PEW, SPEC, btnGDB, btnCDB, control, A_UPDATE
+local GDB, CDB, PEW, SPEC, btnGDB, btnCDB, control
 
 local BAR, BUTTON = NEURON.BAR, NEURON.BUTTON
+
+NEURON.NeuronFlyouts = NEURON:NewModule("Flyouts", "AceEvent-3.0", "AceHook-3.0")
+local NeuronFlyouts = NEURON.NeuronFlyouts
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -44,6 +47,261 @@ f.rtable = {} -- reusable table where flyout button attributes are accumulated
 local rtable = f.rtable
 
 f.filter = {} -- table of search:keyword search functions (f.filter.item(arg))
+
+
+local anchorUpdater
+local ANCHOR_LOGIN_Updater
+local itemScanner
+
+local extensions
+
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronFlyouts:OnInitialize()
+
+	GDB = NeuronGDB
+	CDB = NeuronCDB
+
+	local strings = { tooltipScan:GetRegions() }
+
+	for k,v in pairs(strings) do
+		if (v:GetObjectType() == "FontString") then
+			tinsert(tooltipStrings, v)
+		end
+	end
+
+	STORAGE:Hide()
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronFlyouts:OnEnable()
+
+	f.CacheBags()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("EXECUTE_CHAT_LINE")
+	self:RegisterEvent("BAG_UPDATE")
+	self:RegisterEvent("PLAYER_INVENTORY_CHANGED")
+	self:RegisterEvent("COMPANION_LEARNED")
+	self:RegisterEvent("COMPANION_UPDATE")
+	self:RegisterEvent("LEARNED_SPELL_IN_TAB")
+	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
+	self:RegisterEvent("PET_STABLE_UPDATE")
+	self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+	self:RegisterEvent("SPELLS_CHANGED")
+	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+	self:RegisterEvent("TOYS_UPDATED")
+
+	anchorUpdater = CreateFrame("Frame", nil, UIParent)
+	anchorUpdater:SetScript("OnUpdate", self.updateAnchors)
+	anchorUpdater:Hide()
+
+	ANCHOR_LOGIN_Updater = CreateFrame("Frame", nil, UIParent)
+	ANCHOR_LOGIN_Updater:SetScript("OnUpdate", self.ANCHOR_DelayedUpdate)
+	ANCHOR_LOGIN_Updater:Hide()
+	ANCHOR_LOGIN_Updater.elapsed = 0
+
+	itemScanner = CreateFrame("Frame", nil, UIParent)
+	itemScanner:SetScript("OnUpdate", self.linkScanOnUpdate)
+	itemScanner:Hide()
+
+	extensions = { ["/flyout"] = NeuronFlyouts.command_flyout }
+
+
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronFlyouts:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+
+function NeuronFlyouts:EXECUTE_CHAT_LINE(eventName, ...)
+
+	local command, options = (...):match("(/%a+)%s(.+)")
+
+	if (extensions[command]) then extensions[command](options) end
+
+end
+
+function NeuronFlyouts:BAG_UPDATE(eventName, ...)
+
+	local bag = ...
+	if bag>=0 and bag<=4 then
+		f.bagsToCache[bag] = true
+		f.StartTimer(0.05,f.CacheBags)
+	end
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^i")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+	ANCHOR_LOGIN_Updater:Show()
+end
+
+function NeuronFlyouts:PLAYER_INVENTORY_CHANGED(eventName, ...)
+
+	local bag = ...
+	if bag>=0 and bag<=4 then
+		f.bagsToCache[bag] = true
+		f.StartTimer(0.05,f.CacheBags)
+	end
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^i")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+	ANCHOR_LOGIN_Updater:Show()
+end
+
+function NeuronFlyouts:LEARNED_SPELL_IN_TAB()
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^s") or types:find("^b")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+
+	anchorUpdater:Show()
+end
+
+function NeuronFlyouts:SPELLS_CHANGED()
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^s") or types:find("^b")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+
+	anchorUpdater:Show()
+end
+
+function NeuronFlyouts:CHARACTER_POINTS_CHANGED()
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^s") or types:find("^b")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+
+	anchorUpdater:Show()
+end
+
+function NeuronFlyouts:PET_STABLE_UPDATE()
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^s") or types:find("^b")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+
+	anchorUpdater:Show()
+end
+
+function NeuronFlyouts:COMPANION_LEARNED()
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^c")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+
+	anchorUpdater:Show()
+end
+
+function NeuronFlyouts:COMPANION_UPDATE()
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^c")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+
+	anchorUpdater:Show()
+end
+
+
+function NeuronFlyouts:EQUIPMENT_SETS_CHANGED()
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^e")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+
+	anchorUpdater:Show()
+
+end
+
+function NeuronFlyouts:PLAYER_ENTERING_WORLD()
+	PEW = true
+end
+
+function NeuronFlyouts:PLAYER_EQUIPMENT_CHANGED(eventName, ...)
+
+	local slot, equipped = ...
+	if equipped then
+		f.bagsToCache.Worn = true
+		f.StartTimer(0.05,f.CacheBags)
+	end
+
+	ANCHOR_LOGIN_Updater:Show()
+
+end
+
+function NeuronFlyouts:TOYS_UPDATED()
+
+	for anchor in pairs(ANCHORIndex) do
+		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
+			if (types:find("^f")) then
+				tinsert(needsUpdate, anchor)
+			end
+		end
+	end
+	ANCHOR_LOGIN_Updater:Show()
+
+end
+
+-------------------------------------------------------------------------------
+
+
+
 
 -- ad ds a type/value attribute pair to rtable if it's not already there
 local function addToTable(actionType,actionValue)
@@ -1228,63 +1486,75 @@ function BUTTON:Anchor_Update(reMove)
 	end
 end
 
-local function updateAnchors(self, elapsed)
-	if (not InCombatLockdown()) then
-		local anchor = tremove(needsUpdate)
+function NeuronFlyouts.updateAnchors(self, elapsed)
 
-		if (anchor) then
-			anchor:Flyout_UpdateButtons(nil)
-		else
-
-			self:Hide();
-		end
+	if not self.elapsed then
+		self.elapsed = 0
 	end
-end
 
-
-local anchorUpdater = CreateFrame("Frame", nil, UIParent)
-anchorUpdater:SetScript("OnUpdate", updateAnchors)
-anchorUpdater:Hide()
-
-local function linkScanOnUpdate(self, elapsed)
 	self.elapsed = self.elapsed + elapsed
 
-	-- scan X items per frame draw, where X is the for limit
-	for i=1,2 do
-		self.link = itemLinks[self.index]
-		if (self.link) then
-			local name = GetItemInfo(self.link)
+	if (self.elapsed > GDB.throttle and PEW) then
 
-			if (name) then
-				local tooltip, text = " ", " "
-				tooltipScan:SetOwner(control,"ANCHOR_NONE")
-				tooltipScan:SetHyperlink(self.link)
+		if (not InCombatLockdown()) then
+			local anchor = tremove(needsUpdate)
 
-				for i,string in ipairs(tooltipStrings) do
-					text = string:GetText()
-					if (text) then
-						tooltip = tooltip..text..","
-					end
-				end
+			if (anchor) then
+				anchor:Flyout_UpdateButtons(nil)
+			else
 
-				itemTooltips[name:lower()] = tooltip:lower()
-				self.count = self.count + 1
+				self:Hide();
 			end
 		end
 
-		self.index = next(itemLinks, self.index)
-
-		if not (self.index) then
-			--NeuronBase:Print("Scanned "..self.count.." items in "..self.elapsed.." seconds")
-			self:Hide(); anchorUpdater:Show()
-		end
+		self.elapsed = 0
 	end
 end
 
 
-local itemScanner = CreateFrame("Frame", nil, UIParent)
-itemScanner:SetScript("OnUpdate", linkScanOnUpdate)
-itemScanner:Hide()
+function NeuronFlyouts.linkScanOnUpdate(self, elapsed)
+
+	if not self.elapsed then
+		self.elapsed = 0
+	end
+
+	self.elapsed = self.elapsed + elapsed
+
+	if (self.elapsed > GDB.throttle and PEW) then
+	-- scan X items per frame draw, where X is the for limit
+		for i=1,2 do
+			self.link = itemLinks[self.index]
+			if (self.link) then
+				local name = GetItemInfo(self.link)
+
+				if (name) then
+					local tooltip, text = " ", " "
+					tooltipScan:SetOwner(control,"ANCHOR_NONE")
+					tooltipScan:SetHyperlink(self.link)
+
+					for i,string in ipairs(tooltipStrings) do
+						text = string:GetText()
+						if (text) then
+							tooltip = tooltip..text..","
+						end
+					end
+
+					itemTooltips[name:lower()] = tooltip:lower()
+					self.count = self.count + 1
+				end
+			end
+
+			self.index = next(itemLinks, self.index)
+
+			if not (self.index) then
+				--Neuron:Print("Scanned "..self.count.." items in "..self.elapsed.." seconds")
+				self:Hide(); anchorUpdater:Show()
+			end
+		end
+
+		self.elapsed = 0
+	end
+end
 
 
 local function button_PostClick(self,button,down)
@@ -1295,8 +1565,8 @@ local function button_PostClick(self,button,down)
 end
 
 
-local function command_flyout(options)
-	if (true) then return end
+function NeuronFlyouts.command_flyout(options)
+	--if (true) then return end
 
 	if (InCombatLockdown()) then
 		return
@@ -1312,217 +1582,24 @@ local function command_flyout(options)
 end
 
 
-local extensions = {
-	["/flyout"] = command_flyout,
-}
 
+function NeuronFlyouts.ANCHOR_DelayedUpdate(self, elapsed)
 
-local function ANCHOR_DelayedUpdate(self, elapsed)
+	if not self.elapsed then
+		self.elapsed = 0
+	end
+
 	self.elapsed = self.elapsed + elapsed
 
-	if (self.elapsed > 10) then
+	if (self.elapsed > GDB.throttle and PEW) then
+
 		for anchor in pairs(ANCHORIndex) do
 			tinsert(needsUpdate, anchor)
 		end
 
 		anchorUpdater:Show()
 		self:Hide()
+
+		self.elapsed = 0
 	end
 end
-
-
-local ANCHOR_LOGIN_Updater = CreateFrame("Frame", nil, UIParent)
-ANCHOR_LOGIN_Updater:SetScript("OnUpdate", ANCHOR_DelayedUpdate)
-ANCHOR_LOGIN_Updater:Hide()
-ANCHOR_LOGIN_Updater.elapsed = 0
-
-
----  On event handler
-local function controlOnEvent(self, event, ...)
-	local unit = ...
-
-	if (event == "EXECUTE_CHAT_LINE") then
-		local command, options = (...):match("(/%a+)%s(.+)")
-
-		if (extensions[command]) then extensions[command](options) end
-
-	elseif ((event == "BAG_UPDATE" and PEW )or event =="PLAYER_INVENTORY_CHANGED" and PEW) then
-		local bag = ...
-		if bag>=0 and bag<=4 then
-			f.bagsToCache[bag] = true
-			f.StartTimer(0.05,f.CacheBags)
-		end
-
-		for anchor in pairs(ANCHORIndex) do
-			for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
-				if (types:find("^i")) then
-					tinsert(needsUpdate, anchor)
-				end
-			end
-		end
-		ANCHOR_LOGIN_Updater:Show()
-
-	elseif (event == "LEARNED_SPELL_IN_TAB" or
-			event == "CHARACTER_POINTS_CHANGED" or
-			event == "PET_STABLE_UPDATE" and PEW) then
-
-		for anchor in pairs(ANCHORIndex) do
-			for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
-				if (types:find("^s") or types:find("^b")) then
-					tinsert(needsUpdate, anchor)
-				end
-			end
-		end
-
-		anchorUpdater:Show()
-	elseif (event == "COMPANION_LEARNED" or event == "COMPANION_UPDATE" and PEW) then
-		for anchor in pairs(ANCHORIndex) do
-			for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
-				if (types:find("^c")) then
-					tinsert(needsUpdate, anchor)
-				end
-			end
-		end
-
-		anchorUpdater:Show()
-	elseif (event == "EQUIPMENT_SETS_CHANGED" and PEW) then
-		for anchor in pairs(ANCHORIndex) do
-			for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
-				if (types:find("^e")) then
-					tinsert(needsUpdate, anchor)
-				end
-			end
-		end
-
-		anchorUpdater:Show()
-	elseif (event == "ADDON_LOADED" and ... == "Neuron") then
-		local strings = { tooltipScan:GetRegions() }
-
-		for k,v in pairs(strings) do
-			if (v:GetObjectType() == "FontString") then
-				tinsert(tooltipStrings, v)
-			end
-		end
-
-		STORAGE:Hide()
-	elseif (event == "PLAYER_LOGIN") then
-		--f.TOYS_UPDATED() -- update toy cache
-		f.CacheBags()
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-		PEW = true
-
-		--try to delay item flyouts as late as possible so items are recognized as being in inventory
-	elseif (event == "UPDATE_INVENTORY_DURABILITY" and not A_UPDATE) then
-		ANCHOR_LOGIN_Updater:Show()
-		A_UPDATE = true
-
-	elseif ( event == "PLAYER_EQUIPMENT_CHANGED" )then
-		local slot, equipped = ...
-		if equipped then
-			f.bagsToCache.Worn = true
-			f.StartTimer(0.05,f.CacheBags)
-		end
-		ANCHOR_LOGIN_Updater:Show()
-	elseif ( event == "TOYS_UPDATED" )then
-		--f.TOYS_UPDATED()
-
-		for anchor in pairs(ANCHORIndex) do
-			for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
-				if (types:find("^f")) then
-					tinsert(needsUpdate, anchor)
-				end
-			end
-		end
-		ANCHOR_LOGIN_Updater:Show()
-	end
-end
-
-
-control = CreateFrame("Frame", nil, UIParent)
-control:SetScript("OnEvent", controlOnEvent)
-control:RegisterEvent("ADDON_LOADED")
-control:RegisterEvent("PLAYER_LOGIN")
-control:RegisterEvent("PLAYER_ENTERING_WORLD")
-control:RegisterEvent("EXECUTE_CHAT_LINE")
-control:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-control:RegisterEvent("BAG_UPDATE")
-control:RegisterEvent("PLAYER_INVENTORY_CHANGED")  --outdated?
-control:RegisterEvent("UNIT_INVENTORY_CHANGED")
-control:RegisterEvent("COMPANION_LEARNED")
-control:RegisterEvent("SKILL_LINES_CHANGED")
-control:RegisterEvent("LEARNED_SPELL_IN_TAB")
-control:RegisterEvent("CHARACTER_POINTS_CHANGED")
-control:RegisterEvent("PET_STABLE_UPDATE")
-control:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
-control:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-
-
-
-control:RegisterEvent("SPELLS_CHANGED")
-control:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-control:RegisterEvent("TOYS_UPDATED")
-
-
---[[
-
-
-/flyout command -
-
-	This command allows for the creation of a popup menu of items/spells for flyoution to be used by the macro button
-
-		Format -
-
-			/flyout <types>:<keys>:<shape>:<attach point>:<relative point>:<columns|radius>:<click|mouse>
-
-			/flyout s+,i+:teleport,!drake:linear:top:bottom:1:click
-
-		Examples -
-
-			/flyout item:quest item:linear:right:left:6:mouse
-
-			/flyout item+:quest item:circular:center:center:15:click
-
-			/flyout companion:mount:linear:right:left:6
-
-			Most options may be abbreviated -
-
-			/flyout i+:quest item:c:c:c:15:c
-
-		Types:
-
-			item
-			spell
-			companion
-
-			add + to scan the type's tooltip instead of the type's data
-
-		Keys:
-
-			Comma deliminate as many keys as you want (ex: "quest item,use")
-
-			The "companion" type must have "critter" or "mount" in the key list
-
-			! before a key excludes that key
-
-			~ before a key makes the key optional
-
-		Shapes:
-
-			linear
-			circular
-
-		Points:
-
-			left
-			right
-			top
-			bottom
-			topleft
-			topright
-			bottomleft
-			bottomright
-			center
-
-radius can be negative number
-]]--

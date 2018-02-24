@@ -4,9 +4,8 @@
 local NEURON = Neuron
 local DB, PEW
 
-NEURON.PETIndex = {}
-
-local PETIndex = NEURON.PETIndex
+NEURON.NeuronPetBar = NEURON:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronPetBar = NEURON.NeuronPetBar
 
 local petbarsDB, petbtnsDB
 
@@ -21,16 +20,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local SKIN = LibStub("Masque", true)
 
 local sIndex = NEURON.sIndex
-
-local defDB = {
-	petbars = {},
-	petbtns = {},
-	firstRun = true,
-}
-
-NeuronPetDB = CopyTable(defDB)
-
-NeuronDefaults.profile['NeuronPetDB'] = NeuronPetDB
 
 local gDef = {
 
@@ -50,8 +39,8 @@ local format = string.format
 local GetParentKeys = NEURON.GetParentKeys
 
 
-local AutoCastStart = NEURON.AutoCastStart
-local AutoCastStop = NEURON.AutoCastStop
+local AutoCastStart = NEURON.NeuronButton.AutoCastStart
+local AutoCastStop = NEURON.NeuronButton.AutoCastStop
 
 local configData = {
 
@@ -66,9 +55,123 @@ local keyData = {
 	hotKeyPri = false,
 }
 
-local alphaTimer, alphaDir = 0, 0
 
-local function controlOnUpdate(self, elapsed)
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronPetBar:OnInitialize()
+
+	PETBTN.SetTimer = BUTTON.SetTimer
+	PETBTN.SetSkinned = BUTTON.SetSkinned
+	PETBTN.GetSkinned = BUTTON.GetSkinned
+	PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
+
+
+	DB = NeuronCDB
+
+	---TODO: Remove this in the future. This is just temp code.
+	if (Neuron.db.profile["NeuronPetDB"]) then --migrate old settings to new location
+		if(Neuron.db.profile["NeuronPetDB"].petbars) then
+			NeuronCDB.petbars = CopyTable(Neuron.db.profile["NeuronPetDB"].petbars)
+		end
+		if(Neuron.db.profile["NeuronPetDB"].petbtns) then
+			NeuronCDB.petbtns = CopyTable(Neuron.db.profile["NeuronPetDB"].petbtns)
+		end
+		Neuron.db.profile["NeuronPetDB"] = nil
+		DB.petbarFirstRun = false
+	end
+
+
+	petbarsDB = DB.petbars
+	petbtnsDB = DB.petbtns
+
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false, STORAGE, gDef, nil, false)
+
+	NEURON:RegisterGUIOptions("pet", {
+		AUTOHIDE = true,
+		SHOWGRID = true,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		HIDDEN = true,
+		LOCKBAR = true,
+		TOOLTIPS = true,
+		BINDTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true }, false, 65)
+
+	if (DB.petbarFirstRun) then
+
+		if(NEURON.class == 'HUNTER' or NEURON.class == 'WARLOCK' or NEURON.class == 'DEATHKNIGHT' or NEURON.class == 'MAGE') then --only make bars for pet classe on first run
+
+			local bar, object = NEURON:CreateNewBar("pet", 1, true)
+
+			for i=1,NEURON.maxPetID do
+				object = NEURON:CreateNewObject("pet", i)
+				bar:AddObjectToList(object)
+			end
+
+		end
+
+		DB.petbarFirstRun = false
+
+	else
+
+		for id,data in pairs(petbarsDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewBar("pet", id)
+			end
+		end
+
+		for id,data in pairs(petbtnsDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewObject("pet", id)
+			end
+		end
+	end
+
+	STORAGE:Hide()
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronPetBar:OnEnable()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronPetBar:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+
+function NeuronPetBar:PLAYER_ENTERING_WORLD()
+	PEW = true
+end
+
+-------------------------------------------------------------------------------
+
+
+
+--this function gets called from the controlOnUpdate in the Neuron.lua file
+function NeuronPetBar.controlOnUpdate(self, elapsed)
+	local alphaTimer, alphaDir = 0, 0
 
 	alphaTimer = alphaTimer + elapsed * 2.5
 
@@ -630,95 +733,3 @@ function PETBTN:SetType(save)
 	self:SetScript("OnAttributeChanged", nil)
 
 end
-
-
-function PetProfileUpdate()
-    petbarsDB = NeuronPetDB.petbars
-    petbtnsDB = NeuronPetDB.petbtns
-end
-
-local function controlOnEvent(self, event, ...)
-
-	if (event == "ADDON_LOADED" and ... == "Neuron-Pet") then
-
-		PETBTN.SetTimer = BUTTON.SetTimer
-		PETBTN.SetSkinned = BUTTON.SetSkinned
-		PETBTN.GetSkinned = BUTTON.GetSkinned
-		PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
-
-
-        if (not NeuronBase.db.profile["NeuronPetDB"]) then
-            NeuronBase.db.profile["NeuronPetDB"] = NeuronPetDB
-        end
-
-		DB = NeuronBase.db.profile["NeuronPetDB"]
-
-		for k,v in pairs(defDB) do
-			if (DB[k] == nil) then
-				DB[k] = v
-			end
-		end
-
-		petbarsDB = DB.petbars
-		petbtnsDB = DB.petbtns
-
-		NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, PETIndex, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false, STORAGE, gDef, nil, false)
-
-		NEURON:RegisterGUIOptions("pet", {
-			AUTOHIDE = true,
-			SHOWGRID = true,
-			SNAPTO = true,
-			UPCLICKS = true,
-			DOWNCLICKS = true,
-			HIDDEN = true,
-			LOCKBAR = true,
-			TOOLTIPS = true,
-			BINDTEXT = true,
-			RANGEIND = true,
-			CDTEXT = true,
-			CDALPHA = true }, false, 65)
-
-		if (DB.firstRun) then
-
-			local bar, object = NEURON:CreateNewBar("pet", 1, true)
-
-			for i=1,NEURON.maxPetID do
-				object = NEURON:CreateNewObject("pet", i)
-				bar:AddObjectToList(object)
-			end
-
-			DB.firstRun = false
-
-		else
-
-			for id,data in pairs(petbarsDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewBar("pet", id)
-				end
-			end
-
-			for id,data in pairs(petbtnsDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewObject("pet", id)
-				end
-			end
-		end
-
-		STORAGE:Hide()
-
-	elseif (event == "PLAYER_LOGIN") then
-
-    elseif (event == "VARIABLES_LOADED") then
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-
-		PEW = true
-	end
-end
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
-frame:SetScript("OnUpdate", controlOnUpdate)
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
