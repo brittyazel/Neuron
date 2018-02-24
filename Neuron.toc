@@ -31,6 +31,8 @@ BarTypes/Neuron_ExtraBar.lua
 BarTypes/Neuron_ZoneAbilityBar.lua
 BarTypes/Neuron-Bag.lua
 BarTypes/Neuron-Bag.xml
+BarTypes/Neuron-Menu.lua
+BarTypes/Neuron-Menu.xml
 
 
 Neuron.xml

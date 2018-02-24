@@ -112,6 +112,9 @@ NeuronCDB = {
 	zoneabilitybars = {},
 	zoneabilitybtns = {},
 
+	menubars = {},
+	menubtns = {},
+
 	selfCast = false,
 	focusCast = false,
 	mouseOverMod= "NONE",
@@ -124,6 +127,7 @@ NeuronCDB = {
 	xbarFirstRun = true,
 	zoneabilitybarFirstRun = true,
 	bagbarFirstRun = true,
+	menubarFirstRun = true,
 
 }
 
@@ -502,10 +506,6 @@ function NEURON:RefreshConfig()
 	GDB, CDB, Spec =  NeuronGDB, NeuronCDB, NeuronSpec
 	ButtonProfileUpdate()
 
-	if(self.db.profile["NeuronMenuDB"]) then
-		NeuronMenuDB = self.db.profile["NeuronMenuDB"]
-		MenuProfileUpdate()
-	end
 	if(self.db.profile["NeuronPetDB"]) then
 		NeuronPetDB = self.db.profile["NeuronPetDB"]
 		PetProfileUpdate()

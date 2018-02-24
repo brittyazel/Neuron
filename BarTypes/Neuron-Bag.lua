@@ -18,16 +18,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local SKIN = LibStub("Masque", true)
 
 
---[[NeuronBagDB = {
-	bagbars = {},
-	bagbtns = {},
-	freeSlots = 16,
-	firstRun = true,
-}
-
-NeuronDefaults.profile['NeuronBagDB'] = NeuronBagDB]]
-
-
 local gDef = {
 
 	padH = -1,
@@ -359,7 +349,7 @@ end
 
 local function controlOnEvent(self, event, ...)
 
-	if (event == "ADDON_LOADED" and ... == "Neuron-Bag") then
+	if (event == "ADDON_LOADED" and ... == "Neuron") then
 
 		bagElements[1] = NeuronBackpackButton
 		bagElements[2] = Neuron___Bag0Slot

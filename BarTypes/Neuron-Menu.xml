@@ -338,7 +338,7 @@
 		</HitRectInsets>
 		<Layers>
 			<Layer level="OVERLAY">
-				<Texture name="$parentOverlay" file="Interface\AddOns\Neuron-Menu\Images\MirageUI_LatencyMicroButton_Overlay">
+				<Texture name="$parentOverlay" file="Interface\AddOns\Neuron\Images\MirageUI_LatencyMicroButton_Overlay">
 					<Anchors>
 						<Anchor point="CENTER">
 							<Offset x="0" y="0"/>
@@ -427,9 +427,9 @@
 					end
 			</OnUpdate>
 		</Scripts>
-		<NormalTexture file="Interface\AddOns\Neuron-Menu\Images\MirageUI_LatencyMicroButton_Frame"/>
+		<NormalTexture file="Interface\AddOns\Neuron\Images\MirageUI_LatencyMicroButton_Frame"/>
 		<HighlightTexture file="Interface\Buttons\UI-MicroButton-Hilight" alphaMode="ADD"/>
-		<PushedTexture file="Interface\AddOns\Neuron-Menu\Images\MirageUI_LatencyMicroButton_FramePushed"/>
+		<PushedTexture file="Interface\AddOns\Neuron\Images\MirageUI_LatencyMicroButton_FramePushed"/>
 		<CheckedTexture file="Interface\Buttons\UI-MicroButton-Hilight" alphaMode="ADD"/>
 	</Button>
 

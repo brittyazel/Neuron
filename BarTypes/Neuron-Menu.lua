@@ -21,14 +21,14 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local defDB = {
+--[[local defDB = {
 	menubars = {},
 	menubtns = {},
 	scriptProfile = false,
 	firstRun = true,
 }
 
-NeuronMenuDB = CopyTable(defDB)
+NeuronMenuDB = CopyTable(defDB)]]
 
 NeuronDefaults.profile['NeuronMenuDB'] = NeuronMenuDB
 
@@ -673,7 +673,7 @@ end
 
 
 function NEURON.LatencyButton_OnEvent(self, event, ...)
-	if (event == "ADDON_LOADED" and ...=="Neuron-Menu") then
+	if (event == "ADDON_LOADED" and ...=="Neuron") then
 		self.lastStart = 0
 		if (DB) then
 			self.enabled = DB.scriptProfile
@@ -996,29 +996,22 @@ function ANCHOR:SetType(save)
 end
 
 
-function MenuProfileUpdate()
-    menubarsDB = NeuronMenuDB.menubars
-    menubtnsDB = NeuronMenuDB.menubtns
-end
-
 
 local function controlOnEvent(self, event, ...)
 
 	local object
 
-	if (event == "ADDON_LOADED" and ... == "Neuron-Menu") then
+	if (event == "ADDON_LOADED" and ... == "Neuron") then
 		hooksecurefunc("UpdateMicroButtons", updateMicroButtons)
 
-		if (not Neuron.db.profile["NeuronMenuDB"]) then
-        	Neuron.db.profile["NeuronMenuDB"] = NeuronMenuDB
-		end
 
-		DB = Neuron.db.profile["NeuronMenuDB"]
+		DB = NeuronCDB
 
-		for k,v in pairs(defDB) do
-			if (DB[k] == nil) then
-				DB[k] = v
-			end
+		if (Neuron.db.profile["NeuronMenuDB"]) then --migrate old settings to new location
+			NeuronCDB.menubars = CopyTable(Neuron.db.profile["NeuronMenuDB"].menubars)
+			NeuronCDB.menubtns = CopyTable(Neuron.db.profile["NeuronMenuDB"].menubtns)
+			Neuron.db.profile["NeuronMenuDB"] = nil
+			DB.menubarFirstRun = false
 		end
 
 
@@ -1026,11 +1019,15 @@ local function controlOnEvent(self, event, ...)
 		menubtnsDB = DB.menubtns
 
 
+		if (not DB.scriptProfile) then
+			DB.scriptProfile = false
+		end
+
 		--for some reason the menu settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsDB to be both the GDB and DB in the RegisterBarClass
 		NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, MENUIndex, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, false)
 		NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
-		if (DB.firstRun) then
+		if (DB.menubarFirstRun) then
 			local bar, object = NEURON:CreateNewBar("menu", 1, true)
 
 			for i=1,#menuElements do
@@ -1038,7 +1035,7 @@ local function controlOnEvent(self, event, ...)
 				bar:AddObjectToList(object)
 			end
 
-			DB.firstRun = false
+			DB.menubarFirstRun = false
 
 		else
 			local count = 0
@@ -1086,7 +1083,7 @@ function NEURON.CheckAlertPosition(self, parent)
 		self:SetPoint("TOP", parent, "BOTTOM", 0, -16)
 		self.Arrow:ClearAllPoints()
 		self.Arrow:SetPoint("BOTTOM", self, "TOP", 0, -4)
-		self.Arrow.Arrow:SetTexture("Interface\\AddOns\\Neuron-Menu\\Images\\UpIndicator")
+		self.Arrow.Arrow:SetTexture("Interface\\AddOns\\Neuron\\Images\\UpIndicator")
 		self.Arrow.Arrow:SetTexCoord(0, 1, 0, 1)
 		self.Arrow.Glow:Hide()
 	end
