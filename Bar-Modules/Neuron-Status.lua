@@ -5,9 +5,8 @@ local NEURON = Neuron
 
 local DB, PEW
 
-NEURON.STATUSIndex = {}
-
-local STATUSIndex = NEURON.STATUSIndex
+NEURON.NeuronStatusBar = NEURON:NewModule("StatusBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronStatusBar = NEURON.NeuronStatusBar
 
 local EDITIndex, OBJEDITOR = NEURON.EDITIndex, NEURON.OBJEDITOR
 
@@ -264,9 +263,165 @@ local BrawlerGuildFactions = {
 	[1374] = true, --Horde
 }
 
-------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------
 
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronStatusBar:OnInitialize()
+
+	DB = NeuronCDB
+
+	---TODO: Remove this in the future. This is just temp code.
+	if (Neuron.db.profile["NeuronStatusDB"]) then --migrate old settings to new location
+		if(Neuron.db.profile["NeuronStatusDB"].statusbars) then
+			NeuronCDB.statusbars = CopyTable(Neuron.db.profile["NeuronStatusDB"].statusbars)
+		end
+		if(Neuron.db.profile["NeuronStatusDB"].statusbtns) then
+			NeuronCDB.statusbtns = CopyTable(Neuron.db.profile["NeuronStatusDB"].statusbtns)
+		end
+		Neuron.db.profile["NeuronStatusDB"] = nil
+		DB.statusbarFirstRun = false
+	end
+
+	if not DB.AutoWatch then
+		DB.AutoWatch = 1
+	end
+
+	statusbarsDB = DB.statusbars
+	statusbtnsDB = DB.statusbtns
+
+	NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, NeuronStatusBar, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
+
+	NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
+		SNAPTO = true,
+		HIDDEN = true,
+		TOOLTIPS = true }, false, false)
+
+	if (DB.statusbarFirstRun) then --makes the initial 4 status bars
+
+		local oid, offset = 1, 0
+
+		for id, defaults in ipairs(gDef) do
+
+			NEURON.RegisteredBarData["status"].gDef = defaults
+
+			local bar, object = NEURON:CreateNewBar("status", id, true)
+
+			if (id == 4) then --I'm guessing this is meant to make 4 bars by default
+				for i=1,3 do
+					object = NEURON:CreateNewObject("status", oid+offset, true)
+					bar:AddObjectToList(object)
+					offset = offset + 1
+				end
+			else
+				object = NEURON:CreateNewObject("status", oid+offset, true)
+				bar:AddObjectToList(object)
+				offset = offset + 1
+			end
+
+			NEURON.RegisteredBarData["status"].gDef = nil
+		end
+
+		DB.statusbarFirstRun = false
+	else --loads previous bars from saved variable
+
+		for id,data in pairs(statusbarsDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewBar("status", id)
+			end
+		end
+
+
+		for id,data in pairs(statusbtnsDB) do
+			if (data ~= nil) then
+				NEURON:CreateNewObject("status", id)
+			end
+		end
+	end
+
+	STORAGE:Hide()
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronStatusBar:OnEnable()
+
+	CastingBarFrame:UnregisterAllEvents()
+	CastingBarFrame:Hide()
+
+	UIParent:UnregisterEvent("MIRROR_TIMER_START")
+	MirrorTimer1:UnregisterAllEvents()
+	MirrorTimer2:UnregisterAllEvents()
+	MirrorTimer3:UnregisterAllEvents()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("UPDATE_FACTION")
+	self:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
+	self:RegisterEvent("MIRROR_TIMER_START")
+	self:RegisterEvent("MIRROR_TIMER_STOP")
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronStatusBar:OnDisable()
+
+end
+
+
+------------------------------------------------------------------------------
+
+function NeuronStatusBar:PLAYER_ENTERING_WORLD()
+
+	local timer, value, maxvalue, scale, paused, label
+
+	for i=1,MIRRORTIMER_NUMTIMERS do
+
+		timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
+
+		if (timer ~= "UNKNOWN") then
+			mbStart(timer, value, maxvalue, scale, paused, label)
+		end
+	end
+
+	PEW = true
+end
+
+function NeuronStatusBar:UPDATE_FACTION(eventName, ...)
+
+	NeuronStatusBar.repstrings_Update(...)
+
+end
+
+function NeuronStatusBar:CHAT_MSG_COMBAT_FACTION_CHANGE(eventName, ...)
+
+	NeuronStatusBar.repstrings_Update(...)
+
+end
+
+function NeuronStatusBar:MIRROR_TIMER_START(eventName, ...)
+
+	NeuronStatusBar.mirrorbar_Start(...)
+
+end
+
+function NeuronStatusBar:MIRROR_TIMER_STOP(eventName, ...)
+
+	NeuronStatusBar.mirrorbar_Stop(select(1,...))
+
+end
+
+-------------------------------------------------------------------------------
 
 ----------------------------------
 --------XP Bar--------------------
@@ -569,7 +724,7 @@ local function SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, valu
 end
 
 
-local function repstrings_Update(line)
+function NeuronStatusBar.repstrings_Update(line)
 
 
 	if (GetNumFactions() > 0) then
@@ -625,7 +780,7 @@ end
 
 local function repbar_OnEvent(self, event,...)
 
-	repstrings_Update(...)
+	NeuronStatusBar.repstrings_Update(...)
 
 	if (RepWatch[self.repID]) then
 		self:SetStatusBarColor(RepWatch[self.repID].r,  RepWatch[self.repID].g, RepWatch[self.repID].b)
@@ -781,7 +936,7 @@ end
 ----------------------------------------------------
 
 
-local function mirrorbar_Start(mirror, value, maxvalue, scale, paused, label)
+function NeuronStatusBar.mirrorbar_Start(mirror, value, maxvalue, scale, paused, label)
 
 	if (not MirrorWatch[mirror]) then
 		MirrorWatch[mirror] = { active = false, mbar = nil, label = "", timer = "" }
@@ -824,7 +979,7 @@ end
 
 
 
-local function mirrorbar_Stop(mirror)
+function NeuronStatusBar.mirrorbar_Stop(mirror)
 
 	if (MirrorWatch[mirror] and MirrorWatch[mirror].active) then
 
@@ -1336,7 +1491,7 @@ function STATUS:OnClick(button, down)
 		if (DropDownList1:IsVisible()) then
 			DropDownList1:Hide()
 		else
-			repstrings_Update()
+			NeuronStatusBar.repstrings_Update()
 
 			ToggleDropDownMenu(1, nil, self.dropdown, self, 0, 0)
 
@@ -2674,148 +2829,3 @@ function STATUS:CreateEditFrame(index)
 	OBJEDITOR:Hide()
 
 end
-
-function StatusProfileUpdate()
-	statusbarsDB = NeuronStatusDB.statusbars
-	statusbtnsDB = NeuronStatusDB.statusbtns
-end
-
-----------------------------------------------------------------------
--------Main Event Handler---------------------------------------------
-----------------------------------------------------------------------
-local function controlOnEvent(self, event, ...)
-
-	if (event == "ADDON_LOADED" and ... == "Neuron") then
-
-		CastingBarFrame:UnregisterAllEvents()
-		CastingBarFrame:Hide()
-
-		UIParent:UnregisterEvent("MIRROR_TIMER_START")
-		MirrorTimer1:UnregisterAllEvents()
-		MirrorTimer2:UnregisterAllEvents()
-		MirrorTimer3:UnregisterAllEvents()
-
-		DB = NeuronCDB
-
-        ---TODO: Remove this in the future. This is just temp code.
-		if (Neuron.db.profile["NeuronStatusDB"]) then --migrate old settings to new location
-            if(Neuron.db.profile["NeuronStatusDB"].statusbars) then
-			    NeuronCDB.statusbars = CopyTable(Neuron.db.profile["NeuronStatusDB"].statusbars)
-            end
-            if(Neuron.db.profile["NeuronStatusDB"].statusbtns) then
-			    NeuronCDB.statusbtns = CopyTable(Neuron.db.profile["NeuronStatusDB"].statusbtns)
-            end
-			Neuron.db.profile["NeuronStatusDB"] = nil
-			DB.statusbarFirstRun = false
-		end
-
-		if not DB.AutoWatch then
-			DB.AutoWatch = 1
-		end
-
-		statusbarsDB = DB.statusbars
-		statusbtnsDB = DB.statusbtns
-
-		NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, STATUSIndex, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
-
-		NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
-			SNAPTO = true,
-			HIDDEN = true,
-			TOOLTIPS = true }, false, false)
-
-		if (DB.statusbarFirstRun) then --makes the initial 4 status bars
-
-			local oid, offset = 1, 0
-
-			for id, defaults in ipairs(gDef) do
-
-				NEURON.RegisteredBarData["status"].gDef = defaults
-
-				local bar, object = NEURON:CreateNewBar("status", id, true)
-
-				if (id == 4) then --I'm guessing this is meant to make 4 bars by default
-					for i=1,3 do
-						object = NEURON:CreateNewObject("status", oid+offset, true)
-						bar:AddObjectToList(object)
-						offset = offset + 1
-					end
-				else
-					object = NEURON:CreateNewObject("status", oid+offset, true)
-					bar:AddObjectToList(object)
-					offset = offset + 1
-				end
-
-				NEURON.RegisteredBarData["status"].gDef = nil
-			end
-
-			DB.statusbarFirstRun = false
-		else --loads previous bars from saved variable
-
-			for id,data in pairs(statusbarsDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewBar("status", id)
-				end
-			end
-
-
-			for id,data in pairs(statusbtnsDB) do
-				if (data ~= nil) then
-					NEURON:CreateNewObject("status", id)
-				end
-			end
-		end
-
-		STORAGE:Hide()
-
-	elseif (event == "PLAYER_LOGIN") then
-
-	elseif (event == "VARIABLES_LOADED") then
-
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-
-		local timer, value, maxvalue, scale, paused, label
-
-		for i=1,MIRRORTIMER_NUMTIMERS do
-
-			timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
-
-			if (timer ~= "UNKNOWN") then
-				mbStart(timer, value, maxvalue, scale, paused, label)
-			end
-		end
-
-		PEW = true
-
-
-	elseif (event == "UPDATE_FACTION" or event == "CHAT_MSG_COMBAT_FACTION_CHANGE") then
-
-		repstrings_Update(...)
-
-	elseif (event == "MIRROR_TIMER_START") then
-
-		mirrorbar_Start(...)
-
-	elseif (event == "MIRROR_TIMER_STOP") then
-
-		mirrorbar_Stop(select(1,...))
-
-	end
-end
-
----------------------------------------------
---This is where the addon Starts
----------------------------------------------
-
-local frame = CreateFrame("Frame", nil, UIParent)
-frame:SetScript("OnEvent", controlOnEvent)
-
-frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-
---rep
-frame:RegisterEvent("UPDATE_FACTION")
-frame:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
---mirror
-frame:RegisterEvent("MIRROR_TIMER_START")
-frame:RegisterEvent("MIRROR_TIMER_STOP")
