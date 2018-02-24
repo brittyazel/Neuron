@@ -269,6 +269,7 @@ function NEURON:OnInitialize()
 
 	NEURON:RegisterChatCommand("neuron", "slashHandler")
 
+
 	GDB = NeuronGDB; CDB = NeuronCDB;
 
 	NEURON.MAS = Neuron.MANAGED_ACTION_STATES

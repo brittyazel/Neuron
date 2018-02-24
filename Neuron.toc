@@ -30,12 +30,12 @@ Neuron_OrbButton.lua
 
 Neuron.xml
 
-BarTypes/Neuron-Extra.lua
-BarTypes/Neuron-ZoneAbility.lua
-BarTypes/Neuron-Bag.lua
-BarTypes/Neuron-Bag.xml
-BarTypes/Neuron-Menu.lua
-BarTypes/Neuron-Menu.xml
-BarTypes/Neuron-Pet.lua
-BarTypes/Neuron-Status.lua
-BarTypes/Neuron-Status.xml
+Bar-Modules/Neuron-Extra.lua
+Bar-Modules/Neuron-ZoneAbility.lua
+Bar-Modules/Neuron-Bag.lua
+Bar-Modules/Neuron-Bag.xml
+Bar-Modules/Neuron-Menu.lua
+Bar-Modules/Neuron-Menu.xml
+Bar-Modules/Neuron-Pet.lua
+Bar-Modules/Neuron-Status.lua
+Bar-Modules/Neuron-Status.xml
