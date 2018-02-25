@@ -23,7 +23,7 @@ local PEW = false
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.17" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.18" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
@@ -39,11 +39,13 @@ Cheers,
 local Update_Message = [[Thanks for updating Neuron!
 
 *****IMPORTANT, PLEASE READ!*****
-Three of your bars have had their data reset: the stance bar, the extra action button, and the zone ability button.
+A ton of backend work has been made in this release. An obsurd amount even.
 
-Sorry, again, for the disruption, but it was due to some major changes behind the scenes that will help tremendously going forward.
+I sincerely hope nobody has any bugs or issues; however, if you do, please report them and I'll fix them asap.
 
-Also, all bar types are now taken into account in the Neuron Profile's option. So saving profiles will store all your bars and buttons, not just the core ones.
+If you have any strange addon behavior, please delete the addon files from WoW>Interface>addons and reinstall the files (make careful not not to delete your addon settings)
+
+There may be issues with Flyout functionality, please report.
 
 -Soyier]]
 
