@@ -48,10 +48,12 @@ local rtable = f.rtable
 
 f.filter = {} -- table of search:keyword search functions (f.filter.item(arg))
 
+local barsToUpdate = {}
 
 local anchorUpdater
 local ANCHOR_LOGIN_Updater
 local itemScanner
+local flyoutBarUpdater
 
 local extensions
 
@@ -77,6 +79,23 @@ function NeuronFlyouts:OnInitialize()
 
 	STORAGE:Hide()
 
+	anchorUpdater = CreateFrame("Frame", nil, UIParent)
+	anchorUpdater:SetScript("OnUpdate", self.updateAnchors)
+	anchorUpdater:Hide()
+
+	ANCHOR_LOGIN_Updater = CreateFrame("Frame", nil, UIParent)
+	ANCHOR_LOGIN_Updater:SetScript("OnUpdate", self.ANCHOR_DelayedUpdate)
+	ANCHOR_LOGIN_Updater:Hide()
+	ANCHOR_LOGIN_Updater.elapsed = 0
+
+	itemScanner = CreateFrame("Frame", nil, UIParent)
+	itemScanner:SetScript("OnUpdate", self.linkScanOnUpdate)
+	itemScanner:Hide()
+
+	flyoutBarUpdater = CreateFrame("Frame", nil, UIParent)
+	flyoutBarUpdater:SetScript("OnUpdate", self.updateFlyoutBars)
+	flyoutBarUpdater:Hide()
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -100,23 +119,6 @@ function NeuronFlyouts:OnEnable()
 	self:RegisterEvent("SPELLS_CHANGED")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 	self:RegisterEvent("TOYS_UPDATED")
-
-	anchorUpdater = CreateFrame("Frame", nil, UIParent)
-	anchorUpdater:SetScript("OnUpdate", self.updateAnchors)
-	anchorUpdater:Hide()
-
-	ANCHOR_LOGIN_Updater = CreateFrame("Frame", nil, UIParent)
-	ANCHOR_LOGIN_Updater:SetScript("OnUpdate", self.ANCHOR_DelayedUpdate)
-	ANCHOR_LOGIN_Updater:Hide()
-	ANCHOR_LOGIN_Updater.elapsed = 0
-
-	itemScanner = CreateFrame("Frame", nil, UIParent)
-	itemScanner:SetScript("OnUpdate", self.linkScanOnUpdate)
-	itemScanner:Hide()
-
-	extensions = { ["/flyout"] = NeuronFlyouts.command_flyout }
-
-
 
 end
 
@@ -270,6 +272,9 @@ function NeuronFlyouts:EQUIPMENT_SETS_CHANGED()
 end
 
 function NeuronFlyouts:PLAYER_ENTERING_WORLD()
+
+	extensions = { ["/flyout"] = NeuronFlyouts.command_flyout }
+
 	PEW = true
 end
 
@@ -866,9 +871,8 @@ function BUTTON:GetDataList(options)
 	return scanData
 end
 
-local barsToUpdate = {}
+function NeuronFlyouts.updateFlyoutBars(self, elapsed)
 
-local function updateFlyoutBars(self, elapsed)
 	if (not InCombatLockdown()) then  --Workarout for protected taint if UI reload in combat
 		local bar = tremove(barsToUpdate)
 
@@ -883,9 +887,7 @@ local function updateFlyoutBars(self, elapsed)
 end
 
 
-local flyoutBarUpdater = CreateFrame("Frame", nil, UIParent)
-flyoutBarUpdater:SetScript("OnUpdate", updateFlyoutBars)
-flyoutBarUpdater:Hide()
+
 
 
 function BUTTON:Flyout_UpdateButtons(init)

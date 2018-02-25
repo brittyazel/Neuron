@@ -24,9 +24,9 @@ Neuron_Buttons.lua
 Neuron_Bars.lua
 Neuron_EditFrames.lua
 Neuron_KeyBinder.lua
-Neuron_Flyouts.lua
 Neuron_SnapTo.lua
 Neuron_OrbButton.lua
+Neuron_Flyouts.lua
 
 Neuron.xml
 
