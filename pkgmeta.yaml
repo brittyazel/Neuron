@@ -28,7 +28,3 @@ optional-dependencies:
 
 move-folders:
   Neuron/Neuron-GUI: Neuron-GUI
-  Neuron/Deprecated/Neuron-Bag: Neuron-Bag
-  Neuron/Deprecated/Neuron-Menu: Neuron-Menu
-  Neuron/Deprecated/Neuron-Pet: Neuron-Pet
-  Neuron/Deprecated/Neuron-Status: Neuron-Status

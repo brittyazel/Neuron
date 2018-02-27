@@ -23,7 +23,7 @@ local PEW = false
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.18" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.19" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
@@ -41,7 +41,7 @@ local Update_Message = [[Thanks for updating Neuron!
 *****IMPORTANT, PLEASE READ!*****
 A ton of backend work has been made in this release. An obsurd amount even.
 
-I sincerely hope nobody has any bugs or issues; however, if you do, please report them and I'll fix them asap.
+The Stance bar has been retired for good. It really doesn't make sense to have so much code for something that only effects Druids, and can easily be re-created by dragging the druid forms onto a simple action bar.
 
 If you have any strange addon behavior, please delete the addon files from WoW>Interface>addons and reinstall the files (make careful not not to delete your addon settings)
 
