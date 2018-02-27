@@ -34,7 +34,7 @@ local tooltipStrings = {}
 
 local itemTooltips, itemLinks, spellTooltips, companionTooltips = {}, {}, {}, {}
 local needsUpdate, scanData = {}, {}
-local iconlist = {}
+
 local array = {}
 
 
@@ -874,7 +874,7 @@ end
 function NeuronFlyouts.updateFlyoutBars(self, elapsed)
 
 	if (not InCombatLockdown()) then  --Workarout for protected taint if UI reload in combat
-		local bar = tremove(barsToUpdate)
+		local bar = tremove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
 			bar:SetObjectLoc()
@@ -908,6 +908,12 @@ function BUTTON:Flyout_UpdateButtons(init)
 			for spell, source in keySort(data) do
 				button = self:Flyout_GetButton()
 
+				local _, _, icon = GetSpellInfo(spell) --make sure the right icon is applied
+				if (icon) then
+					button.data.macro_Icon = icon
+				end
+
+
 				if (source == "spell" or source =="blizz") then
 					if (spell:find("%(")) then
 						button.macroshow = spell
@@ -917,6 +923,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 
 					button:SetAttribute("prefix", "/cast ")
 					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
+
 
 					prefix = "/cast "
 
@@ -932,6 +939,13 @@ function BUTTON:Flyout_UpdateButtons(init)
 					--button:SetAttribute("macro_Name", spell)
 					prefix = "/summonpet "
 					--pet = spell
+
+				elseif (source == "mount") then
+					button.macroshow = spell
+					button:SetAttribute("prefix", "/summonpet ")
+					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
+					prefix = "/summonpet "
+
 
 				elseif (source == "item") then
 					button.macroshow = spell
@@ -1018,6 +1032,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 		end
 	end
 end
+
 
 
 function BUTTON:Flyout_UpdateBar()

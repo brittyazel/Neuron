@@ -109,6 +109,8 @@ function NeuronMenuBar:OnInitialize()
     end
     STORAGE:Hide()
 
+
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -457,9 +459,6 @@ end
 
 
 function NeuronMenuBar.TalentButton_OnEvent(self, event, ...)
-    if (IsKioskModeEnabled()) then
-        return;
-    end
     if (event == "PLAYER_LEVEL_UP") then
         local level = ...
         if (level == SHOW_SPEC_LEVEL) then
@@ -473,7 +472,7 @@ function NeuronMenuBar.TalentButton_OnEvent(self, event, ...)
         -- If we just unspecced, and we have unspent talent points, it's probably spec-specific talents that were just wiped.  Show the tutorial box.
         local unit = ...
         if(unit == "player" and GetSpecialization() == nil and GetNumUnspentTalents() > 0) then
-            NeuronMenuBar.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
+           NeuronMenuBar.MainMenuMicroButton_ShowAlert(NeuronTalentMicroButtonAlert, TALENT_MICRO_BUTTON_UNSPENT_TALENTS)
         end
     elseif ( event == "PLAYER_TALENT_UPDATE" or event == "NEUTRAL_FACTION_SELECT_RESULT" ) then
         NeuronMenuBar.updateMicroButtons()
