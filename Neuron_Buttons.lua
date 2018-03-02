@@ -595,7 +595,7 @@ local function isActiveShapeshiftSpell(spell)
 end
 
 
-function NeuronButton.checkCursor(button)
+--[[function NeuronButton.checkCursor(button)
 	if (MacroDrag[1]) then
 		if (button == "LeftButton" or button == "RightButton") then
 			MacroDrag[1] = false
@@ -607,7 +607,7 @@ function NeuronButton.checkCursor(button)
 			NEURON:ToggleButtonGrid(true)
 		end
 	end
-end
+end]]
 
 
 function BUTTON:SetTimer(cd, start, duration, enable, timer, color1, color2, cdAlpha)
@@ -2507,6 +2507,10 @@ function BUTTON:MACRO_OnEnter(...)
 	if (self.bar) then
 		if (self.tooltipsCombat and InCombatLockdown()) then
 			return
+		end
+
+		if(MacroDrag[1]) then ---puts the icon back to the interact icon when moving abilities around and the mouse enteres the WorldFrame
+			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 		end
 
 		if (self.tooltips) then
