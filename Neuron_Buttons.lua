@@ -2104,7 +2104,7 @@ function BUTTON:MACRO_PlaceMacro()
 
 	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
-	wipe(MacroDrag)
+	MacroDrag[1] = false
 	ClearCursor();
 	SetCursor(nil);
 	self:UpdateFlyout()
