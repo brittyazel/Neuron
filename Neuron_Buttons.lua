@@ -17,7 +17,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local MacroDrag, StartDrag = NEURON.MacroDrag, NEURON.StartDrag
+local MacroDrag = NEURON.MacroDrag
+local StartDrag = NEURON.StartDrag
 
 local sIndex = NEURON.sIndex  --Spell index
 local cIndex = NEURON.cIndex  --Battle pet & Mount index
@@ -26,9 +27,9 @@ local tIndex = NEURON.tIndex  --Toys Index
 
 local ItemCache
 
-local currMacro = {}
-
 local cmdSlash
+
+local currMacro = {}
 
 
 local configData = {
@@ -597,14 +598,12 @@ end
 function NeuronButton.checkCursor(button)
 	if (MacroDrag[1]) then
 		if (button == "LeftButton" or button == "RightButton") then
-			MacroDrag[1] = false; SetCursor(nil); PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+			MacroDrag[1] = false
+			SetCursor(nil)
+			PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
 			NEURON:ToggleButtonGrid(nil, true)
-			DeleteMacro("NeuronTemp")
 		else
-			--local texture_path =GetFileName(MacroDrag.texture)
-			--SetCursor(texture_path)
-
 			NEURON:ToggleButtonGrid(true)
 		end
 	end
@@ -1757,29 +1756,6 @@ function BUTTON:MACRO_OnEvent(...)
 end
 
 
-function BUTTON:MACRO_PlaceMacro()
-	self.data.macro_Text = MacroDrag[3]
-	self.data.macro_Icon = MacroDrag[4]
-	self.data.macro_Name = MacroDrag[5]
-	self.data.macro_Auto = MacroDrag[6]
-	self.data.macro_Watch = MacroDrag[7]
-	self.data.macro_Equip = MacroDrag[8]
-	self.data.macro_Note = MacroDrag[9]
-	self.data.macro_UseNote = MacroDrag[10]
-
-	if (not self.cursor) then
-		self:SetType(true)
-	end
-
-	MacroDrag[1] = false
-	ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
-	self:UpdateFlyout()
-	NEURON:ToggleButtonGrid(nil, true)
-	DeleteMacro("NeuronTemp")
-
-end
-
-
 function BUTTON:MACRO_PlaceSpell(action1, action2, spellID, hasAction)
 	local modifier, spell, subName, texture
 	local _ --ignored return value
@@ -1816,7 +1792,8 @@ function BUTTON:MACRO_PlaceSpell(action1, action2, spellID, hasAction)
 
 	MacroDrag[1] = false
 
-	ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
+	ClearCursor()
+	SetCursor(nil)
 
 end
 
@@ -1842,7 +1819,8 @@ function BUTTON:MACRO_PlaceItem(action1, action2, hasAction)
 		self:SetType(true)
 	end
 	MacroDrag[1] = false
-	ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
+	ClearCursor()
+	SetCursor(nil)
 end
 
 
@@ -1877,7 +1855,8 @@ function BUTTON:MACRO_PlaceBlizzMacro(action1)
 
 		MacroDrag[1] = false
 
-		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
+		ClearCursor()
+		SetCursor(nil)
 	end
 end
 
@@ -1911,7 +1890,8 @@ function BUTTON:MACRO_PlaceBlizzEquipSet(action1)
 
 		MacroDrag[1] = false
 
-		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
+		ClearCursor()
+		SetCursor(nil)
 	end
 end
 
@@ -1975,7 +1955,8 @@ function BUTTON:MACRO_PlaceMount(action1, action2, hasAction)
 		MacroDrag[1] = false
 		CurrentMountSpellID = nil
 
-		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
+		ClearCursor()
+		SetCursor(nil)
 	end
 end
 
@@ -2010,7 +1991,8 @@ function BUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 
 		MacroDrag[1] = false
 
-		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
+		ClearCursor()
+		SetCursor(nil)
 	end
 end
 
@@ -2069,7 +2051,8 @@ function BUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 
 		MacroDrag[1] = false
 
-		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
+		ClearCursor()
+		SetCursor(nil)
 	end
 end
 
@@ -2098,33 +2081,37 @@ function BUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
 
 		MacroDrag[1] = false
 
-		ClearCursor(); SetCursor(nil); --drag_button_canvas:Hide()
+		ClearCursor()
+		SetCursor(nil)
 	end
 end
 
---Workaround to getting icons to show when outside of a neuron frame.  Bascialy creates a blank
---macro, sets its icon to what what picked up, and have the cursor pick up the macro. The temp
---macro is then deleted when the item is placed.
+local MacroPlaced = false
 
-local function macroFuss(MacroDrag)
+function BUTTON:MACRO_PlaceMacro()
+	self.data.macro_Text = MacroDrag[3]
+	self.data.macro_Icon = MacroDrag[4]
+	self.data.macro_Name = MacroDrag[5]
+	self.data.macro_Auto = MacroDrag[6]
+	self.data.macro_Watch = MacroDrag[7]
+	self.data.macro_Equip = MacroDrag[8]
+	self.data.macro_Note = MacroDrag[9]
+	self.data.macro_UseNote = MacroDrag[10]
 
-	local macroIndex
-	local macroExists
-
-	if MacroDrag[7] then
-		PickupMacro(MacroDrag[7])
-	else
-		local texture = MacroDrag.texture or "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
-		macroExists = GetMacroInfo("NeuronTemp")
-		if macroExists then
-			macroIndex = EditMacro(macroIndex, "NeuronTemp", texture, "")
-		else
-			macroIndex = CreateMacro("NeuronTemp",texture, "")
-		end
-		PickupMacro("NeuronTemp")
-		MacroDrag[1] = "macro"
+	if (not self.cursor) then
+		self:SetType(true)
 	end
+
+	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+
+	wipe(MacroDrag)
+	ClearCursor();
+	SetCursor(nil);
+	self:UpdateFlyout()
+	NEURON:ToggleButtonGrid(nil, true)
+
 end
+
 
 function BUTTON:MACRO_PickUpMacro()
 	local pickup
@@ -2143,18 +2130,20 @@ function BUTTON:MACRO_PickUpMacro()
 		local texture, move = self.iconframeicon:GetTexture()
 		wipe(MacroDrag)
 
-		if (currMacro[1]) then  --triggers when picking up an existing button with a button in the cursonr
+		if (currMacro[1]) then  ---triggers when picking up an existing button with a button in the cursor
 
 			for k,v in pairs(currMacro) do
 				MacroDrag[k] = v
 			end
 
 			wipe(currMacro)
-			--local texture_path =GetFileName(MacroDrag.texture)
-			macroFuss(MacroDrag)
-			--SetCursor(texture_path)
+
+			SetCursor("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+
 
 		elseif (self:MACRO_HasAction()) then
+			SetCursor("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+
 			MacroDrag[1] = self:MACRO_GetDragAction()
 			MacroDrag[2] = self
 			MacroDrag[3] = self.data.macro_Text
@@ -2185,28 +2174,25 @@ function BUTTON:MACRO_PickUpMacro()
 
 			self:SetType(true)
 
-			macroFuss(MacroDrag)
-
 		end
 
 	end
 end
 
-
+---This is the function that fires when a button is receiving a dragged item
 function BUTTON:MACRO_OnReceiveDrag(preclick)
-	if (InCombatLockdown()) then return end
+	if (InCombatLockdown()) then
+		return
+	end
 
 	local cursorType, action1, action2, spellID = GetCursorInfo()
-
-	--for i=1,select("#",GetCursorInfo()) do
-	--	Neuron:Print(i..": "..select(i,GetCursorInfo()))
-	--end
 
 	local texture = self.iconframeicon:GetTexture()
 
 	if (self:MACRO_HasAction()) then
 		wipe(currMacro)
 
+		---currMacro holds on to the previos macro's info if you are dropping a new macro on top of an existing macro
 		currMacro[1] = self:MACRO_GetDragAction()
 		currMacro[2] = self
 		currMacro[3] = self.data.macro_Text
@@ -2226,7 +2212,8 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 	else
 
 		if (MacroDrag[1]) then
-			self:MACRO_PlaceMacro(); PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+			MacroPlaced = true
+			self:MACRO_PlaceMacro()
 		elseif (cursorType == "spell") then
 			self:MACRO_PlaceSpell(action1, action2, spellID, self:MACRO_HasAction())
 
@@ -2247,16 +2234,15 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 		elseif (cursorType == "battlepet") then
 			self:MACRO_PlaceBattlePet(action1, action2, self:MACRO_HasAction())
 		end
-		DeleteMacro("NeuronTemp")
-		--self:MACRO_SetTooltip()
 	end
 
 	if (StartDrag and currMacro[1]) then
-		self:MACRO_PickUpMacro(); NEURON:ToggleButtonGrid(true)
+		self:MACRO_PickUpMacro()
+		NEURON:ToggleButtonGrid(true)
 	end
 
 	self:MACRO_UpdateAll(true)
-	self.elapsed = 0.2
+
 	StartDrag = false
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
@@ -2264,10 +2250,12 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 	end
 end
 
-
+---this is the function that fires when you begin dragging an item
 function BUTTON:MACRO_OnDragStart(button)
+	MacroPlaced = false
 	if (InCombatLockdown() or not self.bar or self.vehicle_edit or self.actionID) then
-		StartDrag = false; return
+		StartDrag = false
+		return
 	end
 
 	self.drag = nil
@@ -2289,7 +2277,8 @@ function BUTTON:MACRO_OnDragStart(button)
 		self:MACRO_PickUpMacro()
 
 		if (MacroDrag[1]) then
-			PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP); self.sound = true
+			PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+			self.sound = true
 
 			if (MacroDrag[2] ~= self) then
 				self.dragbutton = nil
@@ -2332,8 +2321,16 @@ end
 
 function BUTTON:MACRO_OnDragStop()
 	self.drag = nil
+
+	C_Timer.After(.01, self.MACRO_dropMacro)
 end
 
+function BUTTON:MACRO_dropMacro()
+	if MacroPlaced == false then
+		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+		wipe(MacroDrag)
+	end
+end
 
 function BUTTON:MACRO_PreClick(button)
 	self.cursor = nil

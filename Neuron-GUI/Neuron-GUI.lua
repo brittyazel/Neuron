@@ -3376,8 +3376,10 @@ local function hookHandler(handler)
 
 	handler:HookScript("OnAttributeChanged", function(self,name,value)
 
-		if (NeuronObjectEditor:IsVisible() and self == NEURON.CurrentObject.bar.handler and name == "activestate" and not NeuronButtonEditor.macroedit.edit.hasfocus) then
-			NeuronButtonEditor.macro.elapsed = 0
+		if(NEURON.CurrentObject) then
+			if (NeuronObjectEditor:IsVisible() and self == NEURON.CurrentObject.bar.handler and name == "activestate" and not NeuronButtonEditor.macroedit.edit.hasfocus) then
+				NeuronButtonEditor.macro.elapsed = 0
+			end
 		end
 
 	end)
