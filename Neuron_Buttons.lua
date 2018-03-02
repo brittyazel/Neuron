@@ -2138,11 +2138,11 @@ function BUTTON:MACRO_PickUpMacro()
 
 			wipe(currMacro)
 
-			SetCursor("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 
 
 		elseif (self:MACRO_HasAction()) then
-			SetCursor("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 
 			MacroDrag[1] = self:MACRO_GetDragAction()
 			MacroDrag[2] = self
