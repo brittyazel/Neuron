@@ -231,8 +231,8 @@ function NeuronButton:OnEnable()
 		self:updateAuraInfo(k)
 	end
 
-	self:SecureHookScript(WorldFrame, "OnMouseUp", "checkCursor")
-	self:SecureHookScript(WorldFrame, "OnMouseDown", "checkCursor")
+	--self:SecureHookScript(WorldFrame, "OnMouseUp", "checkCursor")
+	--self:SecureHookScript(WorldFrame, "OnMouseDown", "checkCursor")
 
 end
 
@@ -2277,7 +2277,7 @@ function BUTTON:MACRO_OnDragStart(button)
 		self:MACRO_PickUpMacro()
 
 		if (MacroDrag[1]) then
-			PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+			--PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 			self.sound = true
 
 			if (MacroDrag[2] ~= self) then
@@ -2322,11 +2322,11 @@ end
 function BUTTON:MACRO_OnDragStop()
 	self.drag = nil
 
-	C_Timer.After(.01, self.MACRO_dropMacro)
+	C_Timer.After(.01, self.MACRO_dropMacro) ---add a little bit of a delay, Macro_OnDragStop fires before Macro_OnReceiveDrag
 end
 
 function BUTTON:MACRO_dropMacro()
-	if MacroPlaced == false then
+	if MacroDrag[1] and MacroPlaced == false then
 		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 		wipe(MacroDrag)
 	end
