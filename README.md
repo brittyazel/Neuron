@@ -92,4 +92,4 @@ Translators:
 Disclaimer:
 
 Neuron is a fork of the amazing *Ion Action Bars* addon started by Connor Chenoweth aka **Maul**, for World of Warcraft Legion and onwards. All credit for the bulk of this addon should go to him accordingly, along with SLOKnightFall for his maintainership throughout the years.
-**I take no credit for the idea or implementation of this addon prior to my adoption of the code in the Fall quarter of 2018.**
+**I take no credit for the idea or implementation of this addon prior to my adoption of the code in the Fall quarter of 2017.**
