@@ -231,9 +231,6 @@ function NeuronButton:OnEnable()
 		self:updateAuraInfo(k)
 	end
 
-	--self:SecureHookScript(WorldFrame, "OnMouseUp", "checkCursor")
-	--self:SecureHookScript(WorldFrame, "OnMouseDown", "checkCursor")
-
 end
 
 
@@ -594,20 +591,6 @@ local function isActiveShapeshiftSpell(spell)
 	end
 end
 
-
---[[function NeuronButton.checkCursor(button)
-	if (MacroDrag[1]) then
-		if (button == "LeftButton" or button == "RightButton") then
-			MacroDrag[1] = false
-			SetCursor(nil)
-			PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
-
-			NEURON:ToggleButtonGrid(nil, true)
-		else
-			NEURON:ToggleButtonGrid(true)
-		end
-	end
-end]]
 
 
 function BUTTON:SetTimer(cd, start, duration, enable, timer, color1, color2, cdAlpha)
@@ -2322,7 +2305,7 @@ end
 function BUTTON:MACRO_OnDragStop()
 	self.drag = nil
 
-	C_Timer.After(.01, self.MACRO_dropMacro) ---add a little bit of a delay, Macro_OnDragStop fires before Macro_OnReceiveDrag
+	C_Timer.After(.005, self.MACRO_dropMacro) ---add a little bit of a delay, Macro_OnDragStop fires before Macro_OnReceiveDrag
 end
 
 function BUTTON:MACRO_dropMacro()
@@ -2677,21 +2660,9 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 					self.statedata[value] = CopyTable(stateData)
 				end
 
-
+				---TODO:
 				---we need to to add a workaround for druid Stealth states getting immediately overwritten
-				--[[				if(NEURON.class == "DRUID") then
 
-                                    if (value == "stealth1") then
-                                        stealthStatus = true
-                                    end
-
-                                    if (value ~= "stealth1" and stealthStatus==true) then
-                                        return
-                                    end
-
-
-
-                                end]]
 
 				self.data = self.statedata[value]
 
@@ -3023,8 +2994,6 @@ function BUTTON:SaveData(state)
 
 	else
 		Neuron:Print("DEBUG: Bad Save Data for "..self:GetName().." ?")
-		--Neuron:Print(debugstack())
-		--Neuron:Print(self:GetParent():GetName())
 		Neuron:Print(index); Neuron:Print(spec); Neuron:Print(state)
 	end
 end
