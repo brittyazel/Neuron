@@ -3,17 +3,14 @@
 Neuron is a full featured action Bar addon for World of Warcraft: Legion, updated for Patch 7.3
 
 ## Manual Install:
-I do not reccomend downloading this addon directly from Github, as there are CurseForge packaging modifications made the the addon upon release. These modifications include updating all included libraries to their latest release versions and pulling in all of the crowd sourced localizations. I have made an effort to pull in periodic samplings of these, but what you will find in the packaged versions on CurseForge or WowInterface will be much more up to date.
+I do not recommend downloading this addon directly from Github, as there are CurseForge packaging modifications made the the addon upon release. These modifications include updating all included libraries to their latest release versions and pulling in all of the crowd sourced localizations. I have made an effort to pull in periodic samplings of these, but what you will find in the packaged versions on CurseForge or WowInterface will be much more up to date.
 
-That being said, after download and extracting, make sure to move the *Neuron-GUI, Neuron-Menu, Neuron-Pet, Neuron-Status, and Neuron-Bag* out of the **Neuron** directory. Move the aforementioned five directories as well as the Neuron directory to the **World of Warcraft>Interface>addons** directory.
+That being said, after download and extracting, make sure to move the *Neuron-GUI out of the **Neuron** directory. Move the aforementioned directory as well as the Neuron directory to the **World of Warcraft>Interface>addons** directory.
 
-When the addon is successfully installed the World of **Warcraft>Interface>addons** directory should contain 6 separate folders at the same level:
+When the addon is successfully installed the World of **Warcraft>Interface>addons** directory should contain 2 separate folders at the same level:
  * Neuron
  * Neuron-GUI
- * Neuron-Menu
- * Neuron-Pet
- * Neuron-Bag
- * Neuron-Status
+
 
 ## Translating
 The efforts to translate Neuron into many languages is a community project, and it could use your help!
@@ -95,5 +92,13 @@ Type /neuron alone to display a list of available commands, which are:
 
 
 ## Credits:
+Translators:
+* German: Aszkarath
+* French: Cinedelle
+* Brazilian Portuguese: Alanbre20
+* Russian: Hubbotu
 
-Neuron is a fork of the amazing *Ion Action Bars* addon started by Connor Chenoweth aka **Maul**, for World of Warcraft Legion and onwards. All credit for the bulk of this addon should go to him accordingly, along with SLOKnightFall for his maintainership throughout the years. If you would like to use the ongoing continuation of the Ion addon instead of Neuron, please find it on either Curse or WowInterface.
+Disclaimer:
+
+Neuron is a fork of the amazing *Ion Action Bars* addon started by Connor Chenoweth aka **Maul**, for World of Warcraft Legion and onwards. All credit for the bulk of this addon should go to him accordingly, along with SLOKnightFall for his maintainership throughout the years.
+**I take no credit for the idea or implementation of this addon prior to my adoption of the code in the Fall quarter of 2018.**
