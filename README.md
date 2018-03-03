@@ -24,15 +24,6 @@ The addon can be downloaded at these places:
 * https://wow.curseforge.com/projects/neuron
 * http://www.wowinterface.com/downloads/info10636-IonActionBars.html
 
-
-## Modules:
-Neuron comes bundled with four modules that can be used for a full featured action bar experience. These modules are optional and can be disabled, but it is highly recommended that they be used for the best experience.
-
-* Neuron: Menu
-* Neuron: Status
-* Neuron: Bag
-* Neuron: Pet
-
 ## Theme Support:
 
 Neuron inherits all theming courtesy of the **[Masque](https://mods.curse.com/addons/wow/masque "Masque")** addon. Neuron has full Masque compatibility, and the theming options found in Masque are quite in-depth, not to mention the robust portfolio of skins made to support Masque. In short, you can make your bars look any way you like!
