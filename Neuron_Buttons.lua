@@ -29,8 +29,11 @@ local ItemCache
 
 local cmdSlash
 
-local currMacro = {}
+local macroCache = {}
 
+
+----TODO: fix druid stealth ability with a timer, i.e.
+--C_Timer.After(.005, *function*)
 
 local configData = {
 	btnType = "macro",
@@ -230,6 +233,9 @@ function NeuronButton:OnEnable()
 	for k in pairs(unitAuras) do
 		self:updateAuraInfo(k)
 	end
+
+	---these two hooks are to call a function to check if we dragged an ability off the bar or not
+	self:SecureHookScript(WorldFrame, "OnMouseDown")
 
 end
 
@@ -2069,8 +2075,6 @@ function BUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
 	end
 end
 
-local MacroPlaced = false
-
 function BUTTON:MACRO_PlaceMacro()
 	self.data.macro_Text = MacroDrag[3]
 	self.data.macro_Icon = MacroDrag[4]
@@ -2087,7 +2091,7 @@ function BUTTON:MACRO_PlaceMacro()
 
 	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
-	MacroDrag[1] = false
+	wipe(MacroDrag);
 	ClearCursor();
 	SetCursor(nil);
 	self:UpdateFlyout()
@@ -2109,17 +2113,18 @@ function BUTTON:MACRO_PickUpMacro()
 		pickup = true
 	end
 
-	if (pickup or currMacro[1]) then
+	if (pickup) then
 		local texture, move = self.iconframeicon:GetTexture()
-		wipe(MacroDrag)
 
-		if (currMacro[1]) then  ---triggers when picking up an existing button with a button in the cursor
+		if (macroCache[1]) then  ---triggers when picking up an existing button with a button in the cursor
 
-			for k,v in pairs(currMacro) do
+			wipe(MacroDrag)
+
+			for k,v in pairs(macroCache) do
 				MacroDrag[k] = v
 			end
 
-			wipe(currMacro)
+			wipe(macroCache)
 
 			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 
@@ -2173,53 +2178,49 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 	local texture = self.iconframeicon:GetTexture()
 
 	if (self:MACRO_HasAction()) then
-		wipe(currMacro)
+		wipe(macroCache)
 
-		---currMacro holds on to the previos macro's info if you are dropping a new macro on top of an existing macro
-		currMacro[1] = self:MACRO_GetDragAction()
-		currMacro[2] = self
-		currMacro[3] = self.data.macro_Text
-		currMacro[4] = self.data.macro_Icon
-		currMacro[5] = self.data.macro_Name
-		currMacro[6] = self.data.macro_Auto
-		currMacro[7] = self.data.macro_Watch
-		currMacro[8] = self.data.macro_Equip
-		currMacro[9] = self.data.macro_Note
-		currMacro[10] = self.data.macro_UseNote
+		---macroCache holds on to the previos macro's info if you are dropping a new macro on top of an existing macro
+		macroCache[1] = self:MACRO_GetDragAction()
+		macroCache[2] = self
+		macroCache[3] = self.data.macro_Text
+		macroCache[4] = self.data.macro_Icon
+		macroCache[5] = self.data.macro_Name
+		macroCache[6] = self.data.macro_Auto
+		macroCache[7] = self.data.macro_Watch
+		macroCache[8] = self.data.macro_Equip
+		macroCache[9] = self.data.macro_Note
+		macroCache[10] = self.data.macro_UseNote
 
-		currMacro.texture = texture
+		macroCache.texture = texture
 	end
 
-	if  (action1 == 0 and cursorType ~= "spell") then
-		-- do nothing for now
-	else
 
-		if (MacroDrag[1]) then
-			MacroPlaced = true
-			self:MACRO_PlaceMacro()
-		elseif (cursorType == "spell") then
-			self:MACRO_PlaceSpell(action1, action2, spellID, self:MACRO_HasAction())
+	if (MacroDrag[1]) then
+		self:MACRO_PlaceMacro()
+	elseif (cursorType == "spell") then
+		self:MACRO_PlaceSpell(action1, action2, spellID, self:MACRO_HasAction())
 
-		elseif (cursorType == "item") then
-			self:MACRO_PlaceItem(action1, action2, self:MACRO_HasAction())
+	elseif (cursorType == "item") then
+		self:MACRO_PlaceItem(action1, action2, self:MACRO_HasAction())
 
-		elseif (cursorType == "macro") then
-			self:MACRO_PlaceBlizzMacro(action1)
-		elseif (cursorType == "equipmentset") then
-			self:MACRO_PlaceBlizzEquipSet(action1)
+	elseif (cursorType == "macro") then
+		self:MACRO_PlaceBlizzMacro(action1)
+	elseif (cursorType == "equipmentset") then
+		self:MACRO_PlaceBlizzEquipSet(action1)
 
-		elseif (cursorType == "mount") then
-			self:MACRO_PlaceMount(action1, action2, self:MACRO_HasAction())
+	elseif (cursorType == "mount") then
+		self:MACRO_PlaceMount(action1, action2, self:MACRO_HasAction())
 
-		elseif (cursorType == "flyout") then
-			self:MACRO_PlaceFlyout(action1, action2, self:MACRO_HasAction())
+	elseif (cursorType == "flyout") then
+		self:MACRO_PlaceFlyout(action1, action2, self:MACRO_HasAction())
 
-		elseif (cursorType == "battlepet") then
-			self:MACRO_PlaceBattlePet(action1, action2, self:MACRO_HasAction())
-		end
+	elseif (cursorType == "battlepet") then
+		self:MACRO_PlaceBattlePet(action1, action2, self:MACRO_HasAction())
 	end
 
-	if (StartDrag and currMacro[1]) then
+
+	if (StartDrag and macroCache[1]) then
 		self:MACRO_PickUpMacro()
 		NEURON:ToggleButtonGrid(true)
 	end
@@ -2235,7 +2236,6 @@ end
 
 ---this is the function that fires when you begin dragging an item
 function BUTTON:MACRO_OnDragStart(button)
-	MacroPlaced = false
 	if (InCombatLockdown() or not self.bar or self.vehicle_edit or self.actionID) then
 		StartDrag = false
 		return
@@ -2304,12 +2304,11 @@ end
 
 function BUTTON:MACRO_OnDragStop()
 	self.drag = nil
-
-	C_Timer.After(.005, self.MACRO_dropMacro) ---add a little bit of a delay, Macro_OnDragStop fires before Macro_OnReceiveDrag
 end
 
-function BUTTON:MACRO_dropMacro()
-	if MacroDrag[1] and MacroPlaced == false then
+---This function will be used to check if we should release the cursor
+function NeuronButton:OnMouseDown()
+	if MacroDrag[1] then
 		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 		wipe(MacroDrag)
 	end
