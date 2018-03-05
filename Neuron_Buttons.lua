@@ -237,6 +237,9 @@ function NeuronButton:OnEnable()
 	---these two hooks are to call a function to check if we dragged an ability off the bar or not
 	self:SecureHookScript(WorldFrame, "OnMouseDown")
 
+	self:SecureHook("ToggleCollectionsJournal")
+
+
 end
 
 
@@ -1894,8 +1897,10 @@ local function HookOnEnter(self)
 end
 
 
-local MountButtonsHookIsSet
-hooksecurefunc("ToggleCollectionsJournal", function()
+function NeuronButton:ToggleCollectionsJournal()
+
+	local MountButtonsHookIsSet
+
 	if CollectionsJournal:IsShown() then
 		if not MountButtonsHookIsSet then
 			for i = 1, 20 do
@@ -1910,8 +1915,7 @@ hooksecurefunc("ToggleCollectionsJournal", function()
 			MountButtonsHookIsSet = true
 		end
 	end
-end)
-
+end
 
 function BUTTON:MACRO_PlaceMount(action1, action2, hasAction)
 	if (action1 == 0) then

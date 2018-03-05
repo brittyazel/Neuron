@@ -637,7 +637,9 @@ function NEURON.controlOnUpdate(self, elapsed)
 	end
 
 	---UnThrottled OnUpdate calls
-	NEURON.NeuronButton.controlOnUpdate(self, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+	if(PEW) then
+		NEURON.NeuronButton.controlOnUpdate(self, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+	end
 
 end
 

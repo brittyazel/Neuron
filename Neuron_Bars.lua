@@ -1713,37 +1713,41 @@ end
 
 
 function BAR:OnUpdate(elapsed)
-	if (self.elapsed) then
-		self.elapsed = self.elapsed + elapsed
+	if (PEW) then
 
-		if (self.elapsed > 10) then
-			self.elapsed = 0.75
-		end
+		if (self.elapsed) then
+			self.elapsed = self.elapsed + elapsed
 
-		if (self.microAdjust and not self.action) then
-			self:Pulse(elapsed)
-
-			if (self.keydown and self.elapsed >= 0.5) then
-				self.microAdjust = self.microAdjust + 1
-				self:OnKeyDown(self.keydown, self.microAdjust)
+			if (self.elapsed > 10) then
+				self.elapsed = 0.75
 			end
 
-		elseif (self.pulse) then
-			self:SetAlpha(1)
-			self.pulse = nil
+			if (self.microAdjust and not self.action) then
+				self:Pulse(elapsed)
+
+				if (self.keydown and self.elapsed >= 0.5) then
+					self.microAdjust = self.microAdjust + 1
+					self:OnKeyDown(self.keydown, self.microAdjust)
+				end
+
+			elseif (self.pulse) then
+				self:SetAlpha(1)
+				self.pulse = nil
+			end
+
+			if (self.hover) then
+				self.elapsed = 0
+			end
 		end
 
-		if (self.hover) then
-			self.elapsed = 0
+		if (GetMouseFocus() == self) then
+			if (not self.wheel) then
+				self:EnableMouseWheel(true); self.wheel = true
+			end
+		elseif (self.wheel) then
+			self:EnableMouseWheel(false); self.wheel = nil
 		end
-	end
 
-	if (GetMouseFocus() == self) then
-		if (not self.wheel) then
-			self:EnableMouseWheel(true); self.wheel = true
-		end
-	elseif (self.wheel) then
-		self:EnableMouseWheel(false); self.wheel = nil
 	end
 end
 

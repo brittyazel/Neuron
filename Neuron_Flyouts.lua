@@ -47,6 +47,12 @@ f.rtable = {} -- reusable table where flyout button attributes are accumulated
 local rtable = f.rtable
 
 f.filter = {} -- table of search:keyword search functions (f.filter.item(arg))
+--[[ Item Cache ]]
+
+f.itemCache = {}
+f.bagsToCache = {[0]=true,[1]=true,[2]=true,[3]=true,[4]=true,["Worn"]=true }
+f.timerTimes = {} -- indexed by arbitrary name, the duration to run the timer
+f.timersRunning = {} -- indexed numerically, timers that are running
 
 local barsToUpdate = {}
 
@@ -104,7 +110,9 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronFlyouts:OnEnable()
 
-	f.CacheBags()
+	--[[ Timer Management ]]
+	f.timerFrame = CreateFrame("Frame") -- timer independent of main frame visibility
+	f.timerFrame:Hide()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("EXECUTE_CHAT_LINE")
@@ -119,6 +127,8 @@ function NeuronFlyouts:OnEnable()
 	self:RegisterEvent("SPELLS_CHANGED")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 	self:RegisterEvent("TOYS_UPDATED")
+
+	NeuronFlyouts:HookScript(f.timerFrame, "OnUpdate", "timerFrame_OnUpdate")
 
 end
 
@@ -147,7 +157,9 @@ function NeuronFlyouts:BAG_UPDATE(eventName, ...)
 	local bag = ...
 	if bag>=0 and bag<=4 then
 		f.bagsToCache[bag] = true
-		f.StartTimer(0.05,f.CacheBags)
+		if PEW then
+			f.StartTimer(0.05,f.CacheBags)
+		end
 	end
 
 	for anchor in pairs(ANCHORIndex) do
@@ -165,7 +177,9 @@ function NeuronFlyouts:PLAYER_INVENTORY_CHANGED(eventName, ...)
 	local bag = ...
 	if bag>=0 and bag<=4 then
 		f.bagsToCache[bag] = true
-		f.StartTimer(0.05,f.CacheBags)
+		if PEW then
+			f.StartTimer(0.05,f.CacheBags)
+		end
 	end
 
 	for anchor in pairs(ANCHORIndex) do
@@ -273,9 +287,11 @@ end
 
 function NeuronFlyouts:PLAYER_ENTERING_WORLD()
 
+	f.CacheBags()
+
 	extensions = { ["/flyout"] = NeuronFlyouts.command_flyout }
 
-	PEW = true
+	PEW = trued
 end
 
 function NeuronFlyouts:PLAYER_EQUIPMENT_CHANGED(eventName, ...)
@@ -283,7 +299,9 @@ function NeuronFlyouts:PLAYER_EQUIPMENT_CHANGED(eventName, ...)
 	local slot, equipped = ...
 	if equipped then
 		f.bagsToCache.Worn = true
-		f.StartTimer(0.05,f.CacheBags)
+		if PEW then
+			f.StartTimer(0.05,f.CacheBags)
+		end
 	end
 
 	ANCHOR_LOGIN_Updater:Show()
@@ -305,34 +323,28 @@ end
 
 -------------------------------------------------------------------------------
 
+function NeuronFlyouts:timerFrame_OnUpdate(frame, elapsed)
+	if PEW then
+		local tick
+		local times = f.timerTimes
+		local timers = f.timersRunning
 
+		for i=#timers,1,-1 do
+			local func = timers[i]
+			times[func] = times[func] - elapsed
+			if times[func] < 0 then
+				tremove(timers,i)
+				func()
+			end
+			tick = true
+		end
 
-
--- ad ds a type/value attribute pair to rtable if it's not already there
-local function addToTable(actionType,actionValue)
-	--for i=1,#rtable,2 do
-	--if rtable[i]==actionType and rtable[i+1]==actionValue then
-	--return
-	--end
-	--end
-	--tinsert(rtable,actionType)
-	--tinsert(rtable,actionValue)
-	scanData[actionValue:lower()] = actionType
+		if not tick then
+			self:Hide()
+		end
+	end
 end
 
-
--- returns true if arg and compareTo match. arg is a [Cc][Aa][Ss][Ee]-insensitive pattern
--- so we can't equate them and to get an exact match we need to append ^ and $ to the pattern
-local function compare(arg,compareTo,exact)
-	return compareTo:match(format("^%s$",arg)) and true
-end
-
-
---[[ Timer Management ]]
-f.timerFrame = CreateFrame("Frame") -- timer independent of main frame visibility
-f.timerFrame:Hide()
-f.timerTimes = {} -- indexed by arbitrary name, the duration to run the timer
-f.timersRunning = {} -- indexed numerically, timers that are running
 
 function f.StartTimer(duration,func)
 	local timers = f.timersRunning
@@ -344,34 +356,7 @@ function f.StartTimer(duration,func)
 end
 
 
-f.timerFrame:SetScript("OnUpdate",function(self,elapsed)
-	local tick
-	local times = f.timerTimes
-	local timers = f.timersRunning
-
-	for i=#timers,1,-1 do
-		local func = timers[i]
-		times[func] = times[func] - elapsed
-		if times[func] < 0 then
-			tremove(timers,i)
-			func()
-		end
-		tick = true
-	end
-
-	if not tick then
-		self:Hide()
-	end
-end)
-
-
---[[ Item Cache ]]
-
-f.itemCache = {}
-f.bagsToCache = {[0]=true,[1]=true,[2]=true,[3]=true,[4]=true,["Worn"]=true}
-
-
-local function addToCache(itemID)
+function f.addToCache(itemID)
 	if itemID then
 		local name = GetItemInfo(itemID)
 		if name then
@@ -391,14 +376,14 @@ function f.CacheBags()
 			if bag=="Worn" then
 				for slot=1,19 do
 					local itemID = GetInventoryItemID("player",slot)
-					if addToCache(itemID) then
+					if f.addToCache(itemID) then
 						cacheComplete = false
 					end
 				end
 			else
 				for slot=1,GetContainerNumSlots(bag) do
 					local itemID = GetContainerItemID(bag,slot)
-					if addToCache(itemID) then
+					if f.addToCache(itemID) then
 						cacheComplete = false
 					end
 				end
@@ -456,6 +441,28 @@ function f.filter.none(arg)
 	if toyName and tIndex[toyName] then
 		addToTable("item",toyName)
 	end
+end
+
+
+
+
+-- ad ds a type/value attribute pair to rtable if it's not already there
+local function addToTable(actionType,actionValue)
+	--for i=1,#rtable,2 do
+	--if rtable[i]==actionType and rtable[i+1]==actionValue then
+	--return
+	--end
+	--end
+	--tinsert(rtable,actionType)
+	--tinsert(rtable,actionValue)
+	scanData[actionValue:lower()] = actionType
+end
+
+
+-- returns true if arg and compareTo match. arg is a [Cc][Aa][Ss][Ee]-insensitive pattern
+-- so we can't equate them and to get an exact match we need to append ^ and $ to the pattern
+local function compare(arg,compareTo,exact)
+	return compareTo:match(format("^%s$",arg)) and true
 end
 
 
@@ -873,7 +880,7 @@ end
 
 function NeuronFlyouts.updateFlyoutBars(self, elapsed)
 
-	if (not InCombatLockdown()) then  --Workarout for protected taint if UI reload in combat
+	if (not InCombatLockdown() and PEW) then  --Workarout for protected taint if UI reload in combat
 		local bar = tremove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
