@@ -1,7 +1,7 @@
 --Neuron, a World of Warcraft® user interface addon.
 
 local NEURON = Neuron
-local GDB, CDB, SPEC, PEW, player, realm, barGDB, barCDB
+local GDB, CDB, SPEC, player, realm, barGDB, barCDB
 
 NEURON.NeuronBar = NEURON:NewModule("Bar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBar = NEURON.NeuronBar
@@ -238,8 +238,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronBar:OnEnable()
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-
 	if (GDB.firstRun) then
 		local oid, offset = 1, 0
 
@@ -299,9 +297,6 @@ end
 
 ------------------------------------------------------------------------------
 
-function NeuronBar:PLAYER_ENTERING_WORLD()
-	PEW = true
-end
 -------------------------------------------------------------------------------
 
 ------------------------------------------------------------
@@ -1389,7 +1384,7 @@ end
 
 
 function BAR:ACTIVE_TALENT_GROUP_CHANGED(...)
-	if (PEW) then
+	if (NEURON.PEW) then
 		self.stateschanged = true
 		self.vischanged = true
 
@@ -1713,7 +1708,7 @@ end
 
 
 function BAR:OnUpdate(elapsed)
-	if (PEW) then
+	if (NEURON.PEW) then
 
 		if (self.elapsed) then
 			self.elapsed = self.elapsed + elapsed

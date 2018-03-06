@@ -7,7 +7,7 @@
 -------------------------------------------------------------------------------
 
 local NEURON = Neuron
-local GDB, CDB, PEW, SPEC, btnGDB, btnCDB, control
+local GDB, CDB, SPEC, btnGDB, btnCDB, control
 
 local BAR, BUTTON = NEURON.BAR, NEURON.BUTTON
 
@@ -157,7 +157,7 @@ function NeuronFlyouts:BAG_UPDATE(eventName, ...)
 	local bag = ...
 	if bag>=0 and bag<=4 then
 		f.bagsToCache[bag] = true
-		if PEW then
+		if NEURON.PEW then
 			f.StartTimer(0.05,f.CacheBags)
 		end
 	end
@@ -177,7 +177,7 @@ function NeuronFlyouts:PLAYER_INVENTORY_CHANGED(eventName, ...)
 	local bag = ...
 	if bag>=0 and bag<=4 then
 		f.bagsToCache[bag] = true
-		if PEW then
+		if NEURON.PEW then
 			f.StartTimer(0.05,f.CacheBags)
 		end
 	end
@@ -291,7 +291,6 @@ function NeuronFlyouts:PLAYER_ENTERING_WORLD()
 
 	extensions = { ["/flyout"] = NeuronFlyouts.command_flyout }
 
-	PEW = trued
 end
 
 function NeuronFlyouts:PLAYER_EQUIPMENT_CHANGED(eventName, ...)
@@ -299,7 +298,7 @@ function NeuronFlyouts:PLAYER_EQUIPMENT_CHANGED(eventName, ...)
 	local slot, equipped = ...
 	if equipped then
 		f.bagsToCache.Worn = true
-		if PEW then
+		if NEURON.PEW then
 			f.StartTimer(0.05,f.CacheBags)
 		end
 	end
@@ -324,7 +323,7 @@ end
 -------------------------------------------------------------------------------
 
 function NeuronFlyouts:timerFrame_OnUpdate(frame, elapsed)
-	if PEW then
+	if NEURON.PEW then
 		local tick
 		local times = f.timerTimes
 		local timers = f.timersRunning
@@ -880,7 +879,7 @@ end
 
 function NeuronFlyouts.updateFlyoutBars(self, elapsed)
 
-	if (not InCombatLockdown() and PEW) then  --Workarout for protected taint if UI reload in combat
+	if (not InCombatLockdown() and NEURON.PEW) then  --Workarout for protected taint if UI reload in combat
 		local bar = tremove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
@@ -1518,7 +1517,7 @@ function NeuronFlyouts.updateAnchors(self, elapsed)
 
 	self.elapsed = self.elapsed + elapsed
 
-	if (self.elapsed > GDB.throttle and PEW) then
+	if (self.elapsed > GDB.throttle and NEURON.PEW) then
 
 		if (not InCombatLockdown()) then
 			local anchor = tremove(needsUpdate)
@@ -1544,7 +1543,7 @@ function NeuronFlyouts.linkScanOnUpdate(self, elapsed)
 
 	self.elapsed = self.elapsed + elapsed
 
-	if (self.elapsed > GDB.throttle and PEW) then
+	if (self.elapsed > GDB.throttle and NEURON.PEW) then
 		-- scan X items per frame draw, where X is the for limit
 		for i=1,2 do
 			self.link = itemLinks[self.index]
@@ -1615,7 +1614,7 @@ function NeuronFlyouts.ANCHOR_DelayedUpdate(self, elapsed)
 
 	self.elapsed = self.elapsed + elapsed
 
-	if (self.elapsed > GDB.throttle and PEW) then
+	if (self.elapsed > GDB.throttle and NEURON.PEW) then
 
 		for anchor in pairs(ANCHORIndex) do
 			tinsert(needsUpdate, anchor)

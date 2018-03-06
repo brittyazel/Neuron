@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local CDB, PEW
+local CDB
 
 NEURON.NeuronExtraBar = NEURON:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronExtraBar = NEURON.NeuronExtraBar
@@ -119,8 +119,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronExtraBar:OnEnable()
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-
 end
 
 
@@ -135,9 +133,6 @@ end
 
 ------------------------------------------------------------------------------
 
-function NeuronExtraBar:PLAYER_ENTERING_WORLD()
-	PEW = true
-end
 
 -------------------------------------------------------------------------------
 
@@ -276,7 +271,6 @@ function XBTN:SetData(bar)
 	if (self.downClicks) then down = down.."AnyDown" end
 
 	self:RegisterForClicks(down, up)
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	if (not self.equipcolor) then
 		self.equipcolor = { 0.1, 1, 0.1, 1 }

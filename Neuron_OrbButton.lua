@@ -7,8 +7,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local ORB = CreateFrame("Button", "Neuron_Broker")
 
-ORB:RegisterEvent("PLAYER_ENTERING_WORLD")
-
 ORB.DataObj = LibStub:GetLibrary("LibDataBroker-1.1")
 
 ORB.DataObj:NewDataObject("NeuronBroker", {
@@ -34,7 +32,7 @@ ORB.DataObj:NewDataObject("NeuronBroker", {
 
 local function updatePoint(self, elapsed)
 
-	if (GDB.animate) then
+	if (GDB.animate and NEURON.PEW) then
 
 		self.elapsed = self.elapsed + elapsed
 

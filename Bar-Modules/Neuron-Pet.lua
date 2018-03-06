@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local DB, PEW
+local DB
 
 NEURON.NeuronPetBar = NEURON:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronPetBar = NEURON.NeuronPetBar
@@ -145,7 +145,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronPetBar:OnEnable()
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 end
 
@@ -161,9 +160,6 @@ end
 
 ------------------------------------------------------------------------------
 
-function NeuronPetBar:PLAYER_ENTERING_WORLD()
-	PEW = true
-end
 
 -------------------------------------------------------------------------------
 

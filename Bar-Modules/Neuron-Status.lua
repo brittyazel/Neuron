@@ -3,7 +3,7 @@
 
 local NEURON = Neuron
 
-local DB, PEW
+local DB
 
 NEURON.NeuronStatusBar = NEURON:NewModule("StatusBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronStatusBar = NEURON.NeuronStatusBar
@@ -394,7 +394,6 @@ function NeuronStatusBar:PLAYER_ENTERING_WORLD()
 		end
 	end
 
-	PEW = true
 end
 
 function NeuronStatusBar:UPDATE_FACTION(eventName, ...)

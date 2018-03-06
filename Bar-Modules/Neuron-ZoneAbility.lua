@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local CDB, PEW
+local CDB
 
 NEURON.NeuronZoneAbilityBar = NEURON:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronZoneAbilityBar = NEURON.NeuronZoneAbilityBar
@@ -125,8 +125,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronZoneAbilityBar:OnEnable()
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-
 	------Hiding the default blizzard ZoneAbilityFrame
 	ZoneAbilityFrame:SetScript('OnEvent', nil)
 	ZoneAbilityFrame:Hide()
@@ -145,9 +143,6 @@ end
 
 ------------------------------------------------------------------------------
 
-function NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD()
-	PEW = true
-end
 
 -------------------------------------------------------------------------------
 

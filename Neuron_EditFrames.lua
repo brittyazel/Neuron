@@ -1,7 +1,6 @@
 ﻿--Neuron, a World of Warcraft® user interface addon.
 
 local NEURON = Neuron
-local PEW
 
 NEURON.NeuronEditor = NEURON:NewModule("Editor", "AceEvent-3.0", "AceHook-3.0")
 local NeuronEditor = NEURON.NeuronEditor
@@ -40,7 +39,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronEditor:OnEnable()
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 end
 
@@ -55,9 +53,7 @@ end
 
 
 ------------------------------------------------------------------------------
-function NeuronEditor:PLAYER_ENTERING_WORLD()
-	PEW = true
-end
+
 
 -------------------------------------------------------------------------------
 function OBJEDITOR:OnShow()
@@ -190,7 +186,7 @@ function NEURON:ChangeObject(object)
 
 	local newObj, newEditor = false, false
 
-	if (PEW) then
+	if (NEURON.PEW) then
 
 		if (object and object ~= NEURON.CurrentObject) then
 

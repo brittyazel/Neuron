@@ -17,7 +17,7 @@ local BAR --gets set to NEURON.BAR in the OnEvent method
 
 local icons = {}
 
-local PEW = false
+NEURON.PEW = false
 
 -------------------------------------------------------------------------------
 -- AddOn namespace.
@@ -396,7 +396,7 @@ function NEURON:PLAYER_ENTERING_WORLD()
 		NeuronMinimapButton:Hide()
 	end
 
-	PEW = true
+	NEURON.PEW = true
 
 	if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
 		StaticPopup_Show("NEURON_UPDATE_WARNING")
@@ -452,7 +452,7 @@ end
 
 function NEURON:UNIT_PET(eventName, ...)
 	if ... == "player" then
-		if (PEW) then
+		if (NEURON.PEW) then
 			NEURON:UpdatePetSpellIndex()
 		end
 	end
@@ -626,7 +626,7 @@ function NEURON.controlOnUpdate(self, elapsed)
 	self.elapsed = self.elapsed + elapsed
 
 	---Throttled OnUpdate calls
-	if (self.elapsed > GDB.throttle and PEW) then
+	if (self.elapsed > GDB.throttle and NEURON.PEW) then
 
 		NEURON.NeuronBar.controlOnUpdate(self, elapsed)
 		NEURON.NeuronButton.cooldownsOnUpdate(self, elapsed)
@@ -637,7 +637,7 @@ function NEURON.controlOnUpdate(self, elapsed)
 	end
 
 	---UnThrottled OnUpdate calls
-	if(PEW) then
+	if(NEURON.PEW) then
 		NEURON.NeuronButton.controlOnUpdate(self, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 	end
 
@@ -1835,7 +1835,7 @@ end
 function NEURON:ChangeBar(bar)
 	local newBar = false
 
-	if (PEW) then
+	if (NEURON.PEW) then
 
 		if (bar and NEURON.CurrentBar ~= bar) then
 			NEURON.CurrentBar = bar
@@ -1891,7 +1891,7 @@ end
 
 
 function NEURON:ToggleBars(show, hide)
-	if (PEW) then
+	if (NEURON.PEW) then
 		if ((NEURON.BarsShown or hide) and not show) then
 
 			NEURON.BarsShown = nil

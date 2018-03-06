@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local DB, PEW
+local DB
 
 NEURON.BINDER = setmetatable({}, { __index = CreateFrame("Button") })
 
@@ -266,10 +266,12 @@ end
 
 --- OnUpdate Event handler
 function BINDER:OnUpdate()
-	if (self:IsMouseOver()) then
-		self:EnableKeyboard(true)
-	else
-		self:EnableKeyboard(false)
+	if(NEURON.PEW) then
+		if (self:IsMouseOver()) then
+			self:EnableKeyboard(true)
+		else
+			self:EnableKeyboard(false)
+		end
 	end
 end
 

@@ -1,7 +1,7 @@
 ﻿--Neuron Bag Bar, a World of Warcraft® user interface addon.
 
 local NEURON = Neuron
-local  DB, PEW
+local  DB
 
 NEURON.NeuronBagBar = NEURON:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBagBar = NEURON.NeuronBagBar
@@ -127,8 +127,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronBagBar:OnEnable()
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-
 	NeuronBagBar:SecureHook("ContainerFrame_OnShow", NeuronBagBar.containerFrame_OnShow)
 	NeuronBagBar:SecureHook("ContainerFrame_OnHide", NeuronBagBar.containerFrame_OnHide)
 	NeuronBagBar:SecureHook("ToggleBag", NeuronBagBar.toggleBag)
@@ -154,9 +152,6 @@ end
 
 ------------------------------------------------------------------------------
 
-function NeuronBagBar:PLAYER_ENTERING_WORLD()
-	PEW = true
-end
 
 -------------------------------------------------------------------------------
 

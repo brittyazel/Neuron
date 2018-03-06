@@ -7,7 +7,7 @@
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 local NEURON = Neuron
-local DB, PEW
+local DB
 
 NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronMenuBar = NEURON.NeuronMenuBar
@@ -119,8 +119,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronMenuBar:OnEnable()
 
-    self:RegisterEvent("PLAYER_ENTERING_WORLD")
-
     NeuronMenuBar:SecureHook("UpdateMicroButtons", NeuronMenuBar.updateMicroButtons)
 
     -- Hooks the Microbutton alerts that don't trigger of events  ie closing the talent frame
@@ -145,9 +143,6 @@ end
 
 ------------------------------------------------------------------------------
 
-function NeuronMenuBar:PLAYER_ENTERING_WORLD()
-    PEW = true
-end
 
 -------------------------------------------------------------------------------
 

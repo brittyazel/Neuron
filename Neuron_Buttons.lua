@@ -2,14 +2,13 @@
 
 
 local NEURON = Neuron
-local GDB, CDB, PEW, player, realm, btnGDB, btnCDB
+local GDB, CDB, player, realm, btnGDB, btnCDB
 
 NEURON.NeuronButton = NEURON:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
 local NeuronButton = NEURON.NeuronButton
 
 NEURON.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")})
 local BUTTON = NEURON.BUTTON
-
 
 local BTNIndex, SKINIndex = NEURON.BTNIndex, NEURON.SKINIndex
 
@@ -221,7 +220,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronButton:OnEnable()
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("ACTIONBAR_SHOWGRID")
 	self:RegisterEvent("UNIT_AURA")
@@ -253,9 +251,6 @@ end
 
 
 ------------------------------------------------------------------------------
-function NeuronButton:PLAYER_ENTERING_WORLD()
-	PEW = true
-end
 
 function NeuronButton:PLAYER_TARGET_CHANGED()
 	for k in pairs(unitAuras) do
@@ -1690,14 +1685,14 @@ end
 
 
 function BUTTON:MACRO_UPDATE_MACROS(...)
-	if (PEW and not InCombatLockdown() and self.data.macro_Watch) then
+	if (NEURON.PEW and not InCombatLockdown() and self.data.macro_Watch) then
 		self:MACRO_PlaceBlizzMacro(self.data.macro_Watch)
 	end
 end
 
 
 function BUTTON:MACRO_EQUIPMENT_SETS_CHANGED(...)
-	if (PEW and not InCombatLockdown() and self.data.macro_Equip) then
+	if (NEURON.PEW and not InCombatLockdown() and self.data.macro_Equip) then
 		self:MACRO_PlaceBlizzEquipSet(self.data.macro_Equip)
 	end
 end

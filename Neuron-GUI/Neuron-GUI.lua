@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local GDB, CDB, NMM, NBE, NOE, NBTNE, MAS, PEW
+local GDB, CDB, NMM, NBE, NOE, NBTNE, MAS
 
 local width, height = 1000, 600
 
@@ -3472,9 +3472,6 @@ local function controlOnEvent(self, event, ...)
 		updater.elapsed = 0
 		updater:Show()
 
-	elseif (event == "PLAYER_ENTERING_WORLD" and not PEW) then
-
-		PEW = true
 	end
 end
 
@@ -3482,7 +3479,6 @@ local frame = CreateFrame("Frame", nil, UIParent)
 frame:SetScript("OnEvent", controlOnEvent)
 --frame:SetScript("OnUpdate", controlOnUpdate)
 frame:RegisterEvent("ADDON_LOADED")
-frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
 
