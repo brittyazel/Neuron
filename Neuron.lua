@@ -300,7 +300,7 @@ function NEURON:OnEnable()
 	self:RegisterEvent("UNIT_PET")
 	self:RegisterEvent("TOYS_UPDATED")
 
-	NEURON:SetScript("OnUpdate", NEURON.controlOnUpdate)
+	NEURON:HookScript(self, "OnUpdate", "controlOnUpdate")
 
 	local function hideAlerts(frame)
 		if (not GDB.mainbar) then
@@ -618,7 +618,7 @@ end
 
 
 ---this is the new controlOnUpdate function that will control all the other onUpdate functions.
-function NEURON.controlOnUpdate(self, elapsed)
+function NEURON:controlOnUpdate(frame, elapsed)
 	if not self.elapsed then
 		self.elapsed = 0
 	end
