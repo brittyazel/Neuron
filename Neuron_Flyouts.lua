@@ -339,7 +339,7 @@ function NeuronFlyouts:timerFrame_OnUpdate(frame, elapsed)
 		end
 
 		if not tick then
-			self:Hide()
+			frame:Hide()
 		end
 	end
 end
