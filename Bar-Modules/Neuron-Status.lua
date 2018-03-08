@@ -353,13 +353,7 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronStatusBar:OnEnable()
 
-	CastingBarFrame:UnregisterAllEvents()
-	CastingBarFrame:Hide()
-
-	UIParent:UnregisterEvent("MIRROR_TIMER_START")
-	MirrorTimer1:UnregisterAllEvents()
-	MirrorTimer2:UnregisterAllEvents()
-	MirrorTimer3:UnregisterAllEvents()
+	self:DisableDefault()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("UPDATE_FACTION")
@@ -421,6 +415,45 @@ function NeuronStatusBar:MIRROR_TIMER_STOP(eventName, ...)
 end
 
 -------------------------------------------------------------------------------
+
+function NeuronStatusBar:DisableDefault()
+
+	local disableDefaultCast = false
+	local disableDefaultMirror = false
+
+	for i,v in ipairs(NEURON.NeuronStatusBar) do
+
+		v = v[1]
+
+		if (v["bar"]) then --only disable if a specific button has an associated bar
+			if v.config.sbType == "cast" then
+				disableDefaultCast = true
+			elseif v.config.sbType == "mirror" then
+				disableDefaultMirror = true
+ 			end
+		end
+	end
+
+
+	if disableDefaultCast then
+		CastingBarFrame:UnregisterAllEvents()
+		CastingBarFrame:Hide()
+	end
+
+	if disableDefaultMirror then
+		UIParent:UnregisterEvent("MIRROR_TIMER_START")
+		MirrorTimer1:UnregisterAllEvents()
+		MirrorTimer2:UnregisterAllEvents()
+		MirrorTimer3:UnregisterAllEvents()
+	end
+
+end
+
+
+
+function NeuronStatusBar:controlOnUpdate(elapsed)
+
+end
 
 ----------------------------------
 --------XP Bar--------------------
