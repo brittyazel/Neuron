@@ -9,7 +9,7 @@
 ## SavedVariables: NeuronProfilesDB
 ## SavedVariablesPerCharacter:
 ## X-Copyright: Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
-## X-Permissions: AI-Art Visual Elements used with Author Permission (Quokka@WoWInterface)
+## X-Permissions: Fork of Ion Action Bars with express permission from Connor H. Chenoweth, aka Maul
 ## X-Email: bwyazel@gmail.com
 
 

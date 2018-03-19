@@ -107,15 +107,11 @@ function NeuronPetBar:OnInitialize()
 
 	if (DB.petbarFirstRun) then
 
-		if(NEURON.class == 'HUNTER' or NEURON.class == 'WARLOCK' or NEURON.class == 'DEATHKNIGHT' or NEURON.class == 'MAGE') then --only make bars for pet classe on first run
+		local bar, object = NEURON:CreateNewBar("pet", 1, true)
 
-			local bar, object = NEURON:CreateNewBar("pet", 1, true)
-
-			for i=1,NEURON.maxPetID do
-				object = NEURON:CreateNewObject("pet", i)
-				bar:AddObjectToList(object)
-			end
-
+		for i=1,NEURON.maxPetID do
+			object = NEURON:CreateNewObject("pet", i)
+			bar:AddObjectToList(object)
 		end
 
 		DB.petbarFirstRun = false

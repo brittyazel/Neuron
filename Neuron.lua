@@ -2009,7 +2009,7 @@ function NEURON:PrintBarTypes()
 
 end
 
---updated this function to make use of the real data type instead of importing them in as ... and then using select(2, ..._) to pull the write data out.
+---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
 function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barCDB, objTable, objGDB, objFrameType, objTemplate, objMetaTable, objMax, barReverse, objStorage, gDef, cDef, barCreateMore)
 
 	NEURON.ModuleIndex = NEURON.ModuleIndex + 1
