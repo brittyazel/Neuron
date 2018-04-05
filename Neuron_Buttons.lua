@@ -2647,6 +2647,7 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 	if (value and self.data) then
 		if (name == "activestate") then
 
+			---Part 1 of Druid Prowl overwrite fix
 			-----------------------------------------------------
 			---breaks out of the loop due to flag set below
 			if (NEURON.class == "DRUID" and self.ignoreNextOverrideStance == true and value == "homestate") then
@@ -2656,6 +2657,7 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 			else
 				self.ignoreNextOverrideStance = nil
 			end
+			-----------------------------------------------------
 			-----------------------------------------------------
 
 			if (self:GetAttribute("HasActionID")) then
@@ -2670,14 +2672,15 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 					self.statedata[value] = CopyTable(stateData)
 				end
 
-
-			---------------------------------------------------
+				---Part 2 of Druid Prowl overwrite fix
+				---------------------------------------------------
 				---druids have an issue where once stance will get immediately overwritten by another. I.E. stealth immediately getting overwritten by homestate if they go immediately into prowl from caster form
 				---this conditional sets a flag to ignore the next most stance flag, as that one is most likely in error and should be ignored
 				if(NEURON.class == "DRUID" and value == "stealth1") then
 					self.ignoreNextOverrideStance = true
 				end
-			------------------------------------------------------
+				------------------------------------------------------
+				------------------------------------------------------
 
 
 				self.data = self.statedata[value]
