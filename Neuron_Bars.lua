@@ -2036,7 +2036,9 @@ local statetable = {}
 function BAR:SetState(msg, gui, checked, query)
 	if (msg) then
 		local state = msg:match("^%S+")
-		local command = msg:gsub(state, ""); command = command:gsub("^%s+", "")
+		local command = msg:gsub(state, "");
+		command = command:gsub("^%s+", "")
+
 		if (not MAS[state]) then
 			if (not gui) then
 				NEURON:PrintStateList()

@@ -2647,9 +2647,21 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 	if (value and self.data) then
 		if (name == "activestate") then
 
+			-----------------------------------------------------
+			---breaks out of the loop due to flag set below
+			if (NEURON.class == "DRUID" and self.ignoreNextOverrideStance == true and value == "homestate") then
+				self.ignoreNextOverrideStance = nil
+				self.bar:SetState("stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
+				return
+			else
+				self.ignoreNextOverrideStance = nil
+			end
+			-----------------------------------------------------
+
 			if (self:GetAttribute("HasActionID")) then
 				self.actionID = self:GetAttribute("*action*")
 			else
+
 				if (not self.statedata) then
 					self.statedata = { homestate = CopyTable(stateData) }
 				end
@@ -2658,8 +2670,14 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 					self.statedata[value] = CopyTable(stateData)
 				end
 
-				---TODO:
-				---we need to to add a workaround for druid Stealth states getting immediately overwritten
+
+			---------------------------------------------------
+				---druids have an issue where once stance will get immediately overwritten by another. I.E. stealth immediately getting overwritten by homestate if they go immediately into prowl from caster form
+				---this conditional sets a flag to ignore the next most stance flag, as that one is most likely in error and should be ignored
+				if(NEURON.class == "DRUID" and value == "stealth1") then
+					self.ignoreNextOverrideStance = true
+				end
+			------------------------------------------------------
 
 
 				self.data = self.statedata[value]
@@ -2679,7 +2697,7 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 				end
 			end
 
-			self.specAction = self:GetAttribute("SpecialAction")
+			self.specAction = self:GetAttribute("SpecialAction") --?
 			self:MACRO_UpdateAll(true)
 		end
 

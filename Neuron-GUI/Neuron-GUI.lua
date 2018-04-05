@@ -1567,7 +1567,7 @@ local function remapToOnTextChanged(frame)
 	end
 end
 
-local IsDruid = false
+--local IsDruid = false
 
 
 function NEURON:ActionEditor_OnLoad(frame)
