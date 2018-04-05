@@ -31,9 +31,6 @@ local cmdSlash
 local macroCache = {}
 
 
-----TODO: fix druid stealth ability with a timer, i.e.
---C_Timer.After(.005, *function*)
-
 local configData = {
 	btnType = "macro",
 
