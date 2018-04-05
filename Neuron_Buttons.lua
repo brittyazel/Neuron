@@ -3235,11 +3235,10 @@ function BUTTON:SetType(save, kill, init)
 
 		self:SetAttribute("overrideID_Offset", 156)
 		self:SetAttribute("vehicleID_Offset", 132)
-		--self:SetAttribute("vehicleExit_Macro", "/click OverrideActionBarLeaveFrameLeaveButton")
-		self:SetAttribute("vehicleExit_Macro", "/leavevehicle")
-		self:SetAttribute("possessExit_Macro", "/stopcasting")  --kind of a hack to make the command /stopcasting. It used to be /click PossessButton2 which was super broken
+		--self:SetAttribute("vehicleExit_Macro", "/leavevehicle")
+		--self:SetAttribute("possessExit_Macro", "/stopcasting")  --kind of a hack to make the command /stopcasting. It used to be /click PossessButton2 which was super broken
 
-		self:SetAttribute("_childupdate", [[
+		self:SetAttribute("_childupdate", [=[
 
 				if (message) then
 
@@ -3247,19 +3246,11 @@ function BUTTON:SetType(save, kill, init)
 
 					if (msg:find("vehicle")) then
 
-						if (self:GetAttribute(msg.."-actionID")) then
+						if (not self:GetAttribute(msg.."-actionID")) then
 
-						else
+							self:SetAttribute("type", "action")
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 
-							if (self:GetAttribute("lastPos")) then
-								self:SetAttribute("type", "macro")
-								self:SetAttribute("*macrotext1", self:GetAttribute("vehicleExit_Macro"))
-								self:SetAttribute("*action*", 0)
-
-							else
-								self:SetAttribute("type", "action")
-								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-							end
 						end
 
 						self:SetAttribute("SpecialAction", "vehicle")
@@ -3267,18 +3258,11 @@ function BUTTON:SetType(save, kill, init)
 						self:Show()
 
 					elseif (msg:find("possess")) then
-						if (self:GetAttribute(msg.."-actionID")) then
+						if (not self:GetAttribute(msg.."-actionID")) then
 
-						else
-							if (self:GetAttribute("lastPos")) then
-								self:SetAttribute("type", "macro")
-								self:SetAttribute("*macrotext*", self:GetAttribute("possessExit_Macro"))
-								self:SetAttribute("*action*", 0)
+							self:SetAttribute("type", "action")
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 
-							else
-								self:SetAttribute("type", "action")
-								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-							end
 						end
 
 						self:SetAttribute("SpecialAction", "possess")
@@ -3286,25 +3270,12 @@ function BUTTON:SetType(save, kill, init)
 						self:Show()
 
 					elseif (msg:find("override")) then
-						if (self:GetAttribute(msg.."-actionID")) then
-						else
+						if (not self:GetAttribute(msg.."-actionID")) then
 
-							--if (self:GetAttribute("lastPos")) then
+							self:SetAttribute("type", "action")
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
+							self:SetAttribute("HasActionID", true)
 
-							--	self:SetAttribute("type", "macro")
-
-							--	self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
-							--	self:SetAttribute("*action*", 0)
-
-							--else
-
-								self:SetAttribute("type", "action")
-
-								self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
-
-								self:SetAttribute("HasActionID", true)
-							--end
 						end
 
 						self:SetAttribute("SpecialAction", "override")
@@ -3314,10 +3285,8 @@ function BUTTON:SetType(save, kill, init)
 						self:Show()
 
 					else
-						if (self:GetAttribute(msg.."-actionID")) then
-							self:SetAttribute("HasActionID", true)
+						if (not self:GetAttribute(msg.."-actionID")) then
 
-						else
 							self:SetAttribute("type", "macro")
 							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
 
@@ -3328,6 +3297,8 @@ function BUTTON:SetType(save, kill, init)
 							end
 
 							self:SetAttribute("HasActionID", false)
+						else
+							self:SetAttribute("HasActionID", true)
 						end
 
 						self:SetAttribute("SpecialAction", nil)
@@ -3338,7 +3309,7 @@ function BUTTON:SetType(save, kill, init)
 
 				end
 
-			]])
+			]=])
 
 		if (not init) then
 			self:MACRO_UpdateAll(true)
@@ -3360,65 +3331,39 @@ function BUTTON:SetFauxState(state)
 		local msg = (":"):split(state)
 
 		if (msg:find("vehicle")) then
-			if (self:GetAttribute(msg.."-actionID")) then
-			else
-				if (self:GetAttribute("lastPos")) then
-					self:SetAttribute("type", "macro")
-					self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-					self:SetAttribute("*action*", 0)
-				else
-					self:SetAttribute("type", "action")
-					self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-					self:SetAttribute("HasActionID", true)
-				end
+			if (not self:GetAttribute(msg.."-actionID")) then
+
+				self:SetAttribute("type", "action")
+				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+				self:SetAttribute("HasActionID", true)
+
 			end
 
 			self:Show()
 		elseif (msg:find("possess")) then
-			if (self:GetAttribute(msg.."-actionID")) then
-			else
-				if (self:GetAttribute("lastPos")) then
-					self:SetAttribute("type", "macro")
-					self:SetAttribute("*macrotext*", self:GetAttribute("possessExit_Macro"))
-					self:SetAttribute("*action*", 0)
+			if (not self:GetAttribute(msg.."-actionID")) then
 
-				else
-					self:SetAttribute("type", "action")
-					self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-					self:SetAttribute("HasActionID", true)
-				end
+				self:SetAttribute("type", "action")
+				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+				self:SetAttribute("HasActionID", true)
+
 			end
 
 			self:Show()
 
 		elseif (msg:find("override")) then
-			if (self:GetAttribute(msg.."-actionID")) then
-			else
-
-				--if (self:GetAttribute("lastPos")) then
-
-				--	self:SetAttribute("type", "macro")
-
-				--	self:SetAttribute("*macrotext*", self:GetAttribute("vehicleExit_Macro"))
-
-				--	self:SetAttribute("*action*", 0)
-
-				--else
+			if (not self:GetAttribute(msg.."-actionID")) then
 
 				self:SetAttribute("type", "action")
-
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
-
 				self:SetAttribute("HasActionID", true)
-				--end
+
 			end
 
 			self:Show()
 
 		else
-			if (self:GetAttribute(msg.."-actionID")) then
-
-			else
+			if (not self:GetAttribute(msg.."-actionID")) then
 
 				self:SetAttribute("type", "macro")
 
@@ -3431,6 +3376,8 @@ function BUTTON:SetFauxState(state)
 				end
 
 				self:SetAttribute("HasActionID", false)
+			else
+				self:SetAttribute("HasActionID", true)
 			end
 		end
 		self:SetAttribute("activestate", msg)
