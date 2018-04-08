@@ -1515,65 +1515,6 @@
 		</Layers>
 	</Frame>
 
-	<Button name="NeuronMinimapButton" parent="Minimap" enableMouse="true" movable="true">
-		<Size x="32" y="32"/>
-		<Layers>
-			<Layer level="OVERLAY">
-				<Texture name="$parentBorder" file="Interface\Buttons\UI-PassiveHighlight">
-					<Size x="52" y="52"/>
-					<Anchors>
-						<Anchor point="TOPLEFT"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
-		<Frames>
-			<Frame name="$parentDragFrame" hidden="true" toplevel="true">
-				<Scripts>
-					<OnUpdate>
-							Neuron:DragFrame_OnUpdate()
-					</OnUpdate>
-				</Scripts>
-			</Frame>
-		</Frames>
-		<HighlightTexture alphaMode="ADD" file="Interface\AddOns\Neuron\Images\round_buff_highlight">
-			<Size x="56" y="56"/>
-			<Anchors>
-				<Anchor point="CENTER">
-					<Offset x="1" y="1"/>
-				</Anchor>
-			</Anchors>
-		</HighlightTexture>
-		<Scripts>
-			<OnLoad>
-					Neuron:MinimapButton_OnLoad(self)
-			</OnLoad>
-			<OnEvent>
-					Neuron:MinimapButton_OnEvent(self)
-			</OnEvent>
-			<OnDragStart>
-					Neuron:MinimapButton_OnDragStart(self)
-			</OnDragStart>
-			<OnDragStop>
-					Neuron:MinimapButton_OnDragStop(self)
-			</OnDragStop>
-			<OnShow>
-					Neuron:MinimapButton_OnShow(self)
-			</OnShow>
-			<OnHide>
-					Neuron:MinimapButton_OnHide(self)
-			</OnHide>
-			<OnEnter>
-					Neuron:MinimapButton_OnEnter(self)
-			</OnEnter>
-			<OnLeave>
-					Neuron:MinimapButton_OnLeave(self)
-			</OnLeave>
-			<OnClick>
-					Neuron:MinimapButton_OnClick(self, button)
-			</OnClick>
-		</Scripts>
-	</Button>
 
 	<GameTooltip name="NeuronBindingsEditor" inherits="GameTooltipTemplate" parent="UIParent" enableMouse="true" toplevel="true" movable="true" frameStrata="TOOLTIP" hidden="true">
 		<Size x="128" y="64"/>
@@ -1582,29 +1523,7 @@
 				<Offset x="0" y="-125"/>
 			</Anchor>
 		</Anchors>
-		<Frames>
-			<!--
-			<Button name="$parentDone" toplevel="true">
-				<Size x="32" y="32"/>
-				<Anchors>
-					<Anchor point="TOPRIGHT">
-						<Offset x="1" y="0"/>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						self.button = "close"
-					</OnLoad>
-					<OnClick>
-						self:GetParent():Hide()
-					</OnClick>
-				</Scripts>
-				<NormalTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
-				<PushedTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Down"/>
-				<HighlightTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
-			</Button>
-			-->
-		</Frames>
+
 		<Scripts>
 			<OnLoad>
 					Neuron:BindingsEditor_OnLoad(self)

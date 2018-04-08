@@ -237,9 +237,9 @@ L["Melee"] = true
 L["Shadow Dance"] = true
 
 L["Left-Click to Configure Bars"] = true
-L["Right-Click to Edit Buttons"] = true
-L["Middle-Click or Alt-Click to Edit Key Bindings"] = true
-L["Shift-Click for Main Menu"] = true
+L["Right-Click to Configure Buttons"] = true
+L["Shift + Left-Click to Toggle Keybind Mode"] = true
+L["Shift + Right-Click to Toggle the Interface Menu"] = true
 
 
 L["Keybind_Tooltip_1"] = "Hit a key to bind it to"

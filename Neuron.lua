@@ -95,8 +95,7 @@ NeuronGDB = {
 
 	firstRun = true,
 
-	animate = true,
-	showmmb = true,
+	NeuronOrb = {hide = false,},
 }
 
 NeuronCDB = {
@@ -392,9 +391,6 @@ function NEURON:PLAYER_ENTERING_WORLD()
 
 	NEURON:ToggleBlizzBar(GDB.mainbar)
 
-	if not GDB.showmmb then
-		NeuronMinimapButton:Hide()
-	end
 
 	NEURON.PEW = true
 
@@ -1148,237 +1144,6 @@ function NEURON.PopUp_Update(popupFrame)
 end
 
 
--------------------------------------------------------------------
--------------------------Minimap Icon------------------------------
--------------------------------------------------------------------
-
---From http://www.wowpedia.org/GetMinimapShape
-local minimapShapes = {
-	-- quadrant booleans (same order as SetTexCoord)
-	-- {upper-left, lower-left, upper-right, lower-right}
-	-- true = rounded, false = squared
-	["ROUND"] 				= {true, true, true, true},
-	["SQUARE"] 				= {false, false, false, false},
-	["CORNER-TOPLEFT"] 			= {true, false, false, false},
-	["CORNER-TOPRIGHT"] 		= {false, false, true, false},
-	["CORNER-BOTTOMLEFT"] 		= {false, true, false, false},
-	["CORNER-BOTTOMRIGHT"]		= {false, false, false, true},
-	["SIDE-LEFT"] 				= {true, true, false, false},
-	["SIDE-RIGHT"] 			= {false, false, true, true},
-	["SIDE-TOP"] 				= {true, false, true, false},
-	["SIDE-BOTTOM"] 			= {false, true, false, true},
-	["TRICORNER-TOPLEFT"]		= {true, true, true, false},
-	["TRICORNER-TOPRIGHT"] 		= {true, false, true, true},
-	["TRICORNER-BOTTOMLEFT"]		= {true, true, false, true},
-	["TRICORNER-BOTTOMRIGHT"]	= {false, true, true, true},
-}
-
-
---this is for the minimap icon I think
-local function updatePoint(self, elapsed)
-	if (GDB.animate) then
-		self.elapsed = self.elapsed + elapsed
-
-		if (self.elapsed > 0.025) then
-			self.l = self.l + 0.0625
-			self.r = self.r + 0.0625
-
-			if (self.r > 1) then
-				self.l = 0
-				self.r = 0.0625
-				self.b = self.b + 0.0625
-			end
-
-			if (self.b > 1) then
-				self.l = 0
-				self.r = 0.0625
-				self.b = 0.0625
-			end
-
-			self.t = self.b - (0.0625 * self.tadj)
-
-			if (self.t < 0) then self.t = 0 end
-			if (self.t > 1) then self.t = 1 end
-
-			self.texture:SetTexCoord(self.l, self.r, self.t, self.b)
-			self.elapsed = 0
-		end
-	end
-end
-
-
-local function createMiniOrb(parent, index, prefix)
-	local point = CreateFrame("Frame", prefix..index, parent, "NeuronMiniOrbTemplate")
-
-	point:SetScript("OnUpdate", updatePoint)
-	point.tadj = 1
-	point.elapsed = 0
-
-	local row, col = random(0,15), random(0,15)
-
-	point.l = 0.0625 * row; point.r = point.l + 0.0625
-	point.t = 0.0625 * col; point.b = point.t + 0.0625
-
-	point.texture:SetTexture("Interface\\AddOns\\Neuron\\Images\\seq_smoke")
-	point.texture:SetTexCoord(point.l, point.r, point.t, point.b)
-
-	return point
-end
-
-
-function NEURON:DragFrame_OnUpdate(x, y)
-	local pos, quad, round, radius = nil, nil, nil, GDB.buttonRadius - NeuronMinimapButton:GetWidth()/math.pi
-	local sqRad = sqrt(2*(radius)^2)
-	local xmin, ymin = Minimap:GetLeft(), Minimap:GetBottom()
-	local minimapShape = GetMinimapShape and GetMinimapShape() or "ROUND"
-	local quadTable = minimapShapes[minimapShape]
-	local xpos, ypos = x, y
-
-	if (not xpos or not ypos) then
-		xpos, ypos = GetCursorPosition()
-	end
-
-	xpos = xmin - xpos / Minimap:GetEffectiveScale() + radius
-	ypos = ypos / Minimap:GetEffectiveScale() - ymin - radius
-
-	pos = math.deg(math.atan2(ypos,xpos))
-
-	xpos = cos(pos)
-	ypos = sin(pos)
-
-	if (xpos > 0 and ypos > 0) then
-		quad = 1 --topleft
-	elseif (xpos > 0 and ypos < 0) then
-		quad = 2 --bottomleft
-	elseif (xpos < 0 and ypos > 0) then
-		quad = 3 --topright
-	elseif (xpos < 0 and ypos < 0) then
-		quad = 4 --bottomright
-	end
-
-	round = quadTable[quad]
-
-	if (round) then
-		xpos = xpos * radius
-		ypos = ypos * radius
-	else
-		xpos = max(-radius, min(xpos * sqRad, radius))
-		ypos = max(-radius, min(ypos * sqRad, radius))
-	end
-
-	NeuronMinimapButton:SetPoint("TOPLEFT", "Minimap", "TOPLEFT", 52-xpos, ypos-55)
-	GDB.buttonLoc = {52-xpos, ypos-55}
-end
-
-
-function NEURON:MinimapButton_OnLoad(minimap)
-	minimap:RegisterForClicks("AnyUp")
-	minimap:RegisterForDrag("LeftButton")
-	minimap:RegisterEvent("PLAYER_LOGIN")
-	minimap.elapsed = 0
-	minimap.x = 0
-	minimap.y = 0
-	minimap.count = 1
-	minimap.angle = 0
-	minimap:SetFrameStrata(MinimapCluster:GetFrameStrata())
-	minimap:SetFrameLevel(MinimapCluster:GetFrameLevel()+3)
-	minimap:GetHighlightTexture():SetAlpha(0.3)
-end
-
-
-function NEURON:MinimapButton_OnEvent(minimap)
-	minimap.orb = createMiniOrb(minimap, 1, "NeuronMinimapOrb")
-	minimap.orb:SetPoint("CENTER", minimap, "CENTER", 0.5, 0.5)
-	minimap.orb:SetScale(2)
-	minimap.orb:SetFrameLevel(minimap:GetFrameLevel())
-	minimap.orb.texture:SetVertexColor(0,.54,.54)
-	NEURON:MinimapButton_OnDragStop(minimap)
-end
-
-
-function NEURON:MinimapButton_OnDragStart(minimap)
-	minimap:LockHighlight()
-	minimap:StartMoving()
-	NeuronMinimapButtonDragFrame:Show()
-end
-
-
-function NEURON:MinimapButton_OnDragStop(minimap)
-	if (minimap) then
-		minimap:UnlockHighlight()
-		minimap:StopMovingOrSizing()
-		minimap:SetUserPlaced(false)
-		minimap:ClearAllPoints()
-		if (GDB and GDB.buttonLoc) then
-			minimap:SetPoint("TOPLEFT", "Minimap","TOPLEFT", GDB.buttonLoc[1], GDB.buttonLoc[2])
-		end
-		NeuronMinimapButtonDragFrame:Hide()
-	end
-end
-
-
-function NEURON:MinimapButton_OnShow(minimap)
-
-	if (GDB) then
-		NEURON:MinimapButton_OnDragStop(minimap)
-	end
-end
-
-
-function NEURON:MinimapButton_OnHide(minimap)
-	minimap:UnlockHighlight()
-	NeuronMinimapButtonDragFrame:Hide()
-end
-
-function NEURON:MinimapButton_OnEnter(minimap)
-	GameTooltip_SetDefaultAnchor(GameTooltip, minimap)
-	GameTooltip:SetText("Neuron", 1, 1, 1)
-	GameTooltip:AddLine(L["Left-Click to Configure Bars"], 1, 1, 1)
-	GameTooltip:AddLine(L["Right-Click to Edit Buttons"], 1, 1, 1)
-	GameTooltip:AddLine(L["Middle-Click or Alt-Click to Edit Key Bindings"], 1, 1, 1)
-	GameTooltip:AddLine(L["Shift-Click for Main Menu"], 1, 1, 1)
-	GameTooltip:Show()
-end
-
-
-function NEURON:MinimapButton_OnLeave(minimap)
-	GameTooltip:Hide()
-end
-
-
-function NEURON:MinimapButton_OnClick(minimap, button)
-	PlaySound(SOUNDKIT.IG_CHAT_SCROLL_DOWN)
-
-	if (InCombatLockdown()) then return end
-
-	if (button == "RightButton") then
-		NEURON:ToggleEditFrames()
-	elseif (IsShiftKeyDown()) then
-		NEURON:ToggleMainMenu()
-	elseif (IsAltKeyDown() or button == "MiddleButton") then
-		NEURON:ToggleBindings()
-	else
-		NEURON:ToggleBars()
-	end
-end
-
-
-function NEURON:MinimapMenuClose()
-	NeuronMinimapButton.popup:Hide()
-end
-
-function NEURON:toggleMMB()
-	if not GDB.showmmb then
-		NeuronMinimapButton:Hide()
-	else
-		NeuronMinimapButton:Show()
-	end
-	GDB.showmmb = not GDB.showmmb
-end
-
---------------------------------------------------------------------
---------------------------------------------------------------------
-
 
 
 function NEURON.SubFramePlainBackdrop_OnLoad(self)
@@ -1920,13 +1685,6 @@ function NEURON:ToggleBars(show, hide)
 		end
 	end
 
-	if (NEURON.BarsShown)then
-		NeuronMinimapButton:SetFrameStrata("TOOLTIP")
-		NeuronMinimapButton:SetFrameLevel(MinimapCluster:GetFrameLevel()+3)
-	else
-		NeuronMinimapButton:SetFrameStrata(MinimapCluster:GetFrameStrata())
-		NeuronMinimapButton:SetFrameLevel(MinimapCluster:GetFrameLevel()+3)
-	end
 end
 
 
@@ -1940,16 +1698,8 @@ end
 
 
 function NEURON:ToggleMainMenu(show, hide)
-	if (not IsAddOnLoaded("Neuron-GUI")) then
-		LoadAddOn("Neuron-GUI")
-	end
-	--[[
-        if ((NeuronMainMenu:IsVisible() or hide) and not show) then
-            NeuronMainMenu:Hide()
-        else
-            NeuronMainMenu:Show()
-        end
-        ]]--
+	---need to run the command twice for some reason. The first one only seems to open the Interface panel
+	InterfaceOptionsFrame_OpenToCategory("Neuron");
 	InterfaceOptionsFrame_OpenToCategory("Neuron");
 end
 
@@ -2073,15 +1823,6 @@ function Neuron:SetupInterfaceOptions()
 				type = "group",
 				order = 0,
 				args={
-					AnimateIcon = {
-						order = 0,
-						name = L["Animate Icon"],
-						desc = L["Toggles the Animation of the Neuron Orb Icon"],
-						type = "toggle",
-						set = function() NEURON:Animate() end,
-						get = function() return NeuronGDB.animate end,
-						width = "full",
-					},
 					BlizzardBar = {
 						order = 1,
 						name = L["Display the Blizzard Bar"],
@@ -2091,13 +1832,13 @@ function Neuron:SetupInterfaceOptions()
 						get = function() return NeuronGDB.mainbar end,
 						width = "full",
 					},
-					MMbutton = {
+					NeuronOrbButton = {
 						order = 2,
 						name = L["Display Minimap Button"],
 						desc = L["Toggles the minimap button."],
 						type = "toggle",
-						set =  function() NEURON:toggleMMB() end,
-						get = function() return NeuronGDB.showmmb end,
+						set =  function() NEURON.NeuronMinimapOrb:ToggleIcon() end,
+						get = function() return not NeuronGDB.NeuronOrb.hide end,
 						width = "full"
 					},
 				},
