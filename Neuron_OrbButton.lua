@@ -78,10 +78,10 @@ end
 function NeuronMinimapOrb:TooltipHandler(tooltip)
 
     tooltip:SetText("Neuron", 1, 1, 1)
-    tooltip:AddLine(L["Left-Click to Configure Bars"], 1, 1, 1)
-    tooltip:AddLine(L["Right-Click to Configure Buttons"], 1, 1, 1)
-    tooltip:AddLine(L["Shift + Left-Click to Toggle Keybind Mode"], 1, 1, 1)
-    tooltip:AddLine(L["Shift + Right-Click to Toggle the Interface Menu"], 1, 1, 1)
+    tooltip:AddLine(L["Left-Click to Configure Bars"])
+    tooltip:AddLine(L["Right-Click to Configure Buttons"])
+    tooltip:AddLine(L["Shift + Left-Click to Toggle Keybind Mode"])
+    tooltip:AddLine(L["Shift + Right-Click to Toggle the Interface Menu"])
 
     tooltip:Show()
 
