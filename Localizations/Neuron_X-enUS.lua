@@ -138,9 +138,6 @@ L["BarTypes_Description"] = "Print a list of available bar types to make"
 L["BlizzBar"] = true
 L["BlizzBar_Description"] = "Toggle Blizzard's Action Bar"
 
-L["Animate"] = true
-L["Animate_Description"] = "Toggle Neuron's Orb Animation"
-
 L["MoveSpecButtons"] = true
 L["MoveSpecButtons_Description"] = "Copies the buttons from one spec to a second"
 
@@ -371,9 +368,6 @@ L["Y Position"] = true
 
 L["Display the Blizzard Bar"] = true
 L["Shows / Hides the Default Blizzard Bar"] = true
-
-L["Animate Icon"] = true
-L["Toggles the Animation of the Neuron Orb Icon"] = true
 
 L["Display Minimap Button"] = true
 L["Toggles the minimap button."] = true

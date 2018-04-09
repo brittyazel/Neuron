@@ -550,7 +550,6 @@ local slashFunctions = {
 	{L["TimerLimit"], L["TimerLimit_Description"], "SetTimerLimit"},
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
 	{L["BlizzBar"], L["BlizzBar_Description"], "BlizzBar"},
-	{L["Animate"], L["Animate_Description"], "Animate"},
 }
 
 
@@ -1394,15 +1393,6 @@ function NEURON:BlizzBar()
 
 end
 
-function NEURON:Animate()
-	if (GDB.animate) then
-		GDB.animate = false
-	else
-		GDB.animate = true
-	end
-
-end
-
 
 local function is_valid_spec_id(id, num_specs)
 	return id and id > 0 and id <= num_specs
@@ -1832,7 +1822,7 @@ function Neuron:SetupInterfaceOptions()
 						get = function() return NeuronGDB.mainbar end,
 						width = "full",
 					},
-					NeuronOrbButton = {
+					NeuronMinimapButton = {
 						order = 2,
 						name = L["Display Minimap Button"],
 						desc = L["Toggles the minimap button."],
