@@ -33,7 +33,7 @@ function NeuronMinimapIcon:OnInitialize()
     })
 
     icon = LibStub("LibDBIcon-1.0")
-    icon:Register("Neuron", neuronIconLDB, GDB.NeuronOrb)
+    icon:Register("Neuron", neuronIconLDB, GDB.NeuronIcon)
 
 end
 
