@@ -8,7 +8,7 @@ local NeuronMinimapOrb = NEURON.NeuronMinimapOrb
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local neuronLDB
+local neuronOrbLDB
 
 local orb
 
@@ -24,16 +24,16 @@ function NeuronMinimapOrb:OnInitialize()
 
     GDB = NeuronGDB
 
-    neuronLDB = LibStub("LibDataBroker-1.1"):NewDataObject("OrbButton", {
+    neuronOrbLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Neuron", {
         type = "launcher",
-        text = "OrbButton",
+        text = "Neuron",
         icon = "Interface\\AddOns\\Neuron\\Images\\static_icon",
         OnClick = function(frame, button) self:OnClickHandler(frame, button) end,
         OnTooltipShow = function(tooltip) self:TooltipHandler(tooltip) end,
     })
 
     orb = LibStub("LibDBIcon-1.0")
-    orb:Register("OrbButton", neuronLDB, GDB.NeuronOrb)
+    orb:Register("Neuron", neuronOrbLDB, GDB.NeuronOrb)
 
 end
 
@@ -90,10 +90,10 @@ end
 function NeuronMinimapOrb:ToggleIcon()
 
     if GDB.NeuronOrb.hide == false then
-        orb:Hide("OrbButton")
+        orb:Hide("Neuron")
         GDB.NeuronOrb.hide = true
     elseif GDB.NeuronOrb.hide == true then
-        orb:Show("OrbButton")
+        orb:Show("Neuron")
         GDB.NeuronOrb.hide = false
     end
 
