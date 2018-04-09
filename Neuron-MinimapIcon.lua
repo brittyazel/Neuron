@@ -3,14 +3,14 @@
 local NEURON = Neuron
 local GDB
 
-NEURON.NeuronMinimapOrb = NEURON:NewModule("NeuronMinimapOrb")
-local NeuronMinimapOrb = NEURON.NeuronMinimapOrb
+NEURON.NeuronMinimapIcon = NEURON:NewModule("NeuronMinimapIcon")
+local NeuronMinimapIcon = NEURON.NeuronMinimapIcon
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local neuronOrbLDB
+local neuronIconLDB
 
-local orb
+local icon
 
 
 -------------------------------------------------------------------------
@@ -20,11 +20,11 @@ local orb
 --- **OnInitialize**, which is called directly after the addon is fully loaded.
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
-function NeuronMinimapOrb:OnInitialize()
+function NeuronMinimapIcon:OnInitialize()
 
     GDB = NeuronGDB
 
-    neuronOrbLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Neuron", {
+    neuronIconLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Neuron", {
         type = "launcher",
         text = "Neuron",
         icon = "Interface\\AddOns\\Neuron\\Images\\static_icon",
@@ -32,8 +32,8 @@ function NeuronMinimapOrb:OnInitialize()
         OnTooltipShow = function(tooltip) self:TooltipHandler(tooltip) end,
     })
 
-    orb = LibStub("LibDBIcon-1.0")
-    orb:Register("Neuron", neuronOrbLDB, GDB.NeuronOrb)
+    icon = LibStub("LibDBIcon-1.0")
+    icon:Register("Neuron", neuronIconLDB, GDB.NeuronOrb)
 
 end
 
@@ -41,21 +41,21 @@ end
 --- Do more initialization here, that really enables the use of your addon.
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
-function NeuronMinimapOrb:OnEnable()
+function NeuronMinimapIcon:OnEnable()
 end
 
 --- **OnDisable**, which is only called when your addon is manually being disabled.
 --- Unhook, Unregister Events, Hide frames that you created.
 --- You would probably only use an OnDisable if you want to
 --- build a "standby" mode, or be able to toggle modules on/off.
-function NeuronMinimapOrb:OnDisable()
+function NeuronMinimapIcon:OnDisable()
 
 end
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
-function NeuronMinimapOrb:OnClickHandler(frame, button)
+function NeuronMinimapIcon:OnClickHandler(frame, button)
 
     if (InCombatLockdown()) then
         return
@@ -75,7 +75,7 @@ function NeuronMinimapOrb:OnClickHandler(frame, button)
 
 end
 
-function NeuronMinimapOrb:TooltipHandler(tooltip)
+function NeuronMinimapIcon:TooltipHandler(tooltip)
 
     tooltip:SetText("Neuron", 1, 1, 1)
     tooltip:AddLine(L["Left-Click to Configure Bars"])
@@ -87,14 +87,14 @@ function NeuronMinimapOrb:TooltipHandler(tooltip)
 
 end
 
-function NeuronMinimapOrb:ToggleIcon()
+function NeuronMinimapIcon:ToggleIcon()
 
-    if GDB.NeuronOrb.hide == false then
-        orb:Hide("Neuron")
-        GDB.NeuronOrb.hide = true
-    elseif GDB.NeuronOrb.hide == true then
-        orb:Show("Neuron")
-        GDB.NeuronOrb.hide = false
+    if GDB.NeuronIcon.hide == false then
+        icon:Hide("Neuron")
+        GDB.NeuronIcon.hide = true
+    elseif GDB.NeuronIcon.hide == true then
+        icon:Show("Neuron")
+        GDB.NeuronIcon.hide = false
     end
 
 end

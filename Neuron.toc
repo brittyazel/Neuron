@@ -19,14 +19,14 @@ Localizations\Neuron_Localizations.xml
 Neuron.lua
 
 
-Neuron_States.lua
-Neuron_Buttons.lua
-Neuron_Bars.lua
-Neuron_EditFrames.lua
-Neuron_KeyBinder.lua
-Neuron_SnapTo.lua
-Neuron_OrbButton.lua
-Neuron_Flyouts.lua
+Neuron-States.lua
+Neuron-Buttons.lua
+Neuron-Bars.lua
+Neuron-EditFrames.lua
+Neuron-KeyBinder.lua
+Neuron-SnapTo.lua
+Neuron-MinimapIcon.lua
+Neuron-Flyouts.lua
 
 Neuron.xml
 

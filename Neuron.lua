@@ -95,7 +95,7 @@ NeuronGDB = {
 
 	firstRun = true,
 
-	NeuronOrb = {hide = false,},
+	NeuronIcon = {hide = false,},
 }
 
 NeuronCDB = {
@@ -1837,8 +1837,8 @@ function Neuron:SetupInterfaceOptions()
 						name = L["Display Minimap Button"],
 						desc = L["Toggles the minimap button."],
 						type = "toggle",
-						set =  function() NEURON.NeuronMinimapOrb:ToggleIcon() end,
-						get = function() return not NeuronGDB.NeuronOrb.hide end,
+						set =  function() NEURON.NeuronMinimapIcon:ToggleIcon() end,
+						get = function() return not NeuronGDB.NeuronIcon.hide end,
 						width = "full"
 					},
 				},
