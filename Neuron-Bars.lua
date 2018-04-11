@@ -197,6 +197,8 @@ local cDef = {
 	},
 }
 
+local statetable = {}
+
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -652,7 +654,6 @@ function HANDLER:AddStates(bar, state, conditions)
 end
 
 function HANDLER:ClearStates(bar, state)
-	local clearState
 
 	if (state ~= "homestate") then
 
@@ -2030,9 +2031,6 @@ function BAR:RemoveObjects(num)
 end
 
 
-local statetable = {}
-
-
 function BAR:SetState(msg, gui, checked, query)
 	if (msg) then
 		local state = msg:match("^%S+")
@@ -2212,7 +2210,7 @@ function BAR:SetVisibility(msg, gui, checked, query)
 				local highindex = 0
 
 				for state,desc in pairs(NEURON.STATES) do
-					local index = state:match("%d+$")
+					index = state:match("%d+$")
 
 					if (index) then
 						index = tonumber(index)
@@ -2238,16 +2236,13 @@ function BAR:SetVisibility(msg, gui, checked, query)
 				end
 
 				if (#statetable > 0) then
-					--Neuron:Print("\n")
-					if (statetable[0]) then
+					--[[if (statetable[0]) then
 						desc, showhide = (":"):split(statetable[0])
-						--Neuron:Print("0: "..desc.." - "..showhide)
-					end
+					end]]
 
 					for k,v in ipairs(statetable) do
 						if (v ~= "ignore") then
 							desc, showhide = (":"):split(v)
-							--Neuron:Print(k..": "..desc.." - "..showhide)
 						end
 					end
 				end
@@ -2665,7 +2660,7 @@ function BAR:ShapeBar(shape, gui, query)
 		return barShapes[self.gdata.shape]
 	end
 
-	local shape = tonumber(shape)
+	shape = tonumber(shape)
 
 	if (shape and barShapes[shape]) then
 		self.gdata.shape = shape
@@ -2711,7 +2706,7 @@ function BAR:ColumnsSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Bar_Columnm_Instructions"])
+		Neuron:Print(L["Bar_Column_Instructions"])
 	end
 end
 

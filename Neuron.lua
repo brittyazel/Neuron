@@ -276,7 +276,10 @@ function NEURON:OnInitialize()
 
 	BAR = NEURON.BAR
 
-	NEURON.player, NEURON.class, NEURON.level, NEURON.realm = UnitName("player"), select(2, UnitClass("player")), UnitLevel("player"), GetRealmName()
+	NEURON.player = UnitName("player")
+	NEURON.class = select(2, UnitClass("player"))
+	NEURON.level = UnitLevel("player")
+	NEURON.realm = GetRealmName()
 
 end
 
@@ -557,7 +560,7 @@ local slashFunctions = {
 function NEURON:slashHandler(input)
 
 	if (strlen(input)==0 or input:lower() == "help") then
-		printSlashHelp()
+		self:printSlashHelp()
 		return
 	end
 
@@ -590,7 +593,7 @@ function NEURON:slashHandler(input)
 
 end
 
-function printSlashHelp()
+function NEURON:printSlashHelp()
 
 	Neuron:Print("---------------------------------------------------")
 	Neuron:Print(L["How to use"]..":   ".."/"..addonName:lower().." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
@@ -707,7 +710,7 @@ function NEURON:UpdateSpellIndex()
 		local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
 		local spellID_Alt = spellID
 		local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_SPELL)
-		local icon = GetSpellBookItemTexture(i, BOOKTYPE_SPELL)
+		--local icon = GetSpellBookItemTexture(i, BOOKTYPE_SPELL)
 		local isPassive = IsPassiveSpell(i, BOOKTYPE_SPELL)
 
 		if (spellName and spellType ~= "FUTURESPELL") then
@@ -765,7 +768,7 @@ function NEURON:UpdateSpellIndex()
 				local spellType, spellID = GetSpellBookItemInfo(offsetIndex, BOOKTYPE_PROFESSION)
 				local spellID_Alt = spellID
 				local spellLvl = GetSpellAvailableLevel(offsetIndex, BOOKTYPE_PROFESSION)
-				local icon = GetSpellBookItemTexture(offsetIndex, BOOKTYPE_PROFESSION)
+				--local icon = GetSpellBookItemTexture(offsetIndex, BOOKTYPE_PROFESSION)
 				local isPassive = IsPassiveSpell(offsetIndex, BOOKTYPE_PROFESSION)
 
 				if (spellName and spellType ~= "FUTURESPELL") then
@@ -804,7 +807,7 @@ function NEURON:UpdateSpellIndex()
 	---This code collects the data for the Hunter's "Call Pet" Flyout. It is a mystery why it works, but it does
 
 	if(NEURON.class == 'HUNTER') then
-		local _, _, numSlots, isKnown = GetFlyoutInfo(9)
+		local _, _, numSlots, _ = GetFlyoutInfo(9)
 
 		for i=1, numSlots do
 			local spellID, isKnown = GetFlyoutSlotInfo(9, i)
@@ -842,7 +845,7 @@ function NEURON:UpdatePetSpellIndex()
 			local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
 			local spellID_Alt = spellID
 			local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_PET)
-			local icon = GetSpellBookItemTexture(i, BOOKTYPE_PET)
+			--local icon = GetSpellBookItemTexture(i, BOOKTYPE_PET)
 			local isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
 
 			if (spellName and spellType ~= "FUTURESPELL") then
@@ -963,7 +966,7 @@ function NEURON:UpdateCompanionData()
 	local mountIDs = C_MountJournal.GetMountIDs()
 	for i,id in pairs(mountIDs) do
 		local creatureName , spellID = C_MountJournal.GetMountInfoByID(id) --, creatureID, _, active, summonable, source, isFavorite, isFactionSpecific, faction, unknown, owned = C_MountJournal.GetMountInfoByID(i)
-		local link = GetSpellLink(creatureName)
+		--local link = GetSpellLink(creatureName)
 
 		if (spellID) then
 			local spell, _, icon = GetSpellInfo(spellID)
@@ -986,7 +989,7 @@ end
 
 --- Creates a table of the available spell icon filenames for use in macros
 function NEURON:UpdateIconIndex()
-	local icon
+
 	local temp = {}
 
 	GetMacroIcons(temp)
@@ -1394,23 +1397,6 @@ function NEURON:BlizzBar()
 end
 
 
-local function is_valid_spec_id(id, num_specs)
-	return id and id > 0 and id <= num_specs
-end
-
-
-local function get_profile()
-	local char_name = UnitName("player")
-	local realm_name = GetRealmName()
-	local char_and_realm_name = string.format("%s - %s", char_name, realm_name)
-
-	local profile_key = NeuronProfilesDB.profileKeys[char_and_realm_name]
-	local profile = NeuronProfilesDB.profiles[profile_key]
-
-	return profile
-end
-
-
 function NEURON:CreateBar(index, class, id)
 	local data = NEURON.RegisteredBarData[class]
 	local newBar
@@ -1459,9 +1445,9 @@ function NEURON:CreateBar(index, class, id)
 		bar:SetWidth(375)
 		bar:SetHeight(40)
 		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-			tile = true, tileSize = 16, edgeSize = 12,
-			insets = {left = 4, right = 4, top = 4, bottom = 4}})
+						 edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+						 tile = true, tileSize = 16, edgeSize = 12,
+						 insets = {left = 4, right = 4, top = 4, bottom = 4}})
 		bar:SetBackdropColor(0,0,0,0.4)
 		bar:SetBackdropBorderColor(0,0,0,0)
 		bar:SetFrameLevel(2)
@@ -1572,7 +1558,6 @@ function NEURON:CreateNewObject(class, id, firstRun)
 		object:SetID(0)
 		object.objTIndex = index
 		object.objType = data.objType:gsub("%s", ""):upper()
-		--object:LoadData(GetSpecialization(), "homestate")
 		object:LoadData(GetActiveSpecGroup(), "homestate")
 
 		if (firstRun) then

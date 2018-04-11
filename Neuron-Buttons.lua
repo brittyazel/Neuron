@@ -136,7 +136,7 @@ NEURON.PetActions = {
 	petpassive = { "Interface\\Icons\\Ability_Seal", L["Passive"], { 0, 1, 0, 1 }, "/petpassive" },
 }
 
-local PetActions = NEURON.PetActions
+--local PetActions = NEURON.PetActions
 
 
 --Spells that need their primary spell name overwritten
@@ -1742,7 +1742,6 @@ end
 
 function BUTTON:MACRO_PlaceSpell(action1, action2, spellID, hasAction)
 	local modifier, spell, subName, texture
-	local _ --ignored return value
 
 	if (action1 == 0) then
 		-- I am unsure under what conditions (if any) we wouldn't have a spell ID
@@ -2375,7 +2374,7 @@ function BUTTON:MACRO_SetSpellTooltip(spell)
 			if (self.UberTooltips) then
 				GameTooltip:SetSpellByID(spell_id)
 			else
-				local spell = GetSpellInfo(spell_id)
+				spell = GetSpellInfo(spell_id)
 				GameTooltip:SetText(spell, 1, 1, 1)
 			end
 
