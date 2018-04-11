@@ -1005,7 +1005,7 @@ function NEURON.BarListScrollFrameUpdate(frame, tableList, alt)
 		data[count] = k; count = count + 1
 	end
 
-	--table.sort(data)
+	table.sort(data)
 
 	frame:Show()
 
