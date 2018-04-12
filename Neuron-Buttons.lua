@@ -1740,7 +1740,7 @@ function BUTTON:MACRO_OnEvent(...)
 end
 
 
-function BUTTON:MACRO_PlaceSpell(action1, action2, spellID, hasAction)
+function BUTTON:MACRO_PlaceSpell(action1, action2, spellID)
 	local modifier, spell, subName, texture
 
 	if (action1 == 0) then

@@ -19,8 +19,6 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-local GetParentKeys = NEURON.GetParentKeys
-
 local BarTextures = {
 	[1] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_2", L["Default"] },
 	[2] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_2", L["Contrast"] },
@@ -834,7 +832,6 @@ end
 local function repDropDown_Initialize(dropdown) --Initialize the dropdown menu for choosing a rep
 
 	local parent = dropdown:GetParent()
-	local id = parent.id
 
 	if (parent) then
 
@@ -1988,7 +1985,7 @@ function NEURON.StatusBarEditorUpdate(reset)
 
 			local yoff  = -10
 			local anchor, last, adjHeight
-			local editor = NeuronBarEditor.baropt.editor
+			--local editor = NeuronBarEditor.baropt.editor
 
 			adjHeight = 200
 
@@ -2016,7 +2013,7 @@ function NEURON.StatusBarEditorUpdate(reset)
 			end
 
 			local yoff1, yoff2= (adjHeight)/5, (adjHeight)/5
-			local shape
+			--local shape
 
 			if (sb.config.sbType == "cast") then
 				yoff1 = (adjHeight)/6

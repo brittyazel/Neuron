@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local DB
+--local DB
 
 NEURON.BINDER = setmetatable({}, { __index = CreateFrame("Button") })
 
@@ -10,11 +10,11 @@ local BUTTON, BINDER = NEURON.BUTTON, NEURON.BINDER
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BTNIndex = NEURON.BTNIndex
+--local BTNIndex = NEURON.BTNIndex
 local BINDIndex = NEURON.BINDIndex
 
-local sIndex = NEURON.sIndex
-local cIndex = NEURON.cIndex
+--local sIndex = NEURON.sIndex
+--local cIndex = NEURON.cIndex
 
 
 --- Returns a list of the available spell icon filenames for use in macros

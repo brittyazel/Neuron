@@ -20,10 +20,6 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local SKIN = LibStub("Masque", true)
-
-local sIndex = NEURON.sIndex
-
 local gDef = {
 	hidestates = ":",
 	snapTo = false,
@@ -34,10 +30,6 @@ local gDef = {
 	y = 75,
 	border = true,
 }
-
-
-
-local GetParentKeys = NEURON.GetParentKeys
 
 
 local configData = {
@@ -279,7 +271,7 @@ function ZONEABILITYRBTN:OnEvent(event, ...)
 
 
 	self.spellID = spellID;
-	local lastState = self.BuffSeen; --sets a flag to mark if we have seen the change in UNIT_AURA
+	--local lastState = self.BuffSeen; --sets a flag to mark if we have seen the change in UNIT_AURA
 	self.BuffSeen = (spellID ~= 0);
 
 

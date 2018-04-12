@@ -18,18 +18,18 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local FOBARIndex, FOBTNIndex, ANCHORIndex = {}, {}, {}
 
-local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+--local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local SKIN = LibStub("Masque", true)
+--local SKIN = LibStub("Masque", true)
 
-local sIndex = NEURON.sIndex
-local cIndex = NEURON.cIndex
-local iIndex = NEURON.iIndex
+--local sIndex = NEURON.sIndex
+--local cIndex = NEURON.cIndex
+--local iIndex = NEURON.iIndex
 local tIndex = NEURON.tIndex
-local ItemCache = NeuronItemCache
+--local ItemCache = NeuronItemCache
 
 local tooltipScan = NeuronTooltipScan
-local tooltipScanTextLeft2 = NeuronTooltipScanTextLeft2
+--local tooltipScanTextLeft2 = NeuronTooltipScanTextLeft2
 local tooltipStrings = {}
 
 local itemTooltips, itemLinks, spellTooltips, companionTooltips = {}, {}, {}, {}
@@ -43,8 +43,8 @@ local petIcons = {}
 
 local f = {}  --flyout related helpers
 
-f.rtable = {} -- reusable table where flyout button attributes are accumulated
-local rtable = f.rtable
+--f.rtable = {} -- reusable table where flyout button attributes are accumulated
+--local rtable = f.rtable
 
 f.filter = {} -- table of search:keyword search functions (f.filter.item(arg))
 --[[ Item Cache ]]
@@ -346,7 +346,6 @@ end
 
 
 function f.StartTimer(duration,func)
-	local timers = f.timersRunning
 	f.timerTimes[func] = duration
 	if not tContains(f.timersRunning,func) then
 		tinsert(f.timersRunning,func)
@@ -707,7 +706,7 @@ end
 
 --- Filter handler for companion pets
 -- pet:arg filters companion pets that include arg in the name or arg="any" or arg="favorite(s)"
-function BUTTON:filter_pet(data, arg, rtable)
+function BUTTON:filter_pet(data)
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
 	local excluded
 	for ckey in gmatch(keys, "[^,]+") do
@@ -980,7 +979,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 					end
 
 				elseif (source:find("equipset")) then
-					local _, icon = (";"):split(source)
+					_, icon = (";"):split(source)
 					button.macroshow = spell
 					button.data.macro_Equip = spell
 					button:SetAttribute("prefix", "/equipset ")
@@ -1580,16 +1579,8 @@ function NeuronFlyouts.linkScanOnUpdate(self, elapsed)
 end
 
 
-local function button_PostClick(self,button,down)
-	self.macroBtn.config.macro = self:GetAttribute("newMacro")
-	self.macroBtn.config.macroIcon = "INTERFACE\\ICONS\\Ability_Ambush"
-	self.macroBtn.macroparse = self:GetAttribute("newMacro")
-	self.macroBtn.update(self.macroBtn)
-end
-
-
 function NeuronFlyouts.command_flyout(options)
-	--if (true) then return end
+
 
 	if (InCombatLockdown()) then
 		return

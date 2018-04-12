@@ -17,8 +17,6 @@ local STORAGE = CreateFrame("Frame", nil, UIParent)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local SKIN = LibStub("Masque", true)
-
 local sIndex = NEURON.sIndex
 
 local gDef = {
@@ -33,10 +31,6 @@ local gDef = {
 	x = -440,
 	y = 75,
 }
-
-local format = string.format
-
-local GetParentKeys = NEURON.GetParentKeys
 
 
 local AutoCastStart = NEURON.NeuronButton.AutoCastStart

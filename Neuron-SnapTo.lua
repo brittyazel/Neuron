@@ -154,7 +154,7 @@ end
 
 function BAR:Stick(oFrame, tolerance, xOff, yOff)
 
-	local xOff, yOff = xOff or 0, yOff or 0
+	xOff, yOff = xOff or 0, yOff or 0
 
 	if (not canAttach(self, oFrame)) then return end
 
@@ -216,7 +216,7 @@ end
 
 function BAR:StickToPoint(oFrame, point, xOff, yOff)
 
-	local xOff, yOff = xOff or 0, yOff or 0
+	xOff, yOff = xOff or 0, yOff or 0
 
 	if (not (point and canAttach(self, oFrame))) then return end
 

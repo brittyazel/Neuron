@@ -12,7 +12,7 @@ NEURON.Editors = {}
 
 local BUTTON = NEURON.BUTTON
 local BARIndex = NEURON.BARIndex
-local BTNIndex = NEURON.BTNIndex
+--local BTNIndex = NEURON.BTNIndex
 local EDITIndex = NEURON.EDITIndex
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -146,9 +146,11 @@ function OBJEDITOR:OnEvent(event, ...)
 
 end
 
-local OBJEDITOR_MT = { __index = OBJEDITOR }
+
 
 function BUTTON:CreateEditFrame(index)
+
+	local OBJEDITOR_MT = { __index = OBJEDITOR }
 
 	local EDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
 

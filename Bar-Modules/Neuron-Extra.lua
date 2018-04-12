@@ -26,8 +26,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local sIndex = NEURON.sIndex
-
 local gDef = {
 	hidestates = ":extrabar0:",
 	snapTo = false,
@@ -37,11 +35,6 @@ local gDef = {
 	x = 0,
 	y = 205,
 }
-
-local GetParentKeys = NEURON.GetParentKeys
-
-local AutoCastStart = NEURON.NeuronButton.AutoCastStart
-local AutoCastStop = NEURON.NeuronButton.AutoCastStop
 
 local configData = {
 	stored = false,

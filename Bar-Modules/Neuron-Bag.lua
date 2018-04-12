@@ -31,10 +31,6 @@ local gDef = {
 
 local bagElements = {}
 
-local format = string.format
-
-local GetParentKeys = NEURON.GetParentKeys
-
 local configData = {
 
 	stored = false,
@@ -249,7 +245,7 @@ local function updateFreeSlots(self)
 
 	self.freeSlots = totalFree
 
-	self.count:SetText(format("%s", totalFree))
+	self.count:SetText(string.format("%s", totalFree))
 	self.count:SetTextColor(r, g, 0)
 end
 
@@ -297,7 +293,7 @@ function NEURON.NeuronBackpackButton_OnEnter(self)
 		GameTooltip:AppendText(" "..NORMAL_FONT_COLOR_CODE.."("..keyBinding..")"..FONT_COLOR_CODE_CLOSE)
 	end
 
-	GameTooltip:AddLine(format(NUM_FREE_SLOTS, (self.freeSlots or 0)))
+	GameTooltip:AddLine(string.format(NUM_FREE_SLOTS, (self.freeSlots or 0)))
 
 	GameTooltip:Show()
 end

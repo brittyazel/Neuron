@@ -46,6 +46,7 @@ local configData = {
 function NeuronMenuBar:OnInitialize()
 
     local object
+    local bar
 
     DB = NeuronCDB
 
@@ -75,7 +76,7 @@ function NeuronMenuBar:OnInitialize()
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if (DB.menubarFirstRun) then
-        local bar, object = NEURON:CreateNewBar("menu", 1, true)
+        bar, object = NEURON:CreateNewBar("menu", 1, true)
 
         for i=1,#menuElements do
             object = NEURON:CreateNewObject("menu", i)
