@@ -13,8 +13,6 @@ local NEURON = Neuron --this is the working pointer that all functions act upon,
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BAR --gets set to NEURON.BAR in the OnEvent method
-
 local icons = {}
 
 NEURON.PEW = false
@@ -236,8 +234,11 @@ local interfaceOptions
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
 function NEURON:OnInitialize()
+
 	self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
+
 	self:SetupInterfaceOptions()
+
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(interfaceOptions, addonName)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, interfaceOptions)
 
@@ -249,6 +250,8 @@ function NEURON:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
 	self.db.RegisterCallback(self, "OnDatabaseReset", "RefreshConfig")
 
+
+	---these three statements are just temporary for conversion purposes from older version of Neuron. Should be removed in an upcoming build.
 	if (not Neuron.db.profile["NeuronCDB"]) then
 		self.db.profile["NeuronCDB"] = NeuronCDB
 	end
@@ -258,6 +261,9 @@ function NEURON:OnInitialize()
 	if (not Neuron.db.profile["NeuronItemCache"]) then
 		self.db.profile["NeuronItemCache"] = NeuronItemCache
 	end
+	--------------------------------------------------------------------
+
+
 
 	---load saved variables into working variable containers
 	NeuronCDB = self.db.profile["NeuronCDB"]
@@ -268,13 +274,11 @@ function NEURON:OnInitialize()
 
 	NEURON:RegisterChatCommand("neuron", "slashHandler")
 
-
+	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
 	GDB = NeuronGDB; CDB = NeuronCDB;
 
 	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
 	NEURON.MBS = Neuron.MANAGED_BAR_STATES
-
-	BAR = NEURON.BAR
 
 	NEURON.player = UnitName("player")
 	NEURON.class = select(2, UnitClass("player"))
@@ -1424,7 +1428,7 @@ function NEURON:CreateBar(index, class, id)
 			bar[key] = value
 		end
 
-		setmetatable(bar, {__index = BAR})
+		setmetatable(bar, {__index = NEURON.BAR})
 
 		bar.index = index
 		bar.class = class
@@ -1457,18 +1461,18 @@ function NEURON:CreateBar(index, class, id)
 		bar:EnableKeyboard(false)
 		bar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
-		bar:SetScript("OnClick", BAR.OnClick)
-		bar:SetScript("OnDragStart", BAR.OnDragStart)
-		bar:SetScript("OnDragStop", BAR.OnDragStop)
-		bar:SetScript("OnEnter", BAR.OnEnter)
-		bar:SetScript("OnLeave", BAR.OnLeave)
-		bar:SetScript("OnEvent", BAR.OnEvent)
-		bar:SetScript("OnKeyDown", BAR.OnKeyDown)
-		bar:SetScript("OnKeyUp", BAR.OnKeyUp)
-		bar:SetScript("OnMouseWheel", BAR.OnMouseWheel)
-		bar:SetScript("OnShow", BAR.OnShow)
-		bar:SetScript("OnHide", BAR.OnHide)
-		bar:SetScript("OnUpdate", BAR.OnUpdate)
+		bar:SetScript("OnClick", NEURON.BAR.OnClick)
+		bar:SetScript("OnDragStart", NEURON.BAR.OnDragStart)
+		bar:SetScript("OnDragStop", NEURON.BAR.OnDragStop)
+		bar:SetScript("OnEnter", NEURON.BAR.OnEnter)
+		bar:SetScript("OnLeave", NEURON.BAR.OnLeave)
+		bar:SetScript("OnEvent", NEURON.BAR.OnEvent)
+		bar:SetScript("OnKeyDown", NEURON.BAR.OnKeyDown)
+		bar:SetScript("OnKeyUp", NEURON.BAR.OnKeyUp)
+		bar:SetScript("OnMouseWheel", NEURON.BAR.OnMouseWheel)
+		bar:SetScript("OnShow", NEURON.BAR.OnShow)
+		bar:SetScript("OnHide", NEURON.BAR.OnHide)
+		bar:SetScript("OnUpdate", NEURON.BAR.OnUpdate)
 
 		bar:RegisterEvent("ACTIONBAR_SHOWGRID")
 		bar:RegisterEvent("ACTIONBAR_HIDEGRID")
