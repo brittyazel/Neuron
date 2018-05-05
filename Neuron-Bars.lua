@@ -214,7 +214,8 @@ function NeuronBar:OnInitialize()
 
 	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
 
-	NEURON:RegisterGUIOptions("bar",	{ AUTOHIDE = true,
+	NEURON:RegisterGUIOptions("bar", {
+		AUTOHIDE = true,
 		SHOWGRID = true,
 		SPELLGLOW = true,
 		SNAPTO = true,
@@ -231,7 +232,8 @@ function NeuronBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true,
 		AURATEXT = true,
-		AURAIND = true }, true, 115)
+		AURAIND = true
+		}, true, 115)
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.

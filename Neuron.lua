@@ -251,7 +251,7 @@ function NEURON:OnInitialize()
 	self.db.RegisterCallback(self, "OnDatabaseReset", "RefreshConfig")
 
 
-	---these three statements are just temporary for conversion purposes from older version of Neuron. Should be removed in an upcoming build.
+	---These set the profile to be the defaults if there isn't already these values set in the profile
 	if (not Neuron.db.profile["NeuronCDB"]) then
 		self.db.profile["NeuronCDB"] = NeuronCDB
 	end
@@ -391,16 +391,13 @@ function NEURON:PLAYER_ENTERING_WORLD()
 	NEURON:UpdateToyData()
 	NEURON:UpdateIconIndex()
 
-	--Fix for Titan causing the Main Bar to not be hidden
-	if (IsAddOnLoaded("Titan")) then
-		TitanUtils_AddonAdjust("MainMenuBar", true)
-	end
 
 	NEURON:ToggleBlizzBar(GDB.mainbar)
 
 
 	NEURON.PEW = true
 
+	---displays a info window on login for either fresh installs or updates
 	if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
 		StaticPopup_Show("NEURON_UPDATE_WARNING")
 	elseif(GDB.updateWarning==nil) then
