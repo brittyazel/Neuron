@@ -85,7 +85,8 @@
 					self:RegisterEvent("UPDATE_BINDINGS")
 					self:RegisterEvent("PLAYER_TALENT_UPDATE")
 					self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-					self:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED")
+					-- FIXME 8.0 - The handler for this event is broken
+					--self:RegisterEvent("PLAYER_CHARACTER_UPGRADE_TALENT_COUNT_CHANGED")
 
 					self:RegisterEvent("UNIT_LEVEL")
 					Neuron.NeuronMenuBar.AddMenuElement(self)
