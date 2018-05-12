@@ -1759,7 +1759,11 @@ function BUTTON:MACRO_PlaceSpell(action1, action2, spellID)
 		self.data.macro_Auto = spellInfoName..";"
 	else
 		self.data.macro_Text = self:AutoWriteMacro(spell, subName)
-		self.data.macro_Auto = spell..";"..subName
+		if subName then
+			self.data.macro_Auto = spell..";"..subName
+		else
+			self.data.macro_Auto = spell
+		end
 	end
 
 	self.data.macro_Icon = false
