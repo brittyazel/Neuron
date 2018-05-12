@@ -1336,16 +1336,17 @@ function NEURON:ToggleBlizzBar(on)
 			]])
 		end
 
-		TextStatusBar_Initialize(MainMenuExpBar)
-		MainMenuExpBar:RegisterEvent("PLAYER_ENTERING_WORLD")
-		MainMenuExpBar:RegisterEvent("PLAYER_XP_UPDATE")
-		MainMenuExpBar.textLockable = 1
-		MainMenuExpBar.cvar = "xpBarText"
-		MainMenuExpBar.cvarLabel = "XP_BAR_TEXT"
-		MainMenuExpBar.alwaysPrefix = true
-		MainMenuExpBar_SetWidth(1024)
+		-- FIXME 8.0 These globals are MIA, need to examine new blizzard UI and determien how to best accomplish this
+		--TextStatusBar_Initialize(MainMenuExpBar)
+		--MainMenuExpBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+		--MainMenuExpBar:RegisterEvent("PLAYER_XP_UPDATE")
+		--MainMenuExpBar.textLockable = 1
+		--MainMenuExpBar.cvar = "xpBarText"
+		--MainMenuExpBar.cvarLabel = "XP_BAR_TEXT"
+		--MainMenuExpBar.alwaysPrefix = true
+		--MainMenuExpBar_SetWidth(1024)
 
-		MainMenuBar_OnLoad(MainMenuBarArtFrame)
+		--MainMenuBar_OnLoad(MainMenuBarArtFrame)
 		MainMenuBarVehicleLeaveButton_OnLoad(MainMenuBarVehicleLeaveButton)
 
 		MainMenuBar:SetPoint("BOTTOM", 0, 0)
@@ -1367,7 +1368,8 @@ function NEURON:ToggleBlizzBar(on)
 			handler:UnwrapScript(button, "OnHide")
 		end
 
-		MainMenuExpBar:UnregisterAllEvents()
+		-- FIXME 8.0 These globals are MIA, need to examine new blizzard UI and determien how to best accomplish this
+		--MainMenuExpBar:UnregisterAllEvents()
 		MainMenuBarArtFrame:UnregisterAllEvents()
 		MainMenuBarArtFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 		MainMenuBarArtFrame:RegisterEvent("UNIT_LEVEL")
