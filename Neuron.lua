@@ -297,10 +297,12 @@ function NEURON:OnEnable()
 	self:RegisterEvent("PET_UI_CLOSE")
 	self:RegisterEvent("COMPANION_LEARNED")
 	self:RegisterEvent("COMPANION_UPDATE")
-	self:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 	self:RegisterEvent("UNIT_LEVEL")
 	self:RegisterEvent("UNIT_PET")
-	self:RegisterEvent("TOYS_UPDATED")
+	-- FIXME 8.0 - These events are firing every frame, causing us to do a lot of work and tank framerate.  This may be
+	--              a client/beta bug that works itself out.
+	--self:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+	--self:RegisterEvent("TOYS_UPDATED")
 
 	NEURON:HookScript(self, "OnUpdate", "controlOnUpdate")
 
