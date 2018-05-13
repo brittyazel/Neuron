@@ -263,19 +263,14 @@ function NEURON:OnInitialize()
 	end
 	--------------------------------------------------------------------
 
-
-
 	---load saved variables into working variable containers
 	NeuronCDB = self.db.profile["NeuronCDB"]
 	NeuronGDB = self.db.profile["NeuronGDB"]
 	NeuronItemCache = self.db.profile["NeuronItemCache"]
 
-	InterfaceOptionsFrame:SetFrameStrata("HIGH")
-
-	NEURON:RegisterChatCommand("neuron", "slashHandler")
-
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
-	GDB = NeuronGDB; CDB = NeuronCDB;
+	GDB = NeuronGDB
+	CDB = NeuronCDB
 
 	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
 	NEURON.MBS = Neuron.MANAGED_BAR_STATES
@@ -284,6 +279,16 @@ function NEURON:OnInitialize()
 	NEURON.class = select(2, UnitClass("player"))
 	NEURON.level = UnitLevel("player")
 	NEURON.realm = GetRealmName()
+
+
+	NEURON:RegisterChatCommand("neuron", "slashHandler")
+
+
+	---TODO:figure out what to do with this
+	local frame = CreateFrame("GameTooltip", "NeuronTooltipScan", UIParent, "GameTooltipTemplate")
+	frame:SetOwner(UIParent, "ANCHOR_NONE")
+	frame:SetFrameStrata("TOOLTIP")
+	frame:Hide()
 
 end
 
@@ -308,16 +313,15 @@ function NEURON:OnEnable()
 
 	NEURON:HookScript(self, "OnUpdate", "controlOnUpdate")
 
-	local function hideAlerts(frame)
-		if (not GDB.mainbar) then
-			frame:Hide()
-		end
-	end
 
-	if (CompanionsMicroButtonAlert) then
-		CompanionsMicroButtonAlert:HookScript("OnShow", hideAlerts)
-	end
+	--[[if (CompanionsMicroButtonAlert) then
+		CompanionsMicroButtonAlert:HookScript("OnShow", function(frame)
 
+			if (not GDB.mainbar) then
+				frame:Hide()
+			end
+		end)
+	end]]
 
 	NEURON:UpdateStanceStrings()
 
@@ -337,19 +341,8 @@ function NEURON:OnEnable()
 
 	end)
 
-	StaticPopupDialogs["NEURON_UPDATE_WARNING"] = {
-		text = Update_Message,
-		button1 = OKAY,
-		timeout = 0,
-		OnAccept = function() GDB.updateWarning = latestVersionNum end
-	}
+	NEURON:LoginMessage()
 
-	StaticPopupDialogs["NEURON_INSTALL_MESSAGE"] = {
-		text = Install_Message,
-		button1 = OKAY,
-		timeout = 0,
-		OnAccept = function() GDB.updateWarning = latestVersionNum end,
-	}
 
 end
 
@@ -396,13 +389,6 @@ function NEURON:PLAYER_ENTERING_WORLD()
 
 
 	NEURON.PEW = true
-
-	---displays a info window on login for either fresh installs or updates
-	if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
-		StaticPopup_Show("NEURON_UPDATE_WARNING")
-	elseif(GDB.updateWarning==nil) then
-		StaticPopup_Show("NEURON_INSTALL_MESSAGE")
-	end
 end
 
 function NEURON:ACTIVE_TALENT_GROUP_CHANGED()
@@ -471,11 +457,7 @@ function NEURON:TOYS_UPDATED()
 end
 
 
----TODO:figure out what to do with this
-local frame = CreateFrame("GameTooltip", "NeuronTooltipScan", UIParent, "GameTooltipTemplate")
-frame:SetOwner(UIParent, "ANCHOR_NONE")
-frame:SetFrameStrata("TOOLTIP")
-frame:Hide()
+
 
 
 -------------------------------------------------------------------------
@@ -489,20 +471,18 @@ function NEURON:RefreshConfig()
 	GDB, CDB =  NeuronGDB, NeuronCDB
 	NEURON.NeuronButton.ButtonProfileUpdate()
 
+
+	StaticPopupDialogs["ReloadUI"] = {
+		text = "ReloadUI",
+		button1 = "Yes",
+		OnAccept = function()
+			ReloadUI()
+		end,
+		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+	}
+
 	StaticPopup_Show("ReloadUI")
 end
-
-
-StaticPopupDialogs["ReloadUI"] = {
-	text = "ReloadUI",
-	button1 = "Yes",
-	OnAccept = function()
-		ReloadUI()
-	end,
-	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-}
-
-
 
 --------------------------------------------
 --------------Slash Functions --------------
@@ -644,6 +624,32 @@ function NEURON:controlOnUpdate(frame, elapsed)
 end
 
 -----------------------------------------------------------------
+
+
+function NEURON:LoginMessage()
+
+	StaticPopupDialogs["NEURON_UPDATE_WARNING"] = {
+		text = Update_Message,
+		button1 = OKAY,
+		timeout = 0,
+		OnAccept = function() GDB.updateWarning = latestVersionNum end
+	}
+
+	StaticPopupDialogs["NEURON_INSTALL_MESSAGE"] = {
+		text = Install_Message,
+		button1 = OKAY,
+		timeout = 0,
+		OnAccept = function() GDB.updateWarning = latestVersionNum end,
+	}
+
+	---displays a info window on login for either fresh installs or updates
+	if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
+		StaticPopup_Show("NEURON_UPDATE_WARNING")
+	elseif(GDB.updateWarning==nil) then
+		StaticPopup_Show("NEURON_INSTALL_MESSAGE")
+	end
+
+end
 
 
 --I'm not sure what this function does, but it returns a table of all the names of children of a given frame

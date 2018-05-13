@@ -28,8 +28,7 @@ local FOBARIndex, FOBTNIndex, ANCHORIndex = {}, {}, {}
 local tIndex = NEURON.tIndex
 --local ItemCache = NeuronItemCache
 
-local tooltipScan = NeuronTooltipScan
---local tooltipScanTextLeft2 = NeuronTooltipScanTextLeft2
+
 local tooltipStrings = {}
 
 local itemTooltips, itemLinks, spellTooltips, companionTooltips = {}, {}, {}, {}
@@ -75,7 +74,7 @@ function NeuronFlyouts:OnInitialize()
 	GDB = NeuronGDB
 	CDB = NeuronCDB
 
-	local strings = { tooltipScan:GetRegions() }
+	local strings = { NeuronTooltipScan:GetRegions() }
 
 	for k,v in pairs(strings) do
 		if (v:GetObjectType() == "FontString") then
@@ -1551,8 +1550,8 @@ function NeuronFlyouts.linkScanOnUpdate(self, elapsed)
 
 				if (name) then
 					local tooltip, text = " ", " "
-					tooltipScan:SetOwner(control,"ANCHOR_NONE")
-					tooltipScan:SetHyperlink(self.link)
+					NeuronTooltipScan:SetOwner(control,"ANCHOR_NONE")
+					NeuronTooltipScan:SetHyperlink(self.link)
 
 					for i,string in ipairs(tooltipStrings) do
 						text = string:GetText()
