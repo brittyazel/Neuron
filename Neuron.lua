@@ -15,7 +15,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local icons = {}
 
-NEURON.PEW = false
+NEURON.PEW = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on loging with too many processes
 
 -------------------------------------------------------------------------------
 -- AddOn namespace.
@@ -48,6 +48,7 @@ There may be issues with Flyout functionality, please report.
 -Soyier]]
 
 
+--prepare the NEURON table with some subtables that will be used down the road
 NEURON['sIndex'] = {}
 NEURON['iIndex'] = {[1] = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK" }
 NEURON['cIndex'] = {}
@@ -70,12 +71,14 @@ NEURON['maxActionID'] = 132
 NEURON['maxPetID'] = 10
 NEURON['maxStanceID'] = NUM_STANCE_SLOTS
 
+
+--working variable pointers
 local BARIndex = NEURON.BARIndex
-local BARNameIndex = NEURON.BARNameIndex
+local BARNameIndex = NEURON.BARNameIndex --I'm not sure if we need both BarIndex and BARNameIndex. They're pretty much the same
 local BTNIndex = NEURON.BTNIndex
 local ICONS = NEURON.iIndex
 
----these are the database tables that are going to hold our data
+---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 NeuronGDB = {
 	bars = {},
 	buttons = {},
@@ -138,7 +141,7 @@ NeuronCDB = {
 
 }
 
-NeuronItemCache = {}
+NeuronItemCache = {} --Not sure the practical benefit of this, it's used a bunch in Neuron-Button and Neuron-FLyout though
 
 
 ---this is the Default profile when you "load defaults" in the ace profile window
@@ -149,12 +152,27 @@ NeuronDefaults.profile['NeuronGDB'] = NeuronGDB
 NeuronDefaults.profile['NeuronItemCache'] = NeuronItemCache
 
 
-NEURON.GameVersion, NEURON.GameBuild, NEURON.GameDate, NEURON.TOCVersion = GetBuildInfo()
-
-NEURON.GameVersion = tonumber(NEURON.GameVersion);
-NEURON.TOCVersion = tonumber(NEURON.TOCVersion)
-
-NEURON.Points = {R = "RIGHT", L = "LEFT", T = "TOP", B = "BOTTOM", TL = "TOPLEFT", TR = "TOPRIGHT", BL = "BOTTOMLEFT", BR = "BOTTOMRIGHT", C = "CENTER", RIGHT = "RIGHT", LEFT = "LEFT", TOP = "TOP", BOTTOM = "BOTTOM", TOPLEFT = "TOPLEFT", TOPRIGHT = "TOPRIGHT", BOTTOMLEFT = "BOTTOMLEFT", BOTTOMRIGHT = "BOTTOMRIGHT", CENTER = "CENTER"}
+--I think this is only used in Neuron-Flyouts
+NEURON.Points = {
+	R = "RIGHT",
+	L = "LEFT",
+	T = "TOP",
+	B = "BOTTOM",
+	TL = "TOPLEFT",
+	TR = "TOPRIGHT",
+	BL = "BOTTOMLEFT",
+	BR = "BOTTOMRIGHT",
+	C = "CENTER",
+	RIGHT = "RIGHT",
+	LEFT = "LEFT",
+	TOP = "TOP",
+	BOTTOM = "BOTTOM",
+	TOPLEFT = "TOPLEFT",
+	TOPRIGHT = "TOPRIGHT",
+	BOTTOMLEFT = "BOTTOMLEFT",
+	BOTTOMRIGHT = "BOTTOMRIGHT",
+	CENTER = "CENTER"
+}
 
 NEURON.Stratas = {"BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP"}
 
@@ -314,6 +332,7 @@ function NEURON:OnEnable()
 	NEURON:HookScript(self, "OnUpdate", "controlOnUpdate")
 
 
+	-- --I have no idea what this does
 	--[[if (CompanionsMicroButtonAlert) then
 		CompanionsMicroButtonAlert:HookScript("OnShow", function(frame)
 
@@ -595,6 +614,7 @@ end
 --------------------Intermediate Functions------------------
 ------------------------------------------------------------
 
+---TODO: we need to fix the throttling so that we don't bombard a single frame with ALL the processing, but instead spread out the processing on multiple frames
 
 ---this is the new controlOnUpdate function that will control all the other onUpdate functions.
 function NEURON:controlOnUpdate(frame, elapsed)
