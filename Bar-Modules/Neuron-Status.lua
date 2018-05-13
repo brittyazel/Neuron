@@ -421,8 +421,6 @@ function NeuronStatusBar:DisableDefault()
 
 	for i,v in ipairs(NEURON.NeuronStatusBar) do
 
-		v = v[1]
-
 		if (v["bar"]) then --only disable if a specific button has an associated bar
 			if v.config.sbType == "cast" then
 				disableDefaultCast = true

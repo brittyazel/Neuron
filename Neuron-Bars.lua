@@ -248,7 +248,8 @@ function NeuronBar:OnEnable()
 		for id, defaults in ipairs(gDef) do
 			NEURON.RegisteredBarData["bar"].gDef = defaults
 
-			local bar, object = NEURON:CreateNewBar("bar", id, true)
+			local bar = NEURON:CreateNewBar("bar", id, true)
+			local object
 
 			for i=oid+offset,oid+11+offset do
 				object = NEURON:CreateNewObject("bar", i, true)
@@ -1709,7 +1710,7 @@ function BAR:Pulse(elapsed)
 	self.pulse = true
 end
 
-
+---TODO: This is probably a source of inefficiency
 function BAR:OnUpdate(elapsed)
 	if (NEURON.PEW) then
 
@@ -1929,7 +1930,8 @@ function BAR:AddObjects(num)
 
 			for index,data in ipairs(self.objTable) do
 				if (not object and data[2] == 1) then
-					object = data[1]; data[2] = 0
+					object = data[1]
+					data[2] = 0
 				end
 			end
 

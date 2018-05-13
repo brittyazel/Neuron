@@ -643,14 +643,18 @@ function NEURON:controlOnUpdate(frame, elapsed)
 
 end
 
+-----------------------------------------------------------------
 
+
+--I'm not sure what this function does, but it returns a table of all the names of children of a given frame
 function NEURON:GetParentKeys(frame)
 	if (frame == nil) then
 		return
 	end
 
 	local data, childData = {}, {}
-	local children, regions = {frame:GetChildren()}, {frame:GetRegions()}
+	local children = {frame:GetChildren()}
+	local regions = {frame:GetRegions()}
 
 	for k,v in pairs(children) do
 		tinsert(data, v:GetName())
@@ -1418,7 +1422,7 @@ function NEURON:CreateBar(index, class, id)
 		if (_G["Neuron"..data.barType..id]) then
 			bar = _G["Neuron"..data.barType..id]
 		else
-			bar = CreateFrame("CheckButton", "Neuron"..data.barType..id, UIParent, "NeuronBarTemplate")
+			bar = CreateFrame("CheckButton", "Neuron"..data.barType..id, UIParent, "NeuronBarTemplate") --I think this is the line flooding the global namespace with bar frames
 		end
 
 		for key,value in pairs(data) do
@@ -1509,7 +1513,8 @@ function NEURON:CreateNewBar(class, id, firstRun)
 		end
 
 		if (newBar) then
-			bar:Load(); NEURON:ChangeBar(bar)
+			bar:Load()
+			NEURON:ChangeBar(bar)
 
 			---------------------------------
 			if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
@@ -1535,11 +1540,9 @@ function NEURON:CreateNewObject(class, id, firstRun)
 	local data = NEURON.RegisteredBarData[class]
 
 	if (data) then
-		local index = 1
 
-		for _ in ipairs(data.objTable) do
-			index = index + 1
-		end
+		--this is the same as 'id', I'm not sure why we need both
+		local index = #data.objTable + 1 --sets the current index to 1 greater than the current number of object in the table
 
 		local object = CreateFrame(data.objFrameT, data.objPrefix..id, UIParent, data.objTemplate)
 
@@ -1547,8 +1550,10 @@ function NEURON:CreateNewObject(class, id, firstRun)
 
 		object.elapsed = 0
 
+		--returns a table of the names of all the child objects for a given frame
 		local objects = NEURON:GetParentKeys(object)
 
+		--I think this is creating a pointer inside the object to where the child object resides in the global namespace
 		for k,v in pairs(objects) do
 			local name = (v):gsub(object:GetName(), "")
 			object[name:lower()] = _G[v]
@@ -1567,7 +1572,7 @@ function NEURON:CreateNewObject(class, id, firstRun)
 
 		object:LoadAux()
 
-		data.objTable[index] = {object, 1}
+		data.objTable[index] = object
 
 		return object
 	end
@@ -1749,7 +1754,7 @@ function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barC
 		CDB = barCDB,
 		gDef = gDef,
 		cDef = cDef,
-		objTable = objTable,
+		objTable = objTable, --this is all the buttons associated with a given bar
 		objGDB = objGDB,
 		objPrefix = "Neuron"..objType:gsub("%s+", ""),
 		objFrameT = objFrameType,

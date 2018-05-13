@@ -140,8 +140,6 @@ function NeuronZoneAbilityBar:DisableDefault()
 
 	for i,v in ipairs(NEURON.NeuronZoneAbilityBar) do
 
-		v = v[1]
-
 		if (v["bar"]) then --only disable if a specific button has an associated bar
 				disableZoneAbility = true
 		end
