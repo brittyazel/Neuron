@@ -239,12 +239,15 @@ function BINDER:OnEnter()
 
     local button = self.button
 
-	local name = self.bindType:gsub("^%l", string.upper).. " " .. button.id
+	local name = self.bindType:gsub("^%l", string.upper).. " " .. button.id --default to "button #" in the case that a button is empty
 
+	---TODO:we should definitely added name strings for pets/companions as well. This was just to get it going
 	if self.button.spellID then
 		name = GetSpellInfo(self.button.spellID)
 	elseif self.button.macroitem then
 		name = self.button.macroitem
+	elseif self.button.macrospell then
+		name = self.button.macrospell --this is kind of a catch-all
 	end
 
 	self.select:Show()
@@ -252,13 +255,13 @@ function BINDER:OnEnter()
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
 	GameTooltip:ClearLines()
-    GameTooltip:SetText("Neuron")
-	GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffd100" .. name  .. "|r", 1.0, 1.0, 1.0)
-	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffd100" .. self:GetBindkeyList(button) .. "|r", 1.0, 1.0, 1.0)
+    GameTooltip:SetText("Neuron", 1.0, 1.0, 1.0)
+	GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffffff" .. name  .. "|r")
+	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffffff" .. self:GetBindkeyList(button) .. "|r")
     GameTooltip:AddLine(" ")
-	GameTooltip:AddLine(L["Keybind_Tooltip_3"], 1.0, 1.0, 1.0)
-	GameTooltip:AddLine(L["Keybind_Tooltip_4"], 1.0, 1.0, 1.0)
-	GameTooltip:AddLine(L["Keybind_Tooltip_5"], 1.0, 1.0, 1.0)
+	GameTooltip:AddLine(L["Keybind_Tooltip_3"])
+	GameTooltip:AddLine(L["Keybind_Tooltip_4"])
+	GameTooltip:AddLine(L["Keybind_Tooltip_5"])
 
 	GameTooltip:Show()
 end

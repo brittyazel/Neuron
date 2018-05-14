@@ -1618,7 +1618,7 @@ end
 
 function NEURON:ToggleButtonGrid(show, hide)
 	for id,btn in pairs(BTNIndex) do
-		btn[1]:SetGrid(show, hide)
+		btn:SetGrid(show, hide)
 	end
 end
 
