@@ -8,7 +8,6 @@ local DB
 NEURON.NeuronStatusBar = NEURON:NewModule("StatusBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronStatusBar = NEURON.NeuronStatusBar
 
-local EDITIndex, OBJEDITOR = NEURON.EDITIndex, NEURON.OBJEDITOR
 
 local statusbarsDB, statusbtnsDB
 
@@ -197,9 +196,6 @@ local configDefaults = {
 	[6] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
 }
 
-local sbTypes = { { "cast", L["Cast Bar"] }, { "xp", L["XP Bar"] }, { "rep", L["Rep Bar"] }, { "mirror", L["Mirror Bar"] } }
-
-local sbOpt = { types = {}, chk = {}, adj = {} }
 
 local popupData = {}
 
@@ -285,9 +281,11 @@ function NeuronStatusBar:OnInitialize()
 		DB.statusbarFirstRun = false
 	end
 
+
 	if not DB.AutoWatch then
 		DB.AutoWatch = 1
 	end
+
 
 	statusbarsDB = DB.statusbars
 	statusbtnsDB = DB.statusbtns
@@ -1590,17 +1588,6 @@ end
 
 
 
-function STATUS:UpdateEditor()
-
-	if (NeuronStatusBarEditor and NeuronStatusBarEditor:IsVisible()) then
-		NEURON:StatusBarEditorUpdate()
-	end
-
-end
-
-
-
-
 function STATUS:UpdateWidth(command, gui, query, skipupdate)
 
 	if (query) then
@@ -1973,127 +1960,17 @@ end
 
 
 
-function NEURON.StatusBarEditorUpdate(reset)
 
-	local sb = Neuron.CurrentObject
+--move to GUI
+function STATUS:UpdateEditor()
 
-	if (sb) then
-
-		if (NeuronStatusBarEditor:IsVisible()) then
-
-			local yoff  = -10
-			local anchor, last, adjHeight
-			--local editor = NeuronBarEditor.baropt.editor
-
-			adjHeight = 200
-
-			for i,f in ipairs(sbOpt.types) do
-
-				if (sb.config.sbType == f.sbType) then
-					f:SetChecked(1)
-				else
-					f:SetChecked(nil)
-				end
-
-			end
-
-			for i,f in ipairs(sbOpt.chk) do
-				f:ClearAllPoints(); f:Hide()
-			end
-
-			for i,f in ipairs(sbOpt.chk) do
-
-				if (sb.config.sbType == f.sbType) then
-					f:SetPoint("BOTTOMLEFT", f.parent, "BOTTOMLEFT", 15, 25)
-					f:SetChecked(sb.config[f.index])
-					f:Show()
-				end
-			end
-
-			local yoff1, yoff2= (adjHeight)/5, (adjHeight)/5
-			--local shape
-
-			if (sb.config.sbType == "cast") then
-				yoff1 = (adjHeight)/6
-			end
-
-			for i,f in ipairs(sbOpt.adj) do
-
-				f:ClearAllPoints(); f:Hide()
-
-				if (f.optData and f.strTable) then
-
-					wipe(popupData)
-
-					for types, data in pairs(f.optData) do
-						if (types == sb.config.sbType) then
-							for k,v in pairs(data) do
-								popupData[k.."_"..v[1]] = tostring(k)
-							end
-						end
-					end
-
-					NEURON.EditBox_PopUpInitialize(f.edit.popup, popupData)
-
-				elseif (f.optData) then
-
-					wipe(popupData)
-
-					for k,v in pairs(f.optData) do
-
-						if (k < 10) then
-							popupData["0"..k.."_"..v] = tostring(k)
-						else
-							popupData[k.."_"..v] = tostring(k)
-						end
-					end
-
-					NEURON.EditBox_PopUpInitialize(f.edit.popup, popupData)
-				end
-			end
-
-			for i,f in ipairs(sbOpt.adj) do
-
-				if (i == 6) then
-					if (sb.config.sbType == "cast") then
-						f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
-						f:Show()
-						yoff = yoff-yoff1
-					end
-				elseif (i > 6) then
-
-					if (i == 7) then
-						yoff = -10
-					end
-
-					f:SetPoint("TOPLEFT", f.parent, "TOP", 10, yoff)
-					f:Show()
-					yoff = yoff-yoff2
-				else
-					f:SetPoint("TOPLEFT", f.parent, "TOPLEFT", 10, yoff)
-					f:Show()
-					yoff = yoff-yoff1
-				end
-
-				if (sb[f.func]) then
-					if (f.format) then
-						f.edit:SetText(string.format(f.format, sb[f.func](sb, nil, true, true)*f.mult)..f.endtext)
-					else
-						f.edit:SetText(sb[f.func](sb, nil, true, true) or "")
-					end
-					f.edit:SetCursorPosition(0)
-				end
-			end
-		end
+	if (NeuronStatusBarEditor and NeuronStatusBarEditor:IsVisible()) then
+		NEURON:StatusBarEditorUpdate()
 	end
+
 end
 
 
-
-
-function NEURON:StatusBarEditor_OnLoad(frame)
-	NEURON.Editors.STATUSBAR = { frame, 625, 250, NEURON.StatusBarEditorUpdate }
-end
 
 
 
@@ -2109,309 +1986,6 @@ function NEURON:StatusBarEditor_OnHide(frame)
 
 end
 
-
-
-
-local function sbTypeOnClick(self, button, down)
-
-	local sb = NEURON.CurrentObject
-
-	if (sb) then
-
-		if (self.sbType == "xp") then
-
-			sb.config.sbType = self.sbType
-			sb.config.cIndex = 2
-			sb.config.lIndex = 1
-			sb.config.rIndex = 1
-
-		elseif (self.sbType == "rep") then
-
-			sb.config.sbType = self.sbType
-			sb.config.cIndex = 2
-			sb.config.lIndex = 1
-			sb.config.rIndex = 1
-
-
-		elseif (self.sbType == "cast") then
-
-			sb.config.sbType = self.sbType
-			sb.config.cIndex = 1
-			sb.config.lIndex = 2
-			sb.config.rIndex = 3
-
-		elseif (self.sbType == "mirror") then
-
-			sb.config.sbType = self.sbType
-			sb.config.cIndex = 1
-			sb.config.lIndex = 2
-			sb.config.rIndex = 3
-		end
-
-		sb:SetType()
-
-		sb:UpdateEditor()
-	end
-end
-
-
-
-
-local function chkOptionOnClick(frame)
-
-	local sb = NEURON.CurrentObject
-
-	if (sb) then
-		sb[frame.func](sb, frame, frame:GetChecked())
-	end
-
-end
-
-
-
-
-function NEURON:SB_EditorTypes_OnLoad(frame)
-
-	local f, anchor, last
-
-	for index, types in ipairs(sbTypes) do
-
-		f = CreateFrame("CheckButton", nil, frame, "NeuronOptionsCheckButtonTemplate")
-		f:SetWidth(18)
-		f:SetHeight(18)
-		f:SetScript("OnClick", sbTypeOnClick)
-		f.sbType = types[1]
-		f.text:SetText(types[2])
-
-		if (not anchor) then
-			f:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -15)
-			anchor = f; last = f
-		else
-			f:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -15)
-			last = f
-		end
-
-		tinsert(sbOpt.types, f)
-	end
-
-	frame.line = frame:CreateTexture(nil, "OVERLAY")
-	frame.line:SetHeight(1)
-	frame.line:SetPoint("LEFT", 8, -40)
-	frame.line:SetPoint("RIGHT", -8, -40)
-	frame.line:SetTexture(0.3, 0.3, 0.3)
-
-	anchor, last = nil, nil
-
-	for index, options in ipairs(chkOptions) do
-
-		f = CreateFrame("CheckButton", nil, frame, "NeuronOptionsCheckButtonTemplate")
-		f:SetWidth(18)
-		f:SetHeight(18)
-		f:SetScript("OnClick", chkOptionOnClick)
-		f.sbType = options[1]
-		f.text:SetText(options[2])
-		f.func = options[3]
-		f.index = options[4]
-		f.parent = frame
-
-		tinsert(sbOpt.chk, f)
-	end
-
-end
-
-
-
-
-local function adjOptionOnTextChanged(edit, frame)
-
-	local sb = NEURON.CurrentObject
-
-	if (sb) then
-
-		if (frame.method == 1) then
-
-		elseif (frame.method == 2) then
-
-			sb[frame.func](sb, edit.value, true)
-
-			edit:HighlightText(0,0)
-		end
-	end
-end
-
-
-
-
-local function adjOptionOnEditFocusLost(edit, frame)
-
-	edit.hasfocus = nil
-
-	local sb = NEURON.CurrentObject
-
-	if (sb) then
-
-		if (frame.method == 1) then
-
-			sb[frame.func](sb, edit:GetText(), true)
-
-		elseif (frame.method == 2) then
-
-		end
-	end
-end
-
-
-
-
-local function adjOptionAdd(frame, onupdate)
-
-	local sb = NEURON.CurrentObject
-
-	if (sb) then
-
-		local num = sb[frame.func](sb, nil, true, true)
-
-		if (num == L["Off"] or num == "---") then
-			num = 0
-		else
-			num = tonumber(num)
-		end
-
-		if (num) then
-
-			if (frame.max and num >= frame.max) then
-
-				sb[frame.func](sb, frame.max, true, nil, onupdate)
-
-				if (onupdate) then
-					if (frame.format) then
-						frame.edit:SetText(string.format(frame.format, frame.max*frame.mult)..frame.endtext)
-					else
-						frame.edit:SetText(frame.max)
-					end
-				end
-			else
-				sb[frame.func](sb, num+frame.inc, true, nil, onupdate)
-
-				if (onupdate) then
-					if (frame.format) then
-						frame.edit:SetText(string.format(frame.format, (num+frame.inc)*frame.mult)..frame.endtext)
-					else
-						frame.edit:SetText(num+frame.inc)
-					end
-				end
-			end
-		end
-	end
-end
-
-
-
-
-local function adjOptionSub(frame, onupdate)
-
-	local sb = NEURON.CurrentObject
-
-	if (sb) then
-
-		local num = sb[frame.func](sb, nil, true, true)
-
-		if (num == L["Off"] or num == "---") then
-			num = 0
-		else
-			num = tonumber(num)
-		end
-
-		if (num) then
-
-			if (frame.min and num <= frame.min) then
-
-				sb[frame.func](sb, frame.min, true, nil, onupdate)
-
-				if (onupdate) then
-					if (frame.format) then
-						frame.edit:SetText(string.format(frame.format, frame.min*frame.mult)..frame.endtext)
-					else
-						frame.edit:SetText(frame.min)
-					end
-				end
-			else
-				sb[frame.func](sb, num-frame.inc, true, nil, onupdate)
-
-				if (onupdate) then
-					if (frame.format) then
-						frame.edit:SetText(string.format(frame.format, (num-frame.inc)*frame.mult)..frame.endtext)
-					else
-						frame.edit:SetText(num-frame.inc)
-					end
-				end
-			end
-		end
-	end
-end
-
-
-
-
-local function adjOptionOnMouseWheel(frame, delta)
-
-	if (delta > 0) then
-		adjOptionAdd(frame)
-	else
-		adjOptionSub(frame)
-	end
-
-end
-
-
-
----this needs to be moved into an AceGUI window
-function NEURON.SB_AdjustableOptions_OnLoad(frame)
-
-	frame:RegisterForDrag("LeftButton", "RightButton")
-
-	local f
-
-	for index, options in ipairs(adjOptions) do
-
-		f = CreateFrame("Frame", "NeuronSB_GUIAdjOpt"..index, frame, "NeuronAdjustOptionTemplate")
-		f:SetID(index)
-		f:SetWidth(200)
-		f:SetHeight(24)
-		f:SetScript("OnShow", function() end)
-		f:SetScript("OnMouseWheel", function(self, delta) adjOptionOnMouseWheel(self, delta) end)
-		f:EnableMouseWheel(true)
-
-		f.text:SetText(options[2]..":")
-		f.method = options[3]
-		f["method"..options[3]]:Show()
-		f.edit = f["method"..options[3]].edit
-		f.edit.frame = f
-		f.option = options[1]
-		f.func = options[4]
-		f.inc = options[5]
-		f.min = options[6]
-		f.max = options[7]
-		f.optData = options[8]
-		f.format = options[9]
-		f.mult = options[10]
-		f.endtext = options[11]
-		f.parent = frame
-
-		if (f.optData == sbStrings) then
-			f.strTable = true
-		end
-
-		f.edit:SetScript("OnTextChanged", function(self) adjOptionOnTextChanged(self, self.frame) end)
-		f.edit:SetScript("OnEditFocusLost", function(self) adjOptionOnEditFocusLost(self, self.frame) end)
-
-		f.addfunc = adjOptionAdd
-		f.subfunc = adjOptionSub
-
-		tinsert(sbOpt.adj, f)
-	end
-
-end
 
 
 
@@ -2607,7 +2181,7 @@ end
 
 function STATUS:LoadAux()
 
-	self:CreateEditFrame(self.objTIndex)
+	NEURON:CreateStatusBarEditFrame(self.objTIndex)
 
 end
 
@@ -2807,48 +2381,3 @@ end
 
 
 
-function STATUS:CreateEditFrame(index)
-
-	local OBJEDITOR_MT = { __index = OBJEDITOR }
-
-	local OBJEDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
-
-	setmetatable(OBJEDITOR, OBJEDITOR_MT)
-
-	OBJEDITOR:EnableMouseWheel(true)
-	OBJEDITOR:RegisterForClicks("AnyDown")
-	OBJEDITOR:SetAllPoints(self)
-	OBJEDITOR:SetScript("OnShow", OBJEDITOR.OnShow)
-	OBJEDITOR:SetScript("OnHide", OBJEDITOR.OnHide)
-	OBJEDITOR:SetScript("OnEnter", OBJEDITOR.OnEnter)
-	OBJEDITOR:SetScript("OnLeave", OBJEDITOR.OnLeave)
-	OBJEDITOR:SetScript("OnClick", OBJEDITOR.OnClick)
-
-	OBJEDITOR.type:SetText("")
-	OBJEDITOR.object = self
-	OBJEDITOR.editType = "status"
-
-	OBJEDITOR.select.TL:ClearAllPoints()
-	OBJEDITOR.select.TL:SetPoint("RIGHT", OBJEDITOR.select, "LEFT", 4, 0)
-	OBJEDITOR.select.TL:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
-	OBJEDITOR.select.TL:SetTexCoord(0.71875, 1, 0, 1)
-	OBJEDITOR.select.TL:SetWidth(16)
-	OBJEDITOR.select.TL:SetHeight(55)
-
-	OBJEDITOR.select.TR:ClearAllPoints()
-	OBJEDITOR.select.TR:SetPoint("LEFT", OBJEDITOR.select, "RIGHT", -4, 0)
-	OBJEDITOR.select.TR:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
-	OBJEDITOR.select.TR:SetTexCoord(0, 0.28125, 0, 1)
-	OBJEDITOR.select.TR:SetWidth(16)
-	OBJEDITOR.select.TR:SetHeight(55)
-
-	OBJEDITOR.select.BL:SetTexture("")
-	OBJEDITOR.select.BR:SetTexture("")
-
-	self.OBJEDITOR = OBJEDITOR
-
-	EDITIndex["STATUS"..index] = OBJEDITOR
-
-	OBJEDITOR:Hide()
-
-end

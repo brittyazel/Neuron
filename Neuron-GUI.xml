@@ -625,7 +625,7 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron:MainMenu_OnLoad(self)
+					Neuron.NeuronGUI:MainMenu_OnLoad(self)
 			</OnLoad>
 			<OnDragStart>
 					self:StartMoving()
@@ -681,10 +681,10 @@
 						</ScrollChild>
 						<Scripts>
 							<OnLoad>
-									Neuron.BarListScrollFrame_OnLoad(self)
+									Neuron.NeuronGUI:BarListScrollFrame_OnLoad()
 							</OnLoad>
 							<OnShow>
-									Neuron.BarListScrollFrameUpdate()
+									Neuron.NeuronGUI:BarListScrollFrameUpdate()
 							</OnShow>
 							<OnVerticalScroll>
 								FauxScrollFrame_OnVerticalScroll(self, offset, 2, Neuron.BarListScrollFrameUpdate)
@@ -694,7 +694,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.BarList_OnLoad(self)
+							Neuron.NeuronGUI:BarList_OnLoad()
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -720,7 +720,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.BarOptions_OnLoad(self)
+									Neuron.NeuronGUI:BarOptions_OnLoad()
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -739,7 +739,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.AdjustableOptions_OnLoad(self)
+									Neuron.NeuronGUI:AdjustableOptions_OnLoad()
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -755,7 +755,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.VisiualOptions_OnLoad(self)
+									Neuron.NeuronGUI:VisiualOptions_OnLoad()
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -774,10 +774,10 @@
 						</Frames>
 						<Scripts>
 							<OnLoad>
-									Neuron.BarEditorColorPicker_OnLoad(self)
+									Neuron.NeuronGUI:BarEditorColorPicker_OnLoad()
 							</OnLoad>
 							<OnShow>
-									Neuron.BarEditorColorPicker_OnShow(self)
+									Neuron.NeuronGUI:BarEditorColorPicker_OnShow()
 							</OnShow>
 						</Scripts>
 					</Frame>
@@ -851,7 +851,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-													Neuron.SubFrameBlackBackdrop_OnLoad(self)
+													Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad()
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -894,10 +894,10 @@
 												</ScrollChild>
 												<Scripts>
 													<OnLoad>
-															Neuron.SecondaryPresetsScrollFrame_OnLoad(self)
+															Neuron.NeuronGUI:SecondaryPresetsScrollFrame_OnLoad()
 													</OnLoad>
 													<OnShow>
-															Neuron.SecondaryPresetsScrollFrameUpdate()
+															Neuron.NeuronGUI:SecondaryPresetsScrollFrameUpdate()
 													</OnShow>
 													<OnVerticalScroll>
 														--FauxScrollFrame_OnVerticalScroll(self, offset, 18, Neuron.SecondaryPresetsScrollFrameUpdate)
@@ -908,7 +908,7 @@
 
 										<Scripts>
 											<OnLoad>
-													Neuron.SubFrameBlackBackdrop_OnLoad(self)
+													Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad()
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -1003,10 +1003,10 @@
 								</ScrollChild>
 								<Scripts>
 									<OnLoad>
-											Neuron.VisEditorScrollFrame_OnLoad(self)
+											Neuron.NeuronGUI:VisEditorScrollFrame_OnLoad()
 									</OnLoad>
 									<OnShow>
-											Neuron.VisEditorScrollFrameUpdate()
+											Neuron.NeuronGUI:VisEditorScrollFrameUpdate()
 									</OnShow>
 									<OnVerticalScroll>
 										FauxScrollFrame_OnVerticalScroll(self, offset, 18, Neuron.VisEditorScrollFrameUpdate)
@@ -1016,7 +1016,7 @@
 						</Frames>
 						<Scripts>
 							<OnLoad>
-									Neuron:VisEditor_OnLoad(self)
+									Neuron.NeuronGUI:VisEditor_OnLoad()
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -1032,14 +1032,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron:StateList_OnLoad(self)
+									Neuron.NeuronGUI:StateList_OnLoad()
 							</OnLoad>
 						</Scripts>
 					</Frame>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron:BarStates_OnLoad(self)
+							Neuron.NeuronGUI:BarStates_OnLoad()
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1123,7 +1123,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron:TargetOptions_OnLoad(self)
+							Neuron.NeuronGUI:TargetOptions_OnLoad()
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1140,10 +1140,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							Neuron:CreateButton_OnLoad(self)
+							Neuron.NeuronGUI:CreateButton_OnLoad()
 					</OnLoad>
 					<OnClick>
-							Neuron:BarEditor_CreateNewBar(self)
+							Neuron.NeuronGUI:BarEditor_CreateNewBar()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -1157,10 +1157,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							Neuron:DeleteButton_OnLoad(self)
+							Neuron.NeuronGUI:DeleteButton_OnLoad()
 					</OnLoad>
 					<OnClick>
-							Neuron:BarEditor_DeleteBar(self)
+							Neuron.NeuronGUI:BarEditor_DeleteBar()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -1193,10 +1193,10 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron:ConfirmYes_OnLoad(self)
+									Neuron.NeuronGUI:ConfirmYes_OnLoad()
 							</OnLoad>
 							<OnClick>
-									Neuron:BarEditor_ConfirmYes(self)
+									Neuron.NeuronGUI:BarEditor_ConfirmYes()
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -1209,17 +1209,17 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron:ConfirmNo_OnLoad(self)
+									Neuron.NeuronGUI:ConfirmNo_OnLoad()
 							</OnLoad>
 							<OnClick>
-									Neuron:BarEditor_ConfirmNo(self)
+									Neuron.NeuronGUI:BarEditor_ConfirmNo()
 							</OnClick>
 						</Scripts>
 					</Button>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron:Confirm_OnLoad(self)
+							Neuron.NeuronGUI:Confirm_OnLoad()
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1246,7 +1246,7 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron:BarEditor_OnLoad(self)
+					Neuron.NeuronGUI:BarEditor_OnLoad()
 			</OnLoad>
 			<OnDragStart>
 					self:StartMoving()
@@ -1287,13 +1287,13 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron:ObjectEditor_OnLoad(self)
+					Neuron.NeuronGUI:ObjectEditor_OnLoad()
 			</OnLoad>
 			<OnShow>
-					Neuron:ObjectEditor_OnShow(self)
+					Neuron.NeuronGUI:ObjectEditor_OnShow()
 			</OnShow>
 			<OnHide>
-					Neuron:ObjectEditor_OnHide(self)
+					Neuron.NeuronGUI:ObjectEditor_OnHide()
 			</OnHide>
 			<OnDragStart>
 					self:StartMoving()
@@ -1363,10 +1363,10 @@
 						</ScrollChild>
 						<Scripts>
 							<OnLoad>
-									Neuron:ActionListScrollFrame_OnLoad(self)
+									Neuron.NeuronGUI:ActionListScrollFrame_OnLoad()
 							</OnLoad>
 							<OnShow>
-									Neuron.ActionListScrollFrameUpdate()
+									Neuron.NeuronGUI:ActionListScrollFrameUpdate()
 							</OnShow>
 							<OnVerticalScroll>
 								FauxScrollFrame_OnVerticalScroll(self, offset, 2, Neuron.ActionListScrollFrameUpdate)
@@ -1376,7 +1376,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron:ActionList_OnLoad(self)
+							Neuron.NeuronGUI:ActionList_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1402,7 +1402,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.SubFrameBlackBackdrop_OnLoad(self)
+									Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -1418,7 +1418,7 @@
 									self:GetParent():Hide()
 							</OnClick>
 							<OnHide>
-									Neuron:ButtonEditorIconList_ResetCustom(self:GetParent():GetParent())
+									Neuron.NeuronGUI:ButtonEditorIconList_ResetCustom(self:GetParent():GetParent())
 							</OnHide>
 						</Scripts>
 						<NormalTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
@@ -1459,13 +1459,13 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron:ButtonEditor_OnLoad(self)
+					Neuron.NeuronGUI:ButtonEditor_OnLoad()
 			</OnLoad>
 			<OnShow>
-					Neuron:ButtonEditor_OnShow(self)
+					Neuron.NeuronGUI:ButtonEditor_OnShow()
 			</OnShow>
 			<OnHide>
-					Neuron:ButtonEditor_OnHide(self)
+					Neuron.NeuronGUI:ButtonEditor_OnHide()
 			</OnHide>
 			<OnDragStart>
 					self:GetParent():StartMoving()
@@ -1512,7 +1512,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							Neuron.SubFrameBlackBackdrop_OnLoad(self)
+							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad()
 					</OnLoad>
 					<OnValueChanged>
 						if (NeuronColorPicker.opacityFunc) then
@@ -1549,7 +1549,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.SubFrameBlackBackdrop_OnLoad(self)
+							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad()
 					</OnLoad>
 					<OnTabPressed>
 						self:GetParent().greenvalue:SetFocus()
@@ -1582,7 +1582,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.SubFrameBlackBackdrop_OnLoad(self)
+							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad()
 					</OnLoad>
 					<OnTabPressed>
 						self:GetParent().bluevalue:SetFocus()
@@ -1615,7 +1615,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.SubFrameBlackBackdrop_OnLoad(self)
+							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad()
 					</OnLoad>
 					<OnTabPressed>
 						self:GetParent().hexvalue:SetFocus()
@@ -1648,7 +1648,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.SubFrameBlackBackdrop_OnLoad(self)
+							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad()
 					</OnLoad>
 					<OnTextChanged>
 						self:SetText((self:GetText()):gsub("%X", ""):upper())
@@ -1696,7 +1696,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.SubFrameBlackBackdrop_OnLoad(self)
+							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad()
 					</OnLoad>
 					<OnTabPressed>
 						local value = self:GetText()
@@ -1761,14 +1761,77 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron.ColorPicker_OnLoad(self)
+					Neuron.NeuronGUI:ColorPicker_OnLoad()
 			</OnLoad>
 			<OnShow>
-					Neuron.ColorPicker_OnShow(self)
+					Neuron.NeuronGUI:ColorPicker_OnShow()
 			</OnShow>
 			<OnColorSelect>
 				Neuron.ColorPicker_OnColorSelect(self, r, g, b)
 			</OnColorSelect>
 		</Scripts>
 	</ColorSelect>
+
+
+	<Frame name="NeuronStatusBarEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" clampedToScreen="true" hidden="true">
+		<Frames>
+			<Frame name="$parentTypes" parentKey="types">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="10" y="-30"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT">
+						<Offset x="135" y="10"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+				</Frames>
+				<Scripts>
+					<OnLoad>
+							Neuron.NeuronGUI:SB_EditorTypes_OnLoad()
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentAdjustableOptions" parentKey="adjoptions">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTypes" relativePoint="TOPRIGHT">
+						<Offset x="5" y="0"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-10" y="10"/>
+					</Anchor>
+				</Anchors>
+				<Frames>
+
+				</Frames>
+				<Scripts>
+					<OnLoad>
+							Neuron.NeuronGUI:SB_AdjustableOptions_OnLoad()
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+					Neuron.NeuronGUI:StatusBarEditor_OnLoad()
+			</OnLoad>
+			<OnShow>
+					Neuron.NeuronGUI:StatusBarEditor_OnShow()
+			</OnShow>
+			<OnHide>
+					Neuron.NeuronGUI:StatusBarEditor_OnHide()
+			</OnHide>
+			<OnDragStart>
+					self:GetParent():StartMoving()
+			</OnDragStart>
+			<OnDragStop>
+					self:GetParent():StopMovingOrSizing()
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+
+
+
+
 </Ui>

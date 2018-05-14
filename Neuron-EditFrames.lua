@@ -31,6 +31,8 @@ function NeuronEditor:OnInitialize()
 
 	NEURON.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
 
+	LoadAddOn("Neuron-GUI")
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.

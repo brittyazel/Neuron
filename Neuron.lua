@@ -308,6 +308,8 @@ function NEURON:OnInitialize()
 	frame:SetFrameStrata("TOOLTIP")
 	frame:Hide()
 
+
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -1087,7 +1089,7 @@ end
 
 
 
-
+--TODO: This should be moved to Neuron-GUI
 function NEURON.EditBox_PopUpInitialize(popupFrame, data)
 	popupFrame.func = NEURON.PopUp_Update
 	popupFrame.data = data
