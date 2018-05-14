@@ -236,13 +236,30 @@ end
 
 --- OnEnter Event handler
 function BINDER:OnEnter()
+
+    local button = self.button
+
 	self.select:Show()
+
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+
+	GameTooltip:ClearLines()
+    GameTooltip:SetText("Neuron")
+    GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffd100" .. self.bindType:gsub("^%l", string.upper) .. " " .. button.id .. "|r", 1.0, 1.0, 1.0)
+	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffd100" .. self:GetBindkeyList(button) .. "|r", 1.0, 1.0, 1.0)
+    GameTooltip:AddLine(" ")
+	GameTooltip:AddLine(L["Keybind_Tooltip_3"], 1.0, 1.0, 1.0)
+	GameTooltip:AddLine(L["Keybind_Tooltip_4"], 1.0, 1.0, 1.0)
+	GameTooltip:AddLine(L["Keybind_Tooltip_5"], 1.0, 1.0, 1.0)
+
+	GameTooltip:Show()
 end
 
 
 --- OnLeave Event handler
 function BINDER:OnLeave()
 	self.select:Hide()
+    GameTooltip:Hide()
 end
 
 

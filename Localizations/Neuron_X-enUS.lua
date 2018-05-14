@@ -239,10 +239,11 @@ L["Shift + Left-Click to Toggle Keybind Mode"] = true
 L["Shift + Right-Click to Toggle the Interface Menu"] = true
 
 
-L["Keybind_Tooltip_1"] = "Hit a key to bind it to"
-L["Keybind_Tooltip_2"] = "Left-Click to LOCK this %s's bindings\n\nRight-Click to make this %s's bindings a PRIORITY bind\n\nHit ESC to clear this %s's current binding(s)]"
-L["Keybind_Tooltip_3"] = "Current Binding(s):"
-
+L["Keybind_Tooltip_1"] = "Press a key to bind it to"
+L["Keybind_Tooltip_2"] = "Current Binding(s)"
+L["Keybind_Tooltip_3"] = "Left-Click to lock the current binding(s)"
+L["Keybind_Tooltip_4"] = "Right-Click to give these bindings maximum priority"
+L["Keybind_Tooltip_5"] = "Hit ESC to clear the current binding(s)"
 
 L["Empty Button"] = true
 L["Edit Bindings"] = true
@@ -251,7 +252,6 @@ L["None"] = true
 L["Locked"] = true
 L["Priority"] = true
 L["Bindings_Locked_Notice"]	= "This button's bindings are locked.\nLeft-Click button to unlock."
-L["Keybind_Credits"] = "Neuron Key Binder\nThe Original Mouseover Binding System\nDeveloped by Maul"
 
 L["Off"] = true
 L["Combat"] = true

@@ -2493,7 +2493,8 @@ function BUTTON:MACRO_OnEnter(...)
 		if (self.tooltips) then
 			if (self.tooltipsEnhanced) then
 				self.UberTooltips = true
-				GameTooltip_SetDefaultAnchor(GameTooltip, self)
+				--GameTooltip_SetDefaultAnchor(GameTooltip, self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			else
 				self.UberTooltips = false
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")

@@ -1555,9 +1555,9 @@ function STATUS:OnEnter()
 			if (self.bar.cdata.tooltips) then
 
 				if (self.bar.cdata.tooltipsEnhanced) then
-					GameTooltip_SetDefaultAnchor(GameTooltip, self)
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				else
-					GameTooltip:SetOwner("STATUS_RIGHT")
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				end
 
 				GameTooltip:SetText(self.sb.tFunc(self.sb) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
