@@ -239,13 +239,21 @@ function BINDER:OnEnter()
 
     local button = self.button
 
+	local name = self.bindType:gsub("^%l", string.upper).. " " .. button.id
+
+	if self.button.spellID then
+		name = GetSpellInfo(self.button.spellID)
+	elseif self.button.macroitem then
+		name = self.button.macroitem
+	end
+
 	self.select:Show()
 
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
 	GameTooltip:ClearLines()
     GameTooltip:SetText("Neuron")
-    GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffd100" .. self.bindType:gsub("^%l", string.upper) .. " " .. button.id .. "|r", 1.0, 1.0, 1.0)
+	GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffd100" .. name  .. "|r", 1.0, 1.0, 1.0)
 	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffd100" .. self:GetBindkeyList(button) .. "|r", 1.0, 1.0, 1.0)
     GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(L["Keybind_Tooltip_3"], 1.0, 1.0, 1.0)
