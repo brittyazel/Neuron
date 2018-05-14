@@ -187,7 +187,7 @@ function BINDER:ProcessBinding(key, button)
 	if (key == "ESCAPE") then
 		self:ClearBindings(button)
 	elseif (key) then
-		for index,binder in pairs(BINDIndex) do
+		for _,binder in pairs(BINDIndex) do
 			if (button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
 				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then self:ClearBindings(binder.button, binding) self:ApplyBindings(binder.button) end end)
 			end
@@ -236,31 +236,13 @@ end
 
 --- OnEnter Event handler
 function BINDER:OnEnter()
-	local button = self.button
-
 	self.select:Show()
-
-	NeuronBindingsEditor:ClearLines()
-	NeuronBindingsEditor:SetText(L["Keybind_Credits"])
-	NeuronBindingsEditor:AddDoubleLine(L["Keybind_Tooltip_1"], self.bindType:gsub("^%l", string.upper).." "..button.id, 1.0, 1.0, 1.0, 0, 1, 0)
-	NeuronBindingsEditor:AddLine(" ")
-	NeuronBindingsEditor:AddLine(format(L["Keybind_Tooltip_2"], self.bindType, self.bindType, self.bindType), 1.0, 1.0, 1.0)
-	NeuronBindingsEditor:AddLine(" ")
-	NeuronBindingsEditor:AddDoubleLine(L["Keybind_Tooltip_3"], self:GetBindkeyList(button), 1.0, 1.0, 1.0, 0, 1, 0)
-	NeuronBindingsEditor:AddLine(" ")
-
-	NeuronBindingsEditor:Show()
-
 end
 
 
 --- OnLeave Event handler
 function BINDER:OnLeave()
-	NeuronBindingsEditor:ClearLines()
-	NeuronBindingsEditor:SetText(L["Keybind_Credits"])
-
 	self.select:Hide()
-
 end
 
 
@@ -394,45 +376,6 @@ function BUTTON:CreateBindFrame(index)
 end
 
 
---- OnLoad Event handler for the Bindings Editor
--- @param frame: frame that was loaded
-function NEURON:BindingsEditor_OnLoad(frame)
-
-	--this line was causing a crash on the beta
-	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
-
-	frame:SetBackdropBorderColor(0.5, 0.5, 0.5)
-	frame:SetBackdropColor(0,0,0,0.8)
-
-	frame:RegisterForDrag("LeftButton")
-
-	for i = 1, select("#", frame:GetRegions()) do
-		local region = select(i, frame:GetRegions())
-		if (region and region.SetJustifyH) then
-			region:SetJustifyH("CENTER")
-			region:SetJustifyV("CENTER")
-		end
-	end
-
-	NeuronBindingsEditorTextLeft1:ClearAllPoints()
-	NeuronBindingsEditorTextLeft1:SetPoint("TOP", 0, -10)
-
-	NeuronBindingsEditorTextLeft2:ClearAllPoints()
-	NeuronBindingsEditorTextLeft2:SetPoint("TOPLEFT", 10, -50)
-
-	NeuronBindingsEditorTextRight2:ClearAllPoints()
-	NeuronBindingsEditorTextRight2:SetPoint("TOPRIGHT", -10, -62)
-	NeuronBindingsEditorTextRight2:SetFontObject("GameFontNormal")
-end
-
-
-function NEURON:BindingsEditor_OnShow(frame)
-end
-
-
-function NEURON:BindingsEditor_OnHide(frame)
-end
-
 --- Toggles the displaying of key bindings
 -- @param show: True if to be displayed
 -- @param hide: True if to be hidden
@@ -440,7 +383,7 @@ function NEURON:ToggleBindings(show, hide)
 	if (NEURON.BindingMode or hide) then
 		NEURON.BindingMode = false
 
-		for index, binder in pairs(BINDIndex) do
+		for _, binder in pairs(BINDIndex) do
 			binder:Hide(); binder.button.editmode = NEURON.BindingMode
 			binder:SetFrameStrata("LOW")
 			if (not NEURON.BarsShown) then
@@ -448,15 +391,12 @@ function NEURON:ToggleBindings(show, hide)
 			end
 		end
 
-		NeuronBindingsEditor:Hide()
-
 	else
-		--NEURON:ToggleMainMenu(nil, true)
 		NEURON:ToggleEditFrames(nil, true)
 
 		NEURON.BindingMode = true
 
-		for index, binder in pairs(BINDIndex) do
+		for _, binder in pairs(BINDIndex) do
 			binder:Show(); binder.button.editmode = NEURON.BindingMode
 
 			if (binder.button.bar) then
@@ -465,10 +405,6 @@ function NEURON:ToggleBindings(show, hide)
 				binder.button:SetGrid(true)
 			end
 		end
-
-		NeuronBindingsEditor:SetOwner(UIParent, "ANCHOR_PRESERVE")
-		NeuronBindingsEditor:SetText(L["Keybind_Credits"])
-		NeuronBindingsEditor:Show()
 
 	end
 end

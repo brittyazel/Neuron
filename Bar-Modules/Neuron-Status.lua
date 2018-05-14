@@ -2172,8 +2172,6 @@ end
 
 function NEURON:SB_EditorTypes_OnLoad(frame)
 
-	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
-
 	local f, anchor, last
 
 	for index, types in ipairs(sbTypes) do
@@ -2367,10 +2365,8 @@ end
 
 
 
-
+---this needs to be moved into an AceGUI window
 function NEURON.SB_AdjustableOptions_OnLoad(frame)
-
-	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
 
 	frame:RegisterForDrag("LeftButton", "RightButton")
 

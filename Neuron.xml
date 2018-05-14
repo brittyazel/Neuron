@@ -1396,7 +1396,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.SubFrameBlankBackdrop_OnLoad(self)
+									--Neuron.SubFrameBlankBackdrop_OnLoad(self)
 									self:SetBackdropColor(0, 0, 0, 0)
 									self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
@@ -1441,7 +1441,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.SubFrameBlankBackdrop_OnLoad(self)
+									--Neuron.SubFrameBlankBackdrop_OnLoad(self)
 									self:SetBackdropColor(0, 0, 0, 0)
 									self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
@@ -1470,76 +1470,4 @@
 			</OnUpdate>
 		</Scripts>
 	</Frame>
-
-	<Frame name="NeuronMiniOrbTemplate" virtual="true">
-		<Size x="14" y="14"/>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture name="$parentTexture" parentKey="texture">
-					<Size x="12.5" y="12.5"/>
-					<Anchors>
-						<Anchor point="CENTER"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="ARTWORK">
-				<Texture parentKey="globe" file="Interface\AddOns\Neuron\Images\globe_black">
-					<Size x="14" y="14"/>
-					<Anchors>
-						<Anchor point="CENTER"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="OVERLAY">
-				<Texture name="$parentShine" parentKey="shine" file="Interface\ComboFrame\ComboPoint" alphaMode="ADD">
-					<Size x="10" y="12"/>
-					<Anchors>
-						<Anchor point="CENTER">
-							<Offset x="0" y="4"/>
-						</Anchor>
-					</Anchors>
-					<TexCoords left="0.5625" right="1" top="0" bottom="1"/>
-					<Color r="1" g="1" b="1" a="0"/>
-				</Texture>
-				<Texture parentKey="glow" file="Interface\AddOns\Neuron\Images\cast_glow" hidden="true" alphaMode="ADD">
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="-0.5" y="0.5"/>
-						</Anchor>
-						<Anchor point="BOTTOMRIGHT">
-							<Offset x="0.5" y="-0.5"/>
-						</Anchor>
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
-	</Frame>
-
-
-	<GameTooltip name="NeuronBindingsEditor" inherits="GameTooltipTemplate" parent="UIParent" enableMouse="true" toplevel="true" movable="true" frameStrata="TOOLTIP" hidden="true">
-		<Size x="128" y="64"/>
-		<Anchors>
-			<Anchor point="TOP" relativeTo="UIParent" relativePoint="TOP">
-				<Offset x="0" y="-125"/>
-			</Anchor>
-		</Anchors>
-
-		<Scripts>
-			<OnLoad>
-					Neuron:BindingsEditor_OnLoad(self)
-			</OnLoad>
-			<OnShow>
-					Neuron:BindingsEditor_OnShow(self)
-			</OnShow>
-			<OnHide>
-					Neuron:BindingsEditor_OnHide(self)
-			</OnHide>
-			<OnDragStart>
-					self:StartMoving()
-			</OnDragStart>
-			<OnDragStop>
-					self:StopMovingOrSizing()
-			</OnDragStop>
-		</Scripts>
-	</GameTooltip>
 </Ui>

@@ -98,6 +98,88 @@ local function round(num, idp)
 end
 
 
+function NEURON.SubFramePlainBackdrop_OnLoad(self)
+	self:SetBackdrop({
+		bgFile = "",
+		edgeFile = "Interface\\AddOns\\Neuron\\Images\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 22,
+		insets = {left = 5, right = 5, top = 5, bottom = 5},})
+	self:SetBackdropBorderColor(0.35, 0.35, 0.35, 1)
+	self:SetBackdropColor(0,0,0,0)
+	self:GetParent().backdrop = self
+
+	self.bg = self:CreateTexture(nil, "BACKGROUND")
+	self.bg:SetTexture("Interface\\FriendsFrame\\UI-Toast-Background", true)
+	self.bg:SetVertexColor(0.65,0.65,0.65,0.85)
+	self.bg:SetPoint("TOPLEFT", 3, -3)
+	self.bg:SetPoint("BOTTOMRIGHT", -3, 3)
+	self.bg:SetHorizTile(true)
+	self.bg:SetVertTile(true)
+end
+
+
+function NEURON.SubFrameBlackBackdrop_OnLoad(self)
+	self:SetBackdrop({
+		bgFile = "",
+		edgeFile = "Interface\\AddOns\\Neuron\\Images\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 18,
+		insets = {left = 5, right = 5, top = 5, bottom = 5},})
+	self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+	self:SetBackdropColor(0,0,0,0)
+	self:GetParent().backdrop = self
+
+	self.bg = self:CreateTexture(nil, "BACKGROUND")
+	self.bg:SetTexture("Interface\\FriendsFrame\\UI-Toast-Background", true)
+	self.bg:SetVertexColor(0.65,0.65,0.65,1)
+	self.bg:SetPoint("TOPLEFT", 3, -3)
+	self.bg:SetPoint("BOTTOMRIGHT", -3, 3)
+	self.bg:SetHorizTile(true)
+	self.bg:SetVertTile(true)
+end
+
+
+function NEURON.SubFrameBlankBackdrop_OnLoad(self)
+	self:SetBackdrop({
+		bgFile = "",
+		edgeFile = "Interface\\AddOns\\Neuron\\Images\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 12,
+		insets = {left = 5, right = 5, top = 5, bottom = 5},})
+	self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+	self:SetBackdropColor(0,0,0,0)
+	self:GetParent().backdrop = self
+end
+
+
+function NEURON.SubFrameHoneycombBackdrop_OnLoad(self)
+	self:SetBackdrop({
+		bgFile = "",
+		edgeFile = "Interface\\AddOns\\Neuron\\Images\\UI-Tooltip-Border",
+		tile = true,
+		tileSize = 16,
+		edgeSize = 18,
+		insets = {left = 5, right = 5, top = 5, bottom = 5},})
+	self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+	self:SetBackdropColor(0,0,0,0)
+	self:GetParent().backdrop = self
+
+	self.bg = self:CreateTexture(nil, "BACKGROUND")
+	self.bg:SetTexture("Interface\\AddOns\\Neuron\\Images\\honeycomb_small", true)
+	self.bg:SetVertexColor(0.65,0.65,0.65,1)
+	self.bg:SetPoint("TOPLEFT", 3, -3)
+	self.bg:SetPoint("BOTTOMRIGHT", -3, 3)
+	self.bg:SetHorizTile(true)
+	self.bg:SetVertTile(true)
+end
+
+
+
+
 local function insertLink(text)
 
 	local item = GetItemInfo(text)
