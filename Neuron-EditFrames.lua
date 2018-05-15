@@ -104,18 +104,18 @@ function OBJEDITOR:OnClick(button)
 			if (not newObj and NeuronObjectEditor:IsVisible()) then
 				NeuronObjectEditor:Hide()
 			elseif (newObj and newEditor) then
-				NEURON:ObjectEditor_OnShow(NeuronObjectEditor); NeuronObjectEditor:Show()
+				NEURON.NeuronGUI:ObjectEditor_OnShow(NeuronObjectEditor); NeuronObjectEditor:Show()
 			else
 				NeuronObjectEditor:Show()
 			end
 		end
 
 	elseif (newObj and newEditor and NeuronObjectEditor:IsVisible()) then
-		NEURON:ObjectEditor_OnShow(NeuronObjectEditor); NeuronObjectEditor:Show()
+		NEURON.NeuronGUI:ObjectEditor_OnShow(NeuronObjectEditor); NeuronObjectEditor:Show()
 	end
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
-		NEURON:UpdateObjectGUI()
+		NEURON.NeuronGUI:UpdateObjectGUI()
 	end
 end
 

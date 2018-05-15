@@ -2225,7 +2225,7 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 	StartDrag = false
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
-		NEURON:UpdateObjectGUI()
+		NEURON.NeuronGUI:UpdateObjectGUI()
 	end
 end
 

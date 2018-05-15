@@ -1153,7 +1153,7 @@ function BAR:SetFauxState(state)
 	end
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
-		NEURON:UpdateObjectGUI()
+		NEURON.NeuronGUI:UpdateObjectGUI()
 	end
 end
 
