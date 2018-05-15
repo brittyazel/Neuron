@@ -1014,11 +1014,11 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f = CreateFrame("EditBox", nil,frame, "NeuronEditBoxTemplateSmall")
 	f:SetWidth(160)
 	f:SetHeight(26)
-	f:SetPoint("LEFT", frame.tab1, "LEFT", -3.5, 0)
+	f:SetPoint("LEFT", frame.tab1, "LEFT", -3.5, 0) --weirdly I had to change the first "RIGHT" to a "LEFT" when I switched to Ace3-Addon
 	f:SetPoint("TOPLEFT", frame.barlist, "TOPRIGHT", 3.5, 0)
-	f:SetScript("OnEnterPressed", frame.updateBarName)
-	f:SetScript("OnTabPressed", frame.updateBarName)
-	f:SetScript("OnEscapePressed", frame.resetBarName)
+	f:SetScript("OnEnterPressed", function(self) NeuronGUI:updateBarName(self) end)
+	f:SetScript("OnTabPressed", function(self) NeuronGUI:updateBarName(self) end)
+	f:SetScript("OnEscapePressed", function(self) NeuronGUI:resetBarName(self) end)
 	frame.barname = f
 
 	NeuronGUI:SubFrameBlackBackdrop_OnLoad(f)
@@ -1380,7 +1380,7 @@ function NeuronGUI:BarOptions_OnLoad(frame)
 		f:SetID(index)
 		f:SetWidth(18)
 		f:SetHeight(18)
-		f:SetScript("OnClick", NeuronGUI.chkOptionOnClick)
+		f:SetScript("OnClick", function(self) NeuronGUI:chkOptionOnClick(self) end)
 		--f:SetScale(options[2])
 		f:SetScale(1)
 		f:SetHitRectInsets(-100, 0, 0, 0)
@@ -1573,8 +1573,8 @@ function NeuronGUI:AdjustableOptions_OnLoad(frame)
 		f.edit:SetScript("OnTextChanged", function(self) NeuronGUI:adjOptionOnTextChanged(self, self.frame) end)
 		f.edit:SetScript("OnEditFocusLost", function(self) NeuronGUI:adjOptionOnEditFocusLost(self, self.frame) end)
 
-		f.addfunc = NeuronGUI:adjOptionAdd()
-		f.subfunc = NeuronGUI:adjOptionSub()
+		f.addfunc = (function(self) NeuronGUI:adjOptionAdd(self) end)
+		f.subfunc = (function(self) NeuronGUI:adjOptionSub(self) end)
 
 		tinsert(barOpt.adj, f)
 	end
@@ -2959,7 +2959,7 @@ function NeuronGUI:MacroIconListUpdate(frame)
 
 	end
 
-	FauxScrollFrame_Update(frame, ceil(numIcons/14), 1, 1, nil, nil, nil, nil, nil, nil, true)
+	FauxScrollFrame_Update(frame, math.ceil(numIcons/14), 1, 1, nil, nil, nil, nil, nil, nil, true)
 
 end
 
@@ -3073,10 +3073,6 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	end
 	frame:RegisterForDrag("LeftButton", "RightButton")
 
-	--[[if not NEURON.Editors.ACTIONBUTTON then
-		NEURON.Editors.ACTIONBUTTON = {}
-	end]]
-
 	NEURON.Editors.ACTIONBUTTON[1] = frame
 	NEURON.Editors.ACTIONBUTTON[4] = self.ButtonEditorUpdate
 
@@ -3143,7 +3139,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetWidth(34)
 	f:SetHeight(34)
 	--f:SetScript("OnClick", function(self) SetActiveSpecGroup(GetActiveSpecGroup() == 1 and 2 or 1);  end)
-	f:SetScript("OnClick", self.ResetButtonFields)
+	f:SetScript("OnClick", function(self) NeuronGUI:ResetButtonFields(self) end)
 	f:SetScript("OnEnter", function(self)
 		if ( self.tooltipText ) then
 			GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
@@ -3346,9 +3342,9 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetTextInsets(22, 0, 0, 0)
 	f:SetPoint("TOPLEFT", 8, 36)
 	f:SetScript("OnShow", function(self) self:SetText("") end)
-	f:SetScript("OnEnterPressed", function(self) NeuronGUI:updateIconList() NeuronGUI:MacroIconListUpdate(self) self:ClearFocus() self.hasfocus = nil end)
-	f:SetScript("OnTabPressed", function(self) NeuronGUI:updateIconList() NeuronGUI:MacroIconListUpdate(self) self:ClearFocus() self.hasfocus = nil end)
-	f:SetScript("OnEscapePressed", function(self) self:SetText("") NeuronGUI:updateIconList() NeuronGUI:MacroIconListUpdate(self)  self:ClearFocus() self.hasfocus = nil end)
+	f:SetScript("OnEnterPressed", function(self) NeuronGUI:updateIconList(); NeuronGUI:MacroIconListUpdate(self); self:ClearFocus(); self.hasfocus = nil; end)
+	f:SetScript("OnTabPressed", function(self) NeuronGUI:updateIconList(); NeuronGUI:MacroIconListUpdate(self); self:ClearFocus(); self.hasfocus = nil; end)
+	f:SetScript("OnEscapePressed", function(self) self:SetText(""); NeuronGUI:updateIconList(); NeuronGUI:MacroIconListUpdate(self); self:ClearFocus(); self.hasfocus = nil; end)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.cancel:Show() self.hasfocus = true end)
 	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() self.cancel:Hide() end self.hasfocus = nil end)
 	f:SetScript("OnTextChanged", function(self) if (strlen(self:GetText()) < 1 and not self.hasfocus) then self.text:Show() self.cancel:Hide() end end)
@@ -3540,11 +3536,12 @@ end
 
 
 function NeuronGUI:ColorPicker_OnShow(frame)
+
 	local r,g,b = frame:GetColorRGB()
 	frame.redvalue:SetText(r); frame.redvalue:SetCursorPosition(0)
 	frame.greenvalue:SetText(g); frame.greenvalue:SetCursorPosition(0)
 	frame.bluevalue:SetText(b); frame.bluevalue:SetCursorPosition(0)
-	frame.hexvalue:SetText(string.upper(string.format("%02x%02x%02x", math.ceil((r*255)), math.ceil((g*255)), math.ceil((b*255))))); self.hexvalue:SetCursorPosition(0)
+	frame.hexvalue:SetText(string.upper(string.format("%02x%02x%02x", math.ceil((r*255)), math.ceil((g*255)), math.ceil((b*255))))); frame.hexvalue:SetCursorPosition(0)
 end
 
 function NeuronGUI:ColorPicker_OnColorSelect(frame, r, g, b)
