@@ -28,10 +28,12 @@ Neuron-SnapTo.lua
 Neuron-MinimapIcon.lua
 Neuron-Flyouts.lua
 
+Neuron.xml
+
 Neuron-GUI.lua
 Neuron-GUI.xml
 
-Neuron.xml
+
 
 Bar-Modules/Neuron-Extra.lua
 Bar-Modules/Neuron-ZoneAbility.lua

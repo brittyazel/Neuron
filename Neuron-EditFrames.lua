@@ -20,6 +20,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
 
+
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -30,8 +31,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 function NeuronEditor:OnInitialize()
 
 	NEURON.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
-
-	LoadAddOn("Neuron-GUI")
 
 end
 
@@ -100,10 +99,6 @@ function OBJEDITOR:OnClick(button)
 	local newObj, newEditor = NEURON:ChangeObject(self.object)
 
 	if (button == "RightButton") then
-
-		if (not IsAddOnLoaded("Neuron-GUI")) then
-			LoadAddOn("Neuron-GUI")
-		end
 
 		if (NeuronObjectEditor) then
 			if (not newObj and NeuronObjectEditor:IsVisible()) then

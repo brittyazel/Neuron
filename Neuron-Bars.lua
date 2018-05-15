@@ -1072,7 +1072,7 @@ function BAR:Update(show, hide)
 	self:SaveData()
 
 	if (not hide and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
-		NEURON:UpdateBarGUI()
+		NEURON.NeuronGUI:UpdateBarGUI()
 	end
 end
 
@@ -1471,7 +1471,7 @@ function BAR:OnClick(...)
 	end
 
 	if (not down and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
-		NEURON:UpdateBarGUI(newBar)
+		NEURON.NeuronGUI:UpdateBarGUI(newBar)
 	end
 end
 
@@ -1901,7 +1901,7 @@ function BAR:DeleteBar()
 	self.CDB[self:GetID()] = nil
 
 	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
-		NEURON:UpdateBarGUI()
+		NEURON.NeuronGUI:UpdateBarGUI()
 	end
 end
 
