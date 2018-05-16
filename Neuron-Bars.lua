@@ -1991,21 +1991,16 @@ function BAR:RemoveObjects(num)
 		num = 1
 	end
 
+
 	for i=1,num do
 
-		local id
+		local objID = (self.gdata.objectList):match("%d+$")
 
-		for index in ipairs(self.objTable) do
-			id = index
-		end
-
-		if (id) then
-			local object = self.objTable[id]
+		if (objID) then
+			local object = _G[self.objPrefix..objID]
 			if (object) then
-				self:StoreObject(object, self.objStorage, self.objTable) --I think this reassigns an object to some sort of storage place when removed
-				self:RemoveObjectFromList(id)
-				tremove(self.objTable, id)
-				_G[self.objPrefix..id] = nil
+				self:StoreObject(object, self.objStorage, self.objTable)
+				self:RemoveObjectFromList(objID)
 				self.objCount = self.objCount - 1
 				self.countChanged = true
 			end
@@ -2016,6 +2011,7 @@ function BAR:RemoveObjects(num)
 			self:Update()
 		end
 	end
+
 
 end
 
