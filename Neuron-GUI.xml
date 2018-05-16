@@ -1369,7 +1369,7 @@
 									Neuron.NeuronGUI:ActionListScrollFrameUpdate(self)
 							</OnShow>
 							<OnVerticalScroll>
-								FauxScrollFrame_OnVerticalScroll(self, offset, 2, Neuron.ActionListScrollFrameUpdate)
+								FauxScrollFrame_OnVerticalScroll(self, offset, 2, Neuron.NeuronGUI:ActionListScrollFrameUpdate(self))
 							</OnVerticalScroll>
 						</Scripts>
 					</ScrollFrame>
@@ -1452,7 +1452,7 @@
 							self.parent = self:GetParent()
 					</OnLoad>
 					<OnVerticalScroll>
-						-- FauxScrollFrame_OnVerticalScroll(self, offset, 1, Neuron.MacroIconListUpdate)
+						FauxScrollFrame_OnVerticalScroll(self, offset, 1, Neuron.NeuronGUI:MacroIconListUpdate(self))
 					</OnVerticalScroll>
 				</Scripts>
 			</ScrollFrame>
