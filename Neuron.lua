@@ -405,6 +405,10 @@ function NEURON:PLAYER_ENTERING_WORLD()
 	NEURON:UpdateToyData()
 	NEURON:UpdateIconIndex()
 
+	--Fix for Titan causing the Main Bar to not be hidden
+	if (IsAddOnLoaded("Titan")) then
+		TitanUtils_AddonAdjust("MainMenuBar", true)
+	end
 
 	NEURON:ToggleBlizzBar(GDB.mainbar)
 
