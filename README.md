@@ -5,12 +5,6 @@ Neuron is a full featured action Bar addon for World of Warcraft: Legion, update
 ## Manual Install:
 I do not recommend downloading this addon directly from Github, as there are CurseForge packaging modifications made the the addon upon release. These modifications include updating all included libraries to their latest release versions and pulling in all of the crowd sourced localizations. I have made an effort to pull in periodic samplings of these, but what you will find in the packaged versions on CurseForge or WowInterface will be much more up to date.
 
-That being said, after download and extracting, make sure to move the *Neuron-GUI out of the **Neuron** directory. Move the aforementioned directory as well as the Neuron directory to the **World of Warcraft>Interface>addons** directory.
-
-When the addon is successfully installed the World of **Warcraft>Interface>addons** directory should contain 2 separate folders at the same level:
- * Neuron
- * Neuron-GUI
-
 
 ## Translating
 The efforts to translate Neuron into many languages is a community project, and it could use your help!
