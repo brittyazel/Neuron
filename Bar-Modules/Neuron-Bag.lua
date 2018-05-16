@@ -234,7 +234,10 @@ local function updateFreeSlots(self)
 		end
 	end
 
-	local rgbValue, r, g = math.floor((totalFree/freeSlots)*100)
+	local rgbValue, r, g = 0
+	if (freeSlots > 0) then
+		rgbValue = math.floor((totalFree/freeSlots)*100)
+	end
 
 	if (rgbValue > 49) then
 		r=(1-(rgbValue/100))+(1-(rgbValue/100))
