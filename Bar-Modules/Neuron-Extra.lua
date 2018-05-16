@@ -62,7 +62,7 @@ function NeuronExtraBar:OnInitialize()
 	xbarsCDB = CDB.xbars
 	xbtnsCDB = CDB.xbtns
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, false, STORAGE, gDef, nil, false)
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, STORAGE, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 		SHOWGRID = true,

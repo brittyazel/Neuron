@@ -72,7 +72,7 @@ function NeuronMenuBar:OnInitialize()
     end
 
     --for some reason the menu settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsDB to be both the GDB and DB in the RegisterBarClass
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, false, STORAGE, gDef, nil, false)
+    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, STORAGE, gDef, nil, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if (DB.menubarFirstRun) then

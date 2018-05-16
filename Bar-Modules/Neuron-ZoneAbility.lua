@@ -67,7 +67,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 	ZONEABILITYRBTN.GetSkinned = BUTTON.GetSkinned
 	ZONEABILITYRBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
-	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, false, STORAGE, gDef, nil, false)
+	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, STORAGE, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 		SHOWGRID = false,

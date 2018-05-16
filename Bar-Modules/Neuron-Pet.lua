@@ -83,7 +83,7 @@ function NeuronPetBar:OnInitialize()
 	petbarsDB = DB.petbars
 	petbtnsDB = DB.petbtns
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false, STORAGE, gDef, nil, false)
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, STORAGE, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,

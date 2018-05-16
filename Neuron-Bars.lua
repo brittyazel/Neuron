@@ -212,7 +212,7 @@ function NeuronBar:OnInitialize()
 	barGDB = GDB.bars
 	barCDB = CDB.bars
 
-	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, false, STORAGE, nil, nil, true)
+	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, STORAGE, nil, nil, true)
 
 	NEURON:RegisterGUIOptions("bar", {
 		AUTOHIDE = true,
@@ -1173,7 +1173,7 @@ function BAR:LoadObjects(init)
 		object = _G[self.objPrefix..objID]
 
 		if (object) then
-			self.objTable[object.objTIndex][2] = 0
+			--self.objTable[object.objTIndex][2] = 0
 			object:SetData(self)
 			object:LoadData(spec, self.handler:GetAttribute("activestate"))
 			object:SetAux()
@@ -1909,8 +1909,6 @@ end
 function BAR:AddObjectToList(object)
 	if (not self.gdata.objectList or self.gdata.objectList == "") then
 		self.gdata.objectList = tostring(object.id)
-	elseif (self.barReverse) then
-		self.gdata.objectList = object.id..";"..self.gdata.objectList
 	else
 		self.gdata.objectList = self.gdata.objectList..";"..object.id
 	end
@@ -1924,41 +1922,31 @@ function BAR:AddObjects(num)
 		num = 1
 	end
 
-	if (num) then
-		for i=1,num do
-			local object
+	test = self
 
-			for index,data in ipairs(self.objTable) do
-				if (not object and data[2] == 1) then
-					object = data[1]
-					data[2] = 0
-				end
-			end
+	for i=1,num do
 
-			if (not object and not self.objMax) then
+		local object
+		local id
 
-				local id = 1
-
-				for _ in ipairs(self.objGDB) do
-					id = id + 1
-				end
-
-				object = NEURON:CreateNewObject(self.class, id)
-			end
-
-			if (object) then
-				object:Show()
-				self:AddObjectToList(object)
-			end
+		for index in ipairs(self.objTable) do
+			id = index + 1
 		end
 
-		self:LoadObjects()
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-		self:Update()
-		self:UpdateObjectGrid(NEURON.BarsShown)
+		if (not self.objMax) then
+			object = NEURON:CreateNewObject(self.class, id)
+			self:AddObjectToList(object)
+		end
+
 	end
+
+	self:LoadObjects()
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
+	self:UpdateObjectGrid(NEURON.BarsShown)
+
 end
 
 
@@ -1983,18 +1971,15 @@ function BAR:StoreObject(object, storage, objTable)
 
 	--NEURON.UpdateAnchor(button, nil, nil, nil, true)
 
-	objTable[object.objTIndex][2] = 1
+	--objTable[object.objTIndex][2] = 1
 
 	object:SetParent(storage)
 end
 
 
 function BAR:RemoveObjectFromList(objID)
-	if (self.barReverse) then
-		self.gdata.objectList = (self.gdata.objectList):gsub("^"..objID.."[;]*", "")
-	else
-		self.gdata.objectList = (self.gdata.objectList):gsub("[;]*"..objID.."$", "")
-	end
+
+	self.gdata.objectList = (self.gdata.objectList):gsub("[;]*"..objID.."$", "")
 
 end
 
@@ -2006,32 +1991,32 @@ function BAR:RemoveObjects(num)
 		num = 1
 	end
 
-	if (num) then
-		for i=1,num do
-			local objID
+	for i=1,num do
 
-			if (self.barReverse) then
-				objID = (self.gdata.objectList):match("^%d+")
-			else
-				objID = (self.gdata.objectList):match("%d+$")
+		local id
+
+		for index in ipairs(self.objTable) do
+			id = index
+		end
+
+		if (id) then
+			local object = self.objTable[id]
+			if (object) then
+				self:StoreObject(object, self.objStorage, self.objTable) --I think this reassigns an object to some sort of storage place when removed
+				self:RemoveObjectFromList(id)
+				tremove(self.objTable, id)
+				_G[self.objPrefix..id] = nil
+				self.objCount = self.objCount - 1
+				self.countChanged = true
 			end
 
-			if (objID) then
-				local object = _G[self.objPrefix..objID]
-				if (object) then
-					self:StoreObject(object, self.objStorage, self.objTable)
-					self:RemoveObjectFromList(objID)
-					self.objCount = self.objCount - 1
-					self.countChanged = true
-				end
-
-				self:SetObjectLoc()
-				self:SetPerimeter()
-				self:SetSize()
-				self:Update()
-			end
+			self:SetObjectLoc()
+			self:SetPerimeter()
+			self:SetSize()
+			self:Update()
 		end
 	end
+
 end
 
 

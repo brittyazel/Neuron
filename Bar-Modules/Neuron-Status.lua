@@ -292,7 +292,7 @@ function NeuronStatusBar:OnInitialize()
 	statusbarsDB = DB.statusbars
 	statusbtnsDB = DB.statusbtns
 
-	NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, NeuronStatusBar, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, false, STORAGE, nil, nil, true)
+	NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, NeuronStatusBar, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, STORAGE, nil, nil, true)
 
 	NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
 		SNAPTO = true,
