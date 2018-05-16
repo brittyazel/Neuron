@@ -813,7 +813,7 @@ function BUTTON:MACRO_SetSpellIcon(spell)
 	else
 		if (self.data.macro_Watch) then
 			--for i=1,select("#",GetMacroInfo(self.data.macro_Watch)) do
-			--	Neuron:Print(select(i,GetMacroInfo(self.data.macro_Watch)))
+			--	NEURON:Print(select(i,GetMacroInfo(self.data.macro_Watch)))
 			--end
 
 			_, texture = GetMacroInfo(self.data.macro_Watch)
@@ -3009,8 +3009,8 @@ function BUTTON:SaveData(state)
 		self:BuildStateData()
 
 	else
-		Neuron:Print("DEBUG: Bad Save Data for "..self:GetName().." ?")
-		Neuron:Print(index); Neuron:Print(spec); Neuron:Print(state)
+		NEURON:Print("DEBUG: Bad Save Data for "..self:GetName().." ?")
+		NEURON:Print(index); NEURON:Print(spec); NEURON:Print(state)
 	end
 end
 

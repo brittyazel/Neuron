@@ -1759,7 +1759,7 @@ function BAR:SaveData()
 			self.GDB[id][key] = value
 		end
 	else
-		Neuron:Print("DEBUG: Bad Global Save Data for "..self:GetName().." ?")
+		NEURON:Print("DEBUG: Bad Global Save Data for "..self:GetName().." ?")
 	end
 
 	if (self.CDB[id]) then
@@ -1767,7 +1767,7 @@ function BAR:SaveData()
 			self.CDB[id][key] = value
 		end
 	else
-		Neuron:Print("DEBUG: Bad Character Save Data for "..self:GetName().." ?")
+		NEURON:Print("DEBUG: Bad Character Save Data for "..self:GetName().." ?")
 	end
 end
 
@@ -2045,7 +2045,7 @@ function BAR:SetState(msg, gui, checked, query)
 			if (not gui) then
 				NEURON:PrintStateList()
 			else
-				Neuron:Print("GUI option error")
+				NEURON:Print("GUI option error")
 			end
 
 			return
@@ -2114,7 +2114,7 @@ function BAR:SetState(msg, gui, checked, query)
 
 						count = count + 1
 					else
-						Neuron:Print(states.." not formated properly and skipped")
+						NEURON:Print(states.." not formated properly and skipped")
 					end
 				end
 
@@ -2135,7 +2135,7 @@ function BAR:SetState(msg, gui, checked, query)
 			for states in gmatch(self.gdata.hidestates, "custom%d+") do
 				self.gdata.hidestates = self.gdata.hidestates:gsub(states..":", "")
 			end
-			if not self.gdata.hidestates then Neuron:Print("OOPS")
+			if not self.gdata.hidestates then NEURON:Print("OOPS")
 			end
 		end
 
@@ -2162,7 +2162,7 @@ function BAR:SetState(msg, gui, checked, query)
 		table.sort(statetable)
 
 		for k,v in ipairs(statetable) do
-			Neuron:Print(v)
+			NEURON:Print(v)
 		end
 	end
 
@@ -2190,7 +2190,7 @@ function BAR:SetVisibility(msg, gui, checked, query)
 							self.gdata.hidestates = self.gdata.hidestates..hidestate..":"
 						end
 					else
-						Neuron:Print(L["Invalid index"]); return
+						NEURON:Print(L["Invalid index"]); return
 					end
 
 				elseif (index == L["Show"]) then
@@ -2339,7 +2339,7 @@ local function spellGlowMod(self, msg, gui)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Spellglow_Instructions"])
+		NEURON:Print(L["Spellglow_Instructions"])
 	end
 end
 
@@ -2550,7 +2550,7 @@ local function barLockMod(self, msg, gui)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Bar_Lock_Modifier_Instructions"])
+		NEURON:Print(L["Bar_Lock_Modifier_Instructions"])
 	end
 end
 
@@ -2609,7 +2609,7 @@ local function toolTipMod(self, msg, gui)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Tooltip_Instructions"])
+		NEURON:Print(L["Tooltip_Instructions"])
 	end
 end
 
@@ -2673,7 +2673,7 @@ function BAR:ShapeBar(shape, gui, query)
 		self:SetSize()
 		self:Update()
 	elseif (not gui) then
-		Neuron:Print(L["Bar_Shapes_List"])
+		NEURON:Print(L["Bar_Shapes_List"])
 	end
 end
 
@@ -2710,7 +2710,7 @@ function BAR:ColumnsSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Bar_Column_Instructions"])
+		NEURON:Print(L["Bar_Column_Instructions"])
 	end
 end
 
@@ -2733,7 +2733,7 @@ function BAR:ArcStartSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Bar_ArcStart_Instructions"])
+		NEURON:Print(L["Bar_ArcStart_Instructions"])
 	end
 end
 
@@ -2756,7 +2756,7 @@ function BAR:ArcLengthSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Bar_ArcLength_Instructions"])
+		NEURON:Print(L["Bar_ArcLength_Instructions"])
 	end
 end
 
@@ -2779,7 +2779,7 @@ function BAR:PadHSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Horozontal_Padding_Instructions"])
+		NEURON:Print(L["Horozontal_Padding_Instructions"])
 	end
 end
 
@@ -2802,7 +2802,7 @@ function BAR:PadVSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Vertical_Padding_Instructions"])
+		NEURON:Print(L["Vertical_Padding_Instructions"])
 	end
 end
 
@@ -2827,7 +2827,7 @@ function BAR:PadHVSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Horozontal_and_Vertical_Padding_Instructions"])
+		NEURON:Print(L["Horozontal_and_Vertical_Padding_Instructions"])
 	end
 end
 
@@ -2868,7 +2868,7 @@ function BAR:StrataSet(command, gui, query)
 		self:Update()
 
 	elseif (not gui) then
-		Neuron:Print(L["Bar_Strata_List"])
+		NEURON:Print(L["Bar_Strata_List"])
 	end
 end
 
@@ -2889,7 +2889,7 @@ function BAR:AlphaSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["Bar_Alpha_Instructions"])
+		NEURON:Print(L["Bar_Alpha_Instructions"])
 	end
 end
 
@@ -2969,7 +2969,7 @@ function BAR:XAxisSet(command, gui, query, skipupdate)
 		end
 
 	elseif (not gui) then
-		Neuron:Print(L["X_Position_Instructions"])
+		NEURON:Print(L["X_Position_Instructions"])
 	end
 end
 
@@ -2998,7 +2998,7 @@ function BAR:YAxisSet(command, gui, query, skipupdate)
 			self:Update()
 		end
 	elseif (not gui) then
-		Neuron:Print(L["Y_Position_Instructions"])
+		NEURON:Print(L["Y_Position_Instructions"])
 	end
 end
 

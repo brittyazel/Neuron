@@ -1,7 +1,10 @@
 ﻿--Neuron GUI, a World of Warcraft® user interface addon.
 
+local addonName = ...
 
 local NEURON = Neuron
+
+
 local GDB, CDB, NMM, NBE, NOE, NBTNE, MAS
 
 local width, height = 1000, 600
@@ -10,11 +13,11 @@ local barNames = {}
 
 local numShown = 15
 
---local NeuronGUIFrame = CreateFrame("Frame", nil, UIParent)
+
 NEURON.NeuronGUI = Neuron:NewModule("GUI", "AceEvent-3.0", "AceHook-3.0")
 local NeuronGUI = NEURON.NeuronGUI
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+local NeuronAceGUI = LibStub("AceGUI-3.0")
 
 local GUIData = NEURON.RegisteredGUIData
 
@@ -26,17 +29,6 @@ local iIndex = NEURON.iIndex  --Items Inde -- x
 local ItemCache = NeuronItemCache
 
 local EDITIndex, OBJEDITOR = NEURON.EDITIndex, NEURON.OBJEDITOR
-
-
-NeuronGUIGDB = {
-	firstRun = true,
-}
-
-NeuronGUICDB = {
-
-}
-
-local defGDB, defCDB = CopyTable(NeuronGUIGDB), CopyTable(NeuronGUICDB)
 
 local barOpt = { chk = {}, adj = {}, pri = {}, sec = {}, swatch = {}, vis = {} }
 
@@ -92,11 +84,6 @@ local swatchOptions = {
 }
 
 local specoveride = GetActiveSpecGroup() or 1
-
-local addonName = ...
-
-
-local NeuronAceGUI = LibStub("AceGUI-3.0")
 
 local updater
 
@@ -2631,16 +2618,16 @@ function NeuronGUI:MacroEditorUpdate()
 			else
 				NBTNE.macroicon.icon:SetTexture(data.macro_Icon)
 			end
-			--Neuron:Print(data.macro_Name)
+			--NEURON:Print(data.macro_Name)
 			NBTNE.nameedit:SetText(data.macro_Name)
 			NBTNE.noteedit:SetText(data.macro_Note)
 			NBTNE.usenote:SetChecked(data.macro_UseNote)
 
 		else
-			--Neuron:Print("notinghere")
+			--NEURON:Print("notinghere")
 			--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
 			--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
-			---Neuron:Print(button.specdata[buttonSpec][state])
+			---NEURON:Print(button.specdata[buttonSpec][state])
 			--end
 		end
 	end
@@ -2710,10 +2697,10 @@ function NeuronGUI:macroText_OnTextChanged(frame)
 				button.specdata[buttonSpec][state].macro_Text = frame:GetText()
 				button.specdata[buttonSpec][state].macro_Watch = false
 			else
-				--Neuron:Print("notinghere")
+				--NEURON:Print("notinghere")
 				--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
 				--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
-				--Neuron:Print(button.specdata[buttonSpec][state])
+				--NEURON:Print(button.specdata[buttonSpec][state])
 			end
 
 		end

@@ -1568,7 +1568,7 @@ function NeuronFlyouts.linkScanOnUpdate(self, elapsed)
 			self.index = next(itemLinks, self.index)
 
 			if not (self.index) then
-				--Neuron:Print("Scanned "..self.count.." items in "..self.elapsed.." seconds")
+				--NEURON:Print("Scanned "..self.count.." items in "..self.elapsed.." seconds")
 				self:Hide(); anchorUpdater:Show()
 			end
 		end

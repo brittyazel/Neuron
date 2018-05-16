@@ -238,7 +238,7 @@ NEURON.STATEINDEX = {
 	target = "target",
 }
 
-local handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+local handler
 
 local level, stanceStringsUpdated
 
@@ -585,7 +585,7 @@ function NEURON:slashHandler(input)
 			elseif (bar and bar[func]) then
 				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
 			else
-				Neuron:Print(L["No bar selected or command invalid"])
+				NEURON:Print(L["No bar selected or command invalid"])
 			end
 			return
 		end
@@ -597,14 +597,14 @@ end
 
 function NEURON:printSlashHelp()
 
-	Neuron:Print("---------------------------------------------------")
-	Neuron:Print(L["How to use"]..":   ".."/"..addonName:lower().." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
-	Neuron:Print(L["Command List"]..":")
-	Neuron:Print("---------------------------------------------------")
+	NEURON:Print("---------------------------------------------------")
+	NEURON:Print(L["How to use"]..":   ".."/"..addonName:lower().." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
+	NEURON:Print(L["Command List"]..":")
+	NEURON:Print("---------------------------------------------------")
 
 	for i = 1,#slashFunctions do
 		--formats the output to be the command name and then the description
-		Neuron:Print(slashFunctions[i][1].." - " .."("..slashFunctions[i][2]..")")
+		NEURON:Print(slashFunctions[i][1].." - " .."("..slashFunctions[i][2]..")")
 	end
 
 end
@@ -704,7 +704,7 @@ end
 --- Creates a table containing provided data
 -- @param index, bookType, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon
 -- @return curSpell:  Table containing provided data
-local function SetSpellInfo(index, bookType, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+function NEURON:SetSpellInfo(index, bookType, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 	local curSpell = {}
 
 	curSpell.index = index
@@ -761,7 +761,7 @@ function NEURON:UpdateSpellIndex()
 				altName = GetSpellInfo(spellID_Alt)
 			end
 
-			local spellData = SetSpellInfo(i, BOOKTYPE_SPELL, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+			local spellData = NEURON:SetSpellInfo(i, BOOKTYPE_SPELL, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
 			if (subName and #subName > 0) then
 				NEURON.sIndex[(spellName.."("..subName..")"):lower()] = spellData
@@ -806,7 +806,7 @@ function NEURON:UpdateSpellIndex()
 
 				if (spellName and spellType ~= "FUTURESPELL") then
 					local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
-					local spellData = SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+					local spellData = NEURON:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
 					if (subName and #subName > 0) then
 						NEURON.sIndex[(spellName.."("..subName..")"):lower()] = spellData
@@ -854,7 +854,7 @@ function NEURON:UpdateSpellIndex()
 				for k,v in pairs(NEURON.sIndex) do
 
 					if (v.spellName:find(petName.."$")) then
-						local spellData = SetSpellInfo(v.index, v.booktype, v.spellName, nil, v.subName, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
+						local spellData = NEURON:SetSpellInfo(v.index, v.booktype, v.spellName, nil, v.subName, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
 
 						NEURON.sIndex[(spellName):lower()] = spellData
 						NEURON.sIndex[(spellName):lower().."()"] = spellData
@@ -883,7 +883,7 @@ function NEURON:UpdatePetSpellIndex()
 
 			if (spellName and spellType ~= "FUTURESPELL") then
 				local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
-				local spellData = SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+				local spellData = NEURON:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 				if (subName and #subName > 0) then
 					NEURON.sIndex[(spellName.."("..subName..")"):lower()] = spellData
 				else
@@ -907,7 +907,7 @@ end
 --- Creates a table containing provided companion & mount data
 -- @param index, creatureType, index, creatureID, creatureName, spellID, icon
 -- @return curComp:  Table containing provided data
-local function SetCompanionData(creatureType, index, creatureID, creatureName, spellID, icon)
+function NEURON:SetCompanionData(creatureType, index, creatureID, creatureName, spellID, icon)
 	local curComp = {}
 	curComp.creatureType = creatureType
 	curComp.index = index
@@ -982,7 +982,7 @@ function NEURON:UpdateCompanionData()
 		if (petID) then
 			local spell = speciesName
 			if (spell) then
-				local companionData = SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
+				local companionData = NEURON:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
 				NEURON.cIndex[spell:lower()] = companionData
 				NEURON.cIndex[spell:lower().."()"] = companionData
 				NEURON.cIndex[petID] = companionData
@@ -1004,7 +1004,7 @@ function NEURON:UpdateCompanionData()
 		if (spellID) then
 			local spell, _, icon = GetSpellInfo(spellID)
 			if (spell) then
-				local companionData = SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
+				local companionData = NEURON:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
 				NEURON.cIndex[spell:lower()] = companionData
 				NEURON.cIndex[spell:lower().."()"] = companionData
 				NEURON.cIndex[spellID] = companionData
@@ -1269,6 +1269,11 @@ function NEURON:ToggleBlizzBar(on)
 	if (InCombatLockdown()) then
 		return
 	end
+
+	if not handler then
+		handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+	end
+
 	if (on) then
 		local button
 
@@ -1653,7 +1658,7 @@ function NEURON:PrintStateList()
 		end
 	end
 
-	Neuron:Print(list..L["Custom_Option"])
+	NEURON:Print(list..L["Custom_Option"])
 end
 
 
@@ -1677,13 +1682,13 @@ function NEURON:PrintBarTypes()
 	for i=1,high do if (not data[i]) then data[i] = 0 end end
 
 
-	Neuron:Print("---------------------------------------------------")
-	Neuron:Print("     "..L["How to use"]..":   ".."/"..addonName:lower().." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
-	Neuron:Print("---------------------------------------------------")
+	NEURON:Print("---------------------------------------------------")
+	NEURON:Print("     "..L["How to use"]..":   ".."/"..addonName:lower().." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
+	NEURON:Print("---------------------------------------------------")
 
 	for k,v in ipairs(data) do
 		if (type(v) == "table") then
-			Neuron:Print("    |cff00ff00"..v[1]..":|r "..v[2])
+			NEURON:Print("    |cff00ff00"..v[1]..":|r "..v[2])
 		end
 	end
 
@@ -1731,16 +1736,16 @@ function NEURON:SetTimerLimit(msg)
 
 	if (limit and limit > 0) then
 		GDB.timerLimit = limit
-		Neuron:Print(format(L["Timer_Limit_Set_Message"], GDB.timerLimit))
+		NEURON:Print(format(L["Timer_Limit_Set_Message"], GDB.timerLimit))
 	else
-		Neuron:Print(L["Timer_Limit_Invalid_Message"])
+		NEURON:Print(L["Timer_Limit_Invalid_Message"])
 	end
 end
 
 
 
 
-function Neuron:SetupInterfaceOptions()
+function NEURON:SetupInterfaceOptions()
 
 	---TODO: Move this to a GUI specific element with the GUI rewrite
 	--ACE GUI OPTION TABLE
