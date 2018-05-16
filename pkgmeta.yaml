@@ -25,6 +25,3 @@ ignore:
 
 optional-dependencies:
     - masque
-
-move-folders:
-  Neuron/Neuron-GUI: Neuron-GUI
