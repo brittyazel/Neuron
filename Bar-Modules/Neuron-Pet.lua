@@ -59,7 +59,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronPetBar:OnInitialize()
 
-	PETBTN.SetTimer = BUTTON.SetTimer
+	PETBTN.SetTimer = NEURON.NeuronButton.SetTimer
 	PETBTN.SetSkinned = BUTTON.SetSkinned
 	PETBTN.GetSkinned = BUTTON.GetSkinned
 	PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
@@ -277,7 +277,7 @@ function PETBTN:PET_UpdateCooldown()
 			self.iconframeaurawatch:Hide()
 		end
 
-		self:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		NEURON.NeuronButton:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end
 

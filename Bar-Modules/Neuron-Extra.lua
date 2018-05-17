@@ -514,7 +514,7 @@ function XBTN:SetType(save)
 	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
 	self:SetScript("OnEvent", BUTTON.MACRO_OnEvent)
-	self:SetScript("PostClick", BUTTON.MACRO_UpdateState)
+	self:SetScript("PostClick", function(self) NEURON.NeuronButton:MACRO_UpdateState(self) end)
 	self:SetScript("OnShow", BUTTON.MACRO_OnShow)
 	self:SetScript("OnHide", BUTTON.MACRO_OnHide)
 

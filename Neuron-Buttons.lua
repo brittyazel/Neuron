@@ -317,7 +317,7 @@ end
 
 
 
-function NeuronButton.AutoCastStart(shine, r, g, b)
+function NeuronButton:AutoCastStart(shine, r, g, b)
 	autoCast.shines[shine] = shine
 
 	if (not r) then
@@ -330,7 +330,7 @@ function NeuronButton.AutoCastStart(shine, r, g, b)
 end
 
 
-function NeuronButton.AutoCastStop(shine)
+function NeuronButton:AutoCastStop(shine)
 	autoCast.shines[shine] = nil
 
 	for _,sparkle in pairs(shine.sparkles) do
@@ -579,7 +579,7 @@ function NeuronButton:updateAuraInfo(unit)
 end
 
 
-local function isActiveShapeshiftSpell(spell)
+function NeuronButton:isActiveShapeshiftSpell(spell)
 	local shapeshift, texture, name, isActive = spell:match("^[^(]+")
 
 	if (shapeshift) then
@@ -594,7 +594,7 @@ end
 
 
 
-function BUTTON:SetTimer(cd, start, duration, enable, timer, color1, color2, cdAlpha)
+function NeuronButton:SetTimer(cd, start, duration, enable, timer, color1, color2, cdAlpha)
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 		cd:SetAlpha(1)
 		CooldownFrame_Set(cd, start, duration, enable)
@@ -630,14 +630,14 @@ function BUTTON:SetTimer(cd, start, duration, enable, timer, color1, color2, cdA
 end
 
 
-function BUTTON:MACRO_HasAction()
-	local hasAction = self.data.macro_Text
+function NeuronButton:MACRO_HasAction(button)
+	local hasAction = button.data.macro_Text
 
-	if (self.actionID) then
-		if (self.actionID == 0) then
+	if (button.actionID) then
+		if (button.actionID == 0) then
 			return true
 		else
-			return HasAction(self.actionID)
+			return HasAction(button.actionID)
 		end
 
 	elseif (hasAction and #hasAction>0) then
@@ -648,20 +648,20 @@ function BUTTON:MACRO_HasAction()
 end
 
 
-function BUTTON:MACRO_GetDragAction()
+function NeuronButton:MACRO_GetDragAction()
 	return "macro"
 end
 
 
-function BUTTON:MACRO_UpdateData(...)
+function NeuronButton:MACRO_UpdateData(button, ...)
 
 	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__
 
 
-	if (self.macroparse) then
+	if (button.macroparse) then
 		ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__ = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
 
-		for cmd, options in gmatch(self.macroparse, "(%c%p%a+)(%C+)") do
+		for cmd, options in gmatch(button.macroparse, "(%c%p%a+)(%C+)") do
 			--after gmatch, remove unneeded characters
 			if (cmd) then cmd = cmd:gsub("^%c+", "") end
 			if (options) then options = options:gsub("^%s+", "") end
@@ -708,78 +708,85 @@ function BUTTON:MACRO_UpdateData(...)
 			end
 		end
 
-		self.unit = ud_target or "target"
+		button.unit = ud_target or "target"
 
 		if (ud_spell) then
-			self.macroitem = nil
-			if (ud_spell ~= self.macrospell) then
-				ud_spell = ud_spell:gsub("!", ""); self.macrospell = ud_spell
+			button.macroitem = nil
+			if (ud_spell ~= button.macrospell) then
+
+				ud_spell = ud_spell:gsub("!", "")
+				button.macrospell = ud_spell
+
 				if (sIndex[ud_spell:lower()]) then
-					self.spellID = sIndex[ud_spell:lower()].spellID
+					button.spellID = sIndex[ud_spell:lower()].spellID
 				else
-					self.spellID = nil
+					button.spellID = nil
 				end
 			end
 		else
-			self.macrospell = nil; self.spellID = nil
+			button.macrospell = nil; button.spellID = nil
 		end
 
 		if (ud_show and ud_showcmd:find("#showicon")) then
-			if (ud_show ~= self.macroicon) then
+			if (ud_show ~= button.macroicon) then
 				if(tonumber(ud_show) and GetInventoryItemLink("player", ud_show)) then
 					ud_show = GetInventoryItemLink("player", ud_show)
 				end
-				self.macroicon = ud_show; self.macroshow = nil
+				button.macroicon = ud_show
+				button.macroshow = nil
 			end
 		elseif (ud_show) then
-			if (ud_show ~= self.macroshow) then
+			if (ud_show ~= button.macroshow) then
 				if(tonumber(ud_show) and GetInventoryItemLink("player", ud_show)) then
 					ud_show = GetInventoryItemLink("player", ud_show)
 				end
-				self.macroshow = ud_show; self.macroicon = nil
+				button.macroshow = ud_show
+				button.macroicon = nil
 			end
 		else
-			self.macroshow = nil; self.macroicon = nil
+			button.macroshow = nil
+			button.macroicon = nil
 		end
 
 		if (ud_cd) then
-			if (ud_cd ~= self.macrocd) then
+			if (ud_cd ~= button.macrocd) then
 				if(tonumber(ud_aura) and GetInventoryItemLink("player", ud_cd)) then
 					ud_aura = GetInventoryItemLink("player", ud_cd)
 				end
-				self.macrocd = ud_aura
+				button.macrocd = ud_aura
 			end
 		else
-			self.macrocd = nil
+			button.macrocd = nil
 		end
 
 		if (ud_aura) then
-			if (ud_aura ~= self.macroaura) then
+			if (ud_aura ~= button.macroaura) then
 				if(tonumber(ud_aura) and GetInventoryItemLink("player", ud_aura)) then
 					ud_aura = GetInventoryItemLink("player", ud_aura)
 				end
-				self.macroaura = ud_aura
+				button.macroaura = ud_aura
 			end
 		else
-			self.macroaura = nil
+			button.macroaura = nil
 		end
 
 		if (ud_item) then
-			self.macrospell = nil; self.spellID = nil
-			if (ud_item ~= self.macroitem) then
-				self.macroitem = ud_item
+			button.macrospell = nil;
+			button.spellID = nil
+			if (ud_item ~= button.macroitem) then
+				button.macroitem = ud_item
 			end
 		else
-			self.macroitem = nil
+			button.macroitem = nil
 		end
 	end
 end
 
 
-function BUTTON:MACRO_SetSpellIcon(spell)
+function NeuronButton:MACRO_SetSpellIcon(button, spell)
 	local _, texture
 
-	if (not self.data.macro_Watch and not self.data.macro_Equip) then
+	if (not button.data.macro_Watch and not button.data.macro_Equip) then
 
 		spell = (spell):lower()
 		if (sIndex[spell]) then
@@ -795,39 +802,39 @@ function BUTTON:MACRO_SetSpellIcon(spell)
 
 		if (texture) then
 
-			local shapeshift = isActiveShapeshiftSpell(spell)
+			local shapeshift = NeuronButton:isActiveShapeshiftSpell(spell)
 
 			if (shapeshift) then
-				self.iconframeicon:SetTexture(shapeshift)
+				button.iconframeicon:SetTexture(shapeshift)
 			else
-				self.iconframeicon:SetTexture(texture)
+				button.iconframeicon:SetTexture(texture)
 
 			end
 
-			self.iconframeicon:Show()
+			button.iconframeicon:Show()
 		else
-			self.iconframeicon:SetTexture("")
-			self.iconframeicon:Hide()
+			button.iconframeicon:SetTexture("")
+			button.iconframeicon:Hide()
 		end
 
 	else
-		if (self.data.macro_Watch) then
-			--for i=1,select("#",GetMacroInfo(self.data.macro_Watch)) do
-			--	NEURON:Print(select(i,GetMacroInfo(self.data.macro_Watch)))
+		if (button.data.macro_Watch) then
+			--for i=1,select("#",GetMacroInfo(button.data.macro_Watch)) do
+			--	NEURON:Print(select(i,GetMacroInfo(button.data.macro_Watch)))
 			--end
 
-			_, texture = GetMacroInfo(self.data.macro_Watch)
+			_, texture = GetMacroInfo(button.data.macro_Watch)
 			--texture = "INTERFACE\\ICONS\\"..texture:match("[%w_]+$"):upper()
-			self.data.macro_Icon = texture
-		elseif (self.data.macro_Equip) then
-			texture = GetEquipmentSetInfoByName(self.data.macro_Equip)
+			button.data.macro_Icon = texture
+		elseif (button.data.macro_Equip) then
+			texture = GetEquipmentSetInfoByName(button.data.macro_Equip)
 		end
 
 		if (texture) then
-			self.iconframeicon:SetTexture(texture)
-			self.iconframeicon:Show()
+			button.iconframeicon:SetTexture(texture)
+			button.iconframeicon:Show()
 		else
-			self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+			button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 		end
 	end
 
@@ -835,22 +842,22 @@ function BUTTON:MACRO_SetSpellIcon(spell)
 end
 
 
-function BUTTON:MACRO_SetItemIcon(item)
+function NeuronButton:MACRO_SetItemIcon(button, item)
 	local _,texture, link, itemID
 
 	if (IsEquippedItem(item)) then --makes the border green when item is equipped and dragged to a button
-		self.border:SetVertexColor(0, 1.0, 0, 0.2)
-		self.border:Show()
+		button.border:SetVertexColor(0, 1.0, 0, 0.2)
+		button.border:Show()
 	else
-		self.border:Hide()
+		button.border:Hide()
 	end
 
 	--There is stored icon and dont want to update icon on fly
-	if (((type(self.data.macro_Icon) == "string" and #self.data.macro_Icon > 0) or type(self.data.macro_Icon) == "number")) then
-		if (self.data.macro_Icon == "BLANK") then
-			self.iconframeicon:SetTexture("")
+	if (((type(button.data.macro_Icon) == "string" and #button.data.macro_Icon > 0) or type(button.data.macro_Icon) == "number")) then
+		if (button.data.macro_Icon == "BLANK") then
+			button.iconframeicon:SetTexture("")
 		else
-			self.iconframeicon:SetTexture(self.data.macro_Icon)
+			button.iconframeicon:SetTexture(button.data.macro_Icon)
 		end
 
 	else
@@ -872,98 +879,98 @@ function BUTTON:MACRO_SetItemIcon(item)
 		end
 
 		if (texture) then
-			self.iconframeicon:SetTexture(texture)
+			button.iconframeicon:SetTexture(texture)
 		else
-			self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+			button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 		end
 	end
 
-	self.iconframeicon:Show()
+	button.iconframeicon:Show()
 
-	return self.iconframeicon:GetTexture()
+	return button.iconframeicon:GetTexture()
 end
 
 
-function BUTTON:ACTION_SetIcon(action)
+function NeuronButton:ACTION_SetIcon(button, action)
 	local actionID = tonumber(action)
 
 	if (actionID) then
 		if (actionID == 0) then
-			if (self.specAction and SpecialActions[self.specAction]) then
-				self.iconframeicon:SetTexture(SpecialActions[self.specAction])
+			if (button.specAction and SpecialActions[button.specAction]) then
+				button.iconframeicon:SetTexture(SpecialActions[button.specAction])
 			else
-				self.iconframeicon:SetTexture(0,0,0)
+				button.iconframeicon:SetTexture(0,0,0)
 			end
 
 		else
-			self.macroname:SetText(GetActionText(actionID))
+			button.macroname:SetText(GetActionText(actionID))
 			if (HasAction(actionID)) then
-				self.iconframeicon:SetTexture(GetActionTexture(actionID))
+				button.iconframeicon:SetTexture(GetActionTexture(actionID))
 			else
-				self.iconframeicon:SetTexture(0,0,0)
+				button.iconframeicon:SetTexture(0,0,0)
 			end
 		end
 
-		self.iconframeicon:Show()
+		button.iconframeicon:Show()
 	else
-		self.iconframeicon:SetTexture("")
-		self.iconframeicon:Hide()
+		button.iconframeicon:SetTexture("")
+		button.iconframeicon:Hide()
 	end
 
-	return self.iconframeicon:GetTexture()
+	return button.iconframeicon:GetTexture()
 end
 
 
-function BUTTON:MACRO_UpdateIcon(...)
-	self.updateMacroIcon = nil
-	self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+function NeuronButton:MACRO_UpdateIcon(button, ...)
+	button.updateMacroIcon = nil
+	button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 
-	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
+	local spell, item, show, texture = button.macrospell, button.macroitem, button.macroshow, button.macroicon
 
-	if (self.actionID) then
-		texture = self:ACTION_SetIcon(self.actionID)
+	if (button.actionID) then
+		texture = NeuronButton:ACTION_SetIcon(button, button.actionID)
 	elseif (show and #show>0) then
 		if(GetItemInfo(show) or ItemCache[show]) then
-			texture = self:MACRO_SetItemIcon(show)
+			texture = NeuronButton:MACRO_SetItemIcon(button, show)
 		else
-			texture = self:MACRO_SetSpellIcon(show)
-			self:MACRO_SetSpellState(show)
+			texture = NeuronButton:MACRO_SetSpellIcon(button, show)
+			NeuronButton:MACRO_SetSpellState(button, show)
 		end
 
 	elseif (spell and #spell>0) then
-		texture = self:MACRO_SetSpellIcon(spell)
-		self:MACRO_SetSpellState(spell)
+		texture = NeuronButton:MACRO_SetSpellIcon(button, spell)
+		NeuronButton:MACRO_SetSpellState(button, spell)
 	elseif (item and #item>0) then
-		texture = self:MACRO_SetItemIcon(item)
-	elseif (#self.data.macro_Text > 0) then
-		local equipset = self.data.macro_Text:match("/equipset%s+(%C+)")
+		texture = NeuronButton:MACRO_SetItemIcon(button, item)
+	elseif (#button.data.macro_Text > 0) then
+		local equipset = button.data.macro_Text:match("/equipset%s+(%C+)")
 
 		if (equipset) then
 			equipset = equipset:gsub("%pnobtn:2%p ", "")
 			local icon, _, isEquipped = GetEquipmentSetInfoByName(equipset)
 
 			if (isEquipped) then
-				self.border:Show()
+				button.border:Show()
 			else
-				self.border:Hide()
+				button.border:Hide()
 			end
 
 			if (icon) then
-				self.iconframeicon:SetTexture("INTERFACE\\ICONS\\"..icon:upper())
+				button.iconframeicon:SetTexture("INTERFACE\\ICONS\\"..icon:upper())
 			end
 
-		elseif (self.data.macro_Icon) then
-			self.iconframeicon:SetTexture(self.data.macro_Icon)
+		elseif (button.data.macro_Icon) then
+			button.iconframeicon:SetTexture(button.data.macro_Icon)
 		else
-			self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+			button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 		end
 
-		self.iconframeicon:Show()
+		button.iconframeicon:Show()
 	else
-		self.macroname:SetText("")
-		self.iconframeicon:SetTexture("")
-		self.iconframeicon:Hide()
-		self.border:Hide()
+		button.macroname:SetText("")
+		button.iconframeicon:SetTexture("")
+		button.iconframeicon:Hide()
+		button.border:Hide()
 	end
 
 
@@ -976,160 +983,160 @@ function BUTTON:MACRO_UpdateIcon(...)
 	--Swipe(Cat): 106785
 	--Swipe(NoForm): 213764
 
-	if (self.spellID and IsSpellOverlayed(self.spellID)) then
-		self:MACRO_StartGlow()
+	if (button.spellID and IsSpellOverlayed(button.spellID)) then
+		NeuronButton:MACRO_StartGlow(button)
 	elseif (spell == "Thrash()" and IsSpellOverlayed(106830)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
-		self:MACRO_StartGlow()
+		NeuronButton:MACRO_StartGlow(button)
 	elseif (spell == "Swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
-		self:MACRO_StartGlow()
-	elseif (self.glowing) then
-		self:MACRO_StopGlow()
+		NeuronButton:MACRO_StartGlow(button)
+	elseif (button.glowing) then
+		NeuronButton:MACRO_StopGlow(button)
 	end
 
 	return texture
 end
 
 
-function BUTTON:MACRO_StartGlow()
+function NeuronButton:MACRO_StartGlow(button)
 
-	if (self.spellGlowDef) then
-		ActionButton_ShowOverlayGlow(self)
-	elseif (self.spellGlowAlt) then
-		NeuronButton.AutoCastStart(self.shine)
+	if (button.spellGlowDef) then
+		ActionButton_ShowOverlayGlow(button)
+	elseif (button.spellGlowAlt) then
+		NeuronButton:AutoCastStart(button.shine)
 	end
 
-	self.glowing = true
+	button.glowing = true
 end
 
 
-function BUTTON:MACRO_StopGlow()
-	if (self.spellGlowDef) then
-		ActionButton_HideOverlayGlow(self)
-	elseif (self.spellGlowAlt) then
-		NeuronButton.AutoCastStop(self.shine)
+function NeuronButton:MACRO_StopGlow(button)
+	if (button.spellGlowDef) then
+		ActionButton_HideOverlayGlow(button)
+	elseif (button.spellGlowAlt) then
+		NeuronButton:AutoCastStop(button.shine)
 	end
 
-	self.glowing = nil
+	button.glowing = nil
 end
 
 
-function BUTTON:MACRO_SetSpellState(spell)
+function NeuronButton:MACRO_SetSpellState(button, spell)
 	local charges, maxCharges, chargeStart, chargeDuration = GetSpellCharges(spell)
 	if (maxCharges and maxCharges > 1) then
-		self.count:SetText(charges)
+		button.count:SetText(charges)
 	else
-		self.count:SetText("")
+		button.count:SetText("")
 	end
 
 	local count = GetSpellCount(spell)
 	if (count and count > 0) then
-		self.count:SetText(count)
+		button.count:SetText(count)
 	end
 
 	if (cIndex[spell:lower()]) then
 		spell = cIndex[spell:lower()].spellID
 
 		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell)) then
-			self:SetChecked(1)
+			button:SetChecked(1)
 		else
-			self:SetChecked(nil)
+			button:SetChecked(nil)
 		end
 	else
-		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell) or isActiveShapeshiftSpell(spell:lower())) then
-			self:SetChecked(1)
+		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell) or NeuronButton:isActiveShapeshiftSpell(spell:lower())) then
+			button:SetChecked(1)
 		else
-			self:SetChecked(nil)
+			button:SetChecked(nil)
 		end
 	end
 
 	if ((IsAttackSpell(spell) and IsCurrentSpell(spell)) or IsAutoRepeatSpell(spell)) then
-		self.mac_flash = true
+		button.mac_flash = true
 	else
-		self.mac_flash = false
+		button.mac_flash = false
 	end
 
-	self.macroname:SetText(self.data.macro_Name)
+	button.macroname:SetText(button.data.macro_Name)
 end
 
 
-function BUTTON:MACRO_SetItemState(item)
+function NeuronButton:MACRO_SetItemState(button, item)
 
 	if (GetItemCount(item,nil,true) and  GetItemCount(item,nil,true) > 1) then
-		self.count:SetText(GetItemCount(item,nil,true))
+		button.count:SetText(GetItemCount(item,nil,true))
 	else
-		self.count:SetText("")
+		button.count:SetText("")
 	end
 
 	if(IsCurrentItem(item)) then
-		self:SetChecked(1)
+		button:SetChecked(1)
 	else
-		self:SetChecked(nil)
+		button:SetChecked(nil)
 	end
-	self.macroname:SetText(self.data.macro_Name)
+	button.macroname:SetText(button.data.macro_Name)
 end
 
-function BUTTON:ACTION_UpdateState(action)
+function NeuronButton:ACTION_UpdateState(button, action)
 	local actionID = tonumber(action)
 
-	self.count:SetText("")
+	button.count:SetText("")
 
 	if (actionID) then
-		self.macroname:SetText("")
+		button.macroname:SetText("")
 
 		if (IsCurrentAction(actionID) or IsAutoRepeatAction(actionID)) then
-			self:SetChecked(1)
+			button:SetChecked(1)
 		else
-			self:SetChecked(nil)
+			button:SetChecked(nil)
 		end
 
 		if ((IsAttackAction(actionID) and IsCurrentAction(actionID)) or IsAutoRepeatAction(actionID)) then
-			self.mac_flash = true
+			button.mac_flash = true
 		else
-			self.mac_flash = false
+			button.mac_flash = false
 		end
 	else
-		self:SetChecked(nil)
-		self.mac_flash = false
+		button:SetChecked(nil)
+		button.mac_flash = false
 	end
 end
 
 
-function BUTTON:MACRO_UpdateState(...)
+function NeuronButton:MACRO_UpdateState(button, ...)
 
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
+	local spell, item, show = button.macrospell, button.macroitem, button.macroshow
 
 
-	if (self.actionID) then
-		self:ACTION_UpdateState(self.actionID)
+	if (button.actionID) then
+		NeuronButton:ACTION_UpdateState(button, button.actionID)
 
 	elseif (show and #show>0) then
 
 		if (GetItemInfo(show) or ItemCache[show]) then
-			self:MACRO_SetItemState(show)
+			NeuronButton:MACRO_SetItemState(button, show)
 		else
-			self:MACRO_SetSpellState(show)
+			NeuronButton:MACRO_SetSpellState(button, show)
 		end
 
 	elseif (spell and #spell>0) then
 
-		self:MACRO_SetSpellState(spell)
+		NeuronButton:MACRO_SetSpellState(button, spell)
 
 	elseif (item and #item>0) then
 
-		self:MACRO_SetItemState(item)
+		NeuronButton:MACRO_SetItemState(button, item)
 
-	elseif (self:GetAttribute("macroShow")) then
+	elseif (button:GetAttribute("macroShow")) then
 
-		show = self:GetAttribute("macroShow")
+		show = button:GetAttribute("macroShow")
 
 		if (GetItemInfo(show) or ItemCache[show]) then
-			self:MACRO_SetItemState(show)
+			NeuronButton:MACRO_SetItemState(button, show)
 		else
-			self:MACRO_SetSpellState(show)
+			NeuronButton:MACRO_SetSpellState(button, show)
 		end
 	else
-		self:SetChecked(nil)
-		self.count:SetText("")
+		button:SetChecked(nil)
+		button.count:SetText("")
 	end
 end
 
@@ -1177,10 +1184,10 @@ function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
 			if (self.iconframecooldown.timer:IsShown()) then
 				self.auraQueue = unit..":"..spell; self.iconframeaurawatch.uaw_duration = 0; self.iconframeaurawatch:Hide()
 			elseif (self.auraText) then
-				self:SetTimer(self.iconframecooldown, 0, 0, 0)
-				self:SetTimer(self.iconframeaurawatch, uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color)
+				NeuronButton:SetTimer(self.iconframecooldown, 0, 0, 0)
+				NeuronButton:SetTimer(self.iconframeaurawatch, uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color)
 			else
-				self:SetTimer(self.iconframeaurawatch, 0, 0, 0)
+				NeuronButton:SetTimer(self.iconframeaurawatch, 0, 0, 0)
 			end
 
 			self.auraWatchUnit = unit
@@ -1226,7 +1233,7 @@ function BUTTON:MACRO_SetSpellCooldown(spell)
 		StartChargeCooldown(self, chStart, chDuration);
 	end
 
-	self:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+	NeuronButton:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 end
 
 function BUTTON:MACRO_SetItemCooldown(item)
@@ -1243,7 +1250,7 @@ function BUTTON:MACRO_SetItemCooldown(item)
 			self.iconframeaurawatch:Hide()
 		end
 
-		self:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		NeuronButton:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end
 
@@ -1263,7 +1270,7 @@ function BUTTON:ACTION_SetCooldown(action)
 				self.iconframeaurawatch:Hide()
 			end
 
-			self:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			NeuronButton:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 		end
 	end
 end
@@ -1286,7 +1293,7 @@ function BUTTON:MACRO_UpdateCooldown(update)
 	elseif (item and #item>0) then
 		self:MACRO_SetItemCooldown(item)
 	else
-		self:SetTimer(self.iconframecooldown, 0, 0, 0, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		NeuronButton:SetTimer(self.iconframecooldown, 0, 0, 0, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end
 
@@ -1300,7 +1307,7 @@ end
 
 
 function BUTTON:MACRO_UpdateTexture(force)
-	local hasAction = self:MACRO_HasAction()
+	local hasAction = NeuronButton:MACRO_HasAction(self)
 
 	if (not self:GetSkinned()) then
 		if (hasAction or force) then
@@ -1315,10 +1322,10 @@ end
 
 
 function BUTTON:MACRO_UpdateAll(updateTexture)
-	self:MACRO_UpdateData()
+	NeuronButton:MACRO_UpdateData(self)
 	self:MACRO_UpdateButton()
-	self:MACRO_UpdateIcon()
-	self:MACRO_UpdateState()
+	NeuronButton:MACRO_UpdateIcon(self)
+	NeuronButton:MACRO_UpdateState(self)
 	self:MACRO_UpdateTimers()
 
 	if (updateTexture) then
@@ -1500,19 +1507,19 @@ function BUTTON:MACRO_ShowGrid()
 		self:Show()
 	end
 
-	self:MACRO_UpdateState()
+	NeuronButton:MACRO_UpdateState(self)
 end
 
 
 function BUTTON:MACRO_HideGrid()
 	if (not InCombatLockdown()) then
 
-		if (not self.showGrid and not self:MACRO_HasAction() and not NEURON.BarsShown and not NEURON.EditFrameShown) then
+		if (not self.showGrid and not NeuronButton:MACRO_HasAction(self) and not NEURON.BarsShown and not NEURON.EditFrameShown) then
 			self:Hide()
 		end
 	end
 
-	self:MACRO_UpdateState()
+	NeuronButton:MACRO_UpdateState(self)
 end
 
 
@@ -1525,7 +1532,7 @@ BUTTON.MACRO_RUNE_POWER_UPDATE = BUTTON.MACRO_ACTIONBAR_UPDATE_COOLDOWN
 
 
 function BUTTON:MACRO_ACTIONBAR_UPDATE_STATE(...)
-	self:MACRO_UpdateState(...)
+	NeuronButton:MACRO_UpdateState(self, ...)
 end
 
 
@@ -1543,7 +1550,7 @@ BUTTON.MACRO_ARCHAEOLOGY_CLOSED = BUTTON.MACRO_ACTIONBAR_UPDATE_STATE
 function BUTTON:MACRO_BAG_UPDATE_COOLDOWN(...)
 
 	if (self.macroitem) then
-		self:MACRO_UpdateState(...)
+		NeuronButton:MACRO_UpdateState(self, ...)
 	end
 end
 
@@ -1558,8 +1565,8 @@ function BUTTON:MACRO_UNIT_AURA(...)
 		self:MACRO_UpdateAuraWatch(unit, self.macrospell)
 
 		if (unit == "player") then
-			self:MACRO_UpdateData(...)
-			self:MACRO_UpdateIcon(...)
+			NeuronButton:MACRO_UpdateData(self, ...)
+			NeuronButton:MACRO_UpdateIcon(self, ...)
 		end
 	end
 end
@@ -1594,7 +1601,7 @@ function BUTTON:MACRO_SPELL_ACTIVATION_OVERLAY_GLOW_SHOW(...)
 
 		self:MACRO_UpdateTimers(...)
 
-		self:MACRO_StartGlow()
+		NeuronButton:MACRO_StartGlow(self)
 	end
 end
 
@@ -1604,7 +1611,7 @@ function BUTTON:MACRO_SPELL_ACTIVATION_OVERLAY_GLOW_HIDE(...)
 
 	if ((self.overlay or self.spellGlow) and self.spellID and spellID == self.spellID) then
 
-		self:MACRO_StopGlow()
+		NeuronButton:MACRO_StopGlow(self)
 	end
 end
 
@@ -1655,7 +1662,7 @@ BUTTON.MACRO_SPELL_UPDATE_USABLE = BUTTON.MACRO_MODIFIER_STATE_CHANGED
 
 function BUTTON:MACRO_ACTIONBAR_SLOT_CHANGED(...)
 	if (self.data.macro_Watch or self.data.macro_Equip) then
-		self:MACRO_UpdateIcon()
+		NeuronButton:MACRO_UpdateIcon(self)
 	end
 end
 
@@ -1697,7 +1704,7 @@ end
 
 function BUTTON:MACRO_PLAYER_EQUIPMENT_CHANGED(...)
 	if (self.data.macro_Equip) then
-		self:MACRO_UpdateIcon()
+		NeuronButton:MACRO_UpdateIcon(self)
 	end
 end
 
@@ -2124,10 +2131,10 @@ function BUTTON:MACRO_PickUpMacro()
 			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 
 
-		elseif (self:MACRO_HasAction()) then
+		elseif (NeuronButton:MACRO_HasAction(self)) then
 			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 
-			MacroDrag[1] = self:MACRO_GetDragAction()
+			MacroDrag[1] = NeuronButton:MACRO_GetDragAction()
 			MacroDrag[2] = self
 			MacroDrag[3] = self.data.macro_Text
 			MacroDrag[4] = self.data.macro_Icon
@@ -2172,11 +2179,11 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 
 	local texture = self.iconframeicon:GetTexture()
 
-	if (self:MACRO_HasAction()) then
+	if (NeuronButton:MACRO_HasAction(self)) then
 		wipe(macroCache)
 
 		---macroCache holds on to the previos macro's info if you are dropping a new macro on top of an existing macro
-		macroCache[1] = self:MACRO_GetDragAction()
+		macroCache[1] = NeuronButton:MACRO_GetDragAction()
 		macroCache[2] = self
 		macroCache[3] = self.data.macro_Text
 		macroCache[4] = self.data.macro_Icon
@@ -2194,10 +2201,10 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 	if (MacroDrag[1]) then
 		self:MACRO_PlaceMacro()
 	elseif (cursorType == "spell") then
-		self:MACRO_PlaceSpell(action1, action2, spellID, self:MACRO_HasAction())
+		self:MACRO_PlaceSpell(action1, action2, spellID, NeuronButton:MACRO_HasAction(self))
 
 	elseif (cursorType == "item") then
-		self:MACRO_PlaceItem(action1, action2, self:MACRO_HasAction())
+		self:MACRO_PlaceItem(action1, action2, NeuronButton:MACRO_HasAction(self))
 
 	elseif (cursorType == "macro") then
 		self:MACRO_PlaceBlizzMacro(action1)
@@ -2205,13 +2212,13 @@ function BUTTON:MACRO_OnReceiveDrag(preclick)
 		self:MACRO_PlaceBlizzEquipSet(action1)
 
 	elseif (cursorType == "mount") then
-		self:MACRO_PlaceMount(action1, action2, self:MACRO_HasAction())
+		self:MACRO_PlaceMount(action1, action2, NeuronButton:MACRO_HasAction(self))
 
 	elseif (cursorType == "flyout") then
-		self:MACRO_PlaceFlyout(action1, action2, self:MACRO_HasAction())
+		self:MACRO_PlaceFlyout(action1, action2, NeuronButton:MACRO_HasAction(self))
 
 	elseif (cursorType == "battlepet") then
-		self:MACRO_PlaceBattlePet(action1, action2, self:MACRO_HasAction())
+		self:MACRO_PlaceBattlePet(action1, action2, NeuronButton:MACRO_HasAction(self))
 	end
 
 
@@ -2352,7 +2359,7 @@ function BUTTON:MACRO_PostClick(button)
 			self.middleclick = nil
 		end
 	end
-	self:MACRO_UpdateState()
+	NeuronButton:MACRO_UpdateState(self)
 end
 
 
@@ -3152,7 +3159,7 @@ function BUTTON:SetGrid(show, hide)
 
 		if (show or self.showGrid) then
 			self:Show()
-		elseif (not (self:IsMouseOver() and self:IsVisible()) and not self:MACRO_HasAction()) then
+		elseif (not (self:IsMouseOver() and self:IsVisible()) and not NeuronButton:MACRO_HasAction(self)) then
 			self:Hide()
 		end
 	end

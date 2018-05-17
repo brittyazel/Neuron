@@ -2729,7 +2729,7 @@ function NeuronGUI:macroButton_Changed(frame, button, down)
 		else
 			data.macro_Icon = frame.texture
 		end
-		object:MACRO_UpdateIcon()
+		NEURON.NeuronButton:MACRO_UpdateIcon(object)
 
 		NeuronGUI:UpdateObjectGUI()
 	end
@@ -2986,7 +2986,7 @@ function NeuronGUI:customDoneOnClick(frame)
 
 			button.data.macro_Icon = text
 
-			button:MACRO_UpdateIcon()
+			NEURON.NeuronButton:MACRO_UpdateIcon(button)
 
 			NeuronGUI:UpdateObjectGUI()
 		end

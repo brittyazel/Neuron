@@ -62,7 +62,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 	zoneabilitybarsCDB = CDB.zoneabilitybars
 	zoneabilitybtnsCDB = CDB.zoneabilitybtns
 
-	ZONEABILITYRBTN.SetTimer = BUTTON.SetTimer
+	ZONEABILITYRBTN.SetTimer = NEURON.NeuronButton.SetTimer
 	ZONEABILITYRBTN.SetSkinned = BUTTON.SetSkinned
 	ZONEABILITYRBTN.GetSkinned = BUTTON.GetSkinned
 	ZONEABILITYRBTN.CreateBindFrame = BUTTON.CreateBindFrame
@@ -238,7 +238,7 @@ local function ZoneAbilityFrame_Update(self)
 	end
 
 	if (start) then
-		self:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		NEURON.NeuronButton:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 
 	self.spellName = self.CurrentSpell;
