@@ -1018,7 +1018,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
 				button:MACRO_UpdateParse()
-				button:MACRO_Reset()
+				NEURON.NeuronButton:MACRO_Reset(button)
 				NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
 				list = list..button.id..";"
@@ -1270,7 +1270,7 @@ function BUTTON:Flyout_PostClick()
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
 	button:MACRO_UpdateParse()
-	button:MACRO_Reset()
+	NEURON.NeuronButton:MACRO_Reset(button)
 	NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
 	NEURON.NeuronButton:MACRO_UpdateState(self)

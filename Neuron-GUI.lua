@@ -2601,7 +2601,7 @@ function NeuronGUI:MacroEditorUpdate()
 		local data = button.specdata[buttonSpec][state]
 
 		if not data then
-			button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
+			button.specdata[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
 
 			data = button.specdata[buttonSpec][state]
 			button:UpdateFlyout()
@@ -2625,8 +2625,8 @@ function NeuronGUI:MacroEditorUpdate()
 
 		else
 			--NEURON:Print("notinghere")
-			--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
-			--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
+			--button.specdata[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
+			--NEURON.NeuronButton:MACRO_build(button.specdata[buttonSpec][state])
 			---NEURON:Print(button.specdata[buttonSpec][state])
 			--end
 		end
@@ -2698,8 +2698,8 @@ function NeuronGUI:macroText_OnTextChanged(frame)
 				button.specdata[buttonSpec][state].macro_Watch = false
 			else
 				--NEURON:Print("notinghere")
-				--button.specdata[buttonSpec][state] = NEURON.BUTTON:MACRO_build()
-				--NEURON.BUTTON:MACRO_build(button.specdata[buttonSpec][state])
+				--button.specdata[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
+				--NEURON.NeuronButton:MACRO_build(button.specdata[buttonSpec][state])
 				--NEURON:Print(button.specdata[buttonSpec][state])
 			end
 

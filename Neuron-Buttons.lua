@@ -1655,7 +1655,7 @@ end
 
 function NeuronButton:MACRO_PLAYER_ENTERING_WORLD(button, ...)
 
-	button:MACRO_Reset()
+	NeuronButton:MACRO_Reset(button)
 	NeuronButton:MACRO_UpdateAll(button, true)
 	button.binder:ApplyBindings(button)
 end
@@ -2664,34 +2664,34 @@ function NeuronButton:MACRO_OnHide(button, ...)
 end
 
 
-function BUTTON:MACRO_OnAttributeChanged(name, value)
+function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 
-	if (value and self.data) then
+	if (value and button.data) then
 		if (name == "activestate") then
 
 			---Part 1 of Druid Prowl overwrite fix
 			-----------------------------------------------------
 			---breaks out of the loop due to flag set below
-			if (NEURON.class == "DRUID" and self.ignoreNextOverrideStance == true and value == "homestate") then
-				self.ignoreNextOverrideStance = nil
-				NEURON.NeuronBar:SetState(self.bar, "stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
+			if (NEURON.class == "DRUID" and button.ignoreNextOverrideStance == true and value == "homestate") then
+				button.ignoreNextOverrideStance = nil
+				NEURON.NeuronBar:SetState(button.bar, "stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
 				return
 			else
-				self.ignoreNextOverrideStance = nil
+				button.ignoreNextOverrideStance = nil
 			end
 			-----------------------------------------------------
 			-----------------------------------------------------
 
-			if (self:GetAttribute("HasActionID")) then
-				self.actionID = self:GetAttribute("*action*")
+			if (button:GetAttribute("HasActionID")) then
+				button.actionID = button:GetAttribute("*action*")
 			else
 
-				if (not self.statedata) then
-					self.statedata = { homestate = CopyTable(stateData) }
+				if (not button.statedata) then
+					button.statedata = { homestate = CopyTable(stateData) }
 				end
 
-				if (not self.statedata[value]) then
-					self.statedata[value] = CopyTable(stateData)
+				if (not button.statedata[value]) then
+					button.statedata[value] = CopyTable(stateData)
 				end
 
 				---Part 2 of Druid Prowl overwrite fix
@@ -2699,35 +2699,35 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 				---druids have an issue where once stance will get immediately overwritten by another. I.E. stealth immediately getting overwritten by homestate if they go immediately into prowl from caster form
 				---this conditional sets a flag to ignore the next most stance flag, as that one is most likely in error and should be ignored
 				if(NEURON.class == "DRUID" and value == "stealth1") then
-					self.ignoreNextOverrideStance = true
+					button.ignoreNextOverrideStance = true
 				end
 				------------------------------------------------------
 				------------------------------------------------------
 
 
-				self.data = self.statedata[value]
+				button.data = button.statedata[value]
 
-				self:MACRO_UpdateParse()
+				button:MACRO_UpdateParse()
 
-				self:MACRO_Reset()
+				NeuronButton:MACRO_Reset(button)
 
-				self.actionID = false
+				button.actionID = false
 			end
 			--This will remove any old button state data from the saved varabiels/memory
-			--for id,data in pairs(self.bar.cdata) do
-			for id,data in pairs(self.statedata) do
-				if (self.bar.cdata[id:match("%a+")]) or (id == "" and self.bar.cdata["custom"])  then
-				elseif not self.bar.cdata[id:match("%a+")] then
-					self.statedata[id]= nil
+			--for id,data in pairs(button.bar.cdata) do
+			for id,data in pairs(button.statedata) do
+				if (button.bar.cdata[id:match("%a+")]) or (id == "" and button.bar.cdata["custom"])  then
+				elseif not button.bar.cdata[id:match("%a+")] then
+					button.statedata[id]= nil
 				end
 			end
 
-			self.specAction = self:GetAttribute("SpecialAction") --?
-			NeuronButton:MACRO_UpdateAll(self, true)
+			button.specAction = button:GetAttribute("SpecialAction") --?
+			NeuronButton:MACRO_UpdateAll(button, true)
 		end
 
 		if (name == "update") then
-			NeuronButton:MACRO_UpdateAll(self, true)
+			NeuronButton:MACRO_UpdateAll(button, true)
 		end
 	end
 
@@ -2735,18 +2735,18 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 end
 
 
-function BUTTON:MACRO_build()
+function NeuronButton:MACRO_build()
 	local button = CopyTable(stateData)
 	return button
 end
 
 
-function BUTTON:MACRO_Reset()
-	self.macrospell = nil
-	self.spellID = nil
-	self.macroitem = nil
-	self.macroshow = nil
-	self.macroicon = nil
+function NeuronButton:MACRO_Reset(button)
+	button.macrospell = nil
+	button.spellID = nil
+	button.macroitem = nil
+	button.macroshow = nil
+	button.macroicon = nil
 end
 
 
@@ -3165,7 +3165,7 @@ function BUTTON:Reset()
 	self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
 	self:UnregisterEvent("EQUIPMENT_SETS_CHANGED")
 
-	self:MACRO_Reset()
+	NeuronButton:MACRO_Reset(self)
 end
 
 
@@ -3245,17 +3245,17 @@ function BUTTON:SetType(save, kill, init)
 		self:SetAttribute("*macrotext*", self.macroparse)
 
 		self:SetScript("OnEvent", function(self, event, ...) NeuronButton:MACRO_OnEvent(self, event, ...) end)
-		self:SetScript("PreClick", function(self, mousebutton) NeuronButton.MACRO_PreClick(self, mousebutton) end)
-		self:SetScript("PostClick", function(self, mousebutton) NeuronButton.MACRO_PostClick(self, mousebutton) end)
+		self:SetScript("PreClick", function(self, mousebutton) NeuronButton:MACRO_PreClick(self, mousebutton) end)
+		self:SetScript("PostClick", function(self, mousebutton) NeuronButton:MACRO_PostClick(self, mousebutton) end)
 		self:SetScript("OnReceiveDrag", function(self, preclick) NeuronButton:MACRO_OnReceiveDrag(self, preclick) end)
 		self:SetScript("OnDragStart", function(self, mousebutton) NeuronButton:MACRO_OnDragStart(self, mousebutton) end)
 		self:SetScript("OnDragStop", function(self) NeuronButton:MACRO_OnDragStop(self) end)
 		self:SetScript("OnUpdate", function(self, elapsed) NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
 		self:SetScript("OnShow", function(self, ...) NeuronButton:MACRO_OnShow(self, ...) end)
 		self:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
-		self:SetScript("OnAttributeChanged", BUTTON.MACRO_OnAttributeChanged)
+		self:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
 
-		self:HookScript("OnEnter", function(self, ...) NeuronButton.MACRO_OnEnter(self, ...) end)
+		self:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
 		self:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
 
 		self:WrapScript(self, "OnShow", [[
