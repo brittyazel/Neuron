@@ -2800,7 +2800,7 @@ function NeuronGUI:macroOnEditFocusLost(frame)
 	local button = NEURON.CurrentObject
 
 	if (button) then
-		button:MACRO_UpdateAll(true)
+		NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 	end
 
 	if (frame.text and strlen(frame:GetText()) <= 0) then

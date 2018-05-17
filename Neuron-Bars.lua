@@ -1383,10 +1383,31 @@ end
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 ------------------------OnEvent Functions-----------------------------
+---TODO:I need to figure out what to do with this
+function NeuronBar:ACTIONBAR_SHOWGRID(bar, ...)
+	if (not InCombatLockdown() and bar:IsVisible()) then
+		bar:Hide(); bar.showgrid = true
+	end
+end
 
+function NeuronBar:ACTIONBAR_HIDEGRID(bar, ...)
+	if (not InCombatLockdown() and bar.showgrid) then
+		bar:Show(); bar.showgrid = nil
+	end
+end
+
+function NeuronBar:ACTIVE_TALENT_GROUP_CHANGED(bar, ...)
+	if (NEURON.PEW) then
+		bar.stateschanged = true
+		bar.vischanged = true
+		NEURON.NeuronBar:Update(bar)
+	end
+end
+
+---this function brokers the on event call to the correct bar
 function NeuronBar:OnEvent(bar,event, ...)
-	if (bar[event]) then
-		bar[event](bar, ...)
+	if (NeuronBar[event]) then
+		NeuronBar[event](NeuronBar, bar, ...)
 	end
 end
 
@@ -1900,27 +1921,6 @@ function NeuronBar:CreateBar(index, class, id)
         bar:RegisterEvent("ACTIONBAR_HIDEGRID")
         bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
-
-        ---TODO:I need to figure out what to do with this
-        function bar:ACTIONBAR_SHOWGRID(...)
-            if (not InCombatLockdown() and self:IsVisible()) then
-                self:Hide(); self.showgrid = true
-            end
-        end
-
-        function bar:ACTIONBAR_HIDEGRID(...)
-            if (not InCombatLockdown() and self.showgrid) then
-                self:Show(); self.showgrid = nil
-            end
-        end
-
-        function bar:ACTIVE_TALENT_GROUP_CHANGED(...)
-            if (NEURON.PEW) then
-                self.stateschanged = true
-                self.vischanged = true
-                NEURON.NeuronBar:Update(self)
-            end
-        end
 
         NeuronBar:CreateDriver(bar)
         NeuronBar:CreateHandler(bar)

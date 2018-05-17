@@ -284,7 +284,7 @@ function XBTN:SetData(bar)
 
 	--self:GetSkinned()
 
-	self:MACRO_UpdateTimers()
+	NEURON.NeuronButton:MACRO_UpdateTimers(self)
 end
 
 function XBTN:SaveData()

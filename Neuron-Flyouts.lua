@@ -1019,7 +1019,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 				button.data.macro_Text = button:GetAttribute("macro_Text")
 				button:MACRO_UpdateParse()
 				button:MACRO_Reset()
-				button:MACRO_UpdateAll(true)
+				NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
 				list = list..button.id..";"
 
@@ -1271,7 +1271,7 @@ function BUTTON:Flyout_PostClick()
 
 	button:MACRO_UpdateParse()
 	button:MACRO_Reset()
-	button:MACRO_UpdateAll(true)
+	NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
 	NEURON.NeuronButton:MACRO_UpdateState(self)
 end
@@ -1329,8 +1329,8 @@ function BUTTON:Flyout_GetButton()
 	button:SetScript("OnEvent", self:GetScript("OnEvent"))
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
-	button:HookScript("OnShow", function(self) self:MACRO_UpdateButton() NEURON.NeuronButton:MACRO_UpdateIcon(self); NEURON.NeuronButton:MACRO_UpdateState(self) end)
-	button:HookScript("OnHide", function(self) self:MACRO_UpdateButton() NEURON.NeuronButton:MACRO_UpdateIcon(self) NEURON.NeuronButton:MACRO_UpdateState(self) end)
+	button:HookScript("OnShow", function(self) NEURON.NeuronButton:MACRO_UpdateButton(self) NEURON.NeuronButton:MACRO_UpdateIcon(self); NEURON.NeuronButton:MACRO_UpdateState(self) end)
+	button:HookScript("OnHide", function(self) NEURON.NeuronButton:MACRO_UpdateButton(self) NEURON.NeuronButton:MACRO_UpdateIcon(self) NEURON.NeuronButton:MACRO_UpdateState(self) end)
 
 	button:WrapScript(button, "OnClick", [[
 			local button = self:GetParent():GetParent()
