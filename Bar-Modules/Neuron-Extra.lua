@@ -513,13 +513,13 @@ function XBTN:SetType(save)
 	self:SetAttribute("useparent-unit", false)
 	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
-	self:SetScript("OnEvent", BUTTON.MACRO_OnEvent)
+	self:SetScript("OnEvent", function(self, event, ...) NEURON.NeuronButton:MACRO_OnEvent(self, event, ...) end)
 	self:SetScript("PostClick", function(self) NEURON.NeuronButton:MACRO_UpdateState(self) end)
-	self:SetScript("OnShow", BUTTON.MACRO_OnShow)
-	self:SetScript("OnHide", BUTTON.MACRO_OnHide)
+	self:SetScript("OnShow", function(self, ...) NEURON.NeuronButton:MACRO_OnShow(self, ...) end)
+	self:SetScript("OnHide", function(self, ...) NEURON.NeuronButton:MACRO_OnHide(self, ...) end)
 
-	self:HookScript("OnEnter", BUTTON.MACRO_OnEnter)
-	self:HookScript("OnLeave", BUTTON.MACRO_OnLeave)
+	self:HookScript("OnEnter", function(self, ...) NEURON.NeuronButton:MACRO_OnEnter(self, ...)end)
+	self:HookScript("OnLeave", function(self, ...) NEURON.NeuronButton:MACRO_OnLeave(self, ...) end)
 	self:HookScript("OnShow", XBTN.SetExtraButtonTex)
 
 	self:WrapScript(self, "OnShow", [[

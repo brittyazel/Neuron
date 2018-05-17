@@ -1382,7 +1382,7 @@ end
 
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
-------------------------OnEvent Functions-----------------------------
+------------------------Event Handlers __-----------------------------
 ---TODO:I need to figure out what to do with this
 function NeuronBar:ACTIONBAR_SHOWGRID(bar, ...)
 	if (not InCombatLockdown() and bar:IsVisible()) then
@@ -1403,7 +1403,15 @@ function NeuronBar:ACTIVE_TALENT_GROUP_CHANGED(bar, ...)
 		NEURON.NeuronBar:Update(bar)
 	end
 end
+----------------------------------------------------------------------
+----------------------------------------------------------------------
 
+
+
+
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+------------------------OnEvent Functions-----------------------------
 ---this function brokers the on event call to the correct bar
 function NeuronBar:OnEvent(bar,event, ...)
 	if (NeuronBar[event]) then

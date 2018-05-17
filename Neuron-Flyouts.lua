@@ -1324,8 +1324,8 @@ function BUTTON:Flyout_GetButton()
 	button:SetAttribute("*macrotext1", "")
 
 	button:SetScript("PostClick", BUTTON.Flyout_PostClick)
-	button:SetScript("OnEnter", function(self) BUTTON.MACRO_OnEnter(self) end)
-	button:SetScript("OnLeave", BUTTON.MACRO_OnLeave)
+	button:SetScript("OnEnter", function(self, ...) NEURON.NeuronButton:MACRO_OnEnter(self, ...) end)
+	button:SetScript("OnLeave", function(self, ...) NEURON.NeuronButton:MACRO_OnLeave(self, ...) end)
 	button:SetScript("OnEvent", self:GetScript("OnEvent"))
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
