@@ -1099,7 +1099,7 @@ function NeuronBar:Update(bar, show, hide)
 	NeuronBar:SetAutoHide(handler, bar)
 	bar.text:SetText(bar.gdata.name)
 	handler:SetAlpha(bar.gdata.alpha)
-	bar:SaveData()
+	NeuronBar:SaveData(bar)
 
 	if (not hide and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		NEURON.NeuronGUI:UpdateBarGUI()
@@ -1355,7 +1355,7 @@ function NeuronBar:SetDefaults(bar, gdefaults, cdefaults)
 		end
 	end
 
-	bar:SaveData()
+	NeuronBar:SaveData(bar)
 end
 
 
@@ -1400,7 +1400,9 @@ function NeuronBar:SetSize(bar)
 	end
 end
 
-
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+------------------------OnEvent Functions-----------------------------
 
 function BAR:OnEvent(event, ...)
 	if (self[event]) then
@@ -1581,7 +1583,7 @@ function BAR:OnKeyDown(key, onupdate)
 		end
 
 		NeuronBar:SetPosition(self)
-		self:SaveData()
+		NeuronBar:SaveData(self)
 	end
 end
 
@@ -1745,46 +1747,50 @@ function BAR:OnUpdate(elapsed)
 end
 
 
-function BAR:SaveData()
-	local id = self:GetID()
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
-	if (self.GDB[id]) then
-		for key,value in pairs(self.gdata) do
-			self.GDB[id][key] = value
+
+function NeuronBar:SaveData(bar)
+	local id = bar:GetID()
+
+	if (bar.GDB[id]) then
+		for key,value in pairs(bar.gdata) do
+            bar.GDB[id][key] = value
 		end
 	else
-		NEURON:Print("DEBUG: Bad Global Save Data for "..self:GetName().." ?")
+		NEURON:Print("DEBUG: Bad Global Save Data for "..bar:GetName().." ?")
 	end
 
-	if (self.CDB[id]) then
-		for key,value in pairs(self.cdata) do
-			self.CDB[id][key] = value
+	if (bar.CDB[id]) then
+		for key,value in pairs(bar.cdata) do
+            bar.CDB[id][key] = value
 		end
 	else
-		NEURON:Print("DEBUG: Bad Character Save Data for "..self:GetName().." ?")
+		NEURON:Print("DEBUG: Bad Character Save Data for "..bar:GetName().." ?")
 	end
 end
 
 
-function BAR:LoadData()
-	local id = self:GetID()
+function NeuronBar:LoadData(bar)
+	local id = bar:GetID()
 
-	if (not self.GDB[id]) then
-		self.GDB[id] = CopyTable(NEURON.barGDEF)
+	if (not bar.GDB[id]) then
+		bar.GDB[id] = CopyTable(NEURON.barGDEF)
 	end
 
-	NEURON:UpdateData(self.GDB[id], NEURON.barGDEF)
-	self.gdata = CopyTable(self.GDB[id])
+	NEURON:UpdateData(bar.GDB[id], NEURON.barGDEF)
+	bar.gdata = CopyTable(bar.GDB[id])
 
-	if (not self.CDB[id]) then
-		self.CDB[id] = CopyTable(NEURON.barCDEF)
+	if (not bar.CDB[id]) then
+		bar.CDB[id] = CopyTable(NEURON.barCDEF)
 	end
 
-	NEURON:UpdateData(self.CDB[id], NEURON.barCDEF)
-	self.cdata = CopyTable(self.CDB[id])
+	NEURON:UpdateData(bar.CDB[id], NEURON.barCDEF)
+	bar.cdata = CopyTable(bar.CDB[id])
 
-	if (#self.gdata.name < 1) then
-		self.gdata.name = self.barLabel.." "..self:GetID()
+	if (#bar.gdata.name < 1) then
+		bar.gdata.name = bar.barLabel.." "..bar:GetID()
 	end
 end
 
@@ -1878,7 +1884,7 @@ function BAR:DeleteBar()
 	self:SetScript("OnHide", function() end)
 	self:SetScript("OnUpdate", function() end)
 
-	NeuronBar:UnregisterEvent("ACTIONBAR_SHOWGRID")
+	self:UnregisterEvent("ACTIONBAR_SHOWGRID")
 	self:UnregisterEvent("ACTIONBAR_HIDEGRID")
 	self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 

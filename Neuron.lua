@@ -1441,7 +1441,7 @@ function NEURON:CreateBar(index, class, id)
 		NEURON.NeuronBar:CreateHandler(bar)
 		NEURON.NeuronBar:CreateWatcher(bar)
 
-		bar:LoadData()
+		NEURON.NeuronBar:LoadData(bar)
 
 		if (not newBar) then
 			bar:Hide()

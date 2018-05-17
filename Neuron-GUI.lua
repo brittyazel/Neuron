@@ -868,7 +868,7 @@ function NeuronGUI:updateBarName(frame)
 
 		bar.text:SetText(bar.gdata.name)
 
-		bar:SaveData()
+		NEURON.Neuronbar:SaveData(bar)
 
 		frame:ClearFocus()
 
