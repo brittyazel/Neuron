@@ -211,7 +211,7 @@ function BINDER:OnShow()
 	if (button) then
 
 		if (button.bar) then
-			self:SetFrameLevel(NEURON.NeuronBar:GetFrameLevel(button.bar)+1)
+			self:SetFrameLevel(button.bar:GetFrameLevel()+1)
 		end
 
 		local priority = ""
@@ -428,8 +428,8 @@ function NEURON:ToggleBindings(show, hide)
 			binder:Show(); binder.button.editmode = NEURON.BindingMode
 
 			if (binder.button.bar) then
-				binder:SetFrameStrata(NEURON.NeuronBar:GetFrameStrata(binder.button.bar))
-				binder:SetFrameLevel(NEURON.NeuronBar:GetFrameLevel(binder.button.bar)+4)
+				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
+				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
 				binder.button:SetGrid(true)
 			end
 		end
