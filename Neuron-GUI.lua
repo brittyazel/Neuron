@@ -3615,14 +3615,13 @@ end
 
 function NeuronGUI:SetBarCastTarget(value, toggle)
 	if NEURON.CurrentBar then
-		NEURON.CurrentBar:SetCastingTarget(value, true, toggle)
+		NEURON.NeuronBar:SetCastingTarget(NEURON.CurrentBar, value, true, toggle)
 	end
 end
 
 --/flyout s+,i+:teleport,!drake:linear:top:bottom:1:click
 local FLYOUTMACRO = {
-	["types"] = {
-		["item"] = "item"},
+	["types"] = { ["item"] = "item"},
 	["keys"] = "",
 	["shape"] = "LINEAR",
 	["attach"] = "TOP",

@@ -1471,7 +1471,7 @@ function NEURON:CreateNewBar(class, id, firstRun)
 		end
 
 		if (newBar) then
-			bar:Load()
+			NEURON.NeuronBar:Load(bar)
 			NEURON:ChangeBar(bar)
 
 			---------------------------------
