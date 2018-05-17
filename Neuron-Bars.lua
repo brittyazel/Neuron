@@ -257,7 +257,7 @@ function NeuronBar:OnEnable()
 
 			for i=oid+offset,oid+11+offset do
 				object = NEURON:CreateNewObject("bar", i, true)
-				bar:AddObjectToList(object)
+				NeuronBar:AddObjectToList(bar, object)
 			end
 
 			NEURON.RegisteredBarData["bar"].gDef = nil
@@ -1089,7 +1089,7 @@ function NeuronBar:Update(bar, show, hide)
 
 	if (bar.countChanged) then
 
-		bar:UpdateObjectData()
+		NeuronBar:UpdateObjectData(bar)
 
 		bar.countChanged = nil
 
@@ -1663,7 +1663,7 @@ function BAR:OnShow()
 
 	self.handler:SetAttribute("editmode", true)
 	self.handler:Show()
-	self:UpdateObjectGrid(NEURON.BarsShown)
+	NeuronBar:UpdateObjectGrid(self, NEURON.BarsShown)
 	self:EnableKeyboard(false)
 end
 
@@ -1675,7 +1675,7 @@ function BAR:OnHide()
 		self.handler:Hide()
 	end
 
-	self:UpdateObjectGrid()
+	NeuronBar:UpdateObjectGrid(self)
 	self:EnableKeyboard(false)
 end
 
@@ -1795,24 +1795,24 @@ function NeuronBar:LoadData(bar)
 end
 
 
-function BAR:UpdateObjectData()
+function NeuronBar:UpdateObjectData(bar)
 	local object
 
-	for objID in gmatch(self.gdata.objectList, "[^;]+") do
-		object = _G[self.objPrefix..objID]
+	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			object:SetData(self)
+			object:SetData(bar)
 		end
 	end
 end
 
 
-function BAR:UpdateObjectGrid(show)
+function NeuronBar:UpdateObjectGrid(bar, show)
 	local object
 
-	for objID in gmatch(self.gdata.objectList, "[^;]+") do
-		object = _G[self.objPrefix..objID]
+	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+		object = _G[bar.objPrefix..objID]
 
 		if (object) then
 			object:SetGrid(show)
@@ -1821,23 +1821,23 @@ function BAR:UpdateObjectGrid(show)
 end
 
 
-function BAR:UpdateObjectSpec()
+function NeuronBar:UpdateObjectSpec(bar)
 	local object, spec
 
-	for objID in gmatch(self.gdata.objectList, "[^;]+") do
-		object = _G[self.objPrefix..objID]
+	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			if (self.cdata.multiSpec) then
+			if (bar.cdata.multiSpec) then
 				spec = GetSpecialization()
 			else
 				spec = 1
 			end
 
-			self:Show()
+			bar:Show()
 
-			object:SetData(self)
-			object:LoadData(spec, self.handler:GetAttribute("activestate"))
+			object:SetData(bar)
+			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
 			object:UpdateFlyout()
 			object:SetType()
 			object:SetGrid()
@@ -1846,59 +1846,59 @@ function BAR:UpdateObjectSpec()
 end
 
 
-function BAR:DeleteBar()
-	local handler = self.handler
+function NeuronBar:DeleteBar(bar)
+	local handler = bar.handler
 
 	handler:SetAttribute("state-current", "homestate")
 	handler:SetAttribute("state-last", "homestate")
 	handler:SetAttribute("showstates", "homestate")
-	NeuronBar:ClearStates(handler, self, "homestate")
+	NeuronBar:ClearStates(handler, bar, "homestate")
 
 	for state, values in pairs(MAS) do
-		if (self.cdata[state] and self[state] and self[state].registered) then
-			if (state == "custom" and self.cdata.customRange) then
-				local start = tonumber(string.match(self.cdata.customRange, "^%d+"))
-				local stop = tonumber(string.match(self.cdata.customRange, "%d+$"))
+		if (bar.cdata[state] and bar[state] and bar[state].registered) then
+			if (state == "custom" and bar.cdata.customRange) then
+				local start = tonumber(string.match(bar.cdata.customRange, "^%d+"))
+				local stop = tonumber(string.match(bar.cdata.customRange, "%d+$"))
 
 				if (start and stop) then
-					NeuronBar:ClearStates(handler, self, state)--, start, stop)
+					NeuronBar:ClearStates(handler, bar, state)--, start, stop)
 				end
 			else
-				NeuronBar:ClearStates(handler, self, state)--, values.rangeStart, values.rangeStop)
+				NeuronBar:ClearStates(handler, bar, state)--, values.rangeStart, values.rangeStop)
 			end
 		end
 	end
 
-	self:RemoveObjects(self.objCount)
+	NeuronBar:RemoveObjects(bar, bar.objCount)
 
-	self:SetScript("OnClick", function() end)
-	self:SetScript("OnDragStart", function() end)
-	self:SetScript("OnDragStop", function() end)
-	self:SetScript("OnEnter", function() end)
-	self:SetScript("OnLeave", function() end)
-	self:SetScript("OnEvent", function() end)
-	self:SetScript("OnKeyDown", function() end)
-	self:SetScript("OnKeyUp", function() end)
-	self:SetScript("OnMouseWheel", function() end)
-	self:SetScript("OnShow", function() end)
-	self:SetScript("OnHide", function() end)
-	self:SetScript("OnUpdate", function() end)
+	bar:SetScript("OnClick", function() end)
+	bar:SetScript("OnDragStart", function() end)
+	bar:SetScript("OnDragStop", function() end)
+	bar:SetScript("OnEnter", function() end)
+	bar:SetScript("OnLeave", function() end)
+	bar:SetScript("OnEvent", function() end)
+	bar:SetScript("OnKeyDown", function() end)
+	bar:SetScript("OnKeyUp", function() end)
+	bar:SetScript("OnMouseWheel", function() end)
+	bar:SetScript("OnShow", function() end)
+	bar:SetScript("OnHide", function() end)
+	bar:SetScript("OnUpdate", function() end)
 
-	self:UnregisterEvent("ACTIONBAR_SHOWGRID")
-	self:UnregisterEvent("ACTIONBAR_HIDEGRID")
-	self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+	bar:UnregisterEvent("ACTIONBAR_SHOWGRID")
+	bar:UnregisterEvent("ACTIONBAR_HIDEGRID")
+	bar:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
-	self:SetWidth(36)
-	self:SetHeight(36)
-	self:ClearAllPoints()
-	self:SetPoint("CENTER")
-	self:Hide()
+	bar:SetWidth(36)
+	bar:SetHeight(36)
+	bar:ClearAllPoints()
+	bar:SetPoint("CENTER")
+	bar:Hide()
 
-	BARIndex[self.index] = nil
-	BARNameIndex[self:GetName()] = nil
+	BARIndex[bar.index] = nil
+	BARNameIndex[bar:GetName()] = nil
 
-	self.GDB[self:GetID()] = nil
-	self.CDB[self:GetID()] = nil
+	bar.GDB[bar:GetID()] = nil
+	bar.CDB[bar:GetID()] = nil
 
 	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		NEURON.NeuronGUI:UpdateBarGUI()
@@ -1906,51 +1906,49 @@ function BAR:DeleteBar()
 end
 
 
-function BAR:AddObjectToList(object)
-	if (not self.gdata.objectList or self.gdata.objectList == "") then
-		self.gdata.objectList = tostring(object.id)
+function NeuronBar:AddObjectToList(bar, object)
+	if (not bar.gdata.objectList or bar.gdata.objectList == "") then
+		bar.gdata.objectList = tostring(object.id)
 	else
-		self.gdata.objectList = self.gdata.objectList..";"..object.id
+		bar.gdata.objectList = bar.gdata.objectList..";"..object.id
 	end
 end
 
 
-function BAR:AddObjects(num)
+function NeuronBar:AddObjects(bar, num)
 	num = tonumber(num)
 
 	if (not num) then
 		num = 1
 	end
 
-	test = self
-
 	for i=1,num do
 
 		local object
 		local id
 
-		for index in ipairs(self.objTable) do
+		for index in ipairs(bar.objTable) do
 			id = index + 1
 		end
 
-		if (not self.objMax) then
-			object = NEURON:CreateNewObject(self.class, id)
-			self:AddObjectToList(object)
+		if (not bar.objMax) then
+			object = NEURON:CreateNewObject(bar.class, id)
+			NeuronBar:AddObjectToList(bar, object)
 		end
 
 	end
 
-	NeuronBar:LoadObjects(self)
-	NeuronBar:SetObjectLoc(self)
-	NeuronBar:SetPerimeter(self)
-	NeuronBar:SetSize(self)
-	NeuronBar:Update(self)
-	self:UpdateObjectGrid(NEURON.BarsShown)
+	NeuronBar:LoadObjects(bar)
+	NeuronBar:SetObjectLoc(bar)
+	NeuronBar:SetPerimeter(bar)
+	NeuronBar:SetSize(bar)
+	NeuronBar:Update(bar)
+	NeuronBar:UpdateObjectGrid(bar, NEURON.BarsShown)
 
 end
 
 
-function BAR:StoreObject(object, storage, objTable)
+function NeuronBar:StoreObject(bar, object, storage, objTable)
 	object:ClearAllPoints()
 
 	object.config.scale = 1
@@ -1977,15 +1975,15 @@ function BAR:StoreObject(object, storage, objTable)
 end
 
 
-function BAR:RemoveObjectFromList(objID)
+function NeuronBar:RemoveObjectFromList(bar, objID)
 
-	self.gdata.objectList = (self.gdata.objectList):gsub("[;]*"..objID.."$", "")
+	bar.gdata.objectList = (bar.gdata.objectList):gsub("[;]*"..objID.."$", "")
 
 end
 
 
-function BAR:RemoveObjects(num)
-	if (not self.objStorage) then return end
+function NeuronBar:RemoveObjects(bar, num)
+	if (not bar.objStorage) then return end
 
 	if (not num) then
 		num = 1
@@ -1994,21 +1992,21 @@ function BAR:RemoveObjects(num)
 
 	for i=1,num do
 
-		local objID = (self.gdata.objectList):match("%d+$")
+		local objID = (bar.gdata.objectList):match("%d+$")
 
 		if (objID) then
-			local object = _G[self.objPrefix..objID]
+			local object = _G[bar.objPrefix..objID]
 			if (object) then
-				self:StoreObject(object, self.objStorage, self.objTable)
-				self:RemoveObjectFromList(objID)
-				self.objCount = self.objCount - 1
-				self.countChanged = true
+				NeuronBar:StoreObject(bar, object, bar.objStorage, bar.objTable)
+				NeuronBar:RemoveObjectFromList(bar, objID)
+				bar.objCount = bar.objCount - 1
+				bar.countChanged = true
 			end
 
-			NeuronBar:SetObjectLoc(self)
-			NeuronBar:SetPerimeter(self)
-			NeuronBar:SetSize(self)
-			NeuronBar:Update(self)
+			NeuronBar:SetObjectLoc(bar)
+			NeuronBar:SetPerimeter(bar)
+			NeuronBar:SetSize(bar)
+			NeuronBar:Update(bar)
 		end
 	end
 
@@ -2016,7 +2014,7 @@ function BAR:RemoveObjects(num)
 end
 
 
-function BAR:SetState(msg, gui, checked, query)
+function NeuronBar:SetState(bar, msg, gui, checked, query)
 	if (msg) then
 		local state = msg:match("^%S+")
 		local command = msg:gsub(state, "");
@@ -2034,63 +2032,63 @@ function BAR:SetState(msg, gui, checked, query)
 
 		if (gui) then
 			if (checked) then
-				self.cdata[state] = true
+				bar.cdata[state] = true
 			else
-				self.cdata[state] = false
+				bar.cdata[state] = false
 			end
 		else
-			local toggle = self.cdata[state]
+			local toggle = bar.cdata[state]
 
 			if (toggle) then
-				self.cdata[state] = false
+				bar.cdata[state] = false
 			else
-				self.cdata[state] = true
+				bar.cdata[state] = true
 			end
 		end
 
 		if (state == "paged") then
-			self.cdata.stance = false
-			self.cdata.pet = false
+			bar.cdata.stance = false
+			bar.cdata.pet = false
 
-			if (self.cdata.paged) then
-				NeuronBar:SetRemap_Paged(self)
+			if (bar.cdata.paged) then
+				NeuronBar:SetRemap_Paged(bar)
 			else
-				self.cdata.remap = false
+				bar.cdata.remap = false
 			end
 		end
 
 		if (state == "stance") then
-			self.cdata.paged = false
-			self.cdata.pet = false
+			bar.cdata.paged = false
+			bar.cdata.pet = false
 
 
-			if (NEURON.class == "ROGUE" and self.cdata.stealth) then
-				self.cdata.stealth = false
+			if (NEURON.class == "ROGUE" and bar.cdata.stealth) then
+				bar.cdata.stealth = false
 			end
 
-			if (self.cdata.stance) then
-				NeuronBar:SetRemap_Stance(self)
+			if (bar.cdata.stance) then
+				NeuronBar:SetRemap_Stance(bar)
 			else
-				self.cdata.remap = false
+				bar.cdata.remap = false
 			end
 		end
 
 		if (state == "custom") then
-			if (self.cdata.custom) then
+			if (bar.cdata.custom) then
 				local count, newstates = 0, ""
 
-				self.cdata.customNames = {}
+				bar.cdata.customNames = {}
 
 				for states in gmatch(command, "[^;]+") do
 					if string.find(states, "%[(.+)%]") then
-						self.cdata.customRange = "1;"..count
+						bar.cdata.customRange = "1;"..count
 
 						if (count == 0) then
 							newstates = states.." homestate;"
-							self.cdata.customNames["homestate"] = states
+							bar.cdata.customNames["homestate"] = states
 						else
 							newstates = newstates..states.." custom"..count..";"
-							self.cdata.customNames["custom"..count] = states
+							bar.cdata.customNames["custom"..count] = states
 						end
 
 						count = count + 1
@@ -2100,40 +2098,40 @@ function BAR:SetState(msg, gui, checked, query)
 				end
 
 				if (newstates ~= "" ) then
-					self.cdata.custom = newstates
+					bar.cdata.custom = newstates
 				else
-					self.cdata.custom = false
-					self.cdata.customNames = false
-					self.cdata.customRange = false
+					bar.cdata.custom = false
+					bar.cdata.customNames = false
+					bar.cdata.customRange = false
 				end
 
 			else
-				self.cdata.customNames = false
-				self.cdata.customRange = false
+				bar.cdata.customNames = false
+				bar.cdata.customRange = false
 			end
 
 			--Clears any previous set cusom vis settings
-			for states in gmatch(self.gdata.hidestates, "custom%d+") do
-				self.gdata.hidestates = self.gdata.hidestates:gsub(states..":", "")
+			for states in gmatch(bar.gdata.hidestates, "custom%d+") do
+				bar.gdata.hidestates = bar.gdata.hidestates:gsub(states..":", "")
 			end
-			if not self.gdata.hidestates then NEURON:Print("OOPS")
+			if not bar.gdata.hidestates then NEURON:Print("OOPS")
 			end
 		end
 
 		if (state == "pet") then
-			self.cdata.paged = false
-			self.cdata.stance = false
+			bar.cdata.paged = false
+			bar.cdata.stance = false
 		end
 
-		self.stateschanged = true
-		NeuronBar:Update(self)
+		bar.stateschanged = true
+		NeuronBar:Update(bar)
 
 	elseif (not gui) then
 		wipe(statetable)
 
 		for k,v in pairs(NEURON.STATEINDEX) do
 
-			if (self.cdata[k]) then
+			if (bar.cdata[k]) then
 				tinsert(statetable, k..": on")
 			else
 				tinsert(statetable, k..": off")
@@ -2152,7 +2150,7 @@ end
 
 --I have no clue what or how any of this works. I took out the annoying print statements, but for now I'll just leave it. -Soyier
 
-function BAR:SetVisibility(msg, gui, checked, query)
+function NeuronBar:SetVisibility(bar, msg, gui, checked, query)
 	if (msg) then
 		wipe(statetable)
 		local toggle, index, num = (" "):split(msg)
@@ -2164,11 +2162,11 @@ function BAR:SetVisibility(msg, gui, checked, query)
 
 				if (num) then
 					local hidestate = NEURON.STATEINDEX[toggle]..num
-					if (NEURON.STATES[hidestate]) or (toggle == "custom" and self.cdata.customNames) then
-						if (self.gdata.hidestates:find(hidestate)) then
-							self.gdata.hidestates = self.gdata.hidestates:gsub(hidestate..":", "")
+					if (NEURON.STATES[hidestate]) or (toggle == "custom" and bar.cdata.customNames) then
+						if (bar.gdata.hidestates:find(hidestate)) then
+							bar.gdata.hidestates = bar.gdata.hidestates:gsub(hidestate..":", "")
 						else
-							self.gdata.hidestates = self.gdata.hidestates..hidestate..":"
+							bar.gdata.hidestates = bar.gdata.hidestates..hidestate..":"
 						end
 					else
 						NEURON:Print(L["Invalid index"]); return
@@ -2176,20 +2174,20 @@ function BAR:SetVisibility(msg, gui, checked, query)
 
 				elseif (index == L["Show"]) then
 					local hidestate = NEURON.STATEINDEX[toggle].."%d+"
-					self.gdata.hidestates = self.gdata.hidestates:gsub(hidestate..":", "")
+					bar.gdata.hidestates = bar.gdata.hidestates:gsub(hidestate..":", "")
 				elseif (index == L["Hide"]) then
 					local hidestate = NEURON.STATEINDEX[toggle]
 
 					for state in pairs(NEURON.STATES) do
-						if (state:find("^"..hidestate) and not self.gdata.hidestates:find(state)) then
-							self.gdata.hidestates = self.gdata.hidestates..state..":"
+						if (state:find("^"..hidestate) and not bar.gdata.hidestates:find(state)) then
+							bar.gdata.hidestates = bar.gdata.hidestates..state..":"
 						end
 					end
 				end
 			end
 
 			if (not silent) then
-				local hidestates = self.gdata.hidestates
+				local hidestates = bar.gdata.hidestates
 				local desc, showhide
 
 				local highindex = 0
@@ -2233,8 +2231,8 @@ function BAR:SetVisibility(msg, gui, checked, query)
 				end
 			end
 
-			self.vischanged = true
-			NeuronBar:Update(self)
+			bar.vischanged = true
+			NeuronBar:Update(bar)
 		else
 			NEURON:PrintStateList()
 		end
@@ -2243,80 +2241,80 @@ function BAR:SetVisibility(msg, gui, checked, query)
 end
 
 
-function BAR:AutoHideBar(msg, gui, checked, query)
+function NeuronBar:AutoHideBar(bar, msg, gui, checked, query)
 	if (query) then
-		return self.gdata.autoHide
+		return bar.gdata.autoHide
 	end
 
 	if (gui) then
 		if (checked) then
-			self.gdata.autoHide = true
+			bar.gdata.autoHide = true
 		else
-			self.gdata.autoHide = false
+			bar.gdata.autoHide = false
 		end
 
 	else
-		local toggle = self.gdata.autoHide
+		local toggle = bar.gdata.autoHide
 
 		if (toggle) then
-			self.gdata.autoHide = false
+			bar.gdata.autoHide = false
 		else
-			self.gdata.autoHide = true
+			bar.gdata.autoHide = true
 		end
 	end
 
-	NeuronBar:Update(self)
+	NeuronBar:Update(bar)
 end
 
 
-function BAR:ShowGridSet(msg, gui, checked, query)
+function NeuronBar:ShowGridSet(bar, msg, gui, checked, query)
 	if (query) then
-		return self.gdata.showGrid
+		return bar.gdata.showGrid
 	end
 
 	if (gui) then
 		if (checked) then
-			self.gdata.showGrid = true
+			bar.gdata.showGrid = true
 		else
-			self.gdata.showGrid = false
+			bar.gdata.showGrid = false
 		end
 	else
-		if (self.gdata.showGrid) then
-			self.gdata.showGrid = false
+		if (bar.gdata.showGrid) then
+			bar.gdata.showGrid = false
 		else
 			self.gdata.showGrid = true
 		end
 	end
 
-	self:UpdateObjectData()
-	self:UpdateObjectGrid(NEURON.BarsShown)
-	NeuronBar:Update(self)
+	NeuronBar:UpdateObjectData(bar)
+	NeuronBar:UpdateObjectGrid(bar, NEURON.BarsShown)
+	NeuronBar:Update(bar)
 end
 
 
-local function spellGlowMod(self, msg, gui)
+function NeuronBar:spellGlowMod(bar, msg, gui)
 	if (msg:lower() == "default") then
-		if (self.cdata.spellGlowDef) then
-			self.cdata.spellGlowDef = false
+		if (bar.cdata.spellGlowDef) then
+			bar.cdata.spellGlowDef = false
 		else
-			self.cdata.spellGlowDef = true
-			self.cdata.spellGlowAlt = false
+			bar.cdata.spellGlowDef = true
+			bar.cdata.spellGlowAlt = false
 		end
 
-		if (not self.cdata.spellGlowDef and not self.cdata.spellGlowAlt) then
-			self.cdata.spellGlowDef = true
+		if (not bar.cdata.spellGlowDef and not bar.cdata.spellGlowAlt) then
+			bar.cdata.spellGlowDef = true
 		end
 
 	elseif (msg:lower() == "alt") then
-		if (self.cdata.spellGlowAlt) then
-			self.cdata.spellGlowAlt = false
+		if (bar.cdata.spellGlowAlt) then
+			bar.cdata.spellGlowAlt = false
 		else
-			self.cdata.spellGlowAlt = true
-			self.cdata.spellGlowDef = false
+			bar.cdata.spellGlowAlt = true
+			bar.cdata.spellGlowDef = false
 		end
 
-		if (not self.cdata.spellGlowDef and not self.cdata.spellGlowAlt) then
-			self.cdata.spellGlowDef = true
+		if (not bar.cdata.spellGlowDef and not bar.cdata.spellGlowAlt) then
+			bar.cdata.spellGlowDef = true
 		end
 
 	elseif (not gui) then
@@ -2325,209 +2323,209 @@ local function spellGlowMod(self, msg, gui)
 end
 
 
-function BAR:SpellGlowSet(msg, gui, checked, query)
+function NeuronBar:SpellGlowSet(bar, msg, gui, checked, query)
 	if (query) then
 		if (msg == "default") then
-			return self.cdata.spellGlowDef
+			return bar.cdata.spellGlowDef
 		elseif(msg == "alt") then
-			return self.cdata.spellGlowAlt
+			return bar.cdata.spellGlowAlt
 		else
-			return self.cdata.spellGlow
+			return bar.cdata.spellGlow
 		end
 	end
 
 	if (gui) then
 		if (msg) then
-			spellGlowMod(self, msg, gui)
+			NeuronBar:spellGlowMod(bar, msg, gui)
 		elseif (checked) then
-			self.cdata.spellGlow = true
+			bar.cdata.spellGlow = true
 		else
-			self.cdata.spellGlow = false
+			bar.cdata.spellGlow = false
 		end
 
 	else
 		if (msg) then
-			spellGlowMod(self, msg, gui)
-		elseif (self.cdata.spellGlow) then
-			self.cdata.spellGlow = false
+			NeuronBar:spellGlowMod(bar, msg, gui)
+		elseif (bar.cdata.spellGlow) then
+			bar.cdata.spellGlow = false
 		else
-			self.cdata.spellGlow = true
+			bar.cdata.spellGlow = true
 		end
 	end
 
-	self:UpdateObjectData()
-	NeuronBar:Update(self)
+	NeuronBar:UpdateObjectData(bar)
+	NeuronBar:Update(bar)
 end
 
 
-function BAR:SnapToBar(msg, gui, checked, query)
+function NeuronBar:SnapToBar(bar, msg, gui, checked, query)
 	if (query) then
-		return self.gdata.snapTo
+		return bar.gdata.snapTo
 	end
 
 	if (gui) then
 		if (checked) then
-			self.gdata.snapTo = true
+			bar.gdata.snapTo = true
 		else
-			self.gdata.snapTo = false
+			bar.gdata.snapTo = false
 		end
 	else
-		local toggle = self.gdata.snapTo
+		local toggle = bar.gdata.snapTo
 
 		if (toggle) then
-			self.gdata.snapTo = false
-			self.gdata.snapToPoint = false
-			self.gdata.snapToFrame = false
+			bar.gdata.snapTo = false
+			bar.gdata.snapToPoint = false
+			bar.gdata.snapToFrame = false
 
-			self:SetUserPlaced(true)
-			self.gdata.point, self.gdata.x, self.gdata.y = NeuronBar:GetPosition(self)
-			NeuronBar:SetPosition(self)
+			bar:SetUserPlaced(true)
+			bar.gdata.point, bar.gdata.x, bar.gdata.y = NeuronBar:GetPosition(bar)
+			NeuronBar:SetPosition(bar)
 		else
-			self.gdata.snapTo = true
+			bar.gdata.snapTo = true
 		end
 	end
 
-	NeuronBar:Update(self)
+	NeuronBar:Update(bar)
 end
 
-function BAR:UpClicksSet(msg, gui, checked, query)
+function NeuronBar:UpClicksSet(bar, msg, gui, checked, query)
 	if (query) then
-		return self.cdata.upClicks
+		return bar.cdata.upClicks
 	end
 
 	if (gui) then
 		if (checked) then
-			self.cdata.upClicks = true
+			bar.cdata.upClicks = true
 		else
-			self.cdata.upClicks = false
+			bar.cdata.upClicks = false
 		end
 
 	else
-		if (self.cdata.upClicks) then
-			self.cdata.upClicks = false
+		if (bar.cdata.upClicks) then
+			bar.cdata.upClicks = false
 		else
-			self.cdata.upClicks = true
+			bar.cdata.upClicks = true
 		end
 	end
 
-	self:UpdateObjectData()
-	NeuronBar:Update(self)
+	NeuronBar:UpdateObjectData(bar)
+	NeuronBar:Update(bar)
 end
 
 
-function BAR:DownClicksSet(msg, gui, checked, query)
+function NeuronBar:DownClicksSet(bar, msg, gui, checked, query)
 	if (query) then
-		return self.cdata.downClicks
+		return bar.cdata.downClicks
 	end
 
 	if (gui) then
 		if (checked) then
-			self.cdata.downClicks = true
+			bar.cdata.downClicks = true
 		else
-			self.cdata.downClicks = false
+			bar.cdata.downClicks = false
 		end
 
 	else
-		if (self.cdata.downClicks) then
-			self.cdata.downClicks = false
+		if (bar.cdata.downClicks) then
+			bar.cdata.downClicks = false
 		else
-			self.cdata.downClicks = true
+			bar.cdata.downClicks = true
 		end
 	end
 
-	self:UpdateObjectData()
-	NeuronBar:Update(self)
+	NeuronBar:UpdateObjectData(bar)
+	NeuronBar:Update(bar)
 end
 
 
-function BAR:MultiSpecSet(msg, gui, checked, query)
+function NeuronBar:MultiSpecSet(bar, msg, gui, checked, query)
 	if (query) then
-		return self.cdata.multiSpec
+		return bar.cdata.multiSpec
 	end
 
 	if (gui) then
 		if (checked) then
-			self.cdata.multiSpec = true
+			bar.cdata.multiSpec = true
 		else
-			self.cdata.multiSpec = false
+			bar.cdata.multiSpec = false
 		end
 	else
-		local toggle = self.cdata.multiSpec
+		local toggle = bar.cdata.multiSpec
 
 		if (toggle) then
-			self.cdata.multiSpec = false
+			bar.cdata.multiSpec = false
 		else
-			self.cdata.multiSpec = true
+			bar.cdata.multiSpec = true
 		end
 	end
 
-	self:UpdateObjectSpec()
-	NeuronBar:Update(self)
+	NeuronBar:UpdateObjectSpec(bar)
+	NeuronBar:Update(bar)
 end
 
 
-function BAR:ConcealBar(msg, gui, checked, query)
+function NeuronBar:ConcealBar(bar, msg, gui, checked, query)
 	if (InCombatLockdown()) then return end
 
 	if (query) then
-		return self.cdata.conceal
+		return bar.cdata.conceal
 	end
 
 	if (gui) then
 		if (checked) then
-			self.cdata.conceal = true
+			bar.cdata.conceal = true
 		else
-			self.cdata.conceal = false
+			bar.cdata.conceal = false
 		end
 
 	else
-		local toggle = self.cdata.conceal
+		local toggle = bar.cdata.conceal
 
 		if (toggle) then
-			self.cdata.conceal = false
+			bar.cdata.conceal = false
 		else
-			self.cdata.conceal = true
+			bar.cdata.conceal = true
 		end
 	end
 
-	if (self.cdata.conceal) then
-		if (self.selected) then
-			self:SetBackdropColor(1,0,0,0.6)
+	if (bar.cdata.conceal) then
+		if (bar.selected) then
+			bar:SetBackdropColor(1,0,0,0.6)
 		else
-			self:SetBackdropColor(1,0,0,0.4)
+			bar:SetBackdropColor(1,0,0,0.4)
 		end
 	else
-		if (self.selected) then
-			self:SetBackdropColor(0,0,1,0.5)
+		if (bar.selected) then
+			bar:SetBackdropColor(0,0,1,0.5)
 		else
-			self:SetBackdropColor(0,0,0,0.4)
+			bar:SetBackdropColor(0,0,0,0.4)
 		end
 	end
 
-	NeuronBar:Update(self)
+	NeuronBar:Update(bar)
 end
 
 
-local function barLockMod(self, msg, gui)
+function NeuronBar:barLockMod(bar, msg, gui)
 	if (msg:lower() == "alt") then
-		if (self.cdata.barLockAlt) then
-			self.cdata.barLockAlt = false
+		if (bar.cdata.barLockAlt) then
+			bar.cdata.barLockAlt = false
 		else
-			self.cdata.barLockAlt = true
+			bar.cdata.barLockAlt = true
 		end
 
 	elseif (msg:lower() == "ctrl") then
-		if (self.cdata.barLockCtrl) then
-			self.cdata.barLockCtrl = false
+		if (bar.cdata.barLockCtrl) then
+			bar.cdata.barLockCtrl = false
 		else
-			self.cdata.barLockCtrl = true
+			bar.cdata.barLockCtrl = true
 		end
 
 	elseif (msg:lower() == "shift") then
-		if (self.cdata.barLockShift) then
-			self.cdata.barLockShift = false
+		if (bar.cdata.barLockShift) then
+			bar.cdata.barLockShift = false
 		else
-			self.cdata.barLockShift = true
+			bar.cdata.barLockShift = true
 		end
 
 	elseif (not gui) then
@@ -2550,7 +2548,7 @@ function BAR:LockSet(msg, gui, checked, query)
 
 	if (gui) then
 		if (msg) then
-			barLockMod(self, msg, gui)
+			NeuronBar:barLockMod(self, msg, gui)
 		elseif (checked) then
 			self.cdata.barLock = true
 		else
@@ -2559,7 +2557,7 @@ function BAR:LockSet(msg, gui, checked, query)
 
 	else
 		if (msg) then
-			barLockMod(self, msg, gui)
+			NeuronBar:barLockMod(self, msg, gui)
 		else
 			if (self.cdata.barLock) then
 				self.cdata.barLock = false
@@ -2569,7 +2567,7 @@ function BAR:LockSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -2627,7 +2625,7 @@ function BAR:ToolTipSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -2845,7 +2843,7 @@ function BAR:StrataSet(command, gui, query)
 		self.gdata.objectStrata = NEURON.Stratas[strata]
 
 		NeuronBar:SetPosition(self)
-		self:UpdateObjectData()
+		NeuronBar:UpdateObjectData(self)
 		NeuronBar:Update(self)
 
 	elseif (not gui) then
@@ -3004,7 +3002,7 @@ function BAR:BindTextSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -3029,7 +3027,7 @@ function BAR:MacroTextSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -3054,7 +3052,7 @@ function BAR:CountTextSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -3079,7 +3077,7 @@ function BAR:RangeIndSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -3104,7 +3102,7 @@ function BAR:CDTextSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -3129,7 +3127,7 @@ function BAR:CDAlphaSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -3154,7 +3152,7 @@ function BAR:AuraTextSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -3179,7 +3177,7 @@ function BAR:AuraIndSet(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateObjectData()
+	NeuronBar:UpdateObjectData(self)
 	NeuronBar:Update(self)
 end
 
@@ -3211,7 +3209,7 @@ function NEURONBarProfileUpdate()
 
 			for i=oid+offset,oid+11+offset do
 				object = NEURON:CreateNewObject("bar", i, true)
-				bar:AddObjectToList(object)
+				NeuronBar:AddObjectToList(bar, object)
 			end
 
 			NEURON.RegisteredBarData["bar"].gDef = nil

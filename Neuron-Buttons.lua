@@ -2649,7 +2649,7 @@ function BUTTON:MACRO_OnAttributeChanged(name, value)
 			---breaks out of the loop due to flag set below
 			if (NEURON.class == "DRUID" and self.ignoreNextOverrideStance == true and value == "homestate") then
 				self.ignoreNextOverrideStance = nil
-				self.bar:SetState("stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
+				NEURON.NeuronBar:SetState(self.bar, "stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
 				return
 			else
 				self.ignoreNextOverrideStance = nil

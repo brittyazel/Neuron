@@ -82,7 +82,7 @@ function NeuronExtraBar:OnInitialize()
 		local bar = NEURON:CreateNewBar("extrabar", 1, true)
 		local object = NEURON:CreateNewObject("extrabar", 1)
 
-		bar:AddObjectToList(object)
+		NEURON.NeuronBar:AddObjectToList(bar, object)
 
 		CDB.xbarFirstRun = false
 

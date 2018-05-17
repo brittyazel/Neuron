@@ -900,9 +900,9 @@ function NeuronGUI:updateCustomState(frame)
 	local state = frame:GetText()
 	local customStateList = ""
 
-	bar:SetState("custom", true, false)  --turns off custom state to clear any previous stored items
+	NEURON.NeuronBar:SetState(bar, "custom", true, false)  --turns off custom state to clear any previous stored items
 	if (bar and state ~= "") then
-		bar:SetState("custom "..state, true, true)
+		NEURON.NeuronBar:SetState(bar, "custom "..state, true, true)
 	end
 
 	if (bar and bar.cdata.customNames) then
@@ -921,9 +921,9 @@ function NeuronGUI:countOnMouseWheel(delta)
 	if (bar) then
 
 		if (delta > 0) then
-			bar:AddObjects()
+			NEURON.NeuronBar:AddObjects(bar)
 		else
-			bar:RemoveObjects()
+			NEURON.NeuronBar:RemoveObjects(bar)
 		end
 	end
 end
@@ -1030,7 +1030,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetNormalTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Up")
 	f:SetPushedTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Down")
 	f:SetHighlightTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Highlight")
-	f:SetScript("OnClick", function() if (NEURON.CurrentBar) then NEURON.CurrentBar:AddObjects() end end)
+	f:SetScript("OnClick", function() if (NEURON.CurrentBar) then NEURON.NeuronBar:AddObjects(NEURON.CurrentBar) end end)
 
 	f = CreateFrame("Button", nil, frame.count)
 	f:SetWidth(32)
@@ -1039,7 +1039,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetNormalTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Up")
 	f:SetPushedTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Down")
 	f:SetHighlightTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Highlight")
-	f:SetScript("OnClick", function() if (NEURON.CurrentBar) then NEURON.CurrentBar:RemoveObjects() end end)
+	f:SetScript("OnClick", function() if (NEURON.CurrentBar) then NEURON.NeuronBar:RemoveObjects(NEURON.CurrentBar) end end)
 
 end
 
@@ -1327,7 +1327,7 @@ function NeuronGUI:BarEditor_ConfirmYes(button)
 	local bar = NEURON.CurrentBar
 
 	if (bar) then
-		bar:DeleteBar()
+		NEURON.NeuronBar:DeleteBar(bar)
 	end
 
 	NeuronBarEditorDelete:Click()
@@ -1599,7 +1599,7 @@ function NeuronGUI:colorPickerShow(button)
 
 					bar.gdata[button.option] = value
 
-					bar:UpdateObjectData()
+					NEURON.NeuronBar:UpdateObjectData(bar)
 
 					NEURON.NeuronBar:Update(bar)
 				end
@@ -1683,14 +1683,14 @@ function NeuronGUI:setBarActionState(frame)
 	local bar = NEURON.CurrentBar
 
 	if (bar) then
-		bar:SetState(frame.option, true, frame:GetChecked())
+		NEURON.NeuronBar:SetState(bar, frame.option, true, frame:GetChecked())
 	end
 end
 
 function NeuronGUI:setBarVisability(button)
 	local bar = NEURON.CurrentBar
 	if (bar) then
-		bar:SetVisibility(button.msg, true)
+		NEURON.NeuronBar:SetVisibility(bar, button.msg, true)
 	end
 end
 

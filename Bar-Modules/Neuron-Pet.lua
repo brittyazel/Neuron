@@ -105,7 +105,7 @@ function NeuronPetBar:OnInitialize()
 
 		for i=1,NEURON.maxPetID do
 			object = NEURON:CreateNewObject("pet", i)
-			bar:AddObjectToList(object)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
 		end
 
 		DB.petbarFirstRun = false

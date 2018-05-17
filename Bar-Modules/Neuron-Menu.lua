@@ -80,7 +80,7 @@ function NeuronMenuBar:OnInitialize()
 
         for i=1,#menuElements do
             object = NEURON:CreateNewObject("menu", i)
-            bar:AddObjectToList(object)
+            NEURON.NeuronBar:AddObjectToList(bar, object)
         end
 
         DB.menubarFirstRun = false

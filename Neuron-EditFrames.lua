@@ -241,7 +241,7 @@ function NEURON:ToggleEditFrames(show, hide)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			bar:UpdateObjectGrid(NEURON.EditFrameShown)
+			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
 			if (bar.handler:GetAttribute("assertstate")) then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
 			end
@@ -271,7 +271,7 @@ function NEURON:ToggleEditFrames(show, hide)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			bar:UpdateObjectGrid(NEURON.EditFrameShown)
+			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
 		end
 	end
 end

@@ -93,7 +93,7 @@ function NeuronBagBar:OnInitialize()
 
 		for i=1,#bagElements do
 			object = NEURON:CreateNewObject("bag", i)
-			bar:AddObjectToList(object)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
 		end
 
 		DB.bagbarFirstRun = false
