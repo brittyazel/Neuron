@@ -1381,14 +1381,15 @@ function NEURON:CreateBar(index, class, id)
 		if (_G["Neuron"..data.barType..id]) then
 			bar = _G["Neuron"..data.barType..id]
 		else
-			bar = CreateFrame("CheckButton", "Neuron"..data.barType..id, UIParent, "NeuronBarTemplate") --I think this is the line flooding the global namespace with bar frames
+			---this is the create of our bar object frame
+			bar = CreateFrame("CheckButton", "Neuron"..data.barType..id, UIParent, "NeuronBarTemplate")
+			---this is assigning the metatable of a CheckButton to our new bar object, giving it all a CheckButtons features, and thus finishing the object construction
+			setmetatable(bar, {__index = CreateFrame("CheckButton")})
 		end
 
 		for key,value in pairs(data) do
 			bar[key] = value
 		end
-
-		setmetatable(bar, {__index = NEURON.barMT})
 
 		bar.index = index
 		bar.class = class
