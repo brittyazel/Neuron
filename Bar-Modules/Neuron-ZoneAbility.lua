@@ -587,6 +587,6 @@ function BAR:HideZoneAbilityBorder(msg, gui, checked, query)
 			Neuron.CurrentBar.gdata.border = true
 		end
 	end
-	self:Update()
+	NEURON.NeuronBar:Update(self)
 	ZONEABILITYRBTN:UpdateFrame()
 end

@@ -881,9 +881,9 @@ function NeuronFlyouts.updateFlyoutBars(self, elapsed)
 		local bar = tremove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
-			bar:SetObjectLoc()
-			bar:SetPerimeter()
-			bar:SetSize()
+			NEURON.NeuronBar:SetObjectLoc(self)
+			NEURON.NeuronBar:SetPerimeter(self)
+			NEURON.NeuronBar:SetSize(self)
 		else
 			self:Hide()
 		end
@@ -1399,7 +1399,7 @@ function BUTTON:Flyout_GetBar()
 	bar:SetFrameLevel(2)
 
 	bar:RegisterEvent("PLAYER_ENTERING_WORLD")
-	bar:SetScript("OnEvent", function(self) self:SetObjectLoc() self:SetPerimeter() self:SetSize() end)
+	bar:SetScript("OnEvent", function(self) NEURON.NeuronBar:SetObjectLoc(self) NEURON.NeuronBar:SetPerimeter(self) NEURON.NeuronBar:SetSize(self) end)
 
 	bar:Hide()
 

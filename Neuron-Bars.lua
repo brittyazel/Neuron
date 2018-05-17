@@ -10,13 +10,11 @@ NEURON.BAR = setmetatable({}, {__index = CreateFrame("CheckButton")})
 local BAR = NEURON.BAR
 
 
-NEURON.HANDLER = setmetatable({}, { __index = CreateFrame("Frame") })
+local handlerMT = setmetatable({}, { __index = CreateFrame("Frame") })
 
 
 local BUTTON = NEURON.BUTTON
 
-
-local HANDLER = NEURON.HANDLER
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -199,6 +197,12 @@ local cDef = {
 
 local statetable = {}
 
+local barStack = {}
+
+local stackWatch = CreateFrame("Frame", nil, UIParent)
+stackWatch:SetScript("OnUpdate", function(self) self.bar = GetMouseFocus():GetName() if (not BARNameIndex[self.bar]) then wipe(barStack); self:Hide() end end)
+stackWatch:Hide()
+
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -281,7 +285,7 @@ function NeuronBar:OnEnable()
 		if (CDB.firstRun) then
 			for id, cdefaults in ipairs(cDef) do
 				if (id == bar:GetID()) then
-					bar:SetDefaults(nil, cdefaults)
+					NeuronBar:SetDefaults(bar, nil, cdefaults)
 				end
 			end
 		end
@@ -303,7 +307,29 @@ end
 ------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+---TODO:I need to figure out what to do with this
+function BAR:ACTIONBAR_SHOWGRID(...)
+	if (not InCombatLockdown() and self:IsVisible()) then
+		self:Hide(); self.showgrid = true
+	end
+end
 
+
+function BAR:ACTIONBAR_HIDEGRID(...)
+	if (not InCombatLockdown() and self.showgrid) then
+		self:Show(); self.showgrid = nil
+	end
+end
+
+
+function BAR:ACTIVE_TALENT_GROUP_CHANGED(...)
+	if (NEURON.PEW) then
+		self.stateschanged = true
+		self.vischanged = true
+
+		NeuronBar:Update(self)
+	end
+end
 ------------------------------------------------------------
 --------------------Intermediate Functions------------------
 ------------------------------------------------------------
@@ -314,7 +340,7 @@ local function round(num, idp)
 end
 
 
-local function IsMouseOverSelfOrWatchFrame(frame)
+function NeuronBar:IsMouseOverSelfOrWatchFrame(frame)
 	if (frame:IsMouseOver()) then
 		return true
 	end
@@ -339,7 +365,7 @@ function NeuronBar.controlOnUpdate(self, elapsed)
 				v:SetAlpha(1)
 			else
 
-				if (IsMouseOverSelfOrWatchFrame(k)) then
+				if (NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
 					if (v:GetAlpha() < k.alpha) then
 						if (v:GetAlpha()+v.fadeSpeed <= 1) then
 							v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
@@ -352,7 +378,7 @@ function NeuronBar.controlOnUpdate(self, elapsed)
 
 				end
 
-				if (not IsMouseOverSelfOrWatchFrame(k)) then
+				if (not NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
 					if (v:GetAlpha() > 0) then
 						if (v:GetAlpha()-v.fadeSpeed >= 0) then
 							v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
@@ -391,7 +417,7 @@ function NeuronBar.controlOnUpdate(self, elapsed)
 					else
 						if (k.alphaUp == alphaUps[4]) then
 
-							if (IsMouseOverSelfOrWatchFrame(k)) then
+							if (NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
 								if (v:GetAlpha() < 1) then
 									if (v:GetAlpha()+v.fadeSpeed <= 1) then
 										v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
@@ -442,7 +468,7 @@ function NeuronBar.controlOnUpdate(self, elapsed)
 					else
 						if (k.alphaUp == alphaUps[6]) then
 
-							if (IsMouseOverSelfOrWatchFrame(k)) then
+							if (NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
 								if (v:GetAlpha() < 1) then
 									if (v:GetAlpha()+v.fadeSpeed <= 1) then
 										v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
@@ -478,7 +504,7 @@ function NeuronBar.controlOnUpdate(self, elapsed)
 
 				elseif (k.alphaUp == alphaUps[2]) then
 
-					if (IsMouseOverSelfOrWatchFrame(k)) then
+					if (NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
 						if (v:GetAlpha() < 1) then
 							if (v:GetAlpha()+v.fadeSpeed <= 1) then
 								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
@@ -506,7 +532,7 @@ function NeuronBar.controlOnUpdate(self, elapsed)
 end
 
 
-function HANDLER:SetHidden(bar, show, hide)
+function NeuronBar:SetHidden(handler, bar, show, hide)
 
 	for k,v in pairs(bar.vis) do
 		if (v.registered) then
@@ -514,24 +540,27 @@ function HANDLER:SetHidden(bar, show, hide)
 		end
 	end
 
-	local isAnchorChild = self:GetAttribute("isAnchorChild")
+	local isAnchorChild = handler:GetAttribute("isAnchorChild")
 
 	if (not hide and not isAnchorChild and (show or bar:IsVisible())) then
 
-		self:Show()
+		handler:Show()
 	else
 		if (bar.cdata.conceal) then
-			self:SetAttribute("concealed", true); self:Hide()
+			handler:SetAttribute("concealed", true)
+			handler:Hide()
 		elseif (not bar.gdata.barLink and not isAnchorChild) then
-			self:SetAttribute("concealed", nil); self:Show()
+			handler:SetAttribute("concealed", nil)
+			handler:Show()
 		end
 	end
 end
 
-function HANDLER:SetAutoHide(bar)
+function NeuronBar:SetAutoHide(handler, bar)
 
 	if (bar.gdata.autoHide) then
-		autoHideIndex[bar] = self; self.fadeSpeed = (bar.gdata.fadeSpeed*bar.gdata.fadeSpeed)
+		autoHideIndex[bar] = handler
+		handler.fadeSpeed = (bar.gdata.fadeSpeed*bar.gdata.fadeSpeed)
 	else
 		autoHideIndex[bar] = nil
 	end
@@ -539,25 +568,26 @@ function HANDLER:SetAutoHide(bar)
 	if (bar.gdata.alphaUp == L["Off"]) then
 		alphaupIndex[bar] = nil
 	else
-		alphaupIndex[bar] = self; self.fadeSpeed = (bar.gdata.fadeSpeed*bar.gdata.fadeSpeed)
+		alphaupIndex[bar] = handler
+		handler.fadeSpeed = (bar.gdata.fadeSpeed*bar.gdata.fadeSpeed)
 	end
 end
 
 
-function HANDLER:AddVisibilityDriver(bar, state, conditions)
+function NeuronBar:AddVisibilityDriver(handler, bar, state, conditions)
 
 	if (MBS[state]) then
 
-		RegisterStateDriver(self, state, conditions)
+		RegisterStateDriver(handler, state, conditions)
 
-		if (self:GetAttribute("activestates"):find(state)) then
-			self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-"..state)..";"))
-		elseif (self:GetAttribute("activestates") and self:GetAttribute("state-"..state)) then
-			self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-"..state)..";")
+		if (handler:GetAttribute("activestates"):find(state)) then
+			handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", handler:GetAttribute("state-"..state)..";"))
+		elseif (handler:GetAttribute("activestates") and handler:GetAttribute("state-"..state)) then
+			handler:SetAttribute("activestates", handler:GetAttribute("activestates")..handler:GetAttribute("state-"..state)..";")
 		end
 
-		if (self:GetAttribute("state-"..state)) then
-			self:SetAttribute("state-"..state, self:GetAttribute("state-"..state))
+		if (handler:GetAttribute("state-"..state)) then
+			handler:SetAttribute("state-"..state, handler:GetAttribute("state-"..state))
 		end
 
 		bar.vis[state].registered = true
@@ -565,19 +595,19 @@ function HANDLER:AddVisibilityDriver(bar, state, conditions)
 end
 
 
-function HANDLER:ClearVisibilityDriver(bar, state)
+function NeuronBar:ClearVisibilityDriver(handler, bar, state)
 
-	UnregisterStateDriver(self, state)
+	UnregisterStateDriver(handler, state)
 
-	self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", ""))
-	self:SetAttribute("state-current", "homestate")
-	self:SetAttribute("state-last", "homestate")
+	handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", ""))
+	handler:SetAttribute("state-current", "homestate")
+	handler:SetAttribute("state-last", "homestate")
 
 	bar.vis[state].registered = false
 end
 
 
-function HANDLER:UpdateVisibility(bar)
+function NeuronBar:UpdateVisibility(driver, bar)
 
 	for state, values in pairs(MBS) do
 
@@ -590,23 +620,23 @@ function HANDLER:UpdateVisibility(bar)
 				end
 
 				if (state == "stance" and bar.gdata.hidestates:find(":stance8")) then
-					self:AddVisibilityDriver(bar, state, "[stance:2/3,stealth] stance8; "..values.states)
+					NeuronBar:AddVisibilityDriver(driver, bar, state, "[stance:2/3,stealth] stance8; "..values.states)
 					--elseif (state == "custom" and bar.cdata.custom) then
-					--self:AddVisibilityDriver(bar, state, bar.cdata.custom)
+					--handler:AddVisibilityDriver(bar, state, bar.cdata.custom)
 				else
-					self:AddVisibilityDriver(bar, state, values.states)
+					NeuronBar:AddVisibilityDriver(driver, bar, state, values.states)
 				end
 			end
 
 		elseif (bar.vis[state] and bar.vis[state].registered) then
 
-			self:ClearVisibilityDriver(bar, state)
+			NeuronBar:ClearVisibilityDriver(driver, bar, state)
 
 		end
 	end
 end
 
-function HANDLER:BuildStateMap(bar, remapState)
+function NeuronBar:BuildStateMap(bar, remapState)
 
 	local statemap, state, map, remap, homestate = "", remapState:gsub("paged", "bar")
 
@@ -639,16 +669,16 @@ function HANDLER:BuildStateMap(bar, remapState)
 end
 
 
-function HANDLER:AddStates(bar, state, conditions)
+function NeuronBar:AddStates(handler, bar, state, conditions)
 
 	if (state) then
 
 		if (MAS[state]) then
-			RegisterStateDriver(self, state, conditions)
+			RegisterStateDriver(handler, state, conditions)
 		end
 
 		if (MAS[state].homestate) then
-			self:SetAttribute("handler-homestate", MAS[state].homestate)
+			handler:SetAttribute("handler-homestate", MAS[state].homestate)
 		end
 
 		bar[state].registered = true
@@ -656,27 +686,27 @@ function HANDLER:AddStates(bar, state, conditions)
 
 end
 
-function HANDLER:ClearStates(bar, state)
+function NeuronBar:ClearStates(handler, bar, state)
 
 	if (state ~= "homestate") then
 
 		if (MAS[state].homestate) then
-			self:SetAttribute("handler-homestate", nil)
+			handler:SetAttribute("handler-homestate", nil)
 		end
 
-		self:SetAttribute("state-"..state, nil)
+		handler:SetAttribute("state-"..state, nil)
 
-		UnregisterStateDriver(self, state)
+		UnregisterStateDriver(handler, state)
 
 		bar[state].registered = false
 	end
 
-	self:SetAttribute("state-current", "homestate")
-	self:SetAttribute("state-last", "homestate")
+	handler:SetAttribute("state-current", "homestate")
+	handler:SetAttribute("state-last", "homestate")
 end
 
 
-function HANDLER:UpdateStates(bar)
+function NeuronBar:UpdateStates(handler, bar)
 	for state, values in pairs(MAS) do
 
 		if (bar.cdata[state]) then
@@ -690,35 +720,37 @@ function HANDLER:UpdateStates(bar)
 				end
 
 				if (bar.cdata.remap and (state == "paged" or state == "stance")) then
-					statemap = self:BuildStateMap(bar, state)
+					statemap = NeuronBar:BuildStateMap(bar, state)
 				end
 
 
 				if (state == "custom" and bar.cdata.custom) then
 
-					self:AddStates(bar, state, bar.cdata.custom)
+					NeuronBar:AddStates(handler, bar, state, bar.cdata.custom)
 
 				elseif (statemap) then
 
-					self:AddStates(bar, state, statemap)
+					NeuronBar:AddStates(handler, bar, state, statemap)
 
 				else
-					self:AddStates(bar, state, values.states)
+					NeuronBar:AddStates(handler, bar, state, values.states)
 
 				end
 			end
 
 		elseif (bar[state] and bar[state].registered) then
 
-			self:ClearStates(bar, state)
+			NeuronBar:ClearStates(handler, bar, state)
 
 		end
 	end
 end
 
 
---This is the macro base that will be used to set state
-local DRIVER_BASE_ACTION = [[
+function NeuronBar:CreateDriver(bar)
+
+	--This is the macro base that will be used to set state
+	local DRIVER_BASE_ACTION = [[
 	local state = self:GetAttribute("state-<MODIFIER>"):match("%a+")
 
 	if (state) then
@@ -733,14 +765,11 @@ local DRIVER_BASE_ACTION = [[
 	end
 	]]
 
+	local driver = CreateFrame("Frame", "NeuronBarDriver"..bar:GetID(), UIParent, "SecureHandlerStateTemplate")
 
-function BAR:CreateDriver()
+	setmetatable(driver, { __index = handlerMT })
 
-	local driver = CreateFrame("Frame", "NeuronBarDriver"..self:GetID(), UIParent, "SecureHandlerStateTemplate")
-
-	setmetatable(driver, { __index = HANDLER })
-
-	driver:SetID(self:GetID())
+	driver:SetID(bar:GetID())
 	--Dynamicly builds driver attributes based on stated in NEURON.STATEINDEX using localized attribute text from a above
 	for _, modifier in pairs(NEURON.STATEINDEX) do
 		local action = DRIVER_BASE_ACTION:gsub("<MODIFIER>", modifier)
@@ -755,13 +784,16 @@ function BAR:CreateDriver()
 
 		end)
 
-	driver:SetAllPoints(self)
+	driver:SetAllPoints(bar)
 
-	self.driver = driver; driver.bar = self
+	bar.driver = driver
+	driver.bar = bar
 end
 
 
-local HANDLER_BASE_ACTION = [[
+function NeuronBar:CreateHandler(bar)
+
+	local HANDLER_BASE_ACTION = [[
 	if (self:GetAttribute("state-<MODIFIER>") == "laststate") then
 
 		if (self:GetAttribute("statestack")) then
@@ -814,14 +846,11 @@ local HANDLER_BASE_ACTION = [[
 	end
 	]]
 
+	local handler = CreateFrame("Frame", "NeuronBarHandler"..bar:GetID(), bar.driver, "SecureHandlerStateTemplate")
 
-function BAR:CreateHandler()
+	setmetatable(handler, { __index = handlerMT })
 
-	local handler = CreateFrame("Frame", "NeuronBarHandler"..self:GetID(), self.driver, "SecureHandlerStateTemplate")
-
-	setmetatable(handler, { __index = HANDLER })
-
-	handler:SetID(self:GetID())
+	handler:SetID(bar:GetID())
 
 	--Dynamicly builds handler actions based on states in NEURON.STATEINDEX using Global text
 	for _, modifier in pairs(NEURON.STATEINDEX) do
@@ -999,19 +1028,20 @@ function BAR:CreateHandler()
 
 	]] )
 
-	handler:SetAllPoints(self)
+	handler:SetAllPoints(bar)
 
-	self.handler = handler; handler.bar = self
+	bar.handler = handler;
+	handler.bar = bar
 
 end
 
 
-function BAR:CreateWatcher()
-	local watcher = CreateFrame("Frame", "NeuronBarWatcher"..self:GetID(), self.handler, "SecureHandlerStateTemplate")
+function NeuronBar:CreateWatcher(bar)
+	local watcher = CreateFrame("Frame", "NeuronBarWatcher"..bar:GetID(), bar.handler, "SecureHandlerStateTemplate")
 
-	setmetatable(watcher, { __index = HANDLER })
+	setmetatable(watcher, { __index = handlerMT })
 
-	watcher:SetID(self:GetID())
+	watcher:SetID(bar:GetID())
 
 	watcher:SetAttribute("_onattributechanged", [[ ]])
 
@@ -1029,47 +1059,47 @@ function BAR:CreateWatcher()
 end
 
 
-function BAR:Update(show, hide)
+function NeuronBar:Update(bar, show, hide)
 
 	if(InCombatLockdown()) then
 		return
 	end
 
-	local handler, driver = self.handler, self.driver
+	local handler, driver = bar.handler, bar.driver
 
-	self.elapsed = 0;
-	self.alpha = self.gdata.alpha;
-	self.alphaUp = self.gdata.alphaUp
+	bar.elapsed = 0;
+	bar.alpha = bar.gdata.alpha;
+	bar.alphaUp = bar.gdata.alphaUp
 
-	if (self.stateschanged) then
+	if (bar.stateschanged) then
 
-		handler:UpdateStates(self)
+		NeuronBar:UpdateStates(handler, bar)
 
-		self.stateschanged = nil
+		bar.stateschanged = nil
 	end
 
-	if (self.vischanged) then
+	if (bar.vischanged) then
 
-		handler:SetAttribute("hidestates", self.gdata.hidestates)
+		handler:SetAttribute("hidestates", bar.gdata.hidestates)
 
-		driver:UpdateVisibility(self)
+		NeuronBar:UpdateVisibility(driver, bar)
 
-		self.vischanged = nil
+		bar.vischanged = nil
 	end
 
-	if (self.countChanged) then
+	if (bar.countChanged) then
 
-		self:UpdateObjectData()
+		bar:UpdateObjectData()
 
-		self.countChanged = nil
+		bar.countChanged = nil
 
 	end
 
-	handler:SetHidden(self, show, hide)
-	handler:SetAutoHide(self)
-	self.text:SetText(self.gdata.name)
-	handler:SetAlpha(self.gdata.alpha)
-	self:SaveData()
+	NeuronBar:SetHidden(handler, bar, show, hide)
+	NeuronBar:SetAutoHide(handler, bar)
+	bar.text:SetText(bar.gdata.name)
+	handler:SetAlpha(bar.gdata.alpha)
+	bar:SaveData()
 
 	if (not hide and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		NEURON.NeuronGUI:UpdateBarGUI()
@@ -1077,18 +1107,18 @@ function BAR:Update(show, hide)
 end
 
 
-function BAR:GetPosition(oFrame)
+function NeuronBar:GetPosition(bar, oFrame)
 	local relFrame, point
 
 	if (oFrame) then
 		relFrame = oFrame
 	else
-		relFrame = self:GetParent()
+		relFrame = bar:GetParent()
 	end
 
-	local s = self:GetScale()
+	local s = bar:GetScale()
 	local w, h = relFrame:GetWidth()/s, relFrame:GetHeight()/s
-	local x, y = self:GetCenter()
+	local x, y = bar:GetCenter()
 	local vert = (y>h/1.5) and "TOP" or (y>h/3) and "CENTER" or "BOTTOM"
 	local horz = (x>w/1.5) and "RIGHT" or (x>w/3) and "CENTER" or "LEFT"
 
@@ -1109,46 +1139,46 @@ function BAR:GetPosition(oFrame)
 end
 
 
-function BAR:SetPosition()
-	if (self.gdata.snapToPoint and self.gdata.snapToFrame) then
-		self:StickToPoint(_G[self.gdata.snapToFrame], self.gdata.snapToPoint, self.gdata.padH, self.gdata.padV)
+function NeuronBar:SetPosition(bar)
+	if (bar.gdata.snapToPoint and bar.gdata.snapToFrame) then
+		bar:StickToPoint(_G[bar.gdata.snapToFrame], bar.gdata.snapToPoint, bar.gdata.padH, bar.gdata.padV)
 	else
 
-		local point, x, y = self.gdata.point, self.gdata.x, self.gdata.y
+		local point, x, y = bar.gdata.point, bar.gdata.x, bar.gdata.y
 
 		if (point:find("SnapTo")) then
-			self.gdata.point = "CENTER"; point = "CENTER"
+			bar.gdata.point = "CENTER"; point = "CENTER"
 		end
 
-		self:SetUserPlaced(false)
-		self:ClearAllPoints()
-		self:SetPoint("CENTER", "UIParent", point, x, y)
-		self:SetUserPlaced(true)
-		self:SetFrameStrata(self.gdata.barStrata)
+		bar:SetUserPlaced(false)
+		bar:ClearAllPoints()
+		bar:SetPoint("CENTER", "UIParent", point, x, y)
+		bar:SetUserPlaced(true)
+		bar:SetFrameStrata(bar.gdata.barStrata)
 
-		if (self.message) then
-			self.message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
-			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
-			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
+		if (bar.message) then
+			bar.message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
+			bar.messagebg:SetWidth(bar.message:GetWidth()*1.05)
+			bar.messagebg:SetHeight(bar.message:GetHeight()*1.1)
 		end
 
-		self.posSet = true
+		bar.posSet = true
 	end
 end
 
 
-function BAR:SetFauxState(state)
+function NeuronBar:SetFauxState(bar, state)
 	local object
 
-	self.objCount = 0
-	self.handler:SetAttribute("fauxstate", state)
+	bar.objCount = 0
+	bar.handler:SetAttribute("fauxstate", state)
 
-	for objID in gmatch(self.gdata.objectList, "[^;]+") do
+	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
 
-		object = _G[self.objPrefix..objID]
+		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			object:SetFauxState(state)
+			NeuronBar:SetFauxState(object, state)
 		end
 	end
 
@@ -1158,53 +1188,53 @@ function BAR:SetFauxState(state)
 end
 
 
-function BAR:LoadObjects(init)
+function NeuronBar:LoadObjects(bar, init)
 	local object, spec
 
-	if (self.cdata.multiSpec) then
+	if (bar.cdata.multiSpec) then
 		spec = GetSpecialization()
 	else
 		spec = 1
 	end
 
-	self.objCount = 0
+	bar.objCount = 0
 
-	for objID in gmatch(self.gdata.objectList, "[^;]+") do
-		object = _G[self.objPrefix..objID]
+	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			--self.objTable[object.objTIndex][2] = 0
-			object:SetData(self)
-			object:LoadData(spec, self.handler:GetAttribute("activestate"))
+			--bar.objTable[object.objTIndex][2] = 0
+			object:SetData(bar)
+			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
 			object:SetAux()
 			object:SetType(nil, nil, init)
 			object:SetGrid()
-			self.objCount = self.objCount + 1
-			self.countChanged = true
+			bar.objCount = bar.objCount + 1
+			bar.countChanged = true
 		end
 	end
 end
 
 
-function BAR:SetObjectLoc()
-	local width, height, num, count, origCol = 0, 0, 0, self.objCount, self.gdata.columns
+function NeuronBar:SetObjectLoc(bar)
+	local width, height, num, count, origCol = 0, 0, 0, bar.objCount, bar.gdata.columns
 	local x, y, object, lastObj, placed
-	local shape, padH, padV, arcStart, arcLength = self.gdata.shape, self.gdata.padH, self.gdata.padV, self.gdata.arcStart, self.gdata.arcLength
+	local shape, padH, padV, arcStart, arcLength = bar.gdata.shape, bar.gdata.padH, bar.gdata.padV, bar.gdata.arcStart, bar.gdata.arcLength
 	local cAdjust, rAdjust = 0.5, 1
 	local columns, rows
 
 	if (not origCol) then
 		origCol = count; rows = 1
 	else
-		rows = (round(ceil(count/self.gdata.columns), 1)/2)+0.5
+		rows = (round(ceil(count/bar.gdata.columns), 1)/2)+0.5
 	end
 
-	for objID in gmatch(self.gdata.objectList, "[^;]+") do
-		object = _G[self.objPrefix..objID]
+	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+		object = _G[bar.objPrefix..objID]
 
 		if (object and num < count) then
 			object:ClearAllPoints()
-			object:SetParent(self.handler)
+			object:SetParent(bar.handler)
 			object:SetAttribute("lastPos", nil)
 			width = object:GetWidth(); height = object:GetHeight()
 
@@ -1224,21 +1254,21 @@ function BAR:SetObjectLoc()
 				x = ((width+padH)*(count/math.pi))*(cos(placed))
 				y = ((width+padV)*(count/math.pi))*(sin(placed))
 
-				object:SetPoint("CENTER", self, "CENTER", x, y)
+				object:SetPoint("CENTER", bar, "CENTER", x, y)
 
 				placed = placed - (arcLength/count)
 
 			elseif (shape == 3) then
 				if (not placed) then
 					placed = arcStart
-					object:SetPoint("CENTER", self, "CENTER", 0, 0)
+					object:SetPoint("CENTER", bar, "CENTER", 0, 0)
 					placed = placed - (arcLength/count)
 
 				else
 					x = ((width+padH)*(count/math.pi))*(cos(placed))
 					y = ((width+padV)*(count/math.pi))*(sin(placed))
 
-					object:SetPoint("CENTER", self, "CENTER", x, y)
+					object:SetPoint("CENTER", bar, "CENTER", x, y)
 					placed = placed - (arcLength/(count-1))
 				end
 			else
@@ -1249,7 +1279,7 @@ function BAR:SetObjectLoc()
 				x = -(width + padH) * (columns-cAdjust)
 				y = (height + padV) * (rows-rAdjust)
 
-				object:SetPoint("CENTER", self, "CENTER", x, y)
+				object:SetPoint("CENTER", bar, "CENTER", x, y)
 				placed = placed + 1; cAdjust = cAdjust + 1
 
 				if (placed >= columns*2) then
@@ -1262,7 +1292,7 @@ function BAR:SetObjectLoc()
 			lastObj = object
 			num = num + 1
 			object:SetAttribute("barPos", num)
-			object:SetData(self)
+			object:SetData(bar)
 		end
 	end
 
@@ -1272,15 +1302,15 @@ function BAR:SetObjectLoc()
 end
 
 
-function BAR:SetPerimeter()
-	local num, count = 0, self.objCount
+function NeuronBar:SetPerimeter(bar)
+	local num, count = 0, bar.objCount
 	local object
 
-	self.objectCount = 0
-	self.top = nil; self.bottom = nil; self.left = nil; self.right = nil
+	bar.objectCount = 0
+	bar.top = nil; bar.bottom = nil; bar.left = nil; bar.right = nil
 
-	for objID in gmatch(self.gdata.objectList, "[^;]+") do
-		object = _G[self.objPrefix..objID]
+	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+		object = _G[bar.objPrefix..objID]
 
 		if (object and num < count) then
 			local objTop, objBottom, objLeft, objRight = object:GetTop(), object:GetBottom(), object:GetLeft(), object:GetRight()
@@ -1288,23 +1318,23 @@ function BAR:SetPerimeter()
 			--See if this fixes the ranom position error that happens
 			if not objTop then return end
 
-			self.objectCount = self.objectCount + 1
+			bar.objectCount = bar.objectCount + 1
 
-			if (self.top) then
-				if (objTop*scale > self.top) then self.top = objTop*scale end
-			else self.top = objTop*scale end
+			if (bar.top) then
+				if (objTop*scale > bar.top) then bar.top = objTop*scale end
+			else bar.top = objTop*scale end
 
-			if (self.bottom) then
-				if (objBottom*scale < self.bottom) then self.bottom = objBottom*scale end
-			else self.bottom = objBottom*scale end
+			if (bar.bottom) then
+				if (objBottom*scale < bar.bottom) then bar.bottom = objBottom*scale end
+			else bar.bottom = objBottom*scale end
 
-			if (self.left) then
-				if (objLeft*scale < self.left) then self.left = objLeft*scale end
-			else self.left = objLeft*scale end
+			if (bar.left) then
+				if (objLeft*scale < bar.left) then bar.left = objLeft*scale end
+			else bar.left = objLeft*scale end
 
-			if (self.right) then
-				if (objRight*scale > self.right) then self.right = objRight*scale end
-			else self.right = objRight*scale end
+			if (bar.right) then
+				if (objRight*scale > bar.right) then bar.right = objRight*scale end
+			else bar.right = objRight*scale end
 
 			num = num + 1
 		end
@@ -1312,93 +1342,64 @@ function BAR:SetPerimeter()
 end
 
 
-function BAR:SetDefaults(gdefaults, cdefaults)
+function NeuronBar:SetDefaults(bar, gdefaults, cdefaults)
 	if (gdefaults) then
 		for k,v in pairs(gdefaults) do
-			self.gdata[k] = v
+			bar.gdata[k] = v
 		end
 	end
 
 	if (cdefaults) then
 		for k,v in pairs(cdefaults) do
-			self.cdata[k] = v
+			bar.cdata[k] = v
 		end
 	end
 
-	self:SaveData()
+	bar:SaveData()
 end
 
 
-function BAR:SetRemap_Paged()
-	self.cdata.remap = ""
+function NeuronBar:SetRemap_Paged(bar)
+	bar.cdata.remap = ""
 
 	for i=1,6 do
-		self.cdata.remap = self.cdata.remap..i..":"..i..";"
+		bar.cdata.remap = bar.cdata.remap..i..":"..i..";"
 	end
 
-	self.cdata.remap = gsub(self.cdata.remap, ";$", "")
+	bar.cdata.remap = gsub(bar.cdata.remap, ";$", "")
 end
 
 
-function BAR:SetRemap_Stance()
+function NeuronBar:SetRemap_Stance(bar)
 	local start = tonumber(MAS.stance.homestate:match("%d+"))
 
 	if (start) then
-		self.cdata.remap = ""
+		bar.cdata.remap = ""
 
 		for i=start,GetNumShapeshiftForms() do
-			self.cdata.remap = self.cdata.remap..i..":"..i..";"
+			bar.cdata.remap = bar.cdata.remap..i..":"..i..";"
 		end
 
-		self.cdata.remap = gsub(self.cdata.remap, ";$", "")
+		bar.cdata.remap = gsub(bar.cdata.remap, ";$", "")
 
 
 		if (NEURON.class == "ROGUE") then
-			self.cdata.remap = self.cdata.remap..";2:2"
+			bar.cdata.remap = bar.cdata.remap..";2:2"
 		end
 	end
 end
 
 
-function BAR:SetSize()
-	if (self.right) then
-		self:SetWidth(((self.right-self.left)+5)*(self.gdata.scale))
-		self:SetHeight(((self.top-self.bottom)+5)*(self.gdata.scale))
+function NeuronBar:SetSize(bar)
+	if (bar.right) then
+		bar:SetWidth(((bar.right-bar.left)+5)*(bar.gdata.scale))
+		bar:SetHeight(((bar.top-bar.bottom)+5)*(bar.gdata.scale))
 	else
-		self:SetWidth(195)
-		self:SetHeight(36*(self.gdata.scale))
+		bar:SetWidth(195)
+		bar:SetHeight(36*(bar.gdata.scale))
 	end
 end
 
-
-function BAR:ACTIONBAR_SHOWGRID(...)
-	if (not InCombatLockdown() and self:IsVisible()) then
-		self:Hide(); self.showgrid = true
-	end
-
-end
-
-
-function BAR:ACTIONBAR_HIDEGRID(...)
-	if (not InCombatLockdown() and self.showgrid) then
-		self:Show(); self.showgrid = nil
-	end
-
-end
-
-
-function BAR:ACTIVE_TALENT_GROUP_CHANGED(...)
-	if (NEURON.PEW) then
-		self.stateschanged = true
-		self.vischanged = true
-
-		--if (self.cdata.stance) then
-		--	self:SetRemap_Stance()
-		--end
-
-		self:Update()
-	end
-end
 
 
 function BAR:OnEvent(event, ...)
@@ -1540,8 +1541,8 @@ function BAR:OnDragStop(...)
 	if (not point) then
 		self.gdata.snapToPoint = false
 		self.gdata.snapToFrame = false
-		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
-		self:SetPosition()
+		self.gdata.point, self.gdata.x, self.gdata.y = NeuronBar:GetPosition(self)
+		NeuronBar:SetPosition(self)
 	end
 
 	if (self.gdata.snapTo and not self.gdata.snapToPoint) then
@@ -1551,15 +1552,8 @@ function BAR:OnDragStop(...)
 	self.isMoving = false
 	self.dragged = true
 	self.elapsed = 0
-	self:Update()
+	NeuronBar:Update(self)
 end
-
-
-local barStack = {}
-local stackWatch = CreateFrame("Frame", nil, UIParent)
-stackWatch:SetScript("OnUpdate", function(self) self.bar = GetMouseFocus():GetName() if (not BARNameIndex[self.bar]) then wipe(barStack); self:Hide() end end)
-stackWatch:Hide()
-
 
 function BAR:OnKeyDown(key, onupdate)
 	if (self.microAdjust) then
@@ -1569,7 +1563,7 @@ function BAR:OnKeyDown(key, onupdate)
 			self.elapsed = 0
 		end
 
-		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
+		self.gdata.point, self.gdata.x, self.gdata.y = NeuronBar:GetPosition(self)
 		self:SetUserPlaced(false)
 		self:ClearAllPoints()
 
@@ -1586,7 +1580,7 @@ function BAR:OnKeyDown(key, onupdate)
 			self:EnableKeyboard(false)
 		end
 
-		self:SetPosition()
+		NeuronBar:SetPosition(self)
 		self:SaveData()
 	end
 end
@@ -1852,7 +1846,7 @@ function BAR:DeleteBar()
 	handler:SetAttribute("state-current", "homestate")
 	handler:SetAttribute("state-last", "homestate")
 	handler:SetAttribute("showstates", "homestate")
-	handler:ClearStates(self, "homestate")
+	NeuronBar:ClearStates(handler, self, "homestate")
 
 	for state, values in pairs(MAS) do
 		if (self.cdata[state] and self[state] and self[state].registered) then
@@ -1861,10 +1855,10 @@ function BAR:DeleteBar()
 				local stop = tonumber(string.match(self.cdata.customRange, "%d+$"))
 
 				if (start and stop) then
-					handler:ClearStates(self, state, start, stop)
+					NeuronBar:ClearStates(handler, self, state)--, start, stop)
 				end
 			else
-				handler:ClearStates(self, state, values.rangeStart, values.rangeStop)
+				NeuronBar:ClearStates(handler, self, state)--, values.rangeStart, values.rangeStop)
 			end
 		end
 	end
@@ -1884,7 +1878,7 @@ function BAR:DeleteBar()
 	self:SetScript("OnHide", function() end)
 	self:SetScript("OnUpdate", function() end)
 
-	self:UnregisterEvent("ACTIONBAR_SHOWGRID")
+	NeuronBar:UnregisterEvent("ACTIONBAR_SHOWGRID")
 	self:UnregisterEvent("ACTIONBAR_HIDEGRID")
 	self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
@@ -1940,11 +1934,11 @@ function BAR:AddObjects(num)
 
 	end
 
-	self:LoadObjects()
-	self:SetObjectLoc()
-	self:SetPerimeter()
-	self:SetSize()
-	self:Update()
+	NeuronBar:LoadObjects(self)
+	NeuronBar:SetObjectLoc(self)
+	NeuronBar:SetPerimeter(self)
+	NeuronBar:SetSize(self)
+	NeuronBar:Update(self)
 	self:UpdateObjectGrid(NEURON.BarsShown)
 
 end
@@ -2005,10 +1999,10 @@ function BAR:RemoveObjects(num)
 				self.countChanged = true
 			end
 
-			self:SetObjectLoc()
-			self:SetPerimeter()
-			self:SetSize()
-			self:Update()
+			NeuronBar:SetObjectLoc(self)
+			NeuronBar:SetPerimeter(self)
+			NeuronBar:SetSize(self)
+			NeuronBar:Update(self)
 		end
 	end
 
@@ -2053,7 +2047,7 @@ function BAR:SetState(msg, gui, checked, query)
 			self.cdata.pet = false
 
 			if (self.cdata.paged) then
-				self:SetRemap_Paged()
+				NeuronBar:SetRemap_Paged(self)
 			else
 				self.cdata.remap = false
 			end
@@ -2069,7 +2063,7 @@ function BAR:SetState(msg, gui, checked, query)
 			end
 
 			if (self.cdata.stance) then
-				self:SetRemap_Stance()
+				NeuronBar:SetRemap_Stance(self)
 			else
 				self.cdata.remap = false
 			end
@@ -2126,7 +2120,7 @@ function BAR:SetState(msg, gui, checked, query)
 		end
 
 		self.stateschanged = true
-		self:Update()
+		NeuronBar:Update(self)
 
 	elseif (not gui) then
 		wipe(statetable)
@@ -2234,7 +2228,7 @@ function BAR:SetVisibility(msg, gui, checked, query)
 			end
 
 			self.vischanged = true
-			self:Update()
+			NeuronBar:Update(self)
 		else
 			NEURON:PrintStateList()
 		end
@@ -2265,7 +2259,7 @@ function BAR:AutoHideBar(msg, gui, checked, query)
 		end
 	end
 
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -2290,7 +2284,7 @@ function BAR:ShowGridSet(msg, gui, checked, query)
 
 	self:UpdateObjectData()
 	self:UpdateObjectGrid(NEURON.BarsShown)
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -2356,7 +2350,7 @@ function BAR:SpellGlowSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -2380,14 +2374,14 @@ function BAR:SnapToBar(msg, gui, checked, query)
 			self.gdata.snapToFrame = false
 
 			self:SetUserPlaced(true)
-			self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
-			self:SetPosition()
+			self.gdata.point, self.gdata.x, self.gdata.y = NeuronBar:GetPosition(self)
+			NeuronBar:SetPosition(self)
 		else
 			self.gdata.snapTo = true
 		end
 	end
 
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 function BAR:UpClicksSet(msg, gui, checked, query)
@@ -2411,7 +2405,7 @@ function BAR:UpClicksSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -2436,7 +2430,7 @@ function BAR:DownClicksSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -2462,7 +2456,7 @@ function BAR:MultiSpecSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectSpec()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -2504,7 +2498,7 @@ function BAR:ConcealBar(msg, gui, checked, query)
 		end
 	end
 
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -2570,7 +2564,7 @@ function BAR:LockSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -2628,14 +2622,14 @@ function BAR:ToolTipSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
 function BAR:NameBar(name, gui)
 	if (name) then
 		self.gdata.name = name
-		self:Update()
+		NeuronBar:Update(self)
 	end
 end
 
@@ -2649,10 +2643,10 @@ function BAR:ShapeBar(shape, gui, query)
 
 	if (shape and barShapes[shape]) then
 		self.gdata.shape = shape
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-		self:Update()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
+		NeuronBar:Update(self)
 	elseif (not gui) then
 		NEURON:Print(L["Bar_Shapes_List"])
 	end
@@ -2672,22 +2666,22 @@ function BAR:ColumnsSet(command, gui, query, skipupdate)
 
 	if (columns and columns > 0) then
 		self.gdata.columns = round(columns, 0)
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not columns or columns <= 0) then
 		self.gdata.columns = false
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2705,12 +2699,12 @@ function BAR:ArcStartSet(command, gui, query, skipupdate)
 
 	if (start and start>=0 and start<=359) then
 		self.gdata.arcStart = start
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2728,12 +2722,12 @@ function BAR:ArcLengthSet(command, gui, query, skipupdate)
 
 	if (length and length>=0 and length<=359) then
 		self.gdata.arcLength = length
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2751,12 +2745,12 @@ function BAR:PadHSet(command, gui, query, skipupdate)
 
 	if (padh) then
 		self.gdata.padH = round(padh, 1)
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2774,12 +2768,12 @@ function BAR:PadVSet(command, gui, query, skipupdate)
 
 	if (padv) then
 		self.gdata.padV = round(padv, 1)
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2799,12 +2793,12 @@ function BAR:PadHVSet(command, gui, query, skipupdate)
 		self.gdata.padH = round(self.gdata.padH + padhv, 1)
 		self.gdata.padV = round(self.gdata.padV + padhv, 1)
 
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2822,12 +2816,12 @@ function BAR:ScaleBar(scale, gui, query, skipupdate)
 
 	if (scale) then
 		self.gdata.scale = round(scale, 2)
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+		NeuronBar:SetObjectLoc(self)
+		NeuronBar:SetPerimeter(self)
+		NeuronBar:SetSize(self)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 	end
 end
@@ -2844,9 +2838,9 @@ function BAR:StrataSet(command, gui, query)
 		self.gdata.barStrata = NEURON.Stratas[strata+1]
 		self.gdata.objectStrata = NEURON.Stratas[strata]
 
-		self:SetPosition()
+		NeuronBar:SetPosition(self)
 		self:UpdateObjectData()
-		self:Update()
+		NeuronBar:Update(self)
 
 	elseif (not gui) then
 		NEURON:Print(L["Bar_Strata_List"])
@@ -2866,7 +2860,7 @@ function BAR:AlphaSet(command, gui, query, skipupdate)
 		self.handler:SetAlpha(self.gdata.alpha)
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2888,7 +2882,7 @@ function BAR:AlphaUpSet(command, gui, query)
 
 	if (alphaUp and alphaUps[alphaUp]) then
 		self.gdata.alphaUp = alphaUps[alphaUp]
-		self:Update()
+		NeuronBar:Update(self)
 	elseif (not gui) then
 		local text = ""
 
@@ -2918,7 +2912,7 @@ function BAR:AlphaUpSpeedSet(command, gui, query, skipupdate)
 		end
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2937,8 +2931,8 @@ function BAR:XAxisSet(command, gui, query, skipupdate)
 		self.gdata.snapTo = false
 		self.gdata.snapToPoint = false
 		self.gdata.snapToFrame = false
-		self:SetPosition()
-		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
+		NeuronBar:SetPosition(self)
+		self.gdata.point, self.gdata.x, self.gdata.y = NeuronBar:GetPosition(self)
 
 		if (not gui) then
 			self.message:Show()
@@ -2946,7 +2940,7 @@ function BAR:XAxisSet(command, gui, query, skipupdate)
 		end
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 
 	elseif (not gui) then
@@ -2967,8 +2961,8 @@ function BAR:YAxisSet(command, gui, query, skipupdate)
 		self.gdata.snapTo = false
 		self.gdata.snapToPoint = false
 		self.gdata.snapToFrame = false
-		self:SetPosition()
-		self.gdata.point, self.gdata.x, self.gdata.y = self:GetPosition()
+		NeuronBar:SetPosition(self)
+		self.gdata.point, self.gdata.x, self.gdata.y = NeuronBar:GetPosition(self)
 
 		if (not gui) then
 			self.message:Show()
@@ -2976,7 +2970,7 @@ function BAR:YAxisSet(command, gui, query, skipupdate)
 		end
 
 		if (not skipupdate) then
-			self:Update()
+			NeuronBar:Update(self)
 		end
 	elseif (not gui) then
 		NEURON:Print(L["Y_Position_Instructions"])
@@ -3005,7 +2999,7 @@ function BAR:BindTextSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -3030,7 +3024,7 @@ function BAR:MacroTextSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -3055,7 +3049,7 @@ function BAR:CountTextSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -3080,7 +3074,7 @@ function BAR:RangeIndSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -3105,7 +3099,7 @@ function BAR:CDTextSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -3130,7 +3124,7 @@ function BAR:CDAlphaSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -3155,7 +3149,7 @@ function BAR:AuraTextSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -3180,18 +3174,18 @@ function BAR:AuraIndSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
 function BAR:Load()
-	self:SetPosition()
-	self:LoadObjects(true)
-	self:SetObjectLoc()
-	self:SetPerimeter()
-	self:SetSize()
+	NeuronBar:SetPosition(self)
+	NeuronBar:LoadObjects(self, true)
+	NeuronBar:SetObjectLoc(self)
+	NeuronBar:SetPerimeter(self)
+	NeuronBar:SetSize(self)
 	self:EnableKeyboard(false)
-	self:Update()
+	NeuronBar:Update(self)
 end
 
 
@@ -3274,6 +3268,6 @@ function BAR:SetCastingTarget(value, gui, checked, query)
 		end
 
 		BUTTON:UpdateMacroCastTargets()
-		self:Update()
+		NeuronBar:Update(self)
 	end
 end

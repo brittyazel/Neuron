@@ -1601,7 +1601,7 @@ function NeuronGUI:colorPickerShow(button)
 
 					bar:UpdateObjectData()
 
-					bar:Update()
+					NEURON.NeuronBar:Update(bar)
 				end
 			end
 		end
@@ -1741,7 +1741,7 @@ function NeuronGUI:remapToOnTextChanged(frame)
 
 		bar.stateschanged = true
 
-		bar:Update()
+		NEURON.NeuronBar:Update(bar)
 	end
 end
 
@@ -2344,7 +2344,7 @@ function NeuronGUI:ActionListScrollFrame_OnLoad(frame)
 					if (i == self:GetID()) then
 
 						if (self.bar) then
-							self.bar:SetFauxState(self.state)
+							NEURON.NeuronBar:SetFauxState(self.bar, self.state)
 						end
 
 					else

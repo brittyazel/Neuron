@@ -1437,9 +1437,9 @@ function NEURON:CreateBar(index, class, id)
 		bar:RegisterEvent("ACTIONBAR_HIDEGRID")
 		bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
-		bar:CreateDriver()
-		bar:CreateHandler()
-		bar:CreateWatcher()
+		NEURON.NeuronBar:CreateDriver(bar)
+		NEURON.NeuronBar:CreateHandler(bar)
+		NEURON.NeuronBar:CreateWatcher(bar)
 
 		bar:LoadData()
 
@@ -1467,7 +1467,7 @@ function NEURON:CreateNewBar(class, id, firstRun)
 		local bar, newBar = NEURON:CreateBar(index, class, id)
 
 		if (firstRun) then
-			bar:SetDefaults(bar.gDef, bar.cDef)
+			NEURON.NeuronBar:SetDefaults(bar, bar.gDef, bar.cDef)
 		end
 
 		if (newBar) then
@@ -1478,12 +1478,12 @@ function NEURON:CreateNewBar(class, id, firstRun)
 			if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
 				bar.gdata.hidestates = ":extrabar0:"
 				bar.vischanged = true
-				bar:Update()
+				NEURON.NeuronBar:Update(bar)
 			end
 			if (class == "pet") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
 				bar.gdata.hidestates = ":pet0:"
 				bar.vischanged = true
-				bar:Update()
+				NEURON.NeuronBar:Update(bar)
 			end
 			-----------------------------------
 		end
@@ -1602,7 +1602,8 @@ function NEURON:ToggleBars(show, hide)
 			NEURON.BarsShown = nil
 
 			for index, bar in pairs(BARIndex) do
-				bar:Hide(); bar:Update(nil, true)
+				bar:Hide()
+				NEURON.NeuronBar:Update(bar, nil, true)
 			end
 
 			NEURON:ChangeBar(nil)
@@ -1619,7 +1620,8 @@ function NEURON:ToggleBars(show, hide)
 			NEURON.BarsShown = true
 
 			for index, bar in pairs(BARIndex) do
-				bar:Show(); bar:Update(true)
+				bar:Show()
+				NEURON.NeuronBar:Update(bar, true)
 			end
 		end
 	end

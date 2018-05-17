@@ -118,7 +118,7 @@ end
 
 function BAR:StickToEdge()
 
-	local point, x, y= self:GetPosition()
+	local point, x, y= NEURON.NeuronBar:GetPosition(self)
 	local changed
 	local w, h, rTol = self:GetWidth()/2, self:GetHeight()/2, NeuronGDB.snapToTol
 
@@ -148,7 +148,7 @@ function BAR:StickToEdge()
 
 	if (changed) then
 		self.gdata.point = point; self.gdata.x = x; self.gdata.y = y
-		self:SetPosition()
+		NEURON.NeuronBar:SetPosition(self)
 	end
 end
 

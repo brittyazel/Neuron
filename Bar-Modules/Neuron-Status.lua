@@ -1615,15 +1615,15 @@ function STATUS:UpdateWidth(command, gui, query, skipupdate)
 
 		self:SetWidth(self.config.width)
 
-		self.bar:SetObjectLoc()
+		NEURON.NeuronBar:SetObjectLoc(self.bar)
 
-		self.bar:SetPerimeter()
+		NEURON.NeuronBar:SetPerimeter(self.bar)
 
-		self.bar:SetSize()
+		NEURON.NeuronBar:SetSize(self.bar)
 
 		if (not skipupdate) then
 			self:UpdateEditor()
-			self.bar:Update()
+			NEURON.NeuronBar:Update(self.bar)
 		end
 	end
 end
@@ -1645,15 +1645,15 @@ function STATUS:UpdateHeight(command, gui, query, skipupdate)
 
 		self:SetHeight(self.config.height)
 
-		self.bar:SetObjectLoc()
+		NEURON.NeuronBar:SetObjectLoc(self.bar)
 
-		self.bar:SetPerimeter()
+		NEURON.NeuronBar:SetPerimeter(self.bar)
 
-		self.bar:SetSize()
+		NEURON.NeuronBar:SetSize(self.bar)
 
 		if (not skipupdate) then
 			self:UpdateEditor()
-			self.bar:Update()
+			NEURON.NeuronBar:Update(self.bar)
 		end
 	end
 end
@@ -1747,15 +1747,15 @@ function STATUS:UpdateOrientation(command, gui, query)
 
 		self:SetHeight(self.config.height)
 
-		self.bar:SetObjectLoc()
+		NEURON.NeuronBar:SetObjectLoc(self.bar)
 
-		self.bar:SetPerimeter()
+		NEURON.NeuronBar:SetPerimeter(self.bar)
 
-		self.bar:SetSize()
+		NEURON.NeuronBar:SetSize(self.bar)
 
 		if (not skipupdate) then
 			self:UpdateEditor()
-			self.bar:Update()
+			NEURON.NeuronBar:Update(self.bar)
 		end
 	end
 end
