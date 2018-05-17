@@ -256,7 +256,7 @@ function NEURON:ToggleEditFrames(show, hide)
 	else
 
 		--NEURON:ToggleMainMenu(nil, true)
-		NEURON:ToggleBars(nil, true)
+		NEURON.NeuronBar:ToggleBars(nil, true)
 		NEURON:ToggleBindings(nil, true)
 
 		NEURON.EditFrameShown = true

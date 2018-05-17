@@ -1084,7 +1084,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 							if (self.bar) then
 
-								NEURON:CreateNewBar(self.bar)
+								NEURON.NeuronBar:CreateNewBar(self.bar)
 
 								NeuronBarEditorCreate:Click()
 							end
@@ -1093,7 +1093,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 						elseif (self.bar) then
 
-							NEURON:ChangeBar(self.bar)
+							NEURON.NeuronBar:ChangeBar(self.bar)
 
 							if (NBE and NBE:IsVisible()) then
 								NeuronGUI:UpdateBarGUI()

@@ -64,7 +64,7 @@ function NeuronMinimapIcon:OnClickHandler(frame, button)
     PlaySound(SOUNDKIT.IG_CHAT_SCROLL_DOWN)
 
     if (button == "LeftButton" and not IsShiftKeyDown()) then
-        NEURON:ToggleBars()
+        NEURON.NeuronBar:ToggleBars()
     elseif (button == "RightButton" and not IsShiftKeyDown()) then
         NEURON:ToggleEditFrames()
     elseif (button == "LeftButton" and IsShiftKeyDown()) then

@@ -88,7 +88,7 @@ function NeuronBagBar:OnInitialize()
 
 	if (DB.bagbarFirstRun) then
 
-		local bar = NEURON:CreateNewBar("bag", 1, true)
+		local bar = NEURON.NeuronBar:CreateNewBar("bag", 1, true)
 		local object
 
 		for i=1,#bagElements do
@@ -102,7 +102,7 @@ function NeuronBagBar:OnInitialize()
 
 		for id,data in pairs(bagbarsDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewBar("bag", id)
+				NEURON.NeuronBar:CreateNewBar("bag", id)
 			end
 		end
 

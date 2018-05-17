@@ -232,6 +232,8 @@ function NeuronBar:OnInitialize()
 		}, true, 115)
 
 	NeuronBar.HideZoneAbilityBorder = NEURON.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
+	NEURON.CreateNewBar = NeuronBar.CreateNewBar --temp just so slash functions still work
+	NEURON.ToggleBars = NeuronBar.ToggleBars --temp just so slash functions still work
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -246,7 +248,7 @@ function NeuronBar:OnEnable()
 		for id, defaults in ipairs(gDef) do
 			NEURON.RegisteredBarData["bar"].gDef = defaults
 
-			local bar = NEURON:CreateNewBar("bar", id, true)
+			local bar = NeuronBar:CreateNewBar("bar", id, true)
 			local object
 
 			for i=oid+offset,oid+11+offset do
@@ -262,7 +264,7 @@ function NeuronBar:OnEnable()
 	else
 		for id,data in pairs(barGDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewBar("bar", id)
+				NeuronBar:CreateNewBar("bar", id)
 			end
 		end
 
@@ -1393,7 +1395,7 @@ function NeuronBar:OnClick(bar, ...)
 	local click, down, newBar = select(1, ...), select(2, ...)
 
 	if (not down) then
-		newBar = NEURON:ChangeBar(bar)
+		newBar = NeuronBar:ChangeBar(bar)
 	end
 
 	bar.click = click
@@ -1423,7 +1425,7 @@ function NeuronBar:OnClick(bar, ...)
 
 	elseif (click == "MiddleButton") then
 		if (GetMouseFocus() ~= NEURON.CurrentBar) then
-			newBar = NEURON:ChangeBar(bar)
+			newBar = NeuronBar:ChangeBar(bar)
 		end
 
 		if (down) then
@@ -1480,7 +1482,7 @@ end
 
 
 function NeuronBar:OnDragStart(bar, ...)
-	NEURON:ChangeBar(bar)
+	NeuronBar:ChangeBar(bar)
 
 	bar:SetFrameStrata(bar.gdata.barStrata)
 	bar:EnableKeyboard(false)
@@ -1613,7 +1615,7 @@ function NeuronBar:OnMouseWheel(delta)
 	bar = tremove(barStack, 1)
 
 	if (bar) then
-		NEURON:ChangeBar(bar)
+		NeuronBar:ChangeBar(bar)
 	end
 end
 
@@ -1819,6 +1821,253 @@ function NeuronBar:UpdateObjectSpec(bar)
 	end
 end
 
+
+function NeuronBar:CreateBar(index, class, id)
+    local data = NEURON.RegisteredBarData[class]
+    local newBar
+
+    if (data) then
+        if (not id) then
+            id = 1
+
+            for _ in ipairs(data.GDB) do
+                id = id + 1
+            end
+
+            newBar = true
+        end
+
+        local bar
+
+        if (_G["Neuron"..data.barType..id]) then
+            bar = _G["Neuron"..data.barType..id]
+        else
+            ---this is the create of our bar object frame
+            bar = CreateFrame("CheckButton", "Neuron"..data.barType..id, UIParent, "NeuronBarTemplate")
+            ---this is assigning the metatable of a CheckButton to our new bar object, giving it all a CheckButtons features, and thus finishing the object construction
+            setmetatable(bar, {__index = CreateFrame("CheckButton")})
+        end
+
+        for key,value in pairs(data) do
+            bar[key] = value
+        end
+
+        bar.index = index
+        bar.class = class
+        bar.stateschanged = true
+        bar.vischanged =true
+        bar.elapsed = 0
+        bar.click = nil
+        bar.dragged = false
+        bar.selected = false
+        bar.toggleframe = bar
+        bar.microAdjust = false
+        bar.vis = {}
+        bar.text:Hide()
+        bar.message:Hide()
+        bar.messagebg:Hide()
+
+        bar:SetID(id)
+        bar:SetWidth(375)
+        bar:SetHeight(40)
+        bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+            edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+            tile = true, tileSize = 16, edgeSize = 12,
+            insets = {left = 4, right = 4, top = 4, bottom = 4}})
+        bar:SetBackdropColor(0,0,0,0.4)
+        bar:SetBackdropBorderColor(0,0,0,0)
+        bar:SetFrameLevel(2)
+        bar:RegisterForClicks("AnyDown", "AnyUp")
+        bar:RegisterForDrag("LeftButton")
+        bar:SetMovable(true)
+        bar:EnableKeyboard(false)
+        bar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
+
+        bar:SetScript("OnClick", function(self, ...) NeuronBar:OnClick(self, ...) end)
+        bar:SetScript("OnDragStart", function(self, ...) NeuronBar:OnDragStart(self, ...) end)
+        bar:SetScript("OnDragStop", function(self, ...) NeuronBar:OnDragStop(self, ...) end)
+        bar:SetScript("OnEnter", function(self, ...) NeuronBar:OnEnter(self, ...) end)
+        bar:SetScript("OnLeave", function(self, ...) NeuronBar:OnLeave(self, ...) end)
+        bar:SetScript("OnEvent", function(self, event, ...) NeuronBar:OnEvent(self, event, ...) end)
+        bar:SetScript("OnKeyDown", function(self, key, onupdate) NeuronBar:OnKeyDown(self, key, onupdate) end)
+        bar:SetScript("OnKeyUp", function(self, key) NeuronBar:OnKeyUp(self, key) end)
+        bar:SetScript("OnMouseWheel", function(delta) NeuronBar:OnMouseWheel(delta) end)
+        bar:SetScript("OnShow", function(self) NeuronBar:OnShow(self) end)
+        bar:SetScript("OnHide", function(self) NeuronBar:OnHide(self) end)
+        bar:SetScript("OnUpdate", function(self, elapsed) NeuronBar:OnUpdate(self, elapsed) end)
+
+        bar:RegisterEvent("ACTIONBAR_SHOWGRID")
+        bar:RegisterEvent("ACTIONBAR_HIDEGRID")
+        bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+
+
+        ---TODO:I need to figure out what to do with this
+        function bar:ACTIONBAR_SHOWGRID(...)
+            if (not InCombatLockdown() and self:IsVisible()) then
+                self:Hide(); self.showgrid = true
+            end
+        end
+
+        function bar:ACTIONBAR_HIDEGRID(...)
+            if (not InCombatLockdown() and self.showgrid) then
+                self:Show(); self.showgrid = nil
+            end
+        end
+
+        function bar:ACTIVE_TALENT_GROUP_CHANGED(...)
+            if (NEURON.PEW) then
+                self.stateschanged = true
+                self.vischanged = true
+                NEURON.NeuronBar:Update(self)
+            end
+        end
+
+        NeuronBar:CreateDriver(bar)
+        NeuronBar:CreateHandler(bar)
+        NeuronBar:CreateWatcher(bar)
+
+        NEURON.NeuronBar:LoadData(bar)
+
+        if (not newBar) then
+            bar:Hide()
+        end
+
+        BARIndex[index] = bar
+
+        BARNameIndex[bar:GetName()] = bar
+
+        return bar, newBar
+    end
+end
+
+
+function NeuronBar:CreateNewBar(class, id, firstRun)
+    if (class and NEURON.RegisteredBarData[class]) then
+        local index = 1
+
+        for _ in ipairs(BARIndex) do
+            index = index + 1
+        end
+
+        local bar, newBar = NeuronBar:CreateBar(index, class, id)
+
+        if (firstRun) then
+            NeuronBar:SetDefaults(bar, bar.gDef, bar.cDef)
+        end
+
+        if (newBar) then
+            NeuronBar:Load(bar)
+            NeuronBar:ChangeBar(bar)
+
+            ---------------------------------
+            if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+                bar.gdata.hidestates = ":extrabar0:"
+                bar.vischanged = true
+                NeuronBar:Update(bar)
+            end
+            if (class == "pet") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+                bar.gdata.hidestates = ":pet0:"
+                bar.vischanged = true
+                NeuronBar:Update(bar)
+            end
+            -----------------------------------
+        end
+
+        return bar
+    else
+        NEURON.PrintBarTypes()
+    end
+end
+
+function NeuronBar:ChangeBar(bar)
+	local newBar = false
+
+	if (NEURON.PEW) then
+
+		if (bar and NEURON.CurrentBar ~= bar) then
+			NEURON.CurrentBar = bar
+
+			bar.selected = true
+			bar.action = nil
+
+			bar:SetFrameLevel(3)
+
+			if (bar.gdata.hidden) then
+				bar:SetBackdropColor(1,0,0,0.6)
+			else
+				bar:SetBackdropColor(0,0,1,0.5)
+			end
+
+			newBar = true
+		end
+
+		if (not bar) then
+			NEURON.CurrentBar = nil
+		elseif (bar.text) then
+			bar.text:Show()
+		end
+
+		for k,v in pairs(BARIndex) do
+			if (v ~= bar) then
+
+				if (v.cdata.conceal) then
+					v:SetBackdropColor(1,0,0,0.4)
+				else
+					v:SetBackdropColor(0,0,0,0.4)
+				end
+
+				v:SetFrameLevel(2)
+				v.selected = false
+				v.microAdjust = false
+				v:EnableKeyboard(false)
+				v.text:Hide()
+				v.message:Hide()
+				v.messagebg:Hide()
+				v.mousewheelfunc = nil
+				v.action = nil
+			end
+		end
+
+		if (NEURON.CurrentBar) then
+			NeuronBar:OnEnter(NEURON.CurrentBar)
+		end
+	end
+
+	return newBar
+end
+
+function NeuronBar:ToggleBars(show, hide)
+	if (NEURON.PEW) then
+		if ((NEURON.BarsShown or hide) and not show) then
+
+			NEURON.BarsShown = nil
+
+			for index, bar in pairs(BARIndex) do
+				bar:Hide()
+				NEURON.NeuronBar:Update(bar, nil, true)
+			end
+
+			NeuronBar:ChangeBar(nil)
+
+			if (NeuronBarEditor)then
+				NeuronBarEditor:Hide()
+			end
+
+		else
+
+			--NEURON:ToggleMainMenu(nil, true)
+			NEURON:ToggleEditFrames(nil, true)
+
+			NEURON.BarsShown = true
+
+			for index, bar in pairs(BARIndex) do
+				bar:Show()
+				NEURON.NeuronBar:Update(bar, true)
+			end
+		end
+	end
+
+end
 
 function NeuronBar:DeleteBar(bar)
 	local handler = bar.handler
@@ -3179,7 +3428,7 @@ function NeuronBar:BarProfileUpdate()
 		for id, defaults in ipairs(gDef) do
 			NEURON.RegisteredBarData["bar"].gDef = defaults
 
-			local bar, object = NEURON:CreateNewBar("bar", id, true)
+			local bar, object = NeuronBar:CreateNewBar("bar", id, true)
 
 			for i=oid+offset,oid+11+offset do
 				object = NEURON:CreateNewObject("bar", i, true)
@@ -3193,7 +3442,7 @@ function NeuronBar:BarProfileUpdate()
 	else
 		for id,data in pairs(barGDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewBar("bar", id)
+				NeuronBar:CreateNewBar("bar", id)
 			end
 		end
 

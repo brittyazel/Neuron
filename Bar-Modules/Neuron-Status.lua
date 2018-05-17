@@ -307,7 +307,7 @@ function NeuronStatusBar:OnInitialize()
 
 			NEURON.RegisteredBarData["status"].gDef = defaults
 
-			local bar, object = NEURON:CreateNewBar("status", id, true)
+			local bar, object = NEURON.NeuronBar:CreateNewBar("status", id, true)
 
 			if (id == 4) then --I'm guessing this is meant to make 4 bars by default
 				for i=1,3 do
@@ -329,7 +329,7 @@ function NeuronStatusBar:OnInitialize()
 
 		for id,data in pairs(statusbarsDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewBar("status", id)
+				NEURON.NeuronBar:CreateNewBar("status", id)
 			end
 		end
 

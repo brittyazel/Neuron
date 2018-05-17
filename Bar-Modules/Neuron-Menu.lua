@@ -76,7 +76,7 @@ function NeuronMenuBar:OnInitialize()
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if (DB.menubarFirstRun) then
-        bar, object = NEURON:CreateNewBar("menu", 1, true)
+        bar, object = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
 
         for i=1,#menuElements do
             object = NEURON:CreateNewObject("menu", i)
@@ -90,7 +90,7 @@ function NeuronMenuBar:OnInitialize()
 
         for id,data in pairs(menubarsDB) do
             if (data ~= nil) then
-                NEURON:CreateNewBar("menu", id)
+                NEURON.NeuronBar:CreateNewBar("menu", id)
             end
         end
 

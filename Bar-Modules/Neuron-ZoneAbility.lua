@@ -85,7 +85,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 	if (CDB.zoneabilitybarFirstRun) then
 
-		local bar = NEURON:CreateNewBar("zoneabilitybar", 1, true)
+		local bar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", 1, true)
 		local object = NEURON:CreateNewObject("zoneabilitybar", 1)
 
 		NEURON.NeuronBar:AddObjectToList(bar, object)
@@ -96,7 +96,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 		for id,data in pairs(zoneabilitybarsCDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewBar("zoneabilitybar", id)
+				NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
 			end
 		end
 
