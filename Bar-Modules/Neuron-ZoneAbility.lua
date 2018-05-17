@@ -564,7 +564,7 @@ function ZONEABILITYRBTN:SetType(save)
 	self:SetScript("OnAttributeChanged", nil)
 end
 
-function BAR:HideZoneAbilityBorder(msg, gui, checked, query)
+function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, query)
 	if (query) then
 		return Neuron.CurrentBar.gdata.border
 	end
@@ -587,6 +587,6 @@ function BAR:HideZoneAbilityBorder(msg, gui, checked, query)
 			Neuron.CurrentBar.gdata.border = true
 		end
 	end
-	NEURON.NeuronBar:Update(self)
+	NEURON.NeuronBar:Update(bar)
 	ZONEABILITYRBTN:UpdateFrame()
 end

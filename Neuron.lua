@@ -1388,7 +1388,7 @@ function NEURON:CreateBar(index, class, id)
 			bar[key] = value
 		end
 
-		setmetatable(bar, {__index = NEURON.BAR})
+		setmetatable(bar, {__index = NEURON.barMT})
 
 		bar.index = index
 		bar.class = class
@@ -1421,22 +1421,44 @@ function NEURON:CreateBar(index, class, id)
 		bar:EnableKeyboard(false)
 		bar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
-		bar:SetScript("OnClick", NEURON.BAR.OnClick)
-		bar:SetScript("OnDragStart", NEURON.BAR.OnDragStart)
-		bar:SetScript("OnDragStop", NEURON.BAR.OnDragStop)
-		bar:SetScript("OnEnter", NEURON.BAR.OnEnter)
-		bar:SetScript("OnLeave", NEURON.BAR.OnLeave)
-		bar:SetScript("OnEvent", NEURON.BAR.OnEvent)
-		bar:SetScript("OnKeyDown", NEURON.BAR.OnKeyDown)
-		bar:SetScript("OnKeyUp", NEURON.BAR.OnKeyUp)
-		bar:SetScript("OnMouseWheel", NEURON.BAR.OnMouseWheel)
-		bar:SetScript("OnShow", NEURON.BAR.OnShow)
-		bar:SetScript("OnHide", NEURON.BAR.OnHide)
-		bar:SetScript("OnUpdate", NEURON.BAR.OnUpdate)
+		bar:SetScript("OnClick", function(self, ...) NEURON.NeuronBar:OnClick(self, ...) end)
+		bar:SetScript("OnDragStart", function(self, ...) NEURON.NeuronBar:OnDragStart(self, ...) end)
+		bar:SetScript("OnDragStop", function(self, ...) NEURON.NeuronBar:OnDragStop(self, ...) end)
+		bar:SetScript("OnEnter", function(self, ...) NEURON.NeuronBar:OnEnter(self, ...) end)
+		bar:SetScript("OnLeave", function(self, ...) NEURON.NeuronBar:OnLeave(self, ...) end)
+		bar:SetScript("OnEvent", function(self, event, ...) NEURON.NeuronBar:OnEvent(self, event, ...) end)
+		bar:SetScript("OnKeyDown", function(self, key, onupdate) NEURON.NeuronBar:OnKeyDown(self, key, onupdate) end)
+		bar:SetScript("OnKeyUp", function(self, key) NEURON.NeuronBar:OnKeyUp(self, key) end)
+		bar:SetScript("OnMouseWheel", function(delta) NEURON.NeuronBar:OnMouseWheel(delta) end)
+		bar:SetScript("OnShow", function(self) NEURON.NeuronBar:OnShow(self) end)
+		bar:SetScript("OnHide", function(self) NEURON.NeuronBar:OnHide(self) end)
+		bar:SetScript("OnUpdate", function(self, elapsed) NEURON.NeuronBar:OnUpdate(self, elapsed) end)
 
 		bar:RegisterEvent("ACTIONBAR_SHOWGRID")
 		bar:RegisterEvent("ACTIONBAR_HIDEGRID")
 		bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+
+
+		---TODO:I need to figure out what to do with this
+		function bar:ACTIONBAR_SHOWGRID(...)
+			if (not InCombatLockdown() and self:IsVisible()) then
+				self:Hide(); self.showgrid = true
+			end
+		end
+
+		function bar:ACTIONBAR_HIDEGRID(...)
+			if (not InCombatLockdown() and self.showgrid) then
+				self:Show(); self.showgrid = nil
+			end
+		end
+
+		function bar:ACTIVE_TALENT_GROUP_CHANGED(...)
+			if (NEURON.PEW) then
+				self.stateschanged = true
+				self.vischanged = true
+				NEURON.NeuronBar:Update(self)
+			end
+		end
 
 		NEURON.NeuronBar:CreateDriver(bar)
 		NEURON.NeuronBar:CreateHandler(bar)
@@ -1588,7 +1610,7 @@ function NEURON:ChangeBar(bar)
 		end
 
 		if (NEURON.CurrentBar) then
-			NEURON.CurrentBar:OnEnter()
+			NEURON.NeuronBar:OnEnter(NEURON.CurrentBar)
 		end
 	end
 

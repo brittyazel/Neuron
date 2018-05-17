@@ -6,8 +6,7 @@ local GDB, CDB, SPEC, player, realm, barGDB, barCDB
 NEURON.NeuronBar = NEURON:NewModule("Bar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBar = NEURON.NeuronBar
 
-NEURON.BAR = setmetatable({}, {__index = CreateFrame("CheckButton")})
-local BAR = NEURON.BAR
+NEURON.barMT = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 
 local handlerMT = setmetatable({}, { __index = CreateFrame("Frame") })
@@ -199,10 +198,6 @@ local statetable = {}
 
 local barStack = {}
 
-local stackWatch = CreateFrame("Frame", nil, UIParent)
-stackWatch:SetScript("OnUpdate", function(self) self.bar = GetMouseFocus():GetName() if (not BARNameIndex[self.bar]) then wipe(barStack); self:Hide() end end)
-stackWatch:Hide()
-
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -238,6 +233,8 @@ function NeuronBar:OnInitialize()
 		AURATEXT = true,
 		AURAIND = true
 		}, true, 115)
+
+	NeuronBar.HideZoneAbilityBorder = NEURON.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -292,6 +289,12 @@ function NeuronBar:OnEnable()
 
 		NeuronBar:Load(bar)
 	end
+
+
+	local stackWatch = CreateFrame("Frame", nil, UIParent)
+	stackWatch:SetScript("OnUpdate", function(self) self.bar = GetMouseFocus():GetName() if (not BARNameIndex[self.bar]) then wipe(barStack); self:Hide() end end)
+	stackWatch:Hide()
+
 end
 
 
@@ -307,29 +310,7 @@ end
 ------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
----TODO:I need to figure out what to do with this
-function BAR:ACTIONBAR_SHOWGRID(...)
-	if (not InCombatLockdown() and self:IsVisible()) then
-		self:Hide(); self.showgrid = true
-	end
-end
 
-
-function BAR:ACTIONBAR_HIDEGRID(...)
-	if (not InCombatLockdown() and self.showgrid) then
-		self:Show(); self.showgrid = nil
-	end
-end
-
-
-function BAR:ACTIVE_TALENT_GROUP_CHANGED(...)
-	if (NEURON.PEW) then
-		self.stateschanged = true
-		self.vischanged = true
-
-		NeuronBar:Update(self)
-	end
-end
 ------------------------------------------------------------
 --------------------Intermediate Functions------------------
 ------------------------------------------------------------
@@ -357,7 +338,7 @@ function NeuronBar:IsMouseOverSelfOrWatchFrame(frame)
 end
 
 --this function gets called via controlOnUpdate in the main Neuron.lua
-function NeuronBar.controlOnUpdate(self, elapsed)
+function NeuronBar:controlOnUpdate(frame, elapsed)
 	for k,v in pairs(autoHideIndex) do
 		if (v~=nil) then
 
@@ -1141,7 +1122,7 @@ end
 
 function NeuronBar:SetPosition(bar)
 	if (bar.gdata.snapToPoint and bar.gdata.snapToFrame) then
-		bar:StickToPoint(_G[bar.gdata.snapToFrame], bar.gdata.snapToPoint, bar.gdata.padH, bar.gdata.padV)
+		NeuronBar:StickToPoint(bar, _G[bar.gdata.snapToFrame], bar.gdata.snapToPoint, bar.gdata.padH, bar.gdata.padV)
 	else
 
 		local point, x, y = bar.gdata.point, bar.gdata.x, bar.gdata.y
@@ -1404,60 +1385,56 @@ end
 ----------------------------------------------------------------------
 ------------------------OnEvent Functions-----------------------------
 
-function BAR:OnEvent(event, ...)
-	if (self[event]) then
-		self[event](self, ...)
+function NeuronBar:OnEvent(bar,event, ...)
+	if (bar[event]) then
+		bar[event](bar, ...)
 	end
 end
 
 
-function BAR:OnClick(...)
+function NeuronBar:OnClick(bar, ...)
 	local click, down, newBar = select(1, ...), select(2, ...)
 
 	if (not down) then
-		newBar = NEURON:ChangeBar(self)
+		newBar = NEURON:ChangeBar(bar)
 	end
 
-	self.click = click
-	self.dragged = false
-	self.elapsed = 0
-	self.pushed = 0
+	bar.click = click
+	bar.dragged = false
+	bar.elapsed = 0
+	bar.pushed = 0
 
 	if (IsShiftKeyDown() and not down) then
 
-		if (self.microAdjust) then
-			self.microAdjust = false
-			self:EnableKeyboard(false)
-			self.message:Hide()
-			self.messagebg:Hide()
+		if (bar.microAdjust) then
+			bar.microAdjust = false
+			bar:EnableKeyboard(false)
+			bar.message:Hide()
+			bar.messagebg:Hide()
 		else
-			self.gdata.snapTo = false
-			self.gdata.snapToPoint = false
-			self.gdata.snapToFrame = false
-			self.microAdjust = 1
-			self:EnableKeyboard(true)
-			self.message:Show()
-			self.message:SetText(self.gdata.point:lower().."     x: "..format("%0.2f", self.gdata.x).."     y: "..format("%0.2f", self.gdata.y))
-			self.messagebg:Show()
-			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
-			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
+			bar.gdata.snapTo = false
+			bar.gdata.snapToPoint = false
+			bar.gdata.snapToFrame = false
+			bar.microAdjust = 1
+			bar:EnableKeyboard(true)
+			bar.message:Show()
+			bar.message:SetText(bar.gdata.point:lower().."     x: "..format("%0.2f", bar.gdata.x).."     y: "..format("%0.2f", bar.gdata.y))
+			bar.messagebg:Show()
+			bar.messagebg:SetWidth(bar.message:GetWidth()*1.05)
+			bar.messagebg:SetHeight(bar.message:GetHeight()*1.1)
 		end
 
 	elseif (click == "MiddleButton") then
 		if (GetMouseFocus() ~= NEURON.CurrentBar) then
-			newBar = NEURON:ChangeBar(self)
+			newBar = NEURON:ChangeBar(bar)
 		end
 
 		if (down) then
 			--NEURON:ConcealBar(nil, true)
 		end
 
-	elseif (click == "RightButton" and not self.action and not down) then
-		self.mousewheelfunc = nil
-
-		if (not IsAddOnLoaded("Neuron-GUI")) then
-			LoadAddOn("Neuron-GUI")
-		end
+	elseif (click == "RightButton" and not bar.action and not down) then
+		bar.mousewheelfunc = nil
 
 		if (NeuronBarEditor) then
 			if (not newBar and NeuronBarEditor:IsVisible()) then
@@ -1469,7 +1446,7 @@ function BAR:OnClick(...)
 
 	elseif (not down) then
 		if (not newBar) then
-			--updateState(self, 1)
+			--updateState(bar, 1)
 		end
 	end
 
@@ -1479,125 +1456,125 @@ function BAR:OnClick(...)
 end
 
 
-function BAR:OnEnter(...)
-	if (self.cdata.conceal) then
-		self:SetBackdropColor(1,0,0,0.6)
+function NeuronBar:OnEnter(bar, ...)
+	if (bar.cdata.conceal) then
+		bar:SetBackdropColor(1,0,0,0.6)
 	else
-		self:SetBackdropColor(0,0,1,0.5)
+		bar:SetBackdropColor(0,0,1,0.5)
 	end
 
-	self.text:Show()
+	bar.text:Show()
 end
 
 
-function BAR:OnLeave(...)
-	if (self ~= NEURON.CurrentBar) then
-		if (self.cdata.conceal) then
-			self:SetBackdropColor(1,0,0,0.4)
+function NeuronBar:OnLeave(bar, ...)
+	if (bar ~= NEURON.CurrentBar) then
+		if (bar.cdata.conceal) then
+			bar:SetBackdropColor(1,0,0,0.4)
 		else
-			self:SetBackdropColor(0,0,0,0.4)
+			bar:SetBackdropColor(0,0,0,0.4)
 		end
 	end
 
-	if (self ~= NEURON.CurrentBar) then
-		self.text:Hide()
+	if (bar ~= NEURON.CurrentBar) then
+		bar.text:Hide()
 	end
 end
 
 
-function BAR:OnDragStart(...)
-	NEURON:ChangeBar(self)
+function NeuronBar:OnDragStart(bar, ...)
+	NEURON:ChangeBar(bar)
 
-	self:SetFrameStrata(self.gdata.barStrata)
-	self:EnableKeyboard(false)
+	bar:SetFrameStrata(bar.gdata.barStrata)
+	bar:EnableKeyboard(false)
 
-	self.adjusting = true
-	self.selected = true
-	self.isMoving = true
+	bar.adjusting = true
+	bar.selected = true
+	bar.isMoving = true
 
-	self.gdata.snapToPoint = false
-	self.gdata.snapToFrame = false
+	bar.gdata.snapToPoint = false
+	bar.gdata.snapToFrame = false
 
-	self:StartMoving()
+	bar:StartMoving()
 end
 
 
-function BAR:OnDragStop(...)
+function NeuronBar:OnDragStop(bar, ...)
 	local point
-	self:StopMovingOrSizing()
+	bar:StopMovingOrSizing()
 
-	for _,bar in pairs(BARIndex) do
-		if (not point and self.gdata.snapTo and bar.gdata.snapTo and self ~= bar) then
-			point = self:Stick(bar, GDB.snapToTol, self.gdata.padH, self.gdata.padV)
+	for _,thisbar in pairs(BARIndex) do
+		if (not point and thisbar.gdata.snapTo and thisbar.gdata.snapTo and thisbar ~= thisbar) then
+			point = NeuronBar:Stick(bar, thisbar, GDB.snapToTol, thisbar.gdata.padH, thisbar.gdata.padV)
 
 			if (point) then
-				self.gdata.snapToPoint = point
-				self.gdata.snapToFrame = bar:GetName()
-				self.gdata.point = "SnapTo: "..point
-				self.gdata.x = 0
-				self.gdata.y = 0
+				thisbar.gdata.snapToPoint = point
+				thisbar.gdata.snapToFrame = thisbar:GetName()
+				thisbar.gdata.point = "SnapTo: "..point
+				thisbar.gdata.x = 0
+				thisbar.gdata.y = 0
 			end
 		end
 	end
 
 	if (not point) then
-		self.gdata.snapToPoint = false
-		self.gdata.snapToFrame = false
-		self.gdata.point, self.gdata.x, self.gdata.y = NeuronBar:GetPosition(self)
-		NeuronBar:SetPosition(self)
+		bar.gdata.snapToPoint = false
+		bar.gdata.snapToFrame = false
+		bar.gdata.point, bar.gdata.x, bar.gdata.y = NeuronBar:GetPosition(bar)
+		NeuronBar:SetPosition(bar)
 	end
 
-	if (self.gdata.snapTo and not self.gdata.snapToPoint) then
-		self:StickToEdge()
+	if (bar.gdata.snapTo and not bar.gdata.snapToPoint) then
+		NeuronBar:StickToEdge(bar)
 	end
 
-	self.isMoving = false
-	self.dragged = true
-	self.elapsed = 0
-	NeuronBar:Update(self)
+	bar.isMoving = false
+	bar.dragged = true
+	bar.elapsed = 0
+	NeuronBar:Update(bar)
 end
 
-function BAR:OnKeyDown(key, onupdate)
-	if (self.microAdjust) then
-		self.keydown = key
+function NeuronBar:OnKeyDown(bar, key, onupdate)
+	if (bar.microAdjust) then
+		bar.keydown = key
 
 		if (not onupdate) then
-			self.elapsed = 0
+			bar.elapsed = 0
 		end
 
-		self.gdata.point, self.gdata.x, self.gdata.y = NeuronBar:GetPosition(self)
-		self:SetUserPlaced(false)
-		self:ClearAllPoints()
+		bar.gdata.point, bar.gdata.x, bar.gdata.y = NeuronBar:GetPosition(bar)
+		bar:SetUserPlaced(false)
+		bar:ClearAllPoints()
 
 		if (key == "UP") then
-			self.gdata.y = self.gdata.y + .1 * self.microAdjust
+			bar.gdata.y = bar.gdata.y + .1 * bar.microAdjust
 		elseif (key == "DOWN") then
-			self.gdata.y = self.gdata.y - .1 * self.microAdjust
+			bar.gdata.y = bar.gdata.y - .1 * bar.microAdjust
 		elseif (key == "LEFT") then
-			self.gdata.x = self.gdata.x - .1 * self.microAdjust
+			bar.gdata.x = bar.gdata.x - .1 * bar.microAdjust
 		elseif (key == "RIGHT") then
-			self.gdata.x = self.gdata.x + .1 * self.microAdjust
+			bar.gdata.x = bar.gdata.x + .1 * bar.microAdjust
 		elseif (not key:find("SHIFT")) then
-			self.microAdjust = false
-			self:EnableKeyboard(false)
+			bar.microAdjust = false
+			bar:EnableKeyboard(false)
 		end
 
-		NeuronBar:SetPosition(self)
-		NeuronBar:SaveData(self)
+		NeuronBar:SetPosition(bar)
+		NeuronBar:SaveData(bar)
 	end
 end
 
 
-function BAR:OnKeyUp(key)
-	if (self.microAdjust and not key:find("SHIFT")) then
-		self.microAdjust = 1
-		self.keydown = nil
-		self.elapsed = 0
+function NeuronBar:OnKeyUp(bar, key)
+	if (bar.microAdjust and not key:find("SHIFT")) then
+		bar.microAdjust = 1
+		bar.keydown = nil
+		bar.elapsed = 0
 	end
 end
 
 
-function BAR:OnMouseWheel(delta)
+function NeuronBar:OnMouseWheel(delta)
 	stackWatch:Show()
 
 	NeuronTooltipScan:SetOwner(UIParent, "ANCHOR_NONE")
@@ -1644,43 +1621,43 @@ function BAR:OnMouseWheel(delta)
 end
 
 
-function BAR:OnShow()
-	if (self == NEURON.CurrentBar) then
+function NeuronBar:OnShow(bar)
+	if (bar == NEURON.CurrentBar) then
 
-		if (self.cdata.conceal) then
-			self:SetBackdropColor(1,0,0,0.6)
+		if (bar.cdata.conceal) then
+			bar:SetBackdropColor(1,0,0,0.6)
 		else
-			self:SetBackdropColor(0,0,1,0.5)
+			bar:SetBackdropColor(0,0,1,0.5)
 		end
 
 	else
-		if (self.cdata.conceal) then
-			self:SetBackdropColor(1,0,0,0.4)
+		if (bar.cdata.conceal) then
+			bar:SetBackdropColor(1,0,0,0.4)
 		else
-			self:SetBackdropColor(0,0,0,0.4)
+			bar:SetBackdropColor(0,0,0,0.4)
 		end
 	end
 
-	self.handler:SetAttribute("editmode", true)
-	self.handler:Show()
-	NeuronBar:UpdateObjectGrid(self, NEURON.BarsShown)
-	self:EnableKeyboard(false)
+	bar.handler:SetAttribute("editmode", true)
+	bar.handler:Show()
+	NeuronBar:UpdateObjectGrid(bar, NEURON.BarsShown)
+	bar:EnableKeyboard(false)
 end
 
 
-function BAR:OnHide()
-	self.handler:SetAttribute("editmode", nil)
+function NeuronBar:OnHide(bar)
+	bar.handler:SetAttribute("editmode", nil)
 
-	if (self.handler:GetAttribute("vishide")) then
-		self.handler:Hide()
+	if (bar.handler:GetAttribute("vishide")) then
+		bar.handler:Hide()
 	end
 
-	NeuronBar:UpdateObjectGrid(self)
-	self:EnableKeyboard(false)
+	NeuronBar:UpdateObjectGrid(bar)
+	bar:EnableKeyboard(false)
 end
 
 
-function BAR:Pulse(elapsed)
+function NeuronBar:Pulse(bar, elapsed)
 	alphaTimer = alphaTimer + elapsed * 1.5
 
 	if (alphaDir == 1) then
@@ -1695,52 +1672,52 @@ function BAR:Pulse(elapsed)
 
 	if (alphaDir == 1) then
 		if ((1-(alphaTimer)) >= 0) then
-			self:SetAlpha(1-(alphaTimer))
+			bar:SetAlpha(1-(alphaTimer))
 		end
 	else
 		if ((alphaTimer) <= 1) then
-			self:SetAlpha((alphaTimer))
+			bar:SetAlpha((alphaTimer))
 		end
 	end
 
-	self.pulse = true
+	bar.pulse = true
 end
 
 ---TODO: This is probably a source of inefficiency
-function BAR:OnUpdate(elapsed)
+function NeuronBar:OnUpdate(bar, elapsed)
 	if (NEURON.PEW) then
 
-		if (self.elapsed) then
-			self.elapsed = self.elapsed + elapsed
+		if (bar.elapsed) then
+			bar.elapsed = bar.elapsed + elapsed
 
-			if (self.elapsed > 10) then
-				self.elapsed = 0.75
+			if (bar.elapsed > 10) then
+				bar.elapsed = 0.75
 			end
 
-			if (self.microAdjust and not self.action) then
-				self:Pulse(elapsed)
+			if (bar.microAdjust and not bar.action) then
+				NeuronBar:Pulse(bar, elapsed)
 
-				if (self.keydown and self.elapsed >= 0.5) then
-					self.microAdjust = self.microAdjust + 1
-					self:OnKeyDown(self.keydown, self.microAdjust)
+				if (bar.keydown and bar.elapsed >= 0.5) then
+					bar.microAdjust = bar.microAdjust + 1
+					bar:OnKeyDown(bar.keydown, bar.microAdjust)
 				end
 
-			elseif (self.pulse) then
-				self:SetAlpha(1)
-				self.pulse = nil
+			elseif (bar.pulse) then
+				bar:SetAlpha(1)
+				bar.pulse = nil
 			end
 
-			if (self.hover) then
-				self.elapsed = 0
+			if (bar.hover) then
+				bar.elapsed = 0
 			end
 		end
 
-		if (GetMouseFocus() == self) then
-			if (not self.wheel) then
-				self:EnableMouseWheel(true); self.wheel = true
+		if (GetMouseFocus() == bar) then
+			if (not bar.wheel) then
+				bar:EnableMouseWheel(true); bar.wheel = true
 			end
-		elseif (self.wheel) then
-			self:EnableMouseWheel(false); self.wheel = nil
+		elseif (bar.wheel) then
+			bar:EnableMouseWheel(false); bar.wheel = nil
 		end
 
 	end
