@@ -1183,7 +1183,6 @@ function NeuronBar:LoadObjects(bar, init)
 		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			test = object
 			object:SetData(bar)
 			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
 			object:SetAux()

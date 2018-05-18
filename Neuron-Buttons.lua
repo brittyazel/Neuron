@@ -2822,7 +2822,7 @@ function NeuronButton:GetSkinned(button)
 	end
 end
 
-
+---TODO refactor this to NeuronButton
 function BUTTON:SetData(bar)
 	if (bar) then
 
