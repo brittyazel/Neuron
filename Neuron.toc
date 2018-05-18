@@ -22,7 +22,6 @@ Neuron.lua
 Neuron-States.lua
 Neuron-Buttons.lua
 Neuron-Bars.lua
-Neuron-EditFrames.lua
 Neuron-KeyBinder.lua
 Neuron-SnapTo.lua
 Neuron-MinimapIcon.lua

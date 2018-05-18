@@ -2809,11 +2809,9 @@ end
 
 function STATUS:CreateEditFrame(index)
 
-	local OBJEDITOR_MT = { __index = OBJEDITOR }
-
 	local OBJEDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
 
-	setmetatable(OBJEDITOR, OBJEDITOR_MT)
+	setmetatable(OBJEDITOR, { __index = CreateFrame("Button") })
 
 	OBJEDITOR:EnableMouseWheel(true)
 	OBJEDITOR:RegisterForClicks("AnyDown")

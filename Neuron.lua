@@ -1390,6 +1390,53 @@ function NEURON:ToggleMainMenu(show, hide)
 end
 
 
+function NEURON:ToggleEditFrames(show, hide)
+
+	if (NEURON.EditFrameShown or hide) then
+
+		NEURON.EditFrameShown = false
+
+		for index, OBJEDITOR in pairs(NEURON.EDITIndex) do
+			OBJEDITOR:Hide(); OBJEDITOR.object.editmode = NEURON.EditFrameShown
+			OBJEDITOR:SetFrameStrata("LOW")
+		end
+
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
+			if (bar.handler:GetAttribute("assertstate")) then
+				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
+			end
+		end
+
+		NEURON.NeuronButton:ChangeObject()
+
+		--[[if (IsAddOnLoaded("Neuron-GUI")) then
+			NeuronObjectEditor:Hide()
+		end]]
+
+	else
+
+		--NEURON:ToggleMainMenu(nil, true)
+		NEURON.NeuronBar:ToggleBars(nil, true)
+		NEURON:ToggleBindings(nil, true)
+
+		NEURON.EditFrameShown = true
+
+		for index, OBJEDITOR in pairs(NEURON.EDITIndex) do
+			OBJEDITOR:Show(); OBJEDITOR.object.editmode = NEURON.EditFrameShown
+
+			if (OBJEDITOR.object.bar) then
+				OBJEDITOR:SetFrameStrata(OBJEDITOR.object.bar:GetFrameStrata())
+				OBJEDITOR:SetFrameLevel(OBJEDITOR.object.bar:GetFrameLevel()+4)
+			end
+		end
+
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
+		end
+	end
+end
+
 function NEURON:PrintStateList()
 	local data = {}
 	local list

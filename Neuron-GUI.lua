@@ -111,6 +111,9 @@ function NeuronGUI:OnInitialize()
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
 
 
+	--for the object editor
+	NEURON.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -4017,3 +4020,133 @@ NeuronGUI.interfaceOptions = {
 		},
 	},
 }
+
+
+
+NEURON.Editors = {}
+
+----------------------------------------------------------------------------
+--------------------------Object Editor-------------------------------------
+----------------------------------------------------------------------------
+
+function NeuronGUI:ObjEditor_OnShow(editor)
+
+	local object = editor.object
+
+	if (object) then
+
+		if (object.bar) then
+			editor:SetFrameLevel(object.bar:GetFrameLevel()+1)
+		end
+	end
+end
+
+function NeuronGUI:ObjEditor_OnHide(editor)
+
+
+end
+
+function NeuronGUI:ObjEditor_OnEnter(editor)
+
+	editor.select:Show()
+
+	GameTooltip:SetOwner(editor, "ANCHOR_RIGHT")
+
+	GameTooltip:Show()
+
+end
+
+function NeuronGUI:ObjEditor_OnLeave(editor)
+
+	if (editor.object ~= NEURON.CurrentObject) then
+		editor.select:Hide()
+	end
+
+	GameTooltip:Hide()
+
+end
+
+function NeuronGUI:ObjEditor_OnClick(editor, button)
+
+	local newObj, newEditor = NEURON.NeuronButton:ChangeObject(editor.object)
+
+	if (button == "RightButton") then
+
+		if (NeuronObjectEditor) then
+			if (not newObj and NeuronObjectEditor:IsVisible()) then
+				NeuronObjectEditor:Hide()
+			elseif (newObj and newEditor) then
+				NEURON.NeuronGUI:ObjectEditor_OnShow(NeuronObjectEditor); NeuronObjectEditor:Show()
+			else
+				NeuronObjectEditor:Show()
+			end
+		end
+
+	elseif (newObj and newEditor and NeuronObjectEditor:IsVisible()) then
+		NEURON.NeuronGUI:ObjectEditor_OnShow(NeuronObjectEditor); NeuronObjectEditor:Show()
+	end
+
+	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
+		NEURON.NeuronGUI:UpdateObjectGUI()
+	end
+end
+
+function NeuronGUI:ObjEditor_ACTIONBAR_SHOWGRID(editor)
+
+	if (not InCombatLockdown() and editor:IsVisible()) then
+		editor:Hide()
+		editor.showgrid = true
+	end
+
+end
+
+function NeuronGUI:ObjEditor_ACTIONBAR_HIDEGRID(editor)
+
+	if (not InCombatLockdown() and editor.showgrid) then
+		editor:Show()
+		editor.showgrid = nil
+	end
+
+end
+
+function NeuronGUI:ObjEditor_OnEvent(editor, eventName, ...)
+
+	local event = "ObjEditor_".. eventName
+
+	if (NeuronGUI[event]) then
+		NeuronGUI[event](NeuronGUI, editor, ...)
+	end
+
+end
+
+
+
+function NeuronGUI:ObjEditor_CreateEditFrame(button, index)
+
+	local EDITOR = CreateFrame("Button", button:GetName().."EditFrame", button, "NeuronEditFrameTemplate")
+
+	setmetatable(EDITOR, { __index = CreateFrame("Button") })
+
+	EDITOR:EnableMouseWheel(true)
+	EDITOR:RegisterForClicks("AnyDown")
+	EDITOR:SetAllPoints(button)
+	EDITOR:SetScript("OnShow", function(self) NeuronGUI:ObjEditor_OnShow(self) end)
+	EDITOR:SetScript("OnHide", function(self) NeuronGUI:ObjEditor_OnHide(self) end)
+	EDITOR:SetScript("OnEnter", function(self) NeuronGUI:ObjEditor_OnEnter(self) end)
+	EDITOR:SetScript("OnLeave", function(self) NeuronGUI:ObjEditor_OnLeave(self) end)
+	EDITOR:SetScript("OnClick", function(self, button) NeuronGUI:ObjEditor_OnClick(self, button) end)
+	EDITOR:SetScript("OnEvent", function(self, event, ...) NeuronGUI:ObjEditor_OnEvent(self, event, ...) end)
+	EDITOR:RegisterEvent("ACTIONBAR_SHOWGRID")
+	EDITOR:RegisterEvent("ACTIONBAR_HIDEGRID")
+
+	EDITOR.type:SetText(L["Edit"])
+	EDITOR.object = button
+	EDITOR.editType = "button"
+
+	button.OBJEDITOR = EDITOR
+
+	EDITIndex["BUTTON"..index] = EDITOR
+
+	EDITOR:Hide()
+
+end

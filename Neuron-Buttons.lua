@@ -2866,6 +2866,58 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 end
 
 
+function NeuronButton:ChangeObject(object)
+
+	if not NEURON.CurrentObject then --fix for CurentObject error thrown by Neuron-GUI
+		NEURON.CurrentObject = object
+	end
+
+	local newObj, newEditor = false, false
+
+	if (NEURON.PEW) then
+
+		if (object and object ~= NEURON.CurrentObject) then
+
+			if (NEURON.CurrentObject and NEURON.CurrentObject.OBJEDITOR.editType ~= object.OBJEDITOR.editType) then
+				newEditor = true
+			end
+
+			if (NEURON.CurrentObject and NEURON.CurrentObject.bar ~= object.bar) then
+
+				local bar = NEURON.CurrentObject.bar
+
+				if (bar.handler:GetAttribute("assertstate")) then
+					bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
+				end
+
+				object.bar.handler:SetAttribute("fauxstate", bar.handler:GetAttribute("activestate"))
+
+			end
+
+			NEURON.CurrentObject = object
+
+			object.OBJEDITOR.select:Show()
+
+			object.selected = true
+			object.action = nil
+
+			newObj = true
+		end
+
+		if (not object) then
+			NEURON.CurrentObject = nil
+		end
+
+		for k,v in pairs(NEURON.EDITIndex) do
+			if (not object or v ~= object.OBJEDITOR) then
+				v.select:Hide()
+			end
+		end
+	end
+
+	return newObj, newEditor
+end
+
 ---TODO refactor this to NeuronButton
 function BUTTON:SetData(bar)
 	if (bar) then
@@ -3237,7 +3289,7 @@ end
 ---TODO refactor this to NeuronButton
 function BUTTON:LoadAux()
 
-	self:CreateEditFrame(self.objTIndex)
+	NEURON.NeuronGUI:ObjEditor_CreateEditFrame(self, self.objTIndex)
 	self:CreateBindFrame(self.objTIndex)
 
 end
