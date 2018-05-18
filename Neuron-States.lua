@@ -1,8 +1,10 @@
 ﻿--Neuron , a World of Warcraft® user interface addon.
 
+local NEURON = Neuron
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-Neuron.MANAGED_ACTION_STATES = {
+NEURON.MANAGED_ACTION_STATES = {
 
 	paged = {
 		homestate = "paged1",
@@ -201,7 +203,7 @@ Neuron.MANAGED_ACTION_STATES = {
 	},
 }
 
-Neuron.MANAGED_BAR_STATES = {
+NEURON.MANAGED_BAR_STATES = {
 
 	paged = {
 		homestate = "paged1",

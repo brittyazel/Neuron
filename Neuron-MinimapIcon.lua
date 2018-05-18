@@ -1,5 +1,7 @@
 --Neuron , a World of Warcraft® user interface addon.
 
+--Neuron MinimapIcon makes use of LibDBIcon and LibDataBroker to make sure we play nicely with LDB addons and to simplify dramatically the minimap button
+
 local NEURON = Neuron
 local GDB
 
