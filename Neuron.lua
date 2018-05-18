@@ -270,30 +270,30 @@ local level, stanceStringsUpdated
 --- or setting up slash commands.
 function NEURON:OnInitialize()
 
-	self.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
+	NEURON.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
 
-	self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig")
-	self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig")
-	self.db.RegisterCallback(self, "OnProfileReset", "RefreshConfig")
-	self.db.RegisterCallback(self, "OnDatabaseReset", "RefreshConfig")
+	NEURON.db.RegisterCallback(NEURON, "OnProfileChanged", "RefreshConfig")
+	NEURON.db.RegisterCallback(NEURON, "OnProfileCopied", "RefreshConfig")
+	NEURON.db.RegisterCallback(NEURON, "OnProfileReset", "RefreshConfig")
+	NEURON.db.RegisterCallback(NEURON, "OnDatabaseReset", "RefreshConfig")
 
 
 	---These set the profile to be the defaults if there isn't already these values set in the profile
 	if (not Neuron.db.profile["NeuronCDB"]) then
-		self.db.profile["NeuronCDB"] = NeuronCDB
+		NEURON.db.profile["NeuronCDB"] = NeuronCDB
 	end
 	if (not Neuron.db.profile["NeuronGDB"]) then
-		self.db.profile["NeuronGDB"] = NeuronGDB
+		NEURON.db.profile["NeuronGDB"] = NeuronGDB
 	end
 	if (not Neuron.db.profile["NeuronItemCache"]) then
-		self.db.profile["NeuronItemCache"] = NeuronItemCache
+		NEURON.db.profile["NeuronItemCache"] = NeuronItemCache
 	end
 	--------------------------------------------------------------------
 
 	---load saved variables into working variable containers
-	NeuronCDB = self.db.profile["NeuronCDB"]
-	NeuronGDB = self.db.profile["NeuronGDB"]
-	NeuronItemCache = self.db.profile["NeuronItemCache"]
+	NeuronCDB = NEURON.db.profile["NeuronCDB"]
+	NeuronGDB = NEURON.db.profile["NeuronGDB"]
+	NeuronItemCache = NEURON.db.profile["NeuronItemCache"]
 
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
 	GDB = NeuronGDB
@@ -327,18 +327,18 @@ end
 --- the game that wasn't available in OnInitialize
 function NEURON:OnEnable()
 
-	self:RegisterEvent("PLAYER_REGEN_DISABLED")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("SPELLS_CHANGED")
-	self:RegisterEvent("CHARACTER_POINTS_CHANGED")
-	self:RegisterEvent("LEARNED_SPELL_IN_TAB")
-	self:RegisterEvent("PET_UI_CLOSE")
-	self:RegisterEvent("COMPANION_LEARNED")
-	self:RegisterEvent("COMPANION_UPDATE")
-	self:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
-	self:RegisterEvent("UNIT_LEVEL")
-	self:RegisterEvent("UNIT_PET")
-	self:RegisterEvent("TOYS_UPDATED")
+	NEURON:RegisterEvent("PLAYER_REGEN_DISABLED")
+	NEURON:RegisterEvent("PLAYER_ENTERING_WORLD")
+	NEURON:RegisterEvent("SPELLS_CHANGED")
+	NEURON:RegisterEvent("CHARACTER_POINTS_CHANGED")
+	NEURON:RegisterEvent("LEARNED_SPELL_IN_TAB")
+	NEURON:RegisterEvent("PET_UI_CLOSE")
+	NEURON:RegisterEvent("COMPANION_LEARNED")
+	NEURON:RegisterEvent("COMPANION_UPDATE")
+	NEURON:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+	NEURON:RegisterEvent("UNIT_LEVEL")
+	NEURON:RegisterEvent("UNIT_PET")
+	NEURON:RegisterEvent("TOYS_UPDATED")
 
 	NEURON:HookScript(self, "OnUpdate", "controlOnUpdate")
 
@@ -358,15 +358,18 @@ function NEURON:OnEnable()
 	GameMenuFrame:HookScript("OnShow", function(self)
 
 		if (NEURON.BarsShown) then
-			HideUIPanel(self); NEURON.NeuronBar:ToggleBars(nil, true)
+			HideUIPanel(self)
+			NEURON.NeuronBar:ToggleBars(nil, true)
 		end
 
 		if (NEURON.EditFrameShown) then
-			HideUIPanel(self); NEURON:ToggleEditFrames(nil, true)
+			HideUIPanel(self)
+			NEURON:ToggleEditFrames(nil, true)
 		end
 
 		if (NEURON.BindingMode) then
-			HideUIPanel(self); NEURON:ToggleBindings(nil, true)
+			HideUIPanel(self)
+			NEURON:ToggleBindings(nil, true)
 		end
 
 	end)
@@ -499,8 +502,8 @@ end
 -------------------------------------------------------------------------
 
 function NEURON:RefreshConfig()
-	NeuronCDB = self.db.profile["NeuronCDB"]
-	NeuronGDB = self.db.profile["NeuronGDB"]
+	NeuronCDB = NEURON.db.profile["NeuronCDB"]
+	NeuronGDB = NEURON.db.profile["NeuronGDB"]
 
 	GDB, CDB =  NeuronGDB, NeuronCDB
 	NEURON.NeuronButton.ButtonProfileUpdate()
@@ -575,7 +578,7 @@ local slashFunctions = {
 function NEURON:slashHandler(input)
 
 	if (strlen(input)==0 or input:lower() == "help") then
-		self:printSlashHelp()
+		NEURON:printSlashHelp()
 		return
 	end
 
@@ -634,27 +637,27 @@ end
 
 ---this is the new controlOnUpdate function that will control all the other onUpdate functions.
 function NEURON:controlOnUpdate(frame, elapsed)
-	if not self.elapsed then
-		self.elapsed = 0
+	if not NEURON.elapsed then
+		NEURON.elapsed = 0
 	end
 
-	self.elapsed = self.elapsed + elapsed
+	NEURON.elapsed = NEURON.elapsed + elapsed
 
 	---Throttled OnUpdate calls
-	if (self.elapsed > GDB.throttle and NEURON.PEW) then
+	if (NEURON.elapsed > GDB.throttle and NEURON.PEW) then
 
-		NEURON.NeuronBar.controlOnUpdate(self, elapsed)
-		NEURON.NeuronButton.cooldownsOnUpdate(self, elapsed)
-		NEURON.NeuronZoneAbilityBar.controlOnUpdate(self, elapsed)
-		NEURON.NeuronPetBar.controlOnUpdate(self, elapsed)
-		NEURON.NeuronStatusBar:controlOnUpdate(elapsed)
+		NEURON.NeuronBar:controlOnUpdate(frame, elapsed)
+		NEURON.NeuronButton:cooldownsOnUpdate(frame, elapsed)
+		NEURON.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
+		NEURON.NeuronPetBar:controlOnUpdate(frame, elapsed)
+		NEURON.NeuronStatusBar:controlOnUpdate(frame, elapsed)
 
 		self.elapsed = 0;
 	end
 
 	---UnThrottled OnUpdate calls
 	if(NEURON.PEW) then
-		NEURON.NeuronButton.controlOnUpdate(self, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+		NEURON.NeuronButton:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 	end
 
 end

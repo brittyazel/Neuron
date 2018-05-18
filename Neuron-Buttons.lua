@@ -344,7 +344,7 @@ end
 
 --this function gets called via controlOnUpdate in the main Neuron.lua
 ---this function controlls the sparkley effects around abilities, if throttled then those effects are throttled down super slow. Be careful.
-function NeuronButton.controlOnUpdate(frame, elapsed)
+function NeuronButton:controlOnUpdate(frame, elapsed)
 	local cou_distance, cou_radius, cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position
 
 	for i in next,autoCast.timers do

@@ -157,7 +157,7 @@ end
 
 
 --this function gets called from the controlOnUpdate in the Neuron.lua file
-function NeuronPetBar.controlOnUpdate(self, elapsed)
+function NeuronPetBar:controlOnUpdate(frame, elapsed)
 	local alphaTimer, alphaDir = 0, 0
 
 	alphaTimer = alphaTimer + elapsed * 2.5

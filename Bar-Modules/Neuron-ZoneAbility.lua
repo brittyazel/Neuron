@@ -155,7 +155,7 @@ function NeuronZoneAbilityBar:DisableDefault()
 
 end
 
-function NeuronZoneAbilityBar.controlOnUpdate(self, elapsed)
+function NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
 
 	alphaTimer = alphaTimer + elapsed * 2.5
 

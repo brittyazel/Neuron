@@ -447,7 +447,7 @@ end
 
 
 
-function NeuronStatusBar:controlOnUpdate(elapsed)
+function NeuronStatusBar:controlOnUpdate(frame, elapsed)
 
 end
 
