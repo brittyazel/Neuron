@@ -11,7 +11,6 @@ local zoneabilitybarsCDB
 local zoneabilitybtnsCDB
 
 local BUTTON = NEURON.BUTTON
-local BAR = NEURON.BAR
 
 NEURON.ZONEABILITYRBTN = setmetatable({}, { __index = BUTTON })
 local ZONEABILITYRBTN = NEURON.ZONEABILITYRBTN

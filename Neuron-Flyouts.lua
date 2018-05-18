@@ -9,7 +9,7 @@
 local NEURON = Neuron
 local GDB, CDB, SPEC, btnGDB, btnCDB, control
 
-local BAR, BUTTON = NEURON.BAR, NEURON.BUTTON
+local BUTTON = NEURON.BUTTON
 
 NEURON.NeuronFlyouts = NEURON:NewModule("Flyouts", "AceEvent-3.0", "AceHook-3.0")
 local NeuronFlyouts = NEURON.NeuronFlyouts
