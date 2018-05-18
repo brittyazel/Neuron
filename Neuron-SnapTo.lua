@@ -3,8 +3,6 @@
 
 local NEURON = Neuron
 
-local NeuronBar = NEURON.NeuronBar
-
 local function frameIsDependentOnFrame(frame, otherFrame)
 
 	if (frame and otherFrame) then
@@ -116,7 +114,7 @@ end
 --[[ Usable Functions ]]--
 
 
-function NeuronBar:StickToEdge(bar)
+function NEURON.NeuronBar:StickToEdge(bar)
 
 	local point, x, y= NEURON.NeuronBar:GetPosition(bar)
 	local changed
@@ -152,7 +150,7 @@ function NeuronBar:StickToEdge(bar)
 	end
 end
 
-function NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
+function NEURON.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 
@@ -214,7 +212,7 @@ function NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
 	end
 end
 
-function NeuronBar:StickToPoint(bar, oFrame, point, xOff, yOff)
+function NEURON.NeuronBar:StickToPoint(bar, oFrame, point, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 
