@@ -7,7 +7,7 @@ local NeuronBagBar = NEURON.NeuronBagBar
 
 local  bagbarsDB, bagbtnsDB
 
-local ANCHOR = setmetatable({}, { __index = CreateFrame("Frame") })
+local BAG = setmetatable({}, { __index = CreateFrame("Frame") })
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -44,11 +44,11 @@ local configData = {
 --- or setting up slash commands.
 function NeuronBagBar:OnInitialize()
 
-	bagElements[1] = NeuronBackpackButton
-	bagElements[2] = Neuron___Bag0Slot
+	bagElements[5] = NeuronBackpackButton
+	bagElements[4] = Neuron___Bag0Slot
 	bagElements[3] = Neuron___Bag1Slot
-	bagElements[4] = Neuron___Bag2Slot
-	bagElements[5] = Neuron___Bag3Slot
+	bagElements[2] = Neuron___Bag2Slot
+	bagElements[1] = Neuron___Bag3Slot
 
 	for k,v in pairs(bagElements) do
 		v:SetWidth(32)
@@ -64,14 +64,14 @@ function NeuronBagBar:OnInitialize()
 	DB = NeuronCDB
 
 	---TODO: Remove this in the future. This is just temp code.
-	if (Neuron.db.profile["NeuronBagDB"]) then --migrate old settings to new location
-		if(Neuron.db.profile["NeuronBagDB"].bagbars) then
-			NeuronCDB.bagbars = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbars)
+	if (NEURON.db.profile["NeuronBagDB"]) then --migrate old settings to new location
+		if(NEURON.db.profile["NeuronBagDB"].bagbars) then
+			NeuronCDB.bagbars = CopyTable(NEURON.db.profile["NeuronBagDB"].bagbars)
 		end
-		if(Neuron.db.profile["NeuronBagDB"].bagbtns) then
-			NeuronCDB.bagbtns = CopyTable(Neuron.db.profile["NeuronBagDB"].bagbtns)
+		if(NEURON.db.profile["NeuronBagDB"].bagbtns) then
+			NeuronCDB.bagbtns = CopyTable(NEURON.db.profile["NeuronBagDB"].bagbtns)
 		end
-		Neuron.db.profile["NeuronBagDB"] = nil
+		NEURON.db.profile["NeuronBagDB"] = nil
 		DB.bagbarFirstRun = false
 	end
 
@@ -80,8 +80,7 @@ function NeuronBagBar:OnInitialize()
 	bagbtnsDB = DB.bagbtns
 
 
-	--for some reason the bag settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsDB to be both the GDB and DB in the RegisterBarClass
-	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #bagElements, STORAGE, gDef, nil, true)
+	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAG }, #bagElements, STORAGE, gDef, nil, true)
 
 	NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
@@ -122,15 +121,15 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronBagBar:OnEnable()
 
-	NeuronBagBar:SecureHook("ContainerFrame_OnShow", NeuronBagBar.containerFrame_OnShow)
-	NeuronBagBar:SecureHook("ContainerFrame_OnHide", NeuronBagBar.containerFrame_OnHide)
-	NeuronBagBar:SecureHook("ToggleBag", NeuronBagBar.toggleBag)
-	NeuronBagBar:SecureHook("ToggleBackpack", NeuronBagBar.toggleBackpack)
+	NeuronBagBar:SecureHook("ContainerFrame_OnShow", function(self) NeuronBagBar:containerFrame_OnShow(self) end)
+	NeuronBagBar:SecureHook("ContainerFrame_OnHide", function(self) NeuronBagBar:containerFrame_OnHide(self) end)
+	NeuronBagBar:SecureHook("ToggleBag", function(self, id) NeuronBagBar:toggleBag(id) end)
+	NeuronBagBar:SecureHook("ToggleBackpack", function(self, id) NeuronBagBar:toggleBackpack(id) end)
 
 	for i=1,13 do
 		local frame = _G["ContainerFrame"..i]
-		NeuronBagBar:HookScript(frame, "OnShow", NeuronBagBar.containerFrame_OnShow)
-		NeuronBagBar:HookScript(frame, "OnHide", NeuronBagBar.containerFrame_OnHide)
+		NeuronBagBar:HookScript(frame, "OnShow", function(self) NeuronBagBar:containerFrame_OnShow(self) end)
+		NeuronBagBar:HookScript(frame, "OnHide", function(self) NeuronBagBar:containerFrame_OnHide(self) end)
 	end
 
 end
@@ -152,7 +151,7 @@ end
 
 
 
-function NeuronBagBar.toggleBag(id)
+function NeuronBagBar:toggleBag(id)
 
 	if (not InCombatLockdown() and IsOptionFrameOpen()) then
 
@@ -173,7 +172,7 @@ function NeuronBagBar.toggleBag(id)
 	end
 end
 
-function NeuronBagBar.toggleBackpack()
+function NeuronBagBar:toggleBackpack()
 
 	if (not InCombatLockdown() and IsOptionFrameOpen()) then
 
@@ -199,25 +198,25 @@ function NeuronBagBar.toggleBackpack()
 	end
 end
 
-function NeuronBagBar.containerFrame_OnShow(self)
+function NeuronBagBar:containerFrame_OnShow(frame)
 
-	local index = self:GetID() + 1
+	local index = frame:GetID() + 1
 
 	if (bagElements[index]) then
 		bagElements[index]:SetChecked(1)
 	end
 end
 
-function NeuronBagBar.containerFrame_OnHide(self)
+function NeuronBagBar:containerFrame_OnHide(frame)
 
-	local index = abs(self:GetID()-5)
+	local index = abs(frame:GetID()-5)
 
 	if (bagElements[index]) then
 		bagElements[index]:SetChecked(0)
 	end
 end
 
-local function updateFreeSlots(self)
+function NeuronBagBar:updateFreeSlots(bag)
 
 	local totalSlots, totalFree  = 0, 0
 	local freeSlots, bagFamily
@@ -242,27 +241,27 @@ local function updateFreeSlots(self)
 		r=1; g=(rgbValue/100)*1.5
 	end
 
-	self.freeSlots = totalFree
+	bag.freeSlots = totalFree
 
-	self.count:SetText(string.format("%s", totalFree))
-	self.count:SetTextColor(r, g, 0)
+	bag.count:SetText(string.format("%s", totalFree))
+	bag.count:SetTextColor(r, g, 0)
 end
 
-function NEURON.NeuronBackpackButton_OnLoad(self)
+function NeuronBagBar:NeuronBackpackButton_OnLoad(frame)
 
-	self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("CVAR_UPDATE")
-	self:RegisterEvent("BAG_UPDATE")
+	frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	frame:RegisterEvent("CVAR_UPDATE")
+	frame:RegisterEvent("BAG_UPDATE")
 
-	self.icon:SetTexture("Interface\\Buttons\\Button-Backpack-Up")
+	frame.icon:SetTexture("Interface\\Buttons\\Button-Backpack-Up")
 	--self.BlizzBP = MainMenuBarBackpackButton
 
-	self.count = _G[self:GetName().."Count2"]
-	self.icon = _G[self:GetName().."IconTexture"]
+	frame.count = _G[frame:GetName().."Count2"]
+	frame.icon = _G[frame:GetName().."IconTexture"]
 end
 
-function NEURON.NeuronBackpackButton_OnReceiveDrag(self, button)
+function NeuronBagBar:NeuronBackpackButton_OnReceiveDrag(frame, button)
 
 	if (not PutItemInBackpack()) then
 		ToggleBackpack()
@@ -278,12 +277,12 @@ function NEURON.NeuronBackpackButton_OnReceiveDrag(self, button)
 		end
 	end
 
-	self:SetChecked(isVisible)
+	frame:SetChecked(isVisible)
 end
 
-function NEURON.NeuronBackpackButton_OnEnter(self)
+function NeuronBagBar:NeuronBackpackButton_OnEnter(frame)
 
-	GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+	GameTooltip:SetOwner(frame, "ANCHOR_LEFT")
 	GameTooltip:SetText(BACKPACK_TOOLTIP, 1.0, 1.0, 1.0)
 
 	local keyBinding = GetBindingKey("TOGGLEBACKPACK")
@@ -292,51 +291,51 @@ function NEURON.NeuronBackpackButton_OnEnter(self)
 		GameTooltip:AppendText(" "..NORMAL_FONT_COLOR_CODE.."("..keyBinding..")"..FONT_COLOR_CODE_CLOSE)
 	end
 
-	GameTooltip:AddLine(string.format(NUM_FREE_SLOTS, (self.freeSlots or 0)))
+	GameTooltip:AddLine(string.format(NUM_FREE_SLOTS, (frame.freeSlots or 0)))
 
 	GameTooltip:Show()
 end
 
-function NEURON.NeuronBackpackButton_OnLeave(self)
+function NeuronBagBar:NeuronBackpackButton_OnLeave(frame)
 	GameTooltip:Hide()
 end
 
-function NEURON.NeuronBackpackButton_OnEvent(self, event, ...)
+function NeuronBagBar:NeuronBackpackButton_OnEvent(frame, event, ...)
 
 	if (event == "BAG_UPDATE") then
 
 		if (... >= BACKPACK_CONTAINER and ... <= NUM_BAG_SLOTS) then
-			updateFreeSlots(self)
+			NeuronBagBar:updateFreeSlots(frame)
 		end
 
 	elseif (event == "PLAYER_ENTERING_WORLD") then
 
-		updateFreeSlots(self)
+		NeuronBagBar:updateFreeSlots(frame)
 
-		self.icon:SetTexture([[Interface\Buttons\Button-Backpack-Up]])
+		frame.icon:SetTexture([[Interface\Buttons\Button-Backpack-Up]])
 
 	elseif (event == "CVAR_UPDATE") then
 
 	end
 end
 
-function ANCHOR:SetSkinned()
+function NeuronBagBar:SetSkinned(button)
 
 	if (SKIN) then
 
-		local bar = self.bar
+		local bar = button.bar
 
 		if (bar) then
 
-			local btnData = { Icon = self.element.icon }
+			local btnData = { Icon = button.element.icon }
 
-			SKIN:Group("Neuron", bar.gdata.name):AddButton(self.element, btnData)
+			SKIN:Group("Neuron", bar.gdata.name):AddButton(button.element, btnData)
 
 		end
 	end
 end
 
-function ANCHOR:SetData(bar)
+function BAG:SetData(bar)
 
 	if (bar) then
 
@@ -358,13 +357,13 @@ function ANCHOR:SetData(bar)
 	self:SetFrameLevel(4)
 end
 
-function ANCHOR:SaveData()
+function BAG:SaveData()
 
 	-- empty
 
 end
 
-function ANCHOR:LoadData(spec, state)
+function BAG:LoadData(spec, state)
 
 	local id = self.id
 
@@ -394,37 +393,37 @@ function ANCHOR:LoadData(spec, state)
 	end
 end
 
-function ANCHOR:SetGrid(show, hide)
+function BAG:SetGrid(show, hide)
 
 	--empty
 
 end
 
-function ANCHOR:SetAux()
+function BAG:SetAux()
 
 	-- empty
 
 end
 
-function ANCHOR:LoadAux()
+function BAG:LoadAux()
 
 	-- empty
 
 end
 
-function ANCHOR:SetDefaults()
+function BAG:SetDefaults()
 
 	-- empty
 
 end
 
-function ANCHOR:GetDefaults()
+function BAG:GetDefaults()
 
 	--empty
 
 end
 
-function ANCHOR:SetType(save)
+function BAG:SetType(save)
 
 	if (bagElements[self.id]) then
 
@@ -453,6 +452,6 @@ function ANCHOR:SetType(save)
 			self.element:SetScript("OnClick", BagSlotButton_OnClick)
 		end
 
-		self:SetSkinned()
+		NeuronBagBar:SetSkinned(self)
 	end
 end
