@@ -8,7 +8,7 @@ local DB
 NEURON.NeuronStatusBar = NEURON:NewModule("StatusBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronStatusBar = NEURON.NeuronStatusBar
 
-local EDITIndex, OBJEDITOR = NEURON.EDITIndex, NEURON.OBJEDITOR
+local EDITIndex = NEURON.EDITIndex
 
 local statusbarsDB, statusbtnsDB
 
@@ -2809,44 +2809,44 @@ end
 
 function STATUS:CreateEditFrame(index)
 
-	local OBJEDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
+	local EDITOR = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
 
-	setmetatable(OBJEDITOR, { __index = CreateFrame("Button") })
+	setmetatable(EDITOR, { __index = CreateFrame("Button") })
 
-	OBJEDITOR:EnableMouseWheel(true)
-	OBJEDITOR:RegisterForClicks("AnyDown")
-	OBJEDITOR:SetAllPoints(self)
-	OBJEDITOR:SetScript("OnShow", OBJEDITOR.OnShow)
-	OBJEDITOR:SetScript("OnHide", OBJEDITOR.OnHide)
-	OBJEDITOR:SetScript("OnEnter", OBJEDITOR.OnEnter)
-	OBJEDITOR:SetScript("OnLeave", OBJEDITOR.OnLeave)
-	OBJEDITOR:SetScript("OnClick", OBJEDITOR.OnClick)
+	EDITOR:EnableMouseWheel(true)
+	EDITOR:RegisterForClicks("AnyDown")
+	EDITOR:SetAllPoints(self)
+	EDITOR:SetScript("OnShow", function(self) NEURON.NeuronGUI:ObjEditor_OnShow(self) end)
+	EDITOR:SetScript("OnHide", function(self) NEURON.NeuronGUI:ObjEditor_OnHide(self) end)
+	EDITOR:SetScript("OnEnter", function(self) NEURON.NeuronGUI:ObjEditor_OnEnter(self) end)
+	EDITOR:SetScript("OnLeave", function(self) NEURON.NeuronGUI:ObjEditor_OnLeave(self) end)
+	EDITOR:SetScript("OnClick", function(self, button) NEURON.NeuronGUI:ObjEditor_OnClick(self, button) end)
 
-	OBJEDITOR.type:SetText("")
-	OBJEDITOR.object = self
-	OBJEDITOR.editType = "status"
+	EDITOR.type:SetText("")
+	EDITOR.object = self
+	EDITOR.editType = "status"
 
-	OBJEDITOR.select.TL:ClearAllPoints()
-	OBJEDITOR.select.TL:SetPoint("RIGHT", OBJEDITOR.select, "LEFT", 4, 0)
-	OBJEDITOR.select.TL:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
-	OBJEDITOR.select.TL:SetTexCoord(0.71875, 1, 0, 1)
-	OBJEDITOR.select.TL:SetWidth(16)
-	OBJEDITOR.select.TL:SetHeight(55)
+	EDITOR.select.TL:ClearAllPoints()
+	EDITOR.select.TL:SetPoint("RIGHT", EDITOR.select, "LEFT", 4, 0)
+	EDITOR.select.TL:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
+	EDITOR.select.TL:SetTexCoord(0.71875, 1, 0, 1)
+	EDITOR.select.TL:SetWidth(16)
+	EDITOR.select.TL:SetHeight(55)
 
-	OBJEDITOR.select.TR:ClearAllPoints()
-	OBJEDITOR.select.TR:SetPoint("LEFT", OBJEDITOR.select, "RIGHT", -4, 0)
-	OBJEDITOR.select.TR:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
-	OBJEDITOR.select.TR:SetTexCoord(0, 0.28125, 0, 1)
-	OBJEDITOR.select.TR:SetWidth(16)
-	OBJEDITOR.select.TR:SetHeight(55)
+	EDITOR.select.TR:ClearAllPoints()
+	EDITOR.select.TR:SetPoint("LEFT", EDITOR.select, "RIGHT", -4, 0)
+	EDITOR.select.TR:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
+	EDITOR.select.TR:SetTexCoord(0, 0.28125, 0, 1)
+	EDITOR.select.TR:SetWidth(16)
+	EDITOR.select.TR:SetHeight(55)
 
-	OBJEDITOR.select.BL:SetTexture("")
-	OBJEDITOR.select.BR:SetTexture("")
+	EDITOR.select.BL:SetTexture("")
+	EDITOR.select.BR:SetTexture("")
 
-	self.OBJEDITOR = OBJEDITOR
+	self.OBJEDITOR = EDITOR
 
-	EDITIndex["STATUS"..index] = OBJEDITOR
+	EDITIndex["STATUS"..index] = EDITOR
 
-	OBJEDITOR:Hide()
+	EDITOR:Hide()
 
 end
