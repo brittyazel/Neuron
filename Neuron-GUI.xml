@@ -44,7 +44,7 @@
 		</HitRectInsets>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentLeftDisabled" parentKey="leftdisabled" file="Interface\AddOns\Neuron-GUI\Images\UI-Character-ActiveTab">
+				<Texture name="$parentLeftDisabled" parentKey="leftdisabled" file="Interface\AddOns\Neuron\Images\UI-Character-ActiveTab">
 					<Size x="20" y="35"/>
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -53,35 +53,35 @@
 					</Anchors>
 					<TexCoords left="0" right="0.15625" top="0" bottom="0.546875"/>
 				</Texture>
-				<Texture name="$parentMiddleDisabled" parentKey="middledisabled" file="Interface\AddOns\Neuron-GUI\Images\UI-Character-ActiveTab">
+				<Texture name="$parentMiddleDisabled" parentKey="middledisabled" file="Interface\AddOns\Neuron\Images\UI-Character-ActiveTab">
 					<Size x="88" y="35"/>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentLeftDisabled" relativePoint="RIGHT"/>
 					</Anchors>
 					<TexCoords left="0.15625" right="0.84375" top="0" bottom="0.546875"/>
 				</Texture>
-				<Texture name="$parentRightDisabled" parentKey="rightdisabled" file="Interface\AddOns\Neuron-GUI\Images\UI-Character-ActiveTab">
+				<Texture name="$parentRightDisabled" parentKey="rightdisabled" file="Interface\AddOns\Neuron\Images\UI-Character-ActiveTab">
 					<Size x="20" y="35"/>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentMiddleDisabled" relativePoint="RIGHT"/>
 					</Anchors>
 					<TexCoords left="0.84375" right="1.0" top="0" bottom="0.546875"/>
 				</Texture>
-				<Texture name="$parentLeft" parentKey="left" file="Interface\AddOns\Neuron-GUI\Images\UI-Character-InActiveTab">
+				<Texture name="$parentLeft" parentKey="left" file="Interface\AddOns\Neuron\Images\UI-Character-InActiveTab">
 					<Size x="20" y="32"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" x="0" y="13"/>
 					</Anchors>
 					<TexCoords left="0" right="0.15625" top="0" bottom="1.0"/>
 				</Texture>
-				<Texture name="$parentMiddle" parentKey="middle" file="Interface\AddOns\Neuron-GUI\Images\UI-Character-InActiveTab">
+				<Texture name="$parentMiddle" parentKey="middle" file="Interface\AddOns\Neuron\Images\UI-Character-InActiveTab">
 					<Size x="88" y="32"/>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
 					</Anchors>
 					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0"/>
 				</Texture>
-				<Texture name="$parentRight" parentKey="right" file="Interface\AddOns\Neuron-GUI\Images\UI-Character-InActiveTab">
+				<Texture name="$parentRight" parentKey="right" file="Interface\AddOns\Neuron\Images\UI-Character-InActiveTab">
 					<Size x="20" y="32"/>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT"/>
@@ -101,7 +101,7 @@
 		<NormalFont style="GameFontNormalSmall"/>
 		<HighlightFont style="GameFontHighlightSmall"/>
 		<DisabledFont style="GameFontDisableSmall"/>
-		<HighlightTexture parentKey="highlighttexture" file="Interface\AddOns\Neuron-GUI\Images\UI-Character-Tab-RealHighlight" alphaMode="ADD">
+		<HighlightTexture parentKey="highlighttexture" file="Interface\AddOns\Neuron\Images\UI-Character-Tab-RealHighlight" alphaMode="ADD">
 			<Anchors>
 				<Anchor point="TOPLEFT">
 					<Offset x="-4" y="13"/>

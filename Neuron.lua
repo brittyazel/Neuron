@@ -1411,10 +1411,6 @@ function NEURON:ToggleEditFrames(show, hide)
 
 		NEURON.NeuronButton:ChangeObject()
 
-		--[[if (IsAddOnLoaded("Neuron-GUI")) then
-			NeuronObjectEditor:Hide()
-		end]]
-
 	else
 
 		--NEURON:ToggleMainMenu(nil, true)
