@@ -2,25 +2,57 @@
 
 
 local NEURON = Neuron
---local DB
 
-NEURON.BINDER = setmetatable({}, { __index = CreateFrame("Button") })
 
-local BUTTON, BINDER = NEURON.BUTTON, NEURON.BINDER
+NEURON.NeuronBinder = NEURON:NewModule("Binder", "AceEvent-3.0", "AceHook-3.0")
+local NeuronBinder = NEURON.NeuronBinder
+
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
---local BTNIndex = NEURON.BTNIndex
+
 local BINDIndex = NEURON.BINDIndex
 
---local sIndex = NEURON.sIndex
---local cIndex = NEURON.cIndex
+
+
+
+-----------------------------------------------------------------------------
+--------------------------INIT FUNCTIONS-------------------------------------
+-----------------------------------------------------------------------------
+
+--- **OnInitialize**, which is called directly after the addon is fully loaded.
+--- do init tasks here, like loading the Saved Variables
+--- or setting up slash commands.
+function NeuronBinder:OnInitialize()
+
+
+end
+
+--- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
+--- Do more initialization here, that really enables the use of your addon.
+--- Register Events, Hook functions, Create Frames, Get information from
+--- the game that wasn't available in OnInitialize
+function NeuronBinder:OnEnable()
+
+end
+
+
+--- **OnDisable**, which is only called when your addon is manually being disabled.
+--- Unhook, Unregister Events, Hide frames that you created.
+--- You would probably only use an OnDisable if you want to
+--- build a "standby" mode, or be able to toggle modules on/off.
+function NeuronBinder:OnDisable()
+
+end
+
+
+
 
 
 --- Returns a list of the available spell icon filenames for use in macros
 -- @param N/A
 -- @return text field of the key modifiers currently being pressed
-function BINDER:GetModifier()
+function NeuronBinder:GetModifier()
 	local modifier
 
 	if (IsAltKeyDown()) then
@@ -50,7 +82,7 @@ end
 --- Returns the keybind for a given button
 -- @param Button: The button to keybindings to look up
 -- @return bindkeys: The current key that is bound to the selected button
-function BINDER:GetBindkeyList(button)
+function NeuronBinder:GetBindkeyList(button)
 
 	if (not button.data) then return L["None"] end
 
@@ -70,7 +102,7 @@ end
 --- Returns the text value of a keybind 
 -- @param key: The key to look up
 -- @return keytext: The text value for the key
-function BINDER:GetKeyText(key)
+function NeuronBinder:GetKeyText(key)
 	local keytext
 
 	if (key:find("Button")) then
@@ -109,14 +141,14 @@ end
 --- Clears the bindings of a given button
 -- @param button: The button to clear
 -- @param key: ?
-function BINDER:ClearBindings(button, key)
+function NeuronBinder:ClearBindings(button, key)
 	if (key) then
 		SetOverrideBinding(button, true, key, nil)
 
 		local newkey = key:gsub("%-", "%%-")
 		button.keys.hotKeys = button.keys.hotKeys:gsub(newkey..":", "")
 
-		local keytext = self:GetKeyText(key)
+		local keytext = NeuronBinder:GetKeyText(key)
 		button.keys.hotKeyText = button.keys.hotKeyText:gsub(keytext..":", "")
 	else
 		local bindkey = "CLICK "..button:GetName()..":LeftButton"
@@ -130,32 +162,32 @@ function BINDER:ClearBindings(button, key)
 		button.keys.hotKeyText = ":"
 	end
 
-	self:ApplyBindings(button)
+	NeuronBinder:ApplyBindings(button)
 end
 
 
 --- Sets a keybinding to a button
 -- @param button: The button to set keybinding for
 -- @param key: The key to be used
-function BINDER:SetNeuronBinding(button, key)
+function NeuronBinder:SetNeuronBinding(button, key)
 	local found
 
 	gsub(button.keys.hotKeys, "[^:]+", function(binding) if(binding == key) then found = true end end)
 
 	if (not found) then
-		local keytext = self:GetKeyText(key)
+		local keytext = NeuronBinder:GetKeyText(key)
 
 		button.keys.hotKeys = button.keys.hotKeys..key..":"
 		button.keys.hotKeyText = button.keys.hotKeyText..keytext..":"
 	end
 
-	self:ApplyBindings(button)
+	NeuronBinder:ApplyBindings(button)
 end
 
 
 --- Applys binding to button
 -- @param button: The button to apply settings go
-function BINDER:ApplyBindings(button)
+function NeuronBinder:ApplyBindings(button)
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 
 	if (button:IsVisible() or button:GetParent():GetAttribute("concealed")) then
@@ -178,26 +210,26 @@ end
 --- Processes the change to a key bind  (i think)
 -- @param button: The button to set keybinding for
 -- @param key: The key to be used
-function BINDER:ProcessBinding(key, button)
+function NeuronBinder:ProcessBinding(binder, key, button)
 	if (button and button.keys and button.keys.hotKeyLock) then
 		UIErrorsFrame:AddMessage(L["Bindings_Locked_Notice"], 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME)
 		return
 	end
 
 	if (key == "ESCAPE") then
-		self:ClearBindings(button)
+		NeuronBinder:ClearBindings( button)
 	elseif (key) then
 		for _,binder in pairs(BINDIndex) do
 			if (button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
-				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then self:ClearBindings(binder.button, binding) self:ApplyBindings(binder.button) end end)
+				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then NeuronBinder:ClearBindings(binder.button, binding) NeuronBinder:ApplyBindings(binder.button) end end)
 			end
 		end
 
-		self:SetNeuronBinding(button, key)
+		NeuronBinder:SetNeuronBinding(button, key)
 	end
 
-	if (self:IsVisible()) then
-		self:OnEnter()
+	if (binder:IsVisible()) then
+		NeuronBinder:OnEnter(binder)
 	end
 
 	NEURON.NeuronButton:SaveData(button)
@@ -205,13 +237,13 @@ end
 
 
 --- OnShow Event handler
-function BINDER:OnShow()
-	local button = self.button
+function NeuronBinder:OnShow(binder)
+	local button = binder.button
 
 	if (button) then
 
 		if (button.bar) then
-			self:SetFrameLevel(button.bar:GetFrameLevel()+1)
+			binder:SetFrameLevel(button.bar:GetFrameLevel()+1)
 		end
 
 		local priority = ""
@@ -221,43 +253,43 @@ function BINDER:OnShow()
 		end
 
 		if (button.keys.hotKeyLock) then
-			self.type:SetText(priority.."|cfff00000"..L["Locked"].."|r")
+			binder.type:SetText(priority.."|cfff00000"..L["Locked"].."|r")
 		else
-			self.type:SetText(priority.."|cffffffff"..L["Bind"].."|r")
+			binder.type:SetText(priority.."|cffffffff"..L["Bind"].."|r")
 		end
 	end
 end
 
 
 --- OnHide Event handler
-function BINDER:OnHide()
+function NeuronBinder:OnHide(binder)
 end
 
 
 --- OnEnter Event handler
-function BINDER:OnEnter()
+function NeuronBinder:OnEnter(binder)
 
-    local button = self.button
+    local button = binder.button
 
-	local name = self.bindType:gsub("^%l", string.upper).. " " .. button.id --default to "button #" in the case that a button is empty
+	local name = binder.bindType:gsub("^%l", string.upper).. " " .. button.id --default to "button #" in the case that a button is empty
 
 	---TODO:we should definitely added name strings for pets/companions as well. This was just to get it going
-	if self.button.spellID then
-		name = GetSpellInfo(self.button.spellID)
-	elseif self.button.macroitem then
-		name = self.button.macroitem
-	elseif self.button.macrospell then
-		name = self.button.macrospell --this is kind of a catch-all
+	if binder.button.spellID then
+		name = GetSpellInfo(binder.button.spellID)
+	elseif binder.button.macroitem then
+		name = binder.button.macroitem
+	elseif binder.button.macrospell then
+		name = binder.button.macrospell --this is kind of a catch-all
 	end
 
-	self.select:Show()
+	binder.select:Show()
 
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+	GameTooltip:SetOwner(binder, "ANCHOR_RIGHT")
 
 	GameTooltip:ClearLines()
     GameTooltip:SetText("Neuron", 1.0, 1.0, 1.0)
 	GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffffff" .. name  .. "|r")
-	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffffff" .. self:GetBindkeyList(button) .. "|r")
+	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffffff" .. NeuronBinder:GetBindkeyList(button) .. "|r")
     GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(L["Keybind_Tooltip_3"])
 	GameTooltip:AddLine(L["Keybind_Tooltip_4"])
@@ -268,19 +300,19 @@ end
 
 
 --- OnLeave Event handler
-function BINDER:OnLeave()
-	self.select:Hide()
+function NeuronBinder:OnLeave(binder)
+	binder.select:Hide()
     GameTooltip:Hide()
 end
 
 
 --- OnUpdate Event handler
-function BINDER:OnUpdate()
+function NeuronBinder:OnUpdate(binder)
 	if(NEURON.PEW) then
-		if (self:IsMouseOver()) then
-			self:EnableKeyboard(true)
+		if (binder:IsMouseOver()) then
+			binder:EnableKeyboard(true)
 		else
-			self:EnableKeyboard(false)
+			binder:EnableKeyboard(false)
 		end
 	end
 end
@@ -288,35 +320,35 @@ end
 
 --- OnClick Event handler
 -- @param button: The button that was clicked
-function BINDER:OnClick(button)
+function NeuronBinder:OnClick(binder, button)
 	if (button == "LeftButton") then
 
-		if (self.button.keys.hotKeyLock) then
-			self.button.keys.hotKeyLock = false
+		if (binder.button.keys.hotKeyLock) then
+			binder.button.keys.hotKeyLock = false
 		else
-			self.button.keys.hotKeyLock = true
+			binder.button.keys.hotKeyLock = true
 		end
 
-		self:OnShow()
+		NeuronBinder:OnShow(binder)
 
 		return
 	end
 
 	if (button == "RightButton") then
-		if (self.button.keys.hotKeyPri) then
-			self.button.keys.hotKeyPri = false
+		if (binder.button.keys.hotKeyPri) then
+			binder.button.keys.hotKeyPri = false
 		else
-			self.button.keys.hotKeyPri = true
+			binder.button.keys.hotKeyPri = true
 		end
 
-		self:ApplyBindings(self.button)
+		NeuronBinder:ApplyBindings(binder.button)
 
-		self:OnShow()
+		NeuronBinder:OnShow(binder)
 
 		return
 	end
 
-	local modifier, key = self:GetModifier()
+	local modifier, key = NeuronBinder:GetModifier()
 
 	if (button == "MiddleButton") then
 		key = "Button3"
@@ -328,31 +360,31 @@ function BINDER:OnClick(button)
 		key = modifier..key
 	end
 
-	self:ProcessBinding(key, self.button)
+	binder:ProcessBinding(key, binder.button)
 end
 
 
 --- OnKeyDown Event handler
 -- @param key: The key that was pressed
-function BINDER:OnKeyDown(key)
+function NeuronBinder:OnKeyDown(binder, key)
 	if (key:find("ALT") or key:find("SHIFT") or key:find("CTRL") or key:find("PRINTSCREEN")) then
 		return
 	end
 
-	local modifier = self:GetModifier()
+	local modifier = NeuronBinder:GetModifier()
 
 	if (modifier) then
 		key = modifier..key
 	end
 
-	self:ProcessBinding(key, self.button)
+	NeuronBinder:ProcessBinding(binder, key, binder.button)
 end
 
 
 --- OnMouseWheel Event handler
 -- @param delta: direction mouse wheel moved
-function BINDER:OnMouseWheel(delta)
-	local modifier, key, action = self:GetModifier()
+function NeuronBinder:OnMouseWheel(binder, delta)
+	local modifier, key, action = NeuronBinder:GetModifier()
 
 	if (delta > 0) then
 		key = "MOUSEWHEELUP"
@@ -366,73 +398,35 @@ function BINDER:OnMouseWheel(delta)
 		key = modifier..key
 	end
 
-	self:ProcessBinding(key, self.button)
+	NeuronBinder:ProcessBinding(binder, key, binder.button)
 end
 
+function NeuronBinder:CreateBindFrame(button, index)
+	local binder = CreateFrame("Button", button:GetName().."BindFrame", button, "NeuronBindFrameTemplate")
 
-local BINDER_MT = { __index = BINDER }
-
-
-function BUTTON:CreateBindFrame(index)
-	local binder = CreateFrame("Button", self:GetName().."BindFrame", self, "NeuronBindFrameTemplate")
-
-	setmetatable(binder, BINDER_MT)
+	setmetatable(binder, { __index = CreateFrame("Button") })
 
 	binder:EnableMouseWheel(true)
 	binder:RegisterForClicks("AnyDown")
-	binder:SetAllPoints(self)
-	binder:SetScript("OnShow", BINDER.OnShow)
-	binder:SetScript("OnHide", BINDER.OnHide)
-	binder:SetScript("OnEnter", BINDER.OnEnter)
-	binder:SetScript("OnLeave", BINDER.OnLeave)
-	binder:SetScript("OnClick", BINDER.OnClick)
-	binder:SetScript("OnKeyDown", BINDER.OnKeyDown)
-	binder:SetScript("OnMouseWheel", BINDER.OnMouseWheel)
-	binder:SetScript("OnUpdate", BINDER.OnUpdate)
+	binder:SetAllPoints(button)
+	binder:SetScript("OnShow", function(self) NeuronBinder:OnShow(self) end)
+	binder:SetScript("OnHide", function(self) NeuronBinder:OnHide(self) end)
+	binder:SetScript("OnEnter", function(self) NeuronBinder:OnEnter(self) end)
+	binder:SetScript("OnLeave", function(self) NeuronBinder:OnLeave(self) end)
+	binder:SetScript("OnClick", function(self, button) NeuronBinder:OnClick(self, button) end)
+	binder:SetScript("OnKeyDown", function(self, key) NeuronBinder:OnKeyDown(self, key) end)
+	binder:SetScript("OnMouseWheel", function(self, delta) NeuronBinder:OnMouseWheel(self, delta) end)
+	binder:SetScript("OnUpdate", function(self) NeuronBinder:OnUpdate(self) end)
 
 	binder.type:SetText(L["Bind"])
-	binder.button = self
+	binder.button = button
 	binder.bindType = "button"
 
-	self.binder = binder
-	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
-	self:SetAttribute("hotkeys", self.keys.hotKeys)
+	button.binder = binder
+	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
+	button:SetAttribute("hotkeys", button.keys.hotKeys)
 
-	BINDIndex[self.class..index] = binder
+	BINDIndex[button.class..index] = binder
 
 	binder:Hide()
-end
-
-
---- Toggles the displaying of key bindings
--- @param show: True if to be displayed
--- @param hide: True if to be hidden
-function NEURON:ToggleBindings(show, hide)
-	if (NEURON.BindingMode or hide) then
-		NEURON.BindingMode = false
-
-		for _, binder in pairs(BINDIndex) do
-			binder:Hide(); binder.button.editmode = NEURON.BindingMode
-			binder:SetFrameStrata("LOW")
-			if (not NEURON.BarsShown) then
-				binder.button:SetGrid()
-			end
-		end
-
-	else
-		NEURON:ToggleEditFrames(nil, true)
-
-		NEURON.BindingMode = true
-
-		for _, binder in pairs(BINDIndex) do
-			binder:Show(); binder.button.editmode = NEURON.BindingMode
-
-			if (binder.button.bar) then
-				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
-				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
-				binder.button:SetGrid(true)
-			end
-		end
-
-	end
 end

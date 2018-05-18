@@ -1434,6 +1434,43 @@ function NEURON:ToggleEditFrames(show, hide)
 	end
 end
 
+
+--- Toggles the displaying of key bindings
+-- @param show: True if to be displayed
+-- @param hide: True if to be hidden
+function NEURON:ToggleBindings(show, hide)
+	if (NEURON.BindingMode or hide) then
+		NEURON.BindingMode = false
+
+		for _, binder in pairs(NEURON.BINDIndex) do
+			binder:Hide(); binder.button.editmode = NEURON.BindingMode
+			binder:SetFrameStrata("LOW")
+			if (not NEURON.BarsShown) then
+				binder.button:SetGrid()
+			end
+		end
+
+	else
+		NEURON:ToggleEditFrames(nil, true)
+
+		NEURON.BindingMode = true
+
+		for _, binder in pairs(NEURON.BINDIndex) do
+			binder:Show()
+			binder.button.editmode = NEURON.BindingMode
+
+			if (binder.button.bar) then
+				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
+				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
+				binder.button:SetGrid(true)
+			end
+		end
+
+	end
+end
+
+
+
 function NEURON:PrintStateList()
 	local data = {}
 	local list

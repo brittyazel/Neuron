@@ -2192,7 +2192,7 @@ function NeuronBar:StoreObject(bar, object, storage, objTable)
 	object.config.anchoredBar = false
 
 	if (object.binder) then
-		object.binder:ClearBindings(object)
+		NEURON.NeuronBinder:ClearBindings(object)
 	end
 
 	NEURON.NeuronButton:SaveData(object)

@@ -66,7 +66,6 @@ function NeuronZoneAbilityBar:OnInitialize()
 	ZONEABILITYRBTN.SetTimer = NEURON.NeuronButton.SetTimer
 	ZONEABILITYRBTN.SetSkinned = NEURON.NeuronButton.SetSkinned
 	ZONEABILITYRBTN.GetSkinned = NEURON.NeuronButton.GetSkinned
-	ZONEABILITYRBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
 	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, STORAGE, gDef, nil, false)
 
@@ -483,7 +482,7 @@ end
 
 function ZONEABILITYRBTN:LoadAux()
 	self.spellID = ZoneAbilitySpellID;
-	self:CreateBindFrame(self.objTIndex)
+	NEURON.NeuronBinder:CreateBindFrame(self, self.objTIndex)
 	self.style = self:CreateTexture(nil, "OVERLAY")
 	self.style:SetPoint("CENTER", -2, 1)
 	self.style:SetWidth(190)

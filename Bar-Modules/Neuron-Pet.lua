@@ -59,7 +59,6 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetTimer = NEURON.NeuronButton.SetTimer
 	PETBTN.SetSkinned = NEURON.NeuronButton.SetSkinned
 	PETBTN.GetSkinned = NEURON.NeuronButton.GetSkinned
-	PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
 
 	DB = NeuronCDB
@@ -418,7 +417,7 @@ end
 
 function PETBTN:PLAYER_ENTERING_WORLD(event, ...)
 	if InCombatLockdown() then return end
-	self.binder:ApplyBindings(self)
+	NEURON.NeuronBinder:ApplyBindings(self)
 	self.updateRightClick = true
 end
 
@@ -666,7 +665,7 @@ end
 
 function PETBTN:LoadAux()
 
-	self:CreateBindFrame(self.objTIndex)
+	NEURON.NeuronBinder:CreateBindFrame(self, self.objTIndex)
 
 end
 

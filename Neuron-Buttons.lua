@@ -1657,7 +1657,7 @@ function NeuronButton:MACRO_PLAYER_ENTERING_WORLD(button, ...)
 
 	NeuronButton:MACRO_Reset(button)
 	NeuronButton:MACRO_UpdateAll(button, true)
-	button.binder:ApplyBindings(button)
+	NEURON.NeuronBinder:ApplyBindings(button)
 end
 
 function NeuronButton:MACRO_PET_JOURNAL_LIST_UPDATE(button, ...)
@@ -3290,7 +3290,7 @@ end
 function BUTTON:LoadAux()
 
 	NEURON.NeuronGUI:ObjEditor_CreateEditFrame(self, self.objTIndex)
-	self:CreateBindFrame(self.objTIndex)
+	NEURON.NeuronBinder:CreateBindFrame(self, self.objTIndex)
 
 end
 

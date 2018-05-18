@@ -476,7 +476,7 @@ end
 
 function XBTN:LoadAux()
 
-	self:CreateBindFrame(self.objTIndex)
+	NEURON.NeuronBinder:CreateBindFrame(self, self.objTIndex)
 	self:CreateVehicleLeave(self.objTIndex)
 
 	self.style = self:CreateTexture(nil, "OVERLAY")
