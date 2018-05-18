@@ -1224,38 +1224,38 @@ function NeuronFlyouts:Flyout_ReleaseButton(fbutton, button)
 end
 
 
-function BUTTON:Flyout_SetData(bar)
+function NeuronFlyouts:Flyout_SetData(button, bar)
 	if (bar) then
 
-		self.bar = bar
+		button.bar = bar
 
-		self.tooltips = true
-		self.tooltipsEnhanced = true
+		button.tooltips = true
+		button.tooltipsEnhanced = true
 		--self.tooltipsCombat = bar.cdata.tooltipsCombat
 		--self:SetFrameStrata(bar.gdata.objectStrata)
 		--self:SetScale(bar.gdata.scale)
 	end
 
-	self.hotkey:Hide()
-	self.macroname:Hide()
-	self:RegisterForClicks("AnyUp")
+	button.hotkey:Hide()
+	button.macroname:Hide()
+	button:RegisterForClicks("AnyUp")
 
-	self.equipcolor = { 0.1, 1, 0.1, 1 }
-	self.cdcolor1 = { 1, 0.82, 0, 1 }
-	self.cdcolor2 = { 1, 0.1, 0.1, 1 }
-	self.auracolor1 = { 0, 0.82, 0, 1 }
-	self.auracolor2 = { 1, 0.1, 0.1, 1 }
-	self.buffcolor = { 0, 0.8, 0, 1 }
-	self.debuffcolor = { 0.8, 0, 0, 1 }
-	self.manacolor = { 0.5, 0.5, 1.0 }
-	self.rangecolor = { 0.7, 0.15, 0.15, 1 }
+	button.equipcolor = { 0.1, 1, 0.1, 1 }
+	button.cdcolor1 = { 1, 0.82, 0, 1 }
+	button.cdcolor2 = { 1, 0.1, 0.1, 1 }
+	button.auracolor1 = { 0, 0.82, 0, 1 }
+	button.auracolor2 = { 1, 0.1, 0.1, 1 }
+	button.buffcolor = { 0, 0.8, 0, 1 }
+	button.debuffcolor = { 0.8, 0, 0, 1 }
+	button.manacolor = { 0.5, 0.5, 1.0 }
+	button.rangecolor = { 0.7, 0.15, 0.15, 1 }
 
-	self:SetFrameLevel(4)
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-	self.iconframeaurawatch:SetFrameLevel(3)
+	button:SetFrameLevel(4)
+	button.iconframe:SetFrameLevel(2)
+	button.iconframecooldown:SetFrameLevel(3)
+	button.iconframeaurawatch:SetFrameLevel(3)
 
-	NEURON.NeuronButton:GetSkinned(self)
+	NEURON.NeuronButton:GetSkinned(button)
 end
 
 
@@ -1335,8 +1335,12 @@ function NeuronFlyouts:Flyout_GetButton(fbutton)
 			self:GetParent():Hide()
 	]])
 
-	button.SetData = BUTTON.Flyout_SetData --overwrite the default button SetData function
-	button:SetData(fbutton.flyout.bar)
+
+	--link objects to their associated functions
+	button.SetData = NeuronFlyouts.Flyout_SetData
+
+
+	button:SetData(button, fbutton.flyout.bar)
 	NEURON.NeuronButton:SetSkinned(button, true)
 	button:Show()
 

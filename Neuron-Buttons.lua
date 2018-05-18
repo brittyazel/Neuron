@@ -212,6 +212,11 @@ function NeuronButton:OnInitialize()
 	if (SKIN) then
 		SKIN:Register("Neuron", NeuronButton:SKINCallback(self, SKIN), true)
 	end
+
+	----------------------------------------------------------------
+	BUTTON.SetData = NeuronButton.SetData
+	----------------------------------------------------------------
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -2918,155 +2923,181 @@ function NeuronButton:ChangeObject(object)
 	return newObj, newEditor
 end
 
+
+function NeuronButton:UpdateObjectSpec(bar)
+	local object, spec
+
+	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+		object = _G[bar.objPrefix..objID]
+
+		if (object) then
+			if (bar.cdata.multiSpec) then
+				spec = GetSpecialization()
+			else
+				spec = 1
+			end
+
+			bar:Show()
+
+			object:SetData(object, bar)
+			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
+			NEURON.NeuronFlyouts:UpdateFlyout(object)
+			object:SetType()
+			object:SetGrid()
+		end
+	end
+end
+
+
 ---TODO refactor this to NeuronButton
-function BUTTON:SetData(bar)
+function NeuronButton:SetData(button, bar)
 	if (bar) then
 
-		self.bar = bar
+		button.bar = bar
 
-		self.barLock = bar.cdata.barLock
-		self.barLockAlt = bar.cdata.barLockAlt
-		self.barLockCtrl = bar.cdata.barLockCtrl
-		self.barLockShift = bar.cdata.barLockShift
+		button.barLock = bar.cdata.barLock
+		button.barLockAlt = bar.cdata.barLockAlt
+		button.barLockCtrl = bar.cdata.barLockCtrl
+		button.barLockShift = bar.cdata.barLockShift
 
-		self.tooltips = bar.cdata.tooltips
-		self.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
-		self.tooltipsCombat = bar.cdata.tooltipsCombat
+		button.tooltips = bar.cdata.tooltips
+		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
+		button.tooltipsCombat = bar.cdata.tooltipsCombat
 
-		self.spellGlow = bar.cdata.spellGlow
-		self.spellGlowDef = bar.cdata.spellGlowDef
-		self.spellGlowAlt = bar.cdata.spellGlowAlt
+		button.spellGlow = bar.cdata.spellGlow
+		button.spellGlowDef = bar.cdata.spellGlowDef
+		button.spellGlowAlt = bar.cdata.spellGlowAlt
 
-		self.bindText = bar.cdata.bindText
-		self.macroText = bar.cdata.macroText
-		self.countText = bar.cdata.countText
+		button.bindText = bar.cdata.bindText
+		button.macroText = bar.cdata.macroText
+		button.countText = bar.cdata.countText
 
-		self.cdText = bar.cdata.cdText
+		button.cdText = bar.cdata.cdText
 
 		if (bar.cdata.cdAlpha) then
-			self.cdAlpha = 0.2
+			button.cdAlpha = 0.2
 		else
-			self.cdAlpha = 1
+			button.cdAlpha = 1
 		end
 
-		self.auraText = bar.cdata.auraText
-		self.auraInd = bar.cdata.auraInd
+		button.auraText = bar.cdata.auraText
+		button.auraInd = bar.cdata.auraInd
 
-		self.rangeInd = bar.cdata.rangeInd
+		button.rangeInd = bar.cdata.rangeInd
 
-		self.upClicks = bar.cdata.upClicks
-		self.downClicks = bar.cdata.downClicks
+		button.upClicks = bar.cdata.upClicks
+		button.downClicks = bar.cdata.downClicks
 
-		self.showGrid = bar.gdata.showGrid
-		self.multiSpec = bar.cdata.multiSpec
+		button.showGrid = bar.gdata.showGrid
+		button.multiSpec = bar.cdata.multiSpec
 
-		self.bindColor = bar.gdata.bindColor
-		self.macroColor = bar.gdata.macroColor
-		self.countColor = bar.gdata.countColor
+		button.bindColor = bar.gdata.bindColor
+		button.macroColor = bar.gdata.macroColor
+		button.countColor = bar.gdata.countColor
 
-		if (not self.cdcolor1) then
-			self.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
+		if (not button.cdcolor1) then
+			button.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
 		else
-			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
+			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
 		end
 
-		if (not self.cdcolor2) then
-			self.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
+		if (not button.cdcolor2) then
+			button.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
 		else
-			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
+			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
 		end
 
-		if (not self.auracolor1) then
-			self.auracolor1 = { (";"):split(bar.gdata.auracolor1) }
+		if (not button.auracolor1) then
+			button.auracolor1 = { (";"):split(bar.gdata.auracolor1) }
 		else
-			self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], self.auracolor1[4] = (";"):split(bar.gdata.auracolor1)
+			button.auracolor1[1], button.auracolor1[2], button.auracolor1[3], button.auracolor1[4] = (";"):split(bar.gdata.auracolor1)
 		end
 
-		if (not self.auracolor2) then
-			self.auracolor2 = { (";"):split(bar.gdata.auracolor2) }
+		if (not button.auracolor2) then
+			button.auracolor2 = { (";"):split(bar.gdata.auracolor2) }
 		else
-			self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], self.auracolor2[4] = (";"):split(bar.gdata.auracolor2)
+			button.auracolor2[1], button.auracolor2[2], button.auracolor2[3], button.auracolor2[4] = (";"):split(bar.gdata.auracolor2)
 		end
 
-		if (not self.buffcolor) then
-			self.buffcolor = { (";"):split(bar.gdata.buffcolor) }
+		if (not button.buffcolor) then
+			button.buffcolor = { (";"):split(bar.gdata.buffcolor) }
 		else
-			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.gdata.buffcolor)
+			button.buffcolor[1], button.buffcolor[2], button.buffcolor[3], button.buffcolor[4] = (";"):split(bar.gdata.buffcolor)
 		end
 
-		if (not self.debuffcolor) then
-			self.debuffcolor = { (";"):split(bar.gdata.debuffcolor) }
+		if (not button.debuffcolor) then
+			button.debuffcolor = { (";"):split(bar.gdata.debuffcolor) }
 		else
-			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.gdata.debuffcolor)
+			button.debuffcolor[1], button.debuffcolor[2], button.debuffcolor[3], button.debuffcolor[4] = (";"):split(bar.gdata.debuffcolor)
 		end
 
-		if (not self.rangecolor) then
-			self.rangecolor = { (";"):split(bar.gdata.rangecolor) }
+		if (not button.rangecolor) then
+			button.rangecolor = { (";"):split(bar.gdata.rangecolor) }
 		else
-			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.gdata.rangecolor)
+			button.rangecolor[1], button.rangecolor[2], button.rangecolor[3], button.rangecolor[4] = (";"):split(bar.gdata.rangecolor)
 		end
 
-		self:SetFrameStrata(bar.gdata.objectStrata)
+		button:SetFrameStrata(bar.gdata.objectStrata)
 
-		self:SetScale(bar.gdata.scale)
+		button:SetScale(bar.gdata.scale)
 	end
 
-	if (self.bindText) then
-		self.hotkey:Show()
-		if (self.bindColor) then
-			self.hotkey:SetTextColor((";"):split(self.bindColor))
+	if (button.bindText) then
+		button.hotkey:Show()
+		if (button.bindColor) then
+			button.hotkey:SetTextColor((";"):split(button.bindColor))
 		end
 	else
-		self.hotkey:Hide()
+		button.hotkey:Hide()
 	end
 
-	if (self.macroText) then
-		self.macroname:Show()
-		if (self.macroColor) then
-			self.macroname:SetTextColor((";"):split(self.macroColor))
+	if (button.macroText) then
+		button.macroname:Show()
+		if (button.macroColor) then
+			button.macroname:SetTextColor((";"):split(button.macroColor))
 		end
 	else
-		self.macroname:Hide()
+		button.macroname:Hide()
 	end
 
-	if (self.countText) then
-		self.count:Show()
-		if (self.countColor) then
-			self.count:SetTextColor((";"):split(self.countColor))
+	if (button.countText) then
+		button.count:Show()
+		if (button.countColor) then
+			button.count:SetTextColor((";"):split(button.countColor))
 		end
 	else
-		self.count:Hide()
+		button.count:Hide()
 	end
 
 	local down, up = "", ""
 
-	if (self.upClicks) then up = up.."AnyUp" end
-	if (self.downClicks) then down = down.."AnyDown" end
+	if (button.upClicks) then up = up.."AnyUp" end
+	if (button.downClicks) then down = down.."AnyDown" end
 
-	self:RegisterForClicks(down, up)
-	self:RegisterForDrag("LeftButton", "RightButton")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	button:RegisterForClicks(down, up)
+	button:RegisterForDrag("LeftButton", "RightButton")
+	button:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-	if (not self.equipcolor) then
-		self.equipcolor = { 0.1, 1, 0.1, 1 }
+	if (not button.equipcolor) then
+		button.equipcolor = { 0.1, 1, 0.1, 1 }
 	else
-		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3], self.equipcolor[4] = 0.1, 1, 0.1, 1
+		button.equipcolor[1], button.equipcolor[2], button.equipcolor[3], button.equipcolor[4] = 0.1, 1, 0.1, 1
 	end
 
-	if (not self.manacolor) then
-		self.manacolor = { 0.5, 0.5, 1.0, 1 }
+	if (not button.manacolor) then
+		button.manacolor = { 0.5, 0.5, 1.0, 1 }
 	else
-		self.manacolor[1], self.manacolor[2], self.manacolor[3], self.manacolor[4] = 0.5, 0.5, 1.0, 1
+		button.manacolor[1], button.manacolor[2], button.manacolor[3], button.manacolor[4] = 0.5, 0.5, 1.0, 1
 	end
 
-	self:SetFrameLevel(4)
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-	self.iconframeaurawatch:SetFrameLevel(3)
+	button:SetFrameLevel(4)
+	button.iconframe:SetFrameLevel(2)
+	button.iconframecooldown:SetFrameLevel(3)
+	button.iconframeaurawatch:SetFrameLevel(3)
 
-	NeuronButton:GetSkinned(self)
+	NeuronButton:GetSkinned(button)
 
-	NeuronButton:MACRO_UpdateTimers(self)
+	NeuronButton:MACRO_UpdateTimers(button)
 end
 
 

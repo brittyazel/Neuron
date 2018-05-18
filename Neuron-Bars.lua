@@ -242,17 +242,18 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronBar:OnEnable()
 
+	---TODO: clean up the onload part of this addon. This way of creating all the objects is terribly clunky
 	if (GDB.firstRun) then
 		local oid, offset = 1, 0
 
 		for id, defaults in ipairs(gDef) do
 			NEURON.RegisteredBarData["bar"].gDef = defaults
 
-			local bar = NeuronBar:CreateNewBar("bar", id, true)
+			local bar = NeuronBar:CreateNewBar("bar", id, true) --this calls the bar constructor
 			local object
 
 			for i=oid+offset,oid+11+offset do
-				object = NEURON.NeuronButton:CreateNewObject("bar", i, true)
+				object = NEURON.NeuronButton:CreateNewObject("bar", i, true) --this calls the object (button) constructor
 				NeuronBar:AddObjectToList(bar, object)
 			end
 
@@ -264,13 +265,13 @@ function NeuronBar:OnEnable()
 	else
 		for id,data in pairs(barGDB) do
 			if (data ~= nil) then
-				NeuronBar:CreateNewBar("bar", id)
+				NeuronBar:CreateNewBar("bar", id) --this calls the bar constructor
 			end
 		end
 
 		for id,data in pairs(GDB.buttons) do
 			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("bar", id)
+				NEURON.NeuronButton:CreateNewObject("bar", id) --this calls the object (button) constructor
 			end
 		end
 	end
@@ -1168,6 +1169,7 @@ function NeuronBar:SetFauxState(bar, state)
 end
 
 
+---loads all the object stored for a given bar
 function NeuronBar:LoadObjects(bar, init)
 	local object, spec
 
@@ -1183,7 +1185,7 @@ function NeuronBar:LoadObjects(bar, init)
 		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			object:SetData(bar)
+			object:SetData(object, bar)
 			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
 			object:SetAux()
 			object:SetType(nil, nil, init)
@@ -1271,7 +1273,7 @@ function NeuronBar:SetObjectLoc(bar)
 			lastObj = object
 			num = num + 1
 			object:SetAttribute("barPos", num)
-			object:SetData(bar)
+			object:SetData(object, bar)
 		end
 	end
 
@@ -1806,7 +1808,7 @@ function NeuronBar:UpdateObjectData(bar)
 		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			object:SetData(bar)
+			object:SetData(object, bar)
 		end
 	end
 end
@@ -1824,30 +1826,6 @@ function NeuronBar:UpdateObjectGrid(bar, show)
 	end
 end
 
-
-function NeuronBar:UpdateObjectSpec(bar)
-	local object, spec
-
-	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-		object = _G[bar.objPrefix..objID]
-
-		if (object) then
-			if (bar.cdata.multiSpec) then
-				spec = GetSpecialization()
-			else
-				spec = 1
-			end
-
-			bar:Show()
-
-			object:SetData(bar)
-			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
-			NEURON.NeuronFlyouts:UpdateFlyout(object)
-			object:SetType()
-			object:SetGrid()
-		end
-	end
-end
 
 
 function NeuronBar:CreateBar(index, class, id)
@@ -2689,7 +2667,7 @@ function NeuronBar:MultiSpecSet(bar, msg, gui, checked, query)
 		end
 	end
 
-	NeuronBar:UpdateObjectSpec(bar)
+	NEURON.NeuronButton:UpdateObjectSpec(bar)
 	NeuronBar:Update(bar)
 end
 

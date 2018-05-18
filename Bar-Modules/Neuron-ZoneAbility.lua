@@ -66,6 +66,11 @@ function NeuronZoneAbilityBar:OnInitialize()
 	ZONEABILITYRBTN.SetSkinned = NEURON.NeuronButton.SetSkinned
 	ZONEABILITYRBTN.GetSkinned = NEURON.NeuronButton.GetSkinned
 
+	----------------------------------------------------------------
+	ZONEABILITYRBTN.SetData = NeuronZoneAbilityBar.SetData
+	----------------------------------------------------------------
+
+
 	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, STORAGE, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
@@ -116,6 +121,8 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronZoneAbilityBar:OnEnable()
 	self:DisableDefault()
+
+
 end
 
 
@@ -344,64 +351,63 @@ function ZONEABILITYRBTN:OnLeave ()
 end
 
 
-function ZONEABILITYRBTN:SetData(bar)
-
+function NeuronZoneAbilityBar:SetData(button, bar)
 	if (bar) then
 
-		self.bar = bar
+		button.bar = bar
 
-		self.cdText = bar.cdata.cdText
+		button.cdText = bar.cdata.cdText
 
 		if (bar.cdata.cdAlpha) then
-			self.cdAlpha = 0.2
+			button.cdAlpha = 0.2
 		else
-			self.cdAlpha = 1
+			button.cdAlpha = 1
 		end
 
-		self.barLock = bar.cdata.barLock
-		self.barLockAlt = bar.cdata.barLockAlt
-		self.barLockCtrl = bar.cdata.barLockCtrl
-		self.barLockShift = bar.cdata.barLockShift
+		button.barLock = bar.cdata.barLock
+		button.barLockAlt = bar.cdata.barLockAlt
+		button.barLockCtrl = bar.cdata.barLockCtrl
+		button.barLockShift = bar.cdata.barLockShift
 
-		self.upClicks = bar.cdata.upClicks
-		self.downClicks = bar.cdata.downClicks
+		button.upClicks = bar.cdata.upClicks
+		button.downClicks = bar.cdata.downClicks
 
-		self.bindText = bar.cdata.bindText
+		button.bindText = bar.cdata.bindText
 
-		self.tooltips = bar.cdata.tooltips
-		self.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
-		self.tooltipsCombat = bar.cdata.tooltipsCombat
+		button.tooltips = bar.cdata.tooltips
+		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
+		button.tooltipsCombat = bar.cdata.tooltipsCombat
 
-		self:SetFrameStrata(bar.gdata.objectStrata)
+		button:SetFrameStrata(bar.gdata.objectStrata)
 
-		self:SetScale(bar.gdata.scale)
+		button:SetScale(bar.gdata.scale)
 
 	end
 
 	local down, up = "", ""
 
-	if (self.upClicks) then up = up.."LeftButtonUp" end
-	if (self.downClicks) then down = down.."LeftButtonDown" end
+	if (button.upClicks) then up = up.."LeftButtonUp" end
+	if (button.downClicks) then down = down.."LeftButtonDown" end
 
-	self:RegisterForClicks(down, up)
-	self:RegisterForDrag("LeftButton", "RightButton")
+	button:RegisterForClicks(down, up)
+	button:RegisterForDrag("LeftButton", "RightButton")
 
-	self.cdcolor1 = { 1, 0.82, 0, 1 }
-	self.cdcolor2 = { 1, 0.1, 0.1, 1 }
-	self.auracolor1 = { 0, 0.82, 0, 1 }
-	self.auracolor2 = { 1, 0.1, 0.1, 1 }
-	self.buffcolor = { 0, 0.8, 0, 1 }
-	self.debuffcolor = { 0.8, 0, 0, 1 }
-	self.manacolor = { 0.5, 0.5, 1.0 }
-	self.rangecolor = { 0.7, 0.15, 0.15, 1 }
-	self.skincolor = {1,1,1,1,1}
-	self:SetFrameLevel(4)
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-	--self.iconframeaurawatch:SetFrameLevel(3)
-	self.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
+	button.cdcolor1 = { 1, 0.82, 0, 1 }
+	button.cdcolor2 = { 1, 0.1, 0.1, 1 }
+	button.auracolor1 = { 0, 0.82, 0, 1 }
+	button.auracolor2 = { 1, 0.1, 0.1, 1 }
+	button.buffcolor = { 0, 0.8, 0, 1 }
+	button.debuffcolor = { 0.8, 0, 0, 1 }
+	button.manacolor = { 0.5, 0.5, 1.0 }
+	button.rangecolor = { 0.7, 0.15, 0.15, 1 }
+	button.skincolor = {1,1,1,1,1}
+	button:SetFrameLevel(4)
+	button.iconframe:SetFrameLevel(2)
+	button.iconframecooldown:SetFrameLevel(3)
+	--button.iconframeaurawatch:SetFrameLevel(3)
+	button.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
 
-	--self:GetSkinned()
+	--button:GetSkinned()
 
 
 end

@@ -62,6 +62,10 @@ function NeuronExtraBar:OnInitialize()
 	xbarsCDB = CDB.xbars
 	xbtnsCDB = CDB.xbtns
 
+	----------------------------------------------------------------
+	XBTN.SetData = NeuronExtraBar.SetData
+	----------------------------------------------------------------
+
 	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, STORAGE, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
@@ -103,7 +107,6 @@ function NeuronExtraBar:OnInitialize()
 
 
 	STORAGE:Hide()
-
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -140,152 +143,6 @@ function XBTN:GetSkinned()
 end
 
 
-function XBTN:SetData(bar)
-	if (bar) then
-		self.bar = bar
-
-		self.barLock = bar.cdata.barLock
-		self.barLockAlt = bar.cdata.barLockAlt
-		self.barLockCtrl = bar.cdata.barLockCtrl
-		self.barLockShift = bar.cdata.barLockShift
-
-		self.tooltips = bar.cdata.tooltips
-		self.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
-		self.tooltipsCombat = bar.cdata.tooltipsCombat
-
-		self.spellGlow = bar.cdata.spellGlow
-		self.spellGlowDef = bar.cdata.spellGlowDef
-		self.spellGlowAlt = bar.cdata.spellGlowAlt
-
-		self.bindText = bar.cdata.bindText
-		self.macroText = bar.cdata.macroText
-		self.countText = bar.cdata.countText
-
-		self.cdText = bar.cdata.cdText
-
-		if (bar.cdata.cdAlpha) then
-			self.cdAlpha = 0.2
-		else
-			self.cdAlpha = 1
-		end
-
-		self.auraText = bar.cdata.auraText
-		self.auraInd = bar.cdata.auraInd
-
-		self.rangeInd = bar.cdata.rangeInd
-
-		self.upClicks = bar.cdata.upClicks
-		self.downClicks = bar.cdata.downClicks
-
-		self.showGrid = bar.gdata.showGrid
-
-		self.bindColor = bar.gdata.bindColor
-		self.macroColor = bar.gdata.macroColor
-		self.countColor = bar.gdata.countColor
-
-		if (not self.cdcolor1) then
-			self.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
-		else
-			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
-		end
-
-		if (not self.cdcolor2) then
-			self.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
-		else
-			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
-		end
-
-		if (not self.auracolor1) then
-			self.auracolor1 = { (";"):split(bar.gdata.auracolor1) }
-		else
-			self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], self.auracolor1[4] = (";"):split(bar.gdata.auracolor1)
-		end
-
-		if (not self.auracolor2) then
-			self.auracolor2 = { (";"):split(bar.gdata.auracolor2) }
-		else
-			self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], self.auracolor2[4] = (";"):split(bar.gdata.auracolor2)
-		end
-
-		if (not self.buffcolor) then
-			self.buffcolor = { (";"):split(bar.gdata.buffcolor) }
-		else
-			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.gdata.buffcolor)
-		end
-
-		if (not self.debuffcolor) then
-			self.debuffcolor = { (";"):split(bar.gdata.debuffcolor) }
-		else
-			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.gdata.debuffcolor)
-		end
-
-		if (not self.rangecolor) then
-			self.rangecolor = { (";"):split(bar.gdata.rangecolor) }
-		else
-			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.gdata.rangecolor)
-		end
-
-		self:SetFrameStrata(bar.gdata.objectStrata)
-
-		self:SetScale(bar.gdata.scale)
-
-	end
-
-	if (self.bindText) then
-		self.hotkey:Show()
-		if (self.bindColor) then
-			self.hotkey:SetTextColor((";"):split(self.bindColor))
-		end
-	else
-		self.hotkey:Hide()
-	end
-
-	if (self.macroText) then
-		self.macroname:Show()
-		if (self.macroColor) then
-			self.macroname:SetTextColor((";"):split(self.macroColor))
-		end
-	else
-		self.macroname:Hide()
-	end
-
-	if (self.countText) then
-		self.count:Show()
-		if (self.countColor) then
-			self.count:SetTextColor((";"):split(self.countColor))
-		end
-	else
-		self.count:Hide()
-	end
-
-	local down, up = "", ""
-
-	if (self.upClicks) then up = up.."AnyUp" end
-	if (self.downClicks) then down = down.."AnyDown" end
-
-	self:RegisterForClicks(down, up)
-
-	if (not self.equipcolor) then
-		self.equipcolor = { 0.1, 1, 0.1, 1 }
-	else
-		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3], self.equipcolor[4] = 0.1, 1, 0.1, 1
-	end
-
-	if (not self.manacolor) then
-		self.manacolor = { 0.5, 0.5, 1.0, 1 }
-	else
-		self.manacolor[1], self.manacolor[2], self.manacolor[3], self.manacolor[4] = 0.5, 0.5, 1.0, 1
-	end
-
-	self:SetFrameLevel(4)
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-	self.iconframeaurawatch:SetFrameLevel(3)
-
-	--self:GetSkinned()
-
-	NEURON.NeuronButton:MACRO_UpdateTimers(self)
-end
 
 function XBTN:SaveData()
 
@@ -499,6 +356,10 @@ function XBTN:GetDefaults()
 
 	--empty
 
+end
+
+function NeuronExtraBar:SetData(button, bar)
+	NEURON.NeuronButton:SetData(button, bar)
 end
 
 function XBTN:SetType(save)

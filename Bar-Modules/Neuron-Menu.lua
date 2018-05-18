@@ -14,7 +14,7 @@ local NeuronMenuBar = NEURON.NeuronMenuBar
 
 local menubarsDB, menubtnsDB
 
-local ANCHOR = setmetatable({}, { __index = CreateFrame("Frame") })
+local MENUBTN = setmetatable({}, { __index = CreateFrame("Frame") })
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -71,8 +71,11 @@ function NeuronMenuBar:OnInitialize()
         DB.scriptProfile = false
     end
 
-    --for some reason the menu settings are saved globally, rather than per character. Which shouldn't be the case at all. To fix this temporarilly I just set the bagbarsDB to be both the GDB and DB in the RegisterBarClass
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = ANCHOR }, #menuElements, STORAGE, gDef, nil, false)
+    ----------------------------------------------------------------
+    MENUBTN.SetData = NeuronMenuBar.SetData
+    ----------------------------------------------------------------
+
+    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, STORAGE, gDef, nil, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if (DB.menubarFirstRun) then
@@ -109,8 +112,6 @@ function NeuronMenuBar:OnInitialize()
         end
     end
     STORAGE:Hide()
-
-
 
 end
 
@@ -841,7 +842,7 @@ end
 
 function NeuronMenuBar.LatencyButton_AltOnEnter(self)
     if (not NeuronMenuBarTooltip:IsVisible()) then
-        NeuronMenuBarTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE")
+        NeuronMenuBarTooltip:SetOwner(UIParent, "MENUBTN_PRESERVE")
     end
 
     if (self.enabled) then
@@ -946,24 +947,24 @@ function NeuronMenuBar.LatencyButton_SetNormal()
 end
 
 
-function ANCHOR:SetData(bar)
+function NeuronMenuBar:SetData(button, bar)
     if (bar) then
-        self.bar = bar
+        button.bar = bar
 
-        self:SetFrameStrata(bar.gdata.objectStrata)
-        self:SetScale(bar.gdata.scale)
+        button:SetFrameStrata(bar.gdata.objectStrata)
+        button:SetScale(bar.gdata.scale)
     end
 
-    self:SetFrameLevel(4)
+    button:SetFrameLevel(4)
 end
 
 
-function ANCHOR:SaveData()
+function MENUBTN:SaveData()
     -- empty
 end
 
 
-function ANCHOR:LoadData(spec, state)
+function MENUBTN:LoadData(spec, state)
     local id = self.id
 
     self.DB = menubtnsDB
@@ -991,32 +992,32 @@ function ANCHOR:LoadData(spec, state)
 end
 
 
-function ANCHOR:SetGrid(show, hide)
+function MENUBTN:SetGrid(show, hide)
     --empty
 end
 
 
-function ANCHOR:SetAux()
+function MENUBTN:SetAux()
     -- empty
 end
 
 
-function ANCHOR:LoadAux()
+function MENUBTN:LoadAux()
     -- empty
 end
 
 
-function ANCHOR:SetDefaults()
+function MENUBTN:SetDefaults()
     -- empty
 end
 
 
-function ANCHOR:GetDefaults()
+function MENUBTN:GetDefaults()
     --empty
 end
 
 
-function ANCHOR:SetType(save)
+function MENUBTN:SetType(save)
     if (menuElements[self.id]) then
         self:SetWidth(menuElements[self.id]:GetWidth()*0.90)
         self:SetHeight(menuElements[self.id]:GetHeight()/1.60)

@@ -79,6 +79,11 @@ function NeuronPetBar:OnInitialize()
 	petbarsDB = DB.petbars
 	petbtnsDB = DB.petbtns
 
+
+	----------------------------------------------------------------
+	PETBTN.SetData = NeuronPetBar.SetData
+	----------------------------------------------------------------
+
 	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, STORAGE, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("pet", {
@@ -527,37 +532,37 @@ function PETBTN:OnLeave ()
 end
 
 
-function PETBTN:SetData(bar)
+function NeuronPetBar:SetData(button, bar)
 
 	if (bar) then
 
-		self.bar = bar
+		button.bar = bar
 
-		self.cdText = bar.cdata.cdText
+		button.cdText = bar.cdata.cdText
 
 		if (bar.cdata.cdAlpha) then
-			self.cdAlpha = 0.2
+			button.cdAlpha = 0.2
 		else
-			self.cdAlpha = 1
+			button.cdAlpha = 1
 		end
 
-		self.barLock = bar.cdata.barLock
-		self.barLockAlt = bar.cdata.barLockAlt
-		self.barLockCtrl = bar.cdata.barLockCtrl
-		self.barLockShift = bar.cdata.barLockShift
+		button.barLock = bar.cdata.barLock
+		button.barLockAlt = bar.cdata.barLockAlt
+		button.barLockCtrl = bar.cdata.barLockCtrl
+		button.barLockShift = bar.cdata.barLockShift
 
-		self.upClicks = bar.cdata.upClicks
-		self.downClicks = bar.cdata.downClicks
+		button.upClicks = bar.cdata.upClicks
+		button.downClicks = bar.cdata.downClicks
 
-		self.bindText = bar.cdata.bindText
+		button.bindText = bar.cdata.bindText
 
-		self.tooltips = bar.cdata.tooltips
-		self.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
-		self.tooltipsCombat = bar.cdata.tooltipsCombat
+		button.tooltips = bar.cdata.tooltips
+		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
+		button.tooltipsCombat = bar.cdata.tooltipsCombat
 
-		self:SetFrameStrata(bar.gdata.objectStrata)
+		button:SetFrameStrata(bar.gdata.objectStrata)
 
-		self:SetScale(bar.gdata.scale)
+		button:SetScale(bar.gdata.scale)
 
 	end
 

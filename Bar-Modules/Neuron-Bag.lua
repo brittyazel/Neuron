@@ -79,6 +79,10 @@ function NeuronBagBar:OnInitialize()
 	bagbarsDB = DB.bagbars
 	bagbtnsDB = DB.bagbtns
 
+	----------------------------------------------------------------
+	BAG.SetData = NeuronBagBar.SetData
+	----------------------------------------------------------------
+
 
 	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAG }, #bagElements, STORAGE, gDef, nil, true)
 
@@ -335,26 +339,26 @@ function NeuronBagBar:SetSkinned(button)
 	end
 end
 
-function BAG:SetData(bar)
+function NeuronBagBar:SetData(button, bar)
 
 	if (bar) then
 
-		self.bar = bar
+		button.bar = bar
 
-		self:SetFrameStrata(bar.gdata.objectStrata)
-		self:SetScale(bar.gdata.scale)
+		button:SetFrameStrata(bar.gdata.objectStrata)
+		button:SetScale(bar.gdata.scale)
 
-		if (self.element == NeuronBackpackButton) then
+		if (button.element == NeuronBackpackButton) then
 
 			if (bar.objCount == 1) then
-				self.element:SetScript("OnClick", function() if (ContainerFrame1:IsVisible()) then CloseAllBags() else OpenAllBags() end end)
+				button.element:SetScript("OnClick", function() if (ContainerFrame1:IsVisible()) then CloseAllBags() else OpenAllBags() end end)
 			else
-				self.element:SetScript("OnClick", function() if (IsModifiedClick()) then if (ContainerFrame1:IsVisible()) then CloseAllBags() else OpenAllBags() end else ToggleBackpack() end end)
+				button.element:SetScript("OnClick", function() if (IsModifiedClick()) then if (ContainerFrame1:IsVisible()) then CloseAllBags() else OpenAllBags() end else ToggleBackpack() end end)
 			end
 		end
 	end
 
-	self:SetFrameLevel(4)
+	button:SetFrameLevel(4)
 end
 
 function BAG:SaveData()
