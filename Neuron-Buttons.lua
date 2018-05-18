@@ -2878,7 +2878,7 @@ function NeuronButton:ChangeObject(object)
 
 		if (object and object ~= NEURON.CurrentObject) then
 
-			if (NEURON.CurrentObject and NEURON.CurrentObject.OBJEDITOR.editType ~= object.OBJEDITOR.editType) then
+			if (NEURON.CurrentObject and NEURON.CurrentObject.editor.editType ~= object.editor.editType) then
 				newEditor = true
 			end
 
@@ -2896,7 +2896,7 @@ function NeuronButton:ChangeObject(object)
 
 			NEURON.CurrentObject = object
 
-			object.OBJEDITOR.select:Show()
+			object.editor.select:Show()
 
 			object.selected = true
 			object.action = nil
@@ -2909,7 +2909,7 @@ function NeuronButton:ChangeObject(object)
 		end
 
 		for k,v in pairs(NEURON.EDITIndex) do
-			if (not object or v ~= object.OBJEDITOR) then
+			if (not object or v ~= object.editor) then
 				v.select:Hide()
 			end
 		end

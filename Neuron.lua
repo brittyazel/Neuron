@@ -1396,9 +1396,10 @@ function NEURON:ToggleEditFrames(show, hide)
 
 		NEURON.EditFrameShown = false
 
-		for index, OBJEDITOR in pairs(NEURON.EDITIndex) do
-			OBJEDITOR:Hide(); OBJEDITOR.object.editmode = NEURON.EditFrameShown
-			OBJEDITOR:SetFrameStrata("LOW")
+		for index, editor in pairs(NEURON.EDITIndex) do
+			editor:Hide()
+			editor.object.editmode = NEURON.EditFrameShown
+			editor:SetFrameStrata("LOW")
 		end
 
 		for _,bar in pairs(BARIndex) do
@@ -1422,12 +1423,12 @@ function NEURON:ToggleEditFrames(show, hide)
 
 		NEURON.EditFrameShown = true
 
-		for index, OBJEDITOR in pairs(NEURON.EDITIndex) do
-			OBJEDITOR:Show(); OBJEDITOR.object.editmode = NEURON.EditFrameShown
+		for index, editor in pairs(NEURON.EDITIndex) do
+			editor:Show(); editor.object.editmode = NEURON.EditFrameShown
 
-			if (OBJEDITOR.object.bar) then
-				OBJEDITOR:SetFrameStrata(OBJEDITOR.object.bar:GetFrameStrata())
-				OBJEDITOR:SetFrameLevel(OBJEDITOR.object.bar:GetFrameLevel()+4)
+			if (editor.object.bar) then
+				editor:SetFrameStrata(editor.object.bar:GetFrameStrata())
+				editor:SetFrameLevel(editor.object.bar:GetFrameLevel()+4)
 			end
 		end
 

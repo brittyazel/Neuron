@@ -28,7 +28,7 @@ local cIndex = NEURON.cIndex  --Battle pet & Mount index
 local iIndex = NEURON.iIndex  --Items Inde -- x
 local ItemCache = NeuronItemCache
 
-local EDITIndex, OBJEDITOR = NEURON.EDITIndex, NEURON.OBJEDITOR
+local EDITIndex = NEURON.EDITIndex
 
 local barOpt = { chk = {}, adj = {}, pri = {}, sec = {}, swatch = {}, vis = {} }
 
@@ -4126,30 +4126,30 @@ end
 
 function NeuronGUI:ObjEditor_CreateEditFrame(button, index)
 
-	local EDITOR = CreateFrame("Button", button:GetName().."EditFrame", button, "NeuronEditFrameTemplate")
+	local editor = CreateFrame("Button", button:GetName().."EditFrame", button, "NeuronEditFrameTemplate")
 
-	setmetatable(EDITOR, { __index = CreateFrame("Button") })
+	setmetatable(editor, { __index = CreateFrame("Button") })
 
-	EDITOR:EnableMouseWheel(true)
-	EDITOR:RegisterForClicks("AnyDown")
-	EDITOR:SetAllPoints(button)
-	EDITOR:SetScript("OnShow", function(self) NeuronGUI:ObjEditor_OnShow(self) end)
-	EDITOR:SetScript("OnHide", function(self) NeuronGUI:ObjEditor_OnHide(self) end)
-	EDITOR:SetScript("OnEnter", function(self) NeuronGUI:ObjEditor_OnEnter(self) end)
-	EDITOR:SetScript("OnLeave", function(self) NeuronGUI:ObjEditor_OnLeave(self) end)
-	EDITOR:SetScript("OnClick", function(self, button) NeuronGUI:ObjEditor_OnClick(self, button) end)
-	EDITOR:SetScript("OnEvent", function(self, event, ...) NeuronGUI:ObjEditor_OnEvent(self, event, ...) end)
-	EDITOR:RegisterEvent("ACTIONBAR_SHOWGRID")
-	EDITOR:RegisterEvent("ACTIONBAR_HIDEGRID")
+	editor:EnableMouseWheel(true)
+	editor:RegisterForClicks("AnyDown")
+	editor:SetAllPoints(button)
+	editor:SetScript("OnShow", function(self) NeuronGUI:ObjEditor_OnShow(self) end)
+	editor:SetScript("OnHide", function(self) NeuronGUI:ObjEditor_OnHide(self) end)
+	editor:SetScript("OnEnter", function(self) NeuronGUI:ObjEditor_OnEnter(self) end)
+	editor:SetScript("OnLeave", function(self) NeuronGUI:ObjEditor_OnLeave(self) end)
+	editor:SetScript("OnClick", function(self, button) NeuronGUI:ObjEditor_OnClick(self, button) end)
+	editor:SetScript("OnEvent", function(self, event, ...) NeuronGUI:ObjEditor_OnEvent(self, event, ...) end)
+	editor:RegisterEvent("ACTIONBAR_SHOWGRID")
+	editor:RegisterEvent("ACTIONBAR_HIDEGRID")
 
-	EDITOR.type:SetText(L["Edit"])
-	EDITOR.object = button
-	EDITOR.editType = "button"
+	editor.type:SetText(L["Edit"])
+	editor.object = button
+	editor.editType = "button"
 
-	button.OBJEDITOR = EDITOR
+	button.editor = editor
 
-	EDITIndex["BUTTON"..index] = EDITOR
+	EDITIndex["BUTTON"..index] = editor
 
-	EDITOR:Hide()
+	editor:Hide()
 
 end
