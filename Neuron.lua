@@ -340,7 +340,7 @@ function NEURON:OnEnable()
 	NEURON:RegisterEvent("UNIT_PET")
 	NEURON:RegisterEvent("TOYS_UPDATED")
 
-	NEURON:HookScript(self, "OnUpdate", "controlOnUpdate")
+	NEURON:HookScript(NEURON, "OnUpdate", "controlOnUpdate")
 
 
 	-- --I have no idea what this does
@@ -652,7 +652,7 @@ function NEURON:controlOnUpdate(frame, elapsed)
 		NEURON.NeuronPetBar:controlOnUpdate(frame, elapsed)
 		NEURON.NeuronStatusBar:controlOnUpdate(frame, elapsed)
 
-		self.elapsed = 0;
+		NEURON.elapsed = 0;
 	end
 
 	---UnThrottled OnUpdate calls
