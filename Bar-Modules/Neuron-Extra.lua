@@ -80,7 +80,7 @@ function NeuronExtraBar:OnInitialize()
 	if (CDB.xbarFirstRun) then
 
 		local bar = NEURON.NeuronBar:CreateNewBar("extrabar", 1, true)
-		local object = NEURON:CreateNewObject("extrabar", 1)
+		local object = NEURON.NeuronButton:CreateNewObject("extrabar", 1)
 
 		NEURON.NeuronBar:AddObjectToList(bar, object)
 
@@ -96,7 +96,7 @@ function NeuronExtraBar:OnInitialize()
 
 		for id,data in pairs(xbtnsCDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewObject("extrabar", id)
+				NEURON.NeuronButton:CreateNewObject("extrabar", id)
 			end
 		end
 	end

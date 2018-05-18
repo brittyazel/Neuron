@@ -311,12 +311,12 @@ function NeuronStatusBar:OnInitialize()
 
 			if (id == 4) then --I'm guessing this is meant to make 4 bars by default
 				for i=1,3 do
-					object = NEURON:CreateNewObject("status", oid+offset, true)
+					object = NEURON.NeuronButton:CreateNewObject("status", oid+offset, true)
 					NEURON.NeuronBar:AddObjectToList(bar, object)
 					offset = offset + 1
 				end
 			else
-				object = NEURON:CreateNewObject("status", oid+offset, true)
+				object = NEURON.NeuronButton:CreateNewObject("status", oid+offset, true)
 				NEURON.NeuronBar:AddObjectToList(bar, object)
 				offset = offset + 1
 			end
@@ -336,7 +336,7 @@ function NeuronStatusBar:OnInitialize()
 
 		for id,data in pairs(statusbtnsDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewObject("status", id)
+				NEURON.NeuronButton:CreateNewObject("status", id)
 			end
 		end
 	end

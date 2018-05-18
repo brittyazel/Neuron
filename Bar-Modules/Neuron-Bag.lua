@@ -91,7 +91,7 @@ function NeuronBagBar:OnInitialize()
 		local object
 
 		for i=1,#bagElements do
-			object = NEURON:CreateNewObject("bag", i)
+			object = NEURON.NeuronButton:CreateNewObject("bag", i)
 			NEURON.NeuronBar:AddObjectToList(bar, object)
 		end
 
@@ -107,7 +107,7 @@ function NeuronBagBar:OnInitialize()
 
 		for id,data in pairs(bagbtnsDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewObject("bag", id)
+				NEURON.NeuronButton:CreateNewObject("bag", id)
 			end
 		end
 	end

@@ -252,7 +252,7 @@ function NeuronBar:OnEnable()
 			local object
 
 			for i=oid+offset,oid+11+offset do
-				object = NEURON:CreateNewObject("bar", i, true)
+				object = NEURON.NeuronButton:CreateNewObject("bar", i, true)
 				NeuronBar:AddObjectToList(bar, object)
 			end
 
@@ -270,7 +270,7 @@ function NeuronBar:OnEnable()
 
 		for id,data in pairs(GDB.buttons) do
 			if (data ~= nil) then
-				NEURON:CreateNewObject("bar", id)
+				NEURON.NeuronButton:CreateNewObject("bar", id)
 			end
 		end
 	end
@@ -2162,7 +2162,7 @@ function NeuronBar:AddObjects(bar, num)
 		end
 
 		if (not bar.objMax) then
-			object = NEURON:CreateNewObject(bar.class, id)
+			object = NEURON.NeuronButton:CreateNewObject(bar.class, id)
 			NeuronBar:AddObjectToList(bar, object)
 		end
 
@@ -3438,7 +3438,7 @@ function NeuronBar:BarProfileUpdate()
 			local bar, object = NeuronBar:CreateNewBar("bar", id, true)
 
 			for i=oid+offset,oid+11+offset do
-				object = NEURON:CreateNewObject("bar", i, true)
+				object = NEURON.NeuronButton:CreateNewObject("bar", i, true)
 				NeuronBar:AddObjectToList(bar, object)
 			end
 
@@ -3455,7 +3455,7 @@ function NeuronBar:BarProfileUpdate()
 
 		for id,data in pairs(GDB.buttons) do
 			if (data ~= nil) then
-				NEURON:CreateNewObject("bar", id)
+				NEURON.NeuronButton:CreateNewObject("bar", id)
 			end
 		end
 	end

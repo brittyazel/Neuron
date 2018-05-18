@@ -79,7 +79,7 @@ function NeuronMenuBar:OnInitialize()
         bar, object = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
 
         for i=1,#menuElements do
-            object = NEURON:CreateNewObject("menu", i)
+            object = NEURON.NeuronButton:CreateNewObject("menu", i)
             NEURON.NeuronBar:AddObjectToList(bar, object)
         end
 
@@ -96,7 +96,7 @@ function NeuronMenuBar:OnInitialize()
 
         for id,data in pairs(menubtnsDB) do
             if (data ~= nil) then
-                NEURON:CreateNewObject("menu", id)
+                NEURON.NeuronButton:CreateNewObject("menu", id)
             end
 
             count = count + 1
@@ -104,7 +104,7 @@ function NeuronMenuBar:OnInitialize()
 
         if (count < #menuElements) then
             for i=count+1, #menuElements do
-                object = NEURON:CreateNewObject("menu", i)
+                object = NEURON.NeuronButton:CreateNewObject("menu", i)
             end
         end
     end

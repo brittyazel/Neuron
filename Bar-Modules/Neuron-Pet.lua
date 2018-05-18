@@ -105,7 +105,7 @@ function NeuronPetBar:OnInitialize()
 		local bar, object = NEURON.NeuronBar:CreateNewBar("pet", 1, true)
 
 		for i=1,NEURON.maxPetID do
-			object = NEURON:CreateNewObject("pet", i)
+			object = NEURON.NeuronButton:CreateNewObject("pet", i)
 			NEURON.NeuronBar:AddObjectToList(bar, object)
 		end
 
@@ -121,7 +121,7 @@ function NeuronPetBar:OnInitialize()
 
 		for id,data in pairs(petbtnsDB) do
 			if (data ~= nil) then
-				NEURON:CreateNewObject("pet", id)
+				NEURON.NeuronButton:CreateNewObject("pet", id)
 			end
 		end
 	end

@@ -2822,6 +2822,50 @@ function NeuronButton:GetSkinned(button)
 	end
 end
 
+
+function NeuronButton:CreateNewObject(class, id, firstRun)
+	local data = NEURON.RegisteredBarData[class]
+
+	if (data) then
+
+		--this is the same as 'id', I'm not sure why we need both
+		local index = #data.objTable + 1 --sets the current index to 1 greater than the current number of object in the table
+
+		local object = CreateFrame(data.objFrameT, data.objPrefix..id, UIParent, data.objTemplate)
+
+		setmetatable(object, data.objMetaT)
+
+		object.elapsed = 0
+
+		--returns a table of the names of all the child objects for a given frame
+		local objects = NEURON:GetParentKeys(object)
+
+		--I think this is creating a pointer inside the object to where the child object resides in the global namespace
+		for k,v in pairs(objects) do
+			local name = (v):gsub(object:GetName(), "")
+			object[name:lower()] = _G[v]
+		end
+
+		object.class = class
+		object.id = id
+		object:SetID(0)
+		object.objTIndex = index
+		object.objType = data.objType:gsub("%s", ""):upper()
+		object:LoadData(GetActiveSpecGroup(), "homestate")
+
+		if (firstRun) then
+			object:SetDefaults(object:GetDefaults())
+		end
+
+		object:LoadAux()
+
+		data.objTable[index] = object
+
+		return object
+	end
+end
+
+
 ---TODO refactor this to NeuronButton
 function BUTTON:SetData(bar)
 	if (bar) then
