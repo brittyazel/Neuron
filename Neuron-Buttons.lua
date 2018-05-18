@@ -1646,7 +1646,7 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 	button:Show()
 
 	button:LoadData(spec, button:GetParent():GetAttribute("activestate") or "homestate")
-	button:UpdateFlyout()
+	NEURON.NeuronFlyouts:UpdateFlyout(button)
 	button:SetType()
 	button:SetGrid()
 
@@ -2047,7 +2047,7 @@ function NeuronButton:MACRO_PlaceFlyout(button, action1, action2, hasAction)
 		button.data.macro_Note = ""
 		button.data.macro_UseNote = false
 
-		button:UpdateFlyout(true)
+		NEURON.NeuronFlyouts:UpdateFlyout(button, true)
 
 		if (not button.cursor) then
 			button:SetType(true)
@@ -2109,7 +2109,7 @@ function NeuronButton:MACRO_PlaceMacro(button)
 	wipe(MacroDrag);
 	ClearCursor();
 	SetCursor(nil);
-	button:UpdateFlyout()
+	NEURON.NeuronFlyouts:UpdateFlyout(button)
 	NEURON:ToggleButtonGrid(nil, true)
 
 end
@@ -2173,7 +2173,7 @@ function NeuronButton:MACRO_PickUpMacro(button)
 			button.macroshow = nil
 			button.macroicon = nil
 
-			button:UpdateFlyout()
+			NEURON.NeuronFlyouts:UpdateFlyout(button)
 
 			button:SetType(true)
 
@@ -3231,7 +3231,7 @@ end
 ---TODO refactor this to NeuronButton
 function BUTTON:SetAux()
 	NeuronButton:SetSkinned(self)
-	self:UpdateFlyout(true)
+	NEURON.NeuronFlyouts:UpdateFlyout(self, true)
 end
 
 ---TODO refactor this to NeuronButton
@@ -3637,7 +3637,7 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 		end
 
 		if macro_update then
-			button:UpdateFlyout()
+			NEURON.NeuronFlyouts:UpdateFlyout(button)
 			NeuronButton:BuildStateData(button)
 			button:SetType()
 		end

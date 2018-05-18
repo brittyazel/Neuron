@@ -32,10 +32,6 @@ local gDef = {
 	y = 75,
 }
 
-
-local AutoCastStart = NEURON.NeuronButton.AutoCastStart
-local AutoCastStop = NEURON.NeuronButton.AutoCastStop
-
 local configData = {
 
 	stored = false,
@@ -249,12 +245,12 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 
 	if (enabled) then
 
-		AutoCastStart(self.shine)
+		NEURON.NeuronButton:AutoCastStart(self.shine)
 		self.autocastable:Hide()
 		self.autocastenabled = true
 
 	else
-		AutoCastStop(self.shine)
+		NEURON.NeuronButton:AutoCastStop(self.shine)
 
 		if (allowed) then
 			self.autocastable:Show()

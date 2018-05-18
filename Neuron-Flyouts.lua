@@ -85,20 +85,20 @@ function NeuronFlyouts:OnInitialize()
 	STORAGE:Hide()
 
 	anchorUpdater = CreateFrame("Frame", nil, UIParent)
-	anchorUpdater:SetScript("OnUpdate", self.updateAnchors)
+	anchorUpdater:SetScript("OnUpdate", function(self, elapsed) NeuronFlyouts:updateAnchors(self, elapsed) end)
 	anchorUpdater:Hide()
 
 	ANCHOR_LOGIN_Updater = CreateFrame("Frame", nil, UIParent)
-	ANCHOR_LOGIN_Updater:SetScript("OnUpdate", self.ANCHOR_DelayedUpdate)
+	ANCHOR_LOGIN_Updater:SetScript("OnUpdate", function(self, elapsed)NeuronFlyouts:ANCHOR_DelayedUpdate(self, elapsed) end)
 	ANCHOR_LOGIN_Updater:Hide()
 	ANCHOR_LOGIN_Updater.elapsed = 0
 
 	itemScanner = CreateFrame("Frame", nil, UIParent)
-	itemScanner:SetScript("OnUpdate", self.linkScanOnUpdate)
+	itemScanner:SetScript("OnUpdate", function(self, elapsed) NeuronFlyouts:linkScanOnUpdate(self, elapsed) end)
 	itemScanner:Hide()
 
 	flyoutBarUpdater = CreateFrame("Frame", nil, UIParent)
-	flyoutBarUpdater:SetScript("OnUpdate", self.updateFlyoutBars)
+	flyoutBarUpdater:SetScript("OnUpdate", function(self, elapsed) NeuronFlyouts:updateFlyoutBars(self, elapsed) end)
 	flyoutBarUpdater:Hide()
 
 end
@@ -466,8 +466,8 @@ end
 --- Filter handler for items
 -- item:id will get all items of that itemID
 -- item:name will get all items that contain "name" in its name
-function BUTTON:filter_item(data)
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+function NeuronFlyouts:filter_item(button, data)
+	local keys, found, mandatory, optional = button.flyout.keys, 0, 0, 0
 	local excluded
 	for ckey in gmatch(keys, "[^,]+") do
 
@@ -498,8 +498,8 @@ end
 --- Filter Handler for Spells
 -- spell:id will get all spells of that spellID
 -- spell:name will get all spells that contain "name" in its name or its flyout parent
-function BUTTON:filter_spell(data)
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+function NeuronFlyouts:filter_spell(button, data)
+	local keys, found, mandatory, optional = button.flyout.keys, 0, 0, 0
 	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
@@ -551,8 +551,8 @@ end
 ---Filter handler for item type
 -- type:quest will get all quest items in bags, or those on person with Quest in a type field
 -- type:name will get all items that have "name" in its type, subtype or slot name
-function BUTTON:filter_type(data)
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+function NeuronFlyouts:filter_type(button, data)
+	local keys, found, mandatory, optional = button.flyout.keys, 0, 0, 0
 	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
@@ -594,8 +594,8 @@ end
 --- Filter handler for mounts
 -- mount:any, mount:flying, mount:land, mount:favorite, mount:fflying, mount:fland
 -- mount:arg filters mounts that include arg in the name or arg="flying" or arg="land" or arg=="any"
-function BUTTON:filter_mount(data)
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+function NeuronFlyouts:filter_mount(button, data)
+	local keys, found, mandatory, optional = button.flyout.keys, 0, 0, 0
 	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
@@ -640,20 +640,23 @@ function BUTTON:filter_mount(data)
 	RemoveExclusions(data)
 end
 
--- runs func for each ...
-local function RunForEach(func,...)
-	for i=1,select("#",...) do
-		func((select(i,...)))
-	end
-end
+
 
 --- Filter handler for professions
 -- profession:arg filters professions that include arg in the name or arg="primary" or arg="secondary" or arg="all"
-function BUTTON:filter_profession(data)
+function NeuronFlyouts:filter_profession(button, data)
+
+	-- runs func for each ...
+	local function RunForEach(func,...)
+		for i=1,select("#",...) do
+			func((select(i,...)))
+		end
+	end
+
 	f.professions = f.professions or {}
 	wipe(f.professions)
 
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	local keys, found, mandatory, optional = button.flyout.keys, 0, 0, 0
 	local excluded
 	local profSpells = {}
 
@@ -705,8 +708,8 @@ end
 
 --- Filter handler for companion pets
 -- pet:arg filters companion pets that include arg in the name or arg="any" or arg="favorite(s)"
-function BUTTON:filter_pet(data)
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+function NeuronFlyouts:filter_pet(button, data)
+	local keys, found, mandatory, optional = button.flyout.keys, 0, 0, 0
 	local excluded
 	for ckey in gmatch(keys, "[^,]+") do
 
@@ -744,8 +747,8 @@ end
 
 ---Filter handler for toy items
 -- toy:arg filters items from the toybox; arg="favorite" "any" or partial name
-function BUTTON:filter_toy(data)
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+function NeuronFlyouts:filter_toy(button, data)
+	local keys, found, mandatory, optional = button.flyout.keys, 0, 0, 0
 	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
@@ -815,14 +818,14 @@ end
 
 
 --- Handler for Blizzard flyout spells
-function BUTTON:GetBlizzData(data)
+function NeuronFlyouts:GetBlizzData(button, data)
 	local visible, spellID, isKnown, petIndex, petName, spell, subName
-	local _, _, numSlots = GetFlyoutInfo(self.flyout.keys)
+	local _, _, numSlots = GetFlyoutInfo(button.flyout.keys)
 
 	for i=1, numSlots do
 		visible = true
 
-		spellID, _, isKnown = GetFlyoutSlotInfo(self.flyout.keys, i)
+		spellID, _, isKnown = GetFlyoutSlotInfo(button.flyout.keys, i)
 		petIndex, petName = GetCallPetSpellInfo(spellID)
 
 		if (petIndex and (not petName or petName == "")) then
@@ -844,48 +847,48 @@ end
 
 
 --- Flyout type handler
-function BUTTON:GetDataList(options)
+function NeuronFlyouts:GetDataList(button, options)
 	local tooltip
 
 	wipe(scanData)
 
-	for types in gmatch(self.flyout.types, "%a+[%+]*") do
+	for types in gmatch(button.flyout.types, "%a+[%+]*") do
 		tooltip = types:match("%+")
 
 		if (types:find("^b")) then  --Blizzard Flyout
-			return self:GetBlizzData(scanData)
-		elseif (types:find("^e")) then  --Equipment set
-			return self:GetEquipSetData(scanData)
+			return NeuronFlyouts:GetBlizzData(button, scanData)
+		--elseif (types:find("^e")) then  --Equipment set
+			--return self:GetEquipSetData(scanData)
 		elseif (types:find("^s")) then  --Spell
-			self:filter_spell(scanData)
+			NeuronFlyouts:filter_spell(button, scanData)
 		elseif (types:find("^i")) then  --Item
-			self:filter_item(scanData)
+			NeuronFlyouts:filter_item(button, scanData)
 		elseif (types:find("^c")) then  --Companion
-			self:filter_pet(scanData)
+			NeuronFlyouts:filter_pet(button, scanData)
 		elseif (types:find("^f")) then  --toy
-			self:filter_toy(scanData)
+			NeuronFlyouts:filter_toy(button, scanData)
 		elseif (types:find("^m")) then  --Mount
-			self:filter_mount(scanData)
+			NeuronFlyouts:filter_mount(button, scanData)
 		elseif (types:find("^p")) then  --Profession
-			self:filter_profession(scanData)
+			NeuronFlyouts:filter_profession(button, scanData)
 		elseif (types:find("^t")) then  --Item Type
-			self:filter_type(scanData)
+			NeuronFlyouts:filter_type(button, scanData)
 		end
 	end
 	return scanData
 end
 
-function NeuronFlyouts.updateFlyoutBars(self, elapsed)
+function NeuronFlyouts:updateFlyoutBars(button, elapsed)
 
 	if (not InCombatLockdown() and NEURON.PEW) then  --Workarout for protected taint if UI reload in combat
 		local bar = tremove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
-			NEURON.NeuronBar:SetObjectLoc(self)
-			NEURON.NeuronBar:SetPerimeter(self)
-			NEURON.NeuronBar:SetSize(self)
+			NEURON.NeuronBar:SetObjectLoc(bar)
+			NEURON.NeuronBar:SetPerimeter(bar)
+			NEURON.NeuronBar:SetSize(bar)
 		else
-			self:Hide()
+			button:Hide()
 		end
 	end
 end
@@ -894,23 +897,23 @@ end
 
 
 
-function BUTTON:Flyout_UpdateButtons(init)
+function NeuronFlyouts:Flyout_UpdateButtons(fbutton, init)
 	local slot
 	local pet = false
 
-	if (self.flyout) then
-		local flyout, count, list = self.flyout, 0, ""
+	if (fbutton.flyout) then
+		local flyout, count, list = fbutton.flyout, 0, ""
 		local button, prefix, macroSet
 
-		local data = self:GetDataList(flyout.options)
+		local data = NeuronFlyouts:GetDataList(fbutton, flyout.options)
 
 		for _,button in pairs(flyout.buttons) do
-			self:Flyout_ReleaseButton(button)
+			NeuronFlyouts:Flyout_ReleaseButton(fbutton, button)
 		end
 
 		if (data) then
 			for spell, source in keySort(data) do
-				button = self:Flyout_GetButton()
+				button = NeuronFlyouts:Flyout_GetButton(fbutton)
 
 				local _, _, icon = GetSpellInfo(spell) --make sure the right icon is applied
 				if (icon) then
@@ -955,8 +958,8 @@ function BUTTON:Flyout_UpdateButtons(init)
 					button.macroshow = spell
 
 					if (IsEquippableItem(spell)) then
-						if (self.flyout.keys:find("#%d+")) then
-							slot = self.flyout.keys:match("%d+").." "
+						if (fbutton.flyout.keys:find("#%d+")) then
+							slot = fbutton.flyout.keys:match("%d+").." "
 						end
 
 						if (slot) then
@@ -1012,8 +1015,8 @@ function BUTTON:Flyout_UpdateButtons(init)
 					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..button.macroshow.."\n/stopmacro [nobtn:2]\n/flyout "..flyout.options)
 				end
 
-				if (not macroSet and not self.data.macro_Text:find("nobtn:2")) then
-					self.data.macro_Text = button:GetAttribute("flyoutMacro"); macroSet = true
+				if (not macroSet and not fbutton.data.macro_Text:find("nobtn:2")) then
+					fbutton.data.macro_Text = button:GetAttribute("flyoutMacro"); macroSet = true
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
@@ -1039,13 +1042,13 @@ end
 
 
 
-function BUTTON:Flyout_UpdateBar()
-	self.flyouttop:Hide()
-	self.flyoutbottom:Hide()
-	self.flyoutleft:Hide()
-	self.flyoutright:Hide()
+function NeuronFlyouts:Flyout_UpdateBar(button)
+	button.flyouttop:Hide()
+	button.flyoutbottom:Hide()
+	button.flyoutleft:Hide()
+	button.flyoutright:Hide()
 
-	local flyout = self.flyout
+	local flyout = button.flyout
 	local pointA, pointB, hideArrow, shape, columns, pad
 
 	if (flyout.shape and flyout.shape:lower():find("^c")) then
@@ -1104,39 +1107,39 @@ function BUTTON:Flyout_UpdateBar()
 		flyout.bar.gdata.arcLength = 359
 	end
 	flyout.bar:ClearAllPoints()
-	flyout.bar:SetPoint(pointA, self, pointB, 0, 0)
-	flyout.bar:SetFrameStrata(self:GetFrameStrata())
-	flyout.bar:SetFrameLevel(self:GetFrameLevel()+1)
+	flyout.bar:SetPoint(pointA, button, pointB, 0, 0)
+	flyout.bar:SetFrameStrata(button:GetFrameStrata())
+	flyout.bar:SetFrameLevel(button:GetFrameLevel()+1)
 
 	if (not hideArrow) then
 		if (pointB == "TOP") then
-			self.flyout.arrowPoint = "TOP"
-			self.flyout.arrowX = 0
-			self.flyout.arrowY = 5
-			self.flyout.arrow = self.flyouttop
-			self.flyout.arrow:Show()
+			button.flyout.arrowPoint = "TOP"
+			button.flyout.arrowX = 0
+			button.flyout.arrowY = 5
+			button.flyout.arrow = button.flyouttop
+			button.flyout.arrow:Show()
 		elseif (pointB == "BOTTOM") then
-			self.flyout.arrowPoint = "BOTTOM"
-			self.flyout.arrowX = 0
-			self.flyout.arrowY = -5
-			self.flyout.arrow = self.flyoutbottom
-			self.flyout.arrow:Show()
+			button.flyout.arrowPoint = "BOTTOM"
+			button.flyout.arrowX = 0
+			button.flyout.arrowY = -5
+			button.flyout.arrow = button.flyoutbottom
+			button.flyout.arrow:Show()
 		elseif (pointB == "LEFT") then
-			self.flyout.arrowPoint = "LEFT"
-			self.flyout.arrowX = -5
-			self.flyout.arrowY = 0
-			self.flyout.arrow = self.flyoutleft
-			self.flyout.arrow:Show()
+			button.flyout.arrowPoint = "LEFT"
+			button.flyout.arrowX = -5
+			button.flyout.arrowY = 0
+			button.flyout.arrow = button.flyoutleft
+			button.flyout.arrow:Show()
 		elseif (pointB == "RIGHT") then
-			self.flyout.arrowPoint = "RIGHT"
-			self.flyout.arrowX = 5
-			self.flyout.arrowY = 0
-			self.flyout.arrow = self.flyoutright
-			self.flyout.arrow:Show()
+			button.flyout.arrowPoint = "RIGHT"
+			button.flyout.arrowX = 5
+			button.flyout.arrowY = 0
+			button.flyout.arrow = button.flyoutright
+			button.flyout.arrow:Show()
 		end
 	end
 
-	self:Anchor_Update()
+	NeuronFlyouts:Anchor_Update(button)
 
 	tinsert(barsToUpdate, flyout.bar)
 
@@ -1144,37 +1147,37 @@ function BUTTON:Flyout_UpdateBar()
 end
 
 
-function BUTTON:Flyout_RemoveButtons()
-	for _,button in pairs(self.flyout.buttons) do
-		self:Flyout_ReleaseButton(button)
+function NeuronFlyouts:Flyout_RemoveButtons(fbutton)
+	for _,button in pairs(fbutton.flyout.buttons) do
+		NeuronFlyouts:Flyout_ReleaseButton(fbutton, button)
 	end
 end
 
-function BUTTON:Flyout_RemoveBar()
-	self.flyouttop:Hide()
-	self.flyoutbottom:Hide()
-	self.flyoutleft:Hide()
-	self.flyoutright:Hide()
+function NeuronFlyouts:Flyout_RemoveBar(button)
+	button.flyouttop:Hide()
+	button.flyoutbottom:Hide()
+	button.flyoutleft:Hide()
+	button.flyoutright:Hide()
 
-	self:Anchor_Update(true)
+	NeuronFlyouts:Anchor_Update(button, true)
 
-	self:Flyout_ReleaseBar(self.flyout.bar)
+	NeuronFlyouts:Flyout_ReleaseBar(button, button.flyout.bar)
 end
 
-function BUTTON:UpdateFlyout(init)
-	local options = self.data.macro_Text:match("/flyout%s(%C+)")
-	if (self.flyout) then
-		self:Flyout_RemoveButtons()
-		self:Flyout_RemoveBar()
+function NeuronFlyouts:UpdateFlyout(button, init)
+	local options = button.data.macro_Text:match("/flyout%s(%C+)")
+	if (button.flyout) then
+		NeuronFlyouts:Flyout_RemoveButtons(button)
+		NeuronFlyouts:Flyout_RemoveBar(button)
 	end
 
 	if (options) then
-		if (not self.flyout) then
-			self.flyout = { buttons = {} }
+		if (not button.flyout) then
+			button.flyout = { buttons = {} }
 		end
 
-		local flyout = self.flyout
-		flyout.bar = self:Flyout_GetBar()
+		local flyout = button.flyout
+		flyout.bar = NeuronFlyouts:Flyout_GetBar(button)
 		flyout.options = options
 		flyout.types = select(1, (":"):split(options))
 		flyout.keys = select(2, (":"):split(options))
@@ -1185,24 +1188,25 @@ function BUTTON:UpdateFlyout(init)
 		flyout.mode = select(7, (":"):split(options))
 		flyout.hideArrow = select(8, (":"):split(options))
 
-		self:Flyout_UpdateButtons(init)
-		self:Flyout_UpdateBar()
+		NeuronFlyouts:Flyout_UpdateButtons(button, init)
+		NeuronFlyouts:Flyout_UpdateBar(button)
 
-		if (not self.bar.watchframes) then
-			self.bar.watchframes = {}
+		if (not button.bar.watchframes) then
+			button.bar.watchframes = {}
 		end
 
-		self.bar.watchframes[flyout.bar.handler] = true
+		button.bar.watchframes[flyout.bar.handler] = true
 
-		ANCHORIndex[self] = true
+		ANCHORIndex[button] = true
 	else
-		ANCHORIndex[self] = nil; self.flyout = nil
+		ANCHORIndex[button] = nil
+		button.flyout = nil
 	end
 end
 
 
-function BUTTON:Flyout_ReleaseButton(button)
-	self.flyout.buttons[button.id] = nil
+function NeuronFlyouts:Flyout_ReleaseButton(fbutton, button)
+	fbutton.flyout.buttons[button.id] = nil
 
 	button.stored = true
 
@@ -1240,8 +1244,6 @@ function BUTTON:Flyout_SetData(bar)
 
 	self.hotkey:Hide()
 	self.macroname:Hide()
-	self.count:Show()
-
 	self:RegisterForClicks("AnyUp")
 
 	self.equipcolor = { 0.1, 1, 0.1, 1 }
@@ -1263,29 +1265,29 @@ function BUTTON:Flyout_SetData(bar)
 end
 
 
-function BUTTON:Flyout_PostClick()
-	local button = self.anchor
-	button.data.macro_Text = self:GetAttribute("flyoutMacro")
-	button.data.macro_Icon = self:GetAttribute("macro_Icon") or false
-	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
+function NeuronFlyouts:Flyout_PostClick(fbutton)
+	local button = fbutton.anchor
+	button.data.macro_Text = fbutton:GetAttribute("flyoutMacro")
+	button.data.macro_Icon = fbutton:GetAttribute("macro_Icon") or false
+	button.data.macro_Name = fbutton:GetAttribute("macro_Name") or nil
 
 	NEURON.NeuronButton:MACRO_UpdateParse(button)
 	NEURON.NeuronButton:MACRO_Reset(button)
 	NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
-	NEURON.NeuronButton:MACRO_UpdateState(self)
+	NEURON.NeuronButton:MACRO_UpdateState(fbutton)
 end
 
-function BUTTON:Flyout_GetButton()
+function NeuronFlyouts:Flyout_GetButton(fbutton)
 	local id = 1
 
 	for _,button in ipairs(FOBTNIndex) do
 		if (button.stored) then
-			button.anchor = self
-			button.bar = self.flyout.bar
+			button.anchor = fbutton
+			button.bar = fbutton.flyout.bar
 			button.stored = false
 
-			self.flyout.buttons[button.id] = button
+			fbutton.flyout.buttons[button.id] = button
 
 			button:Show()
 			return button
@@ -1314,8 +1316,8 @@ function BUTTON:Flyout_GetButton()
 	button.objType = "FLYOUTBUTTON"
 	button.data = { macro_Text = "" }
 
-	button.anchor = self
-	button.bar = self.flyout.bar
+	button.anchor = fbutton
+	button.bar = fbutton.flyout.bar
 	button.stored = false
 
 	SecureHandler_OnLoad(button)
@@ -1323,10 +1325,10 @@ function BUTTON:Flyout_GetButton()
 	button:SetAttribute("type1", "macro")
 	button:SetAttribute("*macrotext1", "")
 
-	button:SetScript("PostClick", BUTTON.Flyout_PostClick)
+	button:SetScript("PostClick", function(self) NeuronFlyouts:Flyout_PostClick(self) end)
 	button:SetScript("OnEnter", function(self, ...) NEURON.NeuronButton:MACRO_OnEnter(self, ...) end)
 	button:SetScript("OnLeave", function(self, ...) NEURON.NeuronButton:MACRO_OnLeave(self, ...) end)
-	button:SetScript("OnEvent", self:GetScript("OnEvent"))
+	--button:SetScript("OnEvent", self:GetScript("OnEvent"))
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
 	button:HookScript("OnShow", function(self) NEURON.NeuronButton:MACRO_UpdateButton(self) NEURON.NeuronButton:MACRO_UpdateIcon(self); NEURON.NeuronButton:MACRO_UpdateState(self) end)
@@ -1339,20 +1341,20 @@ function BUTTON:Flyout_GetButton()
 			self:GetParent():Hide()
 	]])
 
-	button.SetData = BUTTON.Flyout_SetData
-	button:SetData(self.flyout.bar)
+	button.SetData = BUTTON.Flyout_SetData --overwrite the default button SetData function
+	button:SetData(fbutton.flyout.bar)
 	NEURON.NeuronButton:SetSkinned(button, true)
 	button:Show()
 
-	self.flyout.buttons[id] = button
+	fbutton.flyout.buttons[id] = button
 
 	FOBTNIndex[id] = button
 	return button
 end
 
 
-function BUTTON:Flyout_ReleaseBar(bar)
-	self.flyout.bar = nil
+function NeuronFlyouts:Flyout_ReleaseBar(button, bar)
+	button.flyout.bar = nil
 
 	bar.stored = true
 	bar:SetWidth(43)
@@ -1362,11 +1364,11 @@ function BUTTON:Flyout_ReleaseBar(bar)
 	bar:SetParent(STORAGE)
 	bar:SetPoint("CENTER")
 
-	self.bar.watchframes[bar.handler] = nil
+	button.bar.watchframes[bar.handler] = nil
 end
 
 
-function BUTTON:Flyout_GetBar()
+function NeuronFlyouts:Flyout_GetBar(button)
 	local id = 1
 
 	for _,bar in ipairs(FOBARIndex) do
@@ -1381,7 +1383,7 @@ function BUTTON:Flyout_GetBar()
 
 	local bar = CreateFrame("CheckButton", "NeuronFlyoutBar"..id, UIParent, "NeuronBarTemplate")
 
-	setmetatable(bar, { __index = BAR })
+	setmetatable(bar, {__index = CreateFrame("CheckButton")})
 
 	bar.index = id
 	bar.class = "bar"
@@ -1423,14 +1425,14 @@ function BUTTON:Flyout_GetBar()
 end
 
 
-function BUTTON:Anchor_RemoveChild()
-	local child = self.flyout.bar and self.flyout.bar.handler
+function NeuronFlyouts:Anchor_RemoveChild(button)
+	local child = button.flyout.bar and button.flyout.bar.handler
 
 	if (child) then
-		self:UnwrapScript(self, "OnEnter")
-		self:UnwrapScript(self, "OnLeave")
-		self:UnwrapScript(self, "OnClick")
-		self:SetAttribute("click-show", nil)
+		button:UnwrapScript(button, "OnEnter")
+		button:UnwrapScript(button, "OnLeave")
+		button:UnwrapScript(button, "OnClick")
+		button:SetAttribute("click-show", nil)
 
 		child:SetAttribute("timedelay", nil)
 		child:SetAttribute("_childupdate-onmouse", nil)
@@ -1441,16 +1443,16 @@ function BUTTON:Anchor_RemoveChild()
 	end
 end
 
-function BUTTON:Anchor_UpdateChild()
-	local child = self.flyout.bar and self.flyout.bar.handler
+function NeuronFlyouts:Anchor_UpdateChild(button)
+	local child = button.flyout.bar and button.flyout.bar.handler
 
 	if (child) then
-		local mode = self.flyout.mode
+		local mode = button.flyout.mode
 		local delay
 
 		if (mode == "click") then
-			self:SetAttribute("click-show", "hide")
-			self:WrapScript(self, "OnClick", [[
+			button:SetAttribute("click-show", "hide")
+			button:WrapScript(button, "OnClick", [[
 							if (button == "RightButton") then
 								if (self:GetAttribute("click-show") == "hide") then
 									self:SetAttribute("click-show", "show")
@@ -1474,11 +1476,11 @@ function BUTTON:Anchor_UpdateChild()
 			child:SetAttribute("timedelay", tonumber(delay) or 0)
 			child:SetAttribute("_childupdate-onclick", [[ if (message == "show") then self:Show() else self:Hide() end ]] )
 
-			child:SetParent(self)
+			child:SetParent(button)
 
 		elseif (mode == "mouse") then
-			self:WrapScript(self, "OnEnter", [[ control:ChildUpdate("onmouse", "enter") ]])
-			self:WrapScript(self, "OnLeave", [[ if (not self:IsUnderMouse(true)) then control:ChildUpdate("onmouse", "leave") end ]])
+			button:WrapScript(button, "OnEnter", [[ control:ChildUpdate("onmouse", "enter") ]])
+			button:WrapScript(button, "OnLeave", [[ if (not self:IsUnderMouse(true)) then control:ChildUpdate("onmouse", "leave") end ]])
 
 			child:SetAttribute("timedelay", tonumber(delay) or 0)
 			child:SetAttribute("_childupdate-onmouse", [[ if (message == "enter") then self:Show() elseif (message == "leave") then self:Hide() end ]] )
@@ -1493,65 +1495,65 @@ function BUTTON:Anchor_UpdateChild()
 
 			child:WrapScript(child, "OnHide", [[ self:UnregisterAutoHide() ]])
 
-			child:SetParent(self)
+			child:SetParent(button)
 		end
 	end
 end
 
 
-function BUTTON:Anchor_Update(reMove)
+function NeuronFlyouts:Anchor_Update(button, reMove)
 	if (reMove) then
-		self:Anchor_RemoveChild()
+		NeuronFlyouts:Anchor_RemoveChild(button)
 	else
-		self:Anchor_UpdateChild()
+		NeuronFlyouts:Anchor_UpdateChild(button)
 	end
 end
 
-function NeuronFlyouts.updateAnchors(self, elapsed)
+function NeuronFlyouts:updateAnchors(button, elapsed)
 
-	if not self.elapsed then
-		self.elapsed = 0
+	if not button.elapsed then
+		button.elapsed = 0
 	end
 
-	self.elapsed = self.elapsed + elapsed
+	button.elapsed = button.elapsed + elapsed
 
-	if (self.elapsed > GDB.throttle and NEURON.PEW) then
+	if (button.elapsed > GDB.throttle and NEURON.PEW) then
 
 		if (not InCombatLockdown()) then
 			local anchor = tremove(needsUpdate)
 
 			if (anchor) then
-				anchor:Flyout_UpdateButtons(nil)
+				NeuronFlyouts:Flyout_UpdateButtons(anchor, nil)
 			else
 
-				self:Hide();
+				button:Hide();
 			end
 		end
 
-		self.elapsed = 0
+		button.elapsed = 0
 	end
 end
 
 
-function NeuronFlyouts.linkScanOnUpdate(self, elapsed)
+function NeuronFlyouts:linkScanOnUpdate(button, elapsed)
 
-	if not self.elapsed then
-		self.elapsed = 0
+	if not button.elapsed then
+		button.elapsed = 0
 	end
 
-	self.elapsed = self.elapsed + elapsed
+	button.elapsed = button.elapsed + elapsed
 
-	if (self.elapsed > GDB.throttle and NEURON.PEW) then
+	if (button.elapsed > GDB.throttle and NEURON.PEW) then
 		-- scan X items per frame draw, where X is the for limit
 		for i=1,2 do
-			self.link = itemLinks[self.index]
-			if (self.link) then
-				local name = GetItemInfo(self.link)
+			button.link = itemLinks[button.index]
+			if (button.link) then
+				local name = GetItemInfo(button.link)
 
 				if (name) then
 					local tooltip, text = " ", " "
 					NeuronTooltipScan:SetOwner(control,"ANCHOR_NONE")
-					NeuronTooltipScan:SetHyperlink(self.link)
+					NeuronTooltipScan:SetHyperlink(button.link)
 
 					for i,string in ipairs(tooltipStrings) do
 						text = string:GetText()
@@ -1561,24 +1563,24 @@ function NeuronFlyouts.linkScanOnUpdate(self, elapsed)
 					end
 
 					itemTooltips[name:lower()] = tooltip:lower()
-					self.count = self.count + 1
+					button.count = button.count + 1
 				end
 			end
 
-			self.index = next(itemLinks, self.index)
+			button.index = next(itemLinks, button.index)
 
-			if not (self.index) then
-				--NEURON:Print("Scanned "..self.count.." items in "..self.elapsed.." seconds")
-				self:Hide(); anchorUpdater:Show()
+			if not (button.index) then
+				--NEURON:Print("Scanned "..button.count.." items in "..button.elapsed.." seconds")
+				button:Hide(); anchorUpdater:Show()
 			end
 		end
 
-		self.elapsed = 0
+		button.elapsed = 0
 	end
 end
 
 
-function NeuronFlyouts.command_flyout(options)
+function NeuronFlyouts:command_flyout(options)
 
 
 	if (InCombatLockdown()) then
@@ -1589,30 +1591,30 @@ function NeuronFlyouts.command_flyout(options)
 
 	if (button) then
 		if (not button.options or button.options ~= options) then
-			button:UpdateFlyout(options)
+			NEURON.NeuronFlyouts:UpdateFlyout(button, options)
 		end
 	end
 end
 
 
 
-function NeuronFlyouts.ANCHOR_DelayedUpdate(self, elapsed)
+function NeuronFlyouts:ANCHOR_DelayedUpdate(button, elapsed)
 
-	if not self.elapsed then
-		self.elapsed = 0
+	if not button.elapsed then
+		button.elapsed = 0
 	end
 
-	self.elapsed = self.elapsed + elapsed
+	button.elapsed = button.elapsed + elapsed
 
-	if (self.elapsed > GDB.throttle and NEURON.PEW) then
+	if (button.elapsed > GDB.throttle and NEURON.PEW) then
 
 		for anchor in pairs(ANCHORIndex) do
 			tinsert(needsUpdate, anchor)
 		end
 
 		anchorUpdater:Show()
-		self:Hide()
+		button:Hide()
 
-		self.elapsed = 0
+		button.elapsed = 0
 	end
 end

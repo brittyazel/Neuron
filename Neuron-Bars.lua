@@ -1842,7 +1842,7 @@ function NeuronBar:UpdateObjectSpec(bar)
 
 			object:SetData(bar)
 			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
-			object:UpdateFlyout()
+			NEURON.NeuronFlyouts:UpdateFlyout(object)
 			object:SetType()
 			object:SetGrid()
 		end
