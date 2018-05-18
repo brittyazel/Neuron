@@ -1315,7 +1315,7 @@ end
 function NeuronButton:MACRO_UpdateTexture(button, force)
 	local hasAction = NeuronButton:MACRO_HasAction(button)
 
-	if (not button:GetSkinned()) then
+	if (not NeuronButton:GetSkinned(button)) then
 		if (hasAction or force) then
 			button:SetNormalTexture(button.hasAction or "")
 			button:GetNormalTexture():SetVertexColor(1,1,1,1)
@@ -2707,7 +2707,7 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 
 				button.data = button.statedata[value]
 
-				button:MACRO_UpdateParse()
+				NeuronButton:MACRO_UpdateParse(button)
 
 				NeuronButton:MACRO_Reset(button)
 
@@ -2750,73 +2750,73 @@ function NeuronButton:MACRO_Reset(button)
 end
 
 
-function BUTTON:MACRO_UpdateParse()
-	self.macroparse = self.data.macro_Text
+function NeuronButton:MACRO_UpdateParse(button)
+	button.macroparse = button.data.macro_Text
 
-	if (#self.macroparse > 0) then
-		self.macroparse = "\n"..self.macroparse.."\n"
-		self.macroparse = (self.macroparse):gsub("(%c+)", " %1")
+	if (#button.macroparse > 0) then
+		button.macroparse = "\n"..button.macroparse.."\n"
+		button.macroparse = (button.macroparse):gsub("(%c+)", " %1")
 	else
-		self.macroparse = nil
+		button.macroparse = nil
 	end
 end
 
 
-function BUTTON:SetSkinned(flyout)
+function NeuronButton:SetSkinned(button, flyout)
 	if (SKIN) then
-		local bar = self.bar
+		local bar = button.bar
 
 		if (bar) then
 			local btnData = {
-				Normal = self.normaltexture,
-				Icon = self.iconframeicon,
-				Cooldown = self.iconframecooldown,
-				HotKey = self.hotkey,
-				Count = self.count,
-				Name = self.name,
-				Border = self.border,
+				Normal = button.normaltexture,
+				Icon = button.iconframeicon,
+				Cooldown = button.iconframecooldown,
+				HotKey = button.hotkey,
+				Count = button.count,
+				Name = button.name,
+				Border = button.border,
 				AutoCast = false,
 			}
 
 			if (flyout) then
-				SKIN:Group("Neuron", self.anchor.bar.gdata.name):AddButton(self, btnData)
+				SKIN:Group("Neuron", button.anchor.bar.gdata.name):AddButton(button, btnData)
 			else
-				SKIN:Group("Neuron", bar.gdata.name):AddButton(self, btnData)
+				SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
 			end
 
-			self.skinned = true
+			button.skinned = true
 
-			SKINIndex[self] = true
+			SKINIndex[button] = true
 		end
 	end
 end
 
 
-function BUTTON:GetSkinned()
-	if (self.__MSQ_NormalTexture) then
-		local Skin = self.__MSQ_NormalSkin
+function NeuronButton:GetSkinned(button)
+	if (button.__MSQ_NormalTexture) then
+		local Skin = button.__MSQ_NormalSkin
 
 		if (Skin) then
-			self.hasAction = Skin.Texture or false
-			self.noAction = Skin.EmptyTexture or false
+			button.hasAction = Skin.Texture or false
+			button.noAction = Skin.EmptyTexture or false
 
-			if (self.__MSQ_Shape) then
-				self.shape = self.__MSQ_Shape:lower()
+			if (button.__MSQ_Shape) then
+				button.shape = button.__MSQ_Shape:lower()
 			else
-				self.shape = "square"
+				button.shape = "square"
 			end
 		else
-			self.hasAction = false
-			self.noAction = false
-			self.shape = "square"
+			button.hasAction = false
+			button.noAction = false
+			button.shape = "square"
 		end
 
-		self.shine.shape = self.shape
+		button.shine.shape = button.shape
 
 		return true
 	else
-		self.hasAction = "Interface\\Buttons\\UI-Quickslot2"
-		self.noAction = "Interface\\Buttons\\UI-Quickslot"
+		button.hasAction = "Interface\\Buttons\\UI-Quickslot2"
+		button.noAction = "Interface\\Buttons\\UI-Quickslot"
 
 		return false
 	end
@@ -2968,7 +2968,7 @@ function BUTTON:SetData(bar)
 	self.iconframecooldown:SetFrameLevel(3)
 	self.iconframeaurawatch:SetFrameLevel(3)
 
-	self:GetSkinned()
+	NeuronButton:GetSkinned(self)
 
 	NeuronButton:MACRO_UpdateTimers(self)
 end
@@ -3184,7 +3184,7 @@ function BUTTON:SetGrid(show, hide)
 end
 
 function BUTTON:SetAux()
-	self:SetSkinned()
+	NeuronButton:SetSkinned(self)
 	self:UpdateFlyout(true)
 end
 
@@ -3239,7 +3239,7 @@ function BUTTON:SetType(save, kill, init)
 		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
-		self:MACRO_UpdateParse()
+		NeuronButton:MACRO_UpdateParse(self)
 
 		self:SetAttribute("type", "macro")
 		self:SetAttribute("*macrotext*", self.macroparse)
@@ -3529,7 +3529,7 @@ function NEURON:SKINCallback(group,...)
 	if (group) then
 		for btn in pairs(SKINIndex) do
 			if (btn.bar and btn.bar.gdata.name == group) then
-				btn:GetSkinned()
+				NeuronButton:GetSkinned(btn)
 			end
 		end
 	end

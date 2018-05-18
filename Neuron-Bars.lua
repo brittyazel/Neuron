@@ -1183,7 +1183,7 @@ function NeuronBar:LoadObjects(bar, init)
 		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			--bar.objTable[object.objTIndex][2] = 0
+			test = object
 			object:SetData(bar)
 			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
 			object:SetAux()
@@ -2196,7 +2196,7 @@ function NeuronBar:StoreObject(bar, object, storage, objTable)
 		object.binder:ClearBindings(object)
 	end
 
-	object:SaveData()
+	NEURON.NeuronButton:SaveData(object)
 
 	--NEURON.UpdateAnchor(button, nil, nil, nil, true)
 

@@ -1017,7 +1017,7 @@ function BUTTON:Flyout_UpdateButtons(init)
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
-				button:MACRO_UpdateParse()
+				NEURON.NeuronButton:MACRO_UpdateParse(button)
 				NEURON.NeuronButton:MACRO_Reset(button)
 				NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
@@ -1259,7 +1259,7 @@ function BUTTON:Flyout_SetData(bar)
 	self.iconframecooldown:SetFrameLevel(3)
 	self.iconframeaurawatch:SetFrameLevel(3)
 
-	self:GetSkinned()
+	NEURON.NeuronButton:GetSkinned(self)
 end
 
 
@@ -1269,7 +1269,7 @@ function BUTTON:Flyout_PostClick()
 	button.data.macro_Icon = self:GetAttribute("macro_Icon") or false
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
-	button:MACRO_UpdateParse()
+	NEURON.NeuronButton:MACRO_UpdateParse(button)
 	NEURON.NeuronButton:MACRO_Reset(button)
 	NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
@@ -1341,7 +1341,7 @@ function BUTTON:Flyout_GetButton()
 
 	button.SetData = BUTTON.Flyout_SetData
 	button:SetData(self.flyout.bar)
-	button:SetSkinned(true)
+	NEURON.NeuronButton:SetSkinned(button, true)
 	button:Show()
 
 	self.flyout.buttons[id] = button

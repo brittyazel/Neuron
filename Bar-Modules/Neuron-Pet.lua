@@ -59,9 +59,10 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronPetBar:OnInitialize()
 
+	--creates pointers to these functions
 	PETBTN.SetTimer = NEURON.NeuronButton.SetTimer
-	PETBTN.SetSkinned = BUTTON.SetSkinned
-	PETBTN.GetSkinned = BUTTON.GetSkinned
+	PETBTN.SetSkinned = NEURON.NeuronButton.SetSkinned
+	PETBTN.GetSkinned = NEURON.NeuronButton.GetSkinned
 	PETBTN.CreateBindFrame = BUTTON.CreateBindFrame
 
 
@@ -285,7 +286,7 @@ function PETBTN:PET_UpdateTexture(force)
 
 	local actionID = self.actionID
 
-	if (not self:GetSkinned()) then
+	if (not PETBTN:GetSkinned(self)) then
 
 		if (HasPetAction(actionID, true) or force) then
 			self:SetNormalTexture(self.hasAction or "")
@@ -588,7 +589,7 @@ function PETBTN:SetData(bar)
 	self.iconframeaurawatch:SetFrameLevel(3)
 	self.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
 
-	self:GetSkinned()
+	--self:GetSkinned()
 end
 
 function PETBTN:SaveData()
@@ -663,7 +664,7 @@ end
 
 function PETBTN:SetAux()
 
-	self:SetSkinned()
+	--self:SetSkinned()
 
 end
 

@@ -1,5 +1,16 @@
 ﻿--Neuron Bag Bar, a World of Warcraft® user interface addon.
 
+
+
+--[[ToDO: we need to continue refactoring the different classes to store all funcitons per-class. This is getting tricky
+- with things like "SetData" which has a different one per bar. So we'll need to a) refactor all these at the same time,
+and B, create a symlink inside of each object to it's classes SetData function, now that functions are moving out of object
+and into the classes.
+List of functions to postpone refactoring:
+1)SetData-
+ ]]
+
+
 local NEURON = Neuron
 local  DB
 

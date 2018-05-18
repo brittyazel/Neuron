@@ -200,7 +200,7 @@ function BINDER:ProcessBinding(key, button)
 		self:OnEnter()
 	end
 
-	button:SaveData()
+	NEURON.NeuronButton:SaveData(button)
 end
 
 
