@@ -14,6 +14,8 @@ List of functions to postpone refactoring:
 3)SetAux
 4)SetType
 5)SetGrid()
+6)LoadAux
+7)SetDefaults
  ]]
 
 

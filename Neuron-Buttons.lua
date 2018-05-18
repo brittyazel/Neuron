@@ -210,7 +210,7 @@ function NeuronButton:OnInitialize()
 	}
 
 	if (SKIN) then
-		SKIN:Register("Neuron", NEURON.SKINCallback, true)
+		SKIN:Register("Neuron", NeuronButton:SKINCallback(self, SKIN), true)
 	end
 end
 
@@ -1779,10 +1779,10 @@ function NeuronButton:MACRO_PlaceSpell(button, action1, action2, spellID)
 	local spellInfoName , subName, icon, castTime, minRange, maxRange= GetSpellInfo(spellID)
 
 	if AlternateSpellNameList[spellID] or not spell then
-		button.data.macro_Text = button:AutoWriteMacro(spellInfoName)
+		button.data.macro_Text = NeuronButton:AutoWriteMacro(button, spellInfoName)
 		button.data.macro_Auto = spellInfoName..";"
 	else
-		button.data.macro_Text = button:AutoWriteMacro(spell, subName)
+		button.data.macro_Text = NeuronButton:AutoWriteMacro(button, spell, subName)
 		button.data.macro_Auto = spell..";"..subName
 	end
 
@@ -1975,7 +1975,7 @@ function NeuronButton:MACRO_PlaceCompanion(button, action1, action2, hasAction)
 
 		if (name) then
 			button.data.macro_Name = name
-			button.data.macro_Text = button:AutoWriteMacro(name)
+			button.data.macro_Text = NeuronButton:AutoWriteMacro(button, name)
 			button.data.macro_Auto = name
 		else
 			button.data.macro_Name = ""
@@ -2009,7 +2009,7 @@ function NeuronButton:MACRO_PlaceFlyout(button, action1, action2, hasAction)
 		local columns = button.bar.gdata.columns or count
 		local rows = count/columns
 
-		local point = button:GetPosition(UIParent)
+		local point = NeuronButton:GetPosition(button, UIParent)
 
 		if (columns/rows > 1) then
 
@@ -2974,14 +2974,14 @@ function BUTTON:SetData(bar)
 end
 
 
-function BUTTON:SaveData(state)
-	local index, spec = self.id, GetSpecialization()
+function NeuronButton:SaveData(button, state)
+	local index, spec = button.id, GetSpecialization()
 
 
 
 
 	if (not state) then
-		state = self:GetParent():GetAttribute("activestate") or "homestate"
+		state = button:GetParent():GetAttribute("activestate") or "homestate"
 	end
 
 	--Possible fix to keep the home state action from getting overwritten
@@ -2997,7 +2997,7 @@ function BUTTON:SaveData(state)
 			btnGDB[index].config = CopyTable(configData)
 		end
 
-		for key,value in pairs(self.config) do
+		for key,value in pairs(button.config) do
 			btnGDB[index].config[key] = value
 		end
 
@@ -3010,11 +3010,11 @@ function BUTTON:SaveData(state)
 		end
 
 		if (CDB.perCharBinds) then
-			for key,value in pairs(self.keys) do
+			for key,value in pairs(button.keys) do
 				btnCDB[index].keys[key] = value
 			end
 		else
-			for key,value in pairs(self.keys) do
+			for key,value in pairs(button.keys) do
 				btnGDB[index].keys[key] = value
 			end
 		end
@@ -3027,19 +3027,19 @@ function BUTTON:SaveData(state)
 			btnCDB[index][spec][state] = CopyTable(stateData)
 		end
 
-		for key,value in pairs(self.data) do
+		for key,value in pairs(button.data) do
 			btnCDB[index][spec][state][key] = value
 		end
 
-		self:BuildStateData()
+		NeuronButton:BuildStateData(button)
 
 	else
-		NEURON:Print("DEBUG: Bad Save Data for "..self:GetName().." ?")
+		NEURON:Print("DEBUG: Bad Save Data for "..button:GetName().." ?")
 		NEURON:Print(index); NEURON:Print(spec); NEURON:Print(state)
 	end
 end
 
-
+---TODO refactor this to NeuronButton
 function BUTTON:LoadData(spec, state)
 	local id = self.id
 
@@ -3127,48 +3127,48 @@ function BUTTON:LoadData(spec, state)
 
 		self.data = self.statedata[state]
 
-		self:BuildStateData()
+		NeuronButton:BuildStateData(self)
 	end
 end
 
 
-function BUTTON:BuildStateData()
-	for state, data in pairs(self.statedata) do
-		self:SetAttribute(state.."-macro_Text", data.macro_Text)
-		self:SetAttribute(state.."-actionID", data.actionID)
+function NeuronButton:BuildStateData(button)
+	for state, data in pairs(button.statedata) do
+		button:SetAttribute(state.."-macro_Text", data.macro_Text)
+		button:SetAttribute(state.."-actionID", data.actionID)
 	end
 end
 
 
-function BUTTON:Reset()
-	self:SetAttribute("unit", nil)
-	self:SetAttribute("useparent-unit", nil)
-	self:SetAttribute("type", nil)
-	self:SetAttribute("type1", nil)
-	self:SetAttribute("type2", nil)
-	self:SetAttribute("*action*", nil)
-	self:SetAttribute("*macrotext*", nil)
-	self:SetAttribute("*action1", nil)
-	self:SetAttribute("*macrotext2", nil)
+function NeuronButton:Reset(button)
+	button:SetAttribute("unit", nil)
+	button:SetAttribute("useparent-unit", nil)
+	button:SetAttribute("type", nil)
+	button:SetAttribute("type1", nil)
+	button:SetAttribute("type2", nil)
+	button:SetAttribute("*action*", nil)
+	button:SetAttribute("*macrotext*", nil)
+	button:SetAttribute("*action1", nil)
+	button:SetAttribute("*macrotext2", nil)
 
-	self:UnregisterEvent("ITEM_LOCK_CHANGED")
-	self:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
-	self:UnregisterEvent("ACTIONBAR_SHOWGRID")
-	self:UnregisterEvent("ACTIONBAR_HIDEGRID")
-	self:UnregisterEvent("PET_BAR_SHOWGRID")
-	self:UnregisterEvent("PET_BAR_HIDEGRID")
-	self:UnregisterEvent("PET_BAR_UPDATE")
-	self:UnregisterEvent("PET_BAR_UPDATE_COOLDOWN")
-	self:UnregisterEvent("UNIT_FLAGS")
-	self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-	self:UnregisterEvent("UPDATE_MACROS")
-	self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	self:UnregisterEvent("EQUIPMENT_SETS_CHANGED")
+	button:UnregisterEvent("ITEM_LOCK_CHANGED")
+	button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
+	button:UnregisterEvent("ACTIONBAR_SHOWGRID")
+	button:UnregisterEvent("ACTIONBAR_HIDEGRID")
+	button:UnregisterEvent("PET_BAR_SHOWGRID")
+	button:UnregisterEvent("PET_BAR_HIDEGRID")
+	button:UnregisterEvent("PET_BAR_UPDATE")
+	button:UnregisterEvent("PET_BAR_UPDATE_COOLDOWN")
+	button:UnregisterEvent("UNIT_FLAGS")
+	button:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+	button:UnregisterEvent("UPDATE_MACROS")
+	button:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+	button:UnregisterEvent("EQUIPMENT_SETS_CHANGED")
 
-	NeuronButton:MACRO_Reset(self)
+	NeuronButton:MACRO_Reset(button)
 end
 
-
+---TODO refactor this to NeuronButton
 function BUTTON:SetGrid(show, hide)
 	if (not InCombatLockdown()) then
 
@@ -3183,12 +3183,14 @@ function BUTTON:SetGrid(show, hide)
 	end
 end
 
+
+---TODO refactor this to NeuronButton
 function BUTTON:SetAux()
 	NeuronButton:SetSkinned(self)
 	self:UpdateFlyout(true)
 end
 
-
+---TODO refactor this to NeuronButton
 function BUTTON:LoadAux()
 
 	self:CreateEditFrame(self.objTIndex)
@@ -3196,7 +3198,7 @@ function BUTTON:LoadAux()
 
 end
 
-
+---TODO refactor this to NeuronButton
 function BUTTON:SetDefaults(config, keys)
 	if (config) then
 		for k,v in pairs(config) do
@@ -3211,16 +3213,16 @@ function BUTTON:SetDefaults(config, keys)
 	end
 end
 
-
+---TODO refactor this to NeuronButton
 function BUTTON:GetDefaults()
 	return nil, keyDefaults[self.id]
 end
 
-
+---TODO refactor this to NeuronButton
 function BUTTON:SetType(save, kill, init)
 	local state = self:GetParent():GetAttribute("activestate")
 
-	self:Reset()
+	NeuronButton:Reset(self)
 
 	if (kill) then
 
@@ -3361,67 +3363,67 @@ function BUTTON:SetType(save, kill, init)
 	end
 
 	if (save) then
-		self:SaveData(state)
+		NeuronButton:SaveData(self, state)
 	end
 end
 
 
-function BUTTON:SetFauxState(state)
+function NeuronButton:SetFauxState(button, state)
 	if (state)  then
 
 		local msg = (":"):split(state)
 
 		if (msg:find("vehicle")) then
-			if (not self:GetAttribute(msg.."-actionID")) then
+			if (not button:GetAttribute(msg.."-actionID")) then
 
-				self:SetAttribute("type", "action")
-				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-				self:SetAttribute("HasActionID", true)
+				button:SetAttribute("type", "action")
+				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
+				button:SetAttribute("HasActionID", true)
 
 			end
 
-			self:Show()
+			button:Show()
 		elseif (msg:find("possess")) then
-			if (not self:GetAttribute(msg.."-actionID")) then
+			if (not button:GetAttribute(msg.."-actionID")) then
 
-				self:SetAttribute("type", "action")
-				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-				self:SetAttribute("HasActionID", true)
+				button:SetAttribute("type", "action")
+				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
+				button:SetAttribute("HasActionID", true)
 
 			end
 
-			self:Show()
+			button:Show()
 
 		elseif (msg:find("override")) then
-			if (not self:GetAttribute(msg.."-actionID")) then
+			if (not button:GetAttribute(msg.."-actionID")) then
 
-				self:SetAttribute("type", "action")
-				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
-				self:SetAttribute("HasActionID", true)
+				button:SetAttribute("type", "action")
+				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("overrideID_Offset"))
+				button:SetAttribute("HasActionID", true)
 
 			end
 
-			self:Show()
+			button:Show()
 
 		else
-			if (not self:GetAttribute(msg.."-actionID")) then
+			if (not button:GetAttribute(msg.."-actionID")) then
 
-				self:SetAttribute("type", "macro")
+				button:SetAttribute("type", "macro")
 
-				self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
+				button:SetAttribute("*macrotext*", button:GetAttribute(msg.."-macro_Text"))
 
-				if ((self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or (self:GetAttribute("showgrid"))) then
-					self:Show()
-				elseif (not self:GetAttribute("isshown")) then
-					self:Hide()
+				if ((button:GetAttribute("*macrotext*") and #button:GetAttribute("*macrotext*") > 0) or (button:GetAttribute("showgrid"))) then
+					button:Show()
+				elseif (not button:GetAttribute("isshown")) then
+					button:Hide()
 				end
 
-				self:SetAttribute("HasActionID", false)
+				button:SetAttribute("HasActionID", false)
 			else
-				self:SetAttribute("HasActionID", true)
+				button:SetAttribute("HasActionID", true)
 			end
 		end
-		self:SetAttribute("activestate", msg)
+		button:SetAttribute("activestate", msg)
 	end
 end
 
@@ -3430,9 +3432,9 @@ end
 --spell: name of spell to use
 --subname: subname of spell to use (optional)
 --return: macro text
-function BUTTON:AutoWriteMacro(spell, subName)
+function NeuronButton:AutoWriteMacro(button, spell, subName)
 	local modifier, modKey = " ", nil
-	local bar = Neuron.CurrentBar or self.bar
+	local bar = Neuron.CurrentBar or button.bar
 
 	if (bar.cdata.mouseOverCast and NeuronCDB.mouseOverMod ~= "NONE" ) then
 		modKey = NeuronCDB.mouseOverMod; modifier = modifier.."[@mouseover,mod:"..modKey.."]"
@@ -3467,7 +3469,7 @@ end
 --This will update the modifier value in a macro when a bar is set twith a target condiional
 --@spell:  this is hte macro text to be updated
 --return: updated macro text
-function BUTTON:AutoUpdateMacro(macro)
+function NeuronButton:AutoUpdateMacro(button, macro)
 	if (GetModifiedClick("SELFCAST") ~= "NONE" ) then
 		macro = macro:gsub("%[@player,mod:%u+%]", "[@player,mod:"..GetModifiedClick("SELFCAST").."]")
 	else
@@ -3492,18 +3494,18 @@ function BUTTON:AutoUpdateMacro(macro)
 end
 
 
-function BUTTON:GetPosition(oFrame)
+function NeuronButton:GetPosition(button, oFrame)
 	local relFrame, point
 
 	if (oFrame) then
 		relFrame = oFrame
 	else
-		relFrame = self:GetParent()
+		relFrame = button:GetParent()
 	end
 
-	local s = self:GetScale()
+	local s = button:GetScale()
 	local w, h = relFrame:GetWidth()/s, relFrame:GetHeight()/s
-	local x, y = self:GetCenter()
+	local x, y = button:GetCenter()
 	local vert = (y>h/1.5) and "TOP" or (y>h/3) and "CENTER" or "BOTTOM"
 	local horz = (x>w/1.5) and "RIGHT" or (x>w/3) and "CENTER" or "LEFT"
 
@@ -3525,7 +3527,7 @@ end
 
 --callback(arg and arg, Group, SkinID, Gloss, Backdrop, Colors, Fonts)
 
-function NEURON:SKINCallback(group,...)
+function NeuronButton:SKINCallback(button, group,...)
 	if (group) then
 		for btn in pairs(SKINIndex) do
 			if (btn.bar and btn.bar.gdata.name == group) then
@@ -3550,7 +3552,7 @@ end
 -- macro will then be updated to via AutoWriteMacro to include selected target macro option, or via AutoUpdateMacro
 -- to update a current target macro's toggle mofifier.
 -- @param global(boolean): if true will go though all buttons, else it will just update the button set for the current bar
-function BUTTON:UpdateMacroCastTargets(global_update)
+function NeuronButton:UpdateMacroCastTargets(global_update)
 	local button_list = {}
 
 	if global_update then
@@ -3559,7 +3561,7 @@ function BUTTON:UpdateMacroCastTargets(global_update)
 			tinsert(button_list, _G["NeuronActionButton"..index])
 		end
 	else
-		local bar = Neuron.CurrentBar
+		local bar = NEURON.CurrentBar
 		for index in gmatch(bar.gdata.objectList, "[^;]+") do
 			tinsert(button_list, _G["NeuronActionButton"..index])
 		end
@@ -3579,9 +3581,9 @@ function BUTTON:UpdateMacroCastTargets(global_update)
 
 					if spell then
 						if global_update then
-							info.macro_Text = NEURON.BUTTON:AutoUpdateMacro(info.macro_Text)
+							info.macro_Text = NeuronButton:AutoUpdateMacro(button, info.macro_Text)
 						else
-							info.macro_Text = NEURON.BUTTON:AutoWriteMacro(spell, subName)
+							info.macro_Text = NeuronButton:AutoWriteMacro(button, spell, subName)
 						end
 
 					end
@@ -3592,7 +3594,7 @@ function BUTTON:UpdateMacroCastTargets(global_update)
 
 		if macro_update then
 			button:UpdateFlyout()
-			button:BuildStateData()
+			NeuronButton:BuildStateData(button)
 			button:SetType()
 		end
 	end

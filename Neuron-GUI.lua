@@ -868,7 +868,7 @@ function NeuronGUI:updateBarName(frame)
 
 		bar.text:SetText(bar.gdata.name)
 
-		NEURON.Neuronbar:SaveData(bar)
+		NEURON.NeuronBar:SaveData(bar)
 
 		frame:ClearFocus()
 
@@ -2605,7 +2605,7 @@ function NeuronGUI:MacroEditorUpdate()
 
 			data = button.specdata[buttonSpec][state]
 			button:UpdateFlyout()
-			button:BuildStateData()
+			NEURON.NeuronButton:BuildStateData(button)
 			button:SetType()
 		end
 
@@ -2675,7 +2675,7 @@ function NeuronGUI:macroText_OnEditFocusLost()
 	if (button) then
 
 		button:UpdateFlyout()
-		button:BuildStateData()
+		NEURON.NeuronButton:BuildStateData(button)
 		button:SetType()
 
 		NeuronGUI:MacroEditorUpdate()
@@ -3685,7 +3685,7 @@ NeuronGUI.target_options = {
 			name = L["Self-Cast by modifier"],
 			desc = L["Select the Self-Cast Modifier"],
 			get = function(info) return GetModifiedClick("SELFCAST") end,
-			set = function(info, value) SetModifiedClick("SELFCAST", value); SaveBindings(GetCurrentBindingSet() or 1); NEURON.BUTTON:UpdateMacroCastTargets(true) end,
+			set = function(info, value) SetModifiedClick("SELFCAST", value); SaveBindings(GetCurrentBindingSet() or 1); NEURON.NeuronButton:UpdateMacroCastTargets(true) end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
 		selfcast_nl = {
@@ -3707,7 +3707,7 @@ NeuronGUI.target_options = {
 			name = L["Focus-Cast by modifier"],
 			desc = L["Select the Focus-Cast Modifier"],
 			get = function(info) return GetModifiedClick("FOCUSCAST") end,
-			set = function(info, value) SetModifiedClick("FOCUSCAST", value); SaveBindings(GetCurrentBindingSet() or 1); NEURON.BUTTON:UpdateMacroCastTargets(true) end,
+			set = function(info, value) SetModifiedClick("FOCUSCAST", value); SaveBindings(GetCurrentBindingSet() or 1); NEURON.NeuronButton:UpdateMacroCastTargets(true) end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
 		focuscast_nl = {
@@ -3742,7 +3742,7 @@ NeuronGUI.target_options = {
 			name = L["Mouse-Over Casting Modifier"],
 			desc = L["Select a modifier for Mouse-Over Casting"],
 			get = function() return NeuronCDB.mouseOverMod end, --getFunc,
-			set = function(info, value) NeuronCDB.mouseOverMod = value; NEURON.BUTTON:UpdateMacroCastTargets(true) end,
+			set = function(info, value) NeuronCDB.mouseOverMod = value; NEURON.NeuronButton:UpdateMacroCastTargets(true) end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
 		mouseovermod_desc = {

@@ -1158,7 +1158,7 @@ function NeuronBar:SetFauxState(bar, state)
 		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			NeuronBar:SetFauxState(object, state)
+			NEURON.NeuronButton:SetFauxState(object, state)
 		end
 	end
 
@@ -3501,7 +3501,7 @@ function NeuronBar:SetCastingTarget(bar, value, gui, checked, query)
 			end
 		end
 
-		BUTTON:UpdateMacroCastTargets()
+		NEURON.NeuronButton:UpdateMacroCastTargets()
 		NeuronBar:Update(bar)
 	end
 end
