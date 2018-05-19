@@ -2422,8 +2422,8 @@ function NeuronStatusBar:SB_AdjustableOptions_OnLoad(frame)
 		f.edit:SetScript("OnTextChanged", function(self) NeuronStatusBar:adjOptionOnTextChanged(self, self.frame) end)
 		f.edit:SetScript("OnEditFocusLost", function(self) NeuronStatusBar:adjOptionOnEditFocusLost(self, self.frame) end)
 
-		f.addfunc = NeuronStatusBar.adjOptionAdd
-		f.subfunc = NeuronStatusBar.adjOptionSub
+		f.addfunc = function(self) NeuronStatusBar:adjOptionAdd(self) end
+		f.subfunc = function(self) NeuronStatusBar:adjOptionSub(self) end
 
 		tinsert(sbOpt.adj, f)
 	end
