@@ -968,21 +968,21 @@ end
 ----------------------------------------------------
 
 
-function NeuronStatusBar:mirrorbar_Start(mirror, value, maxvalue, scale, paused, label)
+function NeuronStatusBar:mirrorbar_Start(button, value, maxvalue, scale, paused, label)
 
-	if (not MirrorWatch[mirror]) then
-		MirrorWatch[mirror] = { active = false, mbar = nil, label = "", timer = "" }
+	if (not MirrorWatch[button]) then
+		MirrorWatch[button] = { active = false, mbar = nil, label = "", timer = "" }
 	end
 
-	if (not MirrorWatch[mirror].active) then
+	if (not MirrorWatch[button].active) then
 
 		local mbar = tremove(MirrorBars, 1)
 
 		if (mbar) then
 
-			MirrorWatch[mirror].active = true
-			MirrorWatch[mirror].mbar = mbar
-			MirrorWatch[mirror].label = label
+			MirrorWatch[button].active = true
+			MirrorWatch[button].mbar = mbar
+			MirrorWatch[button].label = label
 
 			mbar.sb.mirror = mirror
 			mbar.sb.value = (value / 1000)
@@ -995,7 +995,7 @@ function NeuronStatusBar:mirrorbar_Start(mirror, value, maxvalue, scale, paused,
 				mbar.sb.paused = nil
 			end
 
-			local color = MirrorTimerColors[mirror]
+			local color = MirrorTimerColors[button]
 
 			mbar.sb:SetMinMaxValues(0, (maxvalue / 1000))
 			mbar.sb:SetValue(mbar.sb.value)
@@ -1011,20 +1011,20 @@ end
 
 
 
-function NeuronStatusBar:mirrorbar_Stop(mirror)
+function NeuronStatusBar:mirrorbar_Stop(button)
 
-	if (MirrorWatch[mirror] and MirrorWatch[mirror].active) then
+	if (MirrorWatch[button] and MirrorWatch[button].active) then
 
-		local mbar = MirrorWatch[mirror].mbar
+		local mbar = MirrorWatch[button].mbar
 
 		if (mbar) then
 
 			tinsert(MirrorBars, 1, mbar)
 
-			MirrorWatch[mirror].active = false
-			MirrorWatch[mirror].mbar = nil
-			MirrorWatch[mirror].label = ""
-			MirrorWatch[mirror].timer = ""
+			MirrorWatch[button].active = false
+			MirrorWatch[button].mbar = nil
+			MirrorWatch[button].label = ""
+			MirrorWatch[button].timer = ""
 
 			mbar.sb.mirror = nil
 		end
@@ -1035,30 +1035,30 @@ end
 
 
 
-function STATUS:CastBar_FinishSpell()
+function NeuronStatusBar:CastBar_FinishSpell(button)
 
-	self.spark:Hide()
-	self.barflash:SetAlpha(0.0)
-	self.barflash:Show()
-	self.flash = 1
-	self.fadeOut = 1
-	self.casting = nil
-	self.channeling = nil
+	button.spark:Hide()
+	button.barflash:SetAlpha(0.0)
+	button.barflash:Show()
+	button.flash = 1
+	button.fadeOut = 1
+	button.casting = nil
+	button.channeling = nil
 end
 
 
 
 
 
-function STATUS:CastBar_Reset()
+function NeuronStatusBar:CastBar_Reset(button)
 
-	self.fadeOut = 1
-	self.casting = nil
-	self.channeling = nil
-	self:SetStatusBarColor(self.castColor[1], self.castColor[2], self.castColor[3], self.castColor[4])
+	button.fadeOut = 1
+	button.casting = nil
+	button.channeling = nil
+	button:SetStatusBarColor(button.castColor[1], button.castColor[2], button.castColor[3], button.castColor[4])
 
-	if (not self.editmode) then
-		self:Hide()
+	if (not button.editmode) then
+		button:Hide()
 	end
 end
 
@@ -1066,143 +1066,145 @@ end
 
 
 
-function STATUS:CastBar_OnEvent(event, ...)
+function NeuronStatusBar:CastBar_OnEvent(button, event, ...)
 
-	local parent, unit = self.parent, ...
+	local parent, unit = button.parent, ...
 
-	if (unit ~= self.unit) then
+	if (unit ~= button.unit) then
 		return
 	end
 
-	if (not CastWatch[self.unit] ) then
-		CastWatch[self.unit] = {}
+	if (not CastWatch[button.unit] ) then
+		CastWatch[button.unit] = {}
 	end
 
 	if (event == "UNIT_SPELLCAST_START") then
 
 		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
 
-		if (not name or (not self.showTradeSkills and isTradeSkill)) then
-			self.parent.CastBar_Reset(self); return
+		if (not name or (not button.showTradeSkills and isTradeSkill)) then
+			NeuronStatusBar:CastBar_Reset(button)
+			return
 		end
 
-		self:SetStatusBarColor(self.castColor[1], self.castColor[2], self.castColor[3], self.castColor[4])
+		button:SetStatusBarColor(button.castColor[1], button.castColor[2], button.castColor[3], button.castColor[4])
 
-		if (self.spark) then
-			self.spark:SetTexture("Interface\\AddOns\\Neuron\\Images\\CastingBar_Spark_"..self.orientation)
-			self.spark:Show()
+		if (button.spark) then
+			button.spark:SetTexture("Interface\\AddOns\\Neuron\\Images\\CastingBar_Spark_"..button.orientation)
+			button.spark:Show()
 		end
 
-		self.value = (GetTime()-(startTime/1000))
-		self.maxValue = (endTime-startTime)/1000
-		self:SetMinMaxValues(0, self.maxValue)
-		self:SetValue(self.value)
+		button.value = (GetTime()-(startTime/1000))
+		button.maxValue = (endTime-startTime)/1000
+		button:SetMinMaxValues(0, button.maxValue)
+		button:SetValue(button.value)
 
-		self.totalTime = self.maxValue - self:GetValue()
+		button.totalTime = button.maxValue - button:GetValue()
 
-		CastWatch[self.unit].spell = text
+		CastWatch[button.unit].spell = text
 
-		if (self.showIcon) then
+		if (button.showIcon) then
 
-			self.icon:SetTexture(texture)
-			self.icon:Show()
+			button.icon:SetTexture(texture)
+			button.icon:Show()
 
 			if (notInterruptible) then
-				self.shield:Show()
+				button.shield:Show()
 			else
-				self.shield:Hide()
+				button.shield:Hide()
 			end
 
 		else
-			self.icon:Hide()
-			self.shield:Hide()
+			button.icon:Hide()
+			button.shield:Hide()
 		end
 
-		self:SetAlpha(1.0)
-		self.holdTime = 0
-		self.casting = 1
-		self.castID = castID
-		self.channeling = nil
-		self.fadeOut = nil
+		button:SetAlpha(1.0)
+		button.holdTime = 0
+		button.casting = 1
+		button.castID = castID
+		button.channeling = nil
+		button.fadeOut = nil
 
-		self:Show()
+		button:Show()
 
 	elseif (event == "UNIT_SPELLCAST_SUCCEEDED") then
 
-		self:SetStatusBarColor(self.successColor[1], self.successColor[2], self.successColor[3], self.successColor[4])
+		button:SetStatusBarColor(button.successColor[1], button.successColor[2], button.successColor[3], button.successColor[4])
 
 	elseif (event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") then
 
-		if ((self.casting and event == "UNIT_SPELLCAST_STOP" and select(4, ...) == self.castID) or
-				(self.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP")) then
+		if ((button.casting and event == "UNIT_SPELLCAST_STOP" and select(4, ...) == button.castID) or
+				(button.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP")) then
 
-			self.spark:Hide()
-			self.barflash:SetAlpha(0.0)
-			self.barflash:Show()
+			button.spark:Hide()
+			button.barflash:SetAlpha(0.0)
+			button.barflash:Show()
 
-			self:SetValue(self.maxValue)
+			button:SetValue(button.maxValue)
 
 			if (event == "UNIT_SPELLCAST_STOP") then
-				self.casting = nil
+				button.casting = nil
 			else
-				self.channeling = nil
+				button.channeling = nil
 			end
 
-			self.flash = 1
-			self.fadeOut = 1
-			self.holdTime = 0
+			button.flash = 1
+			button.fadeOut = 1
+			button.holdTime = 0
 		end
 
 	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") then
 
-		if (self:IsShown() and (self.casting and select(4, ...) == self.castID) and not self.fadeOut) then
+		if (button:IsShown() and (button.casting and select(4, ...) == button.castID) and not button.fadeOut) then
 
-			self:SetValue(self.maxValue)
+			button:SetValue(button.maxValue)
 
-			self:SetStatusBarColor(self.failColor[1], self.failColor[2], self.failColor[3], self.failColor[4])
+			button:SetStatusBarColor(button.failColor[1], button.failColor[2], button.failColor[3], button.failColor[4])
 
-			if (self.spark) then
-				self.spark:Hide()
+			if (button.spark) then
+				button.spark:Hide()
 			end
 
 			if (event == "UNIT_SPELLCAST_FAILED") then
-				CastWatch[self.unit].spell = FAILED
+				CastWatch[button.unit].spell = FAILED
 			else
-				CastWatch[self.unit].spell = INTERRUPTED
+				CastWatch[button.unit].spell = INTERRUPTED
 			end
 
-			self.casting = nil
-			self.channeling = nil
-			self.fadeOut = 1
-			self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
+			button.casting = nil
+			button.channeling = nil
+			button.fadeOut = 1
+			button.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
 		end
 
 	elseif (event == "UNIT_SPELLCAST_DELAYED") then
 
-		if (self:IsShown()) then
+		if (button:IsShown()) then
 
 			local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
 
-			if (not name or (not self.showTradeSkills and isTradeSkill)) then
-				self.parent.CastBar_Reset(self); return
+			if (not name or (not button.showTradeSkills and isTradeSkill)) then
+				NeuronStatusBar:CastBar_Reset(button)
+				return
 			end
 
-			self.value = (GetTime()-(startTime/1000))
-			self.maxValue = (endTime-startTime)/1000
-			self:SetMinMaxValues(0, self.maxValue)
+			button.value = (GetTime()-(startTime/1000))
+			button.maxValue = (endTime-startTime)/1000
+			button:SetMinMaxValues(0, button.maxValue)
 
-			if (not self.casting) then
+			if (not button.casting) then
 
-				self:SetStatusBarColor(self.castColor[1], self.castColor[2], self.castColor[3], self.castColor[4])
+				button:SetStatusBarColor(button.castColor[1], button.castColor[2], button.castColor[3], button.castColor[4])
 
-				self.spark:Show()
-				self.barflash:SetAlpha(0.0)
-				self.barflash:Hide()
+				button.spark:Show()
+				button.barflash:SetAlpha(0.0)
+				button.barflash:Hide()
 
-				self.casting = 1
-				self.channeling = nil
-				self.flash = 0
-				self.fadeOut = 0
+				button.casting = 1
+				button.channeling = nil
+				button.flash = 0
+				button.fadeOut = 0
 			end
 		end
 
@@ -1210,184 +1212,189 @@ function STATUS:CastBar_OnEvent(event, ...)
 
 		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 
-		if (not name or (not self.showTradeSkills and isTradeSkill)) then
-			self.parent.CastBar_Reset(self); return
+		if (not name or (not button.showTradeSkills and isTradeSkill)) then
+			NeuronStatusBar:CastBar_Reset(button)
+			return
 		end
 
-		self:SetStatusBarColor(self.channelColor[1], self.channelColor[2], self.channelColor[3], self.channelColor[4])
+		button:SetStatusBarColor(button.channelColor[1], button.channelColor[2], button.channelColor[3], button.channelColor[4])
 
-		self.value = ((endTime/1000)-GetTime())
-		self.maxValue = (endTime - startTime) / 1000;
-		self:SetMinMaxValues(0, self.maxValue);
-		self:SetValue(self.value)
+		button.value = ((endTime/1000)-GetTime())
+		button.maxValue = (endTime - startTime) / 1000;
+		button:SetMinMaxValues(0, button.maxValue);
+		button:SetValue(button.value)
 
-		CastWatch[self.unit].spell = text
+		CastWatch[button.unit].spell = text
 
-		if (self.showIcon) then
+		if (button.showIcon) then
 
-			self.icon:SetTexture(texture)
-			self.icon:Show()
+			button.icon:SetTexture(texture)
+			button.icon:Show()
 
 			if (notInterruptible) then
-				self.shield:Show()
+				button.shield:Show()
 			else
-				self.shield:Hide()
+				button.shield:Hide()
 			end
 
 		else
-			self.icon:Hide()
-			self.shield:Hide()
+			button.icon:Hide()
+			button.shield:Hide()
 		end
 
-		if (self.spark) then
-			self.spark:Hide()
+		if (button.spark) then
+			button.spark:Hide()
 		end
 
-		self:SetAlpha(1.0)
-		self.holdTime = 0
-		self.casting = nil
-		self.channeling = 1
-		self.fadeOut = nil
+		button:SetAlpha(1.0)
+		button.holdTime = 0
+		button.casting = nil
+		button.channeling = 1
+		button.fadeOut = nil
 
-		self:Show()
+		button:Show()
 
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
 
-		if (self:IsShown()) then
+		if (button:IsShown()) then
 
 			local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
 
-			if (not name or (not self.showTradeSkills and isTradeSkill)) then
-				self.parent.CastBar_Reset(self); return
+			if (not name or (not button.showTradeSkills and isTradeSkill)) then
+				NeuronStatusBar:CastBar_Reset(button)
+				return
 			end
 
-			self.value = ((endTime/1000)-GetTime())
-			self.maxValue = (endTime-startTime)/1000
-			self:SetMinMaxValues(0, self.maxValue)
-			self:SetValue(self.value)
+			button.value = ((endTime/1000)-GetTime())
+			button.maxValue = (endTime-startTime)/1000
+			button:SetMinMaxValues(0, button.maxValue)
+			button:SetValue(button.value)
 		end
 
-	elseif ( self.showShield and event == "UNIT_SPELLCAST_INTERRUPTIBLE" ) then
+	elseif ( button.showShield and event == "UNIT_SPELLCAST_INTERRUPTIBLE" ) then
 
-		self.shield:Hide()
+		button.shield:Hide()
 
-	elseif ( self.showShield and event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" ) then
+	elseif ( button.showShield and event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" ) then
 
-		self.shield:Show()
+		button.shield:Show()
 
 	else
-		self.parent.CastBar_Reset(self)
+		NeuronStatusBar:CastBar_Reset(button)
 	end
 
-	self.cText:SetText(self.cFunc(self))
-	self.lText:SetText(self.lFunc(self))
-	self.rText:SetText(self.rFunc(self))
-	self.mText:SetText(self.mFunc(self))
+	button.cText:SetText(button.cFunc(button))
+	button.lText:SetText(button.lFunc(button))
+	button.rText:SetText(button.rFunc(button))
+	button.mText:SetText(button.mFunc(button))
 end
 
 
 
 
 
-function STATUS:CastBar_OnUpdate(elapsed)
+function NeuronStatusBar:CastBar_OnUpdate(button, elapsed)
 
-	local unit = self.unit
+	local unit = button.unit
 	local sparkPosition, alpha
 
 	if (unit) then
 
-		if (self.cbtimer.castInfo[unit]) then
+		if (button.cbtimer.castInfo[unit]) then
 
-			local displayName, numFormat = self.cbtimer.castInfo[unit][1], self.cbtimer.castInfo[unit][2]
+			local displayName, numFormat = button.cbtimer.castInfo[unit][1], button.cbtimer.castInfo[unit][2]
 
-			if (self.maxValue) then
-				CastWatch[self.unit].timer = string.format(numFormat, self.value).."/"..format(numFormat, self.maxValue)
+			if (button.maxValue) then
+				CastWatch[button.unit].timer = string.format(numFormat, button.value).."/"..format(numFormat, button.maxValue)
 			else
-				CastWatch[self.unit].timer = string.format(numFormat, self.value)
+				CastWatch[button.unit].timer = string.format(numFormat, button.value)
 			end
 		end
 
-		if (self.casting) then
+		if (button.casting) then
 
-			self.value = self.value + elapsed
+			button.value = button.value + elapsed
 
-			if (self.value >= self.maxValue) then
-				self:SetValue(self.maxValue); self.parent.CastBar_FinishSpell(self); return
+			if (button.value >= button.maxValue) then
+				button:SetValue(button.maxValue)
+				NeuronStatusBar:CastBar_FinishSpell(button); return
 			end
 
-			self:SetValue(self.value)
+			button:SetValue(button.value)
 
-			self.barflash:Hide()
+			button.barflash:Hide()
 
-			if (self.orientation == 1) then
+			if (button.orientation == 1) then
 
-				sparkPosition = (self.value/self.maxValue)*self:GetWidth()
+				sparkPosition = (button.value/button.maxValue)*button:GetWidth()
 
 				if (sparkPosition < 0) then
 					sparkPosition = 0
 				end
 
-				self.spark:SetPoint("CENTER", self, "LEFT", sparkPosition, 0)
+				button.spark:SetPoint("CENTER", button, "LEFT", sparkPosition, 0)
 
 			else
-				sparkPosition = (self.value / self.maxValue) * self:GetHeight()
+				sparkPosition = (button.value / button.maxValue) * button:GetHeight()
 
 				if ( sparkPosition < 0 ) then
 					sparkPosition = 0
 				end
 
-				self.spark:SetPoint("CENTER", self, "BOTTOM", 0, sparkPosition)
+				button.spark:SetPoint("CENTER", button, "BOTTOM", 0, sparkPosition)
 			end
 
-		elseif (self.channeling) then
+		elseif (button.channeling) then
 
-			self.value = self.value - elapsed
+			button.value = button.value - elapsed
 
-			if (self.value <= 0) then
-				self.parent.CastBar_FinishSpell(self); return
+			if (button.value <= 0) then
+				NeuronStatusBar:CastBar_FinishSpell(button)
+				return
 			end
 
-			self:SetValue(self.value)
+			button:SetValue(button.value)
 
-			self.barflash:Hide()
+			button.barflash:Hide()
 
-		elseif (GetTime() < self.holdTime) then
+		elseif (GetTime() < button.holdTime) then
 
 			return
 
-		elseif (self.flash) then
+		elseif (button.flash) then
 
-			alpha = self.barflash:GetAlpha() + CASTING_BAR_FLASH_STEP or 0
+			alpha = button.barflash:GetAlpha() + CASTING_BAR_FLASH_STEP or 0
 
 			if (alpha < 1) then
-				self.barflash:SetAlpha(alpha)
+				button.barflash:SetAlpha(alpha)
 			else
-				self.barflash:SetAlpha(1.0); self.flash = nil
+				button.barflash:SetAlpha(1.0)
+				button.flash = nil
 			end
 
-		elseif (self.fadeOut and not self.editmode) then
+		elseif (button.fadeOut and not button.editmode) then
 
-			alpha = self:GetAlpha() - CASTING_BAR_ALPHA_STEP
+			alpha = button:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
 			if (alpha > 0) then
-				self:SetAlpha(alpha)
+				button:SetAlpha(alpha)
 			else
-				self.parent.CastBar_Reset(self)
+				NeuronStatusBar:CastBar_Reset(button)
 			end
 		end
 	end
 
-	self.cText:SetText(self.cFunc(self))
-	self.lText:SetText(self.lFunc(self))
-	self.rText:SetText(self.rFunc(self))
-	self.mText:SetText(self.mFunc(self))
+	button.cText:SetText(button.cFunc(button))
+	button.lText:SetText(button.lFunc(button))
+	button.rText:SetText(button.rFunc(button))
+	button.mText:SetText(button.mFunc(button))
 end
 
 
 
 
 
-function STATUS:CastBarTimer_OnEvent(event, ...)
+function NeuronStatusBar:CastBarTimer_OnEvent(button, event, ...)
 
 	local unit = select(1, ...)
 
@@ -1397,17 +1404,17 @@ function STATUS:CastBarTimer_OnEvent(event, ...)
 
 			local _, _, text = UnitCastingInfo(unit)
 
-			if (not self.castInfo[unit]) then self.castInfo[unit] = {} end
-			self.castInfo[unit][1] = text
-			self.castInfo[unit][2] = "%0.1f"
+			if (not button.castInfo[unit]) then button.castInfo[unit] = {} end
+			button.castInfo[unit][1] = text
+			button.castInfo[unit][2] = "%0.1f"
 
 		elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 
 			local _, _, text = UnitChannelInfo(unit)
 
-			if (not self.castInfo[unit]) then self.castInfo[unit] = {} end
-			self.castInfo[unit][1] = text
-			self.castInfo[unit][2] = "%0.1f"
+			if (not button.castInfo[unit]) then button.castInfo[unit] = {} end
+			button.castInfo[unit][1] = text
+			button.castInfo[unit][2] = "%0.1f"
 		end
 	end
 end
@@ -1415,61 +1422,61 @@ end
 
 
 
-function STATUS:MirrorBar_OnUpdate(elapsed)
+function NeuronStatusBar:MirrorBar_OnUpdate(button, elapsed)
 
-	if (self.mirror) then
+	if (button.mirror) then
 
-		self.value = GetMirrorTimerProgress(self.mirror)/1000
+		button.value = GetMirrorTimerProgress(button.mirror)/1000
 
-		if (self.value > self.maxvalue) then
+		if (button.value > button.maxvalue) then
 
-			self.alpha = self:GetAlpha() - CASTING_BAR_ALPHA_STEP
+			button.alpha = button:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-			if (self.alpha > 0) then
-				self:SetAlpha(self.alpha)
+			if (button.alpha > 0) then
+				button:SetAlpha(button.alpha)
 			else
-				self:Hide()
+				button:Hide()
 			end
 
 		else
 
-			self:SetValue(self.value)
+			button:SetValue(button.value)
 
-			if (self.value >= 60) then
-				self.value = string.format("%0.1f", self.value/60)
-				self.value = self.value.."m"
+			if (button.value >= 60) then
+				button.value = string.format("%0.1f", button.value/60)
+				button.value = button.value.."m"
 			else
-				self.value = string.format("%0.0f", self.value)
-				self.value = self.value.."s"
+				button.value = string.format("%0.0f", button.value)
+				button.value = button.value.."s"
 			end
 
-			MirrorWatch[self.mirror].timer = self.value
+			MirrorWatch[button.mirror].timer = button.value
 
 		end
 
-	elseif (not self.editmode) then
+	elseif (not button.editmode) then
 
-		self.alpha = self:GetAlpha() - CASTING_BAR_ALPHA_STEP
+		button.alpha = button:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-		if (self.alpha > 0) then
-			self:SetAlpha(self.alpha)
+		if (button.alpha > 0) then
+			button:SetAlpha(button.alpha)
 		else
-			self:Hide()
+			button:Hide()
 		end
 	end
 
-	self.cText:SetText(self.cFunc(self))
-	self.lText:SetText(self.lFunc(self))
-	self.rText:SetText(self.rFunc(self))
-	self.mText:SetText(self.mFunc(self))
+	button.cText:SetText(button.cFunc(button))
+	button.lText:SetText(button.lFunc(button))
+	button.rText:SetText(button.rFunc(button))
+	button.mText:SetText(button.mFunc(button))
 end
 
 
 
 
-function STATUS:SetBorder(sb, config, bordercolor)
+function NeuronStatusBar:SetBorder(button, config, bordercolor)
 
-	sb.border:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+	button.border:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 		edgeFile = BarBorders[config.border][2],
 		tile = true,
 		tileSize = BarBorders[config.border][7],
@@ -1481,19 +1488,19 @@ function STATUS:SetBorder(sb, config, bordercolor)
 		}
 	})
 
-	sb.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
-	sb.border:SetPoint("BOTTOMRIGHT", BarBorders[config.border][11], BarBorders[config.border][12])
+	button.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
+	button.border:SetPoint("BOTTOMRIGHT", BarBorders[config.border][11], BarBorders[config.border][12])
 
-	sb.border:SetBackdropColor(0, 0, 0, 0)
-	sb.border:SetBackdropBorderColor(bordercolor[1], bordercolor[2], bordercolor[3], 1)
-	sb.border:SetFrameLevel(sb:GetFrameLevel()+1)
+	button.border:SetBackdropColor(0, 0, 0, 0)
+	button.border:SetBackdropBorderColor(bordercolor[1], bordercolor[2], bordercolor[3], 1)
+	button.border:SetFrameLevel(button:GetFrameLevel()+1)
 
-	sb.bg:SetBackdropColor(0, 0, 0, 1)
-	sb.bg:SetBackdropBorderColor(0, 0, 0, 0)
-	sb.bg:SetFrameLevel(0)
+	button.bg:SetBackdropColor(0, 0, 0, 1)
+	button.bg:SetBackdropBorderColor(0, 0, 0, 0)
+	button.bg:SetFrameLevel(0)
 
-	if (sb.barflash) then
-		sb.barflash:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+	if (button.barflash) then
+		button.barflash:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 			edgeFile = BarBorders[config.border][2],
 			tile = true,
 			tileSize = BarBorders[config.border][7],
@@ -1510,13 +1517,13 @@ end
 
 
 
-function STATUS:OnClick(button, down)
+function NeuronStatusBar:OnClick(button, mousebutton, down)
 
-	if (button == "RightButton") then
-		if (self.config.sbType == "xp" and not self.dropdown_init) then
-			NeuronStatusBar:XPBar_DropDown_OnLoad(self)
-		elseif(self.config.sbType == "rep" and not self.dropdown_init) then
-			NeuronStatusBar:RepBar_DropDown_OnLoad(self)
+	if (mousebutton == "RightButton") then
+		if (button.config.sbType == "xp" and not button.dropdown_init) then
+			NeuronStatusBar:XPBar_DropDown_OnLoad(button)
+		elseif(button.config.sbType == "rep" and not button.dropdown_init) then
+			NeuronStatusBar:RepBar_DropDown_OnLoad(button)
 		end
 
 
@@ -1525,10 +1532,10 @@ function STATUS:OnClick(button, down)
 		else
 			NeuronStatusBar:repstrings_Update()
 
-			ToggleDropDownMenu(1, nil, self.dropdown, self, 0, 0)
+			ToggleDropDownMenu(1, nil, button.dropdown, button, 0, 0)
 
 			DropDownList1:ClearAllPoints()
-			DropDownList1:SetPoint("LEFT", self, "RIGHT", 3, 0)
+			DropDownList1:SetPoint("LEFT", button, "RIGHT", 3, 0)
 			DropDownList1:SetClampedToScreen(true)
 
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -1539,33 +1546,33 @@ end
 
 
 
-function STATUS:OnEnter()
+function NeuronStatusBar:OnEnter(button)
 
-	if (self.config.mIndex > 1) then
-		self.sb.cText:Hide()
-		self.sb.lText:Hide()
-		self.sb.rText:Hide()
-		self.sb.mText:Show()
-		self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	if (button.config.mIndex > 1) then
+		button.sb.cText:Hide()
+		button.sb.lText:Hide()
+		button.sb.rText:Hide()
+		button.sb.mText:Show()
+		button.sb.mText:SetText(button.sb.mFunc(button.sb))
 	end
 
-	if (self.config.tIndex > 1) then
+	if (button.config.tIndex > 1) then
 
-		if (self.bar) then
+		if (button.bar) then
 
-			if (self.bar.cdata.tooltipsCombat and InCombatLockdown()) then
+			if (button.bar.cdata.tooltipsCombat and InCombatLockdown()) then
 				return
 			end
 
-			if (self.bar.cdata.tooltips) then
+			if (button.bar.cdata.tooltips) then
 
-				if (self.bar.cdata.tooltipsEnhanced) then
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				if (button.bar.cdata.tooltipsEnhanced) then
+					GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 				else
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 				end
 
-				GameTooltip:SetText(self.sb.tFunc(self.sb) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
+				GameTooltip:SetText(button.sb.tFunc(button.sb) or "", button.tColor[1] or 1, button.tColor[2] or 1, button.tColor[3] or 1, button.tColor[4] or 1)
 				GameTooltip:Show()
 			end
 		end
@@ -1575,19 +1582,19 @@ end
 
 
 
-function STATUS:OnLeave()
+function NeuronStatusBar:OnLeave(button)
 
-	if (self.config.mIndex > 1) then
-		self.sb.cText:Show()
-		self.sb.lText:Show()
-		self.sb.rText:Show()
-		self.sb.mText:Hide()
-		self.sb.cText:SetText(self.sb.cFunc(self.sb))
-		self.sb.lText:SetText(self.sb.lFunc(self.sb))
-		self.sb.rText:SetText(self.sb.rFunc(self.sb))
+	if (button.config.mIndex > 1) then
+		button.sb.cText:Show()
+		button.sb.lText:Show()
+		button.sb.rText:Show()
+		button.sb.mText:Hide()
+		button.sb.cText:SetText(button.sb.cFunc(button.sb))
+		button.sb.lText:SetText(button.sb.lFunc(button.sb))
+		button.sb.rText:SetText(button.sb.rFunc(button.sb))
 	end
 
-	if (self.config.tIndex > 1) then
+	if (button.config.tIndex > 1) then
 		GameTooltip:Hide()
 	end
 end
@@ -1595,10 +1602,10 @@ end
 
 
 
-function STATUS:UpdateEditor()
+function NeuronStatusBar:UpdateEditor()
 
 	if (NeuronStatusBarEditor and NeuronStatusBarEditor:IsVisible()) then
-		NEURON:StatusBarEditorUpdate()
+		NeuronStatusBar:StatusBarEditorUpdate()
 	end
 
 end
@@ -1606,29 +1613,29 @@ end
 
 
 
-function STATUS:UpdateWidth(command, gui, query, skipupdate)
+function NeuronStatusBar:UpdateWidth(button, command, gui, query, skipupdate)
 
 	if (query) then
-		return self.config.width
+		return button.config.width
 	end
 
 	local width = tonumber(command)
 
 	if (width and width >= 10) then
 
-		self.config.width = width
+		button.config.width = width
 
-		self:SetWidth(self.config.width)
+		button:SetWidth(button.config.width)
 
-		NEURON.NeuronBar:SetObjectLoc(self.bar)
+		NEURON.NeuronBar:SetObjectLoc(button.bar)
 
-		NEURON.NeuronBar:SetPerimeter(self.bar)
+		NEURON.NeuronBar:SetPerimeter(button.bar)
 
-		NEURON.NeuronBar:SetSize(self.bar)
+		NEURON.NeuronBar:SetSize(button.bar)
 
 		if (not skipupdate) then
-			self:UpdateEditor()
-			NEURON.NeuronBar:Update(self.bar)
+			NeuronStatusBar:UpdateEditor()
+			NEURON.NeuronBar:Update(button.bar)
 		end
 	end
 end
@@ -1636,29 +1643,29 @@ end
 
 
 
-function STATUS:UpdateHeight(command, gui, query, skipupdate)
+function NeuronStatusBar:UpdateHeight(button, command, gui, query, skipupdate)
 
 	if (query) then
-		return self.config.height
+		return button.config.height
 	end
 
 	local height = tonumber(command)
 
 	if (height and height >= 4) then
 
-		self.config.height = height
+		button.config.height = height
 
-		self:SetHeight(self.config.height)
+		button:SetHeight(button.config.height)
 
-		NEURON.NeuronBar:SetObjectLoc(self.bar)
+		NEURON.NeuronBar:SetObjectLoc(button.bar)
 
-		NEURON.NeuronBar:SetPerimeter(self.bar)
+		NEURON.NeuronBar:SetPerimeter(button.bar)
 
-		NEURON.NeuronBar:SetSize(self.bar)
+		NEURON.NeuronBar:SetSize(button.bar)
 
 		if (not skipupdate) then
-			self:UpdateEditor()
-			NEURON.NeuronBar:Update(self.bar)
+			NeuronStatusBar:UpdateEditor()
+			NEURON.NeuronBar:Update(button.bar)
 		end
 	end
 end
@@ -1666,23 +1673,23 @@ end
 
 
 
-function STATUS:UpdateTexture(command, gui, query)
+function NeuronStatusBar:UpdateTexture(button, command, gui, query)
 
 	if (query) then
-		return BarTextures[self.config.texture][3]
+		return BarTextures[button.config.texture][3]
 	end
 
 	local index = tonumber(command)
 
 	if (index and BarTextures[index]) then
 
-		self.config.texture = index
+		button.config.texture = index
 
-		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-		self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		button.sb:SetStatusBarTexture(BarTextures[button.config.texture][button.config.orientation])
+		button.fbframe.feedback:SetStatusBarTexture(BarTextures[button.config.texture][button.config.orientation])
 
 		if (not skipupdate) then
-			self:UpdateEditor()
+			NeuronStatusBar:UpdateEditor()
 		end
 
 	end
@@ -1692,75 +1699,23 @@ end
 
 
 
-function STATUS:UpdateBorder(command, gui, query)
+function NeuronStatusBar:UpdateBorder(button, command, gui, query)
 
 	if (query) then
-		return BarBorders[self.config.border][1]
+		return BarBorders[button.config.border][1]
 	end
 
 	local index = tonumber(command)
 
 	if (index and BarBorders[index]) then
 
-		self.config.border = index
+		button.config.border = index
 
-		self:SetBorder(self.sb, self.config, self.bordercolor)
-		self:SetBorder(self.fbframe.feedback, self.config, self.bordercolor)
-
-		if (not skipupdate) then
-			self:UpdateEditor()
-		end
-	end
-end
-
-
-
-
-function STATUS:UpdateOrientation(command, gui, query)
-
-	if (query) then
-		return BarOrientations[self.config.orientation]
-	end
-
-	local index = tonumber(command)
-
-	if (index) then
-
-		self.config.orientation = index
-		self.sb.orientation = self.config.orientation
-
-		self.sb:SetOrientation(BarOrientations[self.config.orientation]:upper())
-		self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
-
-		if (self.config.orientation == 2) then
-			self.sb.cText:SetAlpha(0)
-			self.sb.lText:SetAlpha(0)
-			self.sb.rText:SetAlpha(0)
-			self.sb.mText:SetAlpha(0)
-		else
-			self.sb.cText:SetAlpha(1)
-			self.sb.lText:SetAlpha(1)
-			self.sb.rText:SetAlpha(1)
-			self.sb.mText:SetAlpha(1)
-		end
-
-		local width, height = self.config.width,  self.config.height
-
-		self.config.width = height;  self.config.height = width
-
-		self:SetWidth(self.config.width)
-
-		self:SetHeight(self.config.height)
-
-		NEURON.NeuronBar:SetObjectLoc(self.bar)
-
-		NEURON.NeuronBar:SetPerimeter(self.bar)
-
-		NEURON.NeuronBar:SetSize(self.bar)
+		NeuronStatusBar:SetBorder(button.sb, button.config, button.bordercolor)
+		NeuronStatusBar:SetBorder(button.fbframe.feedback, button.config, button.bordercolor)
 
 		if (not skipupdate) then
-			self:UpdateEditor()
-			NEURON.NeuronBar:Update(self.bar)
+			NeuronStatusBar:UpdateEditor()
 		end
 	end
 end
@@ -1768,58 +1723,111 @@ end
 
 
 
-function STATUS:UpdateCenterText(command, gui, query)
+function NeuronStatusBar:UpdateOrientation(button, command, gui, query)
 
-	if (not sbStrings[self.config.sbType]) then
+	if (query) then
+		return BarOrientations[button.config.orientation]
+	end
+
+	local index = tonumber(command)
+
+	if (index) then
+
+		button.config.orientation = index
+		button.sb.orientation = button.config.orientation
+
+		button.sb:SetOrientation(BarOrientations[button.config.orientation]:upper())
+		button.fbframe.feedback:SetOrientation(BarOrientations[button.config.orientation]:upper())
+
+		if (button.config.orientation == 2) then
+			button.sb.cText:SetAlpha(0)
+			button.sb.lText:SetAlpha(0)
+			button.sb.rText:SetAlpha(0)
+			button.sb.mText:SetAlpha(0)
+		else
+			button.sb.cText:SetAlpha(1)
+			button.sb.lText:SetAlpha(1)
+			button.sb.rText:SetAlpha(1)
+			button.sb.mText:SetAlpha(1)
+		end
+
+		local width, height = button.config.width,  button.config.height
+
+		button.config.width = height
+		button.config.height = width
+
+		button:SetWidth(button.config.width)
+
+		button:SetHeight(button.config.height)
+
+		NEURON.NeuronBar:SetObjectLoc(button.bar)
+
+		NEURON.NeuronBar:SetPerimeter(button.bar)
+
+		NEURON.NeuronBar:SetSize(button.bar)
+
+		if (not skipupdate) then
+			NeuronStatusBar:UpdateEditor()
+			NEURON.NeuronBar:Update(button.bar)
+		end
+	end
+end
+
+
+
+
+function NeuronStatusBar:UpdateCenterText(button, command, gui, query)
+
+	if (not sbStrings[button.config.sbType]) then
 		return "---"
 	end
 
 	if (query) then
-		return sbStrings[self.config.sbType][self.config.cIndex][1]
+		return sbStrings[button.config.sbType][button.config.cIndex][1]
 	end
 
 	local index = tonumber(command)
 
 	if (index) then
 
-		self.config.cIndex = index
+		button.config.cIndex = index
 
-		if (sbStrings[self.config.sbType]) then
-			self.sb.cFunc = sbStrings[self.config.sbType][self.config.cIndex][2]
+		if (sbStrings[button.config.sbType]) then
+			button.sb.cFunc = sbStrings[button.config.sbType][button.config.cIndex][2]
 		else
-			self.sb.cFunc = function() return "" end
+			buttonsb.cFunc = function() return "" end
 		end
 
-		self.sb.cText:SetText(self.sb.cFunc(self.sb))
+		button.sb.cText:SetText(button.sb.cFunc(button.sb))
 	end
 end
 
 
 
 
-function STATUS:UpdateLeftText(command, gui, query)
+function NeuronStatusBar:UpdateLeftText(button, command, gui, query)
 
-	if (not sbStrings[self.config.sbType]) then
+	if (not sbStrings[button.config.sbType]) then
 		return "---"
 	end
 
 	if (query) then
-		return sbStrings[self.config.sbType][self.config.lIndex][1]
+		return sbStrings[button.config.sbType][button.config.lIndex][1]
 	end
 
 	local index = tonumber(command)
 
 	if (index) then
 
-		self.config.lIndex = index
+		button.config.lIndex = index
 
-		if (sbStrings[self.config.sbType]) then
-			self.sb.lFunc = sbStrings[self.config.sbType][self.config.lIndex][2]
+		if (sbStrings[button.config.sbType]) then
+			button.sb.lFunc = sbStrings[button.config.sbType][button.config.lIndex][2]
 		else
-			self.sb.lFunc = function() return "" end
+			button.sb.lFunc = function() return "" end
 		end
 
-		self.sb.lText:SetText(self.sb.lFunc(self.sb))
+		button.sb.lText:SetText(button.sb.lFunc(button.sb))
 
 	end
 end
@@ -1827,29 +1835,29 @@ end
 
 
 
-function STATUS:UpdateRightText(command, gui, query)
+function NeuronStatusBar:UpdateRightText(button, command, gui, query)
 
-	if (not sbStrings[self.config.sbType]) then
+	if (not sbStrings[button.config.sbType]) then
 		return "---"
 	end
 
 	if (query) then
-		return sbStrings[self.config.sbType][self.config.rIndex][1]
+		return sbStrings[button.config.sbType][button.config.rIndex][1]
 	end
 
 	local index = tonumber(command)
 
 	if (index) then
 
-		self.config.rIndex = index
+		button.config.rIndex = index
 
-		if (sbStrings[self.config.sbType] and self.config.rIndex) then
-			self.sb.rFunc = sbStrings[self.config.sbType][self.config.rIndex][2]
+		if (sbStrings[button.config.sbType] and button.config.rIndex) then
+			button.sb.rFunc = sbStrings[button.config.sbType][button.config.rIndex][2]
 		else
-			self.sb.rFunc = function() return "" end
+			button.sb.rFunc = function() return "" end
 		end
 
-		self.sb.rText:SetText(self.sb.rFunc(self.sb))
+		button.sb.rText:SetText(button.sb.rFunc(button.sb))
 
 	end
 end
@@ -1857,55 +1865,55 @@ end
 
 
 
-function STATUS:UpdateMouseover(command, gui, query)
+function NeuronStatusBar:UpdateMouseover(button, command, gui, query)
 
-	if (not sbStrings[self.config.sbType]) then
+	if (not sbStrings[button.config.sbType]) then
 		return "---"
 	end
 
 	if (query) then
-		return sbStrings[self.config.sbType][self.config.mIndex][1]
+		return sbStrings[button.config.sbType][button.config.mIndex][1]
 	end
 
 	local index = tonumber(command)
 
 	if (index) then
 
-		self.config.mIndex = index
+		button.config.mIndex = index
 
-		if (sbStrings[self.config.sbType]) then
-			self.sb.mFunc = sbStrings[self.config.sbType][self.config.mIndex][2]
+		if (sbStrings[button.config.sbType]) then
+			button.sb.mFunc = sbStrings[button.config.sbType][button.config.mIndex][2]
 		else
-			self.sb.mFunc = function() return "" end
+			button.sb.mFunc = function() return "" end
 		end
 
-		self.sb.mText:SetText(self.sb.mFunc(self.sb))
+		button.sb.mText:SetText(button.sb.mFunc(button.sb))
 	end
 end
 
 
 
 
-function STATUS:UpdateTooltip(command, gui, query)
+function NeuronStatusBar:UpdateTooltip(button, command, gui, query)
 
-	if (not sbStrings[self.config.sbType]) then
+	if (not sbStrings[button.config.sbType]) then
 		return "---"
 	end
 
 	if (query) then
-		return sbStrings[self.config.sbType][self.config.tIndex][1]
+		return sbStrings[button.config.sbType][button.config.tIndex][1]
 	end
 
 	local index = tonumber(command)
 
 	if (index) then
 
-		self.config.tIndex = index
+		button.config.tIndex = index
 
-		if (sbStrings[self.config.sbType]) then
-			self.sb.tFunc = sbStrings[self.config.sbType][self.config.tIndex][2]
+		if (sbStrings[button.config.sbType]) then
+			button.sb.tFunc = sbStrings[button.config.sbType][button.config.tIndex][2]
 		else
-			self.sb.tFunc = function() return "" end
+			button.sb.tFunc = function() return "" end
 		end
 	end
 end
@@ -1913,19 +1921,19 @@ end
 
 
 
-function STATUS:UpdateUnit(command, gui, query)
+function NeuronStatusBar:UpdateUnit(button, command, gui, query)
 
 	if (query) then
-		return BarUnits[self.data.unit]
+		return BarUnits[button.data.unit]
 	end
 
 	local index = tonumber(command)
 
 	if (index) then
 
-		self.data.unit = index
+		button.data.unit = index
 
-		self.sb.unit = BarUnits[self.data.unit]
+		button.sb.unit = BarUnits[button.data.unit]
 
 	end
 end
@@ -1933,52 +1941,52 @@ end
 
 
 
-function STATUS:UpdateCastIcon(frame, checked)
+function NeuronStatusBar:UpdateCastIcon(button, frame, checked)
 
 	if (checked) then
-		self.config.showIcon = true
+		button.config.showIcon = true
 	else
-		self.config.showIcon = false
+		button.config.showIcon = false
 	end
 
-	self.sb.showIcon = self.config.showIcon
+	button.sb.showIcon = button.config.showIcon
 
 end
 
 
 
 
-function STATUS:ChangeStatusBarType(statusbar)
+function NeuronStatusBar:ChangeStatusBarType(button)
 
-	if (self.config.sbType == "xp") then
-		self.config.sbType = "rep"
-		self.config.cIndex = 2
-		self.config.lIndex = 1
-		self.config.rIndex = 1
-	elseif (self.config.sbType == "rep") then
-		self.config.sbType = "cast"
-		self.config.cIndex = 1
-		self.config.lIndex = 2
-		self.config.rIndex = 3
-	elseif (self.config.sbType == "cast") then
-		self.config.sbType = "mirror"
-		self.config.cIndex = 1
-		self.config.lIndex = 2
-		self.config.rIndex = 3
+	if (button.config.sbType == "xp") then
+		button.config.sbType = "rep"
+		button.config.cIndex = 2
+		button.config.lIndex = 1
+		button.config.rIndex = 1
+	elseif (button.config.sbType == "rep") then
+		button.config.sbType = "cast"
+		button.config.cIndex = 1
+		button.config.lIndex = 2
+		button.config.rIndex = 3
+	elseif (button.config.sbType == "cast") then
+		button.config.sbType = "mirror"
+		button.config.cIndex = 1
+		button.config.lIndex = 2
+		button.config.rIndex = 3
 	else
-		self.config.sbType = "xp"
-		self.config.cIndex = 2
-		self.config.lIndex = 1
-		self.config.rIndex = 1
+		button.config.sbType = "xp"
+		button.config.cIndex = 2
+		button.config.lIndex = 1
+		button.config.rIndex = 1
 	end
 
-	self:SetType(self)
+	button:SetType(button)
 end
 
 
 
 
-function NEURON.StatusBarEditorUpdate(reset)
+function NeuronStatusBar:StatusBarEditorUpdate(reset)
 
 	local sb = Neuron.CurrentObject
 
@@ -2080,11 +2088,11 @@ function NEURON.StatusBarEditorUpdate(reset)
 					yoff = yoff-yoff1
 				end
 
-				if (sb[f.func]) then
+				if (NeuronStatusBar[f.func]) then
 					if (f.format) then
-						f.edit:SetText(string.format(f.format, sb[f.func](sb, nil, true, true)*f.mult)..f.endtext)
+						f.edit:SetText(string.format(f.format, NeuronStatusBar[f.func](NeuronStatusBar, sb, nil, true, true)*f.mult)..f.endtext)
 					else
-						f.edit:SetText(sb[f.func](sb, nil, true, true) or "")
+						f.edit:SetText(NeuronStatusBar[f.func](NeuronStatusBar, sb, nil, true, true) or "")
 					end
 					f.edit:SetCursorPosition(0)
 				end
@@ -2096,58 +2104,58 @@ end
 
 
 
-function NEURON:StatusBarEditor_OnLoad(frame)
-	NEURON.Editors.STATUSBAR = { frame, 625, 250, NEURON.StatusBarEditorUpdate }
+function NeuronStatusBar:StatusBarEditor_OnLoad(frame)
+	NEURON.Editors.STATUSBAR = { frame, 625, 250, NeuronStatusBar.StatusBarEditorUpdate }
 end
 
 
 
 
-function NEURON:StatusBarEditor_OnShow(frame)
-
-end
-
-
-
-
-function NEURON:StatusBarEditor_OnHide(frame)
+function NeuronStatusBar:StatusBarEditor_OnShow(frame)
 
 end
 
 
 
 
-local function sbTypeOnClick(self, button, down)
+function NeuronStatusBar:StatusBarEditor_OnHide(frame)
+
+end
+
+
+
+
+function NeuronStatusBar:sbTypeOnClick(button, down)
 
 	local sb = NEURON.CurrentObject
 
 	if (sb) then
 
-		if (self.sbType == "xp") then
+		if (button.sbType == "xp") then
 
-			sb.config.sbType = self.sbType
+			sb.config.sbType = button.sbType
 			sb.config.cIndex = 2
 			sb.config.lIndex = 1
 			sb.config.rIndex = 1
 
-		elseif (self.sbType == "rep") then
+		elseif (button.sbType == "rep") then
 
-			sb.config.sbType = self.sbType
+			sb.config.sbType = button.sbType
 			sb.config.cIndex = 2
 			sb.config.lIndex = 1
 			sb.config.rIndex = 1
 
 
-		elseif (self.sbType == "cast") then
+		elseif (button.sbType == "cast") then
 
-			sb.config.sbType = self.sbType
+			sb.config.sbType = button.sbType
 			sb.config.cIndex = 1
 			sb.config.lIndex = 2
 			sb.config.rIndex = 3
 
-		elseif (self.sbType == "mirror") then
+		elseif (button.sbType == "mirror") then
 
-			sb.config.sbType = self.sbType
+			sb.config.sbType = button.sbType
 			sb.config.cIndex = 1
 			sb.config.lIndex = 2
 			sb.config.rIndex = 3
@@ -2155,19 +2163,19 @@ local function sbTypeOnClick(self, button, down)
 
 		sb:SetType(sb)
 
-		sb:UpdateEditor()
+		NeuronStatusBar:UpdateEditor()
 	end
 end
 
 
 
 
-local function chkOptionOnClick(frame)
+function NeuronStatusBar:chkOptionOnClick(frame)
 
 	local sb = NEURON.CurrentObject
 
 	if (sb) then
-		sb[frame.func](sb, frame, frame:GetChecked())
+		NeuronStatusBar[frame.func](NeuronStatusBar, sb, frame, frame:GetChecked())
 	end
 
 end
@@ -2175,7 +2183,7 @@ end
 
 
 
-function NEURON:SB_EditorTypes_OnLoad(frame)
+function NeuronStatusBar:SB_EditorTypes_OnLoad(frame)
 
 	local f, anchor, last
 
@@ -2184,7 +2192,7 @@ function NEURON:SB_EditorTypes_OnLoad(frame)
 		f = CreateFrame("CheckButton", nil, frame, "NeuronOptionsCheckButtonTemplate")
 		f:SetWidth(18)
 		f:SetHeight(18)
-		f:SetScript("OnClick", sbTypeOnClick)
+		f:SetScript("OnClick", function(self, down) NeuronStatusBar:sbTypeOnClick(self, down) end)
 		f.sbType = types[1]
 		f.text:SetText(types[2])
 
@@ -2212,7 +2220,7 @@ function NEURON:SB_EditorTypes_OnLoad(frame)
 		f = CreateFrame("CheckButton", nil, frame, "NeuronOptionsCheckButtonTemplate")
 		f:SetWidth(18)
 		f:SetHeight(18)
-		f:SetScript("OnClick", chkOptionOnClick)
+		f:SetScript("OnClick", function(self) NeuronStatusBar:chkOptionOnClick(self) end)
 		f.sbType = options[1]
 		f.text:SetText(options[2])
 		f.func = options[3]
@@ -2227,7 +2235,7 @@ end
 
 
 
-local function adjOptionOnTextChanged(edit, frame)
+function NeuronStatusBar:adjOptionOnTextChanged(edit, frame)
 
 	local sb = NEURON.CurrentObject
 
@@ -2237,7 +2245,7 @@ local function adjOptionOnTextChanged(edit, frame)
 
 		elseif (frame.method == 2) then
 
-			sb[frame.func](sb, edit.value, true)
+			NeuronStatusBar[frame.func](NeuronStatusBar, sb, edit.value, true)
 
 			edit:HighlightText(0,0)
 		end
@@ -2247,7 +2255,7 @@ end
 
 
 
-local function adjOptionOnEditFocusLost(edit, frame)
+function NeuronStatusBar:adjOptionOnEditFocusLost(edit, frame)
 
 	edit.hasfocus = nil
 
@@ -2257,7 +2265,7 @@ local function adjOptionOnEditFocusLost(edit, frame)
 
 		if (frame.method == 1) then
 
-			sb[frame.func](sb, edit:GetText(), true)
+			NeuronStatusBar[frame.func](NeuronStatusBar, sb, edit:GetText(), true)
 
 		elseif (frame.method == 2) then
 
@@ -2268,13 +2276,13 @@ end
 
 
 
-local function adjOptionAdd(frame, onupdate)
+function NeuronStatusBar:adjOptionAdd(frame, onupdate)
 
 	local sb = NEURON.CurrentObject
 
 	if (sb) then
 
-		local num = sb[frame.func](sb, nil, true, true)
+		local num = NeuronStatusBar[frame.func](NeuronStatusBar, sb, nil, true, true)
 
 		if (num == L["Off"] or num == "---") then
 			num = 0
@@ -2286,7 +2294,7 @@ local function adjOptionAdd(frame, onupdate)
 
 			if (frame.max and num >= frame.max) then
 
-				sb[frame.func](sb, frame.max, true, nil, onupdate)
+				NeuronStatusBar[frame.func](NeuronStatusBar, sb, frame.max, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -2296,7 +2304,7 @@ local function adjOptionAdd(frame, onupdate)
 					end
 				end
 			else
-				sb[frame.func](sb, num+frame.inc, true, nil, onupdate)
+				NeuronStatusBar[frame.func](NeuronStatusBar, sb, num+frame.inc, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -2313,13 +2321,13 @@ end
 
 
 
-local function adjOptionSub(frame, onupdate)
+function NeuronStatusBar:adjOptionSub(frame, onupdate)
 
 	local sb = NEURON.CurrentObject
 
 	if (sb) then
 
-		local num = sb[frame.func](sb, nil, true, true)
+		local num = NeuronStatusBar[frame.func](NeuronStatusBar, sb, nil, true, true)
 
 		if (num == L["Off"] or num == "---") then
 			num = 0
@@ -2331,7 +2339,7 @@ local function adjOptionSub(frame, onupdate)
 
 			if (frame.min and num <= frame.min) then
 
-				sb[frame.func](sb, frame.min, true, nil, onupdate)
+				NeuronStatusBar[frame.func](NeuronStatusBar, sb, frame.min, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -2341,7 +2349,7 @@ local function adjOptionSub(frame, onupdate)
 					end
 				end
 			else
-				sb[frame.func](sb, num-frame.inc, true, nil, onupdate)
+				NeuronStatusBar[frame.func](NeuronStatusBar, sb, num-frame.inc, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -2358,12 +2366,12 @@ end
 
 
 
-local function adjOptionOnMouseWheel(frame, delta)
+function NeuronStatusBar:adjOptionOnMouseWheel(frame, delta)
 
 	if (delta > 0) then
-		adjOptionAdd(frame)
+		NeuronStatusBar:adjOptionAdd(frame)
 	else
-		adjOptionSub(frame)
+		NeuronStatusBar:adjOptionSub(frame)
 	end
 
 end
@@ -2371,7 +2379,7 @@ end
 
 
 ---this needs to be moved into an AceGUI window
-function NEURON.SB_AdjustableOptions_OnLoad(frame)
+function NeuronStatusBar:SB_AdjustableOptions_OnLoad(frame)
 
 	frame:RegisterForDrag("LeftButton", "RightButton")
 
@@ -2384,7 +2392,7 @@ function NEURON.SB_AdjustableOptions_OnLoad(frame)
 		f:SetWidth(200)
 		f:SetHeight(24)
 		f:SetScript("OnShow", function() end)
-		f:SetScript("OnMouseWheel", function(self, delta) adjOptionOnMouseWheel(self, delta) end)
+		f:SetScript("OnMouseWheel", function(self, delta) NeuronStatusBar:adjOptionOnMouseWheel(self, delta) end)
 		f:EnableMouseWheel(true)
 
 		f.text:SetText(options[2]..":")
@@ -2393,7 +2401,7 @@ function NEURON.SB_AdjustableOptions_OnLoad(frame)
 		f.edit = f["method"..options[3]].edit
 		f.edit.frame = f
 		f.option = options[1]
-		f.func = options[4]
+		f.func = options[4] ---TODO: adjust this
 		f.inc = options[5]
 		f.min = options[6]
 		f.max = options[7]
@@ -2407,11 +2415,11 @@ function NEURON.SB_AdjustableOptions_OnLoad(frame)
 			f.strTable = true
 		end
 
-		f.edit:SetScript("OnTextChanged", function(self) adjOptionOnTextChanged(self, self.frame) end)
-		f.edit:SetScript("OnEditFocusLost", function(self) adjOptionOnEditFocusLost(self, self.frame) end)
+		f.edit:SetScript("OnTextChanged", function(self) NeuronStatusBar:adjOptionOnTextChanged(self, self.frame) end)
+		f.edit:SetScript("OnEditFocusLost", function(self) NeuronStatusBar:adjOptionOnEditFocusLost(self, self.frame) end)
 
-		f.addfunc = adjOptionAdd
-		f.subfunc = adjOptionSub
+		f.addfunc = NeuronStatusBar.adjOptionAdd
+		f.subfunc = NeuronStatusBar.adjOptionSub
 
 		tinsert(sbOpt.adj, f)
 	end
@@ -2524,8 +2532,8 @@ function NeuronStatusBar:SetData(button, bar, skipupdate)
 		button.fbframe.feedback:SetStatusBarTexture(BarTextures[1][button.config.orientation])
 	end
 
-	button:SetBorder(button.sb, button.config, button.bordercolor)
-	button:SetBorder(button.fbframe.feedback, button.config, button.bordercolor)
+	NeuronStatusBar:SetBorder(button.sb, button.config, button.bordercolor)
+	NeuronStatusBar:SetBorder(button.fbframe.feedback, button.config, button.bordercolor)
 
 	button:SetFrameLevel(4)
 
@@ -2612,7 +2620,7 @@ end
 
 function NeuronStatusBar:LoadAux(button)
 
-	button:CreateEditFrame(button.objTIndex)
+	NeuronStatusBar:CreateEditFrame(button, button.objTIndex)
 
 end
 
@@ -2652,26 +2660,26 @@ end
 
 
 
-function STATUS:StatusBar_Reset()
+function NeuronStatusBar:StatusBar_Reset(button)
 
-	self:RegisterForClicks("")
-	self:SetScript("OnClick", function() end)
-	self:SetScript("OnEnter", function() end)
-	self:SetScript("OnLeave", function() end)
-	self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
+	button:RegisterForClicks("")
+	button:SetScript("OnClick", function() end)
+	button:SetScript("OnEnter", function() end)
+	button:SetScript("OnLeave", function() end)
+	button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
-	self.sb:UnregisterAllEvents()
-	self.sb:SetScript("OnEvent", function() end)
-	self.sb:SetScript("OnUpdate", function() end)
-	self.sb:SetScript("OnShow", function() end)
-	self.sb:SetScript("OnHide", function() end)
+	button.sb:UnregisterAllEvents()
+	button.sb:SetScript("OnEvent", function() end)
+	button.sb:SetScript("OnUpdate", function() end)
+	button.sb:SetScript("OnShow", function() end)
+	button.sb:SetScript("OnHide", function() end)
 
-	self.sb.unit = nil
-	self.sb.rep = nil
-	self.sb.showIcon = nil
+	button.sb.unit = nil
+	button.sb.rep = nil
+	button.sb.showIcon = nil
 
-	self.sb.cbtimer:UnregisterAllEvents()
-	self.sb.cbtimer:SetScript("OnEvent", nil)
+	button.sb.cbtimer:UnregisterAllEvents()
+	button.sb.cbtimer:SetScript("OnEvent", nil)
 
 	for index, sb in ipairs(MirrorBars) do
 		if (sb == statusbar) then
@@ -2689,7 +2697,7 @@ function NeuronStatusBar:SetType(button, save)
 		return
 	end
 
-	button:StatusBar_Reset()
+	NeuronStatusBar:StatusBar_Reset(button)
 
 	if (kill) then
 
@@ -2719,8 +2727,8 @@ function NeuronStatusBar:SetType(button, save)
 			button.sb.channeling = nil
 			button.sb.holdTime = 0
 
-			button.sb:SetScript("OnEvent", STATUS.CastBar_OnEvent)
-			button.sb:SetScript("OnUpdate", STATUS.CastBar_OnUpdate)
+			button.sb:SetScript("OnEvent", function(self, event, ...) NeuronStatusBar:CastBar_OnEvent(self, event, ...) end)
+			button.sb:SetScript("OnUpdate", function(self, elapsed) NeuronStatusBar:CastBar_OnUpdate(self, elapsed) end)
 
 			if (not button.sb.cbtimer.castInfo) then
 				button.sb.cbtimer.castInfo = {}
@@ -2732,9 +2740,7 @@ function NeuronStatusBar:SetType(button, save)
 			button.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 			button.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_STOP")
 			button.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-			button.sb.cbtimer:SetScript("OnEvent", STATUS.CastBarTimer_OnEvent)
-
-			button.CastBar_OnEvent(button.sb)
+			button.sb.cbtimer:SetScript("OnEvent", function(self, event, ...) NeuronStatusBar:CastBarTimer_OnEvent(self, event, ...) end)
 
 			button.sb:Hide()
 
@@ -2743,9 +2749,9 @@ function NeuronStatusBar:SetType(button, save)
 			button:SetAttribute("hasaction", true)
 
 			button:RegisterForClicks("RightButtonUp")
-			button:SetScript("OnClick", STATUS.OnClick)
-			button:SetScript("OnEnter", STATUS.OnEnter)
-			button:SetScript("OnLeave", STATUS.OnLeave)
+			button:SetScript("OnClick", function(self, mousebutton, down) NeuronStatusBar:OnClick(self, mousebutton, down) end)
+			button:SetScript("OnEnter", function(self) NeuronStatusBar:OnEnter(self) end)
+			button:SetScript("OnLeave", function(self) NeuronStatusBar:OnLeave(self) end)
 			button:SetHitRectInsets(0, 0, 0, 0)
 
 			button.sb:RegisterEvent("PLAYER_XP_UPDATE")
@@ -2767,9 +2773,9 @@ function NeuronStatusBar:SetType(button, save)
 			button:SetAttribute("hasaction", true)
 
 			button:RegisterForClicks("RightButtonUp")
-			button:SetScript("OnClick", STATUS.OnClick)
-			button:SetScript("OnEnter", STATUS.OnEnter)
-			button:SetScript("OnLeave", STATUS.OnLeave)
+			button:SetScript("OnClick", function(self, mousebutton, down) NeuronStatusBar:OnClick(self, mousebutton, down) end)
+			button:SetScript("OnEnter", function(self) NeuronStatusBar:OnEnter(self) end)
+			button:SetScript("OnLeave", function(self) NeuronStatusBar:OnLeave(self) end)
 			button:SetHitRectInsets(0, 0, 0, 0)
 
 			button.sb:RegisterEvent("UPDATE_FACTION")
@@ -2782,7 +2788,7 @@ function NeuronStatusBar:SetType(button, save)
 
 		elseif (button.config.sbType == "mirror") then
 
-			button.sb:SetScript("OnUpdate",  STATUS.MirrorBar_OnUpdate)
+			button.sb:SetScript("OnUpdate",  function(self, elapsed) NeuronStatusBar:MirrorBar_OnUpdate(self, elapsed) end)
 
 			tinsert(MirrorBars, button)
 
@@ -2814,7 +2820,7 @@ end
 
 
 
-function STATUS:SetFauxState(state)
+function NeuronStatusBar:SetFauxState(button, state)
 
 	-- empty
 
@@ -2823,15 +2829,15 @@ end
 
 
 
-function STATUS:CreateEditFrame(index)
+function NeuronStatusBar:CreateEditFrame(button, index)
 
-	local editor = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
+	local editor = CreateFrame("Button", button:GetName().."EditFrame", button, "NeuronEditFrameTemplate")
 
 	setmetatable(editor, { __index = CreateFrame("Button") })
 
 	editor:EnableMouseWheel(true)
 	editor:RegisterForClicks("AnyDown")
-	editor:SetAllPoints(self)
+	editor:SetAllPoints(button)
 	editor:SetScript("OnShow", function(self) NEURON.NeuronGUI:ObjEditor_OnShow(self) end)
 	editor:SetScript("OnHide", function(self) NEURON.NeuronGUI:ObjEditor_OnHide(self) end)
 	editor:SetScript("OnEnter", function(self) NEURON.NeuronGUI:ObjEditor_OnEnter(self) end)
@@ -2839,7 +2845,7 @@ function STATUS:CreateEditFrame(index)
 	editor:SetScript("OnClick", function(self, button) NEURON.NeuronGUI:ObjEditor_OnClick(self, button) end)
 
 	editor.type:SetText("")
-	editor.object = self
+	editor.object = button
 	editor.editType = "status"
 
 	editor.select.TL:ClearAllPoints()
@@ -2859,7 +2865,7 @@ function STATUS:CreateEditFrame(index)
 	editor.select.BL:SetTexture("")
 	editor.select.BR:SetTexture("")
 
-	self.editor = editor
+	button.editor = editor
 
 	EDITIndex["STATUS"..index] = editor
 
