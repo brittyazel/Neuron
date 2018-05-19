@@ -7,9 +7,6 @@ local GDB, CDB, player, realm, btnGDB, btnCDB
 NEURON.NeuronButton = NEURON:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
 local NeuronButton = NEURON.NeuronButton
 
-NEURON.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")})
-local BUTTON = NEURON.BUTTON
-
 local BTNIndex, SKINIndex = NEURON.BTNIndex, NEURON.SKINIndex
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -160,6 +157,8 @@ local cooldowns, cdAlphas = {}, {}
 local CurrentMountSpellID
 
 
+NEURON.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
+local BUTTON = NEURON.BUTTON
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------

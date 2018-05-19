@@ -7,7 +7,7 @@ local NeuronBagBar = NEURON.NeuronBagBar
 
 local  bagbarsDB, bagbtnsDB
 
-local BAG = setmetatable({}, { __index = CreateFrame("Frame") })
+local BAGBTN = setmetatable({}, { __index = CreateFrame("Frame") })
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -80,21 +80,21 @@ function NeuronBagBar:OnInitialize()
 	bagbtnsDB = DB.bagbtns
 
 	----------------------------------------------------------------
-	BAG.SetData = NeuronBagBar.SetData
-	BAG.LoadData = NeuronBagBar.LoadData
-	BAG.SaveData = NeuronBagBar.SaveData
-	BAG.SetAux = NeuronBagBar.SetAux
-	BAG.LoadAux = NeuronBagBar.LoadAux
-	BAG.SetGrid = NeuronBagBar.SetGrid
-	BAG.SetDefaults = NeuronBagBar.SetDefaults
-	BAG.GetDefaults = NeuronBagBar.GetDefaults
-	BAG.SetType = NeuronBagBar.SetType
-	BAG.GetSkinned = NeuronBagBar.GetSkinned
-	BAG.SetSkinned = NeuronBagBar.SetSkinned
+	BAGBTN.SetData = NeuronBagBar.SetData
+	BAGBTN.LoadData = NeuronBagBar.LoadData
+	BAGBTN.SaveData = NeuronBagBar.SaveData
+	BAGBTN.SetAux = NeuronBagBar.SetAux
+	BAGBTN.LoadAux = NeuronBagBar.LoadAux
+	BAGBTN.SetGrid = NeuronBagBar.SetGrid
+	BAGBTN.SetDefaults = NeuronBagBar.SetDefaults
+	BAGBTN.GetDefaults = NeuronBagBar.GetDefaults
+	BAGBTN.SetType = NeuronBagBar.SetType
+	BAGBTN.GetSkinned = NeuronBagBar.GetSkinned
+	BAGBTN.SetSkinned = NeuronBagBar.SetSkinned
 	----------------------------------------------------------------
 
 
-	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAG }, #bagElements, STORAGE, gDef, nil, true)
+	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, STORAGE, gDef, nil, true)
 
 	NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
