@@ -846,7 +846,9 @@ function NeuronStatusBar:repDropDown_Initialize(dropdown) --Initialize the dropd
 		info.text = L["Auto Select"]
 		info.func = function(self, statusbar, func, checked) --statusbar is arg1, func is arg2
 			local faction = sbStrings.rep[2][2](statusbar.sb)
-			statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb, nil, faction)
+			statusbar.data.repID = self.value
+			statusbar.sb.repID = self.value
+			func(self, statusbar.sb, nil, faction)
 		end
 
 		if (parent.data.repID == 0) then
@@ -934,7 +936,9 @@ function NeuronStatusBar:repDropDown_Initialize(dropdown) --Initialize the dropd
 			info.arg2 = NeuronStatusBar.repbar_OnEvent
 			info.text = text
 			info.func = function(self, statusbar, func, checked)
-				statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb)
+				statusbar.data.repID = self.value
+				statusbar.sb.repID = self.value
+				func(self, statusbar.sb)
 			end
 
 			if (parent.data.repID == ID) then
@@ -2401,7 +2405,7 @@ function NeuronStatusBar:SB_AdjustableOptions_OnLoad(frame)
 		f.edit = f["method"..options[3]].edit
 		f.edit.frame = f
 		f.option = options[1]
-		f.func = options[4] ---TODO: adjust this
+		f.func = options[4]
 		f.inc = options[5]
 		f.min = options[6]
 		f.max = options[7]
