@@ -266,7 +266,7 @@ end
 ---TODO: This should get roped into Ace Event
 function NeuronExtraBar:VehicleLeave_OnEvent(button, event, ...)
 	if (event == "UPDATE_EXTRA_ACTIONBAR") then
-		button:Hide(); return
+		button:Hide(); --return
 	end
 
 	if (ActionBarController_GetCurrentActionBarState) then
@@ -288,7 +288,11 @@ end
 
 function NeuronExtraBar:VehicleLeave_OnEnter(button)
 	if ( UnitOnTaxi("player") ) then
+
+		button:SetHighlightTexture([[Interface\Buttons\CheckButtonHilight]], "ADD");
+
 		GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
+		GameTooltip:ClearLines()
 		GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1);
 		GameTooltip:AddLine(TAXI_CANCEL_DESCRIPTION, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
 		GameTooltip:Show();
@@ -299,10 +303,12 @@ function NeuronExtraBar:VehicleLeave_OnClick(button)
 	if ( UnitOnTaxi("player") ) then
 		TaxiRequestEarlyLanding();
 
+		--TODO: fix this!
+
 		-- Show that the request for landing has been received.
-		button:Disable();
+		--button:Disable();
 		button:SetHighlightTexture([[Interface\Buttons\CheckButtonHilight]], "ADD");
-		button:LockHighlight();
+		--button:LockHighlight();
 	else
 		VehicleExit();
 	end
