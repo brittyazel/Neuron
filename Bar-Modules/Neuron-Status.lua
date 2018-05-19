@@ -296,6 +296,16 @@ function NeuronStatusBar:OnInitialize()
 
 -------------------------------------------------
     STATUS.SetData = NeuronStatusBar.SetData
+	STATUS.LoadData = NeuronStatusBar.LoadData
+	STATUS.SaveData = NeuronStatusBar.SaveData
+	STATUS.SetAux = NeuronStatusBar.SetAux
+	STATUS.LoadAux = NeuronStatusBar.LoadAux
+	STATUS.SetGrid = NeuronStatusBar.SetGrid
+	STATUS.SetDefaults = NeuronStatusBar.SetDefaults
+	STATUS.GetDefaults = NeuronStatusBar.GetDefaults
+	STATUS.SetType = NeuronStatusBar.SetType
+	STATUS.GetSkinned = NeuronStatusBar.GetSkinned
+	STATUS.SetSkinned = NeuronStatusBar.SetSkinned
 -------------------------------------------------
 
 	NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, NeuronStatusBar, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, STORAGE, nil, nil, true)
@@ -1973,7 +1983,7 @@ function STATUS:ChangeStatusBarType(statusbar)
 		self.config.rIndex = 1
 	end
 
-	self:SetType()
+	self:SetType(self)
 end
 
 
@@ -2154,7 +2164,7 @@ local function sbTypeOnClick(self, button, down)
 			sb.config.rIndex = 3
 		end
 
-		sb:SetType()
+		sb:SetType(sb)
 
 		sb:UpdateEditor()
 	end
@@ -2540,7 +2550,7 @@ end
 
 
 
-function STATUS:SaveData()
+function NeuronStatusBar:SaveData(button)
 
 	-- empty
 
@@ -2549,9 +2559,9 @@ end
 
 
 
-function STATUS:LoadData(spec, state)
+function NeuronStatusBar:LoadData(button, spec, state)
 
-	local id = self.id
+	local id = button.id
 
 	if (statusbtnsDB) then
 
@@ -2574,27 +2584,27 @@ function STATUS:LoadData(spec, state)
 		NEURON:UpdateData(statusbtnsDB[id].config, configDef)
 		NEURON:UpdateData(statusbtnsDB[id].data, dataDef)
 
-		self.config = statusbtnsDB[id].config
+		button.config = statusbtnsDB[id].config
 
-		self.data =statusbtnsDB[id].data
+		button.data =statusbtnsDB[id].data
 	end
 end
 
 
 
 
-function STATUS:SetGrid(show, hide)
+function NeuronStatusBar:SetGrid(button, show, hide)
 
 	if (show) then
 
-		self.editmode = true
+		button.editmode = true
 
-		self.fbframe:Show()
+		button.fbframe:Show()
 
 	else
-		self.editmode = nil
+		button.editmode = nil
 
-		self.fbframe:Hide()
+		button.fbframe:Hide()
 	end
 
 end
@@ -2602,7 +2612,7 @@ end
 
 
 
-function STATUS:SetAux()
+function NeuronStatusBar:SetAux(button)
 
 	-- empty
 
@@ -2611,20 +2621,31 @@ end
 
 
 
-function STATUS:LoadAux()
+function NeuronStatusBar:LoadAux(button)
 
-	self:CreateEditFrame(self.objTIndex)
+	button:CreateEditFrame(button.objTIndex)
+
+end
+
+function NeuronStatusBar:SetSkinned(button)
+
+	-- empty
 
 end
 
 
+function NeuronStatusBar:GetSkinned(button)
+
+	-- empty
+
+end
 
 
-function STATUS:SetDefaults(config)
+function NeuronStatusBar:SetDefaults(button, config)
 
 	if (config) then
 		for k,v in pairs(config) do
-			self.config[k] = v
+			button.config[k] = v
 		end
 	end
 
@@ -2633,9 +2654,9 @@ end
 
 
 
-function STATUS:GetDefaults()
+function NeuronStatusBar:GetDefaults(button)
 
-	return configDefaults[self.id]
+	return configDefaults[button.id]
 
 end
 
@@ -2673,131 +2694,131 @@ end
 
 
 
-function STATUS:SetType(save)
+function NeuronStatusBar:SetType(button, save)
 
 	if (InCombatLockdown()) then
 		return
 	end
 
-	self:StatusBar_Reset()
+	button:StatusBar_Reset()
 
 	if (kill) then
 
-		self:SetScript("OnEvent", function() end)
-		self:SetScript("OnUpdate", function() end)
+		button:SetScript("OnEvent", function() end)
+		button:SetScript("OnUpdate", function() end)
 	else
 
-		if (self.config.sbType == "cast") then
+		if (button.config.sbType == "cast") then
 
-			self.sb:RegisterEvent("UNIT_SPELLCAST_START")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_STOP")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_FAILED")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_DELAYED")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_START")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_STOP")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_FAILED")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_DELAYED")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
+			button.sb:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
 
-			self.sb.unit = BarUnits[self.data.unit]
-			self.sb.showIcon = self.config.showIcon
+			button.sb.unit = BarUnits[button.data.unit]
+			button.sb.showIcon = button.config.showIcon
 
-			self.sb.showTradeSkills = true
-			self.sb.casting = nil
-			self.sb.channeling = nil
-			self.sb.holdTime = 0
+			button.sb.showTradeSkills = true
+			button.sb.casting = nil
+			button.sb.channeling = nil
+			button.sb.holdTime = 0
 
-			self.sb:SetScript("OnEvent", STATUS.CastBar_OnEvent)
-			self.sb:SetScript("OnUpdate", STATUS.CastBar_OnUpdate)
+			button.sb:SetScript("OnEvent", STATUS.CastBar_OnEvent)
+			button.sb:SetScript("OnUpdate", STATUS.CastBar_OnUpdate)
 
-			if (not self.sb.cbtimer.castInfo) then
-				self.sb.cbtimer.castInfo = {}
+			if (not button.sb.cbtimer.castInfo) then
+				button.sb.cbtimer.castInfo = {}
 			else
-				wipe(self.sb.cbtimer.castInfo)
+				wipe(button.sb.cbtimer.castInfo)
 			end
 
-			self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_START")
-			self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-			self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_STOP")
-			self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-			self.sb.cbtimer:SetScript("OnEvent", STATUS.CastBarTimer_OnEvent)
+			button.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_START")
+			button.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+			button.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_STOP")
+			button.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
+			button.sb.cbtimer:SetScript("OnEvent", STATUS.CastBarTimer_OnEvent)
 
-			self.CastBar_OnEvent(self.sb)
+			button.CastBar_OnEvent(button.sb)
 
-			self.sb:Hide()
+			button.sb:Hide()
 
-		elseif (self.config.sbType == "xp") then
+		elseif (button.config.sbType == "xp") then
 
-			self:SetAttribute("hasaction", true)
+			button:SetAttribute("hasaction", true)
 
-			self:RegisterForClicks("RightButtonUp")
-			self:SetScript("OnClick", STATUS.OnClick)
-			self:SetScript("OnEnter", STATUS.OnEnter)
-			self:SetScript("OnLeave", STATUS.OnLeave)
-			self:SetHitRectInsets(0, 0, 0, 0)
+			button:RegisterForClicks("RightButtonUp")
+			button:SetScript("OnClick", STATUS.OnClick)
+			button:SetScript("OnEnter", STATUS.OnEnter)
+			button:SetScript("OnLeave", STATUS.OnLeave)
+			button:SetHitRectInsets(0, 0, 0, 0)
 
-			self.sb:RegisterEvent("PLAYER_XP_UPDATE")
-			self.sb:RegisterEvent("HONOR_XP_UPDATE")
-			self.sb:RegisterEvent("ARTIFACT_XP_UPDATE")
-			self.sb:RegisterEvent("UPDATE_EXHAUSTION")
-			self.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
-			self.sb:RegisterEvent("ARTIFACT_UPDATE")
-			self.sb:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+			button.sb:RegisterEvent("PLAYER_XP_UPDATE")
+			button.sb:RegisterEvent("HONOR_XP_UPDATE")
+			button.sb:RegisterEvent("ARTIFACT_XP_UPDATE")
+			button.sb:RegisterEvent("UPDATE_EXHAUSTION")
+			button.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
+			button.sb:RegisterEvent("ARTIFACT_UPDATE")
+			button.sb:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
-			self.sb:SetScript("OnEvent", XPBar_OnEvent)
+			button.sb:SetScript("OnEvent", XPBar_OnEvent)
 
-			self.sb:Show()
+			button.sb:Show()
 
-		elseif (self.config.sbType == "rep") then
+		elseif (button.config.sbType == "rep") then
 
-			self.sb.repID = self.data.repID
+			button.sb.repID = button.data.repID
 
-			self:SetAttribute("hasaction", true)
+			button:SetAttribute("hasaction", true)
 
-			self:RegisterForClicks("RightButtonUp")
-			self:SetScript("OnClick", STATUS.OnClick)
-			self:SetScript("OnEnter", STATUS.OnEnter)
-			self:SetScript("OnLeave", STATUS.OnLeave)
-			self:SetHitRectInsets(0, 0, 0, 0)
+			button:RegisterForClicks("RightButtonUp")
+			button:SetScript("OnClick", STATUS.OnClick)
+			button:SetScript("OnEnter", STATUS.OnEnter)
+			button:SetScript("OnLeave", STATUS.OnLeave)
+			button:SetHitRectInsets(0, 0, 0, 0)
 
-			self.sb:RegisterEvent("UPDATE_FACTION")
-			self.sb:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
-			self.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
+			button.sb:RegisterEvent("UPDATE_FACTION")
+			button.sb:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
+			button.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-			self.sb:SetScript("OnEvent", repbar_OnEvent)
+			button.sb:SetScript("OnEvent", repbar_OnEvent)
 
-			self.sb:Show()
+			button.sb:Show()
 
-		elseif (self.config.sbType == "mirror") then
+		elseif (button.config.sbType == "mirror") then
 
-			self.sb:SetScript("OnUpdate",  STATUS.MirrorBar_OnUpdate)
+			button.sb:SetScript("OnUpdate",  STATUS.MirrorBar_OnUpdate)
 
-			tinsert(MirrorBars, self)
+			tinsert(MirrorBars, button)
 
-			self.sb:Hide()
+			button.sb:Hide()
 
 		end
 
 
 		local typeString
 
-		if (self.config.sbType == "xp") then
+		if (button.config.sbType == "xp") then
 			typeString = L["XP Bar"]
-		elseif (self.config.sbType == "rep") then
+		elseif (button.config.sbType == "rep") then
 			typeString = L["Rep Bar"]
-		elseif (self.config.sbType == "cast") then
+		elseif (button.config.sbType == "cast") then
 			typeString = L["Cast Bar"]
-		elseif (self.config.sbType == "mirror") then
+		elseif (button.config.sbType == "mirror") then
 			typeString = L["Mirror Bar"]
 		end
 
-		self.fbframe.feedback.text:SetText(typeString)
+		button.fbframe.feedback.text:SetText(typeString)
 
 	end
 
-	NeuronStatusBar:SetData(self, self.bar)
+	button:SetData(button, button.bar)
 
 end
 

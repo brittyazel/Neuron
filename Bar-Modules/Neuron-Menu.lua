@@ -73,6 +73,16 @@ function NeuronMenuBar:OnInitialize()
 
     ----------------------------------------------------------------
     MENUBTN.SetData = NeuronMenuBar.SetData
+    MENUBTN.LoadData = NeuronMenuBar.LoadData
+    MENUBTN.SaveData = NeuronMenuBar.SaveData
+    MENUBTN.SetAux = NeuronMenuBar.SetAux
+    MENUBTN.LoadAux = NeuronMenuBar.LoadAux
+    MENUBTN.SetGrid = NeuronMenuBar.SetGrid
+    MENUBTN.SetDefaults = NeuronMenuBar.SetDefaults
+    MENUBTN.GetDefaults = NeuronMenuBar.GetDefaults
+    MENUBTN.SetType = NeuronMenuBar.SetType
+    MENUBTN.GetSkinned = NeuronMenuBar.GetSkinned
+    MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
     ----------------------------------------------------------------
 
     NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, STORAGE, gDef, nil, false)
@@ -959,88 +969,92 @@ function NeuronMenuBar:SetData(button, bar)
 end
 
 
-function MENUBTN:SaveData()
+function NeuronMenuBar:SaveData(button)
     -- empty
 end
 
 
-function MENUBTN:LoadData(spec, state)
-    local id = self.id
+function NeuronMenuBar:LoadData(button, spec, state)
+    local id = button.id
 
-    self.DB = menubtnsDB
+    button.DB = menubtnsDB
 
-    if (self.DB) then
-        if (not self.DB[id]) then
-            self.DB[id] = {}
+    if (button.DB) then
+        if (not button.DB[id]) then
+            button.DB[id] = {}
         end
 
-        if (not self.DB[id].config) then
-            self.DB[id].config = CopyTable(configData)
+        if (not button.DB[id].config) then
+            button.DB[id].config = CopyTable(configData)
         end
 
-        if (not self.DB[id]) then
-            self.DB[id] = {}
+        if (not button.DB[id]) then
+            button.DB[id] = {}
         end
 
-        if (not self.DB[id].data) then
-            self.DB[id].data = {}
+        if (not button.DB[id].data) then
+            button.DB[id].data = {}
         end
 
-        self.config = self.DB [id].config
-        self.data = self.DB[id].data
+        button.config = button.DB [id].config
+        button.data = button.DB[id].data
     end
 end
 
 
-function MENUBTN:SetGrid(show, hide)
+function NeuronMenuBar:SetGrid(button, show, hide)
+    --empty
+end
+
+function NeuronMenuBar:SetAux(button)
+    -- empty
+end
+
+function NeuronMenuBar:LoadAux(button)
+    -- empty
+end
+
+function NeuronMenuBar:SetDefaults(button)
+    -- empty
+end
+
+function NeuronMenuBar:GetDefaults(button)
+    --empty
+end
+
+function NeuronMenuBar:SetSkinned(button)
+    -- empty
+end
+
+function NeuronMenuBar:GetSkinned(button)
     --empty
 end
 
 
-function MENUBTN:SetAux()
-    -- empty
-end
+function NeuronMenuBar:SetType(button, save)
+    if (menuElements[button.id]) then
+        button:SetWidth(menuElements[button.id]:GetWidth()*0.90)
+        button:SetHeight(menuElements[button.id]:GetHeight()/1.60)
+        button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, self:GetHeight()/2, button:GetHeight()/2)
 
+        button.element = menuElements[button.id]
 
-function MENUBTN:LoadAux()
-    -- empty
-end
-
-
-function MENUBTN:SetDefaults()
-    -- empty
-end
-
-
-function MENUBTN:GetDefaults()
-    --empty
-end
-
-
-function MENUBTN:SetType(save)
-    if (menuElements[self.id]) then
-        self:SetWidth(menuElements[self.id]:GetWidth()*0.90)
-        self:SetHeight(menuElements[self.id]:GetHeight()/1.60)
-        self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
-
-        self.element = menuElements[self.id]
-
-        local objects = NEURON:GetParentKeys(self.element)
+        local objects = NEURON:GetParentKeys(button.element)
 
         for k,v in pairs(objects) do
-            local name = v:gsub(self.element:GetName(), "")
-            self[name:lower()] = _G[v]
+            local name = v:gsub(button.element:GetName(), "")
+            button[name:lower()] = _G[v]
         end
 
-        self.element.normaltexture = self.element:CreateTexture("$parentNormalTexture", "OVERLAY", "NeuronCheckButtonTextureTemplate")
-        self.element.normaltexture:ClearAllPoints()
-        self.element.normaltexture:SetPoint("CENTER", 0, 0)
-        self.element.icontexture = self.element:GetNormalTexture()
-        self.element:ClearAllPoints()
-        self.element:SetParent(self)
-        self.element:Show()
-        self.element:SetPoint("BOTTOM", self, "BOTTOM", 0, -1)
-        self.element:SetHitRectInsets(3, 3, 23, 3)
+        button.element.normaltexture = button.element:CreateTexture("$parentNormalTexture", "OVERLAY", "NeuronCheckButtonTextureTemplate")
+        button.element.normaltexture:ClearAllPoints()
+        button.element.normaltexture:SetPoint("CENTER", 0, 0)
+        button.element.icontexture = button.element:GetNormalTexture()
+        button.element:ClearAllPoints()
+        button.element:SetParent(button)
+        button.element:Show()
+        button.element:SetPoint("BOTTOM", self, "BOTTOM", 0, -1)
+        button.element:SetHitRectInsets(3, 3, 23, 3)
     end
 end
 

@@ -1,24 +1,4 @@
 --Neuron, a World of Warcraft® user interface addon.
-
---------------------
------Notes----------
---------------------
----ToDO:
---[[we need to continue refactoring the different classes to store all funcitons per-class. This is getting tricky
-with things like "SetData" which has a different one per bar. So we'll need to a) refactor all these at the same time,
-and B, create a symlink inside of each object to it's classes SetData function, now that functions are moving out of object
-and into the classes.
-List of functions to postpone refactoring:
-1)SetData
-2)LoadData
-3)SetAux
-4)SetType
-5)SetGrid()
-6)LoadAux
-7)SetDefaults
- ]]
-
-
 -------------------------------------------------------------------------------
 -- Localized Lua globals.
 -------------------------------------------------------------------------------
@@ -1376,7 +1356,7 @@ end
 
 function NEURON:ToggleButtonGrid(show, hide)
 	for id,btn in pairs(BTNIndex) do
-		btn:SetGrid(show, hide)
+		btn:SetGrid(btn, show, hide)
 	end
 end
 
@@ -1446,7 +1426,7 @@ function NEURON:ToggleBindings(show, hide)
 			binder:Hide(); binder.button.editmode = NEURON.BindingMode
 			binder:SetFrameStrata("LOW")
 			if (not NEURON.BarsShown) then
-				binder.button:SetGrid()
+				binder.button:SetGrid(binder.button)
 			end
 		end
 
@@ -1462,7 +1442,7 @@ function NEURON:ToggleBindings(show, hide)
 			if (binder.button.bar) then
 				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
 				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
-				binder.button:SetGrid(true)
+				binder.button:SetGrid(binder.button, true)
 			end
 		end
 

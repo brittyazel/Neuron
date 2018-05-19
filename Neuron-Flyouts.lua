@@ -1255,7 +1255,7 @@ function NeuronFlyouts:Flyout_SetData(button, bar)
 	button.iconframecooldown:SetFrameLevel(3)
 	button.iconframeaurawatch:SetFrameLevel(3)
 
-	NEURON.NeuronButton:GetSkinned(button)
+	button:GetSkinned(button)
 end
 
 
@@ -1341,7 +1341,7 @@ function NeuronFlyouts:Flyout_GetButton(fbutton)
 
 
 	button:SetData(button, fbutton.flyout.bar)
-	NEURON.NeuronButton:SetSkinned(button, true)
+	button:SetSkinned(button, true)
 	button:Show()
 
 	fbutton.flyout.buttons[id] = button

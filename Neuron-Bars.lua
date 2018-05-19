@@ -1184,12 +1184,16 @@ function NeuronBar:LoadObjects(bar, init)
 	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
 		object = _G[bar.objPrefix..objID]
 
+
 		if (object) then
+
+			---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
 			object:SetData(object, bar)
-			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
-			object:SetAux()
-			object:SetType(nil, nil, init)
-			object:SetGrid()
+			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
+			object:SetAux(object)
+			object:SetType(object, nil, nil, init)
+			object:SetGrid(object)
+
 			bar.objCount = bar.objCount + 1
 			bar.countChanged = true
 		end
@@ -1821,7 +1825,7 @@ function NeuronBar:UpdateObjectGrid(bar, show)
 		object = _G[bar.objPrefix..objID]
 
 		if (object) then
-			object:SetGrid(show)
+			object:SetGrid(object, show)
 		end
 	end
 end
@@ -2173,7 +2177,7 @@ function NeuronBar:StoreObject(bar, object, storage, objTable)
 		NEURON.NeuronBinder:ClearBindings(object)
 	end
 
-	NEURON.NeuronButton:SaveData(object)
+	object:SaveData(object)
 
 	--NEURON.UpdateAnchor(button, nil, nil, nil, true)
 

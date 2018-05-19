@@ -2615,7 +2615,7 @@ function NeuronGUI:MacroEditorUpdate()
 			data = button.specdata[buttonSpec][state]
 			NEURON.NeuronFlyouts:UpdateFlyout(button)
 			NEURON.NeuronButton:BuildStateData(button)
-			button:SetType()
+			button:SetType(button)
 		end
 
 		if (data) then
@@ -2685,7 +2685,7 @@ function NeuronGUI:macroText_OnEditFocusLost()
 
 		NEURON.NeuronFlyouts:UpdateFlyout(button)
 		NEURON.NeuronButton:BuildStateData(button)
-		button:SetType()
+		button:SetType(button)
 
 		NeuronGUI:MacroEditorUpdate()
 	end

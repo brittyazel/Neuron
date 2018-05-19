@@ -215,6 +215,16 @@ function NeuronButton:OnInitialize()
 
 	----------------------------------------------------------------
 	BUTTON.SetData = NeuronButton.SetData
+	BUTTON.LoadData = NeuronButton.LoadData
+	BUTTON.SaveData = NeuronButton.SaveData
+	BUTTON.SetAux = NeuronButton.SetAux
+	BUTTON.LoadAux = NeuronButton.LoadAux
+	BUTTON.SetGrid = NeuronButton.SetGrid
+	BUTTON.SetDefaults = NeuronButton.SetDefaults
+	BUTTON.GetDefaults = NeuronButton.GetDefaults
+	BUTTON.SetType = NeuronButton.SetType
+	BUTTON.GetSkinned = NeuronButton.GetSkinned
+	BUTTON.SetSkinned = NeuronButton.SetSkinned
 	----------------------------------------------------------------
 
 end
@@ -478,7 +488,7 @@ function NeuronButton:controlOnUpdate(frame, elapsed)
 end
 
 --this function gets called via controlOnUpdate in the main Neuron.lua
-function NeuronButton.cooldownsOnUpdate(frame, elapsed)
+function NeuronButton:cooldownsOnUpdate(frame, elapsed)
 	local coolDown, formatted, size
 
 	for cd in next,cooldowns do
@@ -1320,7 +1330,7 @@ end
 function NeuronButton:MACRO_UpdateTexture(button, force)
 	local hasAction = NeuronButton:MACRO_HasAction(button)
 
-	if (not NeuronButton:GetSkinned(button)) then
+	if (not button:GetSkinned(button)) then
 		if (hasAction or force) then
 			button:SetNormalTexture(button.hasAction or "")
 			button:GetNormalTexture():SetVertexColor(1,1,1,1)
@@ -1650,10 +1660,10 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 
 	button:Show()
 
-	button:LoadData(spec, button:GetParent():GetAttribute("activestate") or "homestate")
+	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
-	button:SetType()
-	button:SetGrid()
+	button:SetType(button)
+	button:SetGrid(button)
 
 end
 
@@ -1799,7 +1809,7 @@ function NeuronButton:MACRO_PlaceSpell(button, action1, action2, spellID)
 	button.data.macro_UseNote = false
 
 	if (not button.cursor) then
-		button:SetType(true)
+		button:SetType(button, true)
 	end
 
 	MacroDrag[1] = false
@@ -1828,7 +1838,7 @@ function NeuronButton:MACRO_PlaceItem(button, action1, action2, hasAction)
 	button.data.macro_UseNote = false
 
 	if (not button.cursor) then
-		button:SetType(true)
+		button:SetType(button, true)
 	end
 	MacroDrag[1] = false
 	ClearCursor()
@@ -1862,7 +1872,7 @@ function NeuronButton:MACRO_PlaceBlizzMacro(button, action1)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(true)
+			button:SetType(button, true)
 		end
 
 		MacroDrag[1] = false
@@ -1897,7 +1907,7 @@ function NeuronButton:MACRO_PlaceBlizzEquipSet(button, action1)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(true)
+			button:SetType(button, true)
 		end
 
 		MacroDrag[1] = false
@@ -1958,7 +1968,7 @@ function NeuronButton:MACRO_PlaceMount(button, action1, action2, hasAction)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(true)
+			button:SetType(button, true)
 		end
 
 		MacroDrag[1] = false
@@ -1995,7 +2005,7 @@ function NeuronButton:MACRO_PlaceCompanion(button, action1, action2, hasAction)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(true)
+			button:SetType(button, true)
 		end
 
 		MacroDrag[1] = false
@@ -2055,7 +2065,7 @@ function NeuronButton:MACRO_PlaceFlyout(button, action1, action2, hasAction)
 		NEURON.NeuronFlyouts:UpdateFlyout(button, true)
 
 		if (not button.cursor) then
-			button:SetType(true)
+			button:SetType(button, true)
 		end
 
 		MacroDrag[1] = false
@@ -2085,7 +2095,7 @@ function NeuronButton:MACRO_PlaceBattlePet(button, action1, action2, hasAction)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(true)
+			button:SetType(button, true)
 		end
 
 		MacroDrag[1] = false
@@ -2106,7 +2116,7 @@ function NeuronButton:MACRO_PlaceMacro(button)
 	button.data.macro_UseNote = MacroDrag[10]
 
 	if (not button.cursor) then
-		button:SetType(true)
+		button:SetType(button, true)
 	end
 
 	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
@@ -2180,7 +2190,7 @@ function NeuronButton:MACRO_PickUpMacro(button)
 
 			NEURON.NeuronFlyouts:UpdateFlyout(button)
 
-			button:SetType(true)
+			button:SetType(button, true)
 
 		end
 
@@ -2350,7 +2360,7 @@ function NeuronButton:MACRO_PreClick(button, mousebutton)
 
 			StartDrag = button:GetParent():GetAttribute("activestate")
 
-			button:SetType(true, true)
+			button:SetType(button, true, true)
 
 			NEURON:ToggleButtonGrid(true)
 
@@ -2372,7 +2382,7 @@ function NeuronButton:MACRO_PostClick(button, mousebutton)
 	if (not InCombatLockdown() and MouseIsOver(button)) then
 
 		if (button.cursor) then
-			button:SetType(true)
+			button:SetType(button, true)
 
 			button.cursor = nil
 
@@ -2856,13 +2866,13 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		object:SetID(0)
 		object.objTIndex = index
 		object.objType = data.objType:gsub("%s", ""):upper()
-		object:LoadData(GetActiveSpecGroup(), "homestate")
+		object:LoadData(object, GetActiveSpecGroup(), "homestate")
 
 		if (firstRun) then
-			object:SetDefaults(object:GetDefaults())
+			object:SetDefaults(object, object:GetDefaults(object))
 		end
 
-		object:LoadAux()
+		object:LoadAux(object)
 
 		data.objTable[index] = object
 
@@ -2940,10 +2950,10 @@ function NeuronButton:UpdateObjectSpec(bar)
 			bar:Show()
 
 			object:SetData(object, bar)
-			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
+			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
 			NEURON.NeuronFlyouts:UpdateFlyout(object)
-			object:SetType()
-			object:SetGrid()
+			object:SetType(object)
+			object:SetGrid(object)
 		end
 	end
 end
@@ -3095,7 +3105,7 @@ function NeuronButton:SetData(button, bar)
 	button.iconframecooldown:SetFrameLevel(3)
 	button.iconframeaurawatch:SetFrameLevel(3)
 
-	NeuronButton:GetSkinned(button)
+	button:GetSkinned(button)
 
 	NeuronButton:MACRO_UpdateTimers(button)
 end
@@ -3167,70 +3177,70 @@ function NeuronButton:SaveData(button, state)
 end
 
 ---TODO refactor this to NeuronButton
-function BUTTON:LoadData(spec, state)
-	local id = self.id
+function NeuronButton:LoadData(button, spec, state)
+	local id = button.id
 
-	self.GDB = btnGDB
-	self.CDB = btnCDB
+	button.GDB = btnGDB
+	button.CDB = btnCDB
 
-	if (self.GDB and self.CDB) then
+	if (button.GDB and button.CDB) then
 
-		if (not self.GDB[id]) then
-			self.GDB[id] = {}
+		if (not button.GDB[id]) then
+			button.GDB[id] = {}
 		end
 
-		if (not self.GDB[id].config) then
-			self.GDB[id].config = CopyTable(configData)
+		if (not button.GDB[id].config) then
+			button.GDB[id].config = CopyTable(configData)
 		end
 
-		if (not self.GDB[id].keys) then
-			self.GDB[id].keys = CopyTable(keyData)
+		if (not button.GDB[id].keys) then
+			button.GDB[id].keys = CopyTable(keyData)
 		end
 
-		if (not self.CDB[id]) then
-			self.CDB[id] = {}
+		if (not button.CDB[id]) then
+			button.CDB[id] = {}
 		end
 
 		for i=1,4 do
-			if (not self.CDB[id][i]) then
-				self.CDB[id][i] = { homestate = CopyTable(stateData) }
+			if (not button.CDB[id][i]) then
+				button.CDB[id][i] = { homestate = CopyTable(stateData) }
 			end
 		end
 
-		if (not self.CDB[id].keys) then
-			self.CDB[id].keys = {}
+		if (not button.CDB[id].keys) then
+			button.CDB[id].keys = {}
 		end
 
 		-- kill old per character key data
-		if (self.CDB[id].keys.hotKeys) then
-			self.CDB[id].keys.hotKeys = nil
-			self.CDB[id].keys.hotKeyText = nil
-			self.CDB[id].keys.hotKeyLock = nil
-			self.CDB[id].keys.hotKeyPri = nil
+		if (button.CDB[id].keys.hotKeys) then
+			button.CDB[id].keys.hotKeys = nil
+			button.CDB[id].keys.hotKeyText = nil
+			button.CDB[id].keys.hotKeyLock = nil
+			button.CDB[id].keys.hotKeyPri = nil
 		end
 
-		if (not self.CDB[id].keys[spec]) then
-			self.CDB[id].keys[spec] = CopyTable(keyData)
+		if (not button.CDB[id].keys[spec]) then
+			button.CDB[id].keys[spec] = CopyTable(keyData)
 		end
 
-		NEURON:UpdateData(self.CDB[id].keys[spec], keyData)
+		NEURON:UpdateData(button.CDB[id].keys[spec], keyData)
 
-		if (not self.CDB[id][spec]) then
-			self.CDB[id][spec] = { homestate = CopyTable(stateData) }
+		if (not button.CDB[id][spec]) then
+			button.CDB[id][spec] = { homestate = CopyTable(stateData) }
 		end
 
-		if (self.CDB[id][spec].keys) then
-			self.CDB[id][spec].keys = nil
+		if (button.CDB[id][spec].keys) then
+			button.CDB[id][spec].keys = nil
 		end
 
-		if (not self.CDB[id][spec][state]) then
-			self.CDB[id][spec][state] = CopyTable(stateData)
+		if (not button.CDB[id][spec][state]) then
+			button.CDB[id][spec][state] = CopyTable(stateData)
 		end
 
-		NEURON:UpdateData(self.GDB[id].config, configData)
-		NEURON:UpdateData(self.GDB[id].keys, keyData)
+		NEURON:UpdateData(button.GDB[id].config, configData)
+		NEURON:UpdateData(button.GDB[id].keys, keyData)
 
-		for spec,states in pairs(self.CDB[id]) do
+		for spec,states in pairs(button.CDB[id]) do
 			if (spec ~= "keys") then
 				for state,data in pairs(states) do
 					if (type(data) == "table") then
@@ -3240,21 +3250,21 @@ function BUTTON:LoadData(spec, state)
 			end
 		end
 
-		self.config = self.GDB[id].config
+		button.config = button.GDB[id].config
 
 		if (CDB.perCharBinds) then
-			self.keys = self.CDB[id].keys
+			button.keys = button.CDB[id].keys
 		else
-			self.keys = self.GDB[id].keys
+			button.keys = button.GDB[id].keys
 		end
 
-		self.specdata = self.CDB[id]
+		button.specdata = button.CDB[id]
 
-		self.statedata = self.specdata[spec]
+		button.statedata = button.specdata[spec]
 
-		self.data = self.statedata[state]
+		button.data = button.statedata[state]
 
-		NeuronButton:BuildStateData(self)
+		NeuronButton:BuildStateData(button)
 	end
 end
 
@@ -3296,104 +3306,104 @@ function NeuronButton:Reset(button)
 end
 
 ---TODO refactor this to NeuronButton
-function BUTTON:SetGrid(show, hide)
+function NeuronButton:SetGrid(button, show, hide)
 	if (not InCombatLockdown()) then
 
-		self:SetAttribute("isshown", self.showGrid)
-		self:SetAttribute("showgrid", show)
+		button:SetAttribute("isshown", button.showGrid)
+		button:SetAttribute("showgrid", show)
 
-		if (show or self.showGrid) then
-			self:Show()
-		elseif (not (self:IsMouseOver() and self:IsVisible()) and not NeuronButton:MACRO_HasAction(self)) then
-			self:Hide()
+		if (show or button.showGrid) then
+			button:Show()
+		elseif (not (button:IsMouseOver() and button:IsVisible()) and not NeuronButton:MACRO_HasAction(button)) then
+			button:Hide()
 		end
 	end
 end
 
 
 ---TODO refactor this to NeuronButton
-function BUTTON:SetAux()
-	NeuronButton:SetSkinned(self)
-	NEURON.NeuronFlyouts:UpdateFlyout(self, true)
+function NeuronButton:SetAux(button)
+	button:SetSkinned(button)
+	NEURON.NeuronFlyouts:UpdateFlyout(button, true)
 end
 
 ---TODO refactor this to NeuronButton
-function BUTTON:LoadAux()
+function NeuronButton:LoadAux(button)
 
-	NEURON.NeuronGUI:ObjEditor_CreateEditFrame(self, self.objTIndex)
-	NEURON.NeuronBinder:CreateBindFrame(self, self.objTIndex)
+	NEURON.NeuronGUI:ObjEditor_CreateEditFrame(button, button.objTIndex)
+	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
 end
 
 ---TODO refactor this to NeuronButton
-function BUTTON:SetDefaults(config, keys)
+function NeuronButton:SetDefaults(button, config, keys)
 	if (config) then
 		for k,v in pairs(config) do
-			self.config[k] = v
+			button.config[k] = v
 		end
 	end
 
 	if (keys) then
 		for k,v in pairs(keys) do
-			self.keys[k] = v
+			button.keys[k] = v
 		end
 	end
 end
 
 ---TODO refactor this to NeuronButton
-function BUTTON:GetDefaults()
-	return nil, keyDefaults[self.id]
+function NeuronButton:GetDefaults(button)
+	return nil, keyDefaults[button.id]
 end
 
 ---TODO refactor this to NeuronButton
-function BUTTON:SetType(save, kill, init)
-	local state = self:GetParent():GetAttribute("activestate")
+function NeuronButton:SetType(button, save, kill, init)
+	local state = button:GetParent():GetAttribute("activestate")
 
-	NeuronButton:Reset(self)
+	NeuronButton:Reset(button)
 
 	if (kill) then
 
-		self:SetScript("OnEvent", function() end)
-		self:SetScript("OnUpdate", function() end)
-		self:SetScript("OnAttributeChanged", function() end)
+		button:SetScript("OnEvent", function() end)
+		button:SetScript("OnUpdate", function() end)
+		button:SetScript("OnAttributeChanged", function() end)
 
 	else
-		SecureHandler_OnLoad(self)
+		SecureHandler_OnLoad(button)
 
-		self:RegisterEvent("ITEM_LOCK_CHANGED")
-		self:RegisterEvent("ACTIONBAR_SHOWGRID")
-		self:RegisterEvent("ACTIONBAR_HIDEGRID")
-		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-		self:RegisterEvent("UPDATE_MACROS")
-		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+		button:RegisterEvent("ITEM_LOCK_CHANGED")
+		button:RegisterEvent("ACTIONBAR_SHOWGRID")
+		button:RegisterEvent("ACTIONBAR_HIDEGRID")
+		button:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+		button:RegisterEvent("UPDATE_MACROS")
+		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		button:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
-		NeuronButton:MACRO_UpdateParse(self)
+		NeuronButton:MACRO_UpdateParse(button)
 
-		self:SetAttribute("type", "macro")
-		self:SetAttribute("*macrotext*", self.macroparse)
+		button:SetAttribute("type", "macro")
+		button:SetAttribute("*macrotext*", button.macroparse)
 
-		self:SetScript("OnEvent", function(self, event, ...) NeuronButton:MACRO_OnEvent(self, event, ...) end)
-		self:SetScript("PreClick", function(self, mousebutton) NeuronButton:MACRO_PreClick(self, mousebutton) end)
-		self:SetScript("PostClick", function(self, mousebutton) NeuronButton:MACRO_PostClick(self, mousebutton) end)
-		self:SetScript("OnReceiveDrag", function(self, preclick) NeuronButton:MACRO_OnReceiveDrag(self, preclick) end)
-		self:SetScript("OnDragStart", function(self, mousebutton) NeuronButton:MACRO_OnDragStart(self, mousebutton) end)
-		self:SetScript("OnDragStop", function(self) NeuronButton:MACRO_OnDragStop(self) end)
-		self:SetScript("OnUpdate", function(self, elapsed) NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
-		self:SetScript("OnShow", function(self, ...) NeuronButton:MACRO_OnShow(self, ...) end)
-		self:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
-		self:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
+		button:SetScript("OnEvent", function(self, event, ...) NeuronButton:MACRO_OnEvent(self, event, ...) end)
+		button:SetScript("PreClick", function(self, mousebutton) NeuronButton:MACRO_PreClick(self, mousebutton) end)
+		button:SetScript("PostClick", function(self, mousebutton) NeuronButton:MACRO_PostClick(self, mousebutton) end)
+		button:SetScript("OnReceiveDrag", function(self, preclick) NeuronButton:MACRO_OnReceiveDrag(self, preclick) end)
+		button:SetScript("OnDragStart", function(self, mousebutton) NeuronButton:MACRO_OnDragStart(self, mousebutton) end)
+		button:SetScript("OnDragStop", function(self) NeuronButton:MACRO_OnDragStop(self) end)
+		button:SetScript("OnUpdate", function(self, elapsed) NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
+		button:SetScript("OnShow", function(self, ...) NeuronButton:MACRO_OnShow(self, ...) end)
+		button:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
+		button:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
 
-		self:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
-		self:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
+		button:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
+		button:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
 
-		self:WrapScript(self, "OnShow", [[
+		button:WrapScript(button, "OnShow", [[
 						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
 							self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
 						end
 						]])
 
-		self:WrapScript(self, "OnHide", [[
+		button:WrapScript(button, "OnHide", [[
 						if (not self:GetParent():GetAttribute("concealed")) then
 							for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
 								self:ClearBinding(key)
@@ -3405,10 +3415,10 @@ function BUTTON:SetType(save, kill, init)
 		--new action ID's for possess 133-138
 		--new action ID's for override 157-162
 
-		self:SetAttribute("overrideID_Offset", 156)
-		self:SetAttribute("vehicleID_Offset", 132)
+		button:SetAttribute("overrideID_Offset", 156)
+		button:SetAttribute("vehicleID_Offset", 132)
 
-		self:SetAttribute("_childupdate", [=[
+		button:SetAttribute("_childupdate", [=[
 
 				if (message) then
 
@@ -3482,15 +3492,15 @@ function BUTTON:SetType(save, kill, init)
 			]=])
 
 		if (not init) then
-			NeuronButton:MACRO_UpdateAll(self, true)
+			NeuronButton:MACRO_UpdateAll(button, true)
 		end
 
-		NeuronButton:MACRO_OnShow(self)
+		NeuronButton:MACRO_OnShow(button)
 
 	end
 
 	if (save) then
-		NeuronButton:SaveData(self, state)
+		button:SaveData(button, state)
 	end
 end
 
@@ -3658,7 +3668,7 @@ function NeuronButton:SKINCallback(button, group,...)
 	if (group) then
 		for btn in pairs(SKINIndex) do
 			if (btn.bar and btn.bar.gdata.name == group) then
-				NeuronButton:GetSkinned(btn)
+				btn:GetSkinned(btn)
 			end
 		end
 	end
@@ -3722,7 +3732,7 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 		if macro_update then
 			NEURON.NeuronFlyouts:UpdateFlyout(button)
 			NeuronButton:BuildStateData(button)
-			button:SetType()
+			button:SetType(button)
 		end
 	end
 end

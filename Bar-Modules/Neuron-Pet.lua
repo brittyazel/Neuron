@@ -55,12 +55,6 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronPetBar:OnInitialize()
 
-	--creates pointers to these functions
-	PETBTN.SetTimer = NEURON.NeuronButton.SetTimer
-	PETBTN.SetSkinned = NEURON.NeuronButton.SetSkinned
-	PETBTN.GetSkinned = NEURON.NeuronButton.GetSkinned
-
-
 	DB = NeuronCDB
 
 	---TODO: Remove this in the future. This is just temp code.
@@ -82,6 +76,16 @@ function NeuronPetBar:OnInitialize()
 
 	----------------------------------------------------------------
 	PETBTN.SetData = NeuronPetBar.SetData
+	PETBTN.LoadData = NeuronPetBar.LoadData
+	PETBTN.SaveData = NeuronPetBar.SaveData
+	PETBTN.SetAux = NeuronPetBar.SetAux
+	PETBTN.LoadAux = NeuronPetBar.LoadAux
+	PETBTN.SetGrid = NeuronPetBar.SetGrid
+	PETBTN.SetDefaults = NeuronPetBar.SetDefaults
+	PETBTN.GetDefaults = NeuronPetBar.GetDefaults
+	PETBTN.SetType = NeuronPetBar.SetType
+	PETBTN.GetSkinned = NeuronPetBar.GetSkinned
+	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
 	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, STORAGE, gDef, nil, false)
@@ -286,7 +290,7 @@ function PETBTN:PET_UpdateTexture(force)
 
 	local actionID = self.actionID
 
-	if (not PETBTN:GetSkinned(self)) then
+	if (not self:GetSkinned(self)) then
 
 		if (HasPetAction(actionID, true) or force) then
 			self:SetNormalTexture(self.hasAction or "")
@@ -568,156 +572,168 @@ function NeuronPetBar:SetData(button, bar)
 
 	local down, up = "", ""
 
-	if (self.upClicks) then up = up.."AnyUp" end
-	if (self.downClicks) then down = down.."AnyDown" end
+	if (button.upClicks) then up = up.."AnyUp" end
+	if (button.downClicks) then down = down.."AnyDown" end
 
-	self:RegisterForClicks(down, up)
-	self:RegisterForDrag("LeftButton", "RightButton")
+	button:RegisterForClicks(down, up)
+	button:RegisterForDrag("LeftButton", "RightButton")
 
-	self.cdcolor1 = { 1, 0.82, 0, 1 }
-	self.cdcolor2 = { 1, 0.1, 0.1, 1 }
-	self.auracolor1 = { 0, 0.82, 0, 1 }
-	self.auracolor2 = { 1, 0.1, 0.1, 1 }
-	self.buffcolor = { 0, 0.8, 0, 1 }
-	self.debuffcolor = { 0.8, 0, 0, 1 }
-	self.manacolor = { 0.5, 0.5, 1.0 }
-	self.rangecolor = { 0.7, 0.15, 0.15, 1 }
+	button.cdcolor1 = { 1, 0.82, 0, 1 }
+	button.cdcolor2 = { 1, 0.1, 0.1, 1 }
+	button.auracolor1 = { 0, 0.82, 0, 1 }
+	button.auracolor2 = { 1, 0.1, 0.1, 1 }
+	button.buffcolor = { 0, 0.8, 0, 1 }
+	button.debuffcolor = { 0.8, 0, 0, 1 }
+	button.manacolor = { 0.5, 0.5, 1.0 }
+	button.rangecolor = { 0.7, 0.15, 0.15, 1 }
 
-	self:SetFrameLevel(4)
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-	self.iconframeaurawatch:SetFrameLevel(3)
-	self.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
+	button:SetFrameLevel(4)
+	button.iconframe:SetFrameLevel(2)
+	button.iconframecooldown:SetFrameLevel(3)
+	button.iconframeaurawatch:SetFrameLevel(3)
+	button.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
 
-	--self:GetSkinned()
+	button:GetSkinned(button)
 end
 
-function PETBTN:SaveData()
+function NeuronPetBar:SaveData(button)
 
 	-- empty
 
 end
 
-function PETBTN:LoadData(spec, state)
+function NeuronPetBar:LoadData(button, spec, state)
 
-	local id = self.id
+	local id = button.id
 
-	self.DB = petbtnsDB
+	button.DB = petbtnsDB
 
-	if (self.DB and self.DB) then
+	if (button.DB and button.DB) then
 
-		if (not self.DB[id]) then
-			self.DB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not self.DB[id].config) then
-			self.DB[id].config = CopyTable(configData)
+		if (not button.DB[id].config) then
+			button.DB[id].config = CopyTable(configData)
 		end
 
-		if (not self.DB[id].keys) then
-			self.DB[id].keys = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not self.DB[id]) then
-			self.DB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not self.DB[id].keys) then
-			self.DB[id].keys = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not self.DB[id].data) then
-			self.DB[id].data = {}
+		if (not button.DB[id].data) then
+			button.DB[id].data = {}
 		end
 
-		NEURON:UpdateData(self.DB[id].config, configData)
-		NEURON:UpdateData(self.DB[id].keys, keyData)
+		NEURON:UpdateData(button.DB[id].config, configData)
+		NEURON:UpdateData(button.DB[id].keys, keyData)
 
-		self.config = self.DB [id].config
+		button.config = button.DB [id].config
 
 		if (DB.perCharBinds) then
-			self.keys = self.DB[id].keys
+			button.keys = button.DB[id].keys
 		else
-			self.keys = self.DB[id].keys
+			button.keys = button.DB[id].keys
 		end
 
-		self.data = self.DB[id].data
+		button.data = button.DB[id].data
 	end
 end
 
-function PETBTN:SetGrid(show, hide)
+function NeuronPetBar:SetGrid(button, show, hide)
 
 	if (true) then return end
 
 	if (not InCombatLockdown()) then
 
-		self:SetAttribute("isshown", self.showGrid)
-		self:SetAttribute("showgrid", show)
+		button:SetAttribute("isshown", button.showGrid)
+		button:SetAttribute("showgrid", button)
 
-		if (show or self.showGrid) then
-			self:Show()
-		elseif (not (self:IsMouseOver() and self:IsVisible()) and not HasPetAction(self.actionID)) then
-			self:Hide()
+		if (button or button.showGrid) then
+			button:Show()
+		elseif (not (button:IsMouseOver() and button:IsVisible()) and not HasPetAction(button.actionID)) then
+			button:Hide()
 		end
 	end
 end
 
-function PETBTN:SetAux()
+function NeuronPetBar:SetAux(button)
 
-	--self:SetSkinned()
-
-end
-
-function PETBTN:LoadAux()
-
-	NEURON.NeuronBinder:CreateBindFrame(self, self.objTIndex)
+	NEURON.NeuronButton:SetSkinned(button)
 
 end
 
-function PETBTN:SetDefaults()
+function NeuronPetBar:LoadAux(button)
+
+	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+
+end
+
+function NeuronPetBar:SetDefaults(button)
 
 	-- empty
 
 end
 
-function PETBTN:GetDefaults()
+function NeuronPetBar:GetDefaults(button)
 
 	--empty
 
 end
 
-function PETBTN:SetType(save)
+function NeuronPetBar:SetSkinned(button)
 
-	self:RegisterEvent("PET_BAR_UPDATE")
-	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
-	self:RegisterEvent("PET_BAR_SHOWGRID")
-	self:RegisterEvent("PET_BAR_HIDEGRID")
-	self:RegisterEvent("PET_SPECIALIZATION_CHANGED")
-	self:RegisterEvent("PET_DISMISS_START")
-	self:RegisterEvent("PLAYER_CONTROL_LOST")
-	self:RegisterEvent("PLAYER_CONTROL_GAINED")
-	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("UNIT_PET")
-	self:RegisterEvent("UNIT_FLAGS")
-	self:RegisterEvent("UNIT_AURA")
+	NEURON.NeuronButton:SetSkinned(button)
 
-	self.actionID = self.id
+end
 
-	self:SetAttribute("type1", "pet")
-	self:SetAttribute("type2", "macro")
-	self:SetAttribute("*action1", self.actionID)
+function NeuronPetBar:GetSkinned(button)
 
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+	NEURON.NeuronButton:GetSkinned(button)
 
-	self:SetScript("OnEvent", PETBTN.PET_OnEvent)
-	self:SetScript("PostClick", PETBTN.PostClick)
-	self:SetScript("OnDragStart", PETBTN.OnDragStart)
-	self:SetScript("OnReceiveDrag", PETBTN.OnReceiveDrag)
-	self:SetScript("OnEnter", PETBTN.OnEnter)
-	self:SetScript("OnLeave", PETBTN.OnLeave)
-	self:SetScript("OnUpdate", PETBTN.OnUpdate)
-	self:SetScript("OnAttributeChanged", nil)
+end
+
+function NeuronPetBar:SetType(button, save)
+
+	button:RegisterEvent("PET_BAR_UPDATE")
+	button:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
+	button:RegisterEvent("PET_BAR_SHOWGRID")
+	button:RegisterEvent("PET_BAR_HIDEGRID")
+	button:RegisterEvent("PET_SPECIALIZATION_CHANGED")
+	button:RegisterEvent("PET_DISMISS_START")
+	button:RegisterEvent("PLAYER_CONTROL_LOST")
+	button:RegisterEvent("PLAYER_CONTROL_GAINED")
+	button:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
+	button:RegisterEvent("PLAYER_ENTERING_WORLD")
+	button:RegisterEvent("UNIT_PET")
+	button:RegisterEvent("UNIT_FLAGS")
+	button:RegisterEvent("UNIT_AURA")
+
+	button.actionID = button.id
+
+	button:SetAttribute("type1", "pet")
+	button:SetAttribute("type2", "macro")
+	button:SetAttribute("*action1", button.actionID)
+
+	button:SetAttribute("useparent-unit", false)
+	button:SetAttribute("unit", ATTRIBUTE_NOOP)
+
+	button:SetScript("OnEvent", PETBTN.PET_OnEvent)
+	button:SetScript("PostClick", PETBTN.PostClick)
+	button:SetScript("OnDragStart", PETBTN.OnDragStart)
+	button:SetScript("OnReceiveDrag", PETBTN.OnReceiveDrag)
+	button:SetScript("OnEnter", PETBTN.OnEnter)
+	button:SetScript("OnLeave", PETBTN.OnLeave)
+	button:SetScript("OnUpdate", PETBTN.OnUpdate)
+	button:SetScript("OnAttributeChanged", nil)
 
 end

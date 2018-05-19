@@ -232,7 +232,7 @@ function NeuronBinder:ProcessBinding(binder, key, button)
 		NeuronBinder:OnEnter(binder)
 	end
 
-	NEURON.NeuronButton:SaveData(button)
+	button:SaveData(button)
 end
 
 

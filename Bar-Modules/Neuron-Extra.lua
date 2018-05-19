@@ -64,6 +64,16 @@ function NeuronExtraBar:OnInitialize()
 
 	----------------------------------------------------------------
 	XBTN.SetData = NeuronExtraBar.SetData
+	XBTN.LoadData = NeuronExtraBar.LoadData
+	XBTN.SaveData = NeuronExtraBar.SaveData
+	XBTN.SetAux = NeuronExtraBar.SetAux
+	XBTN.LoadAux = NeuronExtraBar.LoadAux
+	XBTN.SetGrid = NeuronExtraBar.SetGrid
+	XBTN.SetDefaults = NeuronExtraBar.SetDefaults
+	XBTN.GetDefaults = NeuronExtraBar.GetDefaults
+	XBTN.SetType = NeuronExtraBar.SetType
+	XBTN.GetSkinned = NeuronExtraBar.GetSkinned
+	XBTN.SetSkinned = NeuronExtraBar.SetSkinned
 	----------------------------------------------------------------
 
 	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, STORAGE, gDef, nil, false)
@@ -135,109 +145,113 @@ end
 
 
 
-function XBTN:GetSkinned()
-	self.hasAction = ""
-	self.noAction = ""
+function NeuronExtraBar:GetSkinned(button)
+	button.hasAction = ""
+	button.noAction = ""
 
 	return false
 end
 
+function NeuronExtraBar:SetSkinned(button)
 
+	NEURON.NeuronButton:SetSkinned(button)
 
-function XBTN:SaveData()
+end
+
+function NeuronExtraBar:SaveData(button)
 
 	-- empty
 
 end
 
-function XBTN:LoadData(spec, state)
+function NeuronExtraBar:LoadData(button, spec, state)
 
-	local id = self.id
+	local id = button.id
 
-	self.CDB = xbtnsCDB
+	button.CDB = xbtnsCDB
 
-	if (self.CDB) then
+	if (button.CDB) then
 
-		if (not self.CDB[id]) then
-			self.CDB[id] = {}
+		if (not button.CDB[id]) then
+			button.CDB[id] = {}
 		end
 
-		if (not self.CDB[id].config) then
-			self.CDB[id].config = CopyTable(configData)
+		if (not button.CDB[id].config) then
+			button.CDB[id].config = CopyTable(configData)
 		end
 
-		if (not self.CDB[id].keys) then
-			self.CDB[id].keys = CopyTable(keyData)
+		if (not button.CDB[id].keys) then
+			button.CDB[id].keys = CopyTable(keyData)
 		end
 
-		if (not self.CDB[id]) then
-			self.CDB[id] = {}
+		if (not button.CDB[id]) then
+			button.CDB[id] = {}
 		end
 
-		if (not self.CDB[id].keys) then
-			self.CDB[id].keys = CopyTable(keyData)
+		if (not button.CDB[id].keys) then
+			button.CDB[id].keys = CopyTable(keyData)
 		end
 
-		if (not self.CDB[id].data) then
-			self.CDB[id].data = {}
+		if (not button.CDB[id].data) then
+			button.CDB[id].data = {}
 		end
 
-		NEURON:UpdateData(self.CDB[id].config, configData)
-		NEURON:UpdateData(self.CDB[id].keys, keyData)
+		NEURON:UpdateData(button.CDB[id].config, configData)
+		NEURON:UpdateData(button.CDB[id].keys, keyData)
 
-		self.config = self.CDB [id].config
+		button.config = button.CDB [id].config
 
 		if (CDB.perCharBinds) then
-			self.keys = self.CDB[id].keys
+			button.keys = button.CDB[id].keys
 		else
-			self.keys = self.CDB[id].keys
+			button.keys = button.CDB[id].keys
 		end
 
-		self.data = self.CDB[id].data
+		button.data = button.CDB[id].data
 	end
 end
 
-function XBTN:SetGrid(show, hide)
+function NeuronExtraBar:SetGrid(button, show, hide)
 
 	if (true) then return end
 
 	if (not InCombatLockdown()) then
 
-		self:SetAttribute("isshown", self.showGrid)
-		self:SetAttribute("showgrid", show)
+		button:SetAttribute("isshown", button.showGrid)
+		button:SetAttribute("showgrid", show)
 
-		if (show or self.showGrid) then
-			self:Show()
-		elseif (not (self:IsMouseOver() and self:IsVisible()) and not HasPetAction(self.actionID)) then
-			self:Hide()
+		if (show or button.showGrid) then
+			button:Show()
+		elseif (not (button:IsMouseOver() and button:IsVisible()) and not HasPetAction(button.actionID)) then
+			button:Hide()
 		end
 	end
 end
 
-function XBTN:SetAux()
+function NeuronExtraBar:SetAux(button)
 
-	--self:SetSkinned()
+	button:SetSkinned(button)
 
-	if (self.vlbtn) then
+	if (button.vlbtn) then
 
 		if (SKIN) then
 
 			local btnData = {
-				Normal = self.vlbtn.normaltexture,
-				Icon = self.vlbtn.iconframeicon,
-				Cooldown = self.vlbtn.iconframecooldown,
-				HotKey = self.vlbtn.hotkey,
-				Count = self.vlbtn.count,
-				Name = self.vlbtn.name,
-				Border = self.vlbtn.border,
+				Normal = button.vlbtn.normaltexture,
+				Icon = button.vlbtn.iconframeicon,
+				Cooldown = button.vlbtn.iconframecooldown,
+				HotKey = button.vlbtn.hotkey,
+				Count = button.vlbtn.count,
+				Name = button.vlbtn.name,
+				Border = button.vlbtn.border,
 				AutoCast = false,
 			}
 
-			SKIN:Group("Neuron", "Vehicle Leave"):AddButton(self.vlbtn, btnData)
+			SKIN:Group("Neuron", "Vehicle Leave"):AddButton(button.vlbtn, btnData)
 
-			self.vlbtn.skinned = true
+			button.vlbtn.skinned = true
 
-			SKINIndex[self.vlbtn] = true
+			SKINIndex[button.vlbtn] = true
 		end
 	end
 end
@@ -331,28 +345,32 @@ function XBTN:CreateVehicleLeave(index)
 	self.vlbtn:Hide()
 end
 
-function XBTN:LoadAux()
 
-	NEURON.NeuronBinder:CreateBindFrame(self, self.objTIndex)
-	self:CreateVehicleLeave(self.objTIndex)
 
-	self.style = self:CreateTexture(nil, "OVERLAY")
-	self.style:SetPoint("CENTER", -2, 1)
-	self.style:SetWidth(190)
-	self.style:SetHeight(95)
 
-	self:SetExtraButtonTex()
 
-	self.hotkey:SetPoint("TOPLEFT", -4, -6)
+function NeuronExtraBar:LoadAux(button)
+
+	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	button:CreateVehicleLeave(button.objTIndex)
+
+	button.style = button:CreateTexture(nil, "OVERLAY")
+	button.style:SetPoint("CENTER", -2, 1)
+	button.style:SetWidth(190)
+	button.style:SetHeight(95)
+
+	button:SetExtraButtonTex()
+
+	button.hotkey:SetPoint("TOPLEFT", -4, -6)
 end
 
-function XBTN:SetDefaults()
+function NeuronExtraBar:SetDefaults(button)
 
 	-- empty
 
 end
 
-function XBTN:GetDefaults()
+function NeuronExtraBar:GetDefaults(button)
 
 	--empty
 
@@ -362,34 +380,34 @@ function NeuronExtraBar:SetData(button, bar)
 	NEURON.NeuronButton:SetData(button, bar)
 end
 
-function XBTN:SetType(save)
+function NeuronExtraBar:SetType(button, save)
 
-	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
+	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 
-	self.actionID = 169
+	button.actionID = 169
 
-	self:SetAttribute("type", "action")
-	self:SetAttribute("*action1", self.actionID)
+	button:SetAttribute("type", "action")
+	button:SetAttribute("*action1", self.actionID)
 
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+	button:SetAttribute("useparent-unit", false)
+	button:SetAttribute("unit", ATTRIBUTE_NOOP)
 
-	self:SetScript("OnEvent", function(self, event, ...) NEURON.NeuronButton:MACRO_OnEvent(self, event, ...) end)
-	self:SetScript("PostClick", function(self) NEURON.NeuronButton:MACRO_UpdateState(self) end)
-	self:SetScript("OnShow", function(self, ...) NEURON.NeuronButton:MACRO_OnShow(self, ...) end)
-	self:SetScript("OnHide", function(self, ...) NEURON.NeuronButton:MACRO_OnHide(self, ...) end)
+	button:SetScript("OnEvent", function(self, event, ...) NEURON.NeuronButton:MACRO_OnEvent(self, event, ...) end)
+	button:SetScript("PostClick", function(self) NEURON.NeuronButton:MACRO_UpdateState(self) end)
+	button:SetScript("OnShow", function(self, ...) NEURON.NeuronButton:MACRO_OnShow(self, ...) end)
+	button:SetScript("OnHide", function(self, ...) NEURON.NeuronButton:MACRO_OnHide(self, ...) end)
 
-	self:HookScript("OnEnter", function(self, ...) NEURON.NeuronButton:MACRO_OnEnter(self, ...)end)
-	self:HookScript("OnLeave", function(self, ...) NEURON.NeuronButton:MACRO_OnLeave(self, ...) end)
-	self:HookScript("OnShow", XBTN.SetExtraButtonTex)
+	button:HookScript("OnEnter", function(self, ...) NEURON.NeuronButton:MACRO_OnEnter(self, ...)end)
+	button:HookScript("OnLeave", function(self, ...) NEURON.NeuronButton:MACRO_OnLeave(self, ...) end)
+	button:HookScript("OnShow", XBTN.SetExtraButtonTex)
 
-	self:WrapScript(self, "OnShow", [[
+	button:WrapScript(button, "OnShow", [[
 					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
 						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
 					end
 					]])
 
-	self:WrapScript(self, "OnHide", [[
+	button:WrapScript(button, "OnHide", [[
 					if (not self:GetParent():GetAttribute("concealed")) then
 						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
 							self:ClearBinding(key)
