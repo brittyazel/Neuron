@@ -289,8 +289,6 @@ end
 function NeuronExtraBar:VehicleLeave_OnEnter(button)
 	if ( UnitOnTaxi("player") ) then
 
-		button:SetHighlightTexture([[Interface\Buttons\CheckButtonHilight]], "ADD");
-
 		GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
 		GameTooltip:ClearLines()
 		GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1);
@@ -303,12 +301,10 @@ function NeuronExtraBar:VehicleLeave_OnClick(button)
 	if ( UnitOnTaxi("player") ) then
 		TaxiRequestEarlyLanding();
 
-		--TODO: fix this!
-
 		-- Show that the request for landing has been received.
-		--button:Disable();
+		button:Disable();
 		button:SetHighlightTexture([[Interface\Buttons\CheckButtonHilight]], "ADD");
-		--button:LockHighlight();
+		button:LockHighlight();
 	else
 		VehicleExit();
 	end
@@ -330,7 +326,7 @@ function NeuronExtraBar:CreateVehicleLeave(button, index)
 	button.vlbtn:RegisterEvent("UNIT_EXITED_VEHICLE")
 	button.vlbtn:RegisterEvent("VEHICLE_UPDATE")
 
-	button.vlbtn:SetScript("OnEvent", function(self) NeuronExtraBar:VehicleLeave_OnEvent(self) end)
+	button.vlbtn:SetScript("OnEvent", function(self, event, ...) NeuronExtraBar:VehicleLeave_OnEvent(self, event, ...) end)
 	button.vlbtn:SetScript("OnClick", function(self) NeuronExtraBar:VehicleLeave_OnClick(self) end)
 	button.vlbtn:SetScript("OnEnter", function(self) NeuronExtraBar:VehicleLeave_OnEnter(self) end)
 	button.vlbtn:SetScript("OnLeave", GameTooltip_Hide)
