@@ -63,8 +63,6 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 	--create pointers for these functions
 	ZONEABILITYRBTN.SetTimer = NEURON.NeuronButton.SetTimer
-	ZONEABILITYRBTN.SetSkinned = NEURON.NeuronButton.SetSkinned
-	ZONEABILITYRBTN.GetSkinned = NEURON.NeuronButton.GetSkinned
 
 	----------------------------------------------------------------
 	ZONEABILITYRBTN.SetData = NeuronZoneAbilityBar.SetData
@@ -130,7 +128,7 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function NeuronZoneAbilityBar:OnEnable()
-	self:DisableDefault()
+	NeuronZoneAbilityBar:DisableDefault()
 
 
 end
@@ -190,50 +188,50 @@ end
 --@pram: force - (boolean) will force a texture update
 
 --UPDATE?
-function ZONEABILITYRBTN:STANCE_UpdateButton(actionID)
-	if (self.editmode) then
-		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
-	elseif (self.spellName) then
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+function NeuronZoneAbilityBar:STANCE_UpdateButton(button, actionID)
+	if (button.editmode) then
+		button.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+	elseif (button.spellName) then
+		button.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 	else
-		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+		button.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
 
 	end
-	self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+	button.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 
 end
 
-function ZONEABILITYRBTN:OnUpdate(elapsed)
-	self.elapsed = self.elapsed + elapsed
+function NeuronZoneAbilityBar:OnUpdate(button, elapsed)
+	button.elapsed = button.elapsed + elapsed
 
-	if (self.elapsed > NeuronGDB.throttle) then
-		self:STANCE_UpdateButton(self.actionID)
-		self.elapsed = 0
+	if (button.elapsed > NeuronGDB.throttle) then
+		NeuronZoneAbilityBar:STANCE_UpdateButton(button, button.actionID)
+		button.elapsed = 0
 	end
 end
 
 
-local function ZoneAbilityFrame_Update(self)
-	if (not self.baseName) then
+function NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button)
+	if (not button.baseName) then
 		return;
 	end
-	local name, _, tex, _, _, _, spellID = GetSpellInfo(self.baseName);
-	--ZoneSpellAbility = self.baseName
+	local name, _, tex, _, _, _, spellID = GetSpellInfo(button.baseName);
+	--ZoneSpellAbility = button.baseName
 
-	self.CurrentTexture = tex;
-	self.CurrentSpell = name;
-	self.style:SetTexture(ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK);
-	self.iconframeicon:SetTexture(tex);
+	button.CurrentTexture = tex;
+	button.CurrentSpell = name;
+	button.style:SetTexture(ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK);
+	button.iconframeicon:SetTexture(tex);
 
-	--self.SpellButton.Style:SetTexture(ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK);
-	--self.SpellButton.Icon:SetTexture(tex);
+	--button.SpellButton.Style:SetTexture(ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK);
+	--button.SpellButton.Icon:SetTexture(tex);
 
 
 	if zoneabilitybarsCDB[1].border then
 
-		self.style:Show()
+		button.style:Show()
 	else
-		self.style:Hide()
+		button.style:Hide()
 	end
 
 
@@ -241,89 +239,89 @@ local function ZoneAbilityFrame_Update(self)
 
 	local usesCharges = false;
 	if (maxCharges and maxCharges > 1) then
-		self.count:SetText(charges);
+		button.count:SetText(charges);
 		usesCharges = true;
 	else
-		self.count:SetText("");
+		button.count:SetText("");
 	end
 
 	local start, duration, enable = GetSpellCooldown(name);
 
 	if (usesCharges and charges < maxCharges) then
-		StartChargeCooldown(self, chargeStart, chargeDuration, enable);
+		StartChargeCooldown(button, chargeStart, chargeDuration, enable);
 	end
 
 	if (start) then
-		NEURON.NeuronButton:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		NEURON.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
 	end
 
-	self.spellName = self.CurrentSpell;
-	self.spellID = spellID;
+	button.spellName = button.CurrentSpell;
+	button.spellID = spellID;
 
-	if (self.spellName and not InCombatLockdown()) then
-		self:SetAttribute("*macrotext1", "/cast " .. self.spellName .. "();")
+	if (button.spellName and not InCombatLockdown()) then
+		button:SetAttribute("*macrotext1", "/cast " .. button.spellName .. "();")
 	end
 end
 
 
 
 ---TODO: This should get roped into AceEvent
-function ZONEABILITYRBTN:OnEvent(event, ...)
+function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 
 	local spellID, spellType = GetZoneAbilitySpellInfo();
 
 	if (not InCombatLockdown() and not spellID) then ---should keep the bar hidden when there is no Zone ability available
-		self:Hide()
+		button:Hide()
 		return
 	end
 
 
 	if (event == "SPELLS_CHANGED" or event=="UNIT_AURA") then
-		self.baseName = GetSpellInfo(spellID);
+		button.baseName = GetSpellInfo(spellID);
 		ZoneAbilitySpellID = spellID
 	end
 
 
-	self.spellID = spellID;
-	--local lastState = self.BuffSeen; --sets a flag to mark if we have seen the change in UNIT_AURA
-	self.BuffSeen = (spellID ~= 0);
+	button.spellID = spellID;
+	--local lastState = button.BuffSeen; --sets a flag to mark if we have seen the change in UNIT_AURA
+	button.BuffSeen = (spellID ~= 0);
 
 
 	local display
 
-	if (self.BuffSeen) then
+	if (button.BuffSeen) then
 
 		if ( not GetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY) and garrisonType == LE_GARRISON_TYPE_6_0 ) then
 			SetCVarBitfield( "closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY, true );
 		end
 
 		display = true
-		ZoneAbilityFrame_Update(self);
+		NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button);
 	else
-		if (not self.CurrentTexture) then
-			self.CurrentTexture = select(3, GetSpellInfo(self.baseName));
+		if (not button.CurrentTexture) then
+			button.CurrentTexture = select(3, GetSpellInfo(button.baseName));
 		end
 		display = false
 	end
 
 	if (not InCombatLockdown() and display) then
-		self:Show();
+		button:Show();
 	elseif (not InCombatLockdown() and not display) then
-		self:Hide();
+		button:Hide();
 	end
 end
 
 
-function ZONEABILITYRBTN:SetTooltip()
+function NeuronZoneAbilityBar:SetTooltip(button)
 	if (GetSpellInfo(ZoneAbilitySpellID)) then
-		if (self.UberTooltips) then
-			GameTooltip:SetSpellByID(self.spellID)
+		if (button.UberTooltips) then
+			GameTooltip:SetSpellByID(button.spellID)
 		else
-			GameTooltip:SetText(self.tooltipName)
+			GameTooltip:SetText(button.tooltipName)
 		end
 
 		if (not edit) then
-			self.UpdateTooltip = self.SetTooltip
+			button.UpdateTooltip = button.SetTooltip
 		end
 	elseif (edit) then
 		GameTooltip:SetText(L["Empty Button"])
@@ -332,23 +330,23 @@ function ZONEABILITYRBTN:SetTooltip()
 end
 
 
-function ZONEABILITYRBTN:OnEnter(...)
+function NeuronZoneAbilityBar:OnEnter(button, ...)
 
-	if (self.bar) then
-		if (self.tooltipsCombat and InCombatLockdown()) then
+	if (button.bar) then
+		if (button.tooltipsCombat and InCombatLockdown()) then
 			return
 		end
-		if (self.tooltips) then
-			if (self.tooltipsEnhanced) then
-				self.UberTooltips = true
-				--GameTooltip_SetDefaultAnchor(GameTooltip, self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		if (button.tooltips) then
+			if (button.tooltipsEnhanced) then
+				button.UberTooltips = true
+				--GameTooltip_SetDefaultAnchor(GameTooltip, button)
+				GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 			else
-				self.UberTooltips = false
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				button.UberTooltips = false
+				GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 			end
 
-			self:SetTooltip()
+			NeuronZoneAbilityBar:SetTooltip(button)
 
 			GameTooltip:Show()
 		end
@@ -356,7 +354,7 @@ function ZONEABILITYRBTN:OnEnter(...)
 end
 
 
-function ZONEABILITYRBTN:OnLeave ()
+function NeuronZoneAbilityBar:OnLeave(button)
 	GameTooltip:Hide()
 end
 
@@ -522,19 +520,20 @@ function NeuronZoneAbilityBar:LoadAux(button)
 end
 
 
-function ZONEABILITYRBTN:OnLoad()
+function NeuronZoneAbilityBar:OnLoad(button)
 	-- empty
 end
 
-function ZONEABILITYRBTN:OnShow()
-	--ZoneAbilityFrame_Update(self);
-end
-function ZONEABILITYRBTN:OnHide()
-
+function NeuronZoneAbilityBar:OnShow(button)
+	NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button);
 end
 
+function NeuronZoneAbilityBar:OnHide(button)
 
-function ZONEABILITYRBTN:UpdateFrame()
+end
+
+
+function NeuronZoneAbilityBar:UpdateFrame(button)
 	if zoneabilitybarsCDB[1].border then
 
 		NeuronZoneActionButton1.style:Show()
@@ -544,15 +543,15 @@ function ZONEABILITYRBTN:UpdateFrame()
 	-- empty
 end
 
-function ZONEABILITYRBTN:OnDragStart()
+function NeuronZoneAbilityBar:OnDragStart(button)
 	PickupSpell(ZoneAbilitySpellID)
 end
 
-function ZONEABILITYRBTN:SetDefaults()
+function NeuronZoneAbilityBar:SetDefaults(button)
 	-- empty
 end
 
-function ZONEABILITYRBTN:GetDefaults()
+function NeuronZoneAbilityBar:GetDefaults(button)
 	--empty
 end
 
@@ -579,17 +578,14 @@ function NeuronZoneAbilityBar:SetType(button, save)
 	button:SetAttribute("useparent-unit", false)
 	button:SetAttribute("unit", ATTRIBUTE_NOOP)
 
-	button:SetScript("OnEvent", ZONEABILITYRBTN.OnEvent)
-	button:SetScript("OnDragStart", ZONEABILITYRBTN.OnDragStart)
-	button:SetScript("OnLoad", ZONEABILITYRBTN.OnLoad)
-	button:SetScript("OnShow", ZONEABILITYRBTN.OnShow)
-	button:SetScript("OnHide", ZONEABILITYRBTN.OnHide)
-
-
-
-	button:SetScript("OnEnter", ZONEABILITYRBTN.OnEnter)
-	button:SetScript("OnLeave", ZONEABILITYRBTN.OnLeave)
-	button:SetScript("OnUpdate", ZONEABILITYRBTN.OnUpdate)
+	button:SetScript("OnEvent", function(self, event, ...) NeuronZoneAbilityBar:OnEvent(self, event, ...) end)
+	button:SetScript("OnDragStart", function(self) NeuronZoneAbilityBar:OnDragStart(self) end)
+	button:SetScript("OnLoad", function(self) NeuronZoneAbilityBar:OnLoad(self) end)
+	button:SetScript("OnShow", function(self) NeuronZoneAbilityBar:OnShow(self) end)
+	button:SetScript("OnHide", function(self) NeuronZoneAbilityBar:OnHide(self) end)
+	button:SetScript("OnEnter", function(self, ...) NeuronZoneAbilityBar:OnEnter(self, ...) end)
+	button:SetScript("OnLeave", function(self) NeuronZoneAbilityBar:OnLeave(self) end)
+	button:SetScript("OnUpdate", function(self, elapsed) NeuronZoneAbilityBar:OnUpdate(self, elapsed) end)
 	button:SetScript("OnAttributeChanged", nil)
 end
 
@@ -617,5 +613,5 @@ function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, quer
 		end
 	end
 	NEURON.NeuronBar:Update(bar)
-	ZONEABILITYRBTN:UpdateFrame()
+	NeuronZoneAbilityBar:UpdateFrame()
 end
