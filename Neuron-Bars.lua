@@ -8,6 +8,8 @@ local NeuronBar = NEURON.NeuronBar
 
 local handlerMT = setmetatable({}, { __index = CreateFrame("Frame") })
 
+NEURON.BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --Bar object template
+local BAR = NEURON.BAR
 
 local BUTTON = NEURON.BUTTON
 
@@ -1855,7 +1857,7 @@ function NeuronBar:CreateBar(index, class, id)
             ---this is the create of our bar object frame
             bar = CreateFrame("CheckButton", "Neuron"..data.barType..id, UIParent, "NeuronBarTemplate")
             ---this is assigning the metatable of a CheckButton to our new bar object, giving it all a CheckButtons features, and thus finishing the object construction
-            setmetatable(bar, {__index = CreateFrame("CheckButton")})
+            setmetatable(bar, { __index = BAR })
         end
 
         for key,value in pairs(data) do
