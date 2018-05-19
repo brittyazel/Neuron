@@ -367,13 +367,13 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronStatusBar:OnEnable()
 
-	self:DisableDefault()
+	NeuronStatusBar:DisableDefault()
 
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("UPDATE_FACTION")
-	self:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
-	self:RegisterEvent("MIRROR_TIMER_START")
-	self:RegisterEvent("MIRROR_TIMER_STOP")
+	NeuronStatusBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+	NeuronStatusBar:RegisterEvent("UPDATE_FACTION")
+	NeuronStatusBar:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
+	NeuronStatusBar:RegisterEvent("MIRROR_TIMER_START")
+	NeuronStatusBar:RegisterEvent("MIRROR_TIMER_STOP")
 
 end
 
@@ -406,25 +406,25 @@ end
 
 function NeuronStatusBar:UPDATE_FACTION(eventName, ...)
 
-	NeuronStatusBar.repstrings_Update(...)
+	NeuronStatusBar:repstrings_Update(...)
 
 end
 
 function NeuronStatusBar:CHAT_MSG_COMBAT_FACTION_CHANGE(eventName, ...)
 
-	NeuronStatusBar.repstrings_Update(...)
+	NeuronStatusBar:repstrings_Update(...)
 
 end
 
 function NeuronStatusBar:MIRROR_TIMER_START(eventName, ...)
 
-	NeuronStatusBar.mirrorbar_Start(...)
+	NeuronStatusBar:mirrorbar_Start(...)
 
 end
 
 function NeuronStatusBar:MIRROR_TIMER_STOP(eventName, ...)
 
-	NeuronStatusBar.mirrorbar_Stop(select(1,...))
+	NeuronStatusBar:mirrorbar_Stop(select(1,...))
 
 end
 
@@ -471,21 +471,10 @@ end
 --------XP Bar--------------------
 ----------------------------------
 
---parent appears to be the bar object
---for this section: self is actually parent.sb
---self.parent is pointer back to the parent, it's the same as calling self:GetParent()
---parent has a few important indicies, sb, id, and dropdown (along with a bunch of other crap)
-
-
----note: I think parent.DB is actually statusbtnsDB
----parent.DB is statusbtnsDB
-
-
-
 ---TODO: right now we are using statusbtnsDB to assign settins ot the status buttons, but I think our indexes are bar specific
-local function xpstrings_Update(self) --handles updating all the strings for the play XP watch bar
+function NeuronStatusBar:xpstrings_Update(button) --handles updating all the strings for the play XP watch bar
 
-	local parent = self.parent
+	local parent = button.parent
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
 	local thisBar = statusbtnsDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
@@ -575,15 +564,15 @@ local function xpstrings_Update(self) --handles updating all the strings for the
 		end
 	end
 
-	if (not self.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
-		self.XPWatch = {}
+	if (not button.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
+		button.XPWatch = {}
 	end
 
-	self.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
-	self.XPWatch.rested = restedXP
-	self.XPWatch.percent = percentXP
-	self.XPWatch.bubbles = bubbles
-	self.XPWatch.rank = rank
+	button.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
+	button.XPWatch.rested = restedXP
+	button.XPWatch.percent = percentXP
+	button.XPWatch.bubbles = bubbles
+	button.XPWatch.rank = rank
 
 
 	local isRested
@@ -598,9 +587,9 @@ end
 
 
 
-local function XPBar_OnEvent(self, event, ...)
+function NeuronStatusBar:XPBar_OnEvent(button, event, ...)
 
-	local parent = self.parent
+	local parent = button.parent
 
 	local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
@@ -616,12 +605,12 @@ local function XPBar_OnEvent(self, event, ...)
 
 	if(thisBar.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
 
-		currXP, nextXP, isRested = xpstrings_Update(self)
+		currXP, nextXP, isRested = NeuronStatusBar:xpstrings_Update(button)
 
 		if (isRested) then
-			self:SetStatusBarColor(self.restColor[1], self.restColor[2], self.restColor[3], self.restColor[4])
+			button:SetStatusBarColor(button.restColor[1], button.restColor[2], button.restColor[3], button.restColor[4])
 		else
-			self:SetStatusBarColor(self.norestColor[1], self.norestColor[2], self.norestColor[3], self.norestColor[4])
+			button:SetStatusBarColor(button.norestColor[1], button.norestColor[2], button.norestColor[3], button.norestColor[4])
 		end
 
 		hasChanged = true;
@@ -630,9 +619,9 @@ local function XPBar_OnEvent(self, event, ...)
 
 	if(thisBar.curXPType == "artifact_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
 
-		currXP, nextXP = xpstrings_Update(self)
+		currXP, nextXP = NeuronStatusBar:xpstrings_Update(button)
 
-		self:SetStatusBarColor(1, 1, 0); --set to yellow?
+		button:SetStatusBarColor(1, 1, 0); --set to yellow?
 
 		hasChanged = true;
 
@@ -640,35 +629,35 @@ local function XPBar_OnEvent(self, event, ...)
 
 	if(thisBar.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
 
-		currXP, nextXP = xpstrings_Update(self)
+		currXP, nextXP = NeuronStatusBar:xpstrings_Update(button)
 
-		self:SetStatusBarColor(1, .4, .4);
+		button:SetStatusBarColor(1, .4, .4);
 
 		hasChanged = true;
 	end
 
 	if (hasChanged == true) then
-		self:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
-		self:SetValue((currXP/nextXP)*100)
+		button:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
+		button:SetValue((currXP/nextXP)*100)
 
-		self.cText:SetText(self.cFunc(self))
-		self.lText:SetText(self.lFunc(self))
-		self.rText:SetText(self.rFunc(self))
-		self.mText:SetText(self.mFunc(self))
+		button.cText:SetText(button.cFunc(button))
+		button.lText:SetText(button.lFunc(button))
+		button.rText:SetText(button.rFunc(button))
+		button.mText:SetText(button.mFunc(button))
 	end
 
 end
 
 
 
-local function switchCurXPType(_, parent, newXPType)
+function NeuronStatusBar:switchCurXPType(parent, newXPType)
 	local id = parent.id
 	statusbtnsDB[id].curXPType = newXPType
-	XPBar_OnEvent(parent.sb, "changed_curXPType")
+	NeuronStatusBar:XPBar_OnEvent(parent.sb, "changed_curXPType")
 end
 
 
-local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
+function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
 
 	local parent = dropdown:GetParent()
 	local id = parent.id
@@ -680,7 +669,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 		info.arg1 = parent
 		info.arg2 = "player_xp"
 		info.text = L["Track Character XP"]
-		info.func = switchCurXPType
+		info.func = NeuronStatusBar.switchCurXPType
 
 		if (statusbtnsDB[id].curXPType == "player_xp") then
 			info.checked = 1
@@ -695,7 +684,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.arg1 = parent
 			info.arg2 = "artifact_xp"
 			info.text = L["Track Artifact Power"]
-			info.func = switchCurXPType
+			info.func = NeuronStatusBar.switchCurXPType
 
 			if (statusbtnsDB[id].curXPType == "artifact_xp") then
 				info.checked = 1
@@ -711,7 +700,7 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 			info.arg1 = parent
 			info.arg2 = "honor_points"
 			info.text = L["Track Honor Points"]
-			info.func = switchCurXPType
+			info.func = NeuronStatusBar.switchCurXPType
 
 			if (statusbtnsDB[id].curXPType == "honor_points") then
 				info.checked = 1
@@ -726,9 +715,9 @@ local function xpDropDown_Initialize(dropdown) -- initialize the dropdown menu f
 end
 
 
-function STATUS:XPBar_DropDown_OnLoad()
-	UIDropDownMenu_Initialize(self.dropdown, xpDropDown_Initialize, "MENU")
-	self.dropdown_init = true
+function NeuronStatusBar:XPBar_DropDown_OnLoad(button)
+	UIDropDownMenu_Initialize(button.dropdown, function() NeuronStatusBar:xpDropDown_Initialize(button.dropdown) end, "MENU")
+	button.dropdown_init = true
 end
 
 
@@ -743,7 +732,7 @@ end
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
 -- @return reptable:  Table containing provided data
-local function SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, value, colors)
+function NeuronStatusBar:SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, value, colors)
 	local reptable = {}
 	reptable.rep = name
 	reptable.rank = standing
@@ -768,7 +757,7 @@ local function SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, valu
 end
 
 
-function NeuronStatusBar.repstrings_Update(line)
+function NeuronStatusBar:repstrings_Update(line)
 
 
 	if (GetNumFactions() > 0) then
@@ -806,7 +795,7 @@ function NeuronStatusBar.repstrings_Update(line)
 					colors = BarRepColors[11]
 				end
 
-				local repData = SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
+				local repData = NeuronStatusBar:SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
 				RepWatch[i] = repData --set current reptable into growing RepWatch table
 
 				if (((line and type(line)~= "boolean") and line:find(name)) or DB.AutoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
@@ -822,28 +811,28 @@ end
 
 
 
-local function repbar_OnEvent(self, event,...)
+function NeuronStatusBar:repbar_OnEvent(button, event,...)
 
-	NeuronStatusBar.repstrings_Update(...)
+	NeuronStatusBar:repstrings_Update(...)
 
-	if (RepWatch[self.repID]) then
-		self:SetStatusBarColor(RepWatch[self.repID].r,  RepWatch[self.repID].g, RepWatch[self.repID].b)
-		self:SetMinMaxValues(RepWatch[self.repID].min, RepWatch[self.repID].max)
-		self:SetValue(RepWatch[self.repID].value)
+	if (RepWatch[button.repID]) then
+		button:SetStatusBarColor(RepWatch[button.repID].r,  RepWatch[button.repID].g, RepWatch[button.repID].b)
+		button:SetMinMaxValues(RepWatch[button.repID].min, RepWatch[button.repID].max)
+		button:SetValue(RepWatch[button.repID].value)
 	else
-		self:SetStatusBarColor(0.5,  0.5, 0.5)
-		self:SetMinMaxValues(0, 1)
-		self:SetValue(1)
+		button:SetStatusBarColor(0.5,  0.5, 0.5)
+		button:SetMinMaxValues(0, 1)
+		button:SetValue(1)
 	end
 
-	self.cText:SetText(self.cFunc(self))
-	self.lText:SetText(self.lFunc(self))
-	self.rText:SetText(self.rFunc(self))
-	self.mText:SetText(self.mFunc(self))
+	button.cText:SetText(button.cFunc(button))
+	button.lText:SetText(button.lFunc(button))
+	button.rText:SetText(button.rFunc(button))
+	button.mText:SetText(button.mFunc(button))
 end
 
 
-local function repDropDown_Initialize(dropdown) --Initialize the dropdown menu for choosing a rep
+function NeuronStatusBar:repDropDown_Initialize(dropdown) --Initialize the dropdown menu for choosing a rep
 
 	local parent = dropdown:GetParent()
 
@@ -853,7 +842,7 @@ local function repDropDown_Initialize(dropdown) --Initialize the dropdown menu f
 		local checked, repLine, repIndex
 
 		info.arg1 = parent
-		info.arg2 = repbar_OnEvent
+		info.arg2 = NeuronStatusBar.repbar_OnEvent
 		info.text = L["Auto Select"]
 		info.func = function(self, statusbar, func, checked) --statusbar is arg1, func is arg2
 			local faction = sbStrings.rep[2][2](statusbar.sb)
@@ -942,7 +931,7 @@ local function repDropDown_Initialize(dropdown) --Initialize the dropdown menu f
 			ID = tonumber(ID)
 
 			info.arg1 = parent
-			info.arg2 = repbar_OnEvent
+			info.arg2 = NeuronStatusBar.repbar_OnEvent
 			info.text = text
 			info.func = function(self, statusbar, func, checked)
 				statusbar.data.repID = self.value; statusbar.sb.repID = self.value; func(statusbar.sb)
@@ -967,9 +956,9 @@ local function repDropDown_Initialize(dropdown) --Initialize the dropdown menu f
 end
 
 
-function STATUS:RepBar_DropDown_OnLoad()
-	UIDropDownMenu_Initialize(self.dropdown, repDropDown_Initialize, "MENU")
-	self.dropdown_init = true
+function NeuronStatusBar:RepBar_DropDown_OnLoad(button)
+	UIDropDownMenu_Initialize(button.dropdown, function() NeuronStatusBar:repDropDown_Initialize(button.dropdown) end, "MENU")
+	button.dropdown_init = true
 end
 
 
@@ -979,7 +968,7 @@ end
 ----------------------------------------------------
 
 
-function NeuronStatusBar.mirrorbar_Start(mirror, value, maxvalue, scale, paused, label)
+function NeuronStatusBar:mirrorbar_Start(mirror, value, maxvalue, scale, paused, label)
 
 	if (not MirrorWatch[mirror]) then
 		MirrorWatch[mirror] = { active = false, mbar = nil, label = "", timer = "" }
@@ -1022,7 +1011,7 @@ end
 
 
 
-function NeuronStatusBar.mirrorbar_Stop(mirror)
+function NeuronStatusBar:mirrorbar_Stop(mirror)
 
 	if (MirrorWatch[mirror] and MirrorWatch[mirror].active) then
 
@@ -1525,16 +1514,16 @@ function STATUS:OnClick(button, down)
 
 	if (button == "RightButton") then
 		if (self.config.sbType == "xp" and not self.dropdown_init) then
-			self:XPBar_DropDown_OnLoad()
+			NeuronStatusBar:XPBar_DropDown_OnLoad(self)
 		elseif(self.config.sbType == "rep" and not self.dropdown_init) then
-			self:RepBar_DropDown_OnLoad()
+			NeuronStatusBar:RepBar_DropDown_OnLoad(self)
 		end
 
 
 		if (DropDownList1:IsVisible()) then
 			DropDownList1:Hide()
 		else
-			NeuronStatusBar.repstrings_Update()
+			NeuronStatusBar:repstrings_Update()
 
 			ToggleDropDownMenu(1, nil, self.dropdown, self, 0, 0)
 
@@ -2767,7 +2756,7 @@ function NeuronStatusBar:SetType(button, save)
 			button.sb:RegisterEvent("ARTIFACT_UPDATE")
 			button.sb:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
-			button.sb:SetScript("OnEvent", XPBar_OnEvent)
+			button.sb:SetScript("OnEvent", function(self, event, ...) NeuronStatusBar:XPBar_OnEvent(self, event, ...) end)
 
 			button.sb:Show()
 
@@ -2787,7 +2776,7 @@ function NeuronStatusBar:SetType(button, save)
 			button.sb:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
 			button.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-			button.sb:SetScript("OnEvent", repbar_OnEvent)
+			button.sb:SetScript("OnEvent", function(self, event, ...) NeuronStatusBar:repbar_OnEvent(self, event, ...) end)
 
 			button.sb:Show()
 
