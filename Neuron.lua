@@ -511,8 +511,8 @@ local slashFunctions = {
 	{L["Create"], L["Create_Description"], "CreateNewBar"},
 	{L["Delete"], L["Delete_Description"], "DeleteBar"},
 	{L["Config"], L["Config_Description"], "ToggleBars"},
-	{L["Add"], L["Add_Description"], "AddObjects"},
-	{L["Remove"], L["Remove_Description"], "RemoveObjects"},
+	{L["Add"], L["Add_Description"], "AddObjectsToBar"},
+	{L["Remove"], L["Remove_Description"], "RemoveObjectsFromBar"},
 	{L["Edit"], L["Edit_Description"], "ToggleEditFrames"},
 	{L["Bind"], L["Bind_Description"], "ToggleBindings"},
 	{L["Scale"], L["Scale_Description"], "ScaleBar"},
@@ -1528,7 +1528,7 @@ function NEURON:PrintBarTypes()
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
-function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barCDB, objTable, objGDB, objFrameType, objTemplate, objMetaTable, objMax, objStorage, gDef, cDef, barCreateMore)
+function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barCDB, objTable, objGDB, objFrameType, objTemplate, objMetaTable, objMax, gDef, cDef, barCreateMore)
 
 	NEURON.ModuleIndex = NEURON.ModuleIndex + 1
 
@@ -1548,7 +1548,6 @@ function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barC
 		objMetaT = objMetaTable,
 		objType = objType,
 		objMax = objMax,
-		objStorage = objStorage,
 		createMsg = NEURON.ModuleIndex..objType,
 	}
 end

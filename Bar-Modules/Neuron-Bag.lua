@@ -11,8 +11,6 @@ NEURON.BAGBTN = setmetatable({}, { __index = CreateFrame("Frame") })
 
 local BAGBTN = NEURON.BAGBTN
 
-local STORAGE = CreateFrame("Frame", nil, UIParent)
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
@@ -96,7 +94,7 @@ function NeuronBagBar:OnInitialize()
 	----------------------------------------------------------------
 
 
-	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = NEURON.BAGBTN }, #bagElements, STORAGE, gDef, nil, true)
+	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = NEURON.BAGBTN }, #bagElements, gDef, nil, true)
 
 	NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
@@ -126,8 +124,6 @@ function NeuronBagBar:OnInitialize()
 			end
 		end
 	end
-
-	STORAGE:Hide()
 
 end
 

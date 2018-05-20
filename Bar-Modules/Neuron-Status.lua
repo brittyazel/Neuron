@@ -14,8 +14,6 @@ local statusbarsDB, statusbtnsDB
 
 local STATUS = setmetatable({}, { __index = CreateFrame("Button") })
 
-local STORAGE = CreateFrame("Frame", nil, UIParent)
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
@@ -308,7 +306,7 @@ function NeuronStatusBar:OnInitialize()
 	STATUS.SetSkinned = NeuronStatusBar.SetSkinned
 -------------------------------------------------
 
-	NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, NeuronStatusBar, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, STORAGE, nil, nil, true)
+	NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, NeuronStatusBar, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, false, nil, nil, true)
 
 	NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
 		SNAPTO = true,
@@ -356,8 +354,6 @@ function NeuronStatusBar:OnInitialize()
 			end
 		end
 	end
-
-	STORAGE:Hide()
 
 end
 

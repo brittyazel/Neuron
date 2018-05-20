@@ -930,9 +930,9 @@ function NeuronGUI:countOnMouseWheel(delta)
 	if (bar) then
 
 		if (delta > 0) then
-			NEURON.NeuronBar:AddObjects(bar)
+			NEURON.NeuronBar:AddObjectsToBar(bar)
 		else
-			NEURON.NeuronBar:RemoveObjects(bar)
+			NEURON.NeuronBar:RemoveObjectsFromBar(bar)
 		end
 	end
 end
@@ -1039,7 +1039,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetNormalTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Up")
 	f:SetPushedTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Down")
 	f:SetHighlightTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Highlight")
-	f:SetScript("OnClick", function() if (NEURON.CurrentBar) then NEURON.NeuronBar:AddObjects(NEURON.CurrentBar) end end)
+	f:SetScript("OnClick", function() if (NEURON.CurrentBar) then NEURON.NeuronBar:AddObjectsToBar(NEURON.CurrentBar) end end)
 
 	f = CreateFrame("Button", nil, frame.count)
 	f:SetWidth(32)
@@ -1048,7 +1048,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetNormalTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Up")
 	f:SetPushedTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Down")
 	f:SetHighlightTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Highlight")
-	f:SetScript("OnClick", function() if (NEURON.CurrentBar) then NEURON.NeuronBar:RemoveObjects(NEURON.CurrentBar) end end)
+	f:SetScript("OnClick", function() if (NEURON.CurrentBar) then NEURON.NeuronBar:RemoveObjectsFromBar(NEURON.CurrentBar) end end)
 
 end
 

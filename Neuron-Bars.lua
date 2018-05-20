@@ -13,9 +13,6 @@ local BAR = NEURON.BAR
 
 local BUTTON = NEURON.BUTTON
 
-
-local STORAGE = CreateFrame("Frame", nil, UIParent)
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local BARIndex = NEURON.BARIndex
@@ -213,7 +210,7 @@ function NeuronBar:OnInitialize()
 	barGDB = GDB.bars
 	barCDB = CDB.bars
 
-	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, STORAGE, nil, nil, true)
+	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, nil, nil, true)
 
 	NEURON:RegisterGUIOptions("bar", {
 		AUTOHIDE = true,
@@ -248,8 +245,6 @@ end
 function NeuronBar:OnEnable()
 
 	NeuronBar:SetUpBars()
-
-	STORAGE:Hide()
 
 	for _,bar in pairs(BARIndex) do
 		if (CDB.firstRun) then
@@ -2115,7 +2110,7 @@ function NeuronBar:DeleteBar(bar)
 		end
 	end
 
-	NeuronBar:RemoveObjects(bar, bar.objCount)
+	NeuronBar:RemoveObjectsFromBar(bar, bar.objCount)
 
 	bar:SetScript("OnClick", function() end)
 	bar:SetScript("OnDragStart", function() end)
@@ -2162,7 +2157,7 @@ function NeuronBar:AddObjectToList(bar, object)
 end
 
 
-function NeuronBar:AddObjects(bar, num)
+function NeuronBar:AddObjectsToBar(bar, num)
 
 	num = tonumber(num)
 
@@ -2196,7 +2191,7 @@ function NeuronBar:AddObjects(bar, num)
 end
 
 
-function NeuronBar:StoreObject(bar, object, storage, objTable)
+function NeuronBar:RemoveObject(bar, object, objID)
 	object:ClearAllPoints()
 
 	object.config.scale = 1
@@ -2213,9 +2208,9 @@ function NeuronBar:StoreObject(bar, object, storage, objTable)
 		NEURON.NeuronBinder:ClearBindings(object)
 	end
 
-	object:SaveData(object)
+	NeuronBar:RemoveObjectFromList(bar, objID)
 
-	object:SetParent(storage)
+	object:Hide() --otherwise the object sticks around visually until a reload
 
 end
 
@@ -2233,10 +2228,7 @@ function NeuronBar:RemoveObjectFromList(bar, objID)
 end
 
 
-function NeuronBar:RemoveObjects(bar, num)
-	if (not bar.objStorage) then
-		return
-	end
+function NeuronBar:RemoveObjectsFromBar(bar, num)
 
 	if (not num) then
 		num = 1
@@ -2250,9 +2242,7 @@ function NeuronBar:RemoveObjects(bar, num)
 		if (objID) then
 			local object = _G[bar.objPrefix..tostring(objID)]
 			if (object) then
-				NeuronBar:StoreObject(bar, object, bar.objStorage, bar.objTable)
-				NeuronBar:RemoveObjectFromList(bar, objID)
-				--table.remove(bar.objTable, objID)
+				NeuronBar:RemoveObject(bar, object, objID)
 
 				bar.objCount = bar.objCount - 1
 				bar.countChanged = true
@@ -3484,8 +3474,6 @@ function NeuronBar:BarProfileUpdate()
 			end
 		end
 	end
-
-	STORAGE:Hide()
 
 	for _,bar in pairs(BARIndex) do
 		if (CDB.firstRun) then

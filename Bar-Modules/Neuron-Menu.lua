@@ -16,8 +16,6 @@ local menubarsDB, menubtnsDB
 
 local MENUBTN = setmetatable({}, { __index = CreateFrame("Frame") })
 
-local STORAGE = CreateFrame("Frame", nil, UIParent)
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local gDef = {
@@ -85,7 +83,7 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
     ----------------------------------------------------------------
 
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, STORAGE, gDef, nil, false)
+    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if (DB.menubarFirstRun) then
@@ -121,7 +119,6 @@ function NeuronMenuBar:OnInitialize()
             end
         end
     end
-    STORAGE:Hide()
 
 end
 

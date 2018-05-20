@@ -20,8 +20,6 @@ local SKINIndex = NEURON.SKINIndex
 local xbarsCDB
 local xbtnsCDB
 
-local STORAGE = CreateFrame("Frame", nil, UIParent)
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
@@ -76,7 +74,7 @@ function NeuronExtraBar:OnInitialize()
 	XBTN.SetSkinned = NeuronExtraBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, STORAGE, gDef, nil, false)
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 		SHOWGRID = true,
@@ -115,8 +113,6 @@ function NeuronExtraBar:OnInitialize()
 		end
 	end
 
-
-	STORAGE:Hide()
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.

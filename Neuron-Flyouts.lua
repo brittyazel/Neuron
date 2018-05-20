@@ -14,8 +14,6 @@ local BUTTON = NEURON.BUTTON
 NEURON.NeuronFlyouts = NEURON:NewModule("Flyouts", "AceEvent-3.0", "AceHook-3.0")
 local NeuronFlyouts = NEURON.NeuronFlyouts
 
-local STORAGE = CreateFrame("Frame", nil, UIParent)
-
 local FOBARIndex, FOBTNIndex, ANCHORIndex = {}, {}, {}
 
 
@@ -75,8 +73,6 @@ function NeuronFlyouts:OnInitialize()
 			tinsert(tooltipStrings, v)
 		end
 	end
-
-	STORAGE:Hide()
 
 	anchorUpdater = CreateFrame("Frame", nil, UIParent)
 	anchorUpdater:SetScript("OnUpdate", function(self, elapsed) NeuronFlyouts:updateAnchors(self, elapsed) end)
@@ -1218,7 +1214,7 @@ function NeuronFlyouts:Flyout_ReleaseButton(fbutton, button)
 	button:SetAttribute("flyoutMacro", nil)
 
 	button:ClearAllPoints()
-	button:SetParent(STORAGE)
+	--button:SetParent(STORAGE)
 	button:SetPoint("CENTER")
 	button:Hide()
 end
@@ -1359,7 +1355,7 @@ function NeuronFlyouts:Flyout_ReleaseBar(button, bar)
 	bar:SetHeight(43)
 
 	bar:ClearAllPoints()
-	bar:SetParent(STORAGE)
+	--bar:SetParent(STORAGE)
 	bar:SetPoint("CENTER")
 
 	button.bar.watchframes[bar.handler] = nil

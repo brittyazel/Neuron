@@ -15,8 +15,6 @@ local BUTTON = NEURON.BUTTON
 NEURON.ZONEABILITYRBTN = setmetatable({}, { __index = BUTTON })
 local ZONEABILITYRBTN = NEURON.ZONEABILITYRBTN
 
-local STORAGE = CreateFrame("Frame", nil, UIParent)
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local gDef = {
@@ -79,7 +77,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 	----------------------------------------------------------------
 
 
-	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, STORAGE, gDef, nil, false)
+	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -118,8 +116,6 @@ function NeuronZoneAbilityBar:OnInitialize()
 			end
 		end
 	end
-
-	STORAGE:Hide()
 
 end
 
