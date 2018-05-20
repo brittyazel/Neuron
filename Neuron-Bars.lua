@@ -210,7 +210,7 @@ function NeuronBar:OnInitialize()
 	barGDB = GDB.bars
 	barCDB = CDB.bars
 
-	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, false, nil, nil, true)
+	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barGDB, barCDB, BTNIndex, GDB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000, nil, nil, true)
 
 	NEURON:RegisterGUIOptions("bar", {
 		AUTOHIDE = true,
@@ -2174,8 +2174,13 @@ function NeuronBar:AddObjectsToBar(bar, num)
 			id = index + 1
 		end
 
-		if (not bar.objMax) then
-			object = NEURON.NeuronButton:CreateNewObject(bar.class, id)
+		if (bar.objCount < bar.objMax) then
+
+			if bar.objTable[id] and not bar.objTable[id].bar then --checks to see if the object exists in the object table, and if the object belongs to a bar
+				object = bar.objTable[id]
+			else
+				object = NEURON.NeuronButton:CreateNewObject(bar.class, id)
+			end
 			NeuronBar:AddObjectToList(bar, object)
 		end
 
