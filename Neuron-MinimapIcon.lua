@@ -1,5 +1,7 @@
 --Neuron , a World of Warcraft® user interface addon.
 
+--Neuron MinimapIcon makes use of LibDBIcon and LibDataBroker to make sure we play nicely with LDB addons and to simplify dramatically the minimap button
+
 local NEURON = Neuron
 local GDB
 
@@ -64,7 +66,7 @@ function NeuronMinimapIcon:OnClickHandler(frame, button)
     PlaySound(SOUNDKIT.IG_CHAT_SCROLL_DOWN)
 
     if (button == "LeftButton" and not IsShiftKeyDown()) then
-        NEURON:ToggleBars()
+        NEURON.NeuronBar:ToggleBars()
     elseif (button == "RightButton" and not IsShiftKeyDown()) then
         NEURON:ToggleEditFrames()
     elseif (button == "LeftButton" and IsShiftKeyDown()) then

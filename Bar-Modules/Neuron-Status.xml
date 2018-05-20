@@ -288,7 +288,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron:SB_EditorTypes_OnLoad(self)
+							Neuron.NeuronStatusBar:SB_EditorTypes_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -306,20 +306,20 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.SB_AdjustableOptions_OnLoad(self)
+							Neuron.NeuronStatusBar:SB_AdjustableOptions_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron:StatusBarEditor_OnLoad(self)
+					Neuron.NeuronStatusBar:StatusBarEditor_OnLoad(self)
 			</OnLoad>
 			<OnShow>
-					Neuron:StatusBarEditor_OnShow(self)
+					Neuron.NeuronStatusBar:StatusBarEditor_OnShow(self)
 			</OnShow>
 			<OnHide>
-					Neuron:StatusBarEditor_OnHide(self)
+					Neuron.NeuronStatusBar:StatusBarEditor_OnHide(self)
 			</OnHide>
 			<OnDragStart>
 					self:GetParent():StartMoving()

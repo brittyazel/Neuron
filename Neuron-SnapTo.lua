@@ -3,8 +3,6 @@
 
 local NEURON = Neuron
 
-local BAR = NEURON.BAR
-
 local function frameIsDependentOnFrame(frame, otherFrame)
 
 	if (frame and otherFrame) then
@@ -116,11 +114,11 @@ end
 --[[ Usable Functions ]]--
 
 
-function BAR:StickToEdge()
+function NEURON.NeuronBar:StickToEdge(bar)
 
-	local point, x, y= self:GetPosition()
+	local point, x, y= NEURON.NeuronBar:GetPosition(bar)
 	local changed
-	local w, h, rTol = self:GetWidth()/2, self:GetHeight()/2, NeuronGDB.snapToTol
+	local w, h, rTol = bar:GetWidth()/2, bar:GetHeight()/2, NeuronGDB.snapToTol
 
 	local function calcX(opt)
 		if (opt == 1) then if (x <= w+rTol) then x = w; changed = true end
@@ -147,19 +145,19 @@ function BAR:StickToEdge()
 	if (not changed and point:find("TOP")) then calcX(3); calcY(2) end
 
 	if (changed) then
-		self.gdata.point = point; self.gdata.x = x; self.gdata.y = y
-		self:SetPosition()
+		bar.gdata.point = point; bar.gdata.x = x; bar.gdata.y = y
+		NEURON.NeuronBar:SetPosition(bar)
 	end
 end
 
-function BAR:Stick(oFrame, tolerance, xOff, yOff)
+function NEURON.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 
-	if (not canAttach(self, oFrame)) then return end
+	if (not canAttach(bar, oFrame)) then return end
 
-	local left, right, top, bottom = self:GetLeft(), self:GetRight(), self:GetTop(), self:GetBottom()
-	local centerX, centerY = self:GetCenter()
+	local left, right, top, bottom = bar:GetLeft(), bar:GetRight(), bar:GetTop(), bar:GetBottom()
+	local centerX, centerY = bar:GetCenter()
 
 	if (left and right and top and bottom and centerX) then
 
@@ -177,7 +175,7 @@ function BAR:Stick(oFrame, tolerance, xOff, yOff)
 
 	if (oLeft and oRight and oTop and oBottom and oCenterX) then
 
-		local scale = self:GetScale()
+		local scale = bar:GetScale()
 
 		oLeft = oLeft/scale; oRight = oRight/scale; oTop = oTop/scale; oBottom = oBottom/scale
 
@@ -190,9 +188,9 @@ function BAR:Stick(oFrame, tolerance, xOff, yOff)
 		local distCenter, distLeft, distRight = math.abs(oCenterX - centerX), math.abs(oLeft - left), math.abs(right - oRight)
 
 		if (math.abs(oTop - bottom) <= tolerance) then
-			return attachToTop(self, oFrame, distLeft, distRight, distCenter, yOff)
+			return attachToTop(bar, oFrame, distLeft, distRight, distCenter, yOff)
 		elseif math.abs(oBottom - top) <= tolerance then
-			return attachToBottom(self, oFrame, distLeft, distRight, distCenter, yOff)
+			return attachToBottom(bar, oFrame, distLeft, distRight, distCenter, yOff)
 		end
 	end
 
@@ -201,60 +199,60 @@ function BAR:Stick(oFrame, tolerance, xOff, yOff)
 		local distCenter, distTop, distBottom = math.abs(oCenterY - centerY), math.abs(oTop - top), math.abs(oBottom - bottom)
 
 		if (math.abs(oLeft - right) <= tolerance) then
-			return attachToLeft(self, oFrame, distTop, distBottom, distCenter, xOff)
+			return attachToLeft(bar, oFrame, distTop, distBottom, distCenter, xOff)
 		end
 
 		if (math.abs(oRight - left) <= tolerance) then
-			return attachToRight(self, oFrame, distTop, distBottom, distCenter, xOff)
+			return attachToRight(bar, oFrame, distTop, distBottom, distCenter, xOff)
 		end
 	end
 
 	if (oCenterX > centerX - tolerance/2 and oCenterX < centerX + tolerance/2 and oCenterY > centerY - tolerance/2 and oCenterY < centerY + tolerance/2) then
-		return attachToCenter(self, oFrame)
+		return attachToCenter(bar, oFrame)
 	end
 end
 
-function BAR:StickToPoint(oFrame, point, xOff, yOff)
+function NEURON.NeuronBar:StickToPoint(bar, oFrame, point, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 
-	if (not (point and canAttach(self, oFrame))) then return end
+	if (not (point and canAttach(bar, oFrame))) then return end
 
-	self:ClearAllPoints()
+	bar:ClearAllPoints()
 
 	if (point == "TL") then
-		self:SetPoint("BOTTOMLEFT", oFrame, "TOPLEFT", 0, yOff); return point
+		bar:SetPoint("BOTTOMLEFT", oFrame, "TOPLEFT", 0, yOff); return point
 	elseif (point == "TC") then
-		self:SetPoint("BOTTOM", oFrame, "TOP", 0, yOff); return point
+		bar:SetPoint("BOTTOM", oFrame, "TOP", 0, yOff); return point
 	elseif (point == "TR") then
-		self:SetPoint("BOTTOMRIGHT", oFrame, "TOPRIGHT", 0, yOff);	return point
+		bar:SetPoint("BOTTOMRIGHT", oFrame, "TOPRIGHT", 0, yOff);	return point
 	end
 
 	if (point == "BL") then
-		self:SetPoint("TOPLEFT", oFrame, "BOTTOMLEFT", 0, -yOff); return point
+		bar:SetPoint("TOPLEFT", oFrame, "BOTTOMLEFT", 0, -yOff); return point
 	elseif (point == "BC") then
-		self:SetPoint("TOP", oFrame, "BOTTOM", 0, -yOff); return point
+		bar:SetPoint("TOP", oFrame, "BOTTOM", 0, -yOff); return point
 	elseif (point == "BR") then
-		self:SetPoint("TOPRIGHT", oFrame, "BOTTOMRIGHT", 0, -yOff); return point
+		bar:SetPoint("TOPRIGHT", oFrame, "BOTTOMRIGHT", 0, -yOff); return point
 	end
 
 	if (point == "LB") then
-		self:SetPoint("BOTTOMRIGHT", oFrame, "BOTTOMLEFT", -xOff, 0); return point
+		bar:SetPoint("BOTTOMRIGHT", oFrame, "BOTTOMLEFT", -xOff, 0); return point
 	elseif (point == "LC") then
-		self:SetPoint("RIGHT", oFrame, "LEFT", -xOff, 0); return point
+		bar:SetPoint("RIGHT", oFrame, "LEFT", -xOff, 0); return point
 	elseif (point == "LT") then
-		self:SetPoint("TOPRIGHT", oFrame, "TOPLEFT", -xOff, 0); return point
+		bar:SetPoint("TOPRIGHT", oFrame, "TOPLEFT", -xOff, 0); return point
 	end
 
 	if (point == "RB") then
-		self:SetPoint("BOTTOMLEFT", oFrame, "BOTTOMRIGHT", xOff, 0); return point
+		bar:SetPoint("BOTTOMLEFT", oFrame, "BOTTOMRIGHT", xOff, 0); return point
 	elseif (point == "RC") then
-		self:SetPoint("LEFT", oFrame, "RIGHT", xOff, 0); return point
+		bar:SetPoint("LEFT", oFrame, "RIGHT", xOff, 0); return point
 	elseif (point == "RT") then
-		self:SetPoint("TOPLEFT", oFrame, "TOPRIGHT", xOff, 0); return point
+		bar:SetPoint("TOPLEFT", oFrame, "TOPRIGHT", xOff, 0); return point
 	end
 
 	if (point == "CT") then
-		self:SetPoint("CENTER", oFrame, "CENTER", 0, 0); return point
+		bar:SetPoint("CENTER", oFrame, "CENTER", 0, 0); return point
 	end
 end
