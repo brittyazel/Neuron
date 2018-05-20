@@ -2935,8 +2935,9 @@ end
 function NeuronButton:UpdateObjectSpec(bar)
 	local object, spec
 
-	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-		object = _G[bar.objPrefix..objID]
+	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+	for i, objID in ipairs(bar.gdata.objectList) do
+		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
 			if (bar.cdata.multiSpec) then
@@ -3697,8 +3698,9 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 		end
 	else
 		local bar = NEURON.CurrentBar
-		for index in gmatch(bar.gdata.objectList, "[^;]+") do
-			tinsert(button_list, _G["NeuronActionButton"..index])
+		--for index in gmatch(bar.gdata.objectList, "[^;]+") do
+		for i, objID in ipairs(bar.gdata.objectList) do
+			tinsert(button_list, _G["NeuronActionButton"..tostring(objID)])
 		end
 	end
 

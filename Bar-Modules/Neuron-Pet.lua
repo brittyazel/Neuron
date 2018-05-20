@@ -11,7 +11,9 @@ local petbarsDB, petbtnsDB
 
 local BUTTON = NEURON.BUTTON
 
-local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+
+NEURON.PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+local PETBTN = NEURON.PETBTN
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -88,7 +90,7 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, STORAGE, gDef, nil, false)
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = NEURON.PETBTN }, NEURON.maxPetID, STORAGE, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,

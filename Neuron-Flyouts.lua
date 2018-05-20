@@ -896,7 +896,7 @@ function NeuronFlyouts:Flyout_UpdateButtons(fbutton, init)
 	local pet = false
 
 	if (fbutton.flyout) then
-		local flyout, count, list = fbutton.flyout, 0, ""
+		local flyout, count, list = fbutton.flyout, 0, {}
 		local button, prefix, macroSet
 
 		local data = NeuronFlyouts:GetDataList(fbutton, flyout.options)
@@ -1018,7 +1018,7 @@ function NeuronFlyouts:Flyout_UpdateButtons(fbutton, init)
 				NEURON.NeuronButton:MACRO_Reset(button)
 				NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
-				list = list..button.id..";"
+				list = table.insert(list, button.id)
 
 				count = count + 1
 			end

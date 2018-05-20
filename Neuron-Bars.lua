@@ -51,7 +51,7 @@ local barShapes = NEURON.BarShapes
 NEURON.barGDEF = {
 	name = "",
 
-	objectList = "",
+	objectList = {},
 
 	hidestates = ":",
 
@@ -197,6 +197,9 @@ local statetable = {}
 
 local barStack = {}
 
+
+-----------------------
+
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -244,39 +247,7 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronBar:OnEnable()
 
-	---TODO: clean up the onload part of this addon. This way of creating all the objects is terribly clunky
-	if (GDB.firstRun) then
-		local oid, offset = 1, 0
-
-		for id, defaults in ipairs(gDef) do
-			NEURON.RegisteredBarData["bar"].gDef = defaults
-
-			local bar = NeuronBar:CreateNewBar("bar", id, true) --this calls the bar constructor
-			local object
-
-			for i=oid+offset,oid+11+offset do
-				object = NEURON.NeuronButton:CreateNewObject("bar", i, true) --this calls the object (button) constructor
-				NeuronBar:AddObjectToList(bar, object)
-			end
-
-			NEURON.RegisteredBarData["bar"].gDef = nil
-
-			offset = offset + 12
-		end
-
-	else
-		for id,data in pairs(barGDB) do
-			if (data ~= nil) then
-				NeuronBar:CreateNewBar("bar", id) --this calls the bar constructor
-			end
-		end
-
-		for id,data in pairs(GDB.buttons) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("bar", id) --this calls the object (button) constructor
-			end
-		end
-	end
+	NeuronBar:SetUpBars()
 
 	STORAGE:Hide()
 
@@ -312,14 +283,68 @@ end
 ------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
-
 ------------------------------------------------------------
---------------------Intermediate Functions------------------
+--------------------Helper Functions------------------------
 ------------------------------------------------------------
 
 local function round(num, idp)
 	local mult = 10^(idp or 0)
 	return math.floor(num * mult + 0.5) / mult
+end
+
+local function tFind(table, value)
+	local index = 1;
+	while table[index] do
+		if ( value == table[index] ) then
+			return index;
+		end
+		index = index + 1;
+	end
+	return 0;
+end
+
+------------------------------------------------------------
+--------------------Intermediate Functions------------------
+------------------------------------------------------------
+
+function NeuronBar:SetUpBars()
+
+	---TODO: clean up the onload part of this addon. This way of creating all the objects is terribly clunky
+	if (GDB.firstRun) then
+		local oid, offset = 1, 0
+
+		for id, defaults in ipairs(gDef) do
+			NEURON.RegisteredBarData["bar"].gDef = defaults
+
+			local bar = NeuronBar:CreateNewBar("bar", id, true) --this calls the bar constructor
+			local object
+
+			for i=oid+offset,oid+11+offset do
+				object = NEURON.NeuronButton:CreateNewObject("bar", i, true) --this calls the object (button) constructor
+				NeuronBar:AddObjectToList(bar, object)
+			end
+
+			NEURON.RegisteredBarData["bar"].gDef = nil
+
+			offset = offset + 12
+		end
+
+	else
+		for id,data in pairs(barGDB) do
+			if (data ~= nil) then
+				data.objectTable = NEURON:fixObjectTable(data) ---TODO: remove this eventually, it switches the object table from a ";" deliniated string to an actual table
+				NeuronBar:CreateNewBar("bar", id) --this calls the bar constructor
+			end
+
+		end
+
+		for id,data in pairs(GDB.buttons) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("bar", id) --this calls the object (button) constructor
+			end
+		end
+	end
+
 end
 
 
@@ -1156,9 +1181,10 @@ function NeuronBar:SetFauxState(bar, state)
 	bar.objCount = 0
 	bar.handler:SetAttribute("fauxstate", state)
 
-	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+	for i, objID in ipairs(bar.gdata.objectList) do
 
-		object = _G[bar.objPrefix..objID]
+		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
 			NEURON.NeuronButton:SetFauxState(object, state)
@@ -1183,8 +1209,10 @@ function NeuronBar:LoadObjects(bar, init)
 
 	bar.objCount = 0
 
-	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-		object = _G[bar.objPrefix..objID]
+
+	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+	for i, objID in ipairs(bar.gdata.objectList) do
+		object = _G[bar.objPrefix..tostring(objID)]
 
 
 		if (object) then
@@ -1216,8 +1244,9 @@ function NeuronBar:SetObjectLoc(bar)
 		rows = (round(ceil(count/bar.gdata.columns), 1)/2)+0.5
 	end
 
-	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-		object = _G[bar.objPrefix..objID]
+	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+	for i, objID in ipairs(bar.gdata.objectList) do
+		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object and num < count) then
 			object:ClearAllPoints()
@@ -1296,8 +1325,9 @@ function NeuronBar:SetPerimeter(bar)
 	bar.objectCount = 0
 	bar.top = nil; bar.bottom = nil; bar.left = nil; bar.right = nil
 
-	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-		object = _G[bar.objPrefix..objID]
+	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+	for i, objID in ipairs(bar.gdata.objectList) do
+		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object and num < count) then
 			local objTop, objBottom, objLeft, objRight = object:GetTop(), object:GetBottom(), object:GetLeft(), object:GetRight()
@@ -1810,8 +1840,9 @@ end
 function NeuronBar:UpdateObjectData(bar)
 	local object
 
-	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-		object = _G[bar.objPrefix..objID]
+	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+	for i, objID in ipairs(bar.gdata.objectList) do
+		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
 			object:SetData(object, bar)
@@ -1823,8 +1854,9 @@ end
 function NeuronBar:UpdateObjectGrid(bar, show)
 	local object
 
-	for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-		object = _G[bar.objPrefix..objID]
+	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
+	for i, objID in ipairs(bar.gdata.objectList) do
+		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
 			object:SetGrid(object, show)
@@ -2121,15 +2153,17 @@ end
 
 
 function NeuronBar:AddObjectToList(bar, object)
-	if (not bar.gdata.objectList or bar.gdata.objectList == "") then
-		bar.gdata.objectList = tostring(object.id)
+
+	if (not bar.gdata.objectList or bar.gdata.objectList == {}) then
+		bar.gdata.objectList[1] = object.id
 	else
-		bar.gdata.objectList = bar.gdata.objectList..";"..object.id
+		bar.gdata.objectList[#bar.gdata.objectList +1] = object.id
 	end
 end
 
 
 function NeuronBar:AddObjects(bar, num)
+
 	num = tonumber(num)
 
 	if (not num) then
@@ -2181,23 +2215,28 @@ function NeuronBar:StoreObject(bar, object, storage, objTable)
 
 	object:SaveData(object)
 
-	--NEURON.UpdateAnchor(button, nil, nil, nil, true)
-
-	--objTable[object.objTIndex][2] = 1
-
 	object:SetParent(storage)
+
 end
 
 
 function NeuronBar:RemoveObjectFromList(bar, objID)
 
-	bar.gdata.objectList = (bar.gdata.objectList):gsub("[;]*"..objID.."$", "")
+	local index = tFind(bar.gdata.objectList, objID)
+
+	if index == 0 then --objectID not contained in the list. This shouldn't even trip, but just in case
+		return
+	end
+
+	table.remove(bar.gdata.objectList, index)
 
 end
 
 
 function NeuronBar:RemoveObjects(bar, num)
-	if (not bar.objStorage) then return end
+	if (not bar.objStorage) then
+		return
+	end
 
 	if (not num) then
 		num = 1
@@ -2206,13 +2245,15 @@ function NeuronBar:RemoveObjects(bar, num)
 
 	for i=1,num do
 
-		local objID = (bar.gdata.objectList):match("%d+$")
+		local objID = bar.gdata.objectList[#bar.gdata.objectList]
 
 		if (objID) then
-			local object = _G[bar.objPrefix..objID]
+			local object = _G[bar.objPrefix..tostring(objID)]
 			if (object) then
 				NeuronBar:StoreObject(bar, object, bar.objStorage, bar.objTable)
 				NeuronBar:RemoveObjectFromList(bar, objID)
+				--table.remove(bar.objTable, objID)
+
 				bar.objCount = bar.objCount - 1
 				bar.countChanged = true
 			end

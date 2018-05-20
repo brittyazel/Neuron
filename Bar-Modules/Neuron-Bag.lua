@@ -7,7 +7,9 @@ local NeuronBagBar = NEURON.NeuronBagBar
 
 local  bagbarsDB, bagbtnsDB
 
-local BAGBTN = setmetatable({}, { __index = CreateFrame("Frame") })
+NEURON.BAGBTN = setmetatable({}, { __index = CreateFrame("Frame") })
+
+local BAGBTN = NEURON.BAGBTN
 
 local STORAGE = CreateFrame("Frame", nil, UIParent)
 
@@ -44,11 +46,11 @@ local configData = {
 --- or setting up slash commands.
 function NeuronBagBar:OnInitialize()
 
-	bagElements[5] = NeuronBackpackButton
-	bagElements[4] = Neuron___Bag0Slot
+	bagElements[1] = NeuronBackpackButton
+	bagElements[2] = Neuron___Bag0Slot
 	bagElements[3] = Neuron___Bag1Slot
-	bagElements[2] = Neuron___Bag2Slot
-	bagElements[1] = Neuron___Bag3Slot
+	bagElements[4] = Neuron___Bag2Slot
+	bagElements[5] = Neuron___Bag3Slot
 
 	for k,v in pairs(bagElements) do
 		v:SetWidth(32)
@@ -94,7 +96,7 @@ function NeuronBagBar:OnInitialize()
 	----------------------------------------------------------------
 
 
-	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, STORAGE, gDef, nil, true)
+	NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = NEURON.BAGBTN }, #bagElements, STORAGE, gDef, nil, true)
 
 	NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
