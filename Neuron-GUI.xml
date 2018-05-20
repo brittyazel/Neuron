@@ -1459,7 +1459,7 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					C_Timer.After(1, function() Neuron.NeuronGUI:ButtonEditor_OnLoad(self) end)
+					C_Timer.After(1, function() Neuron.NeuronGUI:ButtonEditor_OnLoad(self) Neuron.NeuronGUI:FlyoutOptions_OnLoad(self) end)
 			</OnLoad>
 			<OnShow>
 					Neuron.NeuronGUI:ButtonEditor_OnShow(self)

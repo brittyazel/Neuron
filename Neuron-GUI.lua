@@ -127,10 +127,6 @@ function NeuronGUI:OnEnable()
 		NeuronGUI:hookHandler(bar.handler)
 	end
 
-
-
-	C_Timer.After(1, function() NeuronGUI:DelayedOnUpdate() end)
-
 	updater = CreateFrame("Frame", nil, UIParent)
 	updater:SetScript("OnUpdate", function(self, elapsed) NeuronGUI:runUpdater(self, elapsed) end)
 	updater.elapsed = 0
@@ -153,25 +149,6 @@ function NeuronGUI:OnDisable()
 
 end
 
-
-function NeuronGUI:DelayedOnUpdate()
-	local content = CreateFrame("Frame",nil, NBTNE.options)
-	content:SetPoint("TOPLEFT",10,-5 )
-	content:SetPoint("BOTTOMRIGHT",-10,5)
-	--This creats a cusomt AceGUI container which lets us imbed a AceGUI menu into our frame.
-	local widget = {
-		frame     = NBTNE.options,
-		content   = content,
-		type      = "NeuronContainer"
-	}
-	widget["OnRelease"] = function(self)
-		self.status = nil
-		wipe(self.localstatus)
-	end
-
-	NeuronButtonEditor.ACEmenu = widget
-	NeuronAceGUI:RegisterAsContainer(widget)
-end
 -------------------------------------------------
 
 
@@ -2133,12 +2110,12 @@ end
 function NeuronGUI:FlyoutOptions_OnLoad(frame)
 	--NeuronButtonEditor.options
 	--Container Support
-	local content = CreateFrame("Frame",nil, NeuronButtonEditor.options)
+	local content = CreateFrame("Frame",nil, frame.options)
 	content:SetPoint("TOPLEFT",10,-5 )
 	content:SetPoint("BOTTOMRIGHT",-10,5)
 	--This creats a cusomt AceGUI container which lets us imbed a AceGUI menu into our frame.
 	local widget = {
-		frame     = NeuronButtonEditor.options,
+		frame     = frame.options,
 		content   = content,
 		type      = "NeuronContainer"
 	}
@@ -2149,8 +2126,7 @@ function NeuronGUI:FlyoutOptions_OnLoad(frame)
 
 	NeuronButtonEditor.ACEmenu = widget
 	NeuronAceGUI:RegisterAsContainer(widget)
-	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
-
+	NeuronGUI:SubFrameHoneycombBackdrop_OnLoad(frame)
 end
 
 
