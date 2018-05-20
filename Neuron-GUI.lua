@@ -3204,6 +3204,8 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnTextChanged", function(self) if (strlen(self:GetText()) < 1 and not self.hasfocus) then self.text:Show() self.cancel:Hide() end end)
 	frame.search = f
 
+	frame.search:Hide() --hide search frame because it is broken and returns nonesense
+
 	NeuronGUI:SubFrameBlackBackdrop_OnLoad(f)
 
 	f.cancel = CreateFrame("Button", nil, f)
@@ -3303,35 +3305,6 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	frame.options = f
 
 	---  /flyout <types>:<keys>:<shape>:<attach point>:<relative point>:<columns|radius>:<click|mouse>
-	--[[
-        f = CreateFrame("EditBox", nil, frame.options)
-        f:SetMultiLine(false)
-        f:SetNumeric(false)
-        f:SetAutoFocus(false)
-        f:SetTextInsets(5,5,5,5)
-        f:SetFontObject("GameFontHighlight")
-        f:SetJustifyH("CENTER")
-        f:SetPoint("TOPLEFT", frame.options, "TOPRIGHT", 5, 3.5)
-        f:SetPoint("BOTTOMRIGHT", frame.options, "TOP", -18, 32)
-        --f:SetScript("OnTextChanged", macroNameEdit_OnTextChanged)
-        f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
-        ---f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
-        f:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-        f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
-        frame.flyoutKey = f
-
-        f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
-        f.text:SetPoint("CENTER")
-        f.text:SetJustifyH("CENTER")
-        f.text:SetText("dsfgdfgsdf")
-
-        f = CreateFrame("Frame", nil, frame.flyoutkey)
-        f:SetPoint("TOPLEFT", 0, 0)
-        f:SetPoint("BOTTOMRIGHT", 0, 0)
-        f:SetFrameLevel(frame.flyoutKey:GetFrameLevel()-1)
-
-        NEURON.SubFrameBlackBackdrop_OnLoad(f)
-    ]]--
 
 
 	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
@@ -3355,15 +3328,6 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.text:SetText(L["Flyout Options"])
 	frame.tab2 = f; frame.tabs[f] = frame.options
 
-	--[[f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
-	f:SetWidth(125)
-	f:SetHeight(28)
-	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)
-	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
-	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(nil)
-	f.text:SetText(L["Action Data"])
-	frame.tab2 = f; frame.tabs[f] = frame.action]]
 
 
 
