@@ -327,7 +327,6 @@ function NeuronBar:SetUpBars()
 	else
 		for id,data in pairs(barGDB) do
 			if (data ~= nil) then
-				data.objectTable = NEURON:fixObjectTable(data) ---TODO: remove this eventually, it switches the object table from a ";" deliniated string to an actual table
 				NeuronBar:CreateNewBar("bar", id) --this calls the bar constructor
 			end
 

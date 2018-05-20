@@ -270,6 +270,8 @@ function NEURON:OnInitialize()
 	end
 	--------------------------------------------------------------------
 
+	NEURON:fixObjectTable(NEURON.db.profile)
+
 	---load saved variables into working variable containers
 	NeuronCDB = NEURON.db.profile["NeuronCDB"]
 	NeuronGDB = NEURON.db.profile["NeuronGDB"]
@@ -605,29 +607,6 @@ function NEURON:printSlashHelp()
 	end
 
 end
-
-
-
-------------------------------------------------------------
---------------------Data Fixing Functions-------------------
-------------------------------------------------------------
-
-function NEURON:fixObjectTable(data) --converted objectTable from a single string to a table of ints, this fixes the table on login
-	if type(data.objectList) ~= "string" then
-		return
-	end
-
-	local function split(source, delimiters)
-		local elements = {}
-		local pattern = '([^'..delimiters..']+)'
-		string.gsub(source, pattern, function(value) elements[#elements + 1] =     value;  end);
-		return elements
-	end
-	return split(data.objectList, ";")
-end
-
-
-
 
 
 ------------------------------------------------------------
