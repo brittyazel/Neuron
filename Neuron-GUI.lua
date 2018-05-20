@@ -111,7 +111,8 @@ function NeuronGUI:OnInitialize()
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
 
 
-	--for the object editor
+	--for the object
+	---- editor
 	NEURON.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
 
 end
@@ -123,28 +124,16 @@ end
 function NeuronGUI:OnEnable()
 
 	for _,bar in pairs(NEURON.BARIndex) do
-		self:hookHandler(bar.handler)
+		NeuronGUI:hookHandler(bar.handler)
 	end
 
-	NeuronGUI:SecureHook("SpellButton_OnModifiedClick", "modifiedSpellClick")
-	NeuronGUI:SecureHook("HandleModifiedItemClick", "modifiedItemClick")
-	NeuronGUI:SecureHook("OpenStackSplitFrame", "openStackSplitFrame")
-
-	C_Timer.After(1, function() NeuronGUI:DelayedOnUpdate() end)
-
 	updater = CreateFrame("Frame", nil, UIParent)
-	updater:SetScript("OnUpdate", runUpdater)
+	updater:SetScript("OnUpdate", function(self, elapsed) NeuronGUI:runUpdater(self, elapsed) end)
 	updater.elapsed = 0
 	updater:Hide()
 
-
-	if(MountJournal)then
-		self.hookMountButtons()
-		self.hookPetJournalButtons()
-	end
-
-	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	self:RegisterEvent("ADDON_LOADED")
+	NeuronGUI:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	NeuronGUI:RegisterEvent("ADDON_LOADED")
 
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-GUI", NeuronGUI.target_options)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-Flyout", NeuronGUI.flyout_options)
@@ -160,25 +149,6 @@ function NeuronGUI:OnDisable()
 
 end
 
-
-function NeuronGUI:DelayedOnUpdate()
-	local content = CreateFrame("Frame",nil, NBTNE.options)
-	content:SetPoint("TOPLEFT",10,-5 )
-	content:SetPoint("BOTTOMRIGHT",-10,5)
-	--This creats a cusomt AceGUI container which lets us imbed a AceGUI menu into our frame.
-	local widget = {
-		frame     = NBTNE.options,
-		content   = content,
-		type      = "NeuronContainer"
-	}
-	widget["OnRelease"] = function(self)
-		self.status = nil
-		wipe(self.localstatus)
-	end
-
-	NeuronButtonEditor.ACEmenu = widget
-	NeuronAceGUI:RegisterAsContainer(widget)
-end
 -------------------------------------------------
 
 
@@ -191,8 +161,8 @@ end
 
 function NeuronGUI:ADDON_LOADED(name)
 	if name == "Blizzard_PetJournal" then
-		self:hookMountButtons()
-		self:hookPetJournalButtons()
+		NeuronGUI:hookMountButtons()
+		NeuronGUI:hookPetJournalButtons()
 	end
 end
 
@@ -294,14 +264,6 @@ function NeuronGUI:insertLink(text)
 
 	local item = GetItemInfo(text)
 
-	--if (NBTNE.flyoutedit and NBTNE.flyoutedit.keyedit.edit:IsVisible()) then
-
-	--	NBTNE.flyoutedit.keyedit.edit:Insert(item or text)
-
-	--	return
-
-	--end
-
 	if (NBTNE.macroedit.edit:IsVisible()) then
 
 		NBTNE.macroedit.edit:SetFocus()
@@ -325,112 +287,6 @@ function NeuronGUI:insertLink(text)
 	end
 end
 
-function NeuronGUI:modifiedSpellClick(button)
-
-	local id = SpellBook_GetSpellBookSlot(GetMouseFocus())
-
-	if (id > MAX_SPELLS) then
-		return
-	end
-
-	if (CursorHasSpell() and NBTNE:IsVisible()) then
-		ClearCursor()
-	end
-
-	if (IsModifiedClick("CHATLINK")) then
-
-		if (NBTNE:IsVisible()) then
-
-			local spell, subName = GetSpellBookItemName(id, SpellBookFrame.bookType)
-
-			if (spell and not IsPassiveSpell(id, SpellBookFrame.bookType)) then
-
-				if (subName and #subName > 0) then
-					self:insertLink(spell.."("..subName..")")
-				else
-					self:insertLink(spell.."()")
-				end
-			end
-			return
-		end
-	end
-
-	if (IsModifiedClick("PICKUPACTION")) then
-
-		PickupSpell(id, SpellBookFrame.bookType)
-
-	end
-end
-
-function NeuronGUI:modifiedItemClick(link)
-
-	if (IsModifiedClick("CHATLINK")) then
-
-		if (NBTNE:IsVisible()) then
-
-			local itemName = GetItemInfo(link)
-
-			if (itemName) then
-				self:insertLink(itemName)
-			end
-
-			return true
-		end
-	end
-end
-
-function NeuronGUI:modifiedMountClick(button)
-
-	local id = button:GetParent().spellID
-
-	if (CursorHasSpell() and NBTNE:IsVisible()) then
-		ClearCursor()
-	end
-
-	if (IsModifiedClick("CHATLINK")) then
-
-		if (NBTNE:IsVisible()) then
-
-			local mount = GetSpellInfo(id)
-
-			if (mount) then
-				self:insertLink(mount.."()")
-			end
-
-			return
-		end
-	end
-end
-
-function NeuronGUI:modifiedPetJournalClick(button)
-
-	local id = button:GetParent().petID
-
-	if (NBTNE:IsVisible()) then
-		ClearCursor()
-	end
-
-	if (IsModifiedClick("CHATLINK")) then
-
-		if (NBTNE:IsVisible()) then
-
-			local _, _, _, _, _, _, petName = C_PetJournal.GetPetInfoByPetID(id)
-
-			if (petName) then
-				self:insertLink(petName.."()")
-			end
-
-			return
-		end
-	end
-end
-
-function NeuronGUI:openStackSplitFrame(...)
-
-	if (NBTNE:IsVisible()) then
-		StackSplitFrame:Hide()
-	end
-end
 
 function NeuronGUI:NeuronPanelTemplates_DeselectTab(tab)
 
@@ -2254,12 +2110,12 @@ end
 function NeuronGUI:FlyoutOptions_OnLoad(frame)
 	--NeuronButtonEditor.options
 	--Container Support
-	local content = CreateFrame("Frame",nil, NeuronButtonEditor.options)
+	local content = CreateFrame("Frame",nil, frame.options)
 	content:SetPoint("TOPLEFT",10,-5 )
 	content:SetPoint("BOTTOMRIGHT",-10,5)
 	--This creats a cusomt AceGUI container which lets us imbed a AceGUI menu into our frame.
 	local widget = {
-		frame     = NeuronButtonEditor.options,
+		frame     = frame.options,
 		content   = content,
 		type      = "NeuronContainer"
 	}
@@ -2270,8 +2126,7 @@ function NeuronGUI:FlyoutOptions_OnLoad(frame)
 
 	NeuronButtonEditor.ACEmenu = widget
 	NeuronAceGUI:RegisterAsContainer(widget)
-	NEURON.SubFrameHoneycombBackdrop_OnLoad(frame)
-
+	NeuronGUI:SubFrameHoneycombBackdrop_OnLoad(frame)
 end
 
 
@@ -2628,8 +2483,12 @@ function NeuronGUI:MacroEditorUpdate()
 				NBTNE.macroicon.icon:SetTexture(data.macro_Icon)
 			end
 			--NEURON:Print(data.macro_Name)
-			NBTNE.nameedit:SetText(data.macro_Name)
-			NBTNE.noteedit:SetText(data.macro_Note)
+			if data.macro_name then
+				NBTNE.nameedit:SetText(data.macro_Name)
+			end
+			if data.macro_Note then
+				NBTNE.noteedit:SetText(data.macro_Note)
+			end
 			NBTNE.usenote:SetChecked(data.macro_UseNote)
 
 		else
@@ -3069,7 +2928,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	frame:RegisterForDrag("LeftButton", "RightButton")
 
 	NEURON.Editors.ACTIONBUTTON[1] = frame
-	NEURON.Editors.ACTIONBUTTON[4] = self.ButtonEditorUpdate
+	NEURON.Editors.ACTIONBUTTON[4] = NeuronGUI.ButtonEditorUpdate
 
 	frame.tabs = {}
 	frame.specs = {}
@@ -3207,7 +3066,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetWidth(104)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec3, "RIGHT", 0, 0)
-	f:SetScript("OnClick", function(self)
+	f:SetScript("OnClick", function()
 		frame.macroedit.edit:ClearFocus()
 		frame.nameedit:ClearFocus()
 		frame.noteedit:ClearFocus()
@@ -3345,6 +3204,8 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnTextChanged", function(self) if (strlen(self:GetText()) < 1 and not self.hasfocus) then self.text:Show() self.cancel:Hide() end end)
 	frame.search = f
 
+	frame.search:Hide() --hide search frame because it is broken and returns nonesense
+
 	NeuronGUI:SubFrameBlackBackdrop_OnLoad(f)
 
 	f.cancel = CreateFrame("Button", nil, f)
@@ -3444,35 +3305,6 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	frame.options = f
 
 	---  /flyout <types>:<keys>:<shape>:<attach point>:<relative point>:<columns|radius>:<click|mouse>
-	--[[
-        f = CreateFrame("EditBox", nil, frame.options)
-        f:SetMultiLine(false)
-        f:SetNumeric(false)
-        f:SetAutoFocus(false)
-        f:SetTextInsets(5,5,5,5)
-        f:SetFontObject("GameFontHighlight")
-        f:SetJustifyH("CENTER")
-        f:SetPoint("TOPLEFT", frame.options, "TOPRIGHT", 5, 3.5)
-        f:SetPoint("BOTTOMRIGHT", frame.options, "TOP", -18, 32)
-        --f:SetScript("OnTextChanged", macroNameEdit_OnTextChanged)
-        f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
-        ---f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end macroOnEditFocusLost(self) end)
-        f:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-        f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
-        frame.flyoutKey = f
-
-        f.text = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
-        f.text:SetPoint("CENTER")
-        f.text:SetJustifyH("CENTER")
-        f.text:SetText("dsfgdfgsdf")
-
-        f = CreateFrame("Frame", nil, frame.flyoutkey)
-        f:SetPoint("TOPLEFT", 0, 0)
-        f:SetPoint("BOTTOMRIGHT", 0, 0)
-        f:SetFrameLevel(frame.flyoutKey:GetFrameLevel()-1)
-
-        NEURON.SubFrameBlackBackdrop_OnLoad(f)
-    ]]--
 
 
 	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
@@ -3496,15 +3328,6 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.text:SetText(L["Flyout Options"])
 	frame.tab2 = f; frame.tabs[f] = frame.options
 
-	--[[f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
-	f:SetWidth(125)
-	f:SetHeight(28)
-	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)
-	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
-	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(nil)
-	f.text:SetText(L["Action Data"])
-	frame.tab2 = f; frame.tabs[f] = frame.action]]
 
 
 
@@ -3572,42 +3395,18 @@ function NeuronGUI:hookHandler(handler)
 	end)
 end
 
-function NeuronGUI:runUpdater(elapsed)
+function NeuronGUI:runUpdater(frame, elapsed)
 
-	self.elapsed = elapsed
+	frame.elapsed = elapsed
 
-	if (self.elapsed > 0) then
+	if (frame.elapsed > 0) then
 
 		NeuronGUI:UpdateBarGUI()
 		NeuronGUI:UpdateObjectGUI()
 
-		self:Hide()
+		frame:Hide()
 	end
 end
-
-
-
-function NeuronGUI:hookMountButtons()
-
-	if (MountJournal.ListScrollFrame.buttons) then
-
-		for i,btn in pairs(MountJournal.ListScrollFrame.buttons) do
-			btn.DragButton:HookScript("OnClick", NeuronGUI:modifiedMountClick())
-		end
-	end
-end
-
-function NeuronGUI:hookPetJournalButtons()
-
-	if (PetJournal.listScroll.buttons) then
-
-		for i,btn in pairs(PetJournal.listScroll.buttons) do
-			btn.dragButton:HookScript("OnClick", NeuronGUI:modifiedPetJournalClick())
-		end
-	end
-end
-
-
 
 
 
