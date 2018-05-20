@@ -1014,7 +1014,7 @@ function NeuronFlyouts:Flyout_UpdateButtons(fbutton, init)
 				NEURON.NeuronButton:MACRO_Reset(button)
 				NEURON.NeuronButton:MACRO_UpdateAll(button, true)
 
-				list = table.insert(list, button.id)
+				list[#list+1] = button.id--table.insert(list, button.id)
 
 				count = count + 1
 			end

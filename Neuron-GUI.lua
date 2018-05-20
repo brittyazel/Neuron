@@ -111,7 +111,8 @@ function NeuronGUI:OnInitialize()
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
 
 
-	--for the object editor
+	--for the object
+	---- editor
 	NEURON.Editors.ACTIONBUTTON = { nil, 550, 350, nil }
 
 end
@@ -123,28 +124,20 @@ end
 function NeuronGUI:OnEnable()
 
 	for _,bar in pairs(NEURON.BARIndex) do
-		self:hookHandler(bar.handler)
+		NeuronGUI:hookHandler(bar.handler)
 	end
 
-	NeuronGUI:SecureHook("SpellButton_OnModifiedClick", "modifiedSpellClick")
-	NeuronGUI:SecureHook("HandleModifiedItemClick", "modifiedItemClick")
-	NeuronGUI:SecureHook("OpenStackSplitFrame", "openStackSplitFrame")
+
 
 	C_Timer.After(1, function() NeuronGUI:DelayedOnUpdate() end)
 
 	updater = CreateFrame("Frame", nil, UIParent)
-	updater:SetScript("OnUpdate", runUpdater)
+	updater:SetScript("OnUpdate", function(self, elapsed) NeuronGUI:runUpdater(self, elapsed) end)
 	updater.elapsed = 0
 	updater:Hide()
 
-
-	if(MountJournal)then
-		self.hookMountButtons()
-		self.hookPetJournalButtons()
-	end
-
-	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	self:RegisterEvent("ADDON_LOADED")
+	NeuronGUI:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	NeuronGUI:RegisterEvent("ADDON_LOADED")
 
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-GUI", NeuronGUI.target_options)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-Flyout", NeuronGUI.flyout_options)
@@ -191,8 +184,8 @@ end
 
 function NeuronGUI:ADDON_LOADED(name)
 	if name == "Blizzard_PetJournal" then
-		self:hookMountButtons()
-		self:hookPetJournalButtons()
+		NeuronGUI:hookMountButtons()
+		NeuronGUI:hookPetJournalButtons()
 	end
 end
 
@@ -294,14 +287,6 @@ function NeuronGUI:insertLink(text)
 
 	local item = GetItemInfo(text)
 
-	--if (NBTNE.flyoutedit and NBTNE.flyoutedit.keyedit.edit:IsVisible()) then
-
-	--	NBTNE.flyoutedit.keyedit.edit:Insert(item or text)
-
-	--	return
-
-	--end
-
 	if (NBTNE.macroedit.edit:IsVisible()) then
 
 		NBTNE.macroedit.edit:SetFocus()
@@ -325,112 +310,6 @@ function NeuronGUI:insertLink(text)
 	end
 end
 
-function NeuronGUI:modifiedSpellClick(button)
-
-	local id = SpellBook_GetSpellBookSlot(GetMouseFocus())
-
-	if (id > MAX_SPELLS) then
-		return
-	end
-
-	if (CursorHasSpell() and NBTNE:IsVisible()) then
-		ClearCursor()
-	end
-
-	if (IsModifiedClick("CHATLINK")) then
-
-		if (NBTNE:IsVisible()) then
-
-			local spell, subName = GetSpellBookItemName(id, SpellBookFrame.bookType)
-
-			if (spell and not IsPassiveSpell(id, SpellBookFrame.bookType)) then
-
-				if (subName and #subName > 0) then
-					self:insertLink(spell.."("..subName..")")
-				else
-					self:insertLink(spell.."()")
-				end
-			end
-			return
-		end
-	end
-
-	if (IsModifiedClick("PICKUPACTION")) then
-
-		PickupSpell(id, SpellBookFrame.bookType)
-
-	end
-end
-
-function NeuronGUI:modifiedItemClick(link)
-
-	if (IsModifiedClick("CHATLINK")) then
-
-		if (NBTNE:IsVisible()) then
-
-			local itemName = GetItemInfo(link)
-
-			if (itemName) then
-				self:insertLink(itemName)
-			end
-
-			return true
-		end
-	end
-end
-
-function NeuronGUI:modifiedMountClick(button)
-
-	local id = button:GetParent().spellID
-
-	if (CursorHasSpell() and NBTNE:IsVisible()) then
-		ClearCursor()
-	end
-
-	if (IsModifiedClick("CHATLINK")) then
-
-		if (NBTNE:IsVisible()) then
-
-			local mount = GetSpellInfo(id)
-
-			if (mount) then
-				self:insertLink(mount.."()")
-			end
-
-			return
-		end
-	end
-end
-
-function NeuronGUI:modifiedPetJournalClick(button)
-
-	local id = button:GetParent().petID
-
-	if (NBTNE:IsVisible()) then
-		ClearCursor()
-	end
-
-	if (IsModifiedClick("CHATLINK")) then
-
-		if (NBTNE:IsVisible()) then
-
-			local _, _, _, _, _, _, petName = C_PetJournal.GetPetInfoByPetID(id)
-
-			if (petName) then
-				self:insertLink(petName.."()")
-			end
-
-			return
-		end
-	end
-end
-
-function NeuronGUI:openStackSplitFrame(...)
-
-	if (NBTNE:IsVisible()) then
-		StackSplitFrame:Hide()
-	end
-end
 
 function NeuronGUI:NeuronPanelTemplates_DeselectTab(tab)
 
@@ -2628,8 +2507,12 @@ function NeuronGUI:MacroEditorUpdate()
 				NBTNE.macroicon.icon:SetTexture(data.macro_Icon)
 			end
 			--NEURON:Print(data.macro_Name)
-			NBTNE.nameedit:SetText(data.macro_Name)
-			NBTNE.noteedit:SetText(data.macro_Note)
+			if data.macro_name then
+				NBTNE.nameedit:SetText(data.macro_Name)
+			end
+			if data.macro_Note then
+				NBTNE.noteedit:SetText(data.macro_Note)
+			end
 			NBTNE.usenote:SetChecked(data.macro_UseNote)
 
 		else
@@ -3069,7 +2952,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	frame:RegisterForDrag("LeftButton", "RightButton")
 
 	NEURON.Editors.ACTIONBUTTON[1] = frame
-	NEURON.Editors.ACTIONBUTTON[4] = self.ButtonEditorUpdate
+	NEURON.Editors.ACTIONBUTTON[4] = NeuronGUI.ButtonEditorUpdate
 
 	frame.tabs = {}
 	frame.specs = {}
@@ -3207,7 +3090,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetWidth(104)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec3, "RIGHT", 0, 0)
-	f:SetScript("OnClick", function(self)
+	f:SetScript("OnClick", function()
 		frame.macroedit.edit:ClearFocus()
 		frame.nameedit:ClearFocus()
 		frame.noteedit:ClearFocus()
@@ -3572,42 +3455,18 @@ function NeuronGUI:hookHandler(handler)
 	end)
 end
 
-function NeuronGUI:runUpdater(elapsed)
+function NeuronGUI:runUpdater(frame, elapsed)
 
-	self.elapsed = elapsed
+	frame.elapsed = elapsed
 
-	if (self.elapsed > 0) then
+	if (frame.elapsed > 0) then
 
 		NeuronGUI:UpdateBarGUI()
 		NeuronGUI:UpdateObjectGUI()
 
-		self:Hide()
+		frame:Hide()
 	end
 end
-
-
-
-function NeuronGUI:hookMountButtons()
-
-	if (MountJournal.ListScrollFrame.buttons) then
-
-		for i,btn in pairs(MountJournal.ListScrollFrame.buttons) do
-			btn.DragButton:HookScript("OnClick", NeuronGUI:modifiedMountClick())
-		end
-	end
-end
-
-function NeuronGUI:hookPetJournalButtons()
-
-	if (PetJournal.listScroll.buttons) then
-
-		for i,btn in pairs(PetJournal.listScroll.buttons) do
-			btn.dragButton:HookScript("OnClick", NeuronGUI:modifiedPetJournalClick())
-		end
-	end
-end
-
-
 
 
 

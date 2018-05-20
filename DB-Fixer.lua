@@ -24,7 +24,9 @@ function NEURON:fixObjectTable(profile) --converted objectTable from a single st
                     string.gsub(source, pattern, function(value) elements[#elements + 1] = value; end);
                     return elements
                 end
-                print("fixing data for: " .. bar.name)
+                if bar.name then
+                    NEURON:Print("fixing data for: " .. bar.name)
+                end
                 bar.objectList = split(bar.objectList, ";")
             end
         end

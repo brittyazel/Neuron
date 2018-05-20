@@ -11,6 +11,9 @@ local handlerMT = setmetatable({}, { __index = CreateFrame("Frame") })
 NEURON.BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --Bar object template
 local BAR = NEURON.BAR
 
+local TRASHCAN = CreateFrame("Frame", nil, UIParent)
+TRASHCAN:Hide()
+
 local BUTTON = NEURON.BUTTON
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -2214,7 +2217,9 @@ function NeuronBar:RemoveObject(bar, object, objID)
 
 	NeuronBar:RemoveObjectFromList(bar, objID)
 
-	object:Hide() --otherwise the object sticks around visually until a reload
+	object:SetParent(TRASHCAN)
+
+	--object:Hide() --otherwise the object sticks around visually until a reload
 
 end
 
