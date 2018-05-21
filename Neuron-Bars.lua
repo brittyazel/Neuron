@@ -1790,6 +1790,8 @@ end
 ---------------------------------------------------------------------------
 
 
+---note: bar.GDB[id] for a give bar is the same as that bars gdata. This is the same for bar.CDB[id] and cdata
+
 function NeuronBar:SaveData(bar)
 	local id = bar:GetID()
 
@@ -3448,54 +3450,6 @@ end
 
 
 
---is this even used?
-function NeuronBar:BarProfileUpdate()
-	GDB, CDB = NeuronGDB, NeuronCDB
-	barGDB = GDB.bars
-	barCDB = CDB.bars
-
-	if (GDB.firstRun) then
-		local oid, offset = 1, 0
-		for id, defaults in ipairs(gDef) do
-			NEURON.RegisteredBarData["bar"].gDef = defaults
-
-			local bar, object = NeuronBar:CreateNewBar("bar", id, true)
-
-			for i=oid+offset,oid+11+offset do
-				object = NEURON.NeuronButton:CreateNewObject("bar", i, true)
-				NeuronBar:AddObjectToList(bar, object)
-			end
-
-			NEURON.RegisteredBarData["bar"].gDef = nil
-			offset = offset + 12
-		end
-
-	else
-		for id,data in pairs(barGDB) do
-			if (data ~= nil) then
-				NeuronBar:CreateNewBar("bar", id)
-			end
-		end
-
-		for id,data in pairs(GDB.buttons) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("bar", id)
-			end
-		end
-	end
-
-	for _,bar in pairs(BARIndex) do
-		if (CDB.firstRun) then
-			for id, cdefaults in ipairs(cDef) do
-				if (id == bar:GetID()) then
-					bar:SetDefaults(nil, cdefaults)
-				end
-			end
-		end
-
-		NeuronBar:Load(bar)
-	end
-end
 
 --- Sets a Target Casting state for a bar
 -- @param value(string): Database refrence value to be set

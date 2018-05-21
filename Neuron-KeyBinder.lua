@@ -276,10 +276,16 @@ function NeuronBinder:OnEnter(binder)
 	---TODO:we should definitely added name strings for pets/companions as well. This was just to get it going
 	if binder.button.spellID then
 		name = GetSpellInfo(binder.button.spellID)
+	elseif binder.button.actionSpell then
+		name = binder.button.actionSpell
 	elseif binder.button.macroitem then
 		name = binder.button.macroitem
 	elseif binder.button.macrospell then
 		name = binder.button.macrospell --this is kind of a catch-all
+	end
+
+	if not name then
+		name = "Button"
 	end
 
 	binder.select:Show()
