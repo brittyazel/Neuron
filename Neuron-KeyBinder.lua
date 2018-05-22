@@ -326,8 +326,9 @@ end
 
 --- OnClick Event handler
 -- @param button: The button that was clicked
-function NeuronBinder:OnClick(binder, button)
-	if (button == "LeftButton") then
+function NeuronBinder:OnClick(binder, buttonpressed)
+
+	if (buttonpressed == "LeftButton") then
 
 		if (binder.button.keys.hotKeyLock) then
 			binder.button.keys.hotKeyLock = false
@@ -340,7 +341,7 @@ function NeuronBinder:OnClick(binder, button)
 		return
 	end
 
-	if (button == "RightButton") then
+	if (buttonpressed == "RightButton") then
 		if (binder.button.keys.hotKeyPri) then
 			binder.button.keys.hotKeyPri = false
 		else
@@ -356,17 +357,17 @@ function NeuronBinder:OnClick(binder, button)
 
 	local modifier, key = NeuronBinder:GetModifier()
 
-	if (button == "MiddleButton") then
+	if (buttonpressed == "MiddleButton") then
 		key = "Button3"
 	else
-		key = button
+		key = buttonpressed
 	end
 
 	if (modifier) then
 		key = modifier..key
 	end
 
-	binder:ProcessBinding(key, binder.button)
+	NeuronBinder:ProcessBinding(binder, key, binder.button)
 end
 
 
