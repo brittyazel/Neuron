@@ -1319,7 +1319,7 @@ function NeuronBar:SetPerimeter(bar)
 	local num, count = 0, bar.objCount
 	local object
 
-	bar.objectCount = 0
+	bar.objCount = 0
 	bar.top = nil; bar.bottom = nil; bar.left = nil; bar.right = nil
 
 	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
@@ -1332,7 +1332,7 @@ function NeuronBar:SetPerimeter(bar)
 			--See if this fixes the ranom position error that happens
 			if not objTop then return end
 
-			bar.objectCount = bar.objectCount + 1
+			bar.objCount = bar.objCount + 1
 
 			if (bar.top) then
 				if (objTop*scale > bar.top) then bar.top = objTop*scale end
@@ -2158,6 +2158,8 @@ function NeuronBar:AddObjectToList(bar, object)
 	else
 		bar.gdata.objectList[#bar.gdata.objectList +1] = object.id
 	end
+
+	object["bar"] = bar
 end
 
 
@@ -2172,15 +2174,17 @@ function NeuronBar:AddObjectsToBar(bar, num)
 	for i=1,num do
 
 		local object
-		local id
+		local id = 1
 
 		for index in ipairs(bar.objTable) do
-			id = index + 1
+			if bar.objTable[index]["bar"] then
+				id = index + 1
+			end
 		end
 
 		if (bar.objCount < bar.objMax) then
 
-			if bar.objTable[id] and not bar.objTable[id].bar then --checks to see if the object exists in the object table, and if the object belongs to a bar
+			if bar.objTable[id] and not bar.objTable[id]["bar"] then --checks to see if the object exists in the object table, and if the object belongs to a bar
 				object = bar.objTable[id]
 			else
 				object = NEURON.NeuronButton:CreateNewObject(bar.class, id)
@@ -2217,16 +2221,18 @@ function NeuronBar:RemoveObject(bar, object, objID)
 		NEURON.NeuronBinder:ClearBindings(object)
 	end
 
-	NeuronBar:RemoveObjectFromList(bar, objID)
+	NeuronBar:RemoveObjectFromList(bar, object, objID)
 
 	object:SetParent(TRASHCAN)
+
+
 
 	--object:Hide() --otherwise the object sticks around visually until a reload
 
 end
 
 
-function NeuronBar:RemoveObjectFromList(bar, objID)
+function NeuronBar:RemoveObjectFromList(bar, object, objID)
 
 	local index = tFind(bar.gdata.objectList, objID)
 
@@ -2235,6 +2241,7 @@ function NeuronBar:RemoveObjectFromList(bar, objID)
 	end
 
 	table.remove(bar.gdata.objectList, index)
+	object["bar"] = nil
 
 end
 
