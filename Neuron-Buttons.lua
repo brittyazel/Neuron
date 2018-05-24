@@ -1169,7 +1169,8 @@ function NeuronButton:MACRO_UpdateAuraWatch(button, unit, spell)
 		if (unitAuras[unit][spell]) then
 			uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count = (":"):split(unitAuras[unit][spell])
 
-			uaw_duration = tonumber(uaw_duration); uaw_timeLeft = tonumber(uaw_timeLeft)
+			uaw_duration = tonumber(uaw_duration)
+			uaw_timeLeft = tonumber(uaw_timeLeft)
 
 			if (button.auraInd) then
 				button.auraBorder = true
@@ -1180,7 +1181,7 @@ function NeuronButton:MACRO_UpdateAuraWatch(button, unit, spell)
 					button.border:SetVertexColor(button.debuffcolor[1], button.debuffcolor[2], button.debuffcolor[3], 1.0)
 				end
 
-				button:Show()
+				button.border:Show()
 			else
 				button.border:Hide()
 			end
@@ -1586,7 +1587,7 @@ NeuronButton.MACRO_BAG_UPDATE = NeuronButton.MACRO_BAG_UPDATE_COOLDOWN
 
 
 function NeuronButton:MACRO_UNIT_AURA(button, ...)
-	local unit = select(2, ...)
+	local unit = select(1, ...)
 
 	if (unitAuras[unit]) then
 		NeuronButton:MACRO_UpdateAuraWatch(button, unit, button.macrospell)

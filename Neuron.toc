@@ -20,7 +20,7 @@ Localizations\Neuron_Localizations.xml
 
 Neuron.lua
 
-DB-Fixer.lua
+Utilities/DB-Fixer.lua
 
 Neuron-States.lua
 Neuron-Buttons.lua
