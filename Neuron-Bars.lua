@@ -1566,15 +1566,15 @@ function NeuronBar:OnDragStop(bar, ...)
 	bar:StopMovingOrSizing()
 
 	for _,thisbar in pairs(BARIndex) do
-		if (not point and thisbar.gdata.snapTo and thisbar.gdata.snapTo and thisbar ~= thisbar) then
-			point = NeuronBar:Stick(bar, thisbar, GDB.snapToTol, thisbar.gdata.padH, thisbar.gdata.padV)
+		if (not point and bar.gdata.snapTo and thisbar.gdata.snapTo and bar ~= thisbar) then
+			point = NeuronBar:Stick(bar, thisbar, GDB.snapToTol, bar.gdata.padH, bar.gdata.padV)
 
 			if (point) then
-				thisbar.gdata.snapToPoint = point
-				thisbar.gdata.snapToFrame = thisbar:GetName()
-				thisbar.gdata.point = "SnapTo: "..point
-				thisbar.gdata.x = 0
-				thisbar.gdata.y = 0
+				bar.gdata.snapToPoint = point
+				bar.gdata.snapToFrame = thisbar:GetName()
+				bar.gdata.point = "SnapTo: "..point
+				bar.gdata.x = 0
+				bar.gdata.y = 0
 			end
 		end
 	end
