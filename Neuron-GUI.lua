@@ -2482,8 +2482,7 @@ function NeuronGUI:MacroEditorUpdate()
 			else
 				NBTNE.macroicon.icon:SetTexture(data.macro_Icon)
 			end
-			--NEURON:Print(data.macro_Name)
-			if data.macro_name then
+			if data.macro_Name then
 				NBTNE.nameedit:SetText(data.macro_Name)
 			end
 			if data.macro_Note then
@@ -2615,6 +2614,10 @@ end
 -- @param self: macro editor name edit box frame
 function NeuronGUI:macroNameEdit_OnTextChanged(frame)
 
+	if not NEURON.CurrentObject then
+		return
+	end
+
 	if (strlen(frame:GetText()) > 0) then
 		frame.text:Hide()
 	end
@@ -2629,15 +2632,19 @@ function NeuronGUI:macroNameEdit_OnTextChanged(frame)
 			button.specdata[buttonSpec][state].macro_Name = frame:GetText()
 		end
 
+		NEURON.NeuronBar:UpdateObjectData(button.bar)
+
 	elseif (strlen(frame:GetText()) <= 0) then
 		frame.text:Show()
 	end
+
 end
 
 
 --- Triggers when the text in the macro editor's note text box changes
 -- @param self: macro editor note edit box frame
 function NeuronGUI:macroNoteEdit_OnTextChanged(frame)
+
 
 	if (strlen(frame:GetText()) > 0) then
 		frame.text:Hide()

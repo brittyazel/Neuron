@@ -3004,6 +3004,8 @@ function NeuronButton:SetData(button, bar)
 		button.macroColor = bar.gdata.macroColor
 		button.countColor = bar.gdata.countColor
 
+		button.macroname:SetText(button.data.macro_Name) --custom macro's weren't showing the name
+
 		if (not button.cdcolor1) then
 			button.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
 		else

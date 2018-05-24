@@ -1840,7 +1840,7 @@ function NeuronBar:UpdateObjectData(bar)
 	local object
 
 	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-	for i, objID in ipairs(bar.gdata.objectList) do
+	for _, objID in pairs(bar.gdata.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
