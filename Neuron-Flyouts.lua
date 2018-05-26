@@ -1505,6 +1505,10 @@ end
 
 function NeuronFlyouts:updateAnchors(button, elapsed)
 
+	if not button then --someone had an error when switching profiles and not reloading fast enough. In that case button didn't exist
+		return
+	end
+
 	if not button.elapsed then
 		button.elapsed = 0
 	end
