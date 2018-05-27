@@ -17,7 +17,6 @@ Libs\embeds.xml
 Localizations\Neuron_Localizations.xml
 
 
-
 Neuron.lua
 
 Utilities/DB-Fixer.lua
@@ -32,11 +31,6 @@ Neuron-Flyouts.lua
 
 Neuron.xml
 
-Neuron-GUI.lua
-Neuron-GUI.xml
-
-
-
 Bar-Modules/Neuron-Extra.lua
 Bar-Modules/Neuron-ZoneAbility.lua
 Bar-Modules/Neuron-Bag.lua
@@ -46,3 +40,6 @@ Bar-Modules/Neuron-Menu.xml
 Bar-Modules/Neuron-Pet.lua
 Bar-Modules/Neuron-Status.lua
 Bar-Modules/Neuron-Status.xml
+
+Neuron-GUI.lua
+Neuron-GUI.xml

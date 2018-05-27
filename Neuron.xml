@@ -780,52 +780,6 @@
 
 
 
-	<CheckButton name="NeuronOptionsCheckButtonTemplate" virtual="true">
-		<Size x="26" y="26"/>
-		<HitRectInsets>
-			<AbsInset left="0" right="-50" top="0" bottom="0"/>
-		</HitRectInsets>
-		<Layers>
-			<Layer level="ARTWORK">
-				<FontString name="$parentText" parentkey="text" inherits="GameFontNormal">
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="RIGHT">
-							<Offset x="3" y="0"/>
-						</Anchor>
-					</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-		<Scripts>
-			<OnClick>
-					if ( self:GetChecked() ) then
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-					else
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-					end
-			</OnClick>
-			<OnEnter>
-					if ( self.tooltipText ) then
-						GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-						GameTooltip:SetText(self.tooltipText)
-					end
-					if ( self.tooltipRequirement ) then
-						GameTooltip:AddLine(self.tooltipRequirement)
-					end
-					GameTooltip:Show();
-			</OnEnter>
-			<OnLeave>
-					GameTooltip:Hide();
-			</OnLeave>
-		</Scripts>
-		<NormalTexture file="Interface\Addons\Neuron\Images\RoundCheckBox.tga"/>
-		<CheckedTexture file="Interface\Addons\Neuron\Images\RoundCheck.tga"/>
-		<DisabledTexture file="Interface\Addons\Neuron\Images\RoundCheckBox.tga"/>
-		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
-	</CheckButton>
-
-
-
 
 	<EditBox name="NeuronEditBoxTemplateSmall" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
 		<Size x="37" y="21"/>
@@ -1235,5 +1189,50 @@
 		</Scripts>
 		<FontString name="$parentFont" justifyH="CENTER" inherits="GameFontHighlightSmall"/>
 	</EditBox>
+
+
+	<CheckButton name="NeuronOptionsCheckButtonTemplate" virtual="true">
+		<Size x="26" y="26"/>
+		<HitRectInsets>
+			<AbsInset left="0" right="-50" top="0" bottom="0"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" parentkey="text" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT">
+							<Offset x="3" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnClick>
+					if ( self:GetChecked() ) then
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+					else
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+					end
+			</OnClick>
+			<OnEnter>
+					if ( self.tooltipText ) then
+						GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+						GameTooltip:SetText(self.tooltipText)
+					end
+					if ( self.tooltipRequirement ) then
+						GameTooltip:AddLine(self.tooltipRequirement)
+					end
+					GameTooltip:Show();
+			</OnEnter>
+			<OnLeave>
+					GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+		<NormalTexture file="Interface\Addons\Neuron\Images\RoundCheckBox.tga"/>
+		<CheckedTexture file="Interface\Addons\Neuron\Images\RoundCheck.tga"/>
+		<DisabledTexture file="Interface\Addons\Neuron\Images\RoundCheckBox.tga"/>
+		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+	</CheckButton>
 
 </Ui>
