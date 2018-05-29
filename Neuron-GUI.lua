@@ -379,6 +379,98 @@ function NeuronGUI:NeuronPanelTemplates_TabResize(tab, padding, absoluteSize, mi
 
 end
 
+--TODO: This should be moved to Neuron-GUI
+function NeuronGUI:EditBox_PopUpInitialize(popupFrame, data)
+	popupFrame.func = NeuronGUI.PopUp_Update
+	popupFrame.data = data
+
+	NeuronGUI:PopUp_Update(popupFrame)
+end
+
+
+
+function NeuronGUI:PopUp_Update(popupFrame)
+	local data, count, height, width = popupFrame.data, 1, 0, 0
+	local option, anchor, last, text
+
+	if (popupFrame.options) then
+		for k,v in pairs(popupFrame.options) do
+			v.text:SetText(""); v:Hide()
+		end
+	end
+
+	if (not popupFrame.array) then
+		popupFrame.array = {}
+	else
+		wipe(popupFrame.array)
+	end
+
+	if (not data) then
+		return
+	end
+
+	for k,v in pairs(data) do
+		if (type(v) == "string") then
+			popupFrame.array[count] = k..","..v
+		else
+			popupFrame.array[count] = k
+		end
+		count = count + 1
+	end
+
+	table.sort(popupFrame.array)
+
+	for i=1,#popupFrame.array do
+		popupFrame.array[i] = gsub(popupFrame.array[i], "%s+", " ")
+		popupFrame.array[i] = gsub(popupFrame.array[i], "^%s+", "")
+
+		if (not popupFrame.options[i]) then
+			option = CreateFrame("Button", popupFrame:GetName().."Option"..i, popupFrame, "NeuronPopupButtonTemplate")
+			option:SetHeight(20)
+
+			popupFrame.options[i] = option
+		else
+			option = _G[popupFrame:GetName().."Option"..i]
+			popupFrame.options[i] = option
+		end
+
+		text = popupFrame.array[i]:match("^[^,]+") or ""
+		option:SetText(text:gsub("^%d+_", ""))
+		option.value = popupFrame.array[i]:match("[^,]+$")
+
+		if (option:GetTextWidth() > width) then
+			width = option:GetTextWidth()
+		end
+
+		option:ClearAllPoints()
+
+		if (not anchor) then
+			option:SetPoint("TOP", popupFrame, "TOP", 0, -5); anchor = option
+		else
+			option:SetPoint("TOP", last, "BOTTOM", 0, -1)
+		end
+
+		last = option
+		height = height + 21
+		option:Show()
+	end
+
+	if (popupFrame.options) then
+		for k,v in pairs(popupFrame.options) do
+			v:SetWidth(width+40)
+		end
+	end
+
+	popupFrame:SetWidth(width+40)
+
+	if (height < popupFrame:GetParent():GetHeight()) then
+		popupFrame:SetHeight(popupFrame:GetParent():GetHeight())
+	else
+		popupFrame:SetHeight(height + 10)
+	end
+end
+
+
 -- This builds the string of any custom states in the order that they were originaly entered.
 function NeuronGUI:generateCustomStateList(bar)
 	local start = tonumber(string.match(bar.cdata.customRange, "^%d+"))
@@ -491,7 +583,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 						popupData[k.."_"..v] = tostring(k)
 					end
 
-					NEURON.EditBox_PopUpInitialize(f.edit.popup, popupData)
+					NeuronGUI:EditBox_PopUpInitialize(f.edit.popup, popupData)
 				end
 			end
 
@@ -682,8 +774,8 @@ function NeuronGUI:UpdateBarGUI(newBar)
 				end
 			end
 
-			NEURON.EditBox_PopUpInitialize(barOpt.remap.popup, popupData)
-			NEURON.EditBox_PopUpInitialize(barOpt.remapto.popup, popupData)
+			NeuronGUI:EditBox_PopUpInitialize(barOpt.remap.popup, popupData)
+			NeuronGUI:EditBox_PopUpInitialize(barOpt.remapto.popup, popupData)
 
 			if (newBar) then
 				barOpt.remap:SetText("")
@@ -4101,7 +4193,7 @@ function NeuronGUI:StatusBarEditorUpdate(reset)
 						end
 					end
 
-					NEURON.EditBox_PopUpInitialize(f.edit.popup, popupData)
+					NeuronGUI:EditBox_PopUpInitialize(f.edit.popup, popupData)
 
 				elseif (f.optData) then
 
@@ -4116,7 +4208,7 @@ function NeuronGUI:StatusBarEditorUpdate(reset)
 						end
 					end
 
-					NEURON.EditBox_PopUpInitialize(f.edit.popup, popupData)
+					NeuronGUI:EditBox_PopUpInitialize(f.edit.popup, popupData)
 				end
 			end
 
