@@ -1177,34 +1177,6 @@ end
 
 
 
-
-
-function NEURON:NeuronAdjustOption_AddOnClick(frame, button, down)
-	frame.elapsed = 0
-	frame.pushed = frame:GetButtonState()
-
-	if (not down) then
-		if (frame:GetParent():GetParent().addfunc) then
-			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent())
-		end
-	end
-end
-
-
-
-function NEURON:NeuronAdjustOption_SubOnClick(frame, button, down)
-	frame.elapsed = 0
-	frame.pushed = frame:GetButtonState()
-
-	if (not down) then
-		if (frame:GetParent():GetParent().subfunc) then
-			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent())
-		end
-	end
-end
-
-
-
 function NEURON:UpdateData(data, defaults)
 	-- Add new vars
 	for key,value in pairs(defaults) do

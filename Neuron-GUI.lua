@@ -11,9 +11,6 @@ local width, height = 1000, 600
 
 local barNames = {}
 
-local numShown = 15
-
-
 NEURON.NeuronGUI = Neuron:NewModule("GUI", "AceEvent-3.0", "AceHook-3.0")
 local NeuronGUI = NEURON.NeuronGUI
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -916,6 +913,9 @@ function NeuronGUI:BarList_OnLoad(frame)
 
 end
 
+
+local numShown = 14
+
 function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 	frame.offset = 0
@@ -1378,6 +1378,33 @@ function NeuronGUI:adjOptionSub(frame, onupdate)
 		end
 	end
 end
+
+
+function NeuronGUI:NeuronAdjustOption_AddOnClick(frame, button, down)
+	frame.elapsed = 0
+	frame.pushed = frame:GetButtonState()
+
+	if (not down) then
+		if (frame:GetParent():GetParent().addfunc) then
+			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent())
+		end
+	end
+end
+
+
+
+function NeuronGUI:NeuronAdjustOption_SubOnClick(frame, button, down)
+	frame.elapsed = 0
+	frame.pushed = frame:GetButtonState()
+
+	if (not down) then
+		if (frame:GetParent():GetParent().subfunc) then
+			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent())
+		end
+	end
+end
+
+
 
 function NeuronGUI:adjOptionOnMouseWheel(frame, delta)
 
