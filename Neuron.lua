@@ -741,7 +741,7 @@ function NEURON:UpdateSpellIndex()
 		local spellID_Alt = spellID
 		local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_SPELL)
 		--local icon = GetSpellBookItemTexture(i, BOOKTYPE_SPELL)
-		local isPassive = IsPassiveSpell(i, BOOKTYPE_SPELL)
+		--local isPassive = IsPassiveSpell(i, BOOKTYPE_SPELL)
 
 		if (spellName and spellType ~= "FUTURESPELL") then
 			local link = GetSpellLink(spellName)
