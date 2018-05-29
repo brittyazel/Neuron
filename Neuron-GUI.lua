@@ -61,15 +61,15 @@ local adjOptions = {
 	[3] = { "COLUMNS", L["Columns"], 1, "ColumnsSet", 1 , 0},
 	[4] = { "ARCSTART", L["Arc Start"], 1, "ArcStartSet", 1, 0, 359 },
 	[5] = { "ARCLENGTH", L["Arc Length"], 1, "ArcLengthSet", 1, 0, 359 },
-	[6] = { "HPAD",L["Horiz Padding"], 1, "PadHSet", 0.1 },
-	[7] = { "VPAD", L["Vert Padding"], 1, "PadVSet", 0.1 },
-	[8] = { "HVPAD", L["H+V Padding"], 1, "PadHVSet", 0.1 },
+	[6] = { "HPAD",L["Horiz Padding"], 1, "PadHSet", 0.5 },
+	[7] = { "VPAD", L["Vert Padding"], 1, "PadVSet", 0.5 },
+	[8] = { "HVPAD", L["H+V Padding"], 1, "PadHVSet", 0.5 },
 	[9] = { "STRATA", L["Strata"], 2, "StrataSet", nil, nil, nil, NEURON.Stratas },
 	[10] = { "ALPHA", L["Alpha"], 1, "AlphaSet", 0.01, 0, 1 },
 	[11] = { "ALPHAUP", L["AlphaUp"], 2, "AlphaUpSet", nil, nil, nil, NEURON.AlphaUps },
 	[12] = { "ALPHAUP", L["AlphaUp Speed"], 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
-	[13] = { "XPOS", L["X Position"], 1, "XAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
-	[14] = { "YPOS", L["Y Position"], 1, "YAxisSet", 0.05, nil, nil, nil, "%0.2f", 1, "" },
+	[13] = { "XPOS", L["X Position"], 1, "XAxisSet", 1, nil, nil, nil, "%0.2f", 1, "" },
+	[14] = { "YPOS", L["Y Position"], 1, "YAxisSet", 1, nil, nil, nil, "%0.2f", 1, "" },
 }
 
 local swatchOptions = {

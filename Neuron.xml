@@ -838,11 +838,8 @@
 									self:RegisterForClicks("AnyUp","AnyDown")
 							</OnLoad>
 							<OnClick>
-									Neuron.NeuronAdjustOption_AddOnClick(self, button, down)
+									Neuron:NeuronAdjustOption_AddOnClick(self, button, down)
 							</OnClick>
-							<OnUpdate>
-									Neuron.NeuronAdjustOption_AddOnUpdate(self, elapsed)
-							</OnUpdate>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\Neuron\Images\AdjustOptionRight-Up"/>
 						<PushedTexture file="Interface\AddOns\Neuron\Images\AdjustOptionRight-Down"/>
@@ -861,11 +858,8 @@
 									self:RegisterForClicks("AnyUp","AnyDown")
 							</OnLoad>
 							<OnClick>
-									Neuron.NeuronAdjustOption_SubOnClick(self, button, down)
+									Neuron:NeuronAdjustOption_SubOnClick(self, button, down)
 							</OnClick>
-							<OnUpdate>
-									Neuron.NeuronAdjustOption_SubOnUpdate(self, elapsed)
-							</OnUpdate>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\Neuron\Images\AdjustOptionLeft-Up"/>
 						<PushedTexture file="Interface\AddOns\Neuron\Images\AdjustOptionLeft-Down"/>
@@ -925,7 +919,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									--Neuron.SubFrameBlankBackdrop_OnLoad(self)
+									--Neuron.NeuronGUI:SubFrameBlankBackdrop_OnLoad(self)
 									self:SetBackdropColor(0, 0, 0, 0)
 									self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
@@ -935,23 +929,12 @@
 			</Frame>
 		</Frames>
 		<Scripts>
-			<OnUpdate>
-					if (self.method1:IsShown()) then
-						if (not self.method1.edit.hasfocus) then
-							if (not self.shown and MouseIsOver(self) and GetMouseFocus() == self.edit) then
-								self.method1.add:Show()
-								self.method1.sub:Show()
-								self.method1.edit:SetBackdropBorderColor(1, 0.82, 0, 1)
-								self.shown = true
-							elseif (self.shown and not MouseIsOver(self)) then
-								self.method1.add:Hide()
-								self.method1.sub:Hide()
-								self.method1.edit:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
-								self.shown = nil
-							end
-						end
-					end
-			</OnUpdate>
+			<OnLoad>
+				self.method1.add:Show()
+				self.method1.sub:Show()
+				self.method1.edit:SetBackdropBorderColor(1, 0.82, 0, 1)
+				self.shown = true
+			</OnLoad>
 		</Scripts>
 	</Frame>
 

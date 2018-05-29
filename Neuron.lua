@@ -1179,7 +1179,7 @@ end
 
 
 
-function NEURON.NeuronAdjustOption_AddOnClick(frame, button, down)
+function NEURON:NeuronAdjustOption_AddOnClick(frame, button, down)
 	frame.elapsed = 0
 	frame.pushed = frame:GetButtonState()
 
@@ -1191,19 +1191,8 @@ function NEURON.NeuronAdjustOption_AddOnClick(frame, button, down)
 end
 
 
-function NEURON.NeuronAdjustOption_AddOnUpdate(frame, elapsed)
-	frame.elapsed = frame.elapsed + elapsed
 
-	if (frame.pushed == "NORMAL") then
-
-		if (frame.elapsed > 1 and frame:GetParent():GetParent().addfunc) then
-			frame:GetParent():GetParent().addfunc(frame:GetParent():GetParent(), true)
-		end
-	end
-end
-
-
-function NEURON.NeuronAdjustOption_SubOnClick(frame, button, down)
+function NEURON:NeuronAdjustOption_SubOnClick(frame, button, down)
 	frame.elapsed = 0
 	frame.pushed = frame:GetButtonState()
 
@@ -1214,17 +1203,6 @@ function NEURON.NeuronAdjustOption_SubOnClick(frame, button, down)
 	end
 end
 
-
-function NEURON.NeuronAdjustOption_SubOnUpdate(frame, elapsed)
-	frame.elapsed = frame.elapsed + elapsed
-
-	if (frame.pushed == "NORMAL") then
-
-		if (frame.elapsed > 1 and frame:GetParent():GetParent().subfunc) then
-			frame:GetParent():GetParent().subfunc(frame:GetParent():GetParent(), true)
-		end
-	end
-end
 
 
 function NEURON:UpdateData(data, defaults)
