@@ -276,10 +276,16 @@ function NeuronBinder:OnEnter(binder)
 	---TODO:we should definitely added name strings for pets/companions as well. This was just to get it going
 	if binder.button.spellID then
 		name = GetSpellInfo(binder.button.spellID)
+	elseif binder.button.actionSpell then
+		name = binder.button.actionSpell
 	elseif binder.button.macroitem then
 		name = binder.button.macroitem
 	elseif binder.button.macrospell then
 		name = binder.button.macrospell --this is kind of a catch-all
+	end
+
+	if not name then
+		name = "Button"
 	end
 
 	binder.select:Show()
@@ -320,8 +326,9 @@ end
 
 --- OnClick Event handler
 -- @param button: The button that was clicked
-function NeuronBinder:OnClick(binder, button)
-	if (button == "LeftButton") then
+function NeuronBinder:OnClick(binder, buttonpressed)
+
+	if (buttonpressed == "LeftButton") then
 
 		if (binder.button.keys.hotKeyLock) then
 			binder.button.keys.hotKeyLock = false
@@ -334,7 +341,7 @@ function NeuronBinder:OnClick(binder, button)
 		return
 	end
 
-	if (button == "RightButton") then
+	if (buttonpressed == "RightButton") then
 		if (binder.button.keys.hotKeyPri) then
 			binder.button.keys.hotKeyPri = false
 		else
@@ -350,17 +357,17 @@ function NeuronBinder:OnClick(binder, button)
 
 	local modifier, key = NeuronBinder:GetModifier()
 
-	if (button == "MiddleButton") then
+	if (buttonpressed == "MiddleButton") then
 		key = "Button3"
 	else
-		key = button
+		key = buttonpressed
 	end
 
 	if (modifier) then
 		key = modifier..key
 	end
 
-	binder:ProcessBinding(key, binder.button)
+	NeuronBinder:ProcessBinding(binder, key, binder.button)
 end
 
 

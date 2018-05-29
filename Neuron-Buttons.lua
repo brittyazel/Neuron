@@ -959,29 +959,9 @@ function NeuronButton:MACRO_UpdateIcon(button, ...)
 		NeuronButton:MACRO_SetSpellState(button, spell)
 	elseif (item and #item>0) then
 		texture = NeuronButton:MACRO_SetItemIcon(button, item)
-	elseif (#button.data.macro_Text > 0) then
-		local equipset = button.data.macro_Text:match("/equipset%s+(%C+)")
 
-		if (equipset) then
-			equipset = equipset:gsub("%pnobtn:2%p ", "")
-			local icon, _, isEquipped = GetEquipmentSetInfoByName(equipset)
-
-			if (isEquipped) then
-				button.border:Show()
-			else
-				button.border:Hide()
-			end
-
-			if (icon) then
-				button.iconframeicon:SetTexture("INTERFACE\\ICONS\\"..icon:upper())
-			end
-
-		elseif (button.data.macro_Icon) then
-			button.iconframeicon:SetTexture(button.data.macro_Icon)
-		else
-			button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-		end
-
+	elseif (button.data.macro_Icon) then
+		button.iconframeicon:SetTexture(button.data.macro_Icon)
 		button.iconframeicon:Show()
 	else
 		button.macroname:SetText("")
@@ -1169,7 +1149,8 @@ function NeuronButton:MACRO_UpdateAuraWatch(button, unit, spell)
 		if (unitAuras[unit][spell]) then
 			uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count = (":"):split(unitAuras[unit][spell])
 
-			uaw_duration = tonumber(uaw_duration); uaw_timeLeft = tonumber(uaw_timeLeft)
+			uaw_duration = tonumber(uaw_duration)
+			uaw_timeLeft = tonumber(uaw_timeLeft)
 
 			if (button.auraInd) then
 				button.auraBorder = true
@@ -1180,7 +1161,7 @@ function NeuronButton:MACRO_UpdateAuraWatch(button, unit, spell)
 					button.border:SetVertexColor(button.debuffcolor[1], button.debuffcolor[2], button.debuffcolor[3], 1.0)
 				end
 
-				button:Show()
+				button.border:Show()
 			else
 				button.border:Hide()
 			end
@@ -1586,7 +1567,7 @@ NeuronButton.MACRO_BAG_UPDATE = NeuronButton.MACRO_BAG_UPDATE_COOLDOWN
 
 
 function NeuronButton:MACRO_UNIT_AURA(button, ...)
-	local unit = select(2, ...)
+	local unit = select(1, ...)
 
 	if (unitAuras[unit]) then
 		NeuronButton:MACRO_UpdateAuraWatch(button, unit, button.macrospell)
@@ -1891,15 +1872,16 @@ function NeuronButton:MACRO_PlaceBlizzEquipSet(button, action1)
 		return
 	else
 
-		local icon = GetEquipmentSetInfoByName(action1)
-		if (icon) then
-
+		local name, texture = GetEquipmentSetInfoByName(action1)
+		if (texture) then
 			button.data.macro_Text = "/equipset "..action1
 			button.data.macro_Equip = action1
-			button.data.macro_Icon = iIndex[icon] or "INTERFACE\\ICONS\\"..icon:upper()
+			button.data.macro_Name = name
+			button.data.macro_Icon = texture
 		else
 			button.data.macro_Text = ""
 			button.data.macro_Equip = false
+			button.data.macro_Name = ""
 			button.data.macro_Icon = false
 		end
 
@@ -1958,6 +1940,7 @@ function NeuronButton:MACRO_PlaceMount(button, action1, action2, hasAction)
 			button.data.macro_Name = "Random Mount"
 			--Any other mount from the Journal
 		else
+
 			local mountName,_, mountIcon = GetSpellInfo(CurrentMountSpellID)
 			button.data.macro_Text = "#autowrite\n/cast "..mountName..";"
 			button.data.macro_Auto = mountName..";"
@@ -3007,6 +2990,8 @@ function NeuronButton:SetData(button, bar)
 		button.bindColor = bar.gdata.bindColor
 		button.macroColor = bar.gdata.macroColor
 		button.countColor = bar.gdata.countColor
+
+		button.macroname:SetText(button.data.macro_Name) --custom macro's weren't showing the name
 
 		if (not button.cdcolor1) then
 			button.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }

@@ -1319,7 +1319,7 @@ function NeuronBar:SetPerimeter(bar)
 	local num, count = 0, bar.objCount
 	local object
 
-	bar.objectCount = 0
+	bar.objCount = 0
 	bar.top = nil; bar.bottom = nil; bar.left = nil; bar.right = nil
 
 	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
@@ -1332,7 +1332,7 @@ function NeuronBar:SetPerimeter(bar)
 			--See if this fixes the ranom position error that happens
 			if not objTop then return end
 
-			bar.objectCount = bar.objectCount + 1
+			bar.objCount = bar.objCount + 1
 
 			if (bar.top) then
 				if (objTop*scale > bar.top) then bar.top = objTop*scale end
@@ -1566,15 +1566,15 @@ function NeuronBar:OnDragStop(bar, ...)
 	bar:StopMovingOrSizing()
 
 	for _,thisbar in pairs(BARIndex) do
-		if (not point and thisbar.gdata.snapTo and thisbar.gdata.snapTo and thisbar ~= thisbar) then
-			point = NeuronBar:Stick(bar, thisbar, GDB.snapToTol, thisbar.gdata.padH, thisbar.gdata.padV)
+		if (not point and bar.gdata.snapTo and thisbar.gdata.snapTo and bar ~= thisbar) then
+			point = NeuronBar:Stick(bar, thisbar, GDB.snapToTol, bar.gdata.padH, bar.gdata.padV)
 
 			if (point) then
-				thisbar.gdata.snapToPoint = point
-				thisbar.gdata.snapToFrame = thisbar:GetName()
-				thisbar.gdata.point = "SnapTo: "..point
-				thisbar.gdata.x = 0
-				thisbar.gdata.y = 0
+				bar.gdata.snapToPoint = point
+				bar.gdata.snapToFrame = thisbar:GetName()
+				bar.gdata.point = "SnapTo: "..point
+				bar.gdata.x = 0
+				bar.gdata.y = 0
 			end
 		end
 	end
@@ -1790,6 +1790,8 @@ end
 ---------------------------------------------------------------------------
 
 
+---note: bar.GDB[id] for a give bar is the same as that bars gdata. This is the same for bar.CDB[id] and cdata
+
 function NeuronBar:SaveData(bar)
 	local id = bar:GetID()
 
@@ -1838,7 +1840,7 @@ function NeuronBar:UpdateObjectData(bar)
 	local object
 
 	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-	for i, objID in ipairs(bar.gdata.objectList) do
+	for _, objID in pairs(bar.gdata.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
@@ -2156,6 +2158,8 @@ function NeuronBar:AddObjectToList(bar, object)
 	else
 		bar.gdata.objectList[#bar.gdata.objectList +1] = object.id
 	end
+
+	object["bar"] = bar
 end
 
 
@@ -2170,15 +2174,17 @@ function NeuronBar:AddObjectsToBar(bar, num)
 	for i=1,num do
 
 		local object
-		local id
+		local id = 1
 
 		for index in ipairs(bar.objTable) do
-			id = index + 1
+			if bar.objTable[index]["bar"] then
+				id = index + 1
+			end
 		end
 
 		if (bar.objCount < bar.objMax) then
 
-			if bar.objTable[id] and not bar.objTable[id].bar then --checks to see if the object exists in the object table, and if the object belongs to a bar
+			if bar.objTable[id] and not bar.objTable[id]["bar"] then --checks to see if the object exists in the object table, and if the object belongs to a bar
 				object = bar.objTable[id]
 			else
 				object = NEURON.NeuronButton:CreateNewObject(bar.class, id)
@@ -2215,16 +2221,18 @@ function NeuronBar:RemoveObject(bar, object, objID)
 		NEURON.NeuronBinder:ClearBindings(object)
 	end
 
-	NeuronBar:RemoveObjectFromList(bar, objID)
+	NeuronBar:RemoveObjectFromList(bar, object, objID)
 
 	object:SetParent(TRASHCAN)
+
+
 
 	--object:Hide() --otherwise the object sticks around visually until a reload
 
 end
 
 
-function NeuronBar:RemoveObjectFromList(bar, objID)
+function NeuronBar:RemoveObjectFromList(bar, object, objID)
 
 	local index = tFind(bar.gdata.objectList, objID)
 
@@ -2233,6 +2241,7 @@ function NeuronBar:RemoveObjectFromList(bar, objID)
 	end
 
 	table.remove(bar.gdata.objectList, index)
+	object["bar"] = nil
 
 end
 
@@ -3448,54 +3457,6 @@ end
 
 
 
---is this even used?
-function NeuronBar:BarProfileUpdate()
-	GDB, CDB = NeuronGDB, NeuronCDB
-	barGDB = GDB.bars
-	barCDB = CDB.bars
-
-	if (GDB.firstRun) then
-		local oid, offset = 1, 0
-		for id, defaults in ipairs(gDef) do
-			NEURON.RegisteredBarData["bar"].gDef = defaults
-
-			local bar, object = NeuronBar:CreateNewBar("bar", id, true)
-
-			for i=oid+offset,oid+11+offset do
-				object = NEURON.NeuronButton:CreateNewObject("bar", i, true)
-				NeuronBar:AddObjectToList(bar, object)
-			end
-
-			NEURON.RegisteredBarData["bar"].gDef = nil
-			offset = offset + 12
-		end
-
-	else
-		for id,data in pairs(barGDB) do
-			if (data ~= nil) then
-				NeuronBar:CreateNewBar("bar", id)
-			end
-		end
-
-		for id,data in pairs(GDB.buttons) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("bar", id)
-			end
-		end
-	end
-
-	for _,bar in pairs(BARIndex) do
-		if (CDB.firstRun) then
-			for id, cdefaults in ipairs(cDef) do
-				if (id == bar:GetID()) then
-					bar:SetDefaults(nil, cdefaults)
-				end
-			end
-		end
-
-		NeuronBar:Load(bar)
-	end
-end
 
 --- Sets a Target Casting state for a bar
 -- @param value(string): Database refrence value to be set
