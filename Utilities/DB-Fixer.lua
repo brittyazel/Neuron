@@ -12,22 +12,28 @@ function NEURON:fixObjectTable(profile) --converted objectTable from a single st
     local barDBLocationsName = {"bars", "bagbars", "menubars", "petbars", "statusbars", "xbars", "zoneabilitybars"}
 
 
-    for i, _ in ipairs(barDBLocations) do
+    for i = 1,#barDBLocations do
 
         for j, bar in pairs(profile[barDBLocations[i]][barDBLocationsName[i]]) do
 
-            if type(bar.objectList) == "string" then
+            if(bar.objectList) then --add safety check in case the profile is really old and this table doesn't exist
+                if type(bar.objectList) == "string" then
 
-                local function split(source, delimiters)
-                    local elements = {}
-                    local pattern = '([^'..delimiters..']+)'
-                    string.gsub(source, pattern, function(value) elements[#elements + 1] = value; end);
-                    return elements
+                    local function split(source, delimiters)
+                        local elements = {}
+                        local pattern = '([^'..delimiters..']+)'
+                        string.gsub(source, pattern, function(value) elements[#elements + 1] = value; end);
+                        return elements
+                    end
+                    if bar.name then
+                        NEURON:Print("fixing data for: " .. bar.name)
+                    end
+                    bar.objectList = split(bar.objectList, ";")
                 end
-                if bar.name then
-                    NEURON:Print("fixing data for: " .. bar.name)
-                end
-                bar.objectList = split(bar.objectList, ";")
+            else
+
+                bar["objectList"] = {}
+
             end
         end
 
