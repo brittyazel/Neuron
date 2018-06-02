@@ -57,18 +57,6 @@ function NeuronPetBar:OnInitialize()
 
 	DB = NeuronCDB
 
-	---TODO: Remove this in the future. This is just temp code.
-	if (Neuron.db.profile["NeuronPetDB"]) then --migrate old settings to new location
-		if(Neuron.db.profile["NeuronPetDB"].petbars) then
-			NeuronCDB.petbars = CopyTable(Neuron.db.profile["NeuronPetDB"].petbars)
-		end
-		if(Neuron.db.profile["NeuronPetDB"].petbtns) then
-			NeuronCDB.petbtns = CopyTable(Neuron.db.profile["NeuronPetDB"].petbtns)
-		end
-		Neuron.db.profile["NeuronPetDB"] = nil
-		DB.petbarFirstRun = false
-	end
-
 
 	petbarsDB = DB.petbars
 	petbtnsDB = DB.petbtns

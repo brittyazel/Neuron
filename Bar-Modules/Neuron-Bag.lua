@@ -63,18 +63,6 @@ function NeuronBagBar:OnInitialize()
 
 	DB = NeuronCDB
 
-	---TODO: Remove this in the future. This is just temp code.
-	if (NEURON.db.profile["NeuronBagDB"]) then --migrate old settings to new location
-		if(NEURON.db.profile["NeuronBagDB"].bagbars) then
-			NeuronCDB.bagbars = CopyTable(NEURON.db.profile["NeuronBagDB"].bagbars)
-		end
-		if(NEURON.db.profile["NeuronBagDB"].bagbtns) then
-			NeuronCDB.bagbtns = CopyTable(NEURON.db.profile["NeuronBagDB"].bagbtns)
-		end
-		NEURON.db.profile["NeuronBagDB"] = nil
-		DB.bagbarFirstRun = false
-	end
-
 
 	bagbarsDB = DB.bagbars
 	bagbtnsDB = DB.bagbtns
