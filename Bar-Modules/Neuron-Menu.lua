@@ -48,18 +48,6 @@ function NeuronMenuBar:OnInitialize()
 
     DB = NeuronCDB
 
-    ---TODO: Remove this in the future. This is just temp code.
-    if (Neuron.db.profile["NeuronMenuDB"]) then --migrate old settings to new location
-        if(Neuron.db.profile["NeuronMenuDB"].menubars) then
-            NeuronCDB.menubars = CopyTable(Neuron.db.profile["NeuronMenuDB"].menubars)
-        end
-        if(Neuron.db.profile["NeuronMenuDB"].menubtns) then
-            NeuronCDB.menubtns = CopyTable(Neuron.db.profile["NeuronMenuDB"].menubtns)
-        end
-        Neuron.db.profile["NeuronMenuDB"] = nil
-        DB.menubarFirstRun = false
-    end
-
 
     menubarsDB = DB.menubars
     menubtnsDB = DB.menubtns

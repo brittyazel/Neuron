@@ -240,17 +240,6 @@ function NeuronStatusBar:OnInitialize()
 
 	DB = NeuronCDB
 
-	---TODO: Remove this in the future. This is just temp code.
-	if (Neuron.db.profile["NeuronStatusDB"]) then --migrate old settings to new location
-		if(Neuron.db.profile["NeuronStatusDB"].statusbars) then
-			NeuronCDB.statusbars = CopyTable(Neuron.db.profile["NeuronStatusDB"].statusbars)
-		end
-		if(Neuron.db.profile["NeuronStatusDB"].statusbtns) then
-			NeuronCDB.statusbtns = CopyTable(Neuron.db.profile["NeuronStatusDB"].statusbtns)
-		end
-		Neuron.db.profile["NeuronStatusDB"] = nil
-		DB.statusbarFirstRun = false
-	end
 
 	if not DB.AutoWatch then
 		DB.AutoWatch = 1
