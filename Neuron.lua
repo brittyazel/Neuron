@@ -20,7 +20,7 @@ NEURON.PEW = false --flag that gets set when the player enters the world. It's u
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.19" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.25" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
@@ -35,14 +35,15 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-*****IMPORTANT, PLEASE READ!*****
-A ton of backend work has been made in this release. An obsurd amount even.
+A ton of work went into this release, and Neuron is now full steam ahead to Battle for Azeroth. There are a couple notes with this version:
 
-The Stance bar has been retired for good. It really doesn't make sense to have so much code for something that only effects Druids, and can easily be re-created by dragging the druid forms onto a simple action bar.
+1)The bag and menu bars have been completely rewritten, so expect a tiny bit of quirkiness (they're fixed in BfA).
 
-If you have any strange addon behavior, please delete the addon files from WoW>Interface>addons and reinstall the files (make careful not not to delete your addon settings)
+2)Neuron is fully updated for BfA, and you can get a working version from the bfa_beta branch on GitHub.
 
-There may be issues with Flyout functionality, please report.
+3)The GUI re-write is well underway, and expect that to also land with the 8.0 update (baring any unforseen events).
+
+Lastly, if you are enjoying Neuron, please consider a small donation to help with development costs.
 
 -Soyier]]
 
