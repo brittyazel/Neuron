@@ -2,7 +2,7 @@
 local NEURON = Neuron
 local  DB
 
-NEURON.NeuronBagBar = NEURON:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
+NEURON.NeuronBagBar = NEURON:NewModule("BagBar")
 local NeuronBagBar = NEURON.NeuronBagBar
 
 local  bagbarsDB, bagbtnsDB

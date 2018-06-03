@@ -1,15 +1,12 @@
 --Neuron Menu Bar, a World of Warcraft® user interface addon.
 
---Most of this code is based off of the 7.0 version of Blizzard's
---MainMenuBarMicroButtons.lua & MainMenuBarMicroButtons.xml files
-
 -------------------------------------------------------------------------------
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 local NEURON = Neuron
 local DB
 
-NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar", "AceEvent-3.0", "AceHook-3.0")
+NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar")
 local NeuronMenuBar = NEURON.NeuronMenuBar
 
 local menubarsDB, menubtnsDB
