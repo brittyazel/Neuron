@@ -543,7 +543,7 @@ local slashFunctions = {
 	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
 	{L["TimerLimit"], L["TimerLimit_Description"], "SetTimerLimit"},
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
-	{L["BlizzBar"], L["BlizzBar_Description"], "ToggleBlizzBar"},
+	{L["BlizzUI"], L["BlizzUI_Description"], "ToggleBlizzUI"},
 }
 
 
@@ -1211,9 +1211,9 @@ function NEURON:HideBlizzard()
 	PossessBarFrame:Hide()
 	PossessBarFrame:SetParent(UIHider)
 
-	PetActionBarFrame:UnregisterAllEvents()
-	PetActionBarFrame:Hide()
-	PetActionBarFrame:SetParent(UIHider)
+	--PetActionBarFrame:UnregisterAllEvents()
+	--PetActionBarFrame:Hide()
+	--PetActionBarFrame:SetParent(UIHider)
 
 	if PlayerTalentFrame then
 		PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
@@ -1227,10 +1227,10 @@ function NEURON:HideBlizzard()
 	--OverrideActionBar:UnregisterAllEvents()
 	--ActionBarController:UnregisterAllEvents()
 	--:UnregisterAllEvents()
-	
+
 end
 
-function NEURON:ToggleBlizzBar()
+function NEURON:ToggleBlizzUI()
 	if (GDB.blizzbar == true) then
 		GDB.blizzbar = false
 		NEURON:HideBlizzard()
