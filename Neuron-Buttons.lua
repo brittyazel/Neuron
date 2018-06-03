@@ -1760,7 +1760,7 @@ end
 
 
 function NeuronButton:MACRO_PlaceSpell(button, action1, action2, spellID)
-	local modifier, spell, subName, texture
+	local modifier, spell, texture, _
 
 	if (action1 == 0) then
 		-- I am unsure under what conditions (if any) we wouldn't have a spell ID
@@ -1771,18 +1771,15 @@ function NeuronButton:MACRO_PlaceSpell(button, action1, action2, spellID)
 		spell,_= GetSpellBookItemName(action1, action2)
 		_,spellID = GetSpellBookItemInfo(action1, action2)
 	end
-	local spellInfoName , subName, icon, castTime, minRange, maxRange= GetSpellInfo(spellID)
+	local spellInfoName , _, icon, castTime, minRange, maxRange= GetSpellInfo(spellID)
 
 	if AlternateSpellNameList[spellID] or not spell then
 		button.data.macro_Text = NeuronButton:AutoWriteMacro(button, spellInfoName)
 		button.data.macro_Auto = spellInfoName..";"
 	else
-		button.data.macro_Text = NeuronButton:AutoWriteMacro(button, spell, subName)
-		if subName then
-			button.data.macro_Auto = spell..";"..subName
-		else
-			button.data.macro_Auto = spell
-		end
+		button.data.macro_Text = NeuronButton:AutoWriteMacro(button, spell)
+
+		button.data.macro_Auto = spell
 	end
 
 	button.data.macro_Icon = false
@@ -3318,7 +3315,9 @@ end
 ---TODO refactor this to NeuronButton
 function NeuronButton:LoadAux(button)
 
-	NEURON.NeuronGUI:ObjEditor_CreateEditFrame(button, button.objTIndex)
+	if NEURON.NeuronGUI then
+		NEURON.NeuronGUI:ObjEditor_CreateEditFrame(button, button.objTIndex)
+	end
 	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
 end
@@ -3557,7 +3556,7 @@ end
 --spell: name of spell to use
 --subname: subname of spell to use (optional)
 --return: macro text
-function NeuronButton:AutoWriteMacro(button, spell, subName)
+function NeuronButton:AutoWriteMacro(button, spell)
 	local modifier, modKey = " ", nil
 	local bar = Neuron.CurrentBar or button.bar
 
@@ -3583,11 +3582,7 @@ function NeuronButton:AutoWriteMacro(button, spell, subName)
 		modifier = modifier.."[] "
 	end
 
-	if (subName and #subName > 0) then
-		return "#autowrite\n/cast"..modifier..spell.."("..subName..")"
-	else
-		return "#autowrite\n/cast"..modifier..spell.."()"
-	end
+	return "#autowrite\n/cast"..modifier..spell.."()"
 end
 
 
@@ -3700,16 +3695,16 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 		for i = 1,2 do
 			for state, info in pairs(cur_button[i]) do
 				if info.macro_Text and info.macro_Text:find("#autowrite\n/cast") then
-					local spell, subName = "", ""
+					local spell = ""
 
 					spell = info.macro_Text:gsub("%[.*%]", "")
-					spell, subName = spell:match("#autowrite\n/cast%s*(.+)%((.*)%)")
+					spell = spell:match("#autowrite\n/cast%s*(.+)%((.*)%)")
 
 					if spell then
 						if global_update then
 							info.macro_Text = NeuronButton:AutoUpdateMacro(button, info.macro_Text)
 						else
-							info.macro_Text = NeuronButton:AutoWriteMacro(button, spell, subName)
+							info.macro_Text = NeuronButton:AutoWriteMacro(button, spell)
 						end
 
 					end

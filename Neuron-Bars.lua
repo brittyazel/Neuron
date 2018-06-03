@@ -236,7 +236,9 @@ function NeuronBar:OnInitialize()
 		AURAIND = true
 		}, true, 115)
 
-	NeuronBar.HideZoneAbilityBorder = NEURON.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
+	if NEURON.NeuronZoneAbilityBar then
+		NeuronBar.HideZoneAbilityBorder = NEURON.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
+	end
 	NEURON.CreateNewBar = NeuronBar.CreateNewBar --temp just so slash functions still work
 	NEURON.ToggleBars = NeuronBar.ToggleBars --temp just so slash functions still work
 end

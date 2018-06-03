@@ -235,6 +235,8 @@ function NeuronBagBar:updateFreeSlots(bag)
 	local rgbValue, r, g
 	if (freeSlots > 0) then
 		rgbValue = math.floor((totalFree/freeSlots)*100)
+	else
+		rgbValue = 1
 	end
 
 	if (rgbValue > 49) then

@@ -317,26 +317,13 @@ function NEURON:OnEnable()
 	NEURON:RegisterEvent("PET_UI_CLOSE")
 	NEURON:RegisterEvent("COMPANION_LEARNED")
 	NEURON:RegisterEvent("COMPANION_UPDATE")
-	NEURON:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 	NEURON:RegisterEvent("UNIT_LEVEL")
 	NEURON:RegisterEvent("UNIT_PET")
-	-- FIXME 8.0 - These events are firing every frame, causing us to do a lot of work and tank framerate.  This may be
-	--              a client/beta bug that works itself out.
 	--NEURON:RegisterEvent("TOYS_UPDATED")
 	--NEURON:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 
 	NEURON:HookScript(NEURON, "OnUpdate", "controlOnUpdate")
 
-
-	-- --I have no idea what this does
-	--[[if (CompanionsMicroButtonAlert) then
-		CompanionsMicroButtonAlert:HookScript("OnShow", function(frame)
-
-			if (not GDB.mainbar) then
-				frame:Hide()
-			end
-		end)
-	end]]
 
 	NEURON:UpdateStanceStrings()
 
@@ -411,6 +398,7 @@ function NEURON:PLAYER_ENTERING_WORLD()
 
 
 	NEURON.PEW = true
+
 end
 
 function NEURON:ACTIVE_TALENT_GROUP_CHANGED()
@@ -631,9 +619,15 @@ function NEURON:controlOnUpdate(frame, elapsed)
 
 		NEURON.NeuronBar:controlOnUpdate(frame, elapsed)
 		NEURON.NeuronButton:cooldownsOnUpdate(frame, elapsed)
-		NEURON.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
-		NEURON.NeuronPetBar:controlOnUpdate(frame, elapsed)
-		NEURON.NeuronStatusBar:controlOnUpdate(frame, elapsed)
+		if NEURON.NeuronZoneAbilityBar then
+			NEURON.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
+		end
+		if NEURON.NeuronPetBar then
+			NEURON.NeuronPetBar:controlOnUpdate(frame, elapsed)
+		end
+		if NEURON.NeuronStatusBar then
+			NEURON.NeuronStatusBar:controlOnUpdate(frame, elapsed)
+		end
 
 		NEURON.elapsed = 0;
 	end
@@ -702,16 +696,15 @@ end
 
 
 --- Creates a table containing provided data
--- @param index, bookType, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon
+-- @param index, bookType, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon
 -- @return curSpell:  Table containing provided data
-function NEURON:SetSpellInfo(index, bookType, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+function NEURON:SetSpellInfo(index, bookType, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 	local curSpell = {}
 
 	curSpell.index = index
 	curSpell.booktype = bookType
 	curSpell.spellName = spellName
 	curSpell.altName = altName
-	curSpell.subName = subName
 	curSpell.spellID = spellID
 	curSpell.spellID_Alt = spellID_Alt
 	curSpell.spellType = spellType
@@ -756,27 +749,20 @@ function NEURON:UpdateSpellIndex()
 				end
 			end
 
-			local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
+			local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
 			if spellID ~= spellID_Alt then
 				altName = GetSpellInfo(spellID_Alt)
 			end
 
-			local spellData = NEURON:SetSpellInfo(i, BOOKTYPE_SPELL, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+			local spellData = NEURON:SetSpellInfo(i, BOOKTYPE_SPELL, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
-			if (subName and #subName > 0) then
-				NEURON.sIndex[(spellName.."("..subName..")"):lower()] = spellData
-			else
-				NEURON.sIndex[(spellName):lower()] = spellData
-				NEURON.sIndex[(spellName):lower().."()"] = spellData
-			end
+			NEURON.sIndex[(spellName):lower()] = spellData
+			NEURON.sIndex[(spellName):lower().."()"] = spellData
+
 
 			if (altName and altName ~= spellName) then
-				if (subName and #subName > 0) then
-					NEURON.sIndex[(altName.."("..subName..")"):lower()] = spellData
-				else
-					NEURON.sIndex[(altName):lower()] = spellData
-					NEURON.sIndex[(altName):lower().."()"] = spellData
-				end
+				NEURON.sIndex[(altName):lower()] = spellData
+				NEURON.sIndex[(altName):lower().."()"] = spellData
 			end
 
 			if (spellID) then
@@ -805,23 +791,17 @@ function NEURON:UpdateSpellIndex()
 				local isPassive = IsPassiveSpell(offsetIndex, BOOKTYPE_PROFESSION)
 
 				if (spellName and spellType ~= "FUTURESPELL") then
-					local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
-					local spellData = NEURON:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+					local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
+					local spellData = NEURON:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
-					if (subName and #subName > 0) then
-						NEURON.sIndex[(spellName.."("..subName..")"):lower()] = spellData
-					else
-						NEURON.sIndex[(spellName):lower()] = spellData
-						NEURON.sIndex[(spellName):lower().."()"] = spellData
-					end
+					NEURON.sIndex[(spellName):lower()] = spellData
+					NEURON.sIndex[(spellName):lower().."()"] = spellData
+
 
 					if (altName and altName ~= spellName) then
-						if (subName and #subName > 0) then
-							NEURON.sIndex[(altName.."("..subName..")"):lower()] = spellData
-						else
-							NEURON.sIndex[(altName):lower()] = spellData
-							NEURON.sIndex[(altName):lower().."()"] = spellData
-						end
+						NEURON.sIndex[(altName):lower()] = spellData
+						NEURON.sIndex[(altName):lower().."()"] = spellData
+
 					end
 
 					if (spellID) then
@@ -849,12 +829,12 @@ function NEURON:UpdateSpellIndex()
 			if (isKnown and petIndex and petName and #petName > 0) then
 				local spellName = GetSpellInfo(spellID)
 
-				local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
+				local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
 
 				for k,v in pairs(NEURON.sIndex) do
 
 					if (v.spellName:find(petName.."$")) then
-						local spellData = NEURON:SetSpellInfo(v.index, v.booktype, v.spellName, nil, v.subName, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
+						local spellData = NEURON:SetSpellInfo(v.index, v.booktype, v.spellName, nil, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
 
 						NEURON.sIndex[(spellName):lower()] = spellData
 						NEURON.sIndex[(spellName):lower().."()"] = spellData
@@ -882,14 +862,12 @@ function NEURON:UpdatePetSpellIndex()
 			local isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
 
 			if (spellName and spellType ~= "FUTURESPELL") then
-				local altName, subName, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
-				local spellData = NEURON:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, subName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
-				if (subName and #subName > 0) then
-					NEURON.sIndex[(spellName.."("..subName..")"):lower()] = spellData
-				else
-					NEURON.sIndex[(spellName):lower()] = spellData
-					NEURON.sIndex[(spellName):lower().."()"] = spellData
-				end
+				local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
+				local spellData = NEURON:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, pellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+
+				NEURON.sIndex[(spellName):lower()] = spellData
+				NEURON.sIndex[(spellName):lower().."()"] = spellData
+
 
 				if (spellID) then
 					NEURON.sIndex[spellID] = spellData

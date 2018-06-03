@@ -415,13 +415,9 @@ function f.filter.none(arg)
 		end
 	end
 	-- if a spell
-	local spellName,subName = GetSpellInfo(arg)
+	local spellName = GetSpellInfo(arg)
 	if spellName and spellName~="" then
-		if subName and subName~="" then
-			addToTable("spell",format("%s(%s)",spellName,subName)) -- for Polymorph(Turtle)
-		else
-			addToTable("spell",spellName)
-		end
+		addToTable("spell",spellName)
 		return
 	end
 	-- if a toy
@@ -824,11 +820,7 @@ function NeuronFlyouts:GetBlizzData(button, data)
 		end
 
 		if (isKnown and visible) then
-			spell, subName = GetSpellInfo(spellID)
-
-			if (subName and #subName > 0) then
-				spell = spell.."("..subName..")"
-			end
+			spell = GetSpellInfo(spellID)
 
 			data[spell] = "blizz"
 		end
