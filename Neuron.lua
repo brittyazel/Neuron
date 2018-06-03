@@ -1234,6 +1234,7 @@ function NEURON:ToggleBlizzUI()
 	if (GDB.blizzbar == true) then
 		GDB.blizzbar = false
 		NEURON:HideBlizzard()
+		StaticPopup_Show("ReloadUI")
 	else
 		GDB.blizzbar = true
 		StaticPopup_Show("ReloadUI")

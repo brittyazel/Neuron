@@ -86,29 +86,32 @@ function NeuronBagBar:OnInitialize()
 
 	NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
 
-	if (DB.bagbarFirstRun) then
 
-		local bar = NEURON.NeuronBar:CreateNewBar("bag", 1, true)
-		local object
+	if NeuronGDB.blizzbar == false then
+		if (DB.bagbarFirstRun) then
 
-		for i=1,#bagElements do
-			object = NEURON.NeuronButton:CreateNewObject("bag", i)
-			NEURON.NeuronBar:AddObjectToList(bar, object)
-		end
+			local bar = NEURON.NeuronBar:CreateNewBar("bag", 1, true)
+			local object
 
-		DB.bagbarFirstRun = false
-
-	else
-
-		for id,data in pairs(bagbarsDB) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("bag", id)
+			for i=1,#bagElements do
+				object = NEURON.NeuronButton:CreateNewObject("bag", i)
+				NEURON.NeuronBar:AddObjectToList(bar, object)
 			end
-		end
 
-		for id,data in pairs(bagbtnsDB) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("bag", id)
+			DB.bagbarFirstRun = false
+
+		else
+
+			for id,data in pairs(bagbarsDB) do
+				if (data ~= nil) then
+					NEURON.NeuronBar:CreateNewBar("bag", id)
+				end
+			end
+
+			for id,data in pairs(bagbtnsDB) do
+				if (data ~= nil) then
+					NEURON.NeuronButton:CreateNewObject("bag", id)
+				end
 			end
 		end
 	end

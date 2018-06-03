@@ -85,32 +85,32 @@ function NeuronMenuBar:OnInitialize()
     NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
+    if NeuronGDB.blizzbar == false then
+        if (DB.menubarFirstRun) then
+            bar, object = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
 
-    if (DB.menubarFirstRun) then
-        bar, object = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
-
-        for i=1,#menuElements do
-            object = NEURON.NeuronButton:CreateNewObject("menu", i)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
-        end
-
-        DB.menubarFirstRun = false
-
-    else
-
-        for id,data in pairs(menubarsDB) do
-            if (data ~= nil) then
-                NEURON.NeuronBar:CreateNewBar("menu", id)
+            for i=1,#menuElements do
+                object = NEURON.NeuronButton:CreateNewObject("menu", i)
+                NEURON.NeuronBar:AddObjectToList(bar, object)
             end
-        end
 
-        for id,data in pairs(menubtnsDB) do
-            if (data ~= nil) then
-                NEURON.NeuronButton:CreateNewObject("menu", id)
+            DB.menubarFirstRun = false
+
+        else
+
+            for id,data in pairs(menubarsDB) do
+                if (data ~= nil) then
+                    NEURON.NeuronBar:CreateNewBar("menu", id)
+                end
+            end
+
+            for id,data in pairs(menubtnsDB) do
+                if (data ~= nil) then
+                    NEURON.NeuronButton:CreateNewObject("menu", id)
+                end
             end
         end
     end
-
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -227,8 +227,8 @@ end
 function NeuronMenuBar:SetType(button, save)
     if (menuElements[button.id]) then
 
-        button:SetWidth(menuElements[button.id]:GetWidth()-1)
-        button:SetHeight(menuElements[button.id]:GetHeight()-1)
+        button:SetWidth(menuElements[button.id]:GetWidth()-2)
+        button:SetHeight(menuElements[button.id]:GetHeight()-2)
         button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
         button.element = menuElements[button.id]
