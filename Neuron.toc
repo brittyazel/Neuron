@@ -34,7 +34,6 @@ Neuron.xml
 Bar-Modules/Neuron-Extra.lua
 Bar-Modules/Neuron-ZoneAbility.lua
 Bar-Modules/Neuron-Bag.lua
-Bar-Modules/Neuron-Bag.xml
 Bar-Modules/Neuron-Menu.lua
 Bar-Modules/Neuron-Pet.lua
 Bar-Modules/Neuron-Status.lua
