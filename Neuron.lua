@@ -1028,16 +1028,19 @@ function NEURON:UpdateStanceStrings()
 		end
 
 		for i=1,GetNumShapeshiftForms() do
-			icon, name, active, castable, spellID = GetShapeshiftFormInfo(i)
+			icon, active, castable, spellID = GetShapeshiftFormInfo(i)
 
-			if (name) then
-				if (spellID) then
-					NEURON.StanceIndex[i] = spellID
-				end
-
-				NEURON.STATES["stance"..i] = name
-				states = states.."[stance:"..i.."] stance"..i.."; "
+			if (spellID) then
+				NEURON.StanceIndex[i] = spellID
 			end
+
+			---TODO: fix this line now that GetShapeshiftFormInfo doesn't return name
+			NEURON.STATES["stance"..i] = "insert_name"
+			states = states.."[stance:"..i.."] stance"..i.."; "
+
+			NEURON.STATES["stance"..i] = name
+			states = states.."[stance:"..i.."] stance"..i.."; "
+
 		end
 
 		--Adds Shadow Dance State for Subelty Rogues

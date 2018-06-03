@@ -166,7 +166,7 @@ end
 
 local function HasPetAction(id, icon)
 
-	local _, _, texture = GetPetActionInfo(id)
+	local _, texture = GetPetActionInfo(id)
 
 	if (GetPetActionSlotUsable(id)) then
 
@@ -185,7 +185,7 @@ local function HasPetAction(id, icon)
 	end
 end
 
-function NeuronPetBar:PET_UpdateIcon(button, spell, subtext, texture, isToken)
+function NeuronPetBar:PET_UpdateIcon(button, spell, texture, isToken)
 
 	button.isToken = isToken
 
@@ -292,7 +292,7 @@ function NeuronPetBar:PET_UpdateOnEvent(button, state)
 
 	local actionID = button.actionID
 
-	local spell, subtext, texture, isToken, isActive, allowed, enabled = GetPetActionInfo(actionID)
+	local spell, texture, isToken, isActive, allowed, enabled = GetPetActionInfo(actionID)
 
 	if (not state) then
 
@@ -309,7 +309,7 @@ function NeuronPetBar:PET_UpdateOnEvent(button, state)
 		end
 
 		NeuronPetBar:PET_UpdateTexture(button)
-		NeuronPetBar:PET_UpdateIcon(button, spell, subtext, texture, isToken)
+		NeuronPetBar:PET_UpdateIcon(button, spell, texture, isToken)
 		NeuronPetBar:PET_UpdateCooldown(button)
 	end
 

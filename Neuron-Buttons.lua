@@ -601,7 +601,7 @@ function NeuronButton:isActiveShapeshiftSpell(spell)
 
 	if (shapeshift) then
 		for i=1, GetNumShapeshiftForms() do
-			texture, name, isActive = GetShapeshiftFormInfo(i)
+			texture, isActive = GetShapeshiftFormInfo(i)
 			if (isActive and name:lower() == shapeshift:lower()) then
 				return texture
 			end

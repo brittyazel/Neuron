@@ -487,7 +487,7 @@ function NeuronZoneAbilityBar:SetGrid(button, show, hide)
 
 	if (not InCombatLockdown()) then
 
-		local texture, name, isActive, isCastable = GetShapeshiftFormInfo(button.id);
+		local texture, isActive, isCastable = GetShapeshiftFormInfo(button.id);
 		button:SetAttribute("isshown", button.showGrid)
 		button:SetAttribute("showgrid", button)
 
