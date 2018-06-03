@@ -562,14 +562,13 @@ end
 
 function NeuronButton:updateAuraInfo(unit)
 
-	local uai__ = 1
 	local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID
 	uai_index = 1
 
 	wipe(unitAuras[unit])
 
 	repeat
-		uai_spell, uai__, uai__, uai_count, uai__, uai_duration, uai_timeLeft, uai_caster, uai__, uai__, uai_spellID = UnitAura(unit, uai_index, "HELPFUL")
+		uai_spell, _, uai_count, _, uai_duration, uai_timeLeft, uai_caster, _, _, uai_spellID = UnitAura(unit, uai_index, "HELPFUL")
 
 		if (uai_duration and (uai_caster == "player" or uai_caster == "pet")) then
 			unitAuras[unit][uai_spell:lower()] = "buff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
@@ -583,7 +582,7 @@ function NeuronButton:updateAuraInfo(unit)
 	uai_index = 1
 
 	repeat
-		uai_spell, uai__, uai__, uai_count, uai__, uai_duration, uai_timeLeft, uai_caster = UnitAura(unit, uai_index, "HARMFUL")
+		uai_spell, _, uai_count, _, uai_duration, uai_timeLeft, uai_caster = UnitAura(unit, uai_index, "HARMFUL")
 
 		if (uai_duration and (uai_caster == "player" or uai_caster == "pet")) then
 			unitAuras[unit][uai_spell:lower()] = "debuff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
