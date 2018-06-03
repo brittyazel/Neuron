@@ -27,8 +27,9 @@ local gDef = {
     y = 23,
 }
 
+local SKIN = LibStub("Masque", true)
+
 local menuElements = {}
-local addonData, sortData = {}, {}
 
 local configData = {
     stored = false,
@@ -53,9 +54,19 @@ function NeuronMenuBar:OnInitialize()
     menubtnsDB = DB.menubtns
 
 
-    if (not DB.scriptProfile) then
-        DB.scriptProfile = false
-    end
+
+    menuElements[1] = CharacterMicroButton
+    menuElements[2] = SpellbookMicroButton
+    menuElements[3] = TalentMicroButton
+    menuElements[4] = AchievementMicroButton
+    menuElements[5] = QuestLogMicroButton
+    menuElements[6] = GuildMicroButton
+    menuElements[7] = LFDMicroButton
+    menuElements[8] = CollectionsMicroButton
+    menuElements[9] = EJMicroButton
+    menuElements[10] = StoreMicroButton
+    menuElements[11] = MainMenuMicroButton
+
 
     ----------------------------------------------------------------
     MENUBTN.SetData = NeuronMenuBar.SetData
@@ -74,7 +85,8 @@ function NeuronMenuBar:OnInitialize()
     NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
-    --[[if (DB.menubarFirstRun) then
+
+    if (DB.menubarFirstRun) then
         bar, object = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
 
         for i=1,#menuElements do
@@ -85,7 +97,6 @@ function NeuronMenuBar:OnInitialize()
         DB.menubarFirstRun = false
 
     else
-        local count = 0
 
         for id,data in pairs(menubarsDB) do
             if (data ~= nil) then
@@ -97,16 +108,8 @@ function NeuronMenuBar:OnInitialize()
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("menu", id)
             end
-
-            count = count + 1
         end
-
-        if (count < #menuElements) then
-            for i=count+1, #menuElements do
-                object = NEURON.NeuronButton:CreateNewObject("menu", i)
-            end
-        end
-    end]]
+    end
 
 end
 
@@ -137,7 +140,16 @@ end
 
 
 function NeuronMenuBar:SetData(button, bar)
-    --empty
+    if (bar) then
+
+        button.bar = bar
+
+        button:SetFrameStrata(bar.gdata.objectStrata)
+        button:SetScale(bar.gdata.scale)
+
+    end
+
+    button:SetFrameLevel(4)
 end
 
 function NeuronMenuBar:SaveData(button)
@@ -145,7 +157,32 @@ function NeuronMenuBar:SaveData(button)
 end
 
 function NeuronMenuBar:LoadData(button, spec, state)
-    --empty
+    local id = button.id
+
+    button.DB = menubtnsDB
+
+    if (button.DB) then
+
+        if (not button.DB[id]) then
+            button.DB[id] = {}
+        end
+
+        if (not button.DB[id].config) then
+            button.DB[id].config = CopyTable(configData)
+        end
+
+        if (not button.DB[id]) then
+            button.DB[id] = {}
+        end
+
+        if (not button.DB[id].data) then
+            button.DB[id].data = {}
+        end
+
+        button.config = button.DB [id].config
+
+        button.data = button.DB[id].data
+    end
 end
 
 function NeuronMenuBar:SetGrid(button, show, hide)
@@ -169,7 +206,18 @@ function NeuronMenuBar:GetDefaults(button)
 end
 
 function NeuronMenuBar:SetSkinned(button)
-    -- empty
+    if (SKIN) then
+
+        local bar = button.bar
+
+        if (bar) then
+
+            local btnData = { Icon = button.element.icon }
+
+            SKIN:Group("Neuron", bar.gdata.name):AddButton(button.element, btnData)
+
+        end
+    end
 end
 
 function NeuronMenuBar:GetSkinned(button)
@@ -177,5 +225,27 @@ function NeuronMenuBar:GetSkinned(button)
 end
 
 function NeuronMenuBar:SetType(button, save)
-    --empty
+    if (menuElements[button.id]) then
+
+        button:SetWidth(menuElements[button.id]:GetWidth()-1)
+        button:SetHeight(menuElements[button.id]:GetHeight()-1)
+        button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
+
+        button.element = menuElements[button.id]
+
+        local objects = NEURON:GetParentKeys(button.element)
+
+        for k,v in pairs(objects) do
+            local name = v:gsub(button.element:GetName(), "")
+            button[name:lower()] = _G[v]
+        end
+
+        button.element:ClearAllPoints()
+        button.element:SetParent(button)
+        button.element:Show()
+        button.element:SetPoint("CENTER", button, "CENTER")
+        button.element:SetScale(1)
+    end
+
+    button:SetSkinned(button)
 end
