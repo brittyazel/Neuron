@@ -1092,7 +1092,7 @@ function NeuronStatusBar:CastBar_OnEvent(button, event, ...)
 
 	elseif (event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") then
 
-		if ((button.casting and event == "UNIT_SPELLCAST_STOP" and select(4, ...) == button.castID) or
+		if ((button.casting and event == "UNIT_SPELLCAST_STOP") or
 				(button.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP")) then
 
 			button.spark:Hide()
@@ -1114,7 +1114,7 @@ function NeuronStatusBar:CastBar_OnEvent(button, event, ...)
 
 	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") then
 
-		if (button:IsShown() and (button.casting and select(4, ...) == button.castID) and not button.fadeOut) then
+		if (button:IsShown() and (button.casting) and not button.fadeOut) then
 
 			button:SetValue(button.maxValue)
 

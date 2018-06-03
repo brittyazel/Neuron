@@ -92,30 +92,9 @@ function NeuronPetBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (DB.petbarFirstRun) then
 
-		local bar, object = NEURON.NeuronBar:CreateNewBar("pet", 1, true)
-
-		for i=1,NEURON.maxPetID do
-			object = NEURON.NeuronButton:CreateNewObject("pet", i)
-			NEURON.NeuronBar:AddObjectToList(bar, object)
-		end
-
-		DB.petbarFirstRun = false
-
-	else
-
-		for id,data in pairs(petbarsDB) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("pet", id)
-			end
-		end
-
-		for id,data in pairs(petbtnsDB) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("pet", id)
-			end
-		end
+	if NeuronGDB.blizzbar == false then
+		NeuronPetBar:CreateBarsAndButtons()
 	end
 
 end
@@ -143,6 +122,34 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronPetBar:CreateBarsAndButtons()
+	if (DB.petbarFirstRun) then
+
+		local bar, object = NEURON.NeuronBar:CreateNewBar("pet", 1, true)
+
+		for i=1,NEURON.maxPetID do
+			object = NEURON.NeuronButton:CreateNewObject("pet", i)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.petbarFirstRun = false
+
+	else
+
+		for id,data in pairs(petbarsDB) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("pet", id)
+			end
+		end
+
+		for id,data in pairs(petbtnsDB) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("pet", id)
+			end
+		end
+	end
+end
 
 
 
