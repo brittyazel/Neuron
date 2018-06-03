@@ -1207,13 +1207,13 @@ function NEURON:HideBlizzard()
 	--BonusActionBarFrame:Hide()
 	--BonusActionBarFrame:SetParent(UIHider)
 
-	--PossessBarFrame:UnregisterAllEvents()
-	PossessBarFrame:Hide()
+	PossessBarFrame:UnregisterAllEvents()
+	--PossessBarFrame:Hide()
 	PossessBarFrame:SetParent(UIHider)
 
-	--PetActionBarFrame:UnregisterAllEvents()
+	PetActionBarFrame:UnregisterAllEvents()
 	--PetActionBarFrame:Hide()
-	--PetActionBarFrame:SetParent(UIHider)
+	PetActionBarFrame:SetParent(UIHider)
 
 	if PlayerTalentFrame then
 		PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")

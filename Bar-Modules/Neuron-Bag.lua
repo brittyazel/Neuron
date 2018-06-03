@@ -31,7 +31,6 @@ local gDef = {
 local bagElements = {}
 
 local configData = {
-
 	stored = false,
 }
 
@@ -44,11 +43,11 @@ local configData = {
 --- or setting up slash commands.
 function NeuronBagBar:OnInitialize()
 
-	bagElements[1] = MainMenuBarBackpackButton
-	bagElements[2] = CharacterBag0Slot
+	bagElements[5] = MainMenuBarBackpackButton
+	bagElements[4] = CharacterBag0Slot
 	bagElements[3] = CharacterBag1Slot
-	bagElements[4] = CharacterBag2Slot
-	bagElements[5] = CharacterBag3Slot
+	bagElements[2] = CharacterBag2Slot
+	bagElements[1] = CharacterBag3Slot
 
 	DB = NeuronCDB
 
@@ -242,7 +241,7 @@ function NeuronBagBar:SetType(button, save)
 
 	if (bagElements[button.id]) then
 
-		if button.id == 1 then
+		if button.id == 5 then --this corrects for some large ass margins on the main backpack button
 			button:SetWidth(bagElements[button.id]:GetWidth()-4)
 			button:SetHeight(bagElements[button.id]:GetHeight()-4)
 		else

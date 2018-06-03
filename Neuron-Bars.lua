@@ -2157,6 +2157,8 @@ function NeuronBar:AddObjectToList(bar, object)
 
 	if (not bar.gdata.objectList or bar.gdata.objectList == {}) then
 		bar.gdata.objectList[1] = object.id
+	elseif (self.class == "bag") then
+		table.insert(bar.gdata.objectList, 1, object.id) --for bag bars insert the object to the start of the list
 	else
 		bar.gdata.objectList[#bar.gdata.objectList +1] = object.id
 	end
@@ -2257,7 +2259,13 @@ function NeuronBar:RemoveObjectsFromBar(bar, num)
 
 	for i=1,num do
 
-		local objID = bar.gdata.objectList[#bar.gdata.objectList]
+		local objID
+
+		if bar.class ~= "bag" then
+			objID = bar.gdata.objectList[#bar.gdata.objectList]
+		else
+			objID = bar.gdata.objectList[1] --for bag bars, remove from the front of the list
+		end
 
 		if (objID) then
 			local object = _G[bar.objPrefix..tostring(objID)]
