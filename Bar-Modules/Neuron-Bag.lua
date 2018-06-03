@@ -88,32 +88,7 @@ function NeuronBagBar:OnInitialize()
 
 
 	if NeuronGDB.blizzbar == false then
-		if (DB.bagbarFirstRun) then
-
-			local bar = NEURON.NeuronBar:CreateNewBar("bag", 1, true)
-			local object
-
-			for i=1,#bagElements do
-				object = NEURON.NeuronButton:CreateNewObject("bag", i)
-				NEURON.NeuronBar:AddObjectToList(bar, object)
-			end
-
-			DB.bagbarFirstRun = false
-
-		else
-
-			for id,data in pairs(bagbarsDB) do
-				if (data ~= nil) then
-					NEURON.NeuronBar:CreateNewBar("bag", id)
-				end
-			end
-
-			for id,data in pairs(bagbtnsDB) do
-				if (data ~= nil) then
-					NEURON.NeuronButton:CreateNewObject("bag", id)
-				end
-			end
-		end
+		NeuronBagBar:CreateBarsAndButtons()
 	end
 
 end
@@ -151,6 +126,36 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronBagBar:CreateBarsAndButtons()
+	if (DB.bagbarFirstRun) then
+
+		local bar = NEURON.NeuronBar:CreateNewBar("bag", 1, true)
+		local object
+
+		for i=1,#bagElements do
+			object = NEURON.NeuronButton:CreateNewObject("bag", i)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.bagbarFirstRun = false
+
+	else
+
+		for id,data in pairs(bagbarsDB) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("bag", id)
+			end
+		end
+
+		for id,data in pairs(bagbtnsDB) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("bag", id)
+			end
+		end
+	end
+end
+
 
 
 

@@ -27,8 +27,6 @@ local gDef = {
     y = 23,
 }
 
-local SKIN = LibStub("Masque", true)
-
 local menuElements = {}
 
 local configData = {
@@ -43,9 +41,6 @@ local configData = {
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
 function NeuronMenuBar:OnInitialize()
-
-    local object
-    local bar
 
     DB = NeuronCDB
 
@@ -86,30 +81,7 @@ function NeuronMenuBar:OnInitialize()
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if NeuronGDB.blizzbar == false then
-        if (DB.menubarFirstRun) then
-            bar, object = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
-
-            for i=1,#menuElements do
-                object = NEURON.NeuronButton:CreateNewObject("menu", i)
-                NEURON.NeuronBar:AddObjectToList(bar, object)
-            end
-
-            DB.menubarFirstRun = false
-
-        else
-
-            for id,data in pairs(menubarsDB) do
-                if (data ~= nil) then
-                    NEURON.NeuronBar:CreateNewBar("menu", id)
-                end
-            end
-
-            for id,data in pairs(menubtnsDB) do
-                if (data ~= nil) then
-                    NEURON.NeuronButton:CreateNewObject("menu", id)
-                end
-            end
-        end
+        NeuronMenuBar:CreateBarsAndButtons()
     end
 end
 
@@ -136,6 +108,37 @@ end
 
 
 -------------------------------------------------------------------------------
+
+
+function NeuronMenuBar:CreateBarsAndButtons()
+
+
+    if (DB.menubarFirstRun) then
+        local bar = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
+        local object
+
+        for i=1,#menuElements do
+            object = NEURON.NeuronButton:CreateNewObject("menu", i)
+            NEURON.NeuronBar:AddObjectToList(bar, object)
+        end
+
+        DB.menubarFirstRun = false
+
+    else
+
+        for id,data in pairs(menubarsDB) do
+            if (data ~= nil) then
+                NEURON.NeuronBar:CreateNewBar("menu", id)
+            end
+        end
+
+        for id,data in pairs(menubtnsDB) do
+            if (data ~= nil) then
+                NEURON.NeuronButton:CreateNewObject("menu", id)
+            end
+        end
+    end
+end
 
 
 
@@ -206,18 +209,7 @@ function NeuronMenuBar:GetDefaults(button)
 end
 
 function NeuronMenuBar:SetSkinned(button)
-    if (SKIN) then
 
-        local bar = button.bar
-
-        if (bar) then
-
-            local btnData = { Icon = button.element.icon }
-
-            SKIN:Group("Neuron", bar.gdata.name):AddButton(button.element, btnData)
-
-        end
-    end
 end
 
 function NeuronMenuBar:GetSkinned(button)
@@ -247,5 +239,4 @@ function NeuronMenuBar:SetType(button, save)
         button.element:SetScale(1)
     end
 
-    button:SetSkinned(button)
 end
