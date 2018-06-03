@@ -1034,8 +1034,9 @@ function NEURON:UpdateStanceStrings()
 				NEURON.StanceIndex[i] = spellID
 			end
 
+			local druidFormNames = {"Bear Form", "Cat Form", "Travel Form", "Moonkin Form"}
 			---TODO: fix this line now that GetShapeshiftFormInfo doesn't return name
-			NEURON.STATES["stance"..i] = "insert_name"
+			NEURON.STATES["stance"..i] = druidFormNames[i]
 			states = states.."[stance:"..i.."] stance"..i.."; "
 
 		end
