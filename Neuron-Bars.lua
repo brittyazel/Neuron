@@ -234,7 +234,7 @@ function NeuronBar:OnInitialize()
 		CDALPHA = true,
 		AURATEXT = true,
 		AURAIND = true
-		}, true, 115)
+	}, true, 115)
 
 	NeuronBar.HideZoneAbilityBorder = NEURON.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
 	NEURON.CreateNewBar = NeuronBar.CreateNewBar --temp just so slash functions still work
@@ -1797,7 +1797,7 @@ function NeuronBar:SaveData(bar)
 
 	if (bar.GDB[id]) then
 		for key,value in pairs(bar.gdata) do
-            bar.GDB[id][key] = value
+			bar.GDB[id][key] = value
 		end
 	else
 		NEURON:Print("DEBUG: Bad Global Save Data for "..bar:GetName().." ?")
@@ -1805,7 +1805,7 @@ function NeuronBar:SaveData(bar)
 
 	if (bar.CDB[id]) then
 		for key,value in pairs(bar.cdata) do
-            bar.CDB[id][key] = value
+			bar.CDB[id][key] = value
 		end
 	else
 		NEURON:Print("DEBUG: Bad Character Save Data for "..bar:GetName().." ?")
@@ -1866,139 +1866,139 @@ end
 
 
 function NeuronBar:CreateBar(index, class, id)
-    local data = NEURON.RegisteredBarData[class]
-    local newBar
+	local data = NEURON.RegisteredBarData[class]
+	local newBar
 
-    if (data) then
-        if (not id) then
-            id = 1
+	if (data) then
+		if (not id) then
+			id = 1
 
-            for _ in ipairs(data.GDB) do
-                id = id + 1
-            end
+			for _ in ipairs(data.GDB) do
+				id = id + 1
+			end
 
-            newBar = true
-        end
+			newBar = true
+		end
 
-        local bar
+		local bar
 
-        if (_G["Neuron"..data.barType..id]) then
-            bar = _G["Neuron"..data.barType..id]
-        else
-            ---this is the create of our bar object frame
-            bar = CreateFrame("CheckButton", "Neuron"..data.barType..id, UIParent, "NeuronBarTemplate")
-            ---this is assigning the metatable of a CheckButton to our new bar object, giving it all a CheckButtons features, and thus finishing the object construction
-            setmetatable(bar, { __index = BAR })
-        end
+		if (_G["Neuron"..data.barType..id]) then
+			bar = _G["Neuron"..data.barType..id]
+		else
+			---this is the create of our bar object frame
+			bar = CreateFrame("CheckButton", "Neuron"..data.barType..id, UIParent, "NeuronBarTemplate")
+			---this is assigning the metatable of a CheckButton to our new bar object, giving it all a CheckButtons features, and thus finishing the object construction
+			setmetatable(bar, { __index = BAR })
+		end
 
-        for key,value in pairs(data) do
-            bar[key] = value
-        end
+		for key,value in pairs(data) do
+			bar[key] = value
+		end
 
-        bar.index = index
-        bar.class = class
-        bar.stateschanged = true
-        bar.vischanged =true
-        bar.elapsed = 0
-        bar.click = nil
-        bar.dragged = false
-        bar.selected = false
-        bar.toggleframe = bar
-        bar.microAdjust = false
-        bar.vis = {}
-        bar.text:Hide()
-        bar.message:Hide()
-        bar.messagebg:Hide()
+		bar.index = index
+		bar.class = class
+		bar.stateschanged = true
+		bar.vischanged =true
+		bar.elapsed = 0
+		bar.click = nil
+		bar.dragged = false
+		bar.selected = false
+		bar.toggleframe = bar
+		bar.microAdjust = false
+		bar.vis = {}
+		bar.text:Hide()
+		bar.message:Hide()
+		bar.messagebg:Hide()
 
-        bar:SetID(id)
-        bar:SetWidth(375)
-        bar:SetHeight(40)
-        bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-            edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-            tile = true, tileSize = 16, edgeSize = 12,
-            insets = {left = 4, right = 4, top = 4, bottom = 4}})
-        bar:SetBackdropColor(0,0,0,0.4)
-        bar:SetBackdropBorderColor(0,0,0,0)
-        bar:SetFrameLevel(2)
-        bar:RegisterForClicks("AnyDown", "AnyUp")
-        bar:RegisterForDrag("LeftButton")
-        bar:SetMovable(true)
-        bar:EnableKeyboard(false)
-        bar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
+		bar:SetID(id)
+		bar:SetWidth(375)
+		bar:SetHeight(40)
+		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+			tile = true, tileSize = 16, edgeSize = 12,
+			insets = {left = 4, right = 4, top = 4, bottom = 4}})
+		bar:SetBackdropColor(0,0,0,0.4)
+		bar:SetBackdropBorderColor(0,0,0,0)
+		bar:SetFrameLevel(2)
+		bar:RegisterForClicks("AnyDown", "AnyUp")
+		bar:RegisterForDrag("LeftButton")
+		bar:SetMovable(true)
+		bar:EnableKeyboard(false)
+		bar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
-        bar:SetScript("OnClick", function(self, ...) NeuronBar:OnClick(self, ...) end)
-        bar:SetScript("OnDragStart", function(self, ...) NeuronBar:OnDragStart(self, ...) end)
-        bar:SetScript("OnDragStop", function(self, ...) NeuronBar:OnDragStop(self, ...) end)
-        bar:SetScript("OnEnter", function(self, ...) NeuronBar:OnEnter(self, ...) end)
-        bar:SetScript("OnLeave", function(self, ...) NeuronBar:OnLeave(self, ...) end)
-        bar:SetScript("OnEvent", function(self, event, ...) NeuronBar:OnEvent(self, event, ...) end)
-        bar:SetScript("OnKeyDown", function(self, key, onupdate) NeuronBar:OnKeyDown(self, key, onupdate) end)
-        bar:SetScript("OnKeyUp", function(self, key) NeuronBar:OnKeyUp(self, key) end)
-        bar:SetScript("OnMouseWheel", function(delta) NeuronBar:OnMouseWheel(delta) end)
-        bar:SetScript("OnShow", function(self) NeuronBar:OnShow(self) end)
-        bar:SetScript("OnHide", function(self) NeuronBar:OnHide(self) end)
-        bar:SetScript("OnUpdate", function(self, elapsed) NeuronBar:OnUpdate(self, elapsed) end)
+		bar:SetScript("OnClick", function(self, ...) NeuronBar:OnClick(self, ...) end)
+		bar:SetScript("OnDragStart", function(self, ...) NeuronBar:OnDragStart(self, ...) end)
+		bar:SetScript("OnDragStop", function(self, ...) NeuronBar:OnDragStop(self, ...) end)
+		bar:SetScript("OnEnter", function(self, ...) NeuronBar:OnEnter(self, ...) end)
+		bar:SetScript("OnLeave", function(self, ...) NeuronBar:OnLeave(self, ...) end)
+		bar:SetScript("OnEvent", function(self, event, ...) NeuronBar:OnEvent(self, event, ...) end)
+		bar:SetScript("OnKeyDown", function(self, key, onupdate) NeuronBar:OnKeyDown(self, key, onupdate) end)
+		bar:SetScript("OnKeyUp", function(self, key) NeuronBar:OnKeyUp(self, key) end)
+		bar:SetScript("OnMouseWheel", function(delta) NeuronBar:OnMouseWheel(delta) end)
+		bar:SetScript("OnShow", function(self) NeuronBar:OnShow(self) end)
+		bar:SetScript("OnHide", function(self) NeuronBar:OnHide(self) end)
+		bar:SetScript("OnUpdate", function(self, elapsed) NeuronBar:OnUpdate(self, elapsed) end)
 
-        bar:RegisterEvent("ACTIONBAR_SHOWGRID")
-        bar:RegisterEvent("ACTIONBAR_HIDEGRID")
-        bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+		bar:RegisterEvent("ACTIONBAR_SHOWGRID")
+		bar:RegisterEvent("ACTIONBAR_HIDEGRID")
+		bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 
-        NeuronBar:CreateDriver(bar)
-        NeuronBar:CreateHandler(bar)
-        NeuronBar:CreateWatcher(bar)
+		NeuronBar:CreateDriver(bar)
+		NeuronBar:CreateHandler(bar)
+		NeuronBar:CreateWatcher(bar)
 
-        NEURON.NeuronBar:LoadData(bar)
+		NEURON.NeuronBar:LoadData(bar)
 
-        if (not newBar) then
-            bar:Hide()
-        end
+		if (not newBar) then
+			bar:Hide()
+		end
 
-        BARIndex[index] = bar
+		BARIndex[index] = bar
 
-        BARNameIndex[bar:GetName()] = bar
+		BARNameIndex[bar:GetName()] = bar
 
-        return bar, newBar
-    end
+		return bar, newBar
+	end
 end
 
 
 function NeuronBar:CreateNewBar(class, id, firstRun)
-    if (class and NEURON.RegisteredBarData[class]) then
-        local index = 1
+	if (class and NEURON.RegisteredBarData[class]) then
+		local index = 1
 
-        for _ in ipairs(BARIndex) do
-            index = index + 1
-        end
+		for _ in ipairs(BARIndex) do
+			index = index + 1
+		end
 
-        local bar, newBar = NeuronBar:CreateBar(index, class, id)
+		local bar, newBar = NeuronBar:CreateBar(index, class, id)
 
-        if (firstRun) then
-            NeuronBar:SetDefaults(bar, bar.gDef, bar.cDef)
-        end
+		if (firstRun) then
+			NeuronBar:SetDefaults(bar, bar.gDef, bar.cDef)
+		end
 
-        if (newBar) then
-            NeuronBar:Load(bar)
-            NeuronBar:ChangeBar(bar)
+		if (newBar) then
+			NeuronBar:Load(bar)
+			NeuronBar:ChangeBar(bar)
 
-            ---------------------------------
-            if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
-                bar.gdata.hidestates = ":extrabar0:"
-                bar.vischanged = true
-                NeuronBar:Update(bar)
-            end
-            if (class == "pet") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
-                bar.gdata.hidestates = ":pet0:"
-                bar.vischanged = true
-                NeuronBar:Update(bar)
-            end
-            -----------------------------------
-        end
+			---------------------------------
+			if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.gdata.hidestates = ":extrabar0:"
+				bar.vischanged = true
+				NeuronBar:Update(bar)
+			end
+			if (class == "pet") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.gdata.hidestates = ":pet0:"
+				bar.vischanged = true
+				NeuronBar:Update(bar)
+			end
+			-----------------------------------
+		end
 
-        return bar
-    else
-        NEURON.PrintBarTypes()
-    end
+		return bar
+	else
+		NEURON.PrintBarTypes()
+	end
 end
 
 function NeuronBar:ChangeBar(bar)
@@ -2155,6 +2155,8 @@ function NeuronBar:AddObjectToList(bar, object)
 
 	if (not bar.gdata.objectList or bar.gdata.objectList == {}) then
 		bar.gdata.objectList[1] = object.id
+	elseif (self.class == "bag") then
+		table.insert(bar.gdata.objectList, 1, object.id) --for bag bars insert the object to the start of the list
 	else
 		bar.gdata.objectList[#bar.gdata.objectList +1] = object.id
 	end
@@ -2255,7 +2257,13 @@ function NeuronBar:RemoveObjectsFromBar(bar, num)
 
 	for i=1,num do
 
-		local objID = bar.gdata.objectList[#bar.gdata.objectList]
+		local objID
+
+		if bar.class ~= "bag" then
+			objID = bar.gdata.objectList[#bar.gdata.objectList]
+		else
+			objID = bar.gdata.objectList[1] --for bag bars, remove from the front of the list
+		end
 
 		if (objID) then
 			local object = _G[bar.objPrefix..tostring(objID)]
