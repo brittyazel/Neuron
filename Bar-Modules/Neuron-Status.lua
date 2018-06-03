@@ -1168,7 +1168,7 @@ function NeuronStatusBar:CastBar_OnEvent(button, event, ...)
 
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 
-		local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
+		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 
 		if (not name or (not button.showTradeSkills and isTradeSkill)) then
 			NeuronStatusBar:CastBar_Reset(button)
@@ -1216,7 +1216,7 @@ function NeuronStatusBar:CastBar_OnEvent(button, event, ...)
 
 		if (button:IsShown()) then
 
-			local name, nameSubtext, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
+			local name, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
 
 			if (not name or (not button.showTradeSkills and isTradeSkill)) then
 				NeuronStatusBar:CastBar_Reset(button)
@@ -1368,7 +1368,7 @@ function NeuronStatusBar:CastBarTimer_OnEvent(button, event, ...)
 
 		elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 
-			local _, _, text = UnitChannelInfo(unit)
+			local _, text = UnitChannelInfo(unit)
 
 			if (not button.castInfo[unit]) then button.castInfo[unit] = {} end
 			button.castInfo[unit][1] = text
