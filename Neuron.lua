@@ -89,7 +89,7 @@ NeuronGDB = {
 	timerLimit = 4,
 	snapToTol = 28,
 
-	mainbar = false,
+	blizzbar = false,
 	zoneabilitybar = false,
 	vehicle = false,
 
@@ -301,6 +301,14 @@ function NEURON:OnInitialize()
 
 
 
+	StaticPopupDialogs["ReloadUI"] = {
+		text = "ReloadUI",
+		button1 = "Yes",
+		OnAccept = function()
+			ReloadUI()
+		end,
+		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+	}
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -394,7 +402,9 @@ function NEURON:PLAYER_ENTERING_WORLD()
 		TitanUtils_AddonAdjust("MainMenuBar", true)
 	end
 
-	NEURON:ToggleBlizzBar(GDB.mainbar)
+	if (GDB.blizzbar == false) then
+		NEURON:HideBlizzard()
+	end
 
 
 	NEURON.PEW = true
@@ -481,16 +491,6 @@ function NEURON:RefreshConfig()
 	GDB, CDB =  NeuronGDB, NeuronCDB
 	NEURON.NeuronButton.ButtonProfileUpdate()
 
-
-	StaticPopupDialogs["ReloadUI"] = {
-		text = "ReloadUI",
-		button1 = "Yes",
-		OnAccept = function()
-			ReloadUI()
-		end,
-		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-	}
-
 	StaticPopup_Show("ReloadUI")
 end
 
@@ -543,7 +543,7 @@ local slashFunctions = {
 	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
 	{L["TimerLimit"], L["TimerLimit_Description"], "SetTimerLimit"},
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
-	{L["BlizzBar"], L["BlizzBar_Description"], "BlizzBar"},
+	{L["BlizzBar"], L["BlizzBar_Description"], "ToggleBlizzBar"},
 }
 
 
@@ -635,9 +635,6 @@ function NEURON:controlOnUpdate(frame, elapsed)
 	---UnThrottled OnUpdate calls
 	if(NEURON.PEW) then
 		NEURON.NeuronButton:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
-
-
-		NEURON:ToggleBlizzBar(GDB.mainbar) ---TODO:Fix this, this is just to get the bar to hide for the time being
 	end
 
 end
@@ -1104,73 +1101,143 @@ function NEURON:UpdateData(data, defaults)
 end
 
 
-function NEURON:ToggleBlizzBar(on)
+---this is taken from Bartender4, thanks guys!
+function NEURON:HideBlizzard()
 	if (InCombatLockdown()) then
 		return
 	end
 
-	if not handler then
-		handler = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+	-- Hidden parent frame
+	local UIHider = CreateFrame("Frame")
+	UIHider:Hide()
+	self.UIHider = UIHider
+
+	MultiBarBottomLeft:SetParent(UIHider)
+	MultiBarBottomRight:SetParent(UIHider)
+	MultiBarLeft:SetParent(UIHider)
+	MultiBarRight:SetParent(UIHider)
+
+	-- Hide MultiBar Buttons, but keep the bars alive
+	for i=1,12 do
+		_G["ActionButton" .. i]:Hide()
+		_G["ActionButton" .. i]:UnregisterAllEvents()
+		_G["ActionButton" .. i]:SetAttribute("statehidden", true)
+
+		_G["MultiBarBottomLeftButton" .. i]:Hide()
+		_G["MultiBarBottomLeftButton" .. i]:UnregisterAllEvents()
+		_G["MultiBarBottomLeftButton" .. i]:SetAttribute("statehidden", true)
+
+		_G["MultiBarBottomRightButton" .. i]:Hide()
+		_G["MultiBarBottomRightButton" .. i]:UnregisterAllEvents()
+		_G["MultiBarBottomRightButton" .. i]:SetAttribute("statehidden", true)
+
+		_G["MultiBarRightButton" .. i]:Hide()
+		_G["MultiBarRightButton" .. i]:UnregisterAllEvents()
+		_G["MultiBarRightButton" .. i]:SetAttribute("statehidden", true)
+
+		_G["MultiBarLeftButton" .. i]:Hide()
+		_G["MultiBarLeftButton" .. i]:UnregisterAllEvents()
+		_G["MultiBarLeftButton" .. i]:SetAttribute("statehidden", true)
+	end
+	UIPARENT_MANAGED_FRAME_POSITIONS["MainMenuBar"] = nil
+	UIPARENT_MANAGED_FRAME_POSITIONS["StanceBarFrame"] = nil
+	UIPARENT_MANAGED_FRAME_POSITIONS["PossessBarFrame"] = nil
+	UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = nil
+
+	--MainMenuBar:UnregisterAllEvents()
+	--MainMenuBar:SetParent(UIHider)
+	--MainMenuBar:Hide()
+	MainMenuBar:EnableMouse(false)
+	MainMenuBar:UnregisterEvent("DISPLAY_SIZE_CHANGED")
+	MainMenuBar:UnregisterEvent("UI_SCALE_CHANGED")
+
+
+	local animations = {MainMenuBar.slideOut:GetAnimations()}
+	animations[1]:SetOffset(0,0)
+
+	animations = {OverrideActionBar.slideOut:GetAnimations()}
+	animations[1]:SetOffset(0,0)
+
+	MainMenuBarArtFrame:Hide()
+	MainMenuBarArtFrame:SetParent(UIHider)
+
+	if MicroButtonAndBagsBar then
+		MicroButtonAndBagsBar:Hide()
+		MicroButtonAndBagsBar:SetParent(UIHider)
 	end
 
-	if (on) then
-		local button
+	if MainMenuExpBar then
+		--MainMenuExpBar:UnregisterAllEvents()
+		--MainMenuExpBar:Hide()
+		MainMenuExpBar:SetParent(UIHider)
+		MainMenuExpBar:SetDeferAnimationCallback(nil)
+	end
 
-		for i=1, NUM_OVERRIDE_BUTTONS do
-			button = _G["OverrideActionBarButton"..i]
-			handler:WrapScript(button, "OnShow", [[
-				local key = GetBindingKey("ACTIONBUTTON"..self:GetID())
-				if (key) then
-					self:SetBindingClick(true, key, self:GetName())
-				end
-			]])
-			handler:WrapScript(button, "OnHide", [[
-				local key = GetBindingKey("ACTIONBUTTON"..self:GetID())
-				if (key) then
-					self:ClearBinding(key)
-				end
-			]])
-		end
+	if MainMenuBarMaxLevelBar then
+		MainMenuBarMaxLevelBar:Hide()
+		MainMenuBarMaxLevelBar:SetParent(UIHider)
+	end
 
+	if ReputationWatchBar then
+		--ReputationWatchBar:UnregisterAllEvents()
+		--ReputationWatchBar:Hide()
+		ReputationWatchBar:SetParent(UIHider)
+	end
 
-		MainMenuBar:Show()
-		OverrideActionBar_OnLoad(OverrideActionBar)
-		ActionBarController_OnLoad(ActionBarController)
-		MainMenuBarVehicleLeaveButton_OnLoad(MainMenuBarVehicleLeaveButton)
+	if ArtifactWatchBar then
+		ArtifactWatchBar:SetParent(UIHider)
+		ArtifactWatchBar.StatusBar:SetDeferAnimationCallback(nil)
+	end
 
+	if HonorWatchBar then
+		HonorWatchBar:SetParent(UIHider)
+		HonorWatchBar.StatusBar:SetDeferAnimationCallback(nil)
+	end
+
+	if StatusTrackingBarManager then
+		StatusTrackingBarManager:Hide()
+		--StatusTrackingBarManager:SetParent(UIHider)
+	end
+
+	StanceBarFrame:UnregisterAllEvents()
+	StanceBarFrame:Hide()
+	StanceBarFrame:SetParent(UIHider)
+
+	--BonusActionBarFrame:UnregisterAllEvents()
+	--BonusActionBarFrame:Hide()
+	--BonusActionBarFrame:SetParent(UIHider)
+
+	--PossessBarFrame:UnregisterAllEvents()
+	PossessBarFrame:Hide()
+	PossessBarFrame:SetParent(UIHider)
+
+	PetActionBarFrame:UnregisterAllEvents()
+	PetActionBarFrame:Hide()
+	PetActionBarFrame:SetParent(UIHider)
+
+	if PlayerTalentFrame then
+		PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 	else
-		local button
-
-		for i=1, NUM_OVERRIDE_BUTTONS do
-			button = _G["OverrideActionBarButton"..i]
-			handler:UnwrapScript(button, "OnShow")
-			handler:UnwrapScript(button, "OnHide")
-		end
-
-
-		MainMenuBarArtFrame:UnregisterAllEvents()
-		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
-		OverrideActionBar:UnregisterAllEvents()
-		ActionBarController:UnregisterAllEvents()
-		MainMenuBar:UnregisterAllEvents()
-
-
-		MainMenuBar:Hide()
-		OverrideActionBar:Hide()
-		ExtraActionBarFrame:Hide()
-		
+		hooksecurefunc("TalentFrame_LoadUI", function() PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED") end)
 	end
+
+
+	--MainMenuBarArtFrame:UnregisterAllEvents()
+	--MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+	--OverrideActionBar:UnregisterAllEvents()
+	--ActionBarController:UnregisterAllEvents()
+	--:UnregisterAllEvents()
+	
 end
 
-
-function NEURON:BlizzBar()
-	if (GDB.mainbar) then
-		GDB.mainbar = false
+function NEURON:ToggleBlizzBar()
+	if (GDB.blizzbar == true) then
+		GDB.blizzbar = false
+		NEURON:HideBlizzard()
 	else
-		GDB.mainbar = true
+		GDB.blizzbar = true
+		StaticPopup_Show("ReloadUI")
 	end
-	NEURON:ToggleBlizzBar(GDB.mainbar)
-
 end
 
 

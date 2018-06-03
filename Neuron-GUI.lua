@@ -3835,8 +3835,8 @@ NeuronGUI.interfaceOptions = {
 					name = L["Display the Blizzard Bar"],
 					desc = L["Shows / Hides the Default Blizzard Bar"],
 					type = "toggle",
-					set = function() NEURON:BlizzBar() end,
-					get = function() return NeuronGDB.mainbar end,
+					set = function() NEURON:ToggleBlizzBar() end,
+					get = function() return NeuronGDB.blizzbar end,
 					width = "full",
 				},
 				NeuronMinimapButton = {
