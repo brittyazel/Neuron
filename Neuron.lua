@@ -635,6 +635,9 @@ function NEURON:controlOnUpdate(frame, elapsed)
 	---UnThrottled OnUpdate calls
 	if(NEURON.PEW) then
 		NEURON.NeuronButton:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+
+
+		NEURON:ToggleBlizzBar(GDB.mainbar) ---TODO:Fix this, this is just to get the bar to hide for the time being
 	end
 
 end
@@ -1129,28 +1132,11 @@ function NEURON:ToggleBlizzBar(on)
 			]])
 		end
 
-		-- FIXME 8.0 These globals are MIA, need to examine new blizzard UI and determien how to best accomplish this
-		--TextStatusBar_Initialize(MainMenuExpBar)
-		--MainMenuExpBar:RegisterEvent("PLAYER_ENTERING_WORLD")
-		--MainMenuExpBar:RegisterEvent("PLAYER_XP_UPDATE")
-		--MainMenuExpBar.textLockable = 1
-		--MainMenuExpBar.cvar = "xpBarText"
-		--MainMenuExpBar.cvarLabel = "XP_BAR_TEXT"
-		--MainMenuExpBar.alwaysPrefix = true
-		--MainMenuExpBar_SetWidth(1024)
 
-		--MainMenuBar_OnLoad(MainMenuBarArtFrame)
-		MainMenuBarVehicleLeaveButton_OnLoad(MainMenuBarVehicleLeaveButton)
-
-		MainMenuBar:SetPoint("BOTTOM", 0, 0)
 		MainMenuBar:Show()
-
 		OverrideActionBar_OnLoad(OverrideActionBar)
-		OverrideActionBar:SetPoint("BOTTOM", 0, 0)
-
-		ExtraActionBarFrame:SetPoint("BOTTOM", 0, 160)
-
 		ActionBarController_OnLoad(ActionBarController)
+		MainMenuBarVehicleLeaveButton_OnLoad(MainMenuBarVehicleLeaveButton)
 
 	else
 		local button
@@ -1161,24 +1147,18 @@ function NEURON:ToggleBlizzBar(on)
 			handler:UnwrapScript(button, "OnHide")
 		end
 
-		-- FIXME 8.0 These globals are MIA, need to examine new blizzard UI and determien how to best accomplish this
-		--MainMenuExpBar:UnregisterAllEvents()
+
 		MainMenuBarArtFrame:UnregisterAllEvents()
-		MainMenuBarArtFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-		MainMenuBarArtFrame:RegisterEvent("UNIT_LEVEL")
 		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
-
-		MainMenuBar:SetPoint("BOTTOM", 0, -200)
-		MainMenuBar:Hide()
-
 		OverrideActionBar:UnregisterAllEvents()
-		OverrideActionBar:SetPoint("BOTTOM", 0, -200)
-		OverrideActionBar:Hide()
-
-		ExtraActionBarFrame:SetPoint("BOTTOM", 0, -200)
-		ExtraActionBarFrame:Hide()
-
 		ActionBarController:UnregisterAllEvents()
+		MainMenuBar:UnregisterAllEvents()
+
+
+		MainMenuBar:Hide()
+		OverrideActionBar:Hide()
+		ExtraActionBarFrame:Hide()
+		
 	end
 end
 
