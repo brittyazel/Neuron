@@ -977,7 +977,6 @@ function NEURON:UpdateCompanionData()
 	local mountIDs = C_MountJournal.GetMountIDs()
 	for i,id in pairs(mountIDs) do
 		local creatureName , spellID = C_MountJournal.GetMountInfoByID(id) --, creatureID, _, active, summonable, source, isFavorite, isFactionSpecific, faction, unknown, owned = C_MountJournal.GetMountInfoByID(i)
-		--local link = GetSpellLink(creatureName)
 
 		if (spellID) then
 			local spell, _, icon = GetSpellInfo(spellID)
