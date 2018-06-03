@@ -24,8 +24,8 @@ local gDef = {
 	snapToFrame = false,
 	snapToPoint = false,
 	point = "BOTTOMRIGHT",
-	x = -100,
-	y = 23,
+	x = -105,
+	y =63,
 }
 
 local bagElements = {}
