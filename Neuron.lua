@@ -1038,9 +1038,6 @@ function NEURON:UpdateStanceStrings()
 			NEURON.STATES["stance"..i] = "insert_name"
 			states = states.."[stance:"..i.."] stance"..i.."; "
 
-			NEURON.STATES["stance"..i] = name
-			states = states.."[stance:"..i.."] stance"..i.."; "
-
 		end
 
 		--Adds Shadow Dance State for Subelty Rogues

@@ -562,7 +562,7 @@ end
 
 function NeuronButton:updateAuraInfo(unit)
 
-	local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID
+	local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID, _
 	uai_index = 1
 
 	wipe(unitAuras[unit])
@@ -595,18 +595,21 @@ function NeuronButton:updateAuraInfo(unit)
 end
 
 
-function NeuronButton:isActiveShapeshiftSpell(spell)
-	local shapeshift, texture, name, isActive = spell:match("^[^(]+")
+---TODO: This no longer works in BfA
+--[[function NeuronButton:isActiveShapeshiftSpell(spell)
+
+	local shapeshift = spell:match("^[^(]+")
+	local texture, isActive
 
 	if (shapeshift) then
 		for i=1, GetNumShapeshiftForms() do
 			texture, isActive = GetShapeshiftFormInfo(i)
-			if (isActive and name:lower() == shapeshift:lower()) then
+			if (isActive) then
 				return texture
 			end
 		end
 	end
-end
+end]]
 
 
 
@@ -818,14 +821,14 @@ function NeuronButton:MACRO_SetSpellIcon(button, spell)
 
 		if (texture) then
 
-			local shapeshift = NeuronButton:isActiveShapeshiftSpell(spell)
+			--local shapeshift_texture = NeuronButton:isActiveShapeshiftSpell(spell)
 
-			if (shapeshift) then
-				button.iconframeicon:SetTexture(shapeshift)
-			else
+			--if (shapeshift_texture) then
+				--button.iconframeicon:SetTexture(shapeshift_texture)
+			--else
 				button.iconframeicon:SetTexture(texture)
 
-			end
+			--end
 
 			button.iconframeicon:Show()
 		else
@@ -1038,7 +1041,7 @@ function NeuronButton:MACRO_SetSpellState(button, spell)
 			button:SetChecked(nil)
 		end
 	else
-		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell) or NeuronButton:isActiveShapeshiftSpell(spell:lower())) then
+		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell)) then --or NeuronButton:isActiveShapeshiftSpell(spell:lower())) then
 			button:SetChecked(1)
 		else
 			button:SetChecked(nil)
