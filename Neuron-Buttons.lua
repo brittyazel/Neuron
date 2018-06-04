@@ -2864,7 +2864,7 @@ end
 
 function NeuronButton:ChangeObject(object)
 
-	if not NEURON.CurrentObject then --fix for CurentObject error thrown by Neuron-GUI
+	if not NEURON.CurrentObject then
 		NEURON.CurrentObject = object
 	end
 
