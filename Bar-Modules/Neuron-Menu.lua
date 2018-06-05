@@ -6,7 +6,7 @@
 local NEURON = Neuron
 local DB
 
-NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar")
+NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar", "AceHook-3.0")
 local NeuronMenuBar = NEURON.NeuronMenuBar
 
 local menubarsDB, menubtnsDB
