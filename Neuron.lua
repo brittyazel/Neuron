@@ -1149,18 +1149,19 @@ function NEURON:HideBlizzard()
 		_G["MultiBarLeftButton" .. i]:UnregisterAllEvents()
 		_G["MultiBarLeftButton" .. i]:SetAttribute("statehidden", true)
 	end
+	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarRight"] = nil
+	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarLeft"] = nil
+	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomLeft"] = nil
+	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomRight"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["MainMenuBar"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["StanceBarFrame"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["PossessBarFrame"] = nil
 	UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = nil
 
 	--MainMenuBar:UnregisterAllEvents()
-	--MainMenuBar:SetParent(UIHider)
 	--MainMenuBar:Hide()
+	--MainMenuBar:SetParent(UIHider)
 	MainMenuBar:EnableMouse(false)
-	MainMenuBar:UnregisterEvent("DISPLAY_SIZE_CHANGED")
-	MainMenuBar:UnregisterEvent("UI_SCALE_CHANGED")
-
 
 	local animations = {MainMenuBar.slideOut:GetAnimations()}
 	animations[1]:SetOffset(0,0)
@@ -1168,46 +1169,36 @@ function NEURON:HideBlizzard()
 	animations = {OverrideActionBar.slideOut:GetAnimations()}
 	animations[1]:SetOffset(0,0)
 
+	--MainMenuBarArtFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+	--MainMenuBarArtFrame:UnregisterEvent("BAG_UPDATE")
+	--MainMenuBarArtFrame:UnregisterEvent("ACTIONBAR_PAGE_CHANGED")
+	--MainMenuBarArtFrame:UnregisterEvent("KNOWN_CURRENCY_TYPES_UPDATE")
+	--MainMenuBarArtFrame:UnregisterEvent("CURRENCY_DISPLAY_UPDATE")
+	--MainMenuBarArtFrame:UnregisterEvent("ADDON_LOADED")
+	--MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERING_VEHICLE")
+	--MainMenuBarArtFrame:UnregisterEvent("UNIT_ENTERED_VEHICLE")
+	--MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITING_VEHICLE")
+	--MainMenuBarArtFrame:UnregisterEvent("UNIT_EXITED_VEHICLE")
 	MainMenuBarArtFrame:Hide()
 	MainMenuBarArtFrame:SetParent(UIHider)
 
-	if MicroButtonAndBagsBar then
-		MicroButtonAndBagsBar:Hide()
-		MicroButtonAndBagsBar:SetParent(UIHider)
-	end
+	--MainMenuExpBar:UnregisterAllEvents()
+	--MainMenuExpBar:Hide()
+	MainMenuExpBar:SetParent(UIHider)
+	MainMenuExpBar:SetDeferAnimationCallback(nil)
 
-	if MainMenuExpBar then
-		--MainMenuExpBar:UnregisterAllEvents()
-		--MainMenuExpBar:Hide()
-		MainMenuExpBar:SetParent(UIHider)
-		MainMenuExpBar:SetDeferAnimationCallback(nil)
-	end
+	MainMenuBarMaxLevelBar:Hide()
+	MainMenuBarMaxLevelBar:SetParent(UIHider)
 
-	if MainMenuBarMaxLevelBar then
-		MainMenuBarMaxLevelBar:Hide()
-		MainMenuBarMaxLevelBar:SetParent(UIHider)
-	end
+	--ReputationWatchBar:UnregisterAllEvents()
+	--ReputationWatchBar:Hide()
+	ReputationWatchBar:SetParent(UIHider)
 
-	if ReputationWatchBar then
-		--ReputationWatchBar:UnregisterAllEvents()
-		--ReputationWatchBar:Hide()
-		ReputationWatchBar:SetParent(UIHider)
-	end
+	ArtifactWatchBar:SetParent(UIHider)
+	ArtifactWatchBar.StatusBar:SetDeferAnimationCallback(nil)
 
-	if ArtifactWatchBar then
-		ArtifactWatchBar:SetParent(UIHider)
-		ArtifactWatchBar.StatusBar:SetDeferAnimationCallback(nil)
-	end
-
-	if HonorWatchBar then
-		HonorWatchBar:SetParent(UIHider)
-		HonorWatchBar.StatusBar:SetDeferAnimationCallback(nil)
-	end
-
-	if StatusTrackingBarManager then
-		StatusTrackingBarManager:Hide()
-		--StatusTrackingBarManager:SetParent(UIHider)
-	end
+	HonorWatchBar:SetParent(UIHider)
+	HonorWatchBar.StatusBar:SetDeferAnimationCallback(nil)
 
 	StanceBarFrame:UnregisterAllEvents()
 	StanceBarFrame:Hide()
@@ -1217,26 +1208,19 @@ function NEURON:HideBlizzard()
 	--BonusActionBarFrame:Hide()
 	--BonusActionBarFrame:SetParent(UIHider)
 
-	PossessBarFrame:UnregisterAllEvents()
-	--PossessBarFrame:Hide()
+	--PossessBarFrame:UnregisterAllEvents()
+	PossessBarFrame:Hide()
 	PossessBarFrame:SetParent(UIHider)
 
 	PetActionBarFrame:UnregisterAllEvents()
-	--PetActionBarFrame:Hide()
+	PetActionBarFrame:Hide()
 	PetActionBarFrame:SetParent(UIHider)
 
-	if PlayerTalentFrame then
+	--[[if PlayerTalentFrame then
 		PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 	else
 		hooksecurefunc("TalentFrame_LoadUI", function() PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED") end)
-	end
-
-
-	--MainMenuBarArtFrame:UnregisterAllEvents()
-	--MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
-	--OverrideActionBar:UnregisterAllEvents()
-	--ActionBarController:UnregisterAllEvents()
-	--:UnregisterAllEvents()
+	end]]
 
 end
 
