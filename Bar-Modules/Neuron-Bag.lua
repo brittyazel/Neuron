@@ -225,7 +225,7 @@ end
 function NeuronBagBar:LoadAux(button)
 
     ---hide the color border around these buttons
-    C_Timer.NewTimer(1, function() button.element.IconBorder:Hide() end)
+    --C_Timer.NewTimer(1, function() button.element.IconBorder:Hide() end)
 
 
 end
