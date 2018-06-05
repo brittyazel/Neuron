@@ -1215,11 +1215,11 @@ function NEURON:HideBlizzard()
 	--PetActionBarFrame:Hide()
 	PetActionBarFrame:SetParent(UIHider)
 
-	if PlayerTalentFrame then
+	--[[if PlayerTalentFrame then
 		PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 	else
 		hooksecurefunc("TalentFrame_LoadUI", function() PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED") end)
-	end
+	end]]
 
 
 	--MainMenuBarArtFrame:UnregisterAllEvents()
