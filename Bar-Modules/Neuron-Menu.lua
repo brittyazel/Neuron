@@ -79,6 +79,10 @@ function NeuronMenuBar:OnInitialize()
 
     if NeuronGDB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
+
+        ---This stops PetBattles from taking over the Micro Buttons
+        NeuronMenuBar:RawHook("MoveMicroButtons", function() end, true)
+        NeuronMenuBar:RawHook("UpdateMicroButtonsParent", function() end, true)
     end
 end
 
