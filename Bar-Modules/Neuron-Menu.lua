@@ -226,7 +226,7 @@ function NeuronMenuBar:SetType(button, save)
     if (menuElements[button.id]) then
 
         button:SetWidth(menuElements[button.id]:GetWidth()-2)
-        button:SetHeight(menuElements[button.id]:GetHeight()-17)
+        button:SetHeight(menuElements[button.id]:GetHeight()-24)
         button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
         button.element = menuElements[button.id]

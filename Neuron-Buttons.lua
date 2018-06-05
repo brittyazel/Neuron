@@ -2852,7 +2852,7 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		if (firstRun) then
 			object:SetDefaults(object, object:GetDefaults(object))
 		end
-		
+
 		object:LoadAux(object)
 
 		data.objTable[index] = object
