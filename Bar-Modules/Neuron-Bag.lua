@@ -270,7 +270,5 @@ function NeuronBagBar:SetType(button, save)
 
         button:SetSkinned(button)
 
-        button.element.IconBorder:Hide()
-
     end
 end

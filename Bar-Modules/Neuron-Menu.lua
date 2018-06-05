@@ -14,7 +14,7 @@ local NeuronMenuBar = NEURON.NeuronMenuBar
 
 local menubarsDB, menubtnsDB
 
-local MENUBTN = setmetatable({}, { __index = CreateFrame("Frame") })
+local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -23,8 +23,8 @@ local gDef = {
     snapToFrame = false,
     snapToPoint = false,
     point = "BOTTOMRIGHT",
-    x = -330.1,
-    y = 32.33,
+    x = -330,
+    y = 21,
 }
 
 local menuElements = {}
@@ -209,7 +209,7 @@ function NeuronMenuBar:GetDefaults(button)
 end
 
 function NeuronMenuBar:SetSkinned(button)
-
+    --empty
 end
 
 function NeuronMenuBar:GetSkinned(button)
@@ -220,7 +220,7 @@ function NeuronMenuBar:SetType(button, save)
     if (menuElements[button.id]) then
 
         button:SetWidth(menuElements[button.id]:GetWidth()-2)
-        button:SetHeight(menuElements[button.id]:GetHeight()-2)
+        button:SetHeight(menuElements[button.id]:GetHeight()-17)
         button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
         button.element = menuElements[button.id]
@@ -235,8 +235,8 @@ function NeuronMenuBar:SetType(button, save)
         button.element:ClearAllPoints()
         button.element:SetParent(button)
         button.element:Show()
-        button.element:SetPoint("CENTER", button, "CENTER")
+        button.element:SetPoint("CENTER", button, "CENTER", 0, 11) ---TODO: this needs to be changed back in bfa, for some reason legion had a weird offset
         button.element:SetScale(1)
-    end
 
+    end
 end
