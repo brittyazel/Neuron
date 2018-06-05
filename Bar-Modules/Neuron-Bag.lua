@@ -7,7 +7,7 @@ local NeuronBagBar = NEURON.NeuronBagBar
 
 local  bagbarsDB, bagbtnsDB
 
-local BAGBTN = setmetatable({}, { __index = CreateFrame("Frame") })
+local BAGBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -22,8 +22,8 @@ local gDef = {
     snapToFrame = false,
     snapToPoint = false,
     point = "BOTTOMRIGHT",
-    x = -100,
-    y = 23,
+    x = -93.33,
+    y = 21.33,
 }
 
 local bagElements = {}
@@ -140,12 +140,17 @@ function NeuronBagBar:SetSkinned(button)
 
         if (bar) then
 
-            local btnData = { Icon = button.element.icon }
+            local btnData = {
+                Icon = button.icontexture,
+                Normal = button.normaltexture,
 
-            SKIN:Group("Neuron", bar.gdata.name):AddButton(button.element, btnData)
+            }
+
+            SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
 
         end
     end
+
 end
 
 
@@ -218,7 +223,9 @@ end
 
 function NeuronBagBar:LoadAux(button)
 
-    -- empty
+    ---hide the color border around these buttons
+    C_Timer.NewTimer(1, function() button.element.IconBorder:Hide() end)
+
 
 end
 
@@ -262,5 +269,8 @@ function NeuronBagBar:SetType(button, save)
 
 
         button:SetSkinned(button)
+
+        button.element.IconBorder:Hide()
+
     end
 end
