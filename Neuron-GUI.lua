@@ -3832,11 +3832,11 @@ NeuronGUI.interfaceOptions = {
 			args={
 				BlizzardBar = {
 					order = 1,
-					name = L["Display the Blizzard Bar"],
-					desc = L["Shows / Hides the Default Blizzard Bar"],
+					name = L["Display the Blizzard UI"],
+					desc = L["Shows / Hides the Default Blizzard UI"],
 					type = "toggle",
-					set = function() NEURON:BlizzBar() end,
-					get = function() return NeuronGDB.mainbar end,
+					set = function() NEURON:ToggleBlizzUI() end,
+					get = function() return NeuronGDB.blizzbar end,
 					width = "full",
 				},
 				NeuronMinimapButton = {

@@ -72,8 +72,9 @@ function NeuronBagBar:OnInitialize()
 
     NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
 
-
-    NeuronBagBar:CreateBarsAndButtons()
+    if NeuronGDB.blizzbar == false then
+        NeuronBagBar:CreateBarsAndButtons()
+    end
 
 
 end

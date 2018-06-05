@@ -80,8 +80,14 @@ function NeuronMenuBar:OnInitialize()
     NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
+    if NeuronGDB.blizzbar == false then
+        NeuronMenuBar:CreateBarsAndButtons()
 
-    NeuronMenuBar:CreateBarsAndButtons()
+        ---This stops PetBattles from taking over the Micro Buttons
+        NeuronMenuBar:RawHook("MoveMicroButtons", function() end, true)
+        NeuronMenuBar:RawHook("UpdateMicroButtonsParent", function() end, true)
+
+    end
 
 end
 
