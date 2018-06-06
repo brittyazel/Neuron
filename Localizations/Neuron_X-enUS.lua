@@ -512,6 +512,7 @@ L["Click"] = true
 L["Generate Macro"] = true
 L["Copy and Paste the text below"] = true
 
+L["Pet Actions can not be added to Neuron bars at this time."] = true
 
 ------------------------------------------------------------
 ----------------------FAQ Strings---------------------------

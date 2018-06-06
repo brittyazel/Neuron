@@ -2230,6 +2230,8 @@ function NeuronButton:MACRO_OnReceiveDrag(button, preclick)
 
 	elseif (cursorType == "battlepet") then
 		NeuronButton:MACRO_PlaceBattlePet(button, action1, action2, NeuronButton:MACRO_HasAction(button))
+	elseif (cursorType == "petaction") then
+		NEURON:Print(L["Pet Actions can not be added to Neuron bars at this time."])
 	end
 
 
