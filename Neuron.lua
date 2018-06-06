@@ -12,7 +12,6 @@ local NEURON = Neuron --this is the working pointer that all functions act upon,
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local icons = {}
 
 NEURON.PEW = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on loging with too many processes
 
@@ -50,7 +49,6 @@ Lastly, if you are enjoying Neuron, please consider a small donation to help wit
 
 --prepare the NEURON table with some subtables that will be used down the road
 NEURON['sIndex'] = {}
-NEURON['iIndex'] = {[1] = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK" }
 NEURON['cIndex'] = {}
 NEURON['tIndex'] = {}
 NEURON['StanceIndex'] = {}
@@ -76,7 +74,6 @@ NEURON['maxStanceID'] = NUM_STANCE_SLOTS
 local BARIndex = NEURON.BARIndex
 local BARNameIndex = NEURON.BARNameIndex --I'm not sure if we need both BarIndex and BARNameIndex. They're pretty much the same
 local BTNIndex = NEURON.BTNIndex
-local ICONS = NEURON.iIndex
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 NeuronGDB = {
@@ -396,7 +393,6 @@ function NEURON:PLAYER_ENTERING_WORLD()
 	NEURON:UpdateStanceStrings()
 	NEURON:UpdateCompanionData()
 	NEURON:UpdateToyData()
-	NEURON:UpdateIconIndex()
 
 	--Fix for Titan causing the Main Bar to not be hidden
 	if (IsAddOnLoaded("Titan")) then
@@ -772,9 +768,6 @@ function NEURON:UpdateSpellIndex()
 				NEURON.sIndex[spellID] = spellData
 			end
 
-			if (icon and not icons[icon]) then
-				ICONS[#ICONS+1] = icon; icons[icon] = true
-			end
 		end
 	end
 
@@ -817,9 +810,7 @@ function NEURON:UpdateSpellIndex()
 						NEURON.sIndex[spellID] = spellData
 					end
 
-					if (icon and not icons[icon]) then
-						ICONS[#ICONS+1] = icon; icons[icon] = true
-					end
+
 				end
 			end
 		end
@@ -854,7 +845,6 @@ function NEURON:UpdateSpellIndex()
 		end
 	end
 
-
 end
 
 
@@ -884,9 +874,7 @@ function NEURON:UpdatePetSpellIndex()
 					NEURON.sIndex[spellID] = spellData
 				end
 
-				if (icon and not icons[icon]) then
-					ICONS[#ICONS+1] = icon; icons[icon] = true
-				end
+
 			end
 		end
 	end
@@ -976,11 +964,6 @@ function NEURON:UpdateCompanionData()
 				NEURON.cIndex[spell:lower().."()"] = companionData
 				NEURON.cIndex[petID] = companionData
 
-				if(type(icon) == "number") then
-					if (icon and not icons[icon]) then
-						ICONS[#ICONS+1] = icon; icons[icon] = true
-					end
-				end
 			end
 		end
 	end
@@ -998,32 +981,12 @@ function NEURON:UpdateCompanionData()
 				NEURON.cIndex[spell:lower().."()"] = companionData
 				NEURON.cIndex[spellID] = companionData
 
-				if (icon and not icons[icon]) then
-					ICONS[#ICONS+1] = icon; icons[icon] = true
-				end
 			end
 		end
 	end
 end
 
 
-
-
---- Creates a table of the available spell icon filenames for use in macros
-function NEURON:UpdateIconIndex()
-
-	local temp = {}
-
-	GetMacroIcons(temp)
-
-	for k,icon in ipairs(temp) do
-		if (not icons[icon]) then
-			ICONS[#ICONS+1] = icon; icons[icon] = true
-		end
-
-	end
-
-end
 
 function NEURON:UpdateStanceStrings()
 	if (NEURON.class == "DRUID" or

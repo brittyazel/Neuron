@@ -2934,7 +2934,7 @@ function NeuronGUI:MacroIconListUpdate(frame)
 		else
 			btn.icon:SetTexture("")
 			btn:Hide()
-			btn.texture = ICONS[1]
+			btn.texture = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
 		end
 
 	end
