@@ -539,6 +539,18 @@ function NeuronPetBar:SetData(button, bar)
 			button.cdAlpha = 1
 		end
 
+		if (not button.cdcolor1) then
+			button.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
+		else
+			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
+		end
+
+		if (not button.cdcolor2) then
+			button.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
+		else
+			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
+		end
+
 		button.barLock = bar.cdata.barLock
 		button.barLockAlt = bar.cdata.barLockAlt
 		button.barLockCtrl = bar.cdata.barLockCtrl
@@ -548,6 +560,12 @@ function NeuronPetBar:SetData(button, bar)
 		button.downClicks = bar.cdata.downClicks
 
 		button.bindText = bar.cdata.bindText
+		button.macroText = bar.cdata.macroText
+		button.countText = bar.cdata.countText
+
+		button.bindColor = bar.gdata.bindColor
+		button.macroColor = bar.gdata.macroColor
+		button.countColor = bar.gdata.countColor
 
 		button.tooltips = bar.cdata.tooltips
 		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
@@ -559,6 +577,33 @@ function NeuronPetBar:SetData(button, bar)
 
 	end
 
+	if (button.bindText) then
+		button.hotkey:Show()
+		if (button.bindColor) then
+			button.hotkey:SetTextColor((";"):split(button.bindColor))
+		end
+	else
+		button.hotkey:Hide()
+	end
+
+	if (button.macroText) then
+		button.macroname:Show()
+		if (button.macroColor) then
+			button.macroname:SetTextColor((";"):split(button.macroColor))
+		end
+	else
+		button.macroname:Hide()
+	end
+
+	if (button.countText) then
+		button.count:Show()
+		if (button.countColor) then
+			button.count:SetTextColor((";"):split(button.countColor))
+		end
+	else
+		button.count:Hide()
+	end
+	
 	local down, up = "", ""
 
 	if (button.upClicks) then up = up.."AnyUp" end
@@ -567,8 +612,6 @@ function NeuronPetBar:SetData(button, bar)
 	button:RegisterForClicks(down, up)
 	button:RegisterForDrag("LeftButton", "RightButton")
 
-	button.cdcolor1 = { 1, 0.82, 0, 1 }
-	button.cdcolor2 = { 1, 0.1, 0.1, 1 }
 	button.auracolor1 = { 0, 0.82, 0, 1 }
 	button.auracolor2 = { 1, 0.1, 0.1, 1 }
 	button.buffcolor = { 0, 0.8, 0, 1 }
