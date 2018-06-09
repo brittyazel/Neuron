@@ -928,6 +928,7 @@ end
 
 function NeuronStatusBar:mirrorbar_Start(button, value, maxvalue, scale, paused, label)
 
+
 	if (not MirrorWatch[button]) then
 		MirrorWatch[button] = { active = false, mbar = nil, label = "", timer = "" }
 	end
@@ -942,7 +943,7 @@ function NeuronStatusBar:mirrorbar_Start(button, value, maxvalue, scale, paused,
 			MirrorWatch[button].mbar = mbar
 			MirrorWatch[button].label = label
 
-			mbar.sb.mirror = mirror
+			mbar.sb.mirror = button
 			mbar.sb.value = (value / 1000)
 			mbar.sb.maxvalue = (maxvalue / 1000)
 			mbar.sb.scale = scale
@@ -970,6 +971,7 @@ end
 
 
 function NeuronStatusBar:mirrorbar_Stop(button)
+
 
 	if (MirrorWatch[button] and MirrorWatch[button].active) then
 
@@ -1385,6 +1387,7 @@ function NeuronStatusBar:MirrorBar_OnUpdate(button, elapsed)
 	if (button.mirror) then
 
 		button.value = GetMirrorTimerProgress(button.mirror)/1000
+
 
 		if (button.value > button.maxvalue) then
 
@@ -2291,7 +2294,7 @@ function NeuronStatusBar:SetType(button, save)
 
 		elseif (button.config.sbType == "mirror") then
 
-			button.sb:SetScript("OnUpdate",  function(self, elapsed) NeuronStatusBar:MirrorBar_OnUpdate(self, elapsed) end)
+			button.sb:SetScript("OnUpdate", function(self, elapsed) NeuronStatusBar:MirrorBar_OnUpdate(self, elapsed) end)
 
 			tinsert(MirrorBars, button)
 
