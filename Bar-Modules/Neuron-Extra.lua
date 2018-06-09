@@ -121,6 +121,8 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronExtraBar:OnEnable()
 
+	NeuronExtraBar:DisableDefault()
+
 end
 
 
@@ -138,7 +140,27 @@ end
 
 -------------------------------------------------------------------------------
 
+function NeuronExtraBar:DisableDefault()
 
+	local disableExtraButton = false
+
+	for i,v in ipairs(NEURON.NeuronExtraBar) do
+
+		if (v["bar"]) then --only disable if a specific button has an associated bar
+			disableExtraButton = true
+		end
+	end
+
+
+	if disableExtraButton then
+		------Hiding the default blizzard ZoneAbilityFrame
+		ExtraActionBarFrame:UnregisterAllEvents()
+		ExtraActionBarFrame:Hide()
+		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+		MainMenuBarVehicleLeaveButton:Hide()
+	end
+
+end
 
 
 function NeuronExtraBar:GetSkinned(button)
