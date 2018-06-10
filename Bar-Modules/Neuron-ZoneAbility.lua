@@ -22,6 +22,7 @@ local gDef = {
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,
+	showGrid = true,
 	point = "BOTTOM",
 	x = 350,
 	y = 75,
@@ -80,7 +81,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
-		SHOWGRID = true,
+		SHOWGRID = false,
 		SNAPTO = true,
 		UPCLICKS = true,
 		DOWNCLICKS = true,
@@ -106,7 +107,8 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 		for id,data in pairs(zoneabilitybarsCDB) do
 			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
+				local newbar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
+				newbar.gdata.showGrid = true
 			end
 		end
 
@@ -202,7 +204,6 @@ function NeuronZoneAbilityBar:OnUpdate(button, elapsed)
 
 	if (button.elapsed > NeuronGDB.throttle) then
 		NeuronZoneAbilityBar:STANCE_UpdateButton(button, button.actionID)
-		button:SetGrid(button)
 		button.elapsed = 0
 	end
 end
@@ -495,7 +496,7 @@ function NeuronZoneAbilityBar:SetGrid(button, show, hide)
 		if (show or button.showGrid) then
 			button:Show()
 		elseif (not (button:IsMouseOver() and button:IsVisible())) then
-			button:Hide()
+			--button:Hide()
 		end
 	end
 end

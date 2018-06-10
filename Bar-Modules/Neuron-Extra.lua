@@ -29,6 +29,7 @@ local gDef = {
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,
+	showGrid = true,
 	point = "BOTTOM",
 	x = 0,
 	y = 205,
@@ -77,7 +78,7 @@ function NeuronExtraBar:OnInitialize()
 	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
-		SHOWGRID = true,
+		SHOWGRID = false,
 		SNAPTO = true,
 		UPCLICKS = true,
 		DOWNCLICKS = true,
@@ -102,7 +103,8 @@ function NeuronExtraBar:OnInitialize()
 
 		for id,data in pairs(xbarsCDB) do
 			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("extrabar", id)
+				local newbar = NEURON.NeuronBar:CreateNewBar("extrabar", id)
+				newbar.gdata.showGrid = true
 			end
 		end
 
@@ -172,7 +174,28 @@ end
 
 function NeuronExtraBar:SetSkinned(button)
 
-	NEURON.NeuronButton:SetSkinned(button)
+	if (button.vlbtn) then
+
+		if (SKIN) then
+
+			local btnData = {
+				Normal = button.vlbtn.normaltexture,
+				Icon = button.vlbtn.iconframeicon,
+				Cooldown = button.vlbtn.iconframecooldown,
+				HotKey = button.vlbtn.hotkey,
+				Count = button.vlbtn.count,
+				Name = button.vlbtn.name,
+				Border = button.vlbtn.border,
+				AutoCast = false,
+			}
+
+			SKIN:Group("Neuron", "Vehicle Leave"):AddButton(button.vlbtn, btnData)
+
+			button.vlbtn.skinned = true
+
+			SKINIndex[button.vlbtn] = true
+		end
+	end
 
 end
 
@@ -231,8 +254,6 @@ end
 
 function NeuronExtraBar:SetGrid(button, show, hide)
 
-	if (true) then return end
-
 	if (not InCombatLockdown()) then
 
 		button:SetAttribute("isshown", button.showGrid)
@@ -248,30 +269,7 @@ end
 
 function NeuronExtraBar:SetAux(button)
 
-	button:SetSkinned(button)
 
-	if (button.vlbtn) then
-
-		if (SKIN) then
-
-			local btnData = {
-				Normal = button.vlbtn.normaltexture,
-				Icon = button.vlbtn.iconframeicon,
-				Cooldown = button.vlbtn.iconframecooldown,
-				HotKey = button.vlbtn.hotkey,
-				Count = button.vlbtn.count,
-				Name = button.vlbtn.name,
-				Border = button.vlbtn.border,
-				AutoCast = false,
-			}
-
-			SKIN:Group("Neuron", "Vehicle Leave"):AddButton(button.vlbtn, btnData)
-
-			button.vlbtn.skinned = true
-
-			SKINIndex[button.vlbtn] = true
-		end
-	end
 end
 
 function NeuronExtraBar:SetExtraButtonTex(button)
@@ -435,4 +433,5 @@ function NeuronExtraBar:SetType(button, save)
 					end
 					]])
 
+	button:SetSkinned(button)
 end

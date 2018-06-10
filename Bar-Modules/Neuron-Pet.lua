@@ -21,7 +21,7 @@ local sIndex = NEURON.sIndex
 local gDef = {
 
 	hidestates = ":pet0:",
-
+    showGrid = true,
 	scale = 0.8,
 	snapTo = false,
 	snapToFrame = false,
@@ -152,13 +152,17 @@ function NeuronPetBar:ShowGridOnSpellbookDrag()
 	for _,bar in pairs(NEURON.BARIndex) do
 		if bar.class == "pet" then
 			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
-		end
+		elseif bar.class =="bar" then
+			NEURON.NeuronBar:UpdateObjectGrid(bar)
+ 		end
 	end
 end
 
 function NeuronPetBar:RestoreGridOnSpellbookDrag()
 	for _,bar in pairs(NEURON.BARIndex) do
-		NEURON.NeuronBar:UpdateObjectGrid(bar)
+        if bar.class == "pet" or bar.class == "bar" then
+		    NEURON.NeuronBar:UpdateObjectGrid(bar)
+        end
 	end
 end
 
@@ -369,10 +373,6 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 
 		NeuronPetBar:PET_UpdateButton(button, button.actionID)
 
-		if not GetCursorInfo() then
-			NeuronPetBar:RestoreGridOnSpellbookDrag()
-		end
-
 
 		if (button.updateRightClick and not InCombatLockdown()) then
 			local spell = GetPetActionInfo(button.actionID)
@@ -383,6 +383,8 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 			end
 		end
 
+
+
 		button.elapsed = 0
 	end
 
@@ -392,6 +394,12 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 	if not button.GridIsSet then
 		C_Timer.After(2, function() NEURON.NeuronBar:UpdateObjectGrid(button.bar) end)
 		button.GridIsSet = true
+	end
+
+	if button.showGrid == false and not NEURON.BarsShown then
+		if not GetCursorInfo() then
+			NeuronPetBar:RestoreGridOnSpellbookDrag()
+		end
 	end
 
 end
@@ -459,6 +467,9 @@ end
 
 function NeuronPetBar:PostClick(button)
 	NeuronPetBar:PET_UpdateOnEvent(button, true)
+    if not GetCursorInfo() then
+        NeuronPetBar:RestoreGridOnSpellbookDrag()
+    end
 end
 
 
@@ -496,7 +507,9 @@ function NeuronPetBar:OnReceiveDrag(button)
 		button:SetChecked(0)
 		PickupPetAction(button.actionID)
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
-	end
+    end
+
+    NeuronPetBar:RestoreGridOnSpellbookDrag()
 end
 
 
@@ -800,7 +813,7 @@ function NeuronPetBar:SetType(button, save)
 	button:SetScript("OnReceiveDrag", function(self) NeuronPetBar:OnReceiveDrag(self) end)
 	button:SetScript("OnEnter", function(self, ...) NeuronPetBar:OnEnter(self, ...) end)
 	button:SetScript("OnLeave", function(self) NeuronPetBar:OnLeave(self) end)
-	button:SetScript("OnUpdate", function(self, elapsed) NeuronPetBar:OnUpdate(self, elapsed) end) ---not working
+	button:SetScript("OnUpdate", function(self, elapsed) NeuronPetBar:OnUpdate(self, elapsed) end)
 
 	button:SetScript("OnAttributeChanged", nil)
 

@@ -1421,13 +1421,15 @@ end
 ---TODO:I need to figure out what to do with this
 function NeuronBar:ACTIONBAR_SHOWGRID(bar, ...)
 	if (not InCombatLockdown() and bar:IsVisible()) then
-		bar:Hide(); bar.showgrid = true
+		bar:Hide()
+		bar.showgrid = true
 	end
 end
 
 function NeuronBar:ACTIONBAR_HIDEGRID(bar, ...)
 	if (not InCombatLockdown() and bar.showgrid) then
-		bar:Show(); bar.showgrid = nil
+		bar:Show()
+		bar.showgrid = nil
 	end
 end
 
@@ -2067,6 +2069,7 @@ function NeuronBar:ToggleBars(show, hide)
 			for index, bar in pairs(BARIndex) do
 				bar:Hide()
 				NEURON.NeuronBar:Update(bar, nil, true)
+				NeuronBar:UpdateObjectGrid(bar)
 			end
 
 			NeuronBar:ChangeBar(nil)
@@ -2085,6 +2088,7 @@ function NeuronBar:ToggleBars(show, hide)
 			for index, bar in pairs(BARIndex) do
 				bar:Show()
 				NEURON.NeuronBar:Update(bar, true)
+				NeuronBar:UpdateObjectGrid(bar, true)
 			end
 		end
 	end

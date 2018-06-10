@@ -2276,7 +2276,7 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 		NeuronButton:MACRO_PickUpMacro(button)
 
 		if (MacroDrag[1]) then
-			--PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+			--PlaySound(SOUNDKIT.IG_ABILITY_CLOSE)
 			button.sound = true
 
 			if (MacroDrag[2] ~= button) then
@@ -2312,6 +2312,14 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 
 		button.border:Hide()
 
+	---shows all action bar buttons in the case you have show grid turned off
+		for _,bar in pairs(NEURON.BARIndex) do
+			if bar.class == "bar" then
+				NEURON.NeuronBar:UpdateObjectGrid(button.bar, true)
+			end
+		end
+
+
 	else
 		StartDrag = false
 	end
@@ -2320,7 +2328,13 @@ end
 
 function NeuronButton:MACRO_OnDragStop(button)
 	button.drag = nil
-	NEURON.NeuronBar:UpdateObjectGrid(button.bar)
+
+	---restores all action bar grid status to what it should be
+	for _,bar in pairs(NEURON.BARIndex) do
+		if bar.class == "bar" then
+			NEURON.NeuronBar:UpdateObjectGrid(button.bar)
+		end
+	end
 end
 
 

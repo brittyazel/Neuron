@@ -403,7 +403,6 @@ function NEURON:PLAYER_ENTERING_WORLD()
 		NEURON:HideBlizzard()
 	end
 
-
 	NEURON.PEW = true
 end
 
@@ -1245,7 +1244,8 @@ function NEURON:ToggleEditFrames(show, hide)
 		NEURON.EditFrameShown = true
 
 		for index, editor in pairs(NEURON.EDITIndex) do
-			editor:Show(); editor.object.editmode = NEURON.EditFrameShown
+			editor:Show()
+			editor.object.editmode = NEURON.EditFrameShown
 
 			if (editor.object.bar) then
 				editor:SetFrameStrata(editor.object.bar:GetFrameStrata())

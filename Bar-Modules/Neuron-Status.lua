@@ -83,6 +83,7 @@ local gDef = {
 
 	[1] = {
 
+		showGrid = true,
 		snapTo = false,
 		snapToFrame = false,
 		snapToPoint = false,
@@ -92,7 +93,7 @@ local gDef = {
 	},
 
 	[2] = {
-
+		showGrid = true,
 		snapTo = false,
 		snapToFrame = false,
 		snapToPoint = false,
@@ -102,7 +103,7 @@ local gDef = {
 	},
 
 	[3] = {
-
+		showGrid = true,
 		snapTo = false,
 		snapToFrame = false,
 		snapToPoint = false,
@@ -112,7 +113,7 @@ local gDef = {
 	},
 
 	[4] = {
-
+		showGrid = true,
 		columns = 1,
 		snapTo = false,
 		snapToFrame = false,
@@ -301,7 +302,8 @@ function NeuronStatusBar:OnInitialize()
 
 		for id,data in pairs(statusbarsDB) do
 			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("status", id)
+				local newbar = NEURON.NeuronBar:CreateNewBar("status", id)
+				newbar.gdata.showGrid = true
 			end
 		end
 
