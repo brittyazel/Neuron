@@ -240,7 +240,7 @@ function NeuronExtraBar:SetGrid(button, show, hide)
 
 		if (show or button.showGrid) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible()) and not HasPetAction(button.actionID)) then
+		elseif (not (button:IsMouseOver() and button:IsVisible())) then
 			button:Hide()
 		end
 	end

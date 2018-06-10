@@ -249,6 +249,7 @@ function NeuronButton:OnEnable()
 	---these two hooks are to call a function to check if we dragged an ability off the bar or not
 	NeuronButton:SecureHookScript(WorldFrame, "OnMouseDown")
 
+
 	NeuronButton:SecureHook("ToggleCollectionsJournal")
 
 
@@ -557,8 +558,6 @@ function NeuronButton:cooldownsOnUpdate(frame, elapsed)
 		end
 	end
 end
-
-
 
 function NeuronButton:updateAuraInfo(unit)
 
@@ -1488,6 +1487,7 @@ function NeuronButton:MACRO_OnUpdate(button, elapsed) --this function uses A TON
 
 		NeuronButton:MACRO_UpdateButton(button)
 
+
 		if (button.auraQueue and not button.iconframecooldown.active) then
 			local unit, spell = (":"):split(button.auraQueue)
 			if (unit and spell) then
@@ -2320,6 +2320,7 @@ end
 
 function NeuronButton:MACRO_OnDragStop(button)
 	button.drag = nil
+	NEURON.NeuronBar:UpdateObjectGrid(button.bar)
 end
 
 

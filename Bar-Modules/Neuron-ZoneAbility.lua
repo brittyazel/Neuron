@@ -80,7 +80,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
-		SHOWGRID = false,
+		SHOWGRID = true,
 		SNAPTO = true,
 		UPCLICKS = true,
 		DOWNCLICKS = true,
@@ -202,6 +202,7 @@ function NeuronZoneAbilityBar:OnUpdate(button, elapsed)
 
 	if (button.elapsed > NeuronGDB.throttle) then
 		NeuronZoneAbilityBar:STANCE_UpdateButton(button, button.actionID)
+		button:SetGrid(button)
 		button.elapsed = 0
 	end
 end
@@ -266,11 +267,14 @@ function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 
 	local spellID, spellType = GetZoneAbilitySpellInfo();
 
-	if (not InCombatLockdown() and not spellID) then ---should keep the bar hidden when there is no Zone ability available
+	--[[if (not InCombatLockdown() and not spellID) then ---should keep the bar hidden when there is no Zone ability available
 		button:Hide()
 		return
-	end
+	end]]
 
+	if (event == "PLAYER_ENTERING_WORLD") then
+		NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD(button, event, ...)
+	end
 
 	if (event == "SPELLS_CHANGED" or event=="UNIT_AURA") then
 		button.baseName = GetSpellInfo(spellID);
@@ -483,17 +487,14 @@ end
 
 function NeuronZoneAbilityBar:SetGrid(button, show, hide)
 
-	if (true) then return end
-
 	if (not InCombatLockdown()) then
 
-		local texture, name, isActive, isCastable = GetShapeshiftFormInfo(button.id);
 		button:SetAttribute("isshown", button.showGrid)
 		button:SetAttribute("showgrid", button)
 
 		if (show or button.showGrid) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible()) and not texture) then
+		elseif (not (button:IsMouseOver() and button:IsVisible())) then
 			button:Hide()
 		end
 	end
@@ -512,7 +513,6 @@ function NeuronZoneAbilityBar:LoadAux(button)
 	button.style:SetHeight(95)
 	button.hotkey:SetPoint("TOPLEFT", -4, -6)
 	button.style:SetTexture("Interface\\ExtraButton\\GarrZoneAbility-Armory")
-	button:Hide()
 end
 
 
@@ -551,18 +551,25 @@ function NeuronZoneAbilityBar:GetDefaults(button)
 	--empty
 end
 
+function NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD(button, event, ...)
+	button:SetGrid(button, true)
+end
+
+
 function NeuronZoneAbilityBar:SetType(button, save)
 
 	button:RegisterUnitEvent("UNIT_AURA", "player");
-	button:RegisterEvent("SPELL_UPDATE_COOLDOWN");
-	button:RegisterEvent("SPELL_UPDATE_USABLE");
-	button:RegisterEvent("SPELL_UPDATE_CHARGES");
+	--button:RegisterEvent("SPELL_UPDATE_COOLDOWN");
+	--button:RegisterEvent("SPELL_UPDATE_USABLE");
+	--button:RegisterEvent("SPELL_UPDATE_CHARGES");
 	button:RegisterEvent("SPELLS_CHANGED");
-	button:RegisterEvent("ACTIONBAR_SLOT_CHANGED");
-	button:RegisterEvent("ZONE_CHANGED")
+	--button:RegisterEvent("ACTIONBAR_SLOT_CHANGED");
+	--button:RegisterEvent("ZONE_CHANGED")
 
-	button:RegisterEvent("UNIT_SPELLCAST_FAILED")
+	--button:RegisterEvent("UNIT_SPELLCAST_FAILED")
 	--BUTTON.MACRO_UNIT_SPELLCAST_FAILED
+
+	button:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 
 

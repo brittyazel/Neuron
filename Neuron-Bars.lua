@@ -1219,6 +1219,7 @@ function NeuronBar:LoadObjects(bar, init)
 			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
 			object:SetAux(object)
 			object:SetType(object, nil, nil, init)
+
 			object:SetGrid(object)
 
 			bar.objCount = bar.objCount + 1
@@ -1853,7 +1854,6 @@ end
 function NeuronBar:UpdateObjectGrid(bar, show)
 	local object
 
-	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
 	for i, objID in ipairs(bar.gdata.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 

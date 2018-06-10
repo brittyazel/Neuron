@@ -103,7 +103,7 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronPetBar:OnEnable()
 
-
+	NeuronPetBar:SecureHook("SpellButton_OnDragStart", "ShowGridOnSpellbookDrag")
 end
 
 
@@ -117,7 +117,6 @@ end
 
 
 ------------------------------------------------------------------------------
-
 
 -------------------------------------------------------------------------------
 
@@ -149,6 +148,20 @@ function NeuronPetBar:CreateBarsAndButtons()
     end
 end
 
+function NeuronPetBar:ShowGridOnSpellbookDrag()
+	for _,bar in pairs(NEURON.BARIndex) do
+		if bar.class == "pet" then
+			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+		end
+	end
+end
+
+function NeuronPetBar:RestoreGridOnSpellbookDrag()
+	for _,bar in pairs(NEURON.BARIndex) do
+		NEURON.NeuronBar:UpdateObjectGrid(bar)
+	end
+end
+
 --this function gets called from the controlOnUpdate in the Neuron.lua file
 function NeuronPetBar:controlOnUpdate(frame, elapsed)
 	local alphaTimer, alphaDir = 0, 0
@@ -167,7 +180,7 @@ function NeuronPetBar:controlOnUpdate(frame, elapsed)
 
 end
 
-local function HasPetAction(id, icon)
+function NeuronPetBar:HasPetAction(id, icon)
 
 	local _, _, texture = GetPetActionInfo(id)
 
@@ -261,7 +274,7 @@ function NeuronPetBar:PET_UpdateCooldown(button)
 
 	local actionID = button.actionID
 
-	if (HasPetAction(actionID)) then
+	if (NeuronPetBar:HasPetAction(actionID)) then
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
@@ -281,7 +294,7 @@ function NeuronPetBar:PET_UpdateTexture(button, force)
 
 	if (not button:GetSkinned(button)) then
 
-		if (HasPetAction(actionID, true) or force) then
+		if (NeuronPetBar:HasPetAction(actionID, true) or force) then
 			button:SetNormalTexture(button.hasAction or "")
 			button:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -356,6 +369,11 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 
 		NeuronPetBar:PET_UpdateButton(button, button.actionID)
 
+		if not GetCursorInfo() then
+			NeuronPetBar:RestoreGridOnSpellbookDrag()
+		end
+
+
 		if (button.updateRightClick and not InCombatLockdown()) then
 			local spell = GetPetActionInfo(button.actionID)
 
@@ -369,6 +387,13 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 	end
 
 	button.elapsed = button.elapsed + elapsed
+
+	---This part is so that the grid get's set properly on login
+	if not button.GridIsSet then
+		C_Timer.After(2, function() NEURON.NeuronBar:UpdateObjectGrid(button.bar) end)
+		button.GridIsSet = true
+	end
+
 end
 
 
@@ -417,8 +442,8 @@ function NeuronPetBar:PLAYER_ENTERING_WORLD(button, event, ...)
 	if InCombatLockdown() then return end
 	NEURON.NeuronBinder:ApplyBindings(button)
 	button.updateRightClick = true
+	button:SetGrid(button, true)
 end
-
 
 NeuronPetBar.PET_SPECIALIZATION_CHANGED = NeuronPetBar.PLAYER_ENTERING_WORLD
 
@@ -455,8 +480,14 @@ function NeuronPetBar:OnDragStart(button)
 
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
 	end
+
+	NeuronPetBar:ShowGridOnSpellbookDrag()
 end
 
+
+function NeuronPetBar:OnDragStop(button)
+	NeuronPetBar:RestoreGridOnSpellbookDrag()
+end
 
 function NeuronPetBar:OnReceiveDrag(button)
 	local cursorType = GetCursorInfo()
@@ -480,7 +511,7 @@ function NeuronPetBar:PET_SetTooltip(button)
 		if (button.tooltipSubtext and button.UberTooltips) then
 			GameTooltip:AddLine(button.tooltipSubtext, "", 0.5, 0.5, 0.5)
 		end
-	elseif (HasPetAction(actionID)) then
+	elseif (NeuronPetBar:HasPetAction(actionID)) then
 		if (button.UberTooltips) then
 			GameTooltip:SetPetAction(actionID)
 		else
@@ -550,6 +581,8 @@ function NeuronPetBar:SetData(button, bar)
 		else
 			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
 		end
+
+		button.showGrid = bar.gdata.showGrid
 
 		button.barLock = bar.cdata.barLock
 		button.barLockAlt = bar.cdata.barLockAlt
@@ -683,20 +716,21 @@ end
 
 function NeuronPetBar:SetGrid(button, show, hide)
 
-	if (true) then return end
-
 	if (not InCombatLockdown()) then
 
 		button:SetAttribute("isshown", button.showGrid)
-		button:SetAttribute("showgrid", button)
+		button:SetAttribute("showgrid", show)
 
-		if (button or button.showGrid) then
+		if (show or button.showGrid) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible()) and not HasPetAction(button.actionID)) then
+		elseif (not (button:IsMouseOver() and button:IsVisible()) and not NeuronPetBar:HasPetAction(button.actionID)) then
 			button:Hide()
 		end
+
 	end
 end
+
+
 
 function NeuronPetBar:SetAux(button)
 
@@ -762,10 +796,12 @@ function NeuronPetBar:SetType(button, save)
 	button:SetScript("OnEvent", function(self, event, ...) NeuronPetBar:PET_OnEvent(self, event, ...) end)
 	button:SetScript("PostClick", function(self) NeuronPetBar:PostClick(self) end)
 	button:SetScript("OnDragStart", function(self) NeuronPetBar:OnDragStart(self) end)
+	button:SetScript("OnDragStop", function(self) NeuronPetBar:OnDragStop(self) end)
 	button:SetScript("OnReceiveDrag", function(self) NeuronPetBar:OnReceiveDrag(self) end)
 	button:SetScript("OnEnter", function(self, ...) NeuronPetBar:OnEnter(self, ...) end)
 	button:SetScript("OnLeave", function(self) NeuronPetBar:OnLeave(self) end)
-	button:SetScript("OnUpdate", function(self, elapsed) NeuronPetBar:OnUpdate(self, elapsed) end)
+	button:SetScript("OnUpdate", function(self, elapsed) NeuronPetBar:OnUpdate(self, elapsed) end) ---not working
+
 	button:SetScript("OnAttributeChanged", nil)
 
 end
