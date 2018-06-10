@@ -613,7 +613,6 @@ function NEURON:controlOnUpdate(frame, elapsed)
 	---Throttled OnUpdate calls
 	if (NEURON.elapsed > GDB.throttle and NEURON.PEW) then
 
-		NEURON.NeuronBar:controlOnUpdate(frame, elapsed)
 		NEURON.NeuronButton:cooldownsOnUpdate(frame, elapsed)
 		NEURON.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
 		NEURON.NeuronPetBar:controlOnUpdate(frame, elapsed)
@@ -625,6 +624,7 @@ function NEURON:controlOnUpdate(frame, elapsed)
 	---UnThrottled OnUpdate calls
 	if(NEURON.PEW) then
 		NEURON.NeuronButton:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+		NEURON.NeuronBar:controlOnUpdate(frame, elapsed)
 	end
 
 end

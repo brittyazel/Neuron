@@ -279,10 +279,10 @@ function NeuronExtraBar:SetExtraButtonTex(button)
 	end
 end
 
----TODO: This should get roped into Ace Event
+
 function NeuronExtraBar:VehicleLeave_OnEvent(button, event, ...)
 	if (event == "UPDATE_EXTRA_ACTIONBAR") then
-		button:Hide(); --return
+		button:Hide()
 	end
 
 	if (ActionBarController_GetCurrentActionBarState) then

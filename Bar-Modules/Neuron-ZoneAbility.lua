@@ -226,7 +226,6 @@ function NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button)
 
 
 	if zoneabilitybarsCDB[1].border then
-
 		button.style:Show()
 	else
 		button.style:Hide()
@@ -268,10 +267,6 @@ function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 
 	local spellID, spellType = GetZoneAbilitySpellInfo();
 
-	--[[if (not InCombatLockdown() and not spellID) then ---should keep the bar hidden when there is no Zone ability available
-		button:Hide()
-		return
-	end]]
 
 	if (event == "PLAYER_ENTERING_WORLD") then
 		NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD(button, event, ...)
@@ -284,31 +279,26 @@ function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 
 
 	button.spellID = spellID;
-	--local lastState = button.BuffSeen; --sets a flag to mark if we have seen the change in UNIT_AURA
-	button.BuffSeen = (spellID ~= 0);
 
-
-	local display
-
-	if (button.BuffSeen) then
+	if (spellID) then
 
 		if ( not GetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY) and garrisonType == LE_GARRISON_TYPE_6_0 ) then
 			SetCVarBitfield( "closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY, true );
 		end
 
-		display = true
 		NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button);
+
+		if (not InCombatLockdown()) then
+			button:Show();
+		end
 	else
 		if (not button.CurrentTexture) then
 			button.CurrentTexture = select(3, GetSpellInfo(button.baseName));
 		end
-		display = false
-	end
 
-	if (not InCombatLockdown() and display) then
-		button:Show();
-	elseif (not InCombatLockdown() and not display) then
-		button:Hide();
+		if (not InCombatLockdown()) then
+			button:Hide();
+		end
 	end
 end
 
@@ -496,7 +486,7 @@ function NeuronZoneAbilityBar:SetGrid(button, show, hide)
 		if (show or button.showGrid) then
 			button:Show()
 		elseif (not (button:IsMouseOver() and button:IsVisible())) then
-			--button:Hide()
+			button:Hide()
 		end
 	end
 end
