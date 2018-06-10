@@ -2276,8 +2276,7 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 		NeuronButton:MACRO_PickUpMacro(button)
 
 		if (MacroDrag[1]) then
-			--PlaySound(SOUNDKIT.IG_ABILITY_CLOSE)
-			button.sound = true
+			--PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
 			if (MacroDrag[2] ~= button) then
 				button.dragbutton = nil
