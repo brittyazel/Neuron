@@ -2312,16 +2312,18 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 		button.border:Hide()
 
 	---shows all action bar buttons in the case you have show grid turned off
-		for _,bar in pairs(NEURON.BARIndex) do
-			if bar.class == "bar" then
-				NEURON.NeuronBar:UpdateObjectGrid(button.bar, true)
-			end
-		end
 
 
 	else
 		StartDrag = false
 	end
+
+	for i,bar in pairs(NEURON.BARIndex) do
+		if bar.class == "bar" then
+			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+		end
+	end
+
 end
 
 

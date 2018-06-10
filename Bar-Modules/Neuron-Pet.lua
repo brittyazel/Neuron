@@ -150,17 +150,19 @@ end
 
 function NeuronPetBar:ShowGridOnSpellbookDrag()
 	for _,bar in pairs(NEURON.BARIndex) do
-		if bar.class == "pet" then
-			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
-		elseif bar.class =="bar" then
-			NEURON.NeuronBar:UpdateObjectGrid(bar)
- 		end
+		if GetCursorInfo() == "petaction" then
+			if bar.class == "pet" then
+				NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+			elseif bar.class =="bar" then
+				NEURON.NeuronBar:UpdateObjectGrid(bar)
+			end
+		end
 	end
 end
 
 function NeuronPetBar:RestoreGridOnSpellbookDrag()
 	for _,bar in pairs(NEURON.BARIndex) do
-        if bar.class == "pet" or bar.class == "bar" then
+        if bar.class == "pet" then
 		    NEURON.NeuronBar:UpdateObjectGrid(bar)
         end
 	end
@@ -384,7 +386,6 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 		end
 
 
-
 		button.elapsed = 0
 	end
 
@@ -492,7 +493,11 @@ function NeuronPetBar:OnDragStart(button)
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
 	end
 
-	NeuronPetBar:ShowGridOnSpellbookDrag()
+	for i,bar in pairs(NEURON.BARIndex) do
+		if bar.class == "pet" then
+			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+		end
+	end
 end
 
 

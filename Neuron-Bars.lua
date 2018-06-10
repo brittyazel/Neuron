@@ -1855,7 +1855,6 @@ end
 
 function NeuronBar:UpdateObjectGrid(bar, show)
 	local object
-
 	for i, objID in ipairs(bar.gdata.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
