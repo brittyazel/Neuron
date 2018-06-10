@@ -180,6 +180,12 @@ function NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
 		end
 	end
 
+	for _,bar in pairs(NEURON.BARIndex) do
+		if bar.class == "zoneabiitybar" then
+			NEURON.NeuronBar:UpdateObjectGrid(bar)
+		end
+	end
+
 end
 
 --- Updates button's texture
@@ -206,6 +212,7 @@ function NeuronZoneAbilityBar:OnUpdate(button, elapsed)
 		NeuronZoneAbilityBar:STANCE_UpdateButton(button, button.actionID)
 		button.elapsed = 0
 	end
+
 end
 
 

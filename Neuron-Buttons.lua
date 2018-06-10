@@ -2333,7 +2333,7 @@ function NeuronButton:MACRO_OnDragStop(button)
 	---restores all action bar grid status to what it should be
 	for _,bar in pairs(NEURON.BARIndex) do
 		if bar.class == "bar" then
-			NEURON.NeuronBar:UpdateObjectGrid(button.bar)
+			NEURON.NeuronBar:UpdateObjectGrid(bar)
 		end
 	end
 end

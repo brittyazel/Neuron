@@ -1235,6 +1235,10 @@ function NEURON:ToggleEditFrames(show, hide)
 
 		NEURON.NeuronButton:ChangeObject()
 
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
+		end
+
 	else
 
 		--NEURON:ToggleMainMenu(nil, true)
