@@ -1516,7 +1516,7 @@ end
 function NeuronButton:MACRO_HideGrid(button)
 	if (not InCombatLockdown()) then
 
-		if (not button.showGrid and not NeuronButton:MACRO_HasAction(button) and not NEURON.BarsShown and not NEURON.EditFrameShown) then
+		if (not button.showGrid and not NeuronButton:MACRO_HasAction(button) or not NEURON.BarEditMode or not NEURON.ButtonEditMode) then
 			button:Hide()
 		end
 	end
@@ -3316,7 +3316,7 @@ function NeuronButton:SetGrid(button, show, hide)
 
 		if (show or button.showGrid) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible()) and not NeuronButton:MACRO_HasAction(button)) then
+		elseif not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
 			button:Hide()
 		end
 	end

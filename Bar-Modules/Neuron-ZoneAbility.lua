@@ -22,7 +22,7 @@ local gDef = {
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,
-	showGrid = true,
+	showGrid = false,
 	point = "BOTTOM",
 	x = 350,
 	y = 75,
@@ -108,7 +108,6 @@ function NeuronZoneAbilityBar:OnInitialize()
 		for id,data in pairs(zoneabilitybarsCDB) do
 			if (data ~= nil) then
 				local newbar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
-				newbar.gdata.showGrid = true
 			end
 		end
 
@@ -180,12 +179,6 @@ function NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
 		end
 	end
 
-	for _,bar in pairs(NEURON.BARIndex) do
-		if bar.class == "zoneabiitybar" then
-			NEURON.NeuronBar:UpdateObjectGrid(bar)
-		end
-	end
-
 end
 
 --- Updates button's texture
@@ -209,27 +202,35 @@ function NeuronZoneAbilityBar:OnUpdate(button, elapsed)
 	button.elapsed = button.elapsed + elapsed
 
 	if (button.elapsed > NeuronGDB.throttle) then
+
 		NeuronZoneAbilityBar:STANCE_UpdateButton(button, button.actionID)
+
 		button.elapsed = 0
 	end
 
 end
 
+function NeuronZoneAbilityBar:SetNeuronButtonTex(button)
+
+	local _, _, _, _, _, _, spellID = GetSpellInfo(button.baseName);
+
+	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
+	button.style:SetTexture(texture)
+end
+
 
 function NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button)
+
 	if (not button.baseName) then
 		return;
 	end
+
 	local name, _, tex, _, _, _, spellID = GetSpellInfo(button.baseName);
-	--ZoneSpellAbility = button.baseName
 
 	button.CurrentTexture = tex;
 	button.CurrentSpell = name;
-	button.style:SetTexture(ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK);
 	button.iconframeicon:SetTexture(tex);
-
-	--button.SpellButton.Style:SetTexture(ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK);
-	--button.SpellButton.Icon:SetTexture(tex);
+	NeuronZoneAbilityBar:SetNeuronButtonTex(button)
 
 
 	if zoneabilitybarsCDB[1].border then
@@ -275,38 +276,28 @@ function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 	local spellID, spellType = GetZoneAbilitySpellInfo();
 
 
-	if (event == "PLAYER_ENTERING_WORLD") then
-		NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD(button, event, ...)
-	end
-
 	if (event == "SPELLS_CHANGED" or event=="UNIT_AURA") then
 		button.baseName = GetSpellInfo(spellID);
 		ZoneAbilitySpellID = spellID
-	end
 
+
+		if (spellID) then
+
+			if ( not GetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY) and garrisonType == LE_GARRISON_TYPE_6_0 ) then
+				SetCVarBitfield( "closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY, true );
+			end
+
+			NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button);
+
+			if (not InCombatLockdown()) then
+				button:Show();
+			end
+		end
+
+		button:SetGrid(button)
+	end
 
 	button.spellID = spellID;
-
-	if (spellID) then
-
-		if ( not GetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY) and garrisonType == LE_GARRISON_TYPE_6_0 ) then
-			SetCVarBitfield( "closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY, true );
-		end
-
-		NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button);
-
-		if (not InCombatLockdown()) then
-			button:Show();
-		end
-	else
-		if (not button.CurrentTexture) then
-			button.CurrentTexture = select(3, GetSpellInfo(button.baseName));
-		end
-
-		if (not InCombatLockdown()) then
-			button:Hide();
-		end
-	end
 end
 
 
@@ -483,16 +474,12 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 	end
 end
 
-function NeuronZoneAbilityBar:SetGrid(button, show, hide)
+function NeuronZoneAbilityBar:SetGrid(button, show)
 
 	if (not InCombatLockdown()) then
-
-		button:SetAttribute("isshown", button.showGrid)
-		button:SetAttribute("showgrid", button)
-
-		if (show or button.showGrid) then
+		if (show) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible())) then
+		elseif not button.spellID and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
 			button:Hide()
 		end
 	end
@@ -549,26 +536,17 @@ function NeuronZoneAbilityBar:GetDefaults(button)
 	--empty
 end
 
-function NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD(button, event, ...)
-	button:SetGrid(button, true)
-end
-
 
 function NeuronZoneAbilityBar:SetType(button, save)
 
 	button:RegisterUnitEvent("UNIT_AURA", "player");
-	--button:RegisterEvent("SPELL_UPDATE_COOLDOWN");
-	--button:RegisterEvent("SPELL_UPDATE_USABLE");
-	--button:RegisterEvent("SPELL_UPDATE_CHARGES");
+	button:RegisterEvent("SPELL_UPDATE_COOLDOWN");
+	button:RegisterEvent("SPELL_UPDATE_USABLE");
+	button:RegisterEvent("SPELL_UPDATE_CHARGES");
 	button:RegisterEvent("SPELLS_CHANGED");
-	--button:RegisterEvent("ACTIONBAR_SLOT_CHANGED");
-	--button:RegisterEvent("ZONE_CHANGED")
-
-	--button:RegisterEvent("UNIT_SPELLCAST_FAILED")
-	--BUTTON.MACRO_UNIT_SPELLCAST_FAILED
-
-	button:RegisterEvent("PLAYER_ENTERING_WORLD")
-
+	button:RegisterEvent("ACTIONBAR_SLOT_CHANGED");
+	button:RegisterEvent("ZONE_CHANGED")
+	button:RegisterEvent("UNIT_SPELLCAST_FAILED")
 
 
 	button.actionID = button.id
@@ -613,6 +591,7 @@ function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, quer
 			Neuron.CurrentBar.gdata.border = true
 		end
 	end
+
 	NEURON.NeuronBar:Update(bar)
 	NeuronZoneAbilityBar:UpdateFrame()
 end

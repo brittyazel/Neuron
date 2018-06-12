@@ -239,6 +239,10 @@ local handler
 
 local level, stanceStringsUpdated
 
+NEURON.BarEditMode = false
+NEURON.ButtonEditMode = false
+NEURON.BindingMode = false
+
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
@@ -335,19 +339,19 @@ function NEURON:OnEnable()
 
 	GameMenuFrame:HookScript("OnShow", function(self)
 
-		if (NEURON.BarsShown) then
+		if (NEURON.BarEditMode) then
 			HideUIPanel(self)
-			NEURON.NeuronBar:ToggleBars(nil, true)
+			NEURON:ToggleBarEditMode(false)
 		end
 
-		if (NEURON.EditFrameShown) then
+		if (NEURON.ButtonEditMode) then
 			HideUIPanel(self)
-			NEURON:ToggleEditFrames(nil, true)
+			NEURON:ToggleButtonEditMode(false)
 		end
 
 		if (NEURON.BindingMode) then
 			HideUIPanel(self)
-			NEURON:ToggleBindings(nil, true)
+			NEURON:ToggleBindingMode(false)
 		end
 
 	end)
@@ -369,16 +373,16 @@ end
 
 function NEURON:PLAYER_REGEN_DISABLED()
 
-	if (NEURON.EditFrameShown) then
-		NEURON:ToggleEditFrames(nil, true)
+	if (NEURON.ButtonEditMode) then
+		NEURON:ToggleButtonEditMode(false)
 	end
 
 	if (NEURON.BindingMode) then
-		NEURON:ToggleBindings(nil, true)
+		NEURON:ToggleBindingMode(false)
 	end
 
-	if (NEURON.BarsShown) then
-		NEURON.NeuronBar:ToggleBars(nil, true)
+	if (NEURON.BarEditMode) then
+		NEURON:ToggleBarEditMode(false)
 	end
 
 end
@@ -499,11 +503,11 @@ local slashFunctions = {
 	{L["Menu"], L["Menu_Description"], "ToggleMainMenu"},
 	{L["Create"], L["Create_Description"], "CreateNewBar"},
 	{L["Delete"], L["Delete_Description"], "DeleteBar"},
-	{L["Config"], L["Config_Description"], "ToggleBars"},
+	{L["Config"], L["Config_Description"], "ToggleBarEditMode"},
 	{L["Add"], L["Add_Description"], "AddObjectsToBar"},
 	{L["Remove"], L["Remove_Description"], "RemoveObjectsFromBar"},
-	{L["Edit"], L["Edit_Description"], "ToggleEditFrames"},
-	{L["Bind"], L["Bind_Description"], "ToggleBindings"},
+	{L["Edit"], L["Edit_Description"], "ToggleButtonEditMode"},
+	{L["Bind"], L["Bind_Description"], "ToggleBindingMode"},
 	{L["Scale"], L["Scale_Description"], "ScaleBar"},
 	{L["SnapTo"], L["SnapTo_Description"], "SnapToBar"},
 	{L["AutoHide"], L["AutoHide_Description"], "AutoHideBar"},
@@ -626,7 +630,6 @@ function NEURON:controlOnUpdate(frame, elapsed)
 		NEURON.NeuronButton:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 		NEURON.NeuronBar:controlOnUpdate(frame, elapsed)
 	end
-
 end
 
 -----------------------------------------------------------------
@@ -1213,43 +1216,54 @@ function NEURON:ToggleMainMenu(show, hide)
 	InterfaceOptionsFrame_OpenToCategory("Neuron");
 end
 
+function NEURON:ToggleBarEditMode(show)
 
-function NEURON:ToggleEditFrames(show, hide)
+	if show and NEURON.BarEditMode == false then
 
-	if (NEURON.EditFrameShown or hide) then
+		NEURON.BarEditMode = true
 
-		NEURON.EditFrameShown = false
+		NEURON:ToggleButtonEditMode(false)
+		NEURON:ToggleBindingMode(false)
 
-		for index, editor in pairs(NEURON.EDITIndex) do
-			editor:Hide()
-			editor.object.editmode = NEURON.EditFrameShown
-			editor:SetFrameStrata("LOW")
-		end
-
-		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
-			if (bar.handler:GetAttribute("assertstate")) then
-				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
-			end
-		end
-
-		NEURON.NeuronButton:ChangeObject()
-
-		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
+		for index, bar in pairs(BARIndex) do
+			bar:Show() --this shows the transparent overlay over a bar
+			NEURON.NeuronBar:Update(bar, true)
+			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
 		end
 
 	else
 
-		--NEURON:ToggleMainMenu(nil, true)
-		NEURON.NeuronBar:ToggleBars(nil, true)
-		NEURON:ToggleBindings(nil, true)
+		NEURON.BarEditMode = false
 
-		NEURON.EditFrameShown = true
+		for index, bar in pairs(BARIndex) do
+			bar:Hide()
+			NEURON.NeuronBar:Update(bar, nil, true)
+			NEURON.NeuronBar:UpdateObjectGrid(bar)
+		end
+
+		NEURON.NeuronBar:ChangeBar(nil)
+
+		if (NeuronBarEditor)then
+			NeuronBarEditor:Hide()
+		end
+
+	end
+
+end
+
+function NEURON:ToggleButtonEditMode(show)
+
+	if show and NEURON.ButtonEditMode == false then
+
+		NEURON.ButtonEditMode = true
+
+		NEURON:ToggleBarEditMode(false)
+		NEURON:ToggleBindingMode(false)
+
 
 		for index, editor in pairs(NEURON.EDITIndex) do
 			editor:Show()
-			editor.object.editmode = NEURON.EditFrameShown
+			editor.object.editmode = NEURON.ButtonEditMode
 
 			if (editor.object.bar) then
 				editor:SetFrameStrata(editor.object.bar:GetFrameStrata())
@@ -1258,31 +1272,42 @@ function NEURON:ToggleEditFrames(show, hide)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
+			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
 		end
+
+	else
+
+		NEURON.ButtonEditMode = false
+
+		for index, editor in pairs(NEURON.EDITIndex) do
+			editor:Hide()
+			editor.object.editmode = NEURON.ButtonEditMode
+			editor:SetFrameStrata("LOW")
+		end
+
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectGrid(bar)
+
+			if (bar.handler:GetAttribute("assertstate")) then
+				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
+			end
+		end
+
+		NEURON.NeuronButton:ChangeObject()
+
 	end
 end
 
 
---- Toggles the displaying of key bindings
--- @param show: True if to be displayed
--- @param hide: True if to be hidden
-function NEURON:ToggleBindings(show, hide)
-	if (NEURON.BindingMode or hide) then
-		NEURON.BindingMode = false
+function NEURON:ToggleBindingMode(show)
 
-		for _, binder in pairs(NEURON.BINDIndex) do
-			binder:Hide(); binder.button.editmode = NEURON.BindingMode
-			binder:SetFrameStrata("LOW")
-			if (not NEURON.BarsShown) then
-				binder.button:SetGrid(binder.button)
-			end
-		end
-
-	else
-		NEURON:ToggleEditFrames(nil, true)
+	if show and NEURON.BindingMode == false then
 
 		NEURON.BindingMode = true
+
+		NEURON:ToggleButtonEditMode(false)
+		NEURON:ToggleBarEditMode(false)
+
 
 		for _, binder in pairs(NEURON.BINDIndex) do
 			binder:Show()
@@ -1295,6 +1320,25 @@ function NEURON:ToggleBindings(show, hide)
 			end
 		end
 
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+		end
+
+	else
+
+		NEURON.BindingMode = false
+
+		for _, binder in pairs(NEURON.BINDIndex) do
+			binder:Hide(); binder.button.editmode = NEURON.BindingMode
+			binder:SetFrameStrata("LOW")
+			if (not NEURON.BarEditMode) then
+				binder.button:SetGrid(binder.button)
+			end
+		end
+
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectGrid(bar)
+		end
 	end
 end
 

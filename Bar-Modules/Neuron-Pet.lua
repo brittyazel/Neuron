@@ -397,7 +397,7 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 		button.GridIsSet = true
 	end
 
-	if button.showGrid == false and not NEURON.BarsShown then
+	if button.showGrid == false and not NEURON.BarEditMode then
 		if not GetCursorInfo() then
 			NeuronPetBar:RestoreGridOnSpellbookDrag()
 		end
@@ -741,7 +741,7 @@ function NeuronPetBar:SetGrid(button, show, hide)
 
 		if (show or button.showGrid) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible()) and not NeuronPetBar:HasPetAction(button.actionID)) then
+		elseif not NeuronPetBar:HasPetAction(button.actionID) and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
 			button:Hide()
 		end
 

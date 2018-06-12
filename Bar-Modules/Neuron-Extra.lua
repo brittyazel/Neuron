@@ -252,16 +252,13 @@ function NeuronExtraBar:LoadData(button, spec, state)
 	end
 end
 
-function NeuronExtraBar:SetGrid(button, show, hide)
+function NeuronExtraBar:SetGrid(button, show)
 
 	if (not InCombatLockdown()) then
 
-		button:SetAttribute("isshown", button.showGrid)
-		button:SetAttribute("showgrid", show)
-
-		if (show or button.showGrid) then
+		if (show) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible())) then
+		elseif (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
 			button:Hide()
 		end
 	end

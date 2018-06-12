@@ -238,7 +238,6 @@ function NeuronBar:OnInitialize()
 
 	NeuronBar.HideZoneAbilityBorder = NEURON.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
 	NEURON.CreateNewBar = NeuronBar.CreateNewBar --temp just so slash functions still work
-	NEURON.ToggleBars = NeuronBar.ToggleBars --temp just so slash functions still work
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -1705,7 +1704,7 @@ function NeuronBar:OnShow(bar)
 
 	bar.handler:SetAttribute("editmode", true)
 	bar.handler:Show()
-	NeuronBar:UpdateObjectGrid(bar, NEURON.BarsShown)
+	NeuronBar:UpdateObjectGrid(bar, NEURON.BarEditMode)
 	bar:EnableKeyboard(false)
 end
 
@@ -2059,41 +2058,6 @@ function NeuronBar:ChangeBar(bar)
 	return newBar
 end
 
-function NeuronBar:ToggleBars(show, hide)
-	if (NEURON.PEW) then
-		if ((NEURON.BarsShown or hide) and not show) then
-
-			NEURON.BarsShown = nil
-
-			for index, bar in pairs(BARIndex) do
-				bar:Hide()
-				NEURON.NeuronBar:Update(bar, nil, true)
-				NeuronBar:UpdateObjectGrid(bar)
-			end
-
-			NeuronBar:ChangeBar(nil)
-
-			if (NeuronBarEditor)then
-				NeuronBarEditor:Hide()
-			end
-
-		else
-
-			--NEURON:ToggleMainMenu(nil, true)
-			NEURON:ToggleEditFrames(nil, true)
-
-			NEURON.BarsShown = true
-
-			for index, bar in pairs(BARIndex) do
-				bar:Show()
-				NEURON.NeuronBar:Update(bar, true)
-				NeuronBar:UpdateObjectGrid(bar, true)
-			end
-		end
-	end
-
-end
-
 function NeuronBar:DeleteBar(bar)
 	local handler = bar.handler
 
@@ -2204,7 +2168,7 @@ function NeuronBar:AddObjectsToBar(bar, num)
 	NeuronBar:SetPerimeter(bar)
 	NeuronBar:SetSize(bar)
 	NeuronBar:Update(bar)
-	NeuronBar:UpdateObjectGrid(bar, NEURON.BarsShown)
+	NeuronBar:UpdateObjectGrid(bar, NEURON.BarEditMode)
 
 end
 
@@ -2561,7 +2525,7 @@ function NeuronBar:ShowGridSet(bar, msg, gui, checked, query)
 	end
 
 	NeuronBar:UpdateObjectData(bar)
-	NeuronBar:UpdateObjectGrid(bar, NEURON.BarsShown)
+	NeuronBar:UpdateObjectGrid(bar, NEURON.BarEditMode)
 	NeuronBar:Update(bar)
 end
 
