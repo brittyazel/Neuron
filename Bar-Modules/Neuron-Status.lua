@@ -257,7 +257,7 @@ function NeuronStatusBar:OnInitialize()
 	STATUS.SaveData = NeuronStatusBar.SaveData
 	STATUS.SetAux = NeuronStatusBar.SetAux
 	STATUS.LoadAux = NeuronStatusBar.LoadAux
-	STATUS.SetGrid = NeuronStatusBar.SetGrid
+	STATUS.SetObjectVisibility = NeuronStatusBar.SetObjectVisibility
 	STATUS.SetDefaults = NeuronStatusBar.SetDefaults
 	STATUS.GetDefaults = NeuronStatusBar.GetDefaults
 	STATUS.SetType = NeuronStatusBar.SetType
@@ -2098,7 +2098,7 @@ end
 
 
 
-function NeuronStatusBar:SetGrid(button, show, hide)
+function NeuronStatusBar:SetObjectVisibility(button, show, hide)
 
 	if (show) then
 

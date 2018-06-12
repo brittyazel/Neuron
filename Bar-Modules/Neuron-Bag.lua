@@ -59,7 +59,7 @@ function NeuronBagBar:OnInitialize()
     BAGBTN.SaveData = NeuronBagBar.SaveData
     BAGBTN.SetAux = NeuronBagBar.SetAux
     BAGBTN.LoadAux = NeuronBagBar.LoadAux
-    BAGBTN.SetGrid = NeuronBagBar.SetGrid
+    BAGBTN.SetObjectVisibility = NeuronBagBar.SetObjectVisibility
     BAGBTN.SetDefaults = NeuronBagBar.SetDefaults
     BAGBTN.GetDefaults = NeuronBagBar.GetDefaults
     BAGBTN.SetType = NeuronBagBar.SetType
@@ -222,7 +222,7 @@ function NeuronBagBar:LoadData(button, spec, state)
     end
 end
 
-function NeuronBagBar:SetGrid(button, show, hide)
+function NeuronBagBar:SetObjectVisibility(button, show, hide)
 
     --empty
 

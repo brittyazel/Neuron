@@ -218,7 +218,7 @@ function NeuronButton:OnInitialize()
 	BUTTON.SaveData = NeuronButton.SaveData
 	BUTTON.SetAux = NeuronButton.SetAux
 	BUTTON.LoadAux = NeuronButton.LoadAux
-	BUTTON.SetGrid = NeuronButton.SetGrid
+	BUTTON.SetObjectVisibility = NeuronButton.SetObjectVisibility
 	BUTTON.SetDefaults = NeuronButton.SetDefaults
 	BUTTON.GetDefaults = NeuronButton.GetDefaults
 	BUTTON.SetType = NeuronButton.SetType
@@ -1643,7 +1643,7 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
 	button:SetType(button)
-	button:SetGrid(button)
+	button:SetObjectVisibility(button)
 
 end
 
@@ -2320,7 +2320,7 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 
 	for i,bar in pairs(NEURON.BARIndex) do
 		if bar.class == "bar" then
-			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
 		end
 	end
 
@@ -2333,7 +2333,7 @@ function NeuronButton:MACRO_OnDragStop(button)
 	---restores all action bar grid status to what it should be
 	for _,bar in pairs(NEURON.BARIndex) do
 		if bar.class == "bar" then
-			NEURON.NeuronBar:UpdateObjectGrid(bar)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar)
 		end
 	end
 end
@@ -2953,7 +2953,7 @@ function NeuronButton:UpdateObjectSpec(bar)
 			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
 			NEURON.NeuronFlyouts:UpdateFlyout(object)
 			object:SetType(object)
-			object:SetGrid(object)
+			object:SetObjectVisibility(object)
 		end
 	end
 end
@@ -3308,7 +3308,7 @@ function NeuronButton:Reset(button)
 end
 
 ---TODO refactor this to NeuronButton
-function NeuronButton:SetGrid(button, show, hide)
+function NeuronButton:SetObjectVisibility(button, show, hide)
 	if (not InCombatLockdown()) then
 
 		button:SetAttribute("isshown", button.showGrid)

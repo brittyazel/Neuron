@@ -69,7 +69,7 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SaveData = NeuronMenuBar.SaveData
     MENUBTN.SetAux = NeuronMenuBar.SetAux
     MENUBTN.LoadAux = NeuronMenuBar.LoadAux
-    MENUBTN.SetGrid = NeuronMenuBar.SetGrid
+    MENUBTN.SetObjectVisibility = NeuronMenuBar.SetObjectVisibility
     MENUBTN.SetDefaults = NeuronMenuBar.SetDefaults
     MENUBTN.GetDefaults = NeuronMenuBar.GetDefaults
     MENUBTN.SetType = NeuronMenuBar.SetType
@@ -194,7 +194,7 @@ function NeuronMenuBar:LoadData(button, spec, state)
     end
 end
 
-function NeuronMenuBar:SetGrid(button, show, hide)
+function NeuronMenuBar:SetObjectVisibility(button, show, hide)
     --empty
 end
 

@@ -1204,7 +1204,7 @@ end
 
 function NEURON:ToggleButtonGrid(show, hide)
 	for id,btn in pairs(NEURON.BTNIndex) do
-		btn:SetGrid(btn, show, hide)
+		btn:SetObjectVisibility(btn, show, hide)
 	end
 end
 
@@ -1228,7 +1228,7 @@ function NEURON:ToggleBarEditMode(show)
 		for index, bar in pairs(BARIndex) do
 			bar:Show() --this shows the transparent overlay over a bar
 			NEURON.NeuronBar:Update(bar, true)
-			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
 		end
 
 	else
@@ -1238,7 +1238,7 @@ function NEURON:ToggleBarEditMode(show)
 		for index, bar in pairs(BARIndex) do
 			bar:Hide()
 			NEURON.NeuronBar:Update(bar, nil, true)
-			NEURON.NeuronBar:UpdateObjectGrid(bar)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar)
 		end
 
 		NEURON.NeuronBar:ChangeBar(nil)
@@ -1272,7 +1272,7 @@ function NEURON:ToggleButtonEditMode(show)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
 		end
 
 	else
@@ -1286,7 +1286,7 @@ function NEURON:ToggleButtonEditMode(show)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar)
 
 			if (bar.handler:GetAttribute("assertstate")) then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
@@ -1316,12 +1316,12 @@ function NEURON:ToggleBindingMode(show)
 			if (binder.button.bar) then
 				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
 				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
-				binder.button:SetGrid(binder.button, true)
+				binder.button:SetObjectVisibility(binder.button, true)
 			end
 		end
 
 		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
 		end
 
 	else
@@ -1332,12 +1332,12 @@ function NEURON:ToggleBindingMode(show)
 			binder:Hide(); binder.button.editmode = NEURON.BindingMode
 			binder:SetFrameStrata("LOW")
 			if (not NEURON.BarEditMode) then
-				binder.button:SetGrid(binder.button)
+				binder.button:SetObjectVisibility(binder.button)
 			end
 		end
 
 		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar)
 		end
 	end
 end

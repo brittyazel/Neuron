@@ -67,7 +67,7 @@ function NeuronExtraBar:OnInitialize()
 	XBTN.SaveData = NeuronExtraBar.SaveData
 	XBTN.SetAux = NeuronExtraBar.SetAux
 	XBTN.LoadAux = NeuronExtraBar.LoadAux
-	XBTN.SetGrid = NeuronExtraBar.SetGrid
+	XBTN.SetObjectVisibility = NeuronExtraBar.SetObjectVisibility
 	XBTN.SetDefaults = NeuronExtraBar.SetDefaults
 	XBTN.GetDefaults = NeuronExtraBar.GetDefaults
 	XBTN.SetType = NeuronExtraBar.SetType
@@ -252,7 +252,7 @@ function NeuronExtraBar:LoadData(button, spec, state)
 	end
 end
 
-function NeuronExtraBar:SetGrid(button, show)
+function NeuronExtraBar:SetObjectVisibility(button, show)
 
 	if (not InCombatLockdown()) then
 

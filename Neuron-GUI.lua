@@ -1671,7 +1671,7 @@ function NeuronGUI:setBarActionState(frame)
 	end
 end
 
-function NeuronGUI:setBarVisability(button)
+function NeuronGUI:SetBarVisibility(button)
 	local bar = NEURON.CurrentBar
 	if (bar) then
 		NEURON.NeuronBar:SetVisibility(bar, button.msg, true)
@@ -1949,7 +1949,7 @@ function NeuronGUI:VisEditorScrollFrame_OnLoad(frame)
 		button.frame = frame:GetParent()
 		button.numShown = numVisShown
 		button:SetCheckedTexture("Interface\\Addons\\Neuron\\Images\\RoundCheckGreen.tga")
-		button:SetScript("OnClick", function(self) NeuronGUI:setBarVisability(self) end)
+		button:SetScript("OnClick", function(self) NeuronGUI:SetBarVisibility(self) end)
 
 
 		button:SetScript("OnShow",

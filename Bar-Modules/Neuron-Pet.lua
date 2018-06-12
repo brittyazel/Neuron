@@ -67,7 +67,7 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SaveData = NeuronPetBar.SaveData
 	PETBTN.SetAux = NeuronPetBar.SetAux
 	PETBTN.LoadAux = NeuronPetBar.LoadAux
-	PETBTN.SetGrid = NeuronPetBar.SetGrid
+	PETBTN.SetObjectVisibility = NeuronPetBar.SetObjectVisibility
 	PETBTN.SetDefaults = NeuronPetBar.SetDefaults
 	PETBTN.GetDefaults = NeuronPetBar.GetDefaults
 	PETBTN.SetType = NeuronPetBar.SetType
@@ -152,9 +152,9 @@ function NeuronPetBar:ShowGridOnSpellbookDrag()
 	for _,bar in pairs(NEURON.BARIndex) do
 		if GetCursorInfo() == "petaction" then
 			if bar.class == "pet" then
-				NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+				NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
 			elseif bar.class =="bar" then
-				NEURON.NeuronBar:UpdateObjectGrid(bar)
+				NEURON.NeuronBar:UpdateObjectVisibility(bar)
 			end
 		end
 	end
@@ -163,7 +163,7 @@ end
 function NeuronPetBar:RestoreGridOnSpellbookDrag()
 	for _,bar in pairs(NEURON.BARIndex) do
         if bar.class == "pet" then
-		    NEURON.NeuronBar:UpdateObjectGrid(bar)
+		    NEURON.NeuronBar:UpdateObjectVisibility(bar)
         end
 	end
 end
@@ -393,7 +393,7 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 
 	---This part is so that the grid get's set properly on login
 	if not button.GridIsSet then
-		C_Timer.After(2, function() NEURON.NeuronBar:UpdateObjectGrid(button.bar) end)
+		C_Timer.After(2, function() NEURON.NeuronBar:UpdateObjectVisibility(button.bar) end)
 		button.GridIsSet = true
 	end
 
@@ -451,7 +451,7 @@ function NeuronPetBar:PLAYER_ENTERING_WORLD(button, event, ...)
 	if InCombatLockdown() then return end
 	NEURON.NeuronBinder:ApplyBindings(button)
 	button.updateRightClick = true
-	button:SetGrid(button, true)
+	button:SetObjectVisibility(button, true)
 end
 
 NeuronPetBar.PET_SPECIALIZATION_CHANGED = NeuronPetBar.PLAYER_ENTERING_WORLD
@@ -495,7 +495,7 @@ function NeuronPetBar:OnDragStart(button)
 
 	for i,bar in pairs(NEURON.BARIndex) do
 		if bar.class == "pet" then
-			NEURON.NeuronBar:UpdateObjectGrid(bar, true)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
 		end
 	end
 end
@@ -732,7 +732,7 @@ function NeuronPetBar:LoadData(button, spec, state)
 	end
 end
 
-function NeuronPetBar:SetGrid(button, show, hide)
+function NeuronPetBar:SetObjectVisibility(button, show, hide)
 
 	if (not InCombatLockdown()) then
 

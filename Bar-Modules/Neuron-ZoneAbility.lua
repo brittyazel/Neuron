@@ -69,7 +69,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 	ZONEABILITYRBTN.SaveData = NeuronZoneAbilityBar.SaveData
 	ZONEABILITYRBTN.SetAux = NeuronZoneAbilityBar.SetAux
 	ZONEABILITYRBTN.LoadAux = NeuronZoneAbilityBar.LoadAux
-	ZONEABILITYRBTN.SetGrid = NeuronZoneAbilityBar.SetGrid
+	ZONEABILITYRBTN.SetObjectVisibility = NeuronZoneAbilityBar.SetObjectVisibility
 	ZONEABILITYRBTN.SetDefaults = NeuronZoneAbilityBar.SetDefaults
 	ZONEABILITYRBTN.GetDefaults = NeuronZoneAbilityBar.GetDefaults
 	ZONEABILITYRBTN.SetType = NeuronZoneAbilityBar.SetType
@@ -294,7 +294,7 @@ function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 			end
 		end
 
-		button:SetGrid(button)
+		button:SetObjectVisibility(button)
 	end
 
 	button.spellID = spellID;
@@ -474,7 +474,7 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 	end
 end
 
-function NeuronZoneAbilityBar:SetGrid(button, show)
+function NeuronZoneAbilityBar:SetObjectVisibility(button, show)
 
 	if (not InCombatLockdown()) then
 		if (show) then

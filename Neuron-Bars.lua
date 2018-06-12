@@ -1219,7 +1219,7 @@ function NeuronBar:LoadObjects(bar, init)
 			object:SetAux(object)
 			object:SetType(object, nil, nil, init)
 
-			object:SetGrid(object)
+			object:SetObjectVisibility(object)
 
 			bar.objCount = bar.objCount + 1
 			bar.countChanged = true
@@ -1704,7 +1704,7 @@ function NeuronBar:OnShow(bar)
 
 	bar.handler:SetAttribute("editmode", true)
 	bar.handler:Show()
-	NeuronBar:UpdateObjectGrid(bar, NEURON.BarEditMode)
+	NeuronBar:UpdateObjectVisibility(bar, NEURON.BarEditMode)
 	bar:EnableKeyboard(false)
 end
 
@@ -1716,7 +1716,7 @@ function NeuronBar:OnHide(bar)
 		bar.handler:Hide()
 	end
 
-	NeuronBar:UpdateObjectGrid(bar)
+	NeuronBar:UpdateObjectVisibility(bar)
 	bar:EnableKeyboard(false)
 end
 
@@ -1852,13 +1852,13 @@ function NeuronBar:UpdateObjectData(bar)
 end
 
 
-function NeuronBar:UpdateObjectGrid(bar, show)
+function NeuronBar:UpdateObjectVisibility(bar, show)
 	local object
 	for i, objID in ipairs(bar.gdata.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
-			object:SetGrid(object, show)
+			object:SetObjectVisibility(object, show)
 		end
 	end
 end
@@ -2168,7 +2168,7 @@ function NeuronBar:AddObjectsToBar(bar, num)
 	NeuronBar:SetPerimeter(bar)
 	NeuronBar:SetSize(bar)
 	NeuronBar:Update(bar)
-	NeuronBar:UpdateObjectGrid(bar, NEURON.BarEditMode)
+	NeuronBar:UpdateObjectVisibility(bar, NEURON.BarEditMode)
 
 end
 
@@ -2525,7 +2525,7 @@ function NeuronBar:ShowGridSet(bar, msg, gui, checked, query)
 	end
 
 	NeuronBar:UpdateObjectData(bar)
-	NeuronBar:UpdateObjectGrid(bar, NEURON.BarEditMode)
+	NeuronBar:UpdateObjectVisibility(bar, NEURON.BarEditMode)
 	NeuronBar:Update(bar)
 end
 
