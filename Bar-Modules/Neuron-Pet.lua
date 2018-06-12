@@ -9,9 +9,6 @@ local NeuronPetBar = NEURON.NeuronPetBar
 
 local petbarsDB, petbtnsDB
 
-local BUTTON = NEURON.BUTTON
-
-
 local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")

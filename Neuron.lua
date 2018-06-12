@@ -1263,7 +1263,7 @@ function NEURON:ToggleButtonEditMode(show)
 
 		for index, editor in pairs(NEURON.EDITIndex) do
 			editor:Show()
-			editor.object.editmode = NEURON.ButtonEditMode
+			editor.object.editmode = true
 
 			if (editor.object.bar) then
 				editor:SetFrameStrata(editor.object.bar:GetFrameStrata())
@@ -1281,7 +1281,7 @@ function NEURON:ToggleButtonEditMode(show)
 
 		for index, editor in pairs(NEURON.EDITIndex) do
 			editor:Hide()
-			editor.object.editmode = NEURON.ButtonEditMode
+			editor.object.editmode = false
 			editor:SetFrameStrata("LOW")
 		end
 
@@ -1311,7 +1311,7 @@ function NEURON:ToggleBindingMode(show)
 
 		for _, binder in pairs(NEURON.BINDIndex) do
 			binder:Show()
-			binder.button.editmode = NEURON.BindingMode
+			binder.button.editmode = true
 
 			if (binder.button.bar) then
 				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
@@ -1329,7 +1329,7 @@ function NEURON:ToggleBindingMode(show)
 		NEURON.BindingMode = false
 
 		for _, binder in pairs(NEURON.BINDIndex) do
-			binder:Hide(); binder.button.editmode = NEURON.BindingMode
+			binder:Hide(); binder.button.editmode = false
 			binder:SetFrameStrata("LOW")
 			if (not NEURON.BarEditMode) then
 				binder.button:SetObjectVisibility(binder.button)

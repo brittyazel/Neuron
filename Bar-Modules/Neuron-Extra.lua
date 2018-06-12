@@ -8,10 +8,8 @@ NEURON.NeuronExtraBar = NEURON:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.
 local NeuronExtraBar = NEURON.NeuronExtraBar
 
 
-local BUTTON = NEURON.BUTTON
+local XBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-NEURON.XBTN = setmetatable({}, { __index = BUTTON })
-local XBTN = NEURON.XBTN
 
 
 
@@ -29,7 +27,6 @@ local gDef = {
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,
-	showGrid = true,
 	point = "BOTTOM",
 	x = 0,
 	y = 205,
@@ -270,10 +267,10 @@ function NeuronExtraBar:SetAux(button)
 end
 
 function NeuronExtraBar:SetExtraButtonTex(button)
-	if (GetOverrideBarSkin) then
-		local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
-		button.style:SetTexture(texture)
-	end
+
+	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
+	button.style:SetTexture(texture)
+
 end
 
 

@@ -10,10 +10,7 @@ local NeuronZoneAbilityBar = NEURON.NeuronZoneAbilityBar
 local zoneabilitybarsCDB
 local zoneabilitybtnsCDB
 
-local BUTTON = NEURON.BUTTON
-
-NEURON.ZONEABILITYRBTN = setmetatable({}, { __index = BUTTON })
-local ZONEABILITYRBTN = NEURON.ZONEABILITYRBTN
+local ZONEABILITYRBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 

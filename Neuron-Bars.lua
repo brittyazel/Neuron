@@ -1982,7 +1982,7 @@ function NeuronBar:CreateNewBar(class, id, firstRun)
 			NeuronBar:ChangeBar(bar)
 
 			---------------------------------
-			if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+			 if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
 				bar.gdata.hidestates = ":extrabar0:"
 				bar.vischanged = true
 				NeuronBar:Update(bar)
