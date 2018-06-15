@@ -100,8 +100,7 @@ function NeuronExtraBar:OnInitialize()
 
 		for id,data in pairs(xbarsCDB) do
 			if (data ~= nil) then
-				local newbar = NEURON.NeuronBar:CreateNewBar("extrabar", id)
-				newbar.gdata.showGrid = true
+				NEURON.NeuronBar:CreateNewBar("extrabar", id)
 			end
 		end
 
@@ -152,7 +151,7 @@ function NeuronExtraBar:DisableDefault()
 
 
 	if disableExtraButton then
-		------Hiding the default blizzard ZoneAbilityFrame
+		------Hiding the default blizzard
 		ExtraActionBarFrame:UnregisterAllEvents()
 		ExtraActionBarFrame:Hide()
 		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
@@ -163,37 +162,11 @@ end
 
 
 function NeuronExtraBar:GetSkinned(button)
-	button.hasAction = ""
-	button.noAction = ""
-
-	return false
+	NEURON.NeuronButton:GetSkinned(button)
 end
 
 function NeuronExtraBar:SetSkinned(button)
-
-	if (button.vlbtn) then
-
-		if (SKIN) then
-
-			local btnData = {
-				Normal = button.vlbtn.normaltexture,
-				Icon = button.vlbtn.iconframeicon,
-				Cooldown = button.vlbtn.iconframecooldown,
-				HotKey = button.vlbtn.hotkey,
-				Count = button.vlbtn.count,
-				Name = button.vlbtn.name,
-				Border = button.vlbtn.border,
-				AutoCast = false,
-			}
-
-			SKIN:Group("Neuron", "Vehicle Leave"):AddButton(button.vlbtn, btnData)
-
-			button.vlbtn.skinned = true
-
-			SKINIndex[button.vlbtn] = true
-		end
-	end
-
+	NEURON.NeuronButton:SetSkinned(button)
 end
 
 function NeuronExtraBar:SaveData(button)
@@ -253,9 +226,10 @@ function NeuronExtraBar:SetObjectVisibility(button, show)
 
 	if (not InCombatLockdown()) then
 
-		if (show) then
+		if HasExtraActionBar() or show then
+			button.iconframeicon:SetTexture(GetActionTexture(button.actionID))
 			button:Show()
-		elseif (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
+		elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
 			button:Hide()
 		end
 	end
@@ -272,6 +246,85 @@ function NeuronExtraBar:SetExtraButtonTex(button)
 	button.style:SetTexture(texture)
 
 end
+
+
+function NeuronExtraBar:LoadAux(button)
+
+	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	NeuronExtraBar:CreateVehicleLeave(button, button.objTIndex)
+
+	button.style = button:CreateTexture(nil, "OVERLAY")
+	button.style:SetPoint("CENTER", -2, 1)
+	button.style:SetWidth(190)
+	button.style:SetHeight(95)
+
+	NeuronExtraBar:SetExtraButtonTex(button)
+
+	button.hotkey:SetPoint("TOPLEFT", -4, -6)
+end
+
+function NeuronExtraBar:SetDefaults(button)
+
+	-- empty
+
+end
+
+function NeuronExtraBar:GetDefaults(button)
+
+	--empty
+
+end
+
+function NeuronExtraBar:SetData(button, bar)
+	NEURON.NeuronButton:SetData(button, bar)
+end
+
+function NeuronExtraBar:SetType(button, save)
+
+	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
+
+	button.actionID = 169
+
+	button:SetAttribute("type", "action")
+	button:SetAttribute("*action1", self.actionID)
+
+	button:SetAttribute("useparent-unit", false)
+	button:SetAttribute("unit", ATTRIBUTE_NOOP)
+
+	button:SetScript("OnEvent", function(self, event, ...) NeuronExtraBar:OnEvent(self, event, ...) end)
+	button:HookScript("OnShow", function(self) NeuronExtraBar:SetExtraButtonTex(self) end)
+
+	button:WrapScript(button, "OnShow", [[
+					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
+						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
+					end
+					]])
+
+	button:WrapScript(button, "OnHide", [[
+					if (not self:GetParent():GetAttribute("concealed")) then
+						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
+							self:ClearBinding(key)
+						end
+					end
+					]])
+
+	button:SetSkinned(button)
+end
+
+
+function NeuronExtraBar:OnEvent(button, event, ...)
+
+	if event == "UPDATE_EXTRA_ACTIONBAR" then
+		NeuronExtraBar:DisableDefault()
+		button:SetObjectVisibility(button)
+	end
+
+end
+
+
+----------------------------------------------------------------------------
+-----------------------------Vehicle Leave Button---------------------------
+----------------------------------------------------------------------------
 
 
 function NeuronExtraBar:VehicleLeave_OnEvent(button, event, ...)
@@ -355,77 +408,4 @@ function NeuronExtraBar:CreateVehicleLeave(button, index)
 	button.vlbtn.iconframecooldown:SetFrameLevel(3)
 
 	button.vlbtn:Hide()
-end
-
-
-
-
-
-function NeuronExtraBar:LoadAux(button)
-
-	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
-	NeuronExtraBar:CreateVehicleLeave(button, button.objTIndex)
-
-	button.style = button:CreateTexture(nil, "OVERLAY")
-	button.style:SetPoint("CENTER", -2, 1)
-	button.style:SetWidth(190)
-	button.style:SetHeight(95)
-
-	NeuronExtraBar:SetExtraButtonTex(button)
-
-	button.hotkey:SetPoint("TOPLEFT", -4, -6)
-end
-
-function NeuronExtraBar:SetDefaults(button)
-
-	-- empty
-
-end
-
-function NeuronExtraBar:GetDefaults(button)
-
-	--empty
-
-end
-
-function NeuronExtraBar:SetData(button, bar)
-	NEURON.NeuronButton:SetData(button, bar)
-end
-
-function NeuronExtraBar:SetType(button, save)
-
-	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
-
-	button.actionID = 169
-
-	button:SetAttribute("type", "action")
-	button:SetAttribute("*action1", self.actionID)
-
-	button:SetAttribute("useparent-unit", false)
-	button:SetAttribute("unit", ATTRIBUTE_NOOP)
-
-	button:SetScript("OnEvent", function(self, event, ...) NEURON.NeuronButton:MACRO_OnEvent(self, event, ...) end)
-	button:SetScript("PostClick", function(self) NEURON.NeuronButton:MACRO_UpdateState(self) end)
-	button:SetScript("OnShow", function(self, ...) NEURON.NeuronButton:MACRO_OnShow(self, ...) end)
-	button:SetScript("OnHide", function(self, ...) NEURON.NeuronButton:MACRO_OnHide(self, ...) end)
-
-	button:HookScript("OnEnter", function(self, ...) NEURON.NeuronButton:MACRO_OnEnter(self, ...)end)
-	button:HookScript("OnLeave", function(self, ...) NEURON.NeuronButton:MACRO_OnLeave(self, ...) end)
-	button:HookScript("OnShow", function(self) NeuronExtraBar:SetExtraButtonTex(self) end)
-
-	button:WrapScript(button, "OnShow", [[
-					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
-						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
-					end
-					]])
-
-	button:WrapScript(button, "OnHide", [[
-					if (not self:GetParent():GetAttribute("concealed")) then
-						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
-							self:ClearBinding(key)
-						end
-					end
-					]])
-
-	button:SetSkinned(button)
 end

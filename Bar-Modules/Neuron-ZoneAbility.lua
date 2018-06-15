@@ -346,77 +346,16 @@ end
 
 
 function NeuronZoneAbilityBar:SetData(button, bar)
-	if (bar) then
-
-		button.bar = bar
-
-		button.cdText = bar.cdata.cdText
-
-		if (bar.cdata.cdAlpha) then
-			button.cdAlpha = 0.2
-		else
-			button.cdAlpha = 1
-		end
-
-		button.barLock = bar.cdata.barLock
-		button.barLockAlt = bar.cdata.barLockAlt
-		button.barLockCtrl = bar.cdata.barLockCtrl
-		button.barLockShift = bar.cdata.barLockShift
-
-		button.upClicks = bar.cdata.upClicks
-		button.downClicks = bar.cdata.downClicks
-
-		button.bindText = bar.cdata.bindText
-
-		button.tooltips = bar.cdata.tooltips
-		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
-		button.tooltipsCombat = bar.cdata.tooltipsCombat
-
-		button:SetFrameStrata(bar.gdata.objectStrata)
-
-		button:SetScale(bar.gdata.scale)
-
-	end
-
-	local down, up = "", ""
-
-	if (button.upClicks) then up = up.."LeftButtonUp" end
-	if (button.downClicks) then down = down.."LeftButtonDown" end
-
-	button:RegisterForClicks(down, up)
-	button:RegisterForDrag("LeftButton", "RightButton")
-
-	button.cdcolor1 = { 1, 0.82, 0, 1 }
-	button.cdcolor2 = { 1, 0.1, 0.1, 1 }
-	button.auracolor1 = { 0, 0.82, 0, 1 }
-	button.auracolor2 = { 1, 0.1, 0.1, 1 }
-	button.buffcolor = { 0, 0.8, 0, 1 }
-	button.debuffcolor = { 0.8, 0, 0, 1 }
-	button.manacolor = { 0.5, 0.5, 1.0 }
-	button.rangecolor = { 0.7, 0.15, 0.15, 1 }
-	button.skincolor = {1,1,1,1,1}
-	button:SetFrameLevel(4)
-	button.iconframe:SetFrameLevel(2)
-	button.iconframecooldown:SetFrameLevel(3)
-	--button.iconframeaurawatch:SetFrameLevel(3)
-	button.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
-
-	button:GetSkinned(button)
-
-
+	NEURON.NeuronButton:SetData(button, bar)
 end
 
 
 function NeuronZoneAbilityBar:GetSkinned(button)
-
 	NEURON.NeuronButton:GetSkinned(button)
-
 end
 
 function NeuronZoneAbilityBar:SetSkinned(button)
-
 	NEURON.NeuronButton:SetSkinned(button)
-
 end
 
 

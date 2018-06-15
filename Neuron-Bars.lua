@@ -1704,7 +1704,7 @@ function NeuronBar:OnShow(bar)
 
 	bar.handler:SetAttribute("editmode", true)
 	bar.handler:Show()
-	NeuronBar:UpdateObjectVisibility(bar, NEURON.BarEditMode)
+	NeuronBar:UpdateObjectVisibility(bar)
 	bar:EnableKeyboard(false)
 end
 
@@ -2168,7 +2168,7 @@ function NeuronBar:AddObjectsToBar(bar, num)
 	NeuronBar:SetPerimeter(bar)
 	NeuronBar:SetSize(bar)
 	NeuronBar:Update(bar)
-	NeuronBar:UpdateObjectVisibility(bar, NEURON.BarEditMode)
+	NeuronBar:UpdateObjectVisibility(bar)
 
 end
 
@@ -2193,10 +2193,6 @@ function NeuronBar:RemoveObject(bar, object, objID)
 	NeuronBar:RemoveObjectFromList(bar, object, objID)
 
 	object:SetParent(TRASHCAN)
-
-
-
-	--object:Hide() --otherwise the object sticks around visually until a reload
 
 end
 

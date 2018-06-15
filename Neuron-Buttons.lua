@@ -1724,10 +1724,8 @@ function NeuronButton:MACRO_UPDATE_VEHICLE_ACTIONBAR(button, ...)
 	end
 end
 
-
 NeuronButton.MACRO_UPDATE_POSSESS_BAR = NeuronButton.MACRO_UPDATE_VEHICLE_ACTIONBAR
 NeuronButton.MACRO_UPDATE_OVERRIDE_ACTIONBAR = NeuronButton.MACRO_UPDATE_VEHICLE_ACTIONBAR
-NeuronButton.MACRO_UPDATE_EXTRA_ACTIONBAR = NeuronButton.MACRO_UPDATE_VEHICLE_ACTIONBAR
 
 --for 4.x compatibility
 NeuronButton.MACRO_UPDATE_BONUS_ACTIONBAR = NeuronButton.MACRO_UPDATE_VEHICLE_ACTIONBAR
@@ -2613,7 +2611,6 @@ function NeuronButton:MACRO_OnShow(button, ...)
 	button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 	button:RegisterEvent("UPDATE_POSSESS_BAR")
 	button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 
 	button:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
@@ -2671,7 +2668,6 @@ function NeuronButton:MACRO_OnHide(button, ...)
 	button:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 	button:UnregisterEvent("UPDATE_POSSESS_BAR")
 	button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	button:UnregisterEvent("UPDATE_EXTRA_ACTIONBAR")
 	button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
 	button:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
 
