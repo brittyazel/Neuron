@@ -499,7 +499,7 @@ end
 
 
 function NeuronPetBar:OnDragStop(button)
-	NeuronPetBar:RestoreGridOnSpellbookDrag()
+
 end
 
 function NeuronPetBar:OnReceiveDrag(button)
@@ -507,11 +507,16 @@ function NeuronPetBar:OnReceiveDrag(button)
 
 	if (cursorType == "petaction") then
 		button:SetChecked(0)
-		PickupPetAction(button.actionID)
+
+		if button.actionID then
+			PickupPetAction(button.actionID)
+		else
+			button.drag = false
+			NeuronPetBar:RestoreGridOnSpellbookDrag()
+		end
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
     end
 
-    NeuronPetBar:RestoreGridOnSpellbookDrag()
 end
 
 
@@ -729,7 +734,7 @@ function NeuronPetBar:LoadData(button, spec, state)
 	end
 end
 
-function NeuronPetBar:SetObjectVisibility(button, show, hide)
+function NeuronPetBar:SetObjectVisibility(button, show)
 
 	if (not InCombatLockdown()) then
 
