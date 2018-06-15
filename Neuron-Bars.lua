@@ -2521,7 +2521,7 @@ function NeuronBar:ShowGridSet(bar, msg, gui, checked, query)
 	end
 
 	NeuronBar:UpdateObjectData(bar)
-	NeuronBar:UpdateObjectVisibility(bar, NEURON.BarEditMode)
+	NeuronBar:UpdateObjectVisibility(bar)
 	NeuronBar:Update(bar)
 end
 

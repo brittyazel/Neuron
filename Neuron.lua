@@ -1202,9 +1202,9 @@ end
 
 
 
-function NEURON:ToggleButtonGrid(show, hide)
+function NEURON:ToggleButtonGrid(show)
 	for id,btn in pairs(NEURON.BTNIndex) do
-		btn:SetObjectVisibility(btn, show, hide)
+		btn:SetObjectVisibility(btn, show)
 	end
 end
 

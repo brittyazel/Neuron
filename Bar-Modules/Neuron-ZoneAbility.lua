@@ -325,7 +325,6 @@ function NeuronZoneAbilityBar:OnEnter(button, ...)
 		if (button.tooltips) then
 			if (button.tooltipsEnhanced) then
 				button.UberTooltips = true
-				--GameTooltip_SetDefaultAnchor(GameTooltip, button)
 				GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
 			else
 				button.UberTooltips = false

@@ -1516,7 +1516,7 @@ end
 function NeuronButton:MACRO_HideGrid(button)
 	if (not InCombatLockdown()) then
 
-		if (not button.showGrid and not NeuronButton:MACRO_HasAction(button) or not NEURON.BarEditMode or not NEURON.ButtonEditMode) then
+		if not button.showGrid and not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
 			button:Hide()
 		end
 	end
@@ -2105,7 +2105,7 @@ function NeuronButton:MACRO_PlaceMacro(button)
 	ClearCursor();
 	SetCursor(nil);
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
-	NEURON:ToggleButtonGrid(nil, true)
+	NEURON:ToggleButtonGrid(false)
 
 end
 
@@ -3304,7 +3304,7 @@ function NeuronButton:Reset(button)
 end
 
 ---TODO refactor this to NeuronButton
-function NeuronButton:SetObjectVisibility(button, show, hide)
+function NeuronButton:SetObjectVisibility(button, show)
 	if (not InCombatLockdown()) then
 
 		button:SetAttribute("isshown", button.showGrid)
