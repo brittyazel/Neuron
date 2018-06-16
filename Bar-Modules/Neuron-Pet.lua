@@ -100,7 +100,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronPetBar:OnEnable()
 
-	NeuronPetBar:SecureHook("SpellButton_OnDragStart", "ShowGridOnSpellbookDrag")
 end
 
 
@@ -145,25 +144,8 @@ function NeuronPetBar:CreateBarsAndButtons()
     end
 end
 
-function NeuronPetBar:ShowGridOnSpellbookDrag()
-	for _,bar in pairs(NEURON.BARIndex) do
-		if GetCursorInfo() == "petaction" then
-			if bar.class == "pet" then
-				NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
-			elseif bar.class =="bar" then
-				NEURON.NeuronBar:UpdateObjectVisibility(bar)
-			end
-		end
-	end
-end
 
-function NeuronPetBar:RestoreGridOnSpellbookDrag()
-	for _,bar in pairs(NEURON.BARIndex) do
-        if bar.class == "pet" then
-		    NEURON.NeuronBar:UpdateObjectVisibility(bar)
-        end
-	end
-end
+
 
 --this function gets called from the controlOnUpdate in the Neuron.lua file
 function NeuronPetBar:controlOnUpdate(frame, elapsed)
@@ -394,12 +376,6 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 		button.GridIsSet = true
 	end
 
-	if button.showGrid == false and not NEURON.BarEditMode then
-		if not GetCursorInfo() then
-			NeuronPetBar:RestoreGridOnSpellbookDrag()
-		end
-	end
-
 end
 
 
@@ -465,9 +441,7 @@ end
 
 function NeuronPetBar:PostClick(button)
 	NeuronPetBar:PET_UpdateOnEvent(button, true)
-    if not GetCursorInfo() then
-        NeuronPetBar:RestoreGridOnSpellbookDrag()
-    end
+
 end
 
 
@@ -499,7 +473,7 @@ end
 
 
 function NeuronPetBar:OnDragStop(button)
-	NeuronPetBar:RestoreGridOnSpellbookDrag()
+
 end
 
 function NeuronPetBar:OnReceiveDrag(button)
@@ -511,7 +485,6 @@ function NeuronPetBar:OnReceiveDrag(button)
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
     end
 
-    NeuronPetBar:RestoreGridOnSpellbookDrag()
 end
 
 
@@ -739,7 +712,7 @@ function NeuronPetBar:SetObjectVisibility(button, show, hide)
 		if (show or button.showGrid) then
 			button:Show()
 		elseif not NeuronPetBar:HasPetAction(button.actionID) and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
-			button:Hide()
+			--button:Hide() --temporarilly disable Show/Hide grid on Pet bar
 		end
 
 	end

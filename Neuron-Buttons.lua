@@ -2316,24 +2316,11 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 		StartDrag = false
 	end
 
-	for i,bar in pairs(NEURON.BARIndex) do
-		if bar.class == "bar" then
-			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
-		end
-	end
-
 end
 
 
 function NeuronButton:MACRO_OnDragStop(button)
 	button.drag = nil
-
-	---restores all action bar grid status to what it should be
-	for _,bar in pairs(NEURON.BARIndex) do
-		if bar.class == "bar" then
-			NEURON.NeuronBar:UpdateObjectVisibility(bar)
-		end
-	end
 end
 
 
