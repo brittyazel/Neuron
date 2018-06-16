@@ -76,7 +76,7 @@ function NeuronPetBar:OnInitialize()
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
-		SHOWGRID = true,
+		SHOWGRID = false,
 		SNAPTO = true,
 		UPCLICKS = true,
 		DOWNCLICKS = true,
