@@ -3358,6 +3358,7 @@ function NeuronButton:SetType(button, save, kill, init)
 		button:RegisterEvent("ITEM_LOCK_CHANGED")
 		button:RegisterEvent("ACTIONBAR_SHOWGRID")
 		button:RegisterEvent("ACTIONBAR_HIDEGRID")
+
 		button:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		button:RegisterEvent("UPDATE_MACROS")
 		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")

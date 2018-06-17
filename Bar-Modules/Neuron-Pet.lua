@@ -370,12 +370,6 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 
 	button.elapsed = button.elapsed + elapsed
 
-	---This part is so that the grid get's set properly on login
-	if not button.GridIsSet then
-		C_Timer.After(2, function() NEURON.NeuronBar:UpdateObjectVisibility(button.bar) end)
-		button.GridIsSet = true
-	end
-
 end
 
 
@@ -411,12 +405,11 @@ end
 
 
 function NeuronPetBar:PET_BAR_SHOWGRID(button, event, ...)
-	--empty
+	---This part is so that the grid get's set properly on login
 end
 
 
 function NeuronPetBar:PET_BAR_HIDEGRID(button, event, ...)
-	--empty
 end
 
 
@@ -424,7 +417,11 @@ function NeuronPetBar:PLAYER_ENTERING_WORLD(button, event, ...)
 	if InCombatLockdown() then return end
 	NEURON.NeuronBinder:ApplyBindings(button)
 	button.updateRightClick = true
-	button:SetObjectVisibility(button, true)
+	button:SetObjectVisibility(button, true) --have to set true at login or the buttons on the bar don't show
+
+	---This part is so that the grid get's set properly on login
+	C_Timer.After(2, function() NEURON.NeuronBar:UpdateObjectVisibility(button.bar) end)
+
 end
 
 NeuronPetBar.PET_SPECIALIZATION_CHANGED = NeuronPetBar.PLAYER_ENTERING_WORLD
