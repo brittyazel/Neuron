@@ -152,10 +152,10 @@ function NeuronExtraBar:DisableDefault()
 
 	if disableExtraButton then
 		------Hiding the default blizzard
-		ExtraActionBarFrame:UnregisterAllEvents()
 		ExtraActionBarFrame:Hide()
-		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+		ExtraActionBarFrame:SetPoint("BOTTOM", 0, -200)
 		MainMenuBarVehicleLeaveButton:Hide()
+		MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", 0, -200)
 	end
 
 end
@@ -282,6 +282,12 @@ end
 function NeuronExtraBar:SetType(button, save)
 
 	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
+	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+	button:RegisterEvent("UPDATE_POSSESS_BAR")
+	button:RegisterEvent("UPDATE_MULTI_CAST_ACTIONBAR")
+	button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+	button:RegisterEvent("ZONE_CHANGED")
+	button:RegisterEvent("SPELLS_CHANGED")
 
 	button.actionID = 169
 
@@ -314,10 +320,8 @@ end
 
 function NeuronExtraBar:OnEvent(button, event, ...)
 
-	if event == "UPDATE_EXTRA_ACTIONBAR" then
-		NeuronExtraBar:DisableDefault()
-		button:SetObjectVisibility(button)
-	end
+	NeuronExtraBar:DisableDefault()
+	button:SetObjectVisibility(button)
 
 end
 
