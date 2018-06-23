@@ -157,7 +157,7 @@ end
 
 
 function NeuronExtraBar:GetSkinned(button)
-
+	--empty
 end
 
 function NeuronExtraBar:SetSkinned(button)
@@ -304,8 +304,6 @@ function NeuronExtraBar:ExtraButton_Update(button)
 	end
 
 	local start, duration, enable = GetActionCooldown(button.actionID);
-
-	print(duration)
 
 	if (start) then
 		NEURON.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
