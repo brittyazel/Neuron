@@ -10,9 +10,6 @@ local NeuronExtraBar = NEURON.NeuronExtraBar
 
 local XBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-
-
-
 local SKINIndex = NEURON.SKINIndex
 
 local xbarsCDB
@@ -152,10 +149,10 @@ function NeuronExtraBar:DisableDefault()
 
 	if disableExtraButton then
 		------Hiding the default blizzard
-		ExtraActionBarFrame:Hide()
-		ExtraActionBarFrame:SetPoint("BOTTOM", 0, -200)
-		MainMenuBarVehicleLeaveButton:Hide()
-		MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", 0, -200)
+		ExtraActionButton1:UnregisterAllEvents()
+		ExtraActionButton1:SetPoint("BOTTOM", 0, -250)
+		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
+		MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", 0, -250)
 	end
 
 end
@@ -227,7 +224,6 @@ function NeuronExtraBar:SetObjectVisibility(button, show)
 	if (not InCombatLockdown()) then
 
 		if HasExtraActionBar() or show then
-			button.iconframeicon:SetTexture(GetActionTexture(button.actionID))
 			button:Show()
 		elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
 			button:Hide()
@@ -241,6 +237,7 @@ function NeuronExtraBar:SetAux(button)
 end
 
 function NeuronExtraBar:SetExtraButtonTex(button)
+
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
 	button.style:SetTexture(texture)
@@ -320,7 +317,7 @@ end
 
 function NeuronExtraBar:OnEvent(button, event, ...)
 
-	NeuronExtraBar:DisableDefault()
+	button.iconframeicon:SetTexture(GetActionTexture(button.actionID))
 	button:SetObjectVisibility(button)
 
 end
