@@ -315,10 +315,6 @@ end
 function NeuronExtraBar:SetType(button, save)
 
 	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
-	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-	button:RegisterEvent("UPDATE_POSSESS_BAR")
-	button:RegisterEvent("UPDATE_MULTI_CAST_ACTIONBAR")
-	button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
 	button:RegisterEvent("ZONE_CHANGED")
 	button:RegisterEvent("SPELLS_CHANGED")
 
