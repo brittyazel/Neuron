@@ -253,7 +253,9 @@ end
 
 function NeuronExtraBar:SetExtraButtonTex(button)
 
-	button.iconframeicon:SetTexture(GetActionTexture(button.actionID))
+	if button.actionID then
+		button.iconframeicon:SetTexture(GetActionTexture(button.actionID))
+	end
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
 	button.style:SetTexture(texture)
@@ -270,8 +272,7 @@ function NeuronExtraBar:LoadAux(button)
 	button.style:SetWidth(190)
 	button.style:SetHeight(95)
 
-	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
-	button.style:SetTexture(texture)
+	NeuronExtraBar:SetExtraButtonTex(button)
 
 	button.hotkey:SetPoint("TOPLEFT", -4, -6)
 end
