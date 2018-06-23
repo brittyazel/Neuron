@@ -10,8 +10,6 @@ local NeuronExtraBar = NEURON.NeuronExtraBar
 
 local XBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-local SKINIndex = NEURON.SKINIndex
-
 local xbarsCDB
 local xbtnsCDB
 
@@ -159,11 +157,28 @@ end
 
 
 function NeuronExtraBar:GetSkinned(button)
-	NEURON.NeuronButton:GetSkinned(button)
+
 end
 
 function NeuronExtraBar:SetSkinned(button)
-	NEURON.NeuronButton:SetSkinned(button)
+
+	if (SKIN) then
+
+		local bar = button.bar
+
+		if (bar) then
+
+			local btnData = {
+				Icon = button.icontexture,
+				Normal = button.normaltexture,
+
+			}
+
+			SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+
+		end
+
+	end
 end
 
 function NeuronExtraBar:SaveData(button)
@@ -238,10 +253,10 @@ end
 
 function NeuronExtraBar:SetExtraButtonTex(button)
 
+	button.iconframeicon:SetTexture(GetActionTexture(button.actionID))
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
 	button.style:SetTexture(texture)
-
 end
 
 
@@ -255,7 +270,8 @@ function NeuronExtraBar:LoadAux(button)
 	button.style:SetWidth(190)
 	button.style:SetHeight(95)
 
-	NeuronExtraBar:SetExtraButtonTex(button)
+	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
+	button.style:SetTexture(texture)
 
 	button.hotkey:SetPoint("TOPLEFT", -4, -6)
 end
@@ -276,6 +292,27 @@ function NeuronExtraBar:SetData(button, bar)
 	NEURON.NeuronButton:SetData(button, bar)
 end
 
+
+function NeuronExtraBar:ExtraButton_Update(button)
+
+	NeuronExtraBar:SetExtraButtonTex(button)
+
+	if xbarsCDB[1].border then
+		button.style:Show()
+	else
+		button.style:Hide()
+	end
+
+	local start, duration, enable = GetActionCooldown(button.actionID);
+
+	print(duration)
+
+	if (start) then
+		NEURON.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
+	end
+end
+
+
 function NeuronExtraBar:SetType(button, save)
 
 	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
@@ -295,7 +332,7 @@ function NeuronExtraBar:SetType(button, save)
 	button:SetAttribute("unit", ATTRIBUTE_NOOP)
 
 	button:SetScript("OnEvent", function(self, event, ...) NeuronExtraBar:OnEvent(self, event, ...) end)
-	button:HookScript("OnShow", function(self) NeuronExtraBar:SetExtraButtonTex(self) end)
+	button:HookScript("OnShow", function(self) NeuronExtraBar:ExtraButton_Update(self) end)
 
 	button:WrapScript(button, "OnShow", [[
 					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
@@ -317,7 +354,7 @@ end
 
 function NeuronExtraBar:OnEvent(button, event, ...)
 
-	button.iconframeicon:SetTexture(GetActionTexture(button.actionID))
+	NeuronExtraBar:ExtraButton_Update(button)
 	button:SetObjectVisibility(button)
 
 end
