@@ -167,6 +167,8 @@ end
 
 function NeuronPetBar:HasPetAction(id, icon)
 
+	if not id then return end --return if there is no id passed in
+
 	local _, _, texture = GetPetActionInfo(id)
 
 	if (GetPetActionSlotUsable(id)) then
