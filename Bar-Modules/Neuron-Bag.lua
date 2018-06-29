@@ -15,14 +15,14 @@ local SKIN = LibStub("Masque", true)
 
 
 local gDef = {
-    padH = -1,
+    padH = 0,
     scale = 1.1,
     snapTo = false,
     snapToFrame = false,
     snapToPoint = false,
     point = "BOTTOMRIGHT",
-    x = -93.33,
-    y = 21.33,
+    x = -104,
+    y = 25,
 }
 
 local bagElements = {}
@@ -75,18 +75,6 @@ function NeuronBagBar:OnInitialize()
 
     if NeuronGDB.blizzbar == false then
         NeuronBagBar:CreateBarsAndButtons()
-
-        ---hide the weird color border around bag bars
-        CharacterBag0Slot.IconBorder:Hide()
-        CharacterBag1Slot.IconBorder:Hide()
-        CharacterBag2Slot.IconBorder:Hide()
-        CharacterBag3Slot.IconBorder:Hide()
-
-        ---overwrite the Show function with a null function because it keeps coming back and won't stay hidden
-        NeuronBagBar:RawHook(CharacterBag0Slot.IconBorder, "Show", function() end, true)
-        NeuronBagBar:RawHook(CharacterBag1Slot.IconBorder, "Show", function() end, true)
-        NeuronBagBar:RawHook(CharacterBag2Slot.IconBorder, "Show", function() end, true)
-        NeuronBagBar:RawHook(CharacterBag3Slot.IconBorder, "Show", function() end, true)
     end
 
 end
@@ -269,6 +257,7 @@ function NeuronBagBar:SetType(button, save)
 
 		button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
+        button.element = bagElements[button.id]
 
         local objects = NEURON:GetParentKeys(button.element)
 
