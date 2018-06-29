@@ -218,7 +218,7 @@ function NeuronButton:OnInitialize()
 	BUTTON.SaveData = NeuronButton.SaveData
 	BUTTON.SetAux = NeuronButton.SetAux
 	BUTTON.LoadAux = NeuronButton.LoadAux
-	BUTTON.SetGrid = NeuronButton.SetGrid
+	BUTTON.SetObjectVisibility = NeuronButton.SetObjectVisibility
 	BUTTON.SetDefaults = NeuronButton.SetDefaults
 	BUTTON.GetDefaults = NeuronButton.GetDefaults
 	BUTTON.SetType = NeuronButton.SetType
@@ -248,6 +248,7 @@ function NeuronButton:OnEnable()
 
 	---these two hooks are to call a function to check if we dragged an ability off the bar or not
 	NeuronButton:SecureHookScript(WorldFrame, "OnMouseDown")
+
 
 	NeuronButton:SecureHook("ToggleCollectionsJournal")
 
@@ -557,8 +558,6 @@ function NeuronButton:cooldownsOnUpdate(frame, elapsed)
 		end
 	end
 end
-
-
 
 function NeuronButton:updateAuraInfo(unit)
 
@@ -1490,6 +1489,7 @@ function NeuronButton:MACRO_OnUpdate(button, elapsed) --this function uses A TON
 
 		NeuronButton:MACRO_UpdateButton(button)
 
+
 		if (button.auraQueue and not button.iconframecooldown.active) then
 			local unit, spell = (":"):split(button.auraQueue)
 			if (unit and spell) then
@@ -1518,7 +1518,7 @@ end
 function NeuronButton:MACRO_HideGrid(button)
 	if (not InCombatLockdown()) then
 
-		if (not button.showGrid and not NeuronButton:MACRO_HasAction(button) and not NEURON.BarsShown and not NEURON.EditFrameShown) then
+		if not button.showGrid and not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
 			button:Hide()
 		end
 	end
@@ -1645,7 +1645,7 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
 	button:SetType(button)
-	button:SetGrid(button)
+	button:SetObjectVisibility(button)
 
 end
 
@@ -1726,10 +1726,8 @@ function NeuronButton:MACRO_UPDATE_VEHICLE_ACTIONBAR(button, ...)
 	end
 end
 
-
 NeuronButton.MACRO_UPDATE_POSSESS_BAR = NeuronButton.MACRO_UPDATE_VEHICLE_ACTIONBAR
 NeuronButton.MACRO_UPDATE_OVERRIDE_ACTIONBAR = NeuronButton.MACRO_UPDATE_VEHICLE_ACTIONBAR
-NeuronButton.MACRO_UPDATE_EXTRA_ACTIONBAR = NeuronButton.MACRO_UPDATE_VEHICLE_ACTIONBAR
 
 --for 4.x compatibility
 NeuronButton.MACRO_UPDATE_BONUS_ACTIONBAR = NeuronButton.MACRO_UPDATE_VEHICLE_ACTIONBAR
@@ -2110,7 +2108,7 @@ function NeuronButton:MACRO_PlaceMacro(button)
 	ClearCursor();
 	SetCursor(nil);
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
-	NEURON:ToggleButtonGrid(nil, true)
+	NEURON:ToggleButtonGrid(false)
 
 end
 
@@ -2233,6 +2231,8 @@ function NeuronButton:MACRO_OnReceiveDrag(button, preclick)
 
 	elseif (cursorType == "battlepet") then
 		NeuronButton:MACRO_PlaceBattlePet(button, action1, action2, NeuronButton:MACRO_HasAction(button))
+	elseif (cursorType == "petaction") then
+		NEURON:Print(L["Pet Actions can not be added to Neuron bars at this time."])
 	end
 
 
@@ -2278,7 +2278,6 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 
 		if (MacroDrag[1]) then
 			--PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
-			button.sound = true
 
 			if (MacroDrag[2] ~= button) then
 				button.dragbutton = nil
@@ -2313,9 +2312,13 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 
 		button.border:Hide()
 
+	---shows all action bar buttons in the case you have show grid turned off
+
+
 	else
 		StartDrag = false
 	end
+
 end
 
 
@@ -2598,7 +2601,6 @@ function NeuronButton:MACRO_OnShow(button, ...)
 	button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 	button:RegisterEvent("UPDATE_POSSESS_BAR")
 	button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 
 	button:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
@@ -2656,7 +2658,6 @@ function NeuronButton:MACRO_OnHide(button, ...)
 	button:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 	button:UnregisterEvent("UPDATE_POSSESS_BAR")
 	button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	button:UnregisterEvent("UPDATE_EXTRA_ACTIONBAR")
 	button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
 	button:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
 
@@ -2867,7 +2868,7 @@ end
 
 function NeuronButton:ChangeObject(object)
 
-	if not NEURON.CurrentObject then --fix for CurentObject error thrown by Neuron-GUI
+	if not NEURON.CurrentObject then
 		NEURON.CurrentObject = object
 	end
 
@@ -2938,7 +2939,7 @@ function NeuronButton:UpdateObjectSpec(bar)
 			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
 			NEURON.NeuronFlyouts:UpdateFlyout(object)
 			object:SetType(object)
-			object:SetGrid(object)
+			object:SetObjectVisibility(object)
 		end
 	end
 end
@@ -3293,7 +3294,7 @@ function NeuronButton:Reset(button)
 end
 
 ---TODO refactor this to NeuronButton
-function NeuronButton:SetGrid(button, show, hide)
+function NeuronButton:SetObjectVisibility(button, show)
 	if (not InCombatLockdown()) then
 
 		button:SetAttribute("isshown", button.showGrid)
@@ -3301,7 +3302,7 @@ function NeuronButton:SetGrid(button, show, hide)
 
 		if (show or button.showGrid) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible()) and not NeuronButton:MACRO_HasAction(button)) then
+		elseif not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
 			button:Hide()
 		end
 	end
@@ -3362,6 +3363,7 @@ function NeuronButton:SetType(button, save, kill, init)
 		button:RegisterEvent("ITEM_LOCK_CHANGED")
 		button:RegisterEvent("ACTIONBAR_SHOWGRID")
 		button:RegisterEvent("ACTIONBAR_HIDEGRID")
+
 		button:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		button:RegisterEvent("UPDATE_MACROS")
 		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")

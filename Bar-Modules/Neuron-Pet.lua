@@ -9,11 +9,7 @@ local NeuronPetBar = NEURON.NeuronPetBar
 
 local petbarsDB, petbtnsDB
 
-local BUTTON = NEURON.BUTTON
-
-
-NEURON.PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
-local PETBTN = NEURON.PETBTN
+local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -22,7 +18,7 @@ local sIndex = NEURON.sIndex
 local gDef = {
 
 	hidestates = ":pet0:",
-
+    showGrid = true,
 	scale = 0.8,
 	snapTo = false,
 	snapToFrame = false,
@@ -68,7 +64,7 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SaveData = NeuronPetBar.SaveData
 	PETBTN.SetAux = NeuronPetBar.SetAux
 	PETBTN.LoadAux = NeuronPetBar.LoadAux
-	PETBTN.SetGrid = NeuronPetBar.SetGrid
+	PETBTN.SetObjectVisibility = NeuronPetBar.SetObjectVisibility
 	PETBTN.SetDefaults = NeuronPetBar.SetDefaults
 	PETBTN.GetDefaults = NeuronPetBar.GetDefaults
 	PETBTN.SetType = NeuronPetBar.SetType
@@ -76,11 +72,11 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = NEURON.PETBTN }, NEURON.maxPetID, gDef, nil, false)
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
-		SHOWGRID = true,
+		SHOWGRID = false,
 		SNAPTO = true,
 		UPCLICKS = true,
 		DOWNCLICKS = true,
@@ -93,9 +89,9 @@ function NeuronPetBar:OnInitialize()
 		CDALPHA = true }, false, 65)
 
 
-	if NeuronGDB.blizzbar == false then
-		NeuronPetBar:CreateBarsAndButtons()
-	end
+    if NeuronGDB.blizzbar == false then
+        NeuronPetBar:CreateBarsAndButtons()
+    end
 
 end
 
@@ -104,7 +100,6 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function NeuronPetBar:OnEnable()
-
 
 end
 
@@ -120,35 +115,35 @@ end
 
 ------------------------------------------------------------------------------
 
-
 -------------------------------------------------------------------------------
 
 function NeuronPetBar:CreateBarsAndButtons()
-	if (DB.petbarFirstRun) then
 
-		local bar, object = NEURON.NeuronBar:CreateNewBar("pet", 1, true)
+    if (DB.petbarFirstRun) then
 
-		for i=1,NEURON.maxPetID do
-			object = NEURON.NeuronButton:CreateNewObject("pet", i)
-			NEURON.NeuronBar:AddObjectToList(bar, object)
-		end
+        local bar, object = NEURON.NeuronBar:CreateNewBar("pet", 1, true)
 
-		DB.petbarFirstRun = false
+        for i=1,NEURON.maxPetID do
+            object = NEURON.NeuronButton:CreateNewObject("pet", i)
+            NEURON.NeuronBar:AddObjectToList(bar, object)
+        end
 
-	else
+        DB.petbarFirstRun = false
 
-		for id,data in pairs(petbarsDB) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("pet", id)
-			end
-		end
+    else
 
-		for id,data in pairs(petbtnsDB) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("pet", id)
-			end
-		end
-	end
+        for id,data in pairs(petbarsDB) do
+            if (data ~= nil) then
+                NEURON.NeuronBar:CreateNewBar("pet", id)
+            end
+        end
+
+        for id,data in pairs(petbtnsDB) do
+            if (data ~= nil) then
+                NEURON.NeuronButton:CreateNewObject("pet", id)
+            end
+        end
+    end
 end
 
 
@@ -171,7 +166,9 @@ function NeuronPetBar:controlOnUpdate(frame, elapsed)
 
 end
 
-local function HasPetAction(id, icon)
+function NeuronPetBar:HasPetAction(id, icon)
+
+	if not id then return end --return if there is no id passed in
 
 	local _, texture = GetPetActionInfo(id)
 
@@ -265,7 +262,7 @@ function NeuronPetBar:PET_UpdateCooldown(button)
 
 	local actionID = button.actionID
 
-	if (HasPetAction(actionID)) then
+	if (NeuronPetBar:HasPetAction(actionID)) then
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
@@ -285,7 +282,7 @@ function NeuronPetBar:PET_UpdateTexture(button, force)
 
 	if (not button:GetSkinned(button)) then
 
-		if (HasPetAction(actionID, true) or force) then
+		if (NeuronPetBar:HasPetAction(actionID, true) or force) then
 			button:SetNormalTexture(button.hasAction or "")
 			button:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -360,6 +357,7 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 
 		NeuronPetBar:PET_UpdateButton(button, button.actionID)
 
+
 		if (button.updateRightClick and not InCombatLockdown()) then
 			local spell = GetPetActionInfo(button.actionID)
 
@@ -369,10 +367,12 @@ function NeuronPetBar:OnUpdate(button, elapsed)
 			end
 		end
 
+
 		button.elapsed = 0
 	end
 
 	button.elapsed = button.elapsed + elapsed
+
 end
 
 
@@ -408,12 +408,11 @@ end
 
 
 function NeuronPetBar:PET_BAR_SHOWGRID(button, event, ...)
-	--empty
+	---This part is so that the grid get's set properly on login
 end
 
 
 function NeuronPetBar:PET_BAR_HIDEGRID(button, event, ...)
-	--empty
 end
 
 
@@ -421,8 +420,12 @@ function NeuronPetBar:PLAYER_ENTERING_WORLD(button, event, ...)
 	if InCombatLockdown() then return end
 	NEURON.NeuronBinder:ApplyBindings(button)
 	button.updateRightClick = true
-end
+	button:SetObjectVisibility(button, true) --have to set true at login or the buttons on the bar don't show
 
+	---This part is so that the grid get's set properly on login
+	C_Timer.After(2, function() NEURON.NeuronBar:UpdateObjectVisibility(button.bar) end)
+
+end
 
 NeuronPetBar.PET_SPECIALIZATION_CHANGED = NeuronPetBar.PLAYER_ENTERING_WORLD
 
@@ -438,6 +441,7 @@ end
 
 function NeuronPetBar:PostClick(button)
 	NeuronPetBar:PET_UpdateOnEvent(button, true)
+
 end
 
 
@@ -459,8 +463,18 @@ function NeuronPetBar:OnDragStart(button)
 
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
 	end
+
+	for i,bar in pairs(NEURON.BARIndex) do
+		if bar.class == "pet" then
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
+		end
+	end
 end
 
+
+function NeuronPetBar:OnDragStop(button)
+
+end
 
 function NeuronPetBar:OnReceiveDrag(button)
 	local cursorType = GetCursorInfo()
@@ -469,7 +483,8 @@ function NeuronPetBar:OnReceiveDrag(button)
 		button:SetChecked(0)
 		PickupPetAction(button.actionID)
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
-	end
+    end
+
 end
 
 
@@ -484,7 +499,7 @@ function NeuronPetBar:PET_SetTooltip(button)
 		if (button.tooltipSubtext and button.UberTooltips) then
 			GameTooltip:AddLine(button.tooltipSubtext, "", 0.5, 0.5, 0.5)
 		end
-	elseif (HasPetAction(actionID)) then
+	elseif (NeuronPetBar:HasPetAction(actionID)) then
 		if (button.UberTooltips) then
 			GameTooltip:SetPetAction(actionID)
 		else
@@ -543,6 +558,20 @@ function NeuronPetBar:SetData(button, bar)
 			button.cdAlpha = 1
 		end
 
+		if (not button.cdcolor1) then
+			button.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
+		else
+			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
+		end
+
+		if (not button.cdcolor2) then
+			button.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
+		else
+			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
+		end
+
+		button.showGrid = bar.gdata.showGrid
+
 		button.barLock = bar.cdata.barLock
 		button.barLockAlt = bar.cdata.barLockAlt
 		button.barLockCtrl = bar.cdata.barLockCtrl
@@ -552,6 +581,12 @@ function NeuronPetBar:SetData(button, bar)
 		button.downClicks = bar.cdata.downClicks
 
 		button.bindText = bar.cdata.bindText
+		button.macroText = bar.cdata.macroText
+		button.countText = bar.cdata.countText
+
+		button.bindColor = bar.gdata.bindColor
+		button.macroColor = bar.gdata.macroColor
+		button.countColor = bar.gdata.countColor
 
 		button.tooltips = bar.cdata.tooltips
 		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
@@ -563,6 +598,33 @@ function NeuronPetBar:SetData(button, bar)
 
 	end
 
+	if (button.bindText) then
+		button.hotkey:Show()
+		if (button.bindColor) then
+			button.hotkey:SetTextColor((";"):split(button.bindColor))
+		end
+	else
+		button.hotkey:Hide()
+	end
+
+	if (button.macroText) then
+		button.macroname:Show()
+		if (button.macroColor) then
+			button.macroname:SetTextColor((";"):split(button.macroColor))
+		end
+	else
+		button.macroname:Hide()
+	end
+
+	if (button.countText) then
+		button.count:Show()
+		if (button.countColor) then
+			button.count:SetTextColor((";"):split(button.countColor))
+		end
+	else
+		button.count:Hide()
+	end
+	
 	local down, up = "", ""
 
 	if (button.upClicks) then up = up.."AnyUp" end
@@ -571,8 +633,6 @@ function NeuronPetBar:SetData(button, bar)
 	button:RegisterForClicks(down, up)
 	button:RegisterForDrag("LeftButton", "RightButton")
 
-	button.cdcolor1 = { 1, 0.82, 0, 1 }
-	button.cdcolor2 = { 1, 0.1, 0.1, 1 }
 	button.auracolor1 = { 0, 0.82, 0, 1 }
 	button.auracolor2 = { 1, 0.1, 0.1, 1 }
 	button.buffcolor = { 0, 0.8, 0, 1 }
@@ -642,22 +702,23 @@ function NeuronPetBar:LoadData(button, spec, state)
 	end
 end
 
-function NeuronPetBar:SetGrid(button, show, hide)
-
-	if (true) then return end
+function NeuronPetBar:SetObjectVisibility(button, show, hide)
 
 	if (not InCombatLockdown()) then
 
 		button:SetAttribute("isshown", button.showGrid)
-		button:SetAttribute("showgrid", button)
+		button:SetAttribute("showgrid", show)
 
-		if (button or button.showGrid) then
+		if (show or button.showGrid) then
 			button:Show()
-		elseif (not (button:IsMouseOver() and button:IsVisible()) and not HasPetAction(button.actionID)) then
-			button:Hide()
+		elseif not NeuronPetBar:HasPetAction(button.actionID) and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
+			--button:Hide() --temporarilly disable Show/Hide grid on Pet bar
 		end
+
 	end
 end
+
+
 
 function NeuronPetBar:SetAux(button)
 
@@ -723,10 +784,12 @@ function NeuronPetBar:SetType(button, save)
 	button:SetScript("OnEvent", function(self, event, ...) NeuronPetBar:PET_OnEvent(self, event, ...) end)
 	button:SetScript("PostClick", function(self) NeuronPetBar:PostClick(self) end)
 	button:SetScript("OnDragStart", function(self) NeuronPetBar:OnDragStart(self) end)
+	button:SetScript("OnDragStop", function(self) NeuronPetBar:OnDragStop(self) end)
 	button:SetScript("OnReceiveDrag", function(self) NeuronPetBar:OnReceiveDrag(self) end)
 	button:SetScript("OnEnter", function(self, ...) NeuronPetBar:OnEnter(self, ...) end)
 	button:SetScript("OnLeave", function(self) NeuronPetBar:OnLeave(self) end)
 	button:SetScript("OnUpdate", function(self, elapsed) NeuronPetBar:OnUpdate(self, elapsed) end)
+
 	button:SetScript("OnAttributeChanged", nil)
 
 end

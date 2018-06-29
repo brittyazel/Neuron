@@ -11,7 +11,7 @@ local NeuronMenuBar = NEURON.NeuronMenuBar
 
 local menubarsDB, menubtnsDB
 
-local MENUBTN = setmetatable({}, { __index = CreateFrame("Frame") })
+local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -20,8 +20,8 @@ local gDef = {
     snapToFrame = false,
     snapToPoint = false,
     point = "BOTTOMRIGHT",
-    x = -148,
-    y = 20,
+    x = -330,
+    y = 21,
 }
 
 local menuElements = {}
@@ -66,7 +66,7 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SaveData = NeuronMenuBar.SaveData
     MENUBTN.SetAux = NeuronMenuBar.SetAux
     MENUBTN.LoadAux = NeuronMenuBar.LoadAux
-    MENUBTN.SetGrid = NeuronMenuBar.SetGrid
+    MENUBTN.SetObjectVisibility = NeuronMenuBar.SetObjectVisibility
     MENUBTN.SetDefaults = NeuronMenuBar.SetDefaults
     MENUBTN.GetDefaults = NeuronMenuBar.GetDefaults
     MENUBTN.SetType = NeuronMenuBar.SetType
@@ -79,10 +79,6 @@ function NeuronMenuBar:OnInitialize()
 
     if NeuronGDB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
-
-        ---This stops PetBattles from taking over the Micro Buttons
-        NeuronMenuBar:RawHook("MoveMicroButtons", function() end, true)
-        NeuronMenuBar:RawHook("UpdateMicroButtonsParent", function() end, true)
     end
 end
 
@@ -92,6 +88,10 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronMenuBar:OnEnable()
 
+    NEURON:RegisterEvent("PET_BATTLE_OPENING_START")
+    NEURON:RegisterEvent("PET_BATTLE_CLOSE")
+
+    NeuronMenuBar:DisableDefault()
 
 end
 
@@ -108,6 +108,12 @@ end
 ------------------------------------------------------------------------------
 
 
+function NEURON:PET_BATTLE_OPENING_START()
+end
+
+function NEURON:PET_BATTLE_CLOSE()
+end
+
 -------------------------------------------------------------------------------
 
 
@@ -121,6 +127,7 @@ function NeuronMenuBar:CreateBarsAndButtons()
         for i=1,#menuElements do
             object = NEURON.NeuronButton:CreateNewObject("menu", i)
             NEURON.NeuronBar:AddObjectToList(bar, object)
+
         end
 
         DB.menubarFirstRun = false
@@ -141,6 +148,23 @@ function NeuronMenuBar:CreateBarsAndButtons()
     end
 end
 
+function NeuronMenuBar:DisableDefault()
+
+    local disableMenuBarFunctions = false
+
+    for i,v in ipairs(NEURON.NeuronMenuBar) do
+        if (v["bar"]) then --only disable if a specific button has an associated bar
+            disableMenuBarFunctions = true
+        end
+    end
+
+    if disableMenuBarFunctions then
+        ---This stops PetBattles from taking over the Micro Buttons
+        NeuronMenuBar:RawHook("MoveMicroButtons", function() end, true)
+        NeuronMenuBar:RawHook("UpdateMicroButtonsParent", function() end, true)
+    end
+
+end
 
 
 function NeuronMenuBar:SetData(button, bar)
@@ -189,7 +213,8 @@ function NeuronMenuBar:LoadData(button, spec, state)
     end
 end
 
-function NeuronMenuBar:SetGrid(button, show, hide)
+
+function NeuronMenuBar:SetObjectVisibility(button, show, hide)
     --empty
 end
 
@@ -210,7 +235,7 @@ function NeuronMenuBar:GetDefaults(button)
 end
 
 function NeuronMenuBar:SetSkinned(button)
-
+    --empty
 end
 
 function NeuronMenuBar:GetSkinned(button)
@@ -222,6 +247,7 @@ function NeuronMenuBar:SetType(button, save)
 
         button:SetWidth(menuElements[button.id]:GetWidth()-2)
         button:SetHeight(menuElements[button.id]:GetHeight()-2)
+
         button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
         button.element = menuElements[button.id]

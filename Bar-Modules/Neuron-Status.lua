@@ -83,6 +83,7 @@ local gDef = {
 
 	[1] = {
 
+		showGrid = true,
 		snapTo = false,
 		snapToFrame = false,
 		snapToPoint = false,
@@ -92,7 +93,7 @@ local gDef = {
 	},
 
 	[2] = {
-
+		showGrid = true,
 		snapTo = false,
 		snapToFrame = false,
 		snapToPoint = false,
@@ -102,7 +103,7 @@ local gDef = {
 	},
 
 	[3] = {
-
+		showGrid = true,
 		snapTo = false,
 		snapToFrame = false,
 		snapToPoint = false,
@@ -112,7 +113,7 @@ local gDef = {
 	},
 
 	[4] = {
-
+		showGrid = true,
 		columns = 1,
 		snapTo = false,
 		snapToFrame = false,
@@ -256,7 +257,7 @@ function NeuronStatusBar:OnInitialize()
 	STATUS.SaveData = NeuronStatusBar.SaveData
 	STATUS.SetAux = NeuronStatusBar.SetAux
 	STATUS.LoadAux = NeuronStatusBar.LoadAux
-	STATUS.SetGrid = NeuronStatusBar.SetGrid
+	STATUS.SetObjectVisibility = NeuronStatusBar.SetObjectVisibility
 	STATUS.SetDefaults = NeuronStatusBar.SetDefaults
 	STATUS.GetDefaults = NeuronStatusBar.GetDefaults
 	STATUS.SetType = NeuronStatusBar.SetType
@@ -301,7 +302,8 @@ function NeuronStatusBar:OnInitialize()
 
 		for id,data in pairs(statusbarsDB) do
 			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("status", id)
+				local newbar = NEURON.NeuronBar:CreateNewBar("status", id)
+				newbar.gdata.showGrid = true
 			end
 		end
 
@@ -928,6 +930,7 @@ end
 
 function NeuronStatusBar:mirrorbar_Start(button, value, maxvalue, scale, paused, label)
 
+
 	if (not MirrorWatch[button]) then
 		MirrorWatch[button] = { active = false, mbar = nil, label = "", timer = "" }
 	end
@@ -942,7 +945,7 @@ function NeuronStatusBar:mirrorbar_Start(button, value, maxvalue, scale, paused,
 			MirrorWatch[button].mbar = mbar
 			MirrorWatch[button].label = label
 
-			mbar.sb.mirror = mirror
+			mbar.sb.mirror = button
 			mbar.sb.value = (value / 1000)
 			mbar.sb.maxvalue = (maxvalue / 1000)
 			mbar.sb.scale = scale
@@ -970,6 +973,7 @@ end
 
 
 function NeuronStatusBar:mirrorbar_Stop(button)
+
 
 	if (MirrorWatch[button] and MirrorWatch[button].active) then
 
@@ -1385,6 +1389,7 @@ function NeuronStatusBar:MirrorBar_OnUpdate(button, elapsed)
 	if (button.mirror) then
 
 		button.value = GetMirrorTimerProgress(button.mirror)/1000
+
 
 		if (button.value > button.maxvalue) then
 
@@ -2093,7 +2098,7 @@ end
 
 
 
-function NeuronStatusBar:SetGrid(button, show, hide)
+function NeuronStatusBar:SetObjectVisibility(button, show, hide)
 
 	if (show) then
 
@@ -2291,7 +2296,7 @@ function NeuronStatusBar:SetType(button, save)
 
 		elseif (button.config.sbType == "mirror") then
 
-			button.sb:SetScript("OnUpdate",  function(self, elapsed) NeuronStatusBar:MirrorBar_OnUpdate(self, elapsed) end)
+			button.sb:SetScript("OnUpdate", function(self, elapsed) NeuronStatusBar:MirrorBar_OnUpdate(self, elapsed) end)
 
 			tinsert(MirrorBars, button)
 

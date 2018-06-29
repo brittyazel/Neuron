@@ -12,7 +12,6 @@ local NEURON = Neuron --this is the working pointer that all functions act upon,
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local icons = {}
 
 NEURON.PEW = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on loging with too many processes
 
@@ -20,7 +19,7 @@ NEURON.PEW = false --flag that gets set when the player enters the world. It's u
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.19" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.25" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
@@ -35,21 +34,21 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-*****IMPORTANT, PLEASE READ!*****
-A ton of backend work has been made in this release. An obsurd amount even.
+A ton of work went into this release, and Neuron is now full steam ahead to Battle for Azeroth. There are a couple notes with this version:
 
-The Stance bar has been retired for good. It really doesn't make sense to have so much code for something that only effects Druids, and can easily be re-created by dragging the druid forms onto a simple action bar.
+1)The bag and menu bars have been completely rewritten, so expect a tiny bit of quirkiness (they're fixed in BfA).
 
-If you have any strange addon behavior, please delete the addon files from WoW>Interface>addons and reinstall the files (make careful not not to delete your addon settings)
+2)Neuron is fully updated for BfA, and you can get a working version from the bfa_beta branch on GitHub.
 
-There may be issues with Flyout functionality, please report.
+3)The GUI re-write is well underway, and expect that to also land with the 8.0 update (baring any unforseen events).
+
+Lastly, if you are enjoying Neuron, please consider a small donation to help with development costs.
 
 -Soyier]]
 
 
 --prepare the NEURON table with some subtables that will be used down the road
 NEURON['sIndex'] = {}
-NEURON['iIndex'] = {[1] = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK" }
 NEURON['cIndex'] = {}
 NEURON['tIndex'] = {}
 NEURON['StanceIndex'] = {}
@@ -75,7 +74,6 @@ NEURON['maxStanceID'] = NUM_STANCE_SLOTS
 local BARIndex = NEURON.BARIndex
 local BARNameIndex = NEURON.BARNameIndex --I'm not sure if we need both BarIndex and BARNameIndex. They're pretty much the same
 local BTNIndex = NEURON.BTNIndex
-local ICONS = NEURON.iIndex
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 NeuronGDB = {
@@ -241,6 +239,10 @@ local handler
 
 local level, stanceStringsUpdated
 
+NEURON.BarEditMode = false
+NEURON.ButtonEditMode = false
+NEURON.BindingMode = false
+
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
@@ -300,6 +302,14 @@ function NEURON:OnInitialize()
 	frame:Hide()
 
 
+	StaticPopupDialogs["ReloadUI"] = {
+		text = "ReloadUI",
+		button1 = "Yes",
+		OnAccept = function()
+			ReloadUI()
+		end,
+		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+	}
 
 	StaticPopupDialogs["ReloadUI"] = {
 		text = "ReloadUI",
@@ -337,19 +347,19 @@ function NEURON:OnEnable()
 
 	GameMenuFrame:HookScript("OnShow", function(self)
 
-		if (NEURON.BarsShown) then
+		if (NEURON.BarEditMode) then
 			HideUIPanel(self)
-			NEURON.NeuronBar:ToggleBars(nil, true)
+			NEURON:ToggleBarEditMode(false)
 		end
 
-		if (NEURON.EditFrameShown) then
+		if (NEURON.ButtonEditMode) then
 			HideUIPanel(self)
-			NEURON:ToggleEditFrames(nil, true)
+			NEURON:ToggleButtonEditMode(false)
 		end
 
 		if (NEURON.BindingMode) then
 			HideUIPanel(self)
-			NEURON:ToggleBindings(nil, true)
+			NEURON:ToggleBindingMode(false)
 		end
 
 	end)
@@ -371,16 +381,16 @@ end
 
 function NEURON:PLAYER_REGEN_DISABLED()
 
-	if (NEURON.EditFrameShown) then
-		NEURON:ToggleEditFrames(nil, true)
+	if (NEURON.ButtonEditMode) then
+		NEURON:ToggleButtonEditMode(false)
 	end
 
 	if (NEURON.BindingMode) then
-		NEURON:ToggleBindings(nil, true)
+		NEURON:ToggleBindingMode(false)
 	end
 
-	if (NEURON.BarsShown) then
-		NEURON.NeuronBar:ToggleBars(nil, true)
+	if (NEURON.BarEditMode) then
+		NEURON:ToggleBarEditMode(false)
 	end
 
 end
@@ -395,7 +405,6 @@ function NEURON:PLAYER_ENTERING_WORLD()
 	NEURON:UpdateStanceStrings()
 	NEURON:UpdateCompanionData()
 	NEURON:UpdateToyData()
-	NEURON:UpdateIconIndex()
 
 	--Fix for Titan causing the Main Bar to not be hidden
 	if (IsAddOnLoaded("Titan")) then
@@ -405,7 +414,6 @@ function NEURON:PLAYER_ENTERING_WORLD()
 	if (GDB.blizzbar == false) then
 		NEURON:HideBlizzard()
 	end
-
 
 	NEURON.PEW = true
 
@@ -503,11 +511,11 @@ local slashFunctions = {
 	{L["Menu"], L["Menu_Description"], "ToggleMainMenu"},
 	{L["Create"], L["Create_Description"], "CreateNewBar"},
 	{L["Delete"], L["Delete_Description"], "DeleteBar"},
-	{L["Config"], L["Config_Description"], "ToggleBars"},
+	{L["Config"], L["Config_Description"], "ToggleBarEditMode"},
 	{L["Add"], L["Add_Description"], "AddObjectsToBar"},
 	{L["Remove"], L["Remove_Description"], "RemoveObjectsFromBar"},
-	{L["Edit"], L["Edit_Description"], "ToggleEditFrames"},
-	{L["Bind"], L["Bind_Description"], "ToggleBindings"},
+	{L["Edit"], L["Edit_Description"], "ToggleButtonEditMode"},
+	{L["Bind"], L["Bind_Description"], "ToggleBindingMode"},
 	{L["Scale"], L["Scale_Description"], "ScaleBar"},
 	{L["SnapTo"], L["SnapTo_Description"], "SnapToBar"},
 	{L["AutoHide"], L["AutoHide_Description"], "AutoHideBar"},
@@ -617,7 +625,6 @@ function NEURON:controlOnUpdate(frame, elapsed)
 	---Throttled OnUpdate calls
 	if (NEURON.elapsed > GDB.throttle and NEURON.PEW) then
 
-		NEURON.NeuronBar:controlOnUpdate(frame, elapsed)
 		NEURON.NeuronButton:cooldownsOnUpdate(frame, elapsed)
 		if NEURON.NeuronZoneAbilityBar then
 			NEURON.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
@@ -635,8 +642,8 @@ function NEURON:controlOnUpdate(frame, elapsed)
 	---UnThrottled OnUpdate calls
 	if(NEURON.PEW) then
 		NEURON.NeuronButton:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+		NEURON.NeuronBar:controlOnUpdate(frame, elapsed)
 	end
-
 end
 
 -----------------------------------------------------------------
@@ -769,9 +776,6 @@ function NEURON:UpdateSpellIndex()
 				NEURON.sIndex[spellID] = spellData
 			end
 
-			if (icon and not icons[icon]) then
-				ICONS[#ICONS+1] = icon; icons[icon] = true
-			end
 		end
 	end
 
@@ -808,9 +812,7 @@ function NEURON:UpdateSpellIndex()
 						NEURON.sIndex[spellID] = spellData
 					end
 
-					if (icon and not icons[icon]) then
-						ICONS[#ICONS+1] = icon; icons[icon] = true
-					end
+
 				end
 			end
 		end
@@ -845,7 +847,6 @@ function NEURON:UpdateSpellIndex()
 		end
 	end
 
-
 end
 
 
@@ -873,9 +874,7 @@ function NEURON:UpdatePetSpellIndex()
 					NEURON.sIndex[spellID] = spellData
 				end
 
-				if (icon and not icons[icon]) then
-					ICONS[#ICONS+1] = icon; icons[icon] = true
-				end
+
 			end
 		end
 	end
@@ -965,11 +964,6 @@ function NEURON:UpdateCompanionData()
 				NEURON.cIndex[spell:lower().."()"] = companionData
 				NEURON.cIndex[petID] = companionData
 
-				if(type(icon) == "number") then
-					if (icon and not icons[icon]) then
-						ICONS[#ICONS+1] = icon; icons[icon] = true
-					end
-				end
 			end
 		end
 	end
@@ -986,32 +980,12 @@ function NEURON:UpdateCompanionData()
 				NEURON.cIndex[spell:lower().."()"] = companionData
 				NEURON.cIndex[spellID] = companionData
 
-				if (icon and not icons[icon]) then
-					ICONS[#ICONS+1] = icon; icons[icon] = true
-				end
 			end
 		end
 	end
 end
 
 
-
-
---- Creates a table of the available spell icon filenames for use in macros
-function NEURON:UpdateIconIndex()
-
-	local temp = {}
-
-	GetMacroIcons(temp)
-
-	for k,icon in ipairs(temp) do
-		if (not icons[icon]) then
-			ICONS[#ICONS+1] = icon; icons[icon] = true
-		end
-
-	end
-
-end
 
 function NEURON:UpdateStanceStrings()
 	if (NEURON.class == "DRUID" or
@@ -1139,10 +1113,11 @@ function NEURON:HideBlizzard()
 		_G["MultiBarLeftButton" .. i]:UnregisterAllEvents()
 		_G["MultiBarLeftButton" .. i]:SetAttribute("statehidden", true)
 	end
-	UIPARENT_MANAGED_FRAME_POSITIONS["MainMenuBar"] = nil
-	UIPARENT_MANAGED_FRAME_POSITIONS["StanceBarFrame"] = nil
-	UIPARENT_MANAGED_FRAME_POSITIONS["PossessBarFrame"] = nil
-	UIPARENT_MANAGED_FRAME_POSITIONS["PETACTIONBAR_YPOS"] = nil
+
+	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarRight"] = nil
+	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarLeft"] = nil
+	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomLeft"] = nil
+	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomRight"] = nil
 
 	--MainMenuBar:UnregisterAllEvents()
 	--MainMenuBar:SetParent(UIHider)
@@ -1242,13 +1217,11 @@ function NEURON:ToggleBlizzUI()
 end
 
 
-
-function NEURON:ToggleButtonGrid(show, hide)
-	for id,btn in pairs(BTNIndex) do
-		btn:SetGrid(btn, show, hide)
+function NEURON:ToggleButtonGrid(show)
+	for id,btn in pairs(NEURON.BTNIndex) do
+		btn:SetObjectVisibility(btn, show)
 	end
 end
-
 
 
 
@@ -1258,38 +1231,54 @@ function NEURON:ToggleMainMenu(show, hide)
 	InterfaceOptionsFrame_OpenToCategory("Neuron");
 end
 
+function NEURON:ToggleBarEditMode(show)
 
-function NEURON:ToggleEditFrames(show, hide)
+	if show and NEURON.BarEditMode == false then
 
-	if (NEURON.EditFrameShown or hide) then
+		NEURON.BarEditMode = true
 
-		NEURON.EditFrameShown = false
+		NEURON:ToggleButtonEditMode(false)
+		NEURON:ToggleBindingMode(false)
 
-		for index, editor in pairs(NEURON.EDITIndex) do
-			editor:Hide()
-			editor.object.editmode = NEURON.EditFrameShown
-			editor:SetFrameStrata("LOW")
+		for index, bar in pairs(BARIndex) do
+			bar:Show() --this shows the transparent overlay over a bar
+			NEURON.NeuronBar:Update(bar, true)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
 		end
-
-		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
-			if (bar.handler:GetAttribute("assertstate")) then
-				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
-			end
-		end
-
-		NEURON.NeuronButton:ChangeObject()
 
 	else
 
-		--NEURON:ToggleMainMenu(nil, true)
-		NEURON.NeuronBar:ToggleBars(nil, true)
-		NEURON:ToggleBindings(nil, true)
+		NEURON.BarEditMode = false
 
-		NEURON.EditFrameShown = true
+		for index, bar in pairs(BARIndex) do
+			bar:Hide()
+			NEURON.NeuronBar:Update(bar, nil, true)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar)
+		end
+
+		NEURON.NeuronBar:ChangeBar(nil)
+
+		if (NeuronBarEditor)then
+			NeuronBarEditor:Hide()
+		end
+
+	end
+
+end
+
+function NEURON:ToggleButtonEditMode(show)
+
+	if show and NEURON.ButtonEditMode == false then
+
+		NEURON.ButtonEditMode = true
+
+		NEURON:ToggleBarEditMode(false)
+		NEURON:ToggleBindingMode(false)
+
 
 		for index, editor in pairs(NEURON.EDITIndex) do
-			editor:Show(); editor.object.editmode = NEURON.EditFrameShown
+			editor:Show()
+			editor.object.editmode = true
 
 			if (editor.object.bar) then
 				editor:SetFrameStrata(editor.object.bar:GetFrameStrata())
@@ -1298,43 +1287,73 @@ function NEURON:ToggleEditFrames(show, hide)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			NEURON.NeuronBar:UpdateObjectGrid(bar, NEURON.EditFrameShown)
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
 		end
+
+	else
+
+		NEURON.ButtonEditMode = false
+
+		for index, editor in pairs(NEURON.EDITIndex) do
+			editor:Hide()
+			editor.object.editmode = false
+			editor:SetFrameStrata("LOW")
+		end
+
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectVisibility(bar)
+
+			if (bar.handler:GetAttribute("assertstate")) then
+				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
+			end
+		end
+
+		NEURON.NeuronButton:ChangeObject()
+
 	end
 end
 
 
---- Toggles the displaying of key bindings
--- @param show: True if to be displayed
--- @param hide: True if to be hidden
-function NEURON:ToggleBindings(show, hide)
-	if (NEURON.BindingMode or hide) then
-		NEURON.BindingMode = false
+function NEURON:ToggleBindingMode(show)
 
-		for _, binder in pairs(NEURON.BINDIndex) do
-			binder:Hide(); binder.button.editmode = NEURON.BindingMode
-			binder:SetFrameStrata("LOW")
-			if (not NEURON.BarsShown) then
-				binder.button:SetGrid(binder.button)
-			end
-		end
-
-	else
-		NEURON:ToggleEditFrames(nil, true)
+	if show and NEURON.BindingMode == false then
 
 		NEURON.BindingMode = true
 
+		NEURON:ToggleButtonEditMode(false)
+		NEURON:ToggleBarEditMode(false)
+
+
 		for _, binder in pairs(NEURON.BINDIndex) do
 			binder:Show()
-			binder.button.editmode = NEURON.BindingMode
+			binder.button.editmode = true
 
 			if (binder.button.bar) then
 				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
 				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
-				binder.button:SetGrid(binder.button, true)
+				binder.button:SetObjectVisibility(binder.button, true)
 			end
 		end
 
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
+		end
+
+	else
+
+		NEURON.BindingMode = false
+
+		for _, binder in pairs(NEURON.BINDIndex) do
+			binder:Hide(); binder.button.editmode = false
+			binder:SetFrameStrata("LOW")
+			if (not NEURON.BarEditMode) then
+				binder.button:SetObjectVisibility(binder.button)
+			end
+		end
+
+		for _,bar in pairs(BARIndex) do
+			NEURON.NeuronBar:UpdateObjectVisibility(bar)
+		end
 	end
 end
 
