@@ -236,14 +236,12 @@ end
 
 function NeuronExtraBar:SetObjectVisibility(button, show)
 
-	if (not InCombatLockdown()) then
-
-		if HasExtraActionBar() or show then
-			button:Show()
-		elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
-			button:Hide()
-		end
+	if HasExtraActionBar() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+		button:SetAlpha(1)
+	elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
+		button:SetAlpha(0)
 	end
+
 end
 
 function NeuronExtraBar:SetAux(button)
