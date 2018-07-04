@@ -703,18 +703,16 @@ end
 
 function NeuronPetBar:SetObjectVisibility(button, show, hide)
 
-	if (not InCombatLockdown()) then
 
 		button:SetAttribute("isshown", button.showGrid)
 		button:SetAttribute("showgrid", show)
 
 		if (show or button.showGrid) then
-			button:Show()
+			button:SetAlpha(1)
 		elseif not NeuronPetBar:HasPetAction(button.actionID) and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
-			--button:Hide() --temporarilly disable Show/Hide grid on Pet bar
+			--button:SetAlpha(0) --temporarilly disable Show/Hide grid on Pet bar
 		end
 
-	end
 end
 
 
