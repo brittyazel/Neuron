@@ -272,29 +272,25 @@ function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 
 	local spellID, spellType = GetZoneAbilitySpellInfo();
 
-
-	if (event == "SPELLS_CHANGED" or event=="UNIT_AURA") then
-		button.baseName = GetSpellInfo(spellID);
-		ZoneAbilitySpellID = spellID
+	button.baseName = GetSpellInfo(spellID);
+	ZoneAbilitySpellID = spellID
 
 
-		if (spellID) then
+	if (spellID) then
 
-			if ( not GetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY) and garrisonType == LE_GARRISON_TYPE_6_0 ) then
-				SetCVarBitfield( "closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY, true );
-			end
-
-			NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button);
-
-			if (not InCombatLockdown()) then
-				button:Show();
-			end
+		if ( not GetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY) and garrisonType == LE_GARRISON_TYPE_6_0 ) then
+			SetCVarBitfield( "closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY, true );
 		end
 
-		button:SetObjectVisibility(button)
+		NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button);
+
+		if (not InCombatLockdown()) then
+			button:Show();
+		end
 	end
 
 	button.spellID = spellID;
+	button:SetObjectVisibility(button)
 end
 
 
@@ -411,7 +407,7 @@ end
 
 function NeuronZoneAbilityBar:SetObjectVisibility(button, show)
 
-	if (show) then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+	if (GetZoneAbilitySpellInfo() or show) then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		button:SetAlpha(1)
 	elseif not button.spellID and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
 		button:SetAlpha(0)
@@ -472,14 +468,9 @@ end
 
 function NeuronZoneAbilityBar:SetType(button, save)
 
-	button:RegisterUnitEvent("UNIT_AURA", "player");
-	button:RegisterEvent("SPELL_UPDATE_COOLDOWN");
-	button:RegisterEvent("SPELL_UPDATE_USABLE");
-	button:RegisterEvent("SPELL_UPDATE_CHARGES");
-	button:RegisterEvent("SPELLS_CHANGED");
-	button:RegisterEvent("ACTIONBAR_SLOT_CHANGED");
+	button:RegisterUnitEvent("UNIT_AURA", "player")
+	button:RegisterEvent("SPELLS_CHANGED")
 	button:RegisterEvent("ZONE_CHANGED")
-	button:RegisterEvent("UNIT_SPELLCAST_FAILED")
 
 
 	button.actionID = button.id
@@ -503,25 +494,25 @@ end
 
 function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, query)
 	if (query) then
-		return Neuron.CurrentBar.gdata.border
+		return NEURON.CurrentBar.gdata.border
 	end
 
 	if (gui) then
 
 		if (checked) then
-			Neuron.CurrentBar.gdata.border = true
+			NEURON.CurrentBar.gdata.border = true
 		else
-			Neuron.CurrentBar.gdata.border = false
+			NEURON.CurrentBar.gdata.border = false
 		end
 
 	else
 
-		local toggle = Neuron.CurrentBar.gdata.border
+		local toggle = NEURON.CurrentBar.gdata.border
 
 		if (toggle) then
-			Neuron.CurrentBar.gdata.border = false
+			NEURON.CurrentBar.gdata.border = false
 		else
-			Neuron.CurrentBar.gdata.border = true
+			NEURON.CurrentBar.gdata.border = true
 		end
 	end
 
