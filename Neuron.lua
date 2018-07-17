@@ -24,7 +24,7 @@ local latestVersionNum = "0.9.30" --this variable is set to popup a welcome mess
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
 
-Neuron is currently in a "|cffffff00release|r" state.
+Neuron is currently in a "|cffffff00release|r" state. However, please be aware that Neuron is still very much a work-in-progress.
 
 If you have any questions or concerns please direct all inquirires our Github page or through Curseforge, which are listed in the F.A.Q.
 
@@ -34,15 +34,11 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-A ton of work went into this release, and Neuron is now full steam ahead to Battle for Azeroth. There are a couple notes with this version:
+Neuron has been updated for patch 8.0.1; however, like with any new patch there are bound to be breakages.
 
-1)The bag and menu bars have been completely rewritten, so expect a tiny bit of quirkiness (they're fixed in BfA).
+Please report any bugs you may find, and keep in mind that Neuron is always looking for contributions in the form of code, bug testing, or translations.
 
-2)Neuron is fully updated for BfA, and you can get a working version from the bfa_beta branch on GitHub.
-
-3)The GUI re-write is well underway, and expect that to also land with the 8.0 update (baring any unforseen events).
-
-Lastly, if you are enjoying Neuron, please consider a small donation to help with development costs.
+Thank you for your support! And look for a future message from me about a Neuron "Community" in game.
 
 -Soyier]]
 
