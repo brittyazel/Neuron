@@ -1,7 +1,7 @@
 --[[-----------------------------------------------------------------------------
 EditBox Widget
 -------------------------------------------------------------------------------]]
-local Type, Version = "EditBox", 28
+local Type, Version = "EditBox", 27
 local AceGUI = LibStub and LibStub("AceGUI-3.0", true)
 if not AceGUI or (AceGUI:GetWidgetVersion(Type) or 0) >= Version then return end
 
@@ -73,7 +73,7 @@ local function EditBox_OnEnterPressed(frame)
 	local value = frame:GetText()
 	local cancel = self:Fire("OnEnterPressed", value)
 	if not cancel then
-		PlaySound(856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
+		PlaySound(PlaySoundKitID and "igMainMenuOptionCheckBoxOn" or 856) -- SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON
 		HideButton(self)
 	end
 end
@@ -81,21 +81,23 @@ end
 local function EditBox_OnReceiveDrag(frame)
 	local self = frame.obj
 	local type, id, info = GetCursorInfo()
-	local name
 	if type == "item" then
-		name = info
+		self:SetText(info)
+		self:Fire("OnEnterPressed", info)
+		ClearCursor()
 	elseif type == "spell" then
-		name = GetSpellInfo(id, info)
-	elseif type == "macro" then
-		name = GetMacroInfo(id)
-	end
-	if name then
+		local name = GetSpellInfo(id, info)
 		self:SetText(name)
 		self:Fire("OnEnterPressed", name)
 		ClearCursor()
-		HideButton(self)
-		AceGUI:ClearFocus()
+	elseif type == "macro" then
+		local name = GetMacroInfo(id)
+		self:SetText(name)
+		self:Fire("OnEnterPressed", name)
+		ClearCursor()
 	end
+	HideButton(self)
+	AceGUI:ClearFocus()
 end
 
 local function EditBox_OnTextChanged(frame)

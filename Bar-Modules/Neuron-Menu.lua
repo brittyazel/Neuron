@@ -1,5 +1,8 @@
 --Neuron Menu Bar, a World of Warcraft® user interface addon.
 
+--Most of this code is based off of the 7.0 version of Blizzard's
+--MainMenuBarMicroButtons.lua & MainMenuBarMicroButtons.xml files
+
 -------------------------------------------------------------------------------
 -- AddOn namespace.
 -------------------------------------------------------------------------------
@@ -20,8 +23,8 @@ local gDef = {
     snapToFrame = false,
     snapToPoint = false,
     point = "BOTTOMRIGHT",
-    x = -344,
-    y = 24.5,
+    x = -330,
+    y = 21,
 }
 
 local menuElements = {}
@@ -80,6 +83,7 @@ function NeuronMenuBar:OnInitialize()
     if NeuronGDB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
     end
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -107,13 +111,11 @@ end
 
 ------------------------------------------------------------------------------
 
-
 function NEURON:PET_BATTLE_OPENING_START()
 end
 
 function NEURON:PET_BATTLE_CLOSE()
 end
-
 -------------------------------------------------------------------------------
 
 
@@ -127,7 +129,6 @@ function NeuronMenuBar:CreateBarsAndButtons()
         for i=1,#menuElements do
             object = NEURON.NeuronButton:CreateNewObject("menu", i)
             NEURON.NeuronBar:AddObjectToList(bar, object)
-
         end
 
         DB.menubarFirstRun = false
@@ -165,7 +166,6 @@ function NeuronMenuBar:DisableDefault()
     end
 
 end
-
 
 function NeuronMenuBar:SetData(button, bar)
     if (bar) then
@@ -213,7 +213,6 @@ function NeuronMenuBar:LoadData(button, spec, state)
     end
 end
 
-
 function NeuronMenuBar:SetObjectVisibility(button, show, hide)
     --empty
 end
@@ -246,8 +245,7 @@ function NeuronMenuBar:SetType(button, save)
     if (menuElements[button.id]) then
 
         button:SetWidth(menuElements[button.id]:GetWidth()-2)
-        button:SetHeight(menuElements[button.id]:GetHeight()-2)
-
+        button:SetHeight(menuElements[button.id]:GetHeight()-24)
         button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
         button.element = menuElements[button.id]
@@ -262,8 +260,8 @@ function NeuronMenuBar:SetType(button, save)
         button.element:ClearAllPoints()
         button.element:SetParent(button)
         button.element:Show()
-        button.element:SetPoint("CENTER", button, "CENTER")
+        button.element:SetPoint("CENTER", button, "CENTER", 0, 11) ---TODO: this needs to be changed back in bfa, for some reason legion had a weird offset
         button.element:SetScale(1)
-    end
 
+    end
 end
