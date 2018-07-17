@@ -1,6 +1,6 @@
 # Neuron
 
-Neuron is a full featured action Bar addon for World of Warcraft: Legion, updated for Patch 8.0
+Neuron is a full featured action Bar addon for World of Warcraft: Battle for Azeroth, updated for Patch 8.0
 
 ## Manual Install:
 I do not recommend downloading this addon directly from Github, as there are CurseForge packaging modifications made the the addon upon release. These modifications include updating all included libraries to their latest release versions and pulling in all of the crowd sourced localizations. I have made an effort to pull in periodic samplings of these, but what you will find in the packaged versions on CurseForge or WowInterface will be much more up to date.
