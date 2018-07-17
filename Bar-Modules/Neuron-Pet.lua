@@ -88,6 +88,7 @@ function NeuronPetBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
+
     if NeuronGDB.blizzbar == false then
         NeuronPetBar:CreateBarsAndButtons()
     end
@@ -117,6 +118,7 @@ end
 -------------------------------------------------------------------------------
 
 function NeuronPetBar:CreateBarsAndButtons()
+
     if (DB.petbarFirstRun) then
 
         local bar, object = NEURON.NeuronBar:CreateNewBar("pet", 1, true)
@@ -146,7 +148,6 @@ end
 
 
 
-
 --this function gets called from the controlOnUpdate in the Neuron.lua file
 function NeuronPetBar:controlOnUpdate(frame, elapsed)
 	local alphaTimer, alphaDir = 0, 0
@@ -169,7 +170,7 @@ function NeuronPetBar:HasPetAction(id, icon)
 
 	if not id then return end --return if there is no id passed in
 
-	local _, _, texture = GetPetActionInfo(id)
+	local _, texture = GetPetActionInfo(id)
 
 	if (GetPetActionSlotUsable(id)) then
 
@@ -188,7 +189,7 @@ function NeuronPetBar:HasPetAction(id, icon)
 	end
 end
 
-function NeuronPetBar:PET_UpdateIcon(button, spell, subtext, texture, isToken)
+function NeuronPetBar:PET_UpdateIcon(button, spell, texture, isToken)
 
 	button.isToken = isToken
 
@@ -295,7 +296,7 @@ function NeuronPetBar:PET_UpdateOnEvent(button, state)
 
 	local actionID = button.actionID
 
-	local spell, subtext, texture, isToken, isActive, allowed, enabled = GetPetActionInfo(actionID)
+	local spell, texture, isToken, isActive, allowed, enabled = GetPetActionInfo(actionID)
 
 	if (not state) then
 
@@ -312,7 +313,7 @@ function NeuronPetBar:PET_UpdateOnEvent(button, state)
 		end
 
 		NeuronPetBar:PET_UpdateTexture(button)
-		NeuronPetBar:PET_UpdateIcon(button, spell, subtext, texture, isToken)
+		NeuronPetBar:PET_UpdateIcon(button, spell, texture, isToken)
 		NeuronPetBar:PET_UpdateCooldown(button)
 	end
 

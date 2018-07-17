@@ -106,7 +106,8 @@ function NeuronFlyouts:OnEnable()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("EXECUTE_CHAT_LINE")
 	self:RegisterEvent("BAG_UPDATE")
-	self:RegisterEvent("PLAYER_INVENTORY_CHANGED")
+	-- FIXME 8.0 - This event handler is broken
+	--self:RegisterEvent("PLAYER_INVENTORY_CHANGED")
 	self:RegisterEvent("COMPANION_LEARNED")
 	self:RegisterEvent("COMPANION_UPDATE")
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB")
@@ -414,13 +415,9 @@ function f.filter.none(arg)
 		end
 	end
 	-- if a spell
-	local spellName,subName = GetSpellInfo(arg)
+	local spellName = GetSpellInfo(arg)
 	if spellName and spellName~="" then
-		if subName and subName~="" then
-			addToTable("spell",format("%s(%s)",spellName,subName)) -- for Polymorph(Turtle)
-		else
-			addToTable("spell",spellName)
-		end
+		addToTable("spell",spellName)
 		return
 	end
 	-- if a toy
@@ -823,11 +820,7 @@ function NeuronFlyouts:GetBlizzData(button, data)
 		end
 
 		if (isKnown and visible) then
-			spell, subName = GetSpellInfo(spellID)
-
-			if (subName and #subName > 0) then
-				spell = spell.."("..subName..")"
-			end
+			spell = GetSpellInfo(spellID)
 
 			data[spell] = "blizz"
 		end

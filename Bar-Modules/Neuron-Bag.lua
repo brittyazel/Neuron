@@ -2,7 +2,7 @@
 local NEURON = Neuron
 local  DB
 
-NEURON.NeuronBagBar = NEURON:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
+NEURON.NeuronBagBar = NEURON:NewModule("BagBar")
 local NeuronBagBar = NEURON.NeuronBagBar
 
 local  bagbarsDB, bagbtnsDB
@@ -15,15 +15,14 @@ local SKIN = LibStub("Masque", true)
 
 
 local gDef = {
-
-    padH = -1,
+    padH = 0,
     scale = 1.1,
     snapTo = false,
     snapToFrame = false,
     snapToPoint = false,
     point = "BOTTOMRIGHT",
-    x = -93.33,
-    y = 21.33,
+    x = -104,
+    y = 25,
 }
 
 local bagElements = {}
@@ -40,6 +39,7 @@ local configData = {
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
 function NeuronBagBar:OnInitialize()
+
 
     bagElements[5] = MainMenuBarBackpackButton
     bagElements[4] = CharacterBag0Slot
@@ -70,24 +70,12 @@ function NeuronBagBar:OnInitialize()
 
     NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarsDB, bagbarsDB, NeuronBagBar, bagbtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, gDef, nil, true)
 
+
     NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
 
     if NeuronGDB.blizzbar == false then
         NeuronBagBar:CreateBarsAndButtons()
-
-        ---hide the weird color border around bag bars
-        CharacterBag0Slot.IconBorder:Hide()
-        CharacterBag1Slot.IconBorder:Hide()
-        CharacterBag2Slot.IconBorder:Hide()
-        CharacterBag3Slot.IconBorder:Hide()
-
-        ---overwrite the Show function with a null function because it keeps coming back and won't stay hidden
-        NeuronBagBar:RawHook(CharacterBag0Slot.IconBorder, "Show", function() end, true)
-        NeuronBagBar:RawHook(CharacterBag1Slot.IconBorder, "Show", function() end, true)
-        NeuronBagBar:RawHook(CharacterBag2Slot.IconBorder, "Show", function() end, true)
-        NeuronBagBar:RawHook(CharacterBag3Slot.IconBorder, "Show", function() end, true)
     end
-
 
 end
 
@@ -116,6 +104,7 @@ end
 -------------------------------------------------------------------------------
 
 function NeuronBagBar:CreateBarsAndButtons()
+
     if (DB.bagbarFirstRun) then
 
         local bar = NEURON.NeuronBar:CreateNewBar("bag", 1, true)
@@ -258,12 +247,15 @@ function NeuronBagBar:SetType(button, save)
 
     if (bagElements[button.id]) then
 
+		if button.id == 5 then --this corrects for some large ass margins on the main backpack button
+			button:SetWidth(bagElements[button.id]:GetWidth()-4)
+			button:SetHeight(bagElements[button.id]:GetHeight()-4)
+		else
+			button:SetWidth(bagElements[button.id]:GetWidth()+3)
+			button:SetHeight(bagElements[button.id]:GetHeight()+3)
+		end
 
-        button:SetWidth(bagElements[button.id]:GetWidth()+3)
-        button:SetHeight(bagElements[button.id]:GetHeight()+3)
-
-
-        button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
+		button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
         button.element = bagElements[button.id]
 
@@ -280,8 +272,7 @@ function NeuronBagBar:SetType(button, save)
         button.element:SetPoint("CENTER", button, "CENTER")
         button.element:SetScale(1)
 
-
-        button:SetSkinned(button)
-
-    end
+		button:SetSkinned(button)
+	end
 end
+
