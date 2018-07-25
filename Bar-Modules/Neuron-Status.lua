@@ -498,26 +498,19 @@ function NeuronStatusBar:xpstrings_Update(button) --handles updating all the str
 	elseif(thisBar.curXPType == "honor_points") then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
-		restedXP = tostring(GetHonorRestState()).." "..L["Levels"]
+		restedXP = tostring(0).." "..L["Levels"]
 
 		local level = UnitHonorLevel("player");
-		local levelmax = GetMaxPlayerHonorLevel();
 
-		if (level ~= levelmax) then
-			percentXP = (currXP/nextXP)*100
-		else
-			percentXP = 100
-		end
+		percentXP = (currXP/nextXP)*100
+
 
 		bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
 		percentXP = string.format("%.1f", percentXP).."%"; --format
 
 
-		if (UnitPrestige("player")) then
-			rank = L["Level"].." "..tostring(UnitHonorLevel("player")).." - "..L["Prestige"].." "..tostring(UnitPrestige("Player"))
-		else
-			rank = tostring(UnitHonorLevel("player"))
-		end
+		rank = tostring(UnitHonorLevel("player"))
+
 	end
 
 	if (not button.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
