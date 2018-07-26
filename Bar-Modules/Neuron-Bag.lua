@@ -21,7 +21,7 @@ local gDef = {
     snapToFrame = false,
     snapToPoint = false,
     point = "BOTTOMRIGHT",
-    x = -104,
+    x = -115,
     y = 25,
 }
 
@@ -260,11 +260,11 @@ function NeuronBagBar:SetType(button, save)
     if (bagElements[button.id]) then
 
 		if button.id == 5 then --this corrects for some large ass margins on the main backpack button
-			button:SetWidth(bagElements[button.id]:GetWidth()-4)
-			button:SetHeight(bagElements[button.id]:GetHeight()-4)
+			button:SetWidth(bagElements[button.id]:GetWidth())
+			button:SetHeight(bagElements[button.id]:GetHeight())
 		else
-			button:SetWidth(bagElements[button.id]:GetWidth()+3)
-			button:SetHeight(bagElements[button.id]:GetHeight()+3)
+			button:SetWidth(bagElements[button.id]:GetWidth())
+			button:SetHeight(bagElements[button.id]:GetHeight())
 		end
 
 		button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)

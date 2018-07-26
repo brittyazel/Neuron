@@ -20,7 +20,7 @@ local gDef = {
     snapToFrame = false,
     snapToPoint = false,
     point = "BOTTOMRIGHT",
-    x = -344,
+    x = -354,
     y = 24.5,
 }
 
