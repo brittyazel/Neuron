@@ -1207,7 +1207,6 @@ function NeuronFlyouts:Flyout_ReleaseButton(fbutton, button)
 	button:SetAttribute("flyoutMacro", nil)
 
 	button:ClearAllPoints()
-	--button:SetParent(STORAGE)
 	button:SetPoint("CENTER")
 	button:Hide()
 end
@@ -1348,7 +1347,6 @@ function NeuronFlyouts:Flyout_ReleaseBar(button, bar)
 	bar:SetHeight(43)
 
 	bar:ClearAllPoints()
-	--bar:SetParent(STORAGE)
 	bar:SetPoint("CENTER")
 
 	button.bar.watchframes[bar.handler] = nil

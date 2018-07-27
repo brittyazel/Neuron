@@ -567,6 +567,19 @@ function NEURON:slashHandler(input)
 	end
 
 
+	--somewhat of a hack to insert a "true" as an arg if trying to toggle the edit modes
+	if command == "config" and NEURON.BarEditMode == false then
+		args[1] = true
+	end
+	if command == "edit" and NEURON.ButtonEditMode == false then
+		args[1] = true
+	end
+	if command == "bind" and NEURON.BindingMode == false then
+		args[1] = true
+	end
+
+
+
 	for i = 1,#slashFunctions do
 
 		if (command == slashFunctions[i][1]:lower()) then
@@ -1003,7 +1016,7 @@ function NEURON:UpdateStanceStrings()
 				if (spellID) then
 					NEURON.StanceIndex[i] = spellID
 				end
-			
+
 				local druidFormTable = {
 					{"Bear Form", 5487},
 					{"Cat Form", 768},
@@ -1013,6 +1026,7 @@ function NEURON:UpdateStanceStrings()
 					{"Stag Form", 210053},
 				}
 
+				--compare the current i's Shapeshift Form spellID to the ones in the druidFormTable, and choose the appropriate string
 			 	for j=1,#druidFormTable do
 					if spellID == druidFormTable[j][2] then
 						NEURON.STATES["stance"..i] = druidFormTable[j][1]
