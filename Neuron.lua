@@ -996,18 +996,31 @@ function NEURON:UpdateStanceStrings()
 			NEURON.STATES["stance"..i] = nil
 		end
 
-		for i=1,GetNumShapeshiftForms() do
-			icon, active, castable, spellID = GetShapeshiftFormInfo(i)
+		if (NEURON.class == "DRUID") then
+			for i=1,GetNumShapeshiftForms() do
+				icon, active, castable, spellID = GetShapeshiftFormInfo(i)
 
-			if (spellID) then
-				NEURON.StanceIndex[i] = spellID
+				if (spellID) then
+					NEURON.StanceIndex[i] = spellID
+				end
+			
+				local druidFormTable = {
+					{"Bear Form", 5487},
+					{"Cat Form", 768},
+					{"Travel Form", 783},
+					{"Moonkin Form", 24858},
+					{"Treant Form", 114282},
+					{"Stag Form", 210053},
+				}
+
+			 	for j=1,#druidFormTable do
+					if spellID == druidFormTable[j][2] then
+						NEURON.STATES["stance"..i] = druidFormTable[j][1]
+						states = states.."[stance:"..i.."] stance"..i.."; "
+					end
+				end
+
 			end
-
-			local druidFormNames = {"Bear Form", "Cat Form", "Travel Form", "Moonkin Form"}
-			---TODO: fix this line now that GetShapeshiftFormInfo doesn't return name
-			NEURON.STATES["stance"..i] = druidFormNames[i]
-			states = states.."[stance:"..i.."] stance"..i.."; "
-
 		end
 
 		--Adds Shadow Dance State for Subelty Rogues
