@@ -19,7 +19,7 @@ NEURON.PEW = false --flag that gets set when the player enters the world. It's u
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.30" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.30b" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
@@ -34,11 +34,11 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-Neuron has been updated for patch 8.0.1; however, like with any new patch there are bound to be breakages.
+I'm slowly chipping away at the bugs you've all reported and all of the unseen and undocumented changes to the WoW API. Things should be noticably more stable now than they were at launch.
 
-Please report any bugs you may find, and keep in mind that Neuron is always looking for contributions in the form of code, bug testing, or translations.
+I have created a community on the Horde side for Neuron users to talk in. This is a test for now, so we'll see how it goes. Perhaps if it goes well and doesn't turn into a flame war I'll make an Alliance side community.
 
-Thank you for your support! And look for a future message from me about a Neuron "Community" in game.
+https://bit.ly/2Lu72NZ
 
 -Soyier]]
 
@@ -677,10 +677,25 @@ function NEURON:LoginMessage()
 	---displays a info window on login for either fresh installs or updates
 	if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
 		StaticPopup_Show("NEURON_UPDATE_WARNING")
+
+		NEURON:ChatMessage()
+
 	elseif(GDB.updateWarning==nil) then
 		StaticPopup_Show("NEURON_INSTALL_MESSAGE")
+
+		NEURON:ChatMessage()
+
 	end
 
+end
+
+function NEURON:ChatMessage()
+	---TODO: Remove this eventually
+
+	if UnitFactionGroup('player') == "Horde" then
+		NEURON.Print("Click the following link to join the Neuron in-game community")
+		NEURON.Print("https://bit.ly/2Lu72NZ")
+	end
 end
 
 
