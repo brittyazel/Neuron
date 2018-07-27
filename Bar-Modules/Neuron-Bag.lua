@@ -76,7 +76,7 @@ function NeuronBagBar:OnInitialize()
     if NeuronGDB.blizzbar == false then
         NeuronBagBar:CreateBarsAndButtons()
 
-       --[[ ---hide the weird color border around bag bars
+        ---hide the weird color border around bag bars
         CharacterBag0Slot.IconBorder:Hide()
         CharacterBag1Slot.IconBorder:Hide()
         CharacterBag2Slot.IconBorder:Hide()
@@ -86,7 +86,7 @@ function NeuronBagBar:OnInitialize()
         NeuronBagBar:RawHook(CharacterBag0Slot.IconBorder, "Show", function() end, true)
         NeuronBagBar:RawHook(CharacterBag1Slot.IconBorder, "Show", function() end, true)
         NeuronBagBar:RawHook(CharacterBag2Slot.IconBorder, "Show", function() end, true)
-        NeuronBagBar:RawHook(CharacterBag3Slot.IconBorder, "Show", function() end, true)]]
+        NeuronBagBar:RawHook(CharacterBag3Slot.IconBorder, "Show", function() end, true)
     end
 
 end
@@ -157,6 +157,7 @@ function NeuronBagBar:SetSkinned(button)
             local btnData = {
                 Icon = button.icontexture,
                 Normal = button.normaltexture,
+                Count = button.count,
             }
 
             SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
@@ -283,7 +284,7 @@ function NeuronBagBar:SetType(button, save)
         button.element:SetPoint("CENTER", button, "CENTER")
         button.element:SetScale(1)
 
-		--button:SetSkinned(button)
+		button:SetSkinned(button)
 	end
 end
 
