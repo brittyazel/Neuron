@@ -1020,11 +1020,12 @@ function NEURON:UpdateStanceStrings()
 		local icon, name, active, castable, spellID, UJU
 		local states = "[stance:0] stance0; "
 
-		for i=1,8 do
-			NEURON.STATES["stance"..i] = nil
-		end
-
 		if (NEURON.class == "DRUID") then
+
+			for i=1,6 do
+				NEURON.STATES["stance"..i] = nil
+			end
+
 			for i=1,GetNumShapeshiftForms() do
 				icon, active, castable, spellID = GetShapeshiftFormInfo(i)
 
