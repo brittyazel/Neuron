@@ -202,6 +202,7 @@ L["Control Down"] = true
 L["Shift Up"] = true
 L["Shift Down"] = true
 
+L["Vanish"] = true
 L["Shapeshift"] = true
 L["No Stealth"] = true
 L["Friendly"] = true

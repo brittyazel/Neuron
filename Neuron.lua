@@ -47,7 +47,6 @@ https://bit.ly/2Lu72NZ
 NEURON['sIndex'] = {}
 NEURON['cIndex'] = {}
 NEURON['tIndex'] = {}
-NEURON['StanceIndex'] = {}
 NEURON['ShowGrids'] = {}
 NEURON['HideGrids'] = {}
 NEURON['BARIndex'] = {}
@@ -233,7 +232,7 @@ NEURON.STATEINDEX = {
 
 local handler
 
-local level, stanceStringsUpdated
+local level
 
 NEURON.BarEditMode = false
 NEURON.ButtonEditMode = false
@@ -1015,9 +1014,9 @@ function NEURON:UpdateStanceStrings()
 	if (NEURON.class == "DRUID" or
 			NEURON.class == "ROGUE") then
 
-		wipe(NEURON.StanceIndex)
-
 		local icon, name, active, castable, spellID, UJU
+
+		NEURON.STATES["stance0"] = L["Home State"]
 		local states = "[stance:0] stance0; "
 
 		if (NEURON.class == "DRUID") then
@@ -1026,12 +1025,10 @@ function NEURON:UpdateStanceStrings()
 				NEURON.STATES["stance"..i] = nil
 			end
 
+			NEURON.STATES["stance0"] = L["Caster Form"]
+
 			for i=1,GetNumShapeshiftForms() do
 				icon, active, castable, spellID = GetShapeshiftFormInfo(i)
-
-				if (spellID) then
-					NEURON.StanceIndex[i] = spellID
-				end
 
 				local druidFormTable = {
 					{"Bear Form", 5487},
@@ -1056,29 +1053,21 @@ function NEURON:UpdateStanceStrings()
 		--Adds Shadow Dance State for Subelty Rogues
 		if (NEURON.class == "ROGUE") then
 
-			NEURON.STATES["stance"..1] = "Stealth"
+			NEURON.STATES["stance0"] = L["Melee"]
+
+			NEURON.STATES["stance1"] = L["Stealth"]
 			states = states.."[stance:1] stance1; "
 
+			NEURON.STATES["stance2"] = L["Vanish"]
+			states = states.."[stance:2] stance2; "
+
 			if(GetSpecialization() == 3) then
-				NEURON.STATES["stance2"] = L["Shadow Dance"]
-				NEURON.StanceIndex[2] = 185313
-				states = states.."[stance:2] stance2; "
+				NEURON.STATES["stance3"] = L["Shadow Dance"]
+				states = states.."[stance:3] stance3; "
 			end
 		end
 
 		local states = states:gsub("; $", "")
-
-		if (not stanceStringsUpdated) then
-			if (NEURON.class == "DRUID") then
-				NEURON.STATES.stance0 = L["Caster Form"]
-			end
-
-			if (NEURON.class == "ROGUE") then
-				NEURON.STATES.stance0 = L["Melee"]
-			end
-
-			stanceStringsUpdated = true
-		end
 
 		NEURON.MAS.stance.states = states
 	end
