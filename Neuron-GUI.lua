@@ -1803,6 +1803,8 @@ function NeuronGUI:ActionEditor_OnLoad(frame)
 		states[values.order] = state
 	end
 
+	local _, class = UnitClass("player")
+
 	for index,state in ipairs(states) do
 		if (MAS[state].homestate) then
 
@@ -1812,8 +1814,10 @@ function NeuronGUI:ActionEditor_OnLoad(frame)
 			f:SetHeight(18)
 			f:SetScript("OnClick", function(self) NeuronGUI:setBarActionState(self) end)
 			--Renames Stance for rogues to Stealth as that is what should really be used
-			if state == "stance" and (NEURON.class == "ROGUE") then
+			if state == "stance" and (class == "ROGUE") then
 				f.text:SetText(L["Stealth"])--:upper())
+			elseif state == "stance" and (class == "DRUID") then
+				f.text:SetText(L["Shapeshift"])--:upper())
 			else
 				f.text:SetText(MAS[state].localizedName)--:upper())
 			end
@@ -2001,12 +2005,14 @@ function NeuronGUI:VisEditorScrollFrameUpdate(frame, tableList, alt)
 	local dataOffset, count, data = FauxScrollFrame_GetOffset(frame), 1, {}
 	local button, text
 
+	local _, class = UnitClass("player")
+
 	for k in pairs(tableList) do
 		local val = k:match("%d+$")
 
 		if (val and (k ~= "custom0"))then
 			--Messy workaround to not have 2 stealths for rogues
-			if ((k == "stealth0" or k == "stealth1") and (NEURON.class == "ROGUE")) then
+			if ((k == "stealth0" or k == "stealth1") and (class == "ROGUE")) then
 
 			else
 				data[count] = k; count = count + 1
@@ -2038,6 +2044,8 @@ function NeuronGUI:VisEditorScrollFrameUpdate(frame, tableList, alt)
 
 		count = dataOffset + i
 
+		local _, class = UnitClass("player")
+
 		if (data[count]) then
 
 			text = NEURON.STATES[data[count]] or data[count]
@@ -2051,7 +2059,7 @@ function NeuronGUI:VisEditorScrollFrameUpdate(frame, tableList, alt)
 			end
 
 			--Renames rogues stance0 from Melee to No stealth for the view states list
-			if (data[count] == "stance0"  and NEURON.class == "ROGUE") then
+			if (data[count] == "stance0"  and class == "ROGUE") then
 				text = L["No Stealth"]
 			end
 
@@ -2151,11 +2159,18 @@ function NeuronGUI:SecondaryPresetsScrollFrameUpdate(frame, stateList, alt)
 
 	local count = 1
 
+	local _, class = UnitClass("player")
+
 	for k,v in pairs(stateList) do
 
-		if (not MAS[k].homestate and (k ~= "extrabar") and (k ~= "custom") ) then --or ((NEURON.class == "ROGUE") and k ~= "stealth")
-			states[count] = k
-			count = count + 1
+		if (not MAS[k].homestate and (k ~= "extrabar") and (k ~= "custom")) then
+
+			if ((class == "ROGUE") and k == "stealth") then
+
+			else
+				states[count] = k
+				count = count + 1
+			end
 		end
 	end
 

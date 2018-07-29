@@ -1054,13 +1054,19 @@ function NEURON:UpdateStanceStrings()
 		end
 
 		--Adds Shadow Dance State for Subelty Rogues
-		if (NEURON.class == "ROGUE" and GetSpecialization() == 3 ) then
-			NEURON.STATES["stance2"] = L["Shadow Dance"]
-			NEURON.StanceIndex[2] = 185313
-			states = states.."[stance:2] stance2; "
+		if (NEURON.class == "ROGUE") then
+
+			NEURON.STATES["stance"..1] = "Stealth"
+			states = states.."[stance:1] stance1; "
+
+			if(GetSpecialization() == 3) then
+				NEURON.STATES["stance2"] = L["Shadow Dance"]
+				NEURON.StanceIndex[2] = 185313
+				states = states.."[stance:2] stance2; "
+			end
 		end
 
-		states = states:gsub("; $", "")
+		local states = states:gsub("; $", "")
 
 		if (not stanceStringsUpdated) then
 			if (NEURON.class == "DRUID") then

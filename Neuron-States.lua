@@ -17,7 +17,7 @@ NEURON.MANAGED_ACTION_STATES = {
 
 	stance = {
 		homestate = "stance0",
-		states = "[stance:0] stance0; [stance:1] stance1; [stance:2] stance2; [stance:3] stance3; [stance:4] stance4; [stance:5] stance5; [stance:6] stance6; [stance:7] stance7",
+		states = "[stance:0] stance0; [stance:1] stance1; [stance:2] stance2; [stance:3] stance3; [stance:4] stance4; [stance:5] stance5; [stance:6] stance6;",
 		rangeStart = 1,
 		rangeStop = 8,
 		order = 2,
