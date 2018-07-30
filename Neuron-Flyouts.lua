@@ -106,8 +106,6 @@ function NeuronFlyouts:OnEnable()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("EXECUTE_CHAT_LINE")
 	self:RegisterEvent("BAG_UPDATE")
-	-- FIXME 8.0 - This event handler is broken
-	--self:RegisterEvent("PLAYER_INVENTORY_CHANGED")
 	self:RegisterEvent("COMPANION_LEARNED")
 	self:RegisterEvent("COMPANION_UPDATE")
 	self:RegisterEvent("LEARNED_SPELL_IN_TAB")
@@ -143,26 +141,6 @@ function NeuronFlyouts:EXECUTE_CHAT_LINE(eventName, ...)
 end
 
 function NeuronFlyouts:BAG_UPDATE(eventName, ...)
-
-	local bag = ...
-	if bag>=0 and bag<=4 then
-		f.bagsToCache[bag] = true
-		if NEURON.PEW then
-			f.StartTimer(0.05,f.CacheBags)
-		end
-	end
-
-	for anchor in pairs(ANCHORIndex) do
-		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
-			if (types:find("^i")) then
-				tinsert(needsUpdate, anchor)
-			end
-		end
-	end
-	ANCHOR_LOGIN_Updater:Show()
-end
-
-function NeuronFlyouts:PLAYER_INVENTORY_CHANGED(eventName, ...)
 
 	local bag = ...
 	if bag>=0 and bag<=4 then

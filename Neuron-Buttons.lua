@@ -844,8 +844,8 @@ function NeuronButton:MACRO_SetSpellIcon(button, spell)
 			_, texture = GetMacroInfo(button.data.macro_Watch)
 			--texture = "INTERFACE\\ICONS\\"..texture:match("[%w_]+$"):upper()
 			button.data.macro_Icon = texture
-		elseif (button.data.macro_Equip) then
-			texture = GetEquipmentSetInfoByName(button.data.macro_Equip)
+		--elseif (button.data.macro_Equip) then
+			--_,texture = C_EquipmentSet.GetEquipmentSetInfo(button.data.macro_Equip)
 		end
 
 		if (texture) then
@@ -1864,15 +1864,23 @@ function NeuronButton:MACRO_PlaceBlizzMacro(button, action1)
 end
 
 
-function NeuronButton:MACRO_PlaceBlizzEquipSet(button, action1)
-	if (action1 == 0) then
+function NeuronButton:MACRO_PlaceBlizzEquipSet(button, equipmentSetName)
+	if (equipmentSetName == 0) then
 		return
 	else
 
-		local name, texture = GetEquipmentSetInfoByName(action1)
+		local equipsetNameIndex = 0 ---cycle through the equipment sets to find the index of the one with the right name
+		for i = 1,C_EquipmentSet.GetNumEquipmentSets() do
+			if equipmentSetName == C_EquipmentSet.GetEquipmentSetInfo(i) then
+				equipsetNameIndex = i end
+
+		end
+
+
+		local name, texture = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
 		if (texture) then
-			button.data.macro_Text = "/equipset "..action1
-			button.data.macro_Equip = action1
+			button.data.macro_Text = "/equipset "..equipmentSetName
+			button.data.macro_Equip = equipmentSetName
 			button.data.macro_Name = name
 			button.data.macro_Icon = texture
 		else
