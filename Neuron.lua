@@ -879,15 +879,16 @@ function NEURON:UpdatePetSpellIndex()
 	if (HasPetSpells()) then
 		for i=1,HasPetSpells() do
 			local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_PET)
-			local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
-			local spellID_Alt = spellID
+			local spellType, actionID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
 			local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_PET)
 			--local icon = GetSpellBookItemTexture(i, BOOKTYPE_PET)
 			local isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
 
 			if (spellName and spellType ~= "FUTURESPELL") then
-				local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
-				local spellData = NEURON:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, pellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+				local altName, _, icon, castTime, minRange, maxRange, spellID = GetSpellInfo(spellName)
+				local spellID_Alt = spellID
+
+				local spellData = NEURON:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
 				NEURON.sIndex[(spellName):lower()] = spellData
 				NEURON.sIndex[(spellName):lower().."()"] = spellData
