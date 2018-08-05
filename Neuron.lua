@@ -879,9 +879,8 @@ function NEURON:UpdatePetSpellIndex()
 	if (HasPetSpells()) then
 		for i=1,HasPetSpells() do
 			local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_PET)
-			local spellType, actionID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
+			local spellType, _ = GetSpellBookItemInfo(i, BOOKTYPE_PET)
 			local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_PET)
-			--local icon = GetSpellBookItemTexture(i, BOOKTYPE_PET)
 			local isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
 
 			if (spellName and spellType ~= "FUTURESPELL") then
