@@ -1053,12 +1053,16 @@ function NeuronBar:CreateWatcher(bar)
 
 	watcher:SetAttribute("_onstate-petbattle", [[
 
-			if (self:GetAttribute("state-petbattle") == "hide") then
-				self:GetParent():Hide()
-			elseif (not self:GetParent():IsShown() and not self:GetParent():GetAttribute("vishide")) then
-				self:GetParent():Show()
-			end
-	]])
+            if (self:GetAttribute("state-petbattle") == "hide") then
+                self:GetParent():Hide()
+            else
+                if (not self:GetParent():IsShown()) then
+                    if (not self:GetParent():GetAttribute("vishide") and not self:GetParent():GetAttribute("concealed")) then
+                        self:GetParent():Show()
+                    end
+                end
+            end
+    ]])
 
 	RegisterStateDriver(watcher, "petbattle", "[petbattle] hide; [nopetbattle] show")
 
