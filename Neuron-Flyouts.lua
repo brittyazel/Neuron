@@ -52,7 +52,7 @@ local ANCHOR_LOGIN_Updater
 local itemScanner
 local flyoutBarUpdater
 
-local extensions
+--local extensions
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -104,7 +104,7 @@ function NeuronFlyouts:OnEnable()
 	f.timerFrame:Hide()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("EXECUTE_CHAT_LINE")
+	--self:RegisterEvent("EXECUTE_CHAT_LINE")
 	self:RegisterEvent("BAG_UPDATE")
 	self:RegisterEvent("COMPANION_LEARNED")
 	self:RegisterEvent("COMPANION_UPDATE")
@@ -136,7 +136,7 @@ function NeuronFlyouts:EXECUTE_CHAT_LINE(eventName, ...)
 
 	local command, options = (...):match("(/%a+)%s(.+)")
 
-	if (extensions[command]) then extensions[command](options) end
+	--if (extensions[command]) then extensions[command](options) end
 
 end
 
@@ -257,7 +257,7 @@ function NeuronFlyouts:PLAYER_ENTERING_WORLD()
 
 	f.CacheBags()
 
-	extensions = { ["/flyout"] = NeuronFlyouts.command_flyout }
+	--extensions = { ["/flyout"] = NeuronFlyouts.command_flyout }
 
 end
 

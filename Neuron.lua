@@ -327,7 +327,6 @@ function NEURON:OnEnable()
 	NEURON:RegisterEvent("SPELLS_CHANGED")
 	NEURON:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	NEURON:RegisterEvent("LEARNED_SPELL_IN_TAB")
-	NEURON:RegisterEvent("PET_UI_CLOSE")
 	NEURON:RegisterEvent("COMPANION_LEARNED")
 	NEURON:RegisterEvent("COMPANION_UPDATE")
 	NEURON:RegisterEvent("UNIT_LEVEL")
@@ -434,12 +433,6 @@ function NEURON:SPELLS_CHANGED()
 	NEURON:UpdateStanceStrings()
 end
 
-function NEURON:PET_UI_CLOSE()
-	if not CollectionsJournal or not CollectionsJournal:IsShown() then
-		NEURON:UpdateCompanionData()
-	end
-end
-
 function NEURON:COMPANION_LEARNED()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		NEURON:UpdateCompanionData()
@@ -464,13 +457,13 @@ function NEURON:UNIT_PET(eventName, ...)
 		if (NEURON.PEW) then
 			NEURON:UpdatePetSpellIndex()
 		end
-	end
+    end
 end
 
 function NEURON:UNIT_LEVEL(eventName, ...)
 	if ... == "player" then
 		NEURON.level = UnitLevel("player")
-	end
+    end
 end
 
 function NEURON:TOYS_UPDATED()
