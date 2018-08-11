@@ -1487,16 +1487,16 @@ function NeuronButton:MACRO_OnUpdate(button, elapsed) --this function uses A TON
 			button.mac_flashing = false
 		end
 
-		NeuronButton:MACRO_UpdateButton(button)
+		--NeuronButton:MACRO_UpdateButton(button)
 
 
-		if (button.auraQueue and not button.iconframecooldown.active) then
+		--[[if (button.auraQueue and not button.iconframecooldown.active) then
 			local unit, spell = (":"):split(button.auraQueue)
 			if (unit and spell) then
 				button.auraQueue = nil;
 				NeuronButton:MACRO_UpdateAuraWatch(button, unit, spell)
 			end
-		end
+		end]]
 
 		button.elapsed = 0
 	end
@@ -1657,9 +1657,10 @@ function NeuronButton:MACRO_PLAYER_ENTERING_WORLD(button, ...)
 	NEURON.NeuronBinder:ApplyBindings(button)
 end
 
-function NeuronButton:MACRO_PET_JOURNAL_LIST_UPDATE(button, ...)
+---super broken with 8.0
+--[[function NeuronButton:MACRO_PET_JOURNAL_LIST_UPDATE(button, ...)
 	NeuronButton:MACRO_UpdateAll(button, true)
-end
+end]]
 
 
 function NeuronButton:MACRO_MODIFIER_STATE_CHANGED(button, ...)
@@ -2611,7 +2612,7 @@ function NeuronButton:MACRO_OnShow(button, ...)
 	button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
 	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 
-	button:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+	--button:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 
 end
 
@@ -2667,7 +2668,7 @@ function NeuronButton:MACRO_OnHide(button, ...)
 	button:UnregisterEvent("UPDATE_POSSESS_BAR")
 	button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
 	button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
-	button:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
+	--button:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
 
 end
 

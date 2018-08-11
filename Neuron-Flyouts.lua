@@ -114,7 +114,7 @@ function NeuronFlyouts:OnEnable()
 	self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 	self:RegisterEvent("SPELLS_CHANGED")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	self:RegisterEvent("TOYS_UPDATED")
+	--self:RegisterEvent("TOYS_UPDATED")
 
 	NeuronFlyouts:HookScript(f.timerFrame, "OnUpdate", "timerFrame_OnUpdate")
 
