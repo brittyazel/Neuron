@@ -1487,16 +1487,16 @@ function NeuronButton:MACRO_OnUpdate(button, elapsed) --this function uses A TON
 			button.mac_flashing = false
 		end
 
-		--NeuronButton:MACRO_UpdateButton(button)
+		NeuronButton:MACRO_UpdateButton(button)
 
 
-		--[[if (button.auraQueue and not button.iconframecooldown.active) then
+		if (button.auraQueue and not button.iconframecooldown.active) then
 			local unit, spell = (":"):split(button.auraQueue)
 			if (unit and spell) then
 				button.auraQueue = nil;
 				NeuronButton:MACRO_UpdateAuraWatch(button, unit, spell)
 			end
-		end]]
+		end
 
 		button.elapsed = 0
 	end
