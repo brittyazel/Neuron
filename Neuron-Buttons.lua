@@ -719,8 +719,8 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 		elseif (ud_spell) then
 			if (#ud_spell < 1) then
 				ud_spell = nil
-			--elseif(GetItemInfo(ud_spell) or ItemCache[ud_spell]) then
-			elseif(ItemCache[ud_spell]) then
+			elseif(GetItemInfo(ud_spell) or ItemCache[ud_spell]) then
+			--elseif(ItemCache[ud_spell]) then
 				ud_item = ud_spell; ud_spell = nil
 			elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then
 				ud_item = GetInventoryItemLink("player", ud_spell); ud_spell = nil
