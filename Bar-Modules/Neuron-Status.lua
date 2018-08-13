@@ -464,7 +464,38 @@ function NeuronStatusBar:xpstrings_Update(button) --handles updating all the str
 		rank = L["Level"].." "..tostring(playerLevel)
 
 
-		--honor points option
+	--[[---heart of azeroth power option
+	elseif(thisBar.curXPType == "artifact_xp") then
+
+		--when first logging in for some reason this check fails, even if the player is wearing an artifact weapon
+		if(HasArtifactEquipped("player")) then
+			local itemID, altItemID, name, icon, artifactTotalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
+			currXP = artifactTotalXP;
+
+			if( not C_ArtifactUI.IsEquippedArtifactMaxed()) then-- check to see if weapon is a max level
+				local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+				nextXP = xpForNextPoint;
+			else
+				nextXP = currXP;
+			end
+
+			restedXP = "0".." "..L["Levels"]
+
+			percentXP = (currXP/nextXP)*100
+			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"]
+			rank = tostring(pointsSpent).." "..L["Points"]
+		else
+			currXP = 0;
+			nextXP = 0;
+			percentXP = 0;
+			bubbles = tostring(0).." / 20 "..L["Bubbles"]
+			rank = tostring(0).." "..L["Points"]
+		end
+
+		percentXP = string.format("%.1f", percentXP).."%"; --format]]
+
+
+	---honor points option
 	elseif(thisBar.curXPType == "honor_points") then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
@@ -588,21 +619,21 @@ function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropd
 		UIDropDownMenu_AddButton(info)
 		wipe(info)
 
-		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
-			info.arg1 = parent
-			info.arg2 = "honor_points"
-			info.text = L["Track Honor Points"]
-			info.func = NeuronStatusBar.switchCurXPType
 
-			if (statusbtnsDB[id].curXPType == "honor_points") then
-				info.checked = 1
-			else
-				info.checked = nil
-			end
+		info.arg1 = parent
+		info.arg2 = "honor_points"
+		info.text = L["Track Honor Points"]
+		info.func = NeuronStatusBar.switchCurXPType
 
-			UIDropDownMenu_AddButton(info)
-			wipe(info)
+		if (statusbtnsDB[id].curXPType == "honor_points") then
+			info.checked = 1
+		else
+			info.checked = nil
 		end
+
+		UIDropDownMenu_AddButton(info)
+		wipe(info)
+
 	end
 end
 
