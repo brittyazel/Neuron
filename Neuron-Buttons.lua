@@ -1109,7 +1109,7 @@ function NeuronButton:MACRO_UpdateState(button, ...)
 
 	elseif (show and #show>0) then
 
-		if (GetItemInfo(show) or ItemCache[show]) then
+		if (GetItemInfo(show) or ItemCache[show]) then ---this GetItemInfo gets called a lot
 			NeuronButton:MACRO_SetItemState(button, show)
 		else
 			NeuronButton:MACRO_SetSpellState(button, show)
@@ -1442,7 +1442,7 @@ function NeuronButton:MACRO_UpdateButton(button, ...)
 
 	elseif (button.macroshow and #button.macroshow>0) then
 
-		if(GetItemInfo(button.macroshow) or ItemCache[button.macroshow]) then
+		if(GetItemInfo(button.macroshow) or ItemCache[button.macroshow]) then ---we need to figure out what to use instead of GetItemInfo
 			NeuronButton:MACRO_UpdateUsableItem(button, button.macroshow)
 		else
 			NeuronButton:MACRO_UpdateUsableSpell(button, button.macroshow)
