@@ -719,7 +719,8 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 		elseif (ud_spell) then
 			if (#ud_spell < 1) then
 				ud_spell = nil
-			elseif(GetItemInfo(ud_spell) or ItemCache[ud_spell]) then
+			--elseif(GetItemInfo(ud_spell) or ItemCache[ud_spell]) then
+			elseif(ItemCache[ud_spell]) then
 				ud_item = ud_spell; ud_spell = nil
 			elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then
 				ud_item = GetInventoryItemLink("player", ud_spell); ud_spell = nil
@@ -948,7 +949,8 @@ function NeuronButton:MACRO_UpdateIcon(button, ...)
 	if (button.actionID) then
 		texture = NeuronButton:ACTION_SetIcon(button, button.actionID)
 	elseif (show and #show>0) then
-		if(GetItemInfo(show) or ItemCache[show]) then
+		--if(GetItemInfo(show) or ItemCache[show]) then
+		if(ItemCache[show]) then
 			texture = NeuronButton:MACRO_SetItemIcon(button, show)
 		else
 			texture = NeuronButton:MACRO_SetSpellIcon(button, show)
@@ -1109,7 +1111,8 @@ function NeuronButton:MACRO_UpdateState(button, ...)
 
 	elseif (show and #show>0) then
 
-		if (GetItemInfo(show) or ItemCache[show]) then ---this GetItemInfo gets called a lot
+		--if (GetItemInfo(show) or ItemCache[show]) then
+		if (ItemCache[show]) then ---this GetItemInfo gets called a lot
 			NeuronButton:MACRO_SetItemState(button, show)
 		else
 			NeuronButton:MACRO_SetSpellState(button, show)
@@ -1127,7 +1130,8 @@ function NeuronButton:MACRO_UpdateState(button, ...)
 
 		show = button:GetAttribute("macroShow")
 
-		if (GetItemInfo(show) or ItemCache[show]) then
+		--if (GetItemInfo(show) or ItemCache[show]) then
+		if (ItemCache[show]) then
 			NeuronButton:MACRO_SetItemState(button, show)
 		else
 			NeuronButton:MACRO_SetSpellState(button, show)
@@ -1284,7 +1288,8 @@ function NeuronButton:MACRO_UpdateCooldown(button, update)
 	if (button.actionID) then
 		NeuronButton:ACTION_SetCooldown(button, button.actionID)
 	elseif (show and #show>0) then
-		if(GetItemInfo(show) or ItemCache[show]) then
+		--if(GetItemInfo(show) or ItemCache[show]) then
+		if (ItemCache[show]) then
 			NeuronButton:MACRO_SetItemCooldown(button, show)
 		else
 			NeuronButton:MACRO_SetSpellCooldown(button, show)
@@ -1442,7 +1447,8 @@ function NeuronButton:MACRO_UpdateButton(button, ...)
 
 	elseif (button.macroshow and #button.macroshow>0) then
 
-		if(GetItemInfo(button.macroshow) or ItemCache[button.macroshow]) then ---we need to figure out what to use instead of GetItemInfo
+		--if (GetItemInfo(button.macroshow) or ItemCache[button.macroshow]) then
+		if(ItemCache[button.macroshow]) then ---we need to figure out what to use instead of GetItemInfo
 			NeuronButton:MACRO_UpdateUsableItem(button, button.macroshow)
 		else
 			NeuronButton:MACRO_UpdateUsableSpell(button, button.macroshow)
@@ -2483,7 +2489,8 @@ function NeuronButton:MACRO_SetTooltip(button, edit)
 		NeuronButton:ACTION_SetTooltip(button, button.actionID)
 
 	elseif (show and #show>0) then
-		if(GetItemInfo(show) or ItemCache[show]) then
+		--if(GetItemInfo(show) or ItemCache[show]) then
+		if(ItemCache[show]) then
 			NeuronButton:MACRO_SetItemTooltip(button, show)
 		else
 			NeuronButton:MACRO_SetSpellTooltip(button, show:lower())
@@ -2498,7 +2505,8 @@ function NeuronButton:MACRO_SetTooltip(button, edit)
 	elseif (button:GetAttribute("macroShow")) then
 		show = button:GetAttribute("macroShow")
 
-		if(GetItemInfo(show) or ItemCache[show]) then
+		--if(GetItemInfo(show) or ItemCache[show]) then
+		if(ItemCache[show]) then
 			NeuronButton:MACRO_SetItemTooltip(button, show)
 		else
 			NeuronButton:MACRO_SetSpellTooltip(button, show:lower())
