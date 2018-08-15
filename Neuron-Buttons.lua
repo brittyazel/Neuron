@@ -247,11 +247,10 @@ function NeuronButton:OnEnable()
 	end
 
 	---these two hooks are to call a function to check if we dragged an ability off the bar or not
-	if NeuronButton.Hooks == nil then
-		NeuronButton:SecureHookScript(WorldFrame, "OnMouseDown")
-		NeuronButton:SecureHook("ToggleCollectionsJournal")
-		NeuronButton.Hooks = true
-	end
+	NeuronButton:SecureHookScript(WorldFrame, "OnMouseDown")
+	NeuronButton:SecureHook("ToggleCollectionsJournal")
+	NeuronButton.Hooks = true
+
 
 
 end
@@ -674,6 +673,7 @@ end
 function NeuronButton:MACRO_RegisterCorrectEvents(button, typeOfMacro)
 	if typeOfMacro == nil then
 		button:UnregisterEvent("SPELL_UPDATE_USABLE")
+		button:UnregisterEvent("SPELL_UPDATE_CHARGES")
 		button:UnregisterEvent("RUNE_POWER_UPDATE")
 		button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
 		button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
@@ -692,6 +692,7 @@ function NeuronButton:MACRO_RegisterCorrectEvents(button, typeOfMacro)
 		button:UnregisterEvent("UNIT_AURA")
 	elseif typeOfMacro == "spell" then
 		button:RegisterEvent("SPELL_UPDATE_USABLE")
+		button:RegisterEvent("SPELL_UPDATE_CHARGES")
 		button:RegisterEvent("RUNE_POWER_UPDATE")
 		button:RegisterEvent("UNIT_ENTERED_VEHICLE")
 		button:RegisterEvent("UNIT_ENTERING_VEHICLE")
@@ -710,6 +711,7 @@ function NeuronButton:MACRO_RegisterCorrectEvents(button, typeOfMacro)
 		button:UnregisterEvent("UNIT_AURA")
 	elseif typeOfMacro == "item" then
 		button:UnregisterEvent("SPELL_UPDATE_USABLE")
+		button:RegisterEvent("SPELL_UPDATE_CHARGES")
 		button:UnregisterEvent("RUNE_POWER_UPDATE")
 		button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
 		button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
@@ -728,6 +730,7 @@ function NeuronButton:MACRO_RegisterCorrectEvents(button, typeOfMacro)
 		button:UnregisterEvent("UNIT_AURA")
 	elseif typeOfMacro == "show" then
 		button:RegisterEvent("SPELL_UPDATE_USABLE")
+		button:RegisterEvent("SPELL_UPDATE_CHARGES")
 		button:RegisterEvent("RUNE_POWER_UPDATE")
 		button:RegisterEvent("UNIT_ENTERED_VEHICLE")
 		button:RegisterEvent("UNIT_ENTERING_VEHICLE")
@@ -746,6 +749,7 @@ function NeuronButton:MACRO_RegisterCorrectEvents(button, typeOfMacro)
 		button:RegisterEvent("UNIT_AURA")
 	elseif typeOfMacro == "aura" then
 		button:UnregisterEvent("SPELL_UPDATE_USABLE")
+		button:UnregisterEvent("SPELL_UPDATE_CHARGES")
 		button:UnregisterEvent("RUNE_POWER_UPDATE")
 		button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
 		button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
@@ -816,27 +820,16 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 
 			if (#ud_spell < 1) then
 				ud_spell = nil
-			else
-				if(ItemCache[ud_spell]) then
-					ud_item = ud_spell
-					ud_spell = nil
-				else
-					local _, _, _, _, _, _, ud_spellid = GetSpellInfo(ud_spell)
-					if ud_spellid ~= nil then
-						--print(tostring(ud_spellid))
-					elseif GetItemInfo(ud_spell) then --cache any items in itemcache if they are not yet in itemcache
-						local _, link = GetItemInfo(ud_spell)
-						if link then
-							local _, itemID = link:match("(item:)(%d+)")
-							ItemCache[ud_spell] = itemID
-						end				
-						ud_item = ud_spell
-						ud_spell = nil
-					elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then
-						ud_item = GetInventoryItemLink("player", ud_spell)
-						ud_spell = nil
-					end
-				end
+
+			elseif(ItemCache[ud_spell]) then
+
+				ud_item = ud_spell
+				ud_spell = nil
+
+
+			elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then
+				ud_item = GetInventoryItemLink("player", ud_spell)
+				ud_spell = nil
 			end
 		end
 
@@ -944,33 +937,21 @@ function NeuronButton:MACRO_SetSpellIcon(button, spell)
 		end
 
 		if (texture) then
-
-			--local shapeshift_texture = NeuronButton:isActiveShapeshiftSpell(spell)
-
-			--if (shapeshift_texture) then
-				--button.iconframeicon:SetTexture(shapeshift_texture)
-			--else
-				button.iconframeicon:SetTexture(texture)
-
-			--end
-
+			button.iconframeicon:SetTexture(texture)
 			button.iconframeicon:Show()
 		else
-			button.iconframeicon:SetTexture("")
-			button.iconframeicon:Hide()
+			--button.iconframeicon:SetTexture("")
+			--button.iconframeicon:Hide()
+			button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK") --show questionmark instead of empty button to avoid confusion
 		end
 
 	else
 		if (button.data.macro_Watch) then
-			--for i=1,select("#",GetMacroInfo(button.data.macro_Watch)) do
-			--	NEURON:Print(select(i,GetMacroInfo(button.data.macro_Watch)))
-			--end
 
 			_, texture = GetMacroInfo(button.data.macro_Watch)
-			--texture = "INTERFACE\\ICONS\\"..texture:match("[%w_]+$"):upper()
+
 			button.data.macro_Icon = texture
-		--elseif (button.data.macro_Equip) then
-			--_,texture = C_EquipmentSet.GetEquipmentSetInfo(button.data.macro_Equip)
+
 		end
 
 		if (texture) then
@@ -2682,10 +2663,10 @@ function NeuronButton:MACRO_OnShow(button, ...)
 	button:RegisterEvent("ACTIONBAR_UPDATE_STATE")
 	button:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
 
-	button:RegisterEvent("SPELL_UPDATE_CHARGES")
-	button:RegisterEvent("SPELL_UPDATE_USABLE")
+	--button:RegisterEvent("SPELL_UPDATE_CHARGES")
+	--button:RegisterEvent("SPELL_UPDATE_USABLE")
 
-	button:RegisterEvent("RUNE_POWER_UPDATE")
+	--button:RegisterEvent("RUNE_POWER_UPDATE")
 
 	button:RegisterEvent("TRADE_SKILL_SHOW")
 	button:RegisterEvent("TRADE_SKILL_CLOSE")
@@ -2698,10 +2679,10 @@ function NeuronButton:MACRO_OnShow(button, ...)
 	button:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 	button:RegisterEvent("UNIT_SPELLCAST_FAILED")
 	button:RegisterEvent("UNIT_PET")
-	button:RegisterEvent("UNIT_AURA")
-	button:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	button:RegisterEvent("UNIT_ENTERING_VEHICLE")
-	button:RegisterEvent("UNIT_EXITED_VEHICLE")
+	--button:RegisterEvent("UNIT_AURA")
+	--button:RegisterEvent("UNIT_ENTERED_VEHICLE")
+	--button:RegisterEvent("UNIT_ENTERING_VEHICLE")
+	--button:RegisterEvent("UNIT_EXITED_VEHICLE")
 
 	button:RegisterEvent("PLAYER_TARGET_CHANGED")
 	button:RegisterEvent("PLAYER_FOCUS_CHANGED")
@@ -2711,22 +2692,22 @@ function NeuronButton:MACRO_OnShow(button, ...)
 	button:RegisterEvent("PLAYER_LEAVE_COMBAT")
 	button:RegisterEvent("PLAYER_CONTROL_LOST")
 	button:RegisterEvent("PLAYER_CONTROL_GAINED")
-	button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+	--button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
-	button:RegisterEvent("UNIT_INVENTORY_CHANGED")
-	button:RegisterEvent("BAG_UPDATE_COOLDOWN")
-	button:RegisterEvent("BAG_UPDATE")
-	button:RegisterEvent("COMPANION_UPDATE")
+	--button:RegisterEvent("UNIT_INVENTORY_CHANGED")
+	--button:RegisterEvent("BAG_UPDATE_COOLDOWN")
+	--button:RegisterEvent("BAG_UPDATE")
+	--button:RegisterEvent("COMPANION_UPDATE")
 	button:RegisterEvent("PET_STABLE_UPDATE")
 	button:RegisterEvent("PET_STABLE_SHOW")
 
-	button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-	button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+	--button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+	--button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
 
-	button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	button:RegisterEvent("UPDATE_POSSESS_BAR")
-	button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+	--button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+	--button:RegisterEvent("UPDATE_POSSESS_BAR")
+	--button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+	--button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 
 	--button:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 
@@ -2739,10 +2720,10 @@ function NeuronButton:MACRO_OnHide(button, ...)
 	button:UnregisterEvent("ACTIONBAR_UPDATE_STATE")
 	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
 
-	button:UnregisterEvent("SPELL_UPDATE_CHARGES")
-	button:UnregisterEvent("SPELL_UPDATE_USABLE")
+	--button:UnregisterEvent("SPELL_UPDATE_CHARGES")
+	--button:UnregisterEvent("SPELL_UPDATE_USABLE")
 
-	button:UnregisterEvent("RUNE_POWER_UPDATE")
+	--button:UnregisterEvent("RUNE_POWER_UPDATE")
 
 	button:UnregisterEvent("TRADE_SKILL_SHOW")
 	button:UnregisterEvent("TRADE_SKILL_CLOSE")
@@ -2755,10 +2736,10 @@ function NeuronButton:MACRO_OnHide(button, ...)
 	button:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 	button:UnregisterEvent("UNIT_SPELLCAST_FAILED")
 	button:UnregisterEvent("UNIT_PET")
-	button:UnregisterEvent("UNIT_AURA")
-	button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
-	button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
-	button:UnregisterEvent("UNIT_EXITED_VEHICLE")
+	--button:UnregisterEvent("UNIT_AURA")
+	--button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
+	--button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
+	--button:UnregisterEvent("UNIT_EXITED_VEHICLE")
 
 	button:UnregisterEvent("PLAYER_TARGET_CHANGED")
 	button:UnregisterEvent("PLAYER_FOCUS_CHANGED")
@@ -2768,22 +2749,22 @@ function NeuronButton:MACRO_OnHide(button, ...)
 	button:UnregisterEvent("PLAYER_LEAVE_COMBAT")
 	button:UnregisterEvent("PLAYER_CONTROL_LOST")
 	button:UnregisterEvent("PLAYER_CONTROL_GAINED")
-	button:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+	--button:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
-	button:UnregisterEvent("UNIT_INVENTORY_CHANGED")
-	button:UnregisterEvent("BAG_UPDATE_COOLDOWN")
-	button:UnregisterEvent("BAG_UPDATE")
-	button:UnregisterEvent("COMPANION_UPDATE")
+	--button:UnregisterEvent("UNIT_INVENTORY_CHANGED")
+	--button:UnregisterEvent("BAG_UPDATE_COOLDOWN")
+	--button:UnregisterEvent("BAG_UPDATE")
+	--button:UnregisterEvent("COMPANION_UPDATE")
 	button:UnregisterEvent("PET_STABLE_UPDATE")
 	button:UnregisterEvent("PET_STABLE_SHOW")
 
-	button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-	button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+	--button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+	--button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
 
-	button:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	button:UnregisterEvent("UPDATE_POSSESS_BAR")
-	button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
+	--button:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+	--button:UnregisterEvent("UPDATE_POSSESS_BAR")
+	--button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+	--button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
 	--button:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
 
 end
@@ -3510,10 +3491,10 @@ function NeuronButton:SetType(button, save, kill, init)
 		button:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
 		button:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
 
-		if button.EnterLeaveScriptsHooked == nil then
+		if button.enterLeaveScriptIsHooked == nil then
 			button:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
 			button:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
-			button.EnterLeaveScriptsHooked = true
+			button.enterLeaveScriptIsHooked = true
 		end
 
 		button:WrapScript(button, "OnShow", [[
