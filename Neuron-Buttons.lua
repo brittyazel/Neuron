@@ -855,11 +855,11 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 			if (#ud_spell < 1) then
 				ud_spell = nil
 			else
-				if(ItemCache[ud_spell]) then --this is an item that's already in the item cache
+				if(ItemCache[ud_spell]) then --this is an item that's already in the item cache, so skip wasteful spell and item checks
 					ud_item = ud_spell
 					ud_spell = nil
 				else
-					local _, _, _, _, _, _, ud_spellid = GetSpellInfo(ud_spell)
+					local _, _, _, _, _, _, ud_spellid = GetSpellInfo(ud_spell) --check if it's a spell and save the spellID to be reused later
 					if ud_spellid ~= nil then --this is a spell, so do nothing and skip wasteful item check
 					elseif GetItemInfo(ud_spell) then --this is an item that's not yet in the cache, so cache it
 						local _, link = GetItemInfo(ud_spell)
