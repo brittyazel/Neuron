@@ -397,7 +397,7 @@ function NEURON:PLAYER_ENTERING_WORLD()
 	NEURON:UpdateSpellIndex()
 	NEURON:UpdatePetSpellIndex()
 	NEURON:UpdateStanceStrings()
-	NEURON:UpdateCompanionData()
+	NEURON:UpdateCompanionData(true)
 	NEURON:UpdateToyData()
 
 	--Fix for Titan causing the Main Bar to not be hidden
@@ -435,7 +435,7 @@ end
 
 function NEURON:COMPANION_LEARNED()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
-		NEURON:UpdateCompanionData()
+		NEURON:UpdateCompanionData(true)
 	end
 end
 
@@ -955,49 +955,51 @@ end
 
 --- Compiles a list of battle pets & mounts a player has.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
 ---	If a companion is not displaying its tooltip or cooldown, then the item in the macro probably is not in the database
-function NEURON:UpdateCompanionData()
+function NEURON:UpdateCompanionData(force)
 	--.C_PetJournal.ClearAllPetSourcesFilter()
 	--.C_PetJournal.ClearAllPetTypesFilter()
+	if ((NEURON.CompanionDataUpdated == nil) or (force == true)) then
+		C_PetJournal.ClearSearchFilter()
 
-	C_PetJournal.ClearSearchFilter()
+		--.C_PetJournal.AddAllPetSourcesFilter()
+		--.C_PetJournal.AddAllPetTypesFilter()
 
-	--.C_PetJournal.AddAllPetSourcesFilter()
-	--.C_PetJournal.AddAllPetTypesFilter()
+		C_PetJournal.SetAllPetSourcesChecked(true)
+		C_PetJournal.SetAllPetTypesChecked(true)
+		local numpet = select(1, C_PetJournal.GetNumPets())
 
-	C_PetJournal.SetAllPetSourcesChecked(true)
-	C_PetJournal.SetAllPetTypesChecked(true)
-	local numpet = select(1, C_PetJournal.GetNumPets())
+		for i=1,numpet do
 
-	for i=1,numpet do
+			local petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName, icon, petType, companionID, tooltip, description, isWild, canBattle, isTradeable, isUnique, obtainable = C_PetJournal.GetPetInfoByIndex(i)
 
-		local petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName, icon, petType, companionID, tooltip, description, isWild, canBattle, isTradeable, isUnique, obtainable = C_PetJournal.GetPetInfoByIndex(i)
+			if (petID) then
+				local spell = speciesName
+				if (spell) then
+					local companionData = NEURON:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
+					NEURON.cIndex[spell:lower()] = companionData
+					NEURON.cIndex[spell:lower().."()"] = companionData
+					NEURON.cIndex[petID] = companionData
 
-		if (petID) then
-			local spell = speciesName
-			if (spell) then
-				local companionData = NEURON:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
-				NEURON.cIndex[spell:lower()] = companionData
-				NEURON.cIndex[spell:lower().."()"] = companionData
-				NEURON.cIndex[petID] = companionData
-
+				end
 			end
 		end
-	end
 
-	local mountIDs = C_MountJournal.GetMountIDs()
-	for i,id in pairs(mountIDs) do
-		local creatureName , spellID = C_MountJournal.GetMountInfoByID(id) --, creatureID, _, active, summonable, source, isFavorite, isFactionSpecific, faction, unknown, owned = C_MountJournal.GetMountInfoByID(i)
+		local mountIDs = C_MountJournal.GetMountIDs()
+		for i,id in pairs(mountIDs) do
+			local creatureName , spellID = C_MountJournal.GetMountInfoByID(id) --, creatureID, _, active, summonable, source, isFavorite, isFactionSpecific, faction, unknown, owned = C_MountJournal.GetMountInfoByID(i)
 
-		if (spellID) then
-			local spell, _, icon = GetSpellInfo(spellID)
-			if (spell) then
-				local companionData = NEURON:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
-				NEURON.cIndex[spell:lower()] = companionData
-				NEURON.cIndex[spell:lower().."()"] = companionData
-				NEURON.cIndex[spellID] = companionData
+			if (spellID) then
+				local spell, _, icon = GetSpellInfo(spellID)
+				if (spell) then
+					local companionData = NEURON:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
+					NEURON.cIndex[spell:lower()] = companionData
+					NEURON.cIndex[spell:lower().."()"] = companionData
+					NEURON.cIndex[spellID] = companionData
 
+				end
 			end
 		end
+		NEURON.CompanionDataUpdated = true
 	end
 end
 
