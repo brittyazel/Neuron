@@ -728,17 +728,6 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 				ud_item = ud_spell
 				ud_spell = nil
 
-			elseif GetItemInfo(ud_spell) then --cache any items in itemcache if they are not yet in itemcache
-
-				local _, link = GetItemInfo(ud_spell)
-
-				if link then
-					local _, itemID = link:match("(item:)(%d+)")
-					ItemCache[ud_spell] = itemID
-				end
-
-				ud_item = ud_spell
-				ud_spell = nil
 
 			elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then
 				ud_item = GetInventoryItemLink("player", ud_spell)
@@ -1809,6 +1798,12 @@ end
 
 function NeuronButton:MACRO_PlaceItem(button, action1, action2, hasAction)
 	local item, link = GetItemInfo(action2)
+
+	if link and not ItemCache[item] then --add the item to the itemcache if it isn't otherwise in it
+		local _, itemID = link:match("(item:)(%d+)")
+		ItemCache[item] = itemID
+	end
+
 
 	if (IsEquippableItem(item)) then
 		button.data.macro_Text = "/equip "..item.."\n/use "..item
