@@ -1812,7 +1812,7 @@ function NeuronButton:MACRO_MODIFIER_STATE_CHANGED(button, ...)
 end
 
 
-function NeuronButton:MACRO_MODIFIER_UPDATE_USABLE(button, ...)
+function NeuronButton:MACRO_SPELL_UPDATE_USABLE(button, ...)
 	NeuronButton:MACRO_UpdateAll(button, nil, true)
 end
 
