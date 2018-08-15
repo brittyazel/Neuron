@@ -161,7 +161,6 @@ NEURON.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this 
 local BUTTON = NEURON.BUTTON
 
 local isHooked
-local enterLeaveScriptIsHooked
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -3502,10 +3501,10 @@ function NeuronButton:SetType(button, save, kill, init)
 		button:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
 		button:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
 
-		if enterLeaveScriptIsHooked == nil then
+		if button.enterLeaveScriptIsHooked == nil then
 			button:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
 			button:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
-			enterLeaveScriptIsHooked = true
+			button.enterLeaveScriptIsHooked = true
 		end
 
 		button:WrapScript(button, "OnShow", [[
