@@ -806,7 +806,7 @@ end
 
 function NeuronButton:MACRO_UpdateData(button, ...)
 
-	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__
+	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__, ud_spellid
 
 
 	if (button.macroparse) then
@@ -859,7 +859,7 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 					ud_item = ud_spell
 					ud_spell = nil
 				else
-					local _, _, _, _, _, _, ud_spellid = GetSpellInfo(ud_spell) --check if it's a spell and save the spellID to be reused later
+					_, _, _, _, _, _, ud_spellid = GetSpellInfo(ud_spell) --check if it's a spell and save the spellID to be reused later
 					if ud_spellid ~= nil then --this is a spell, so do nothing and skip wasteful item check
 					elseif GetItemInfo(ud_spell) then --this is an item that's not yet in the cache, so cache it
 						local _, link = GetItemInfo(ud_spell)
