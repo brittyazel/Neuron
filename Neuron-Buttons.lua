@@ -1808,11 +1808,13 @@ end]]
 
 
 function NeuronButton:MACRO_MODIFIER_STATE_CHANGED(button, ...)
-	NeuronButton:MACRO_UpdateAll(button, nil, true)
+	NeuronButton:MACRO_UpdateAll(button, true, true)
 end
 
 
-NeuronButton.MACRO_SPELL_UPDATE_USABLE = NeuronButton.MACRO_MODIFIER_STATE_CHANGED
+function NeuronButton:MACRO_MODIFIER_UPDATE_USABLE(button, ...)
+	NeuronButton:MACRO_UpdateAll(button, nil, true)
+end
 
 
 function NeuronButton:MACRO_ACTIONBAR_SLOT_CHANGED(button, ...)
