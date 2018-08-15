@@ -1422,7 +1422,11 @@ end
 
 
 function NeuronButton:MACRO_UpdateAll(button, updateData, updateTexture)
-	if (updateData) then NeuronButton:MACRO_UpdateData(button) end
+
+	if (updateData) then
+		NeuronButton:MACRO_UpdateData(button)
+	end
+
 	NeuronButton:MACRO_UpdateButton(button)
 	NeuronButton:MACRO_UpdateIcon(button)
 	NeuronButton:MACRO_UpdateState(button)
