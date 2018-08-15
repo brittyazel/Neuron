@@ -247,10 +247,11 @@ function NeuronButton:OnEnable()
 	end
 
 	---these two hooks are to call a function to check if we dragged an ability off the bar or not
-	NeuronButton:SecureHookScript(WorldFrame, "OnMouseDown")
-
-
-	NeuronButton:SecureHook("ToggleCollectionsJournal")
+	if NeuronButton.Hooks == nil then
+		NeuronButton:SecureHookScript(WorldFrame, "OnMouseDown")
+		NeuronButton:SecureHook("ToggleCollectionsJournal")
+		NeuronButton.Hooks = true
+	end
 
 
 end
@@ -670,6 +671,99 @@ function NeuronButton:MACRO_GetDragAction()
 	return "macro"
 end
 
+function NeuronButton:MACRO_RegisterCorrectEvents(button, typeOfMacro)
+	if typeOfMacro == nil then
+		button:UnregisterEvent("SPELL_UPDATE_USABLE")
+		button:UnregisterEvent("RUNE_POWER_UPDATE")
+		button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
+		button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
+		button:UnregisterEvent("UNIT_EXITED_VEHICLE")
+		button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+		button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+		button:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+		button:UnregisterEvent("UPDATE_POSSESS_BAR")
+		button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+		button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
+		button:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		button:UnregisterEvent("UNIT_INVENTORY_CHANGED")
+		button:UnregisterEvent("BAG_UPDATE_COOLDOWN")
+		button:UnregisterEvent("BAG_UPDATE")
+		button:UnregisterEvent("COMPANION_UPDATE")
+		button:UnregisterEvent("UNIT_AURA")
+	elseif typeOfMacro == "spell" then
+		button:RegisterEvent("SPELL_UPDATE_USABLE")
+		button:RegisterEvent("RUNE_POWER_UPDATE")
+		button:RegisterEvent("UNIT_ENTERED_VEHICLE")
+		button:RegisterEvent("UNIT_ENTERING_VEHICLE")
+		button:RegisterEvent("UNIT_EXITED_VEHICLE")
+		button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+		button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+		button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+		button:RegisterEvent("UPDATE_POSSESS_BAR")
+		button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+		button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+		button:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		button:UnregisterEvent("UNIT_INVENTORY_CHANGED")
+		button:UnregisterEvent("BAG_UPDATE_COOLDOWN")
+		button:UnregisterEvent("BAG_UPDATE")
+		button:RegisterEvent("COMPANION_UPDATE")
+		button:UnregisterEvent("UNIT_AURA")
+	elseif typeOfMacro == "item" then
+		button:UnregisterEvent("SPELL_UPDATE_USABLE")
+		button:UnregisterEvent("RUNE_POWER_UPDATE")
+		button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
+		button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
+		button:UnregisterEvent("UNIT_EXITED_VEHICLE")
+		button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+		button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+		button:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+		button:UnregisterEvent("UPDATE_POSSESS_BAR")
+		button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+		button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
+		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		button:RegisterEvent("UNIT_INVENTORY_CHANGED")
+		button:RegisterEvent("BAG_UPDATE_COOLDOWN")
+		button:RegisterEvent("BAG_UPDATE")
+		button:RegisterEvent("COMPANION_UPDATE")
+		button:UnregisterEvent("UNIT_AURA")
+	elseif typeOfMacro == "show" then
+		button:RegisterEvent("SPELL_UPDATE_USABLE")
+		button:RegisterEvent("RUNE_POWER_UPDATE")
+		button:RegisterEvent("UNIT_ENTERED_VEHICLE")
+		button:RegisterEvent("UNIT_ENTERING_VEHICLE")
+		button:RegisterEvent("UNIT_EXITED_VEHICLE")
+		button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+		button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+		button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+		button:RegisterEvent("UPDATE_POSSESS_BAR")
+		button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+		button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		button:RegisterEvent("UNIT_INVENTORY_CHANGED")
+		button:RegisterEvent("BAG_UPDATE_COOLDOWN")
+		button:RegisterEvent("BAG_UPDATE")
+		button:RegisterEvent("COMPANION_UPDATE")
+		button:RegisterEvent("UNIT_AURA")
+	elseif typeOfMacro == "aura" then
+		button:UnregisterEvent("SPELL_UPDATE_USABLE")
+		button:UnregisterEvent("RUNE_POWER_UPDATE")
+		button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
+		button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
+		button:UnregisterEvent("UNIT_EXITED_VEHICLE")
+		button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+		button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+		button:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+		button:UnregisterEvent("UPDATE_POSSESS_BAR")
+		button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+		button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
+		button:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		button:UnregisterEvent("UNIT_INVENTORY_CHANGED")
+		button:UnregisterEvent("BAG_UPDATE_COOLDOWN")
+		button:UnregisterEvent("BAG_UPDATE")
+		button:UnregisterEvent("COMPANION_UPDATE")
+		button:RegisterEvent("UNIT_AURA")
+	end
+end
 
 function NeuronButton:MACRO_UpdateData(button, ...)
 
@@ -722,16 +816,27 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 
 			if (#ud_spell < 1) then
 				ud_spell = nil
-
-			elseif(ItemCache[ud_spell]) then
-
-				ud_item = ud_spell
-				ud_spell = nil
-
-
-			elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then
-				ud_item = GetInventoryItemLink("player", ud_spell)
-				ud_spell = nil
+			else
+				if(ItemCache[ud_spell]) then
+					ud_item = ud_spell
+					ud_spell = nil
+				else
+					local _, _, _, _, _, _, ud_spellid = GetSpellInfo(ud_spell)
+					if ud_spellid ~= nil then
+						--print(tostring(ud_spellid))
+					elseif GetItemInfo(ud_spell) then --cache any items in itemcache if they are not yet in itemcache
+						local _, link = GetItemInfo(ud_spell)
+						if link then
+							local _, itemID = link:match("(item:)(%d+)")
+							ItemCache[ud_spell] = itemID
+						end				
+						ud_item = ud_spell
+						ud_spell = nil
+					elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then
+						ud_item = GetInventoryItemLink("player", ud_spell)
+						ud_spell = nil
+					end
+				end
 			end
 		end
 
@@ -744,14 +849,16 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 				ud_spell = ud_spell:gsub("!", "")
 				button.macrospell = ud_spell
 
-				if (sIndex[ud_spell:lower()]) then
-					button.spellID = sIndex[ud_spell:lower()].spellID
+				if (ud_spellid) then
+					button.spellID = ud_spellid
 				else
 					button.spellID = nil
 				end
+				NeuronButton:MACRO_RegisterCorrectEvents(button, "spell")
 			end
 		else
 			button.macrospell = nil; button.spellID = nil
+			NeuronButton:MACRO_RegisterCorrectEvents(button)
 		end
 
 		if (ud_show and ud_showcmd:find("#showicon")) then
@@ -761,6 +868,7 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 				end
 				button.macroicon = ud_show
 				button.macroshow = nil
+				NeuronButton:MACRO_RegisterCorrectEvents(button, "show")
 			end
 		elseif (ud_show) then
 			if (ud_show ~= button.macroshow) then
@@ -769,10 +877,12 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 				end
 				button.macroshow = ud_show
 				button.macroicon = nil
+				NeuronButton:MACRO_RegisterCorrectEvents(button, "show")
 			end
 		else
 			button.macroshow = nil
 			button.macroicon = nil
+			NeuronButton:MACRO_RegisterCorrectEvents(button)
 		end
 
 		if (ud_cd) then
@@ -781,9 +891,11 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 					ud_aura = GetInventoryItemLink("player", ud_cd)
 				end
 				button.macrocd = ud_aura
+				NeuronButton:MACRO_RegisterCorrectEvents(button, "aura")
 			end
 		else
 			button.macrocd = nil
+			NeuronButton:MACRO_RegisterCorrectEvents(button)
 		end
 
 		if (ud_aura) then
@@ -792,9 +904,11 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 					ud_aura = GetInventoryItemLink("player", ud_aura)
 				end
 				button.macroaura = ud_aura
+				NeuronButton:MACRO_RegisterCorrectEvents(button, "aura")
 			end
 		else
 			button.macroaura = nil
+			NeuronButton:MACRO_RegisterCorrectEvents(button)
 		end
 
 		if (ud_item) then
@@ -802,9 +916,11 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 			button.spellID = nil
 			if (ud_item ~= button.macroitem) then
 				button.macroitem = ud_item
+				NeuronButton:MACRO_RegisterCorrectEvents(button, "item")
 			end
 		else
 			button.macroitem = nil
+			NeuronButton:MACRO_RegisterCorrectEvents(button)
 		end
 	end
 end
@@ -1317,8 +1433,8 @@ function NeuronButton:MACRO_UpdateTexture(button, force)
 end
 
 
-function NeuronButton:MACRO_UpdateAll(button, updateTexture)
-	NeuronButton:MACRO_UpdateData(button)
+function NeuronButton:MACRO_UpdateAll(button, updateData, updateTexture)
+	if (updateData) then NeuronButton:MACRO_UpdateData(button) end
 	NeuronButton:MACRO_UpdateButton(button)
 	NeuronButton:MACRO_UpdateIcon(button)
 	NeuronButton:MACRO_UpdateState(button)
@@ -1647,18 +1763,18 @@ end
 function NeuronButton:MACRO_PLAYER_ENTERING_WORLD(button, ...)
 
 	NeuronButton:MACRO_Reset(button)
-	NeuronButton:MACRO_UpdateAll(button, true)
+	NeuronButton:MACRO_UpdateAll(button, true, true)
 	NEURON.NeuronBinder:ApplyBindings(button)
 end
 
 ---super broken with 8.0
 --[[function NeuronButton:MACRO_PET_JOURNAL_LIST_UPDATE(button, ...)
-	NeuronButton:MACRO_UpdateAll(button, true)
+	NeuronButton:MACRO_UpdateAll(button, true, true)
 end]]
 
 
 function NeuronButton:MACRO_MODIFIER_STATE_CHANGED(button, ...)
-	NeuronButton:MACRO_UpdateAll(button, true)
+	NeuronButton:MACRO_UpdateAll(button, nil, true)
 end
 
 
@@ -1717,7 +1833,7 @@ end
 function NeuronButton:MACRO_UPDATE_VEHICLE_ACTIONBAR(button, ...)
 
 	if (button.actionID) then
-		NeuronButton:MACRO_UpdateAll(button, true)
+		NeuronButton:MACRO_UpdateAll(button, true, true)
 	end
 end
 
@@ -2250,7 +2366,7 @@ function NeuronButton:MACRO_OnReceiveDrag(button, preclick)
 		NEURON:ToggleButtonGrid(true)
 	end
 
-	NeuronButton:MACRO_UpdateAll(button, true)
+	NeuronButton:MACRO_UpdateAll(button, true, true)
 
 	StartDrag = false
 
@@ -2297,7 +2413,7 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 			button.dragbutton = nil
 		end
 
-		NeuronButton:MACRO_UpdateAll(button)
+		NeuronButton:MACRO_UpdateAll(button, true, nil)
 
 		button.iconframecooldown.duration = 0
 		button.iconframecooldown.timer:SetText("")
@@ -2722,7 +2838,7 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 
 				button.actionID = false
 			end
-			--This will remove any old button state data from the saved varabiels/memory
+			--This will remove any old button state data from the saved variables/memory
 			--for id,data in pairs(button.bar.cdata) do
 			for id,data in pairs(button.statedata) do
 				if (button.bar.cdata[id:match("%a+")]) or (id == "" and button.bar.cdata["custom"])  then
@@ -2732,11 +2848,11 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 			end
 
 			button.specAction = button:GetAttribute("SpecialAction") --?
-			NeuronButton:MACRO_UpdateAll(button, true)
+			NeuronButton:MACRO_UpdateAll(button, true, true)
 		end
 
 		if (name == "update") then
-			NeuronButton:MACRO_UpdateAll(button, true)
+			NeuronButton:MACRO_UpdateAll(button, true, true)
 		end
 	end
 
@@ -3394,8 +3510,11 @@ function NeuronButton:SetType(button, save, kill, init)
 		button:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
 		button:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
 
-		button:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
-		button:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
+		if button.EnterLeaveScriptsHooked == nil then
+			button:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
+			button:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
+			button.EnterLeaveScriptsHooked = true
+		end
 
 		button:WrapScript(button, "OnShow", [[
 						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
@@ -3492,7 +3611,7 @@ function NeuronButton:SetType(button, save, kill, init)
 			]=])
 
 		if (not init) then
-			NeuronButton:MACRO_UpdateAll(button, true)
+			NeuronButton:MACRO_UpdateAll(button, true, true)
 		end
 
 		NeuronButton:MACRO_OnShow(button)
