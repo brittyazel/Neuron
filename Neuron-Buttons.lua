@@ -773,6 +773,35 @@ function NeuronButton:MACRO_RegisterCorrectEvents(button, typeOfMacro)
 		button:RegisterEvent("COMPANION_UPDATE")
 		button:RegisterEvent("UNIT_AURA")
 	end
+
+	button:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+	button:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
+	button:RegisterEvent("ACTIONBAR_UPDATE_STATE")
+	button:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
+
+	button:RegisterEvent("TRADE_SKILL_SHOW")
+	button:RegisterEvent("TRADE_SKILL_CLOSE")
+	button:RegisterEvent("ARCHAEOLOGY_CLOSED")
+
+	button:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+
+	button:RegisterEvent("MODIFIER_STATE_CHANGED")
+
+	button:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+	button:RegisterEvent("UNIT_SPELLCAST_FAILED")
+	button:RegisterEvent("UNIT_PET")
+
+	button:RegisterEvent("PLAYER_TARGET_CHANGED")
+	button:RegisterEvent("PLAYER_FOCUS_CHANGED")
+	button:RegisterEvent("PLAYER_REGEN_ENABLED")
+	button:RegisterEvent("PLAYER_REGEN_DISABLED")
+	button:RegisterEvent("PLAYER_ENTER_COMBAT")
+	button:RegisterEvent("PLAYER_LEAVE_COMBAT")
+	button:RegisterEvent("PLAYER_CONTROL_LOST")
+	button:RegisterEvent("PLAYER_CONTROL_GAINED")
+
+	button:RegisterEvent("PET_STABLE_UPDATE")
+	button:RegisterEvent("PET_STABLE_SHOW")
 end
 
 function NeuronButton:MACRO_UpdateData(button, ...)
@@ -2667,119 +2696,6 @@ function NeuronButton:MACRO_OnLeave(button, ...)
 end
 
 
-function NeuronButton:MACRO_OnShow(button, ...)
-	button:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
-	button:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
-	button:RegisterEvent("ACTIONBAR_UPDATE_STATE")
-	button:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
-
-	--button:RegisterEvent("SPELL_UPDATE_CHARGES")
-	--button:RegisterEvent("SPELL_UPDATE_USABLE")
-
-	--button:RegisterEvent("RUNE_POWER_UPDATE")
-
-	button:RegisterEvent("TRADE_SKILL_SHOW")
-	button:RegisterEvent("TRADE_SKILL_CLOSE")
-	button:RegisterEvent("ARCHAEOLOGY_CLOSED")
-
-	button:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
-
-	button:RegisterEvent("MODIFIER_STATE_CHANGED")
-
-	button:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	button:RegisterEvent("UNIT_SPELLCAST_FAILED")
-	button:RegisterEvent("UNIT_PET")
-	--button:RegisterEvent("UNIT_AURA")
-	--button:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	--button:RegisterEvent("UNIT_ENTERING_VEHICLE")
-	--button:RegisterEvent("UNIT_EXITED_VEHICLE")
-
-	button:RegisterEvent("PLAYER_TARGET_CHANGED")
-	button:RegisterEvent("PLAYER_FOCUS_CHANGED")
-	button:RegisterEvent("PLAYER_REGEN_ENABLED")
-	button:RegisterEvent("PLAYER_REGEN_DISABLED")
-	button:RegisterEvent("PLAYER_ENTER_COMBAT")
-	button:RegisterEvent("PLAYER_LEAVE_COMBAT")
-	button:RegisterEvent("PLAYER_CONTROL_LOST")
-	button:RegisterEvent("PLAYER_CONTROL_GAINED")
-	--button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-
-	--button:RegisterEvent("UNIT_INVENTORY_CHANGED")
-	--button:RegisterEvent("BAG_UPDATE_COOLDOWN")
-	--button:RegisterEvent("BAG_UPDATE")
-	--button:RegisterEvent("COMPANION_UPDATE")
-	button:RegisterEvent("PET_STABLE_UPDATE")
-	button:RegisterEvent("PET_STABLE_SHOW")
-
-	--button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-	--button:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
-
-	--button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	--button:RegisterEvent("UPDATE_POSSESS_BAR")
-	--button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	--button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-
-	--button:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
-
-end
-
-
-function NeuronButton:MACRO_OnHide(button, ...)
-	button:UnregisterEvent("ACTIONBAR_SLOT_CHANGED")
-	button:UnregisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
-	button:UnregisterEvent("ACTIONBAR_UPDATE_STATE")
-	button:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
-
-	--button:UnregisterEvent("SPELL_UPDATE_CHARGES")
-	--button:UnregisterEvent("SPELL_UPDATE_USABLE")
-
-	--button:UnregisterEvent("RUNE_POWER_UPDATE")
-
-	button:UnregisterEvent("TRADE_SKILL_SHOW")
-	button:UnregisterEvent("TRADE_SKILL_CLOSE")
-	button:UnregisterEvent("ARCHAEOLOGY_CLOSED")
-
-	button:UnregisterEvent("UPDATE_MOUSEOVER_UNIT")
-
-	button:UnregisterEvent("MODIFIER_STATE_CHANGED")
-
-	button:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	button:UnregisterEvent("UNIT_SPELLCAST_FAILED")
-	button:UnregisterEvent("UNIT_PET")
-	--button:UnregisterEvent("UNIT_AURA")
-	--button:UnregisterEvent("UNIT_ENTERED_VEHICLE")
-	--button:UnregisterEvent("UNIT_ENTERING_VEHICLE")
-	--button:UnregisterEvent("UNIT_EXITED_VEHICLE")
-
-	button:UnregisterEvent("PLAYER_TARGET_CHANGED")
-	button:UnregisterEvent("PLAYER_FOCUS_CHANGED")
-	button:UnregisterEvent("PLAYER_REGEN_ENABLED")
-	button:UnregisterEvent("PLAYER_REGEN_DISABLED")
-	button:UnregisterEvent("PLAYER_ENTER_COMBAT")
-	button:UnregisterEvent("PLAYER_LEAVE_COMBAT")
-	button:UnregisterEvent("PLAYER_CONTROL_LOST")
-	button:UnregisterEvent("PLAYER_CONTROL_GAINED")
-	--button:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
-
-	--button:UnregisterEvent("UNIT_INVENTORY_CHANGED")
-	--button:UnregisterEvent("BAG_UPDATE_COOLDOWN")
-	--button:UnregisterEvent("BAG_UPDATE")
-	--button:UnregisterEvent("COMPANION_UPDATE")
-	button:UnregisterEvent("PET_STABLE_UPDATE")
-	button:UnregisterEvent("PET_STABLE_SHOW")
-
-	--button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-	--button:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
-
-	--button:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	--button:UnregisterEvent("UPDATE_POSSESS_BAR")
-	--button:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	--button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
-	--button:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
-
-end
-
-
 function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 
 	if (value and button.data) then
@@ -3392,19 +3308,7 @@ function NeuronButton:Reset(button)
 	button:SetAttribute("*action1", nil)
 	button:SetAttribute("*macrotext2", nil)
 
-	button:UnregisterEvent("ITEM_LOCK_CHANGED")
-	button:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
-	button:UnregisterEvent("ACTIONBAR_SHOWGRID")
-	button:UnregisterEvent("ACTIONBAR_HIDEGRID")
-	button:UnregisterEvent("PET_BAR_SHOWGRID")
-	button:UnregisterEvent("PET_BAR_HIDEGRID")
-	button:UnregisterEvent("PET_BAR_UPDATE")
-	button:UnregisterEvent("PET_BAR_UPDATE_COOLDOWN")
-	button:UnregisterEvent("UNIT_FLAGS")
-	button:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-	button:UnregisterEvent("UPDATE_MACROS")
-	button:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	button:UnregisterEvent("EQUIPMENT_SETS_CHANGED")
+	button:UnregisterAllEvents()
 
 	NeuronButton:MACRO_Reset(button)
 end
@@ -3497,8 +3401,8 @@ function NeuronButton:SetType(button, save, kill, init)
 		button:SetScript("OnDragStart", function(self, mousebutton) NeuronButton:MACRO_OnDragStart(self, mousebutton) end)
 		button:SetScript("OnDragStop", function(self) NeuronButton:MACRO_OnDragStop(self) end)
 		button:SetScript("OnUpdate", function(self, elapsed) NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
-		button:SetScript("OnShow", function(self, ...) NeuronButton:MACRO_OnShow(self, ...) end)
-		button:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
+		button:SetScript("OnShow", function(self, ...) NeuronButton:MACRO_UpdateData(self, ...) end)
+		button:SetScript("OnHide", function(self, ...) self:UnregisterAllEvents() end)
 		button:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
 
 		if button.enterLeaveScriptIsHooked == nil then
@@ -3604,8 +3508,6 @@ function NeuronButton:SetType(button, save, kill, init)
 		if (not init) then
 			NeuronButton:MACRO_UpdateAll(button, true, true)
 		end
-
-		NeuronButton:MACRO_OnShow(button)
 
 	end
 
