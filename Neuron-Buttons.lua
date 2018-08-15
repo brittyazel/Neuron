@@ -885,7 +885,8 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 				NeuronButton:MACRO_RegisterCorrectEvents(button, "spell")
 			end
 		else
-			button.macrospell = nil; button.spellID = nil
+			button.macrospell = nil
+			button.spellID = nil
 			NeuronButton:MACRO_RegisterCorrectEvents(button)
 		end
 
@@ -1562,6 +1563,8 @@ end
 
 function NeuronButton:MACRO_UpdateButton(button, ...)
 
+	button:SetScript("OnUpdate", function(self, elapsed) NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
+
 	if (button.editmode) then
 
 		button.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
@@ -1588,6 +1591,8 @@ function NeuronButton:MACRO_UpdateButton(button, ...)
 
 	else
 		button.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+
+		button:SetScript("OnUpdate", nil)
 	end
 end
 
@@ -3373,9 +3378,9 @@ function NeuronButton:SetType(button, save, kill, init)
 
 	if (kill) then
 
-		button:SetScript("OnEvent", function() end)
-		button:SetScript("OnUpdate", function() end)
-		button:SetScript("OnAttributeChanged", function() end)
+		button:SetScript("OnEvent", nil)
+		button:SetScript("OnUpdate", nil)
+		button:SetScript("OnAttributeChanged", nil)
 
 	else
 		SecureHandler_OnLoad(button)
@@ -3400,7 +3405,7 @@ function NeuronButton:SetType(button, save, kill, init)
 		button:SetScript("OnReceiveDrag", function(self, preclick) NeuronButton:MACRO_OnReceiveDrag(self, preclick) end)
 		button:SetScript("OnDragStart", function(self, mousebutton) NeuronButton:MACRO_OnDragStart(self, mousebutton) end)
 		button:SetScript("OnDragStop", function(self) NeuronButton:MACRO_OnDragStop(self) end)
-		button:SetScript("OnUpdate", function(self, elapsed) NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
+		--button:SetScript("OnUpdate", function(self, elapsed) NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
 		button:SetScript("OnShow", function(self, ...) NeuronButton:MACRO_UpdateData(self, ...) end)
 		button:SetScript("OnHide", function(self, ...) self:UnregisterAllEvents() end)
 		button:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
