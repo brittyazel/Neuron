@@ -3505,9 +3505,8 @@ function NeuronButton:SetType(button, save, kill, init)
 
 			]=])
 
-		if (not init) then
-			NeuronButton:MACRO_UpdateAll(button, true, true)
-		end
+
+		NeuronButton:MACRO_UpdateAll(button, true, true)
 
 	end
 
