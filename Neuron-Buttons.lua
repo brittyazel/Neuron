@@ -160,6 +160,9 @@ local CurrentMountSpellID
 NEURON.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 local BUTTON = NEURON.BUTTON
 
+local isHooked
+local enterLeaveScriptIsHooked
+
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -247,9 +250,13 @@ function NeuronButton:OnEnable()
 	end
 
 	---these two hooks are to call a function to check if we dragged an ability off the bar or not
-	NeuronButton:SecureHookScript(WorldFrame, "OnMouseDown")
-	NeuronButton:SecureHook("ToggleCollectionsJournal")
-	NeuronButton.Hooks = true
+
+
+	if isHooked == nil then
+		NeuronButton:SecureHookScript(WorldFrame, "OnMouseDown")
+		--NeuronButton:SecureHook("ToggleCollectionsJournal")
+		isHooked = true
+	end
 
 
 
@@ -3491,10 +3498,10 @@ function NeuronButton:SetType(button, save, kill, init)
 		button:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
 		button:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
 
-		if button.enterLeaveScriptIsHooked == nil then
+		if enterLeaveScriptIsHooked == nil then
 			button:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
 			button:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
-			button.enterLeaveScriptIsHooked = true
+			enterLeaveScriptIsHooked = true
 		end
 
 		button:WrapScript(button, "OnShow", [[
