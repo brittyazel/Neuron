@@ -852,19 +852,28 @@ function NeuronButton:MACRO_UpdateData(button, ...)
 			ud__, ud_item, ud_spell = QueryCastSequence(ud_spell)
 
 		elseif (ud_spell) then
-
 			if (#ud_spell < 1) then
 				ud_spell = nil
-
-			elseif(ItemCache[ud_spell]) then
-
-				ud_item = ud_spell
-				ud_spell = nil
-
-
-			elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then
-				ud_item = GetInventoryItemLink("player", ud_spell)
-				ud_spell = nil
+			else
+				if(ItemCache[ud_spell]) then --this is an item that's already in the item cache
+					ud_item = ud_spell
+					ud_spell = nil
+				else
+					local _, _, _, _, _, _, ud_spellid = GetSpellInfo(ud_spell)
+					if ud_spellid ~= nil then --this is a spell, so do nothing and skip wasteful item check
+					elseif GetItemInfo(ud_spell) then --this is an item that's not yet in the cache, so cache it
+						local _, link = GetItemInfo(ud_spell)
+						if link then
+							local _, itemID = link:match("(item:)(%d+)")
+							ItemCache[ud_spell] = itemID
+						end				
+						ud_item = ud_spell
+						ud_spell = nil
+					elseif(tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell)) then --not sure how execution will ever reach here, but leaving this intact
+						ud_item = GetInventoryItemLink("player", ud_spell)
+						ud_spell = nil
+					end
+				end
 			end
 		end
 
