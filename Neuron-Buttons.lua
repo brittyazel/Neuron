@@ -806,7 +806,7 @@ end
 
 function NeuronButton:MACRO_UpdateData(button, ...)
 
-	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__, ud_spellid
+	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__, ud_spellid, _
 
 
 	if (button.macroparse) then
