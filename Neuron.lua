@@ -19,7 +19,7 @@ NEURON.PEW = false --flag that gets set when the player enters the world. It's u
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.30b" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.33" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
@@ -34,11 +34,7 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-I'm slowly chipping away at the bugs you've all reported and all of the unseen and undocumented changes to the WoW API. Things should be noticably more stable now than they were at launch.
-
-I have created a community on the Horde side for Neuron users to talk in. This is a test for now, so we'll see how it goes. Perhaps if it goes well and doesn't turn into a flame war I'll make an Alliance side community.
-
-https://bit.ly/2Lu72NZ
+Sorry for breaking stuff with the last update. I have reverted all of those changes until we can ensure stability. The performance benefit will be worth it when it's alls aid and done.
 
 -Soyier]]
 
