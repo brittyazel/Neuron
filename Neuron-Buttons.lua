@@ -888,7 +888,11 @@ function NeuronButton:MACRO_SetItemIcon(button, item)
 		end
 
 	else
-		texture = GetItemIcon("item:"..ItemCache[item]..":0:0:0:0:0:0:0")
+		if (ItemCache[item]) then
+			texture = GetItemIcon("item:"..ItemCache[item]..":0:0:0:0:0:0:0")
+		else
+			_,_,_,_,_,_,_,_,_,texture = GetItemInfo(item)
+		end
 
 		if (texture) then
 			button.iconframeicon:SetTexture(texture)
