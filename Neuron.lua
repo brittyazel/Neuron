@@ -19,7 +19,7 @@ NEURON.PEW = false --flag that gets set when the player enters the world. It's u
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.33" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.34" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
@@ -34,7 +34,7 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-Sorry for breaking stuff with the last update. I have reverted all of those changes until we can ensure stability. The performance benefit will be worth it when it's alls aid and done.
+New Feature! You can now track Azerite power! Try right-clicking on an XP bar to try it out!
 
 -Soyier]]
 
