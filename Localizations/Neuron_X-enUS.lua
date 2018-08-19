@@ -225,6 +225,8 @@ L["Override Bar"] = true
 L["No Extra Bar"] = true
 L["Extra Bar"] = true
 
+L["Vehicle Exit Bar"] = true
+
 L["Custom States"] = true
 
 

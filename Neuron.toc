@@ -38,6 +38,7 @@ Bar-Modules/Neuron-Menu.lua
 Bar-Modules/Neuron-Pet.lua
 Bar-Modules/Neuron-Status.lua
 Bar-Modules/Neuron-Status.xml
+Bar-Modules/Neuron-Exit.lua
 
 Neuron-GUI.lua
 Neuron-GUI.xml

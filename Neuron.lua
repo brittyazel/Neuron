@@ -94,6 +94,9 @@ NeuronCDB = {
 	xbars = {},
 	xbtns = {},
 
+	exitbars = {},
+	exitbtns = {},
+
 	bagbars = {},
 	bagbtns = {},
 
@@ -121,6 +124,7 @@ NeuronCDB = {
 	AutoWatch = 1,
 
 	xbarFirstRun = true,
+	exitbarFirstRun = true,
 	zoneabilitybarFirstRun = true,
 	bagbarFirstRun = true,
 	menubarFirstRun = true,

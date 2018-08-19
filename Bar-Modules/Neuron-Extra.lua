@@ -149,8 +149,6 @@ function NeuronExtraBar:DisableDefault()
 		------Hiding the default blizzard
 		ExtraActionButton1:UnregisterAllEvents()
 		ExtraActionButton1:SetPoint("BOTTOM", 0, -250)
-		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
-		MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", 0, -250)
 	end
 
 end
@@ -171,7 +169,6 @@ function NeuronExtraBar:SetSkinned(button)
 			local btnData = {
 				Icon = button.icontexture,
 				Normal = button.normaltexture,
-
 			}
 
 			SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
@@ -263,7 +260,6 @@ end
 function NeuronExtraBar:LoadAux(button)
 
 	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
-	NeuronExtraBar:CreateVehicleLeave(button, button.objTIndex)
 
 	button.style = button:CreateTexture(nil, "OVERLAY")
 	button.style:SetPoint("CENTER", -2, 1)
@@ -350,93 +346,4 @@ function NeuronExtraBar:OnEvent(button, event, ...)
 	NeuronExtraBar:ExtraButton_Update(button)
 	button:SetObjectVisibility(button)
 
-end
-
-
-----------------------------------------------------------------------------
------------------------------Vehicle Leave Button---------------------------
-----------------------------------------------------------------------------
-
-
-function NeuronExtraBar:VehicleLeave_OnEvent(button, event, ...)
-	if (event == "UPDATE_EXTRA_ACTIONBAR") then
-		button:Hide()
-	end
-
-	if (ActionBarController_GetCurrentActionBarState) then
-		if (CanExitVehicle() and ActionBarController_GetCurrentActionBarState() == 1) then
-			button:Show()
-			button:Enable();
-			if UnitOnTaxi("player") then
-				button.iconframeicon:SetTexture(NEURON.SpecialActions.taxi)
-			else
-				button.iconframeicon:SetTexture(NEURON.SpecialActions.vehicle)
-			end
-		else
-			button:Hide()
-		end
-	end
-end
-
-
-
-function NeuronExtraBar:VehicleLeave_OnEnter(button)
-	if ( UnitOnTaxi("player") ) then
-
-		GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
-		GameTooltip:ClearLines()
-		GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1);
-		GameTooltip:AddLine(TAXI_CANCEL_DESCRIPTION, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
-		GameTooltip:Show();
-	end
-end
-
-function NeuronExtraBar:VehicleLeave_OnClick(button)
-	if ( UnitOnTaxi("player") ) then
-		TaxiRequestEarlyLanding();
-
-		-- Show that the request for landing has been received.
-		button:Disable();
-		button:SetHighlightTexture([[Interface\Buttons\CheckButtonHilight]], "ADD");
-		button:LockHighlight();
-	else
-		VehicleExit();
-	end
-end
-
-
-function NeuronExtraBar:CreateVehicleLeave(button, index)
-	button.vlbtn = CreateFrame("Button", button:GetName().."VLeave", UIParent, "NeuronNonSecureButtonTemplate")
-
-	button.vlbtn:SetAllPoints(button)
-
-	button.vlbtn:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-	button.vlbtn:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	button.vlbtn:RegisterEvent("UPDATE_POSSESS_BAR");
-	button.vlbtn:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR");
-	button.vlbtn:RegisterEvent("UPDATE_EXTRA_ACTIONBAR");
-	button.vlbtn:RegisterEvent("UPDATE_MULTI_CAST_ACTIONBAR")
-	button.vlbtn:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	button.vlbtn:RegisterEvent("UNIT_EXITED_VEHICLE")
-	button.vlbtn:RegisterEvent("VEHICLE_UPDATE")
-
-	button.vlbtn:SetScript("OnEvent", function(self, event, ...) NeuronExtraBar:VehicleLeave_OnEvent(self, event, ...) end)
-	button.vlbtn:SetScript("OnClick", function(self) NeuronExtraBar:VehicleLeave_OnClick(self) end)
-	button.vlbtn:SetScript("OnEnter", function(self) NeuronExtraBar:VehicleLeave_OnEnter(self) end)
-	button.vlbtn:SetScript("OnLeave", GameTooltip_Hide)
-
-	local objects = NEURON:GetParentKeys(button.vlbtn)
-
-	for k,v in pairs(objects) do
-		local name = (v):gsub(button.vlbtn:GetName(), "")
-		button.vlbtn[name:lower()] = _G[v]
-	end
-
-	button.vlbtn.iconframeicon:SetTexture(NEURON.SpecialActions.vehicle)
-
-	button.vlbtn:SetFrameLevel(4)
-	button.vlbtn.iconframe:SetFrameLevel(2)
-	button.vlbtn.iconframecooldown:SetFrameLevel(3)
-
-	button.vlbtn:Hide()
 end
