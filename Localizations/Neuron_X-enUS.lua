@@ -429,7 +429,7 @@ L["Pet Bar"] = true
 L["Menu Bar"] = true
 
 L["Track Character XP"] = true
-L["Track Artifact Power"] = true
+L["Track Azerite Power"] = true
 L["Track Honor Points"] = true
 
 L["Width"] = true
