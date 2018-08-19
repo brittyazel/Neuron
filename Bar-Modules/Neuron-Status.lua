@@ -561,7 +561,7 @@ function NeuronStatusBar:XPBar_OnEvent(button, event, ...)
     end
 
 
-    if(thisBar.curXPType == "azerite_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
+    if(thisBar.curXPType == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
 
         currXP, nextXP = NeuronStatusBar:xpstrings_Update(button)
 
@@ -2258,10 +2258,9 @@ function NeuronStatusBar:SetType(button, save)
 
             button.sb:RegisterEvent("PLAYER_XP_UPDATE")
             button.sb:RegisterEvent("HONOR_XP_UPDATE")
-            button.sb:RegisterEvent("ARTIFACT_XP_UPDATE")
             button.sb:RegisterEvent("UPDATE_EXHAUSTION")
             button.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
-            button.sb:RegisterEvent("ARTIFACT_UPDATE")
+            button.sb:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
             button.sb:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
             button.sb:SetScript("OnEvent", function(self, event, ...) NeuronStatusBar:XPBar_OnEvent(self, event, ...) end)
