@@ -234,13 +234,13 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronButton:OnEnable()
 
-	--[[NeuronButton:RegisterEvent("PLAYER_TARGET_CHANGED")
+	NeuronButton:RegisterEvent("PLAYER_TARGET_CHANGED")
 	NeuronButton:RegisterEvent("ACTIONBAR_SHOWGRID")
 	NeuronButton:RegisterEvent("UNIT_AURA")
 	NeuronButton:RegisterEvent("UNIT_SPELLCAST_SENT")
 	NeuronButton:RegisterEvent("UNIT_SPELLCAST_START")
 	NeuronButton:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	NeuronButton:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")]]
+	NeuronButton:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
 	for k in pairs(unitAuras) do
 		NeuronButton:updateAuraInfo(k)
@@ -267,7 +267,7 @@ end
 
 ------------------------------------------------------------------------------
 
---[[function NeuronButton:PLAYER_TARGET_CHANGED()
+function NeuronButton:PLAYER_TARGET_CHANGED()
 	for k in pairs(unitAuras) do
 		NeuronButton:updateAuraInfo(k)
 	end
@@ -323,7 +323,7 @@ function NeuronButton:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
 		end
 		NeuronButton:updateAuraInfo(select(1,...))
 	end
-end]]
+end
 
 
 -------------------------------------------------------------------------------
