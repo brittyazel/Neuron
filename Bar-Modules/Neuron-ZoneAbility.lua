@@ -406,10 +406,10 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 end
 
 function NeuronZoneAbilityBar:SetObjectVisibility(button, show)
-
+	
 	if (GetZoneAbilitySpellInfo() or show) then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		button:SetAlpha(1)
-	elseif not button.spellID and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
+	elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
 		button:SetAlpha(0)
 	end
 end
@@ -490,6 +490,8 @@ function NeuronZoneAbilityBar:SetType(button, save)
 	button:SetScript("OnLeave", function(self) NeuronZoneAbilityBar:OnLeave(self) end)
 	button:SetScript("OnUpdate", function(self, elapsed) NeuronZoneAbilityBar:OnUpdate(self, elapsed) end)
 	button:SetScript("OnAttributeChanged", nil)
+
+	NeuronZoneAbilityBar:SetObjectVisibility(button)
 end
 
 function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, query)

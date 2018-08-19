@@ -252,9 +252,9 @@ end
 
 function NeuronExitBar:LoadAux(button)
 
-	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	--NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
-	button.hotkey:SetPoint("TOPLEFT", -4, -6)
+	--button.hotkey:SetPoint("TOPLEFT", -4, -6)
 end
 
 function NeuronExitBar:SetDefaults(button)
@@ -340,11 +340,6 @@ end
 function NeuronExitBar:OnClick(button)
 	if ( UnitOnTaxi("player") ) then
 		TaxiRequestEarlyLanding();
-
-		-- Show that the request for landing has been received.
-		button:Disable();
-		button:SetHighlightTexture([[Interface\Buttons\CheckButtonHilight]], "ADD");
-		button:LockHighlight();
 	else
 		VehicleExit();
 	end
