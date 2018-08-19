@@ -463,8 +463,7 @@ function NeuronStatusBar:xpstrings_Update(button) --handles updating all the str
 
 		rank = L["Level"].." "..tostring(playerLevel)
 
-
-	--[[---heart of azeroth power option
+		--artifact xp option
 	elseif(thisBar.curXPType == "artifact_xp") then
 
 		--when first logging in for some reason this check fails, even if the player is wearing an artifact weapon
@@ -492,10 +491,10 @@ function NeuronStatusBar:xpstrings_Update(button) --handles updating all the str
 			rank = tostring(0).." "..L["Points"]
 		end
 
-		percentXP = string.format("%.1f", percentXP).."%"; --format]]
+		percentXP = string.format("%.1f", percentXP).."%"; --format
 
 
-	---honor points option
+		--honor points option
 	elseif(thisBar.curXPType == "honor_points") then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
@@ -566,6 +565,17 @@ function NeuronStatusBar:XPBar_OnEvent(button, event, ...)
 		hasChanged = true;
 	end
 
+
+	if(thisBar.curXPType == "artifact_xp" and (event=="ARTIFACT_XP_UPDATE" or event =="ARTIFACT_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
+
+		currXP, nextXP = NeuronStatusBar:xpstrings_Update(button)
+
+		button:SetStatusBarColor(1, 1, 0); --set to yellow?
+
+		hasChanged = true;
+
+	end
+
 	if(thisBar.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
 
 		currXP, nextXP = NeuronStatusBar:xpstrings_Update(button)
@@ -596,7 +606,7 @@ function NeuronStatusBar:switchCurXPType(parent, newXPType)
 end
 
 
-function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropdown menu for chosing to watch either XP or Honor Points
+function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropdown menu for chosing to watch either XP, Artifact XP, or Honor Points
 
 	local parent = dropdown:GetParent()
 	local id = parent.id
@@ -619,6 +629,27 @@ function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropd
 		UIDropDownMenu_AddButton(info)
 		wipe(info)
 
+		if(HasArtifactEquipped("player")) then --only show this button if there's an artifact to show
+			info.arg1 = parent
+			info.arg2 = "artifact_xp"
+			info.text = L["Track Artifact Power"]
+			info.func = NeuronStatusBar.switchCurXPType
+
+			if (statusbtnsDB[id].curXPType == "artifact_xp") then
+				info.checked = 1
+			else
+				info.checked = nil
+			end
+
+			UIDropDownMenu_AddButton(info)
+			wipe(info)
+		end
+
+		if(UnitLevel("player") >= MAX_PLAYER_LEVEL) then
+			info.arg1 = parent
+			info.arg2 = "honor_points"
+			info.text = L["Track Honor Points"]
+			info.func = NeuronStatusBar.switchCurXPType
 
 		info.arg1 = parent
 		info.arg2 = "honor_points"
