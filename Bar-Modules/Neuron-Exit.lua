@@ -315,6 +315,8 @@ function NeuronExitBar:SetType(button, save)
 	button.iconframe:SetFrameLevel(2)
 	button.iconframecooldown:SetFrameLevel(3)
 
+	button:SetSkinned(button)
+
 	NeuronExitBar:SetObjectVisibility(button)
 end
 
