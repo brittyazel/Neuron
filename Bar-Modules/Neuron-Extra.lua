@@ -292,11 +292,16 @@ function NeuronExtraBar:ExtraButton_Update(button)
 
 	NeuronExtraBar:SetExtraButtonTex(button)
 
-	if xbarsCDB[1].border then
+	--This conditional is to show/hide the border of the button, but it ins't fully implemented yet
+	--Some people were hitting a bit be because this option didn't exist it seems
+
+	--[[if xbarsCDB[1].border then
 		button.style:Show()
 	else
 		button.style:Hide()
-	end
+	end]]
+
+	button.style:Show()
 
 	local start, duration, enable = GetActionCooldown(button.actionID);
 
