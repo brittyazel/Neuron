@@ -246,15 +246,15 @@ end
 
 function NeuronExitBar:SetAux(button)
 
+	-- empty
 
 end
 
 
 function NeuronExitBar:LoadAux(button)
 
-	--NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	-- empty
 
-	--button.hotkey:SetPoint("TOPLEFT", -4, -6)
 end
 
 function NeuronExitBar:SetDefaults(button)

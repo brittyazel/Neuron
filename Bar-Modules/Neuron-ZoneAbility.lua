@@ -301,12 +301,6 @@ function NeuronZoneAbilityBar:SetTooltip(button)
 		else
 			GameTooltip:SetText(button.tooltipName)
 		end
-
-		if (not edit) then
-			button.UpdateTooltip = button.SetTooltip
-		end
-	elseif (edit) then
-		GameTooltip:SetText(L["Empty Button"])
 	end
 
 end

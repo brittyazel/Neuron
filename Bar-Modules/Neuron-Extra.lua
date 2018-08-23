@@ -76,7 +76,7 @@ function NeuronExtraBar:OnInitialize()
 		DOWNCLICKS = true,
 		HIDDEN = true,
 		LOCKBAR = true,
-		TOOLTIPS = true,
+		--TOOLTIPS = true,
 		BINDTEXT = true,
 		RANGEIND = true,
 		CDTEXT = true,
@@ -235,6 +235,7 @@ function NeuronExtraBar:SetObjectVisibility(button, show)
 
 	if HasExtraActionBar() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		button:SetAlpha(1)
+
 	elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
 		button:SetAlpha(0)
 	end
@@ -311,6 +312,35 @@ function NeuronExtraBar:ExtraButton_Update(button)
 end
 
 
+function NeuronExtraBar:SetTooltip(button)
+
+	if (GetActionInfo(button.actionID)) then
+
+		GameTooltip:SetAction(button.actionID)
+
+	end
+
+end
+
+function NeuronExtraBar:OnEnter(button, ...)
+
+	if (button.bar) then
+
+		button.UberTooltips = true
+		GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+	
+		NeuronExtraBar:SetTooltip(button)
+
+		GameTooltip:Show()
+
+	end
+end
+
+
+function NeuronExtraBar:OnLeave(button)
+	GameTooltip:Hide()
+end
+
 function NeuronExtraBar:SetType(button, save)
 
 	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
@@ -326,23 +356,26 @@ function NeuronExtraBar:SetType(button, save)
 	button:SetAttribute("unit", ATTRIBUTE_NOOP)
 
 	button:SetScript("OnEvent", function(self, event, ...) NeuronExtraBar:OnEvent(self, event, ...) end)
-	button:HookScript("OnShow", function(self) NeuronExtraBar:ExtraButton_Update(self) end)
+	button:SetScript("OnEnter", function(self, ...) NeuronExtraBar:OnEnter(self, ...) end)
+	button:SetScript("OnLeave", function(self) NeuronExtraBar:OnLeave(self) end)
+	--button:HookScript("OnShow", function(self) NeuronExtraBar:ExtraButton_Update(self) end)
 
-	button:WrapScript(button, "OnShow", [[
-					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
-						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
-					end
-					]])
-
-	button:WrapScript(button, "OnHide", [[
-					if (not self:GetParent():GetAttribute("concealed")) then
-						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
-							self:ClearBinding(key)
-						end
-					end
-					]])
+--	button:WrapScript(button, "OnShow", [[
+--					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
+--						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
+--					end
+--					]])
+--
+--	button:WrapScript(button, "OnHide", [[
+--					if (not self:GetParent():GetAttribute("concealed")) then
+--						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
+--							self:ClearBinding(key)
+--						end
+--					end
+--					]])
 
 	button:SetSkinned(button)
+
 end
 
 
