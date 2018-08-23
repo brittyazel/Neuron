@@ -312,24 +312,17 @@ function NeuronExtraBar:ExtraButton_Update(button)
 end
 
 
-function NeuronExtraBar:SetTooltip(button)
-
-	if (GetActionInfo(button.actionID)) then
-
-		GameTooltip:SetAction(button.actionID)
-
-	end
-
-end
-
 function NeuronExtraBar:OnEnter(button, ...)
 
 	if (button.bar) then
 
-		button.UberTooltips = true
 		GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
-	
-		NeuronExtraBar:SetTooltip(button)
+
+		if (GetActionInfo(button.actionID)) then
+
+			GameTooltip:SetAction(button.actionID)
+
+		end
 
 		GameTooltip:Show()
 
