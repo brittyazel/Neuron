@@ -264,7 +264,7 @@ function NEURON:OnInitialize()
 		if not NEURON.db.profile.NeuronCDB.xbars then --"xbars" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
 			NEURON.db.profile.NeuronCDB.DBVersion = latestDBVersion
 		else
-			NEURON.db.profile = NEURON:DBFixer(NEURON.db.profile, 1.0)
+			NEURON.db.profile.NeuronCDB.DBVersion = 1.0
 		end
 	end
 
