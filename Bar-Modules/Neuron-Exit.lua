@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local CDB
+local DB
 
 NEURON.NeuronExitBar = NEURON:NewModule("ExitBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronExitBar = NEURON.NeuronExitBar
@@ -47,10 +47,10 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronExitBar:OnInitialize()
 
-	CDB = NeuronCDB
+	DB = NeuronCDB
 
-	exitbarDB = CDB.exitbar
-	exitbtnDB = CDB.exitbtn
+	exitbarDB = DB.exitbar
+	exitbtnDB = DB.exitbtn
 
 	----------------------------------------------------------------
 	EXITBTN.SetData = NeuronExitBar.SetData
@@ -81,14 +81,14 @@ function NeuronExitBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (CDB.exitbarFirstRun) then
+	if (DB.exitbarFirstRun) then
 
 		local bar = NEURON.NeuronBar:CreateNewBar("exitbar", 1, true)
 		local object = NEURON.NeuronButton:CreateNewObject("exitbar", 1)
 
 		NEURON.NeuronBar:AddObjectToList(bar, object)
 
-		CDB.exitbarFirstRun = false
+		DB.exitbarFirstRun = false
 
 	else
 
@@ -188,46 +188,46 @@ function NeuronExitBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.CDB = exitbtnDB
+	button.DB = exitbtnDB
 
-	if (button.CDB) then
+	if (button.DB) then
 
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not button.CDB[id].config) then
-			button.CDB[id].config = CopyTable(configData)
+		if (not button.DB[id].config) then
+			button.DB[id].config = CopyTable(configData)
 		end
 
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.CDB[id].data) then
-			button.CDB[id].data = {}
+		if (not button.DB[id].data) then
+			button.DB[id].data = {}
 		end
 
-		NEURON:UpdateData(button.CDB[id].config, configData)
-		NEURON:UpdateData(button.CDB[id].keys, keyData)
+		NEURON:UpdateData(button.DB[id].config, configData)
+		NEURON:UpdateData(button.DB[id].keys, keyData)
 
-		button.config = button.CDB [id].config
+		button.config = button.DB [id].config
 
-		if (CDB.perCharBinds) then
-			button.keys = button.CDB[id].keys
+		if (DB.perCharBinds) then
+			button.keys = button.DB[id].keys
 		else
-			button.keys = button.CDB[id].keys
+			button.keys = button.DB[id].keys
 		end
 
-		button.data = button.CDB[id].data
+		button.data = button.DB[id].data
 	end
 end
 

@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local CDB
+local DB
 
 NEURON.NeuronZoneAbilityBar = NEURON:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronZoneAbilityBar = NEURON.NeuronZoneAbilityBar
@@ -52,10 +52,10 @@ local alphaTimer, alphaDir = 0, 0
 --- or setting up slash commands.
 function NeuronZoneAbilityBar:OnInitialize()
 
-	CDB = NeuronCDB
+	DB = NeuronCDB
 
-	zoneabilitybarDB = CDB.zoneabilitybar
-	zoneabilitybtnDB = CDB.zoneabilitybtn
+	zoneabilitybarDB = DB.zoneabilitybar
+	zoneabilitybtnDB = DB.zoneabilitybtn
 
 	--create pointers for these functions
 	ZONEABILITYBTN.SetTimer = NEURON.NeuronButton.SetTimer
@@ -91,14 +91,14 @@ function NeuronZoneAbilityBar:OnInitialize()
 		CDALPHA = true,
 		ZONEABILITY = true}, false, 65)
 
-	if (CDB.zoneabilitybarFirstRun) then
+	if (DB.zoneabilitybarFirstRun) then
 
 		local bar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", 1, true)
 		local object = NEURON.NeuronButton:CreateNewObject("zoneabilitybar", 1)
 
 		NEURON.NeuronBar:AddObjectToList(bar, object)
 
-		CDB.zoneabilitybarFirstRun = false
+		DB.zoneabilitybarFirstRun = false
 
 	else
 
@@ -356,46 +356,46 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.CDB = zoneabilitybtnDB
+	button.DB = zoneabilitybtnDB
 
-	if (button.CDB and button.CDB) then
+	if (button.DB and button.DB) then
 
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not button.CDB[id].config) then
-			button.CDB[id].config = CopyTable(configData)
+		if (not button.DB[id].config) then
+			button.DB[id].config = CopyTable(configData)
 		end
 
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.CDB[id].data) then
-			button.CDB[id].data = {}
+		if (not button.DB[id].data) then
+			button.DB[id].data = {}
 		end
 
-		NEURON:UpdateData(button.CDB[id].config, configData)
-		NEURON:UpdateData(button.CDB[id].keys, keyData)
+		NEURON:UpdateData(button.DB[id].config, configData)
+		NEURON:UpdateData(button.DB[id].keys, keyData)
 
-		button.config = button.CDB [id].config
+		button.config = button.DB [id].config
 
-		if (CDB.perCharBinds) then
-			button.keys = button.CDB[id].keys
+		if (DB.perCharBinds) then
+			button.keys = button.DB[id].keys
 		else
-			button.keys = button.CDB[id].keys
+			button.keys = button.DB[id].keys
 		end
 
-		button.data = button.CDB[id].data
+		button.data = button.DB[id].data
 	end
 end
 
