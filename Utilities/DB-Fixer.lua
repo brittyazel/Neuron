@@ -6,9 +6,11 @@ local NEURON = Neuron
 --------------------Data Fixing Functions-------------------
 ------------------------------------------------------------
 
-function NEURON:fixObjectTable(profile, oldDBVersion) --converted objectTable from a single string to a table of ints, this fixes the table on login
+function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a single string to a table of ints, this fixes the table on login
 
-    if oldDBVersion == nil then --this is the first of many DB fixes. This should be run first before the rest to migrate us into the DBVersion 1.1 state
+
+    ---Added on 8/25/2018. Remove at some point in the future
+    if oldDBVersion < 1.1 then --this is the first of many DB fixes. This should be run first before the rest to migrate us into the DBVersion 1.1 state
 
         local barDBLocationsName = {"bagbar", "menubar", "petbar", "statusbar", "extrabar", "zoneabilitybar", "exitbar" }
         local btnDBLocationsName = {"bagbtn", "menubtn", "petbtn", "statusbtn", "extrabtn", "zoneabilitybtn", "exitbtn" }
@@ -34,6 +36,8 @@ function NEURON:fixObjectTable(profile, oldDBVersion) --converted objectTable fr
         profile["NeuronCDB"]["extrabarFirstRun"] = profile["NeuronCDB"]["xbarFirstRun"]
         profile["NeuronCDB"]["xbarFirstRun"] = nil
 
+        oldDBVersion = 1.1 --increment oldDBVersion up to the latest that this set of code fixes
+        NEURON:Print("Neuron database migrated to version " .. 1.1)
     end
 
 

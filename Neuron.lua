@@ -257,34 +257,28 @@ function NEURON:OnInitialize()
 	NEURON.db.RegisterCallback(NEURON, "OnDatabaseReset", "RefreshConfig")
 
 	----DATABASE VERSION CHECKING AND MIGRATING----------
-	if not NEURON.db.profile.DBVersion or NEURON.db.profile.DBVersion ~= latestDBVersion then --checks for the existence of a DB version or if the version is out of date
-		NEURON.db.profile = NEURON:fixObjectTable(NEURON.db.profile, NEURON.db.profile.DBVersion)
-
-		if NEURON.db.profile.DBVersion then --only print the message if a previous database existed
-			NEURON:Print("Neuron database migrated to latest version.")
+	if not NEURON.db.profile.NeuronCDB.DBVersion then
+		--we need to know if a profile doesn't have a DBVersion because it is brand new, or because it pre-dates DB versioning
+		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
+		--eventually we can get rid of this check and just assume that having no DBVersion means that it is a fresh profile
+		if not NEURON.db.profile.NeuronCDB.xbars then --"xbars" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
+			NEURON.db.profile.NeuronCDB.DBVersion = latestDBVersion
+		else
+			NEURON.db.profile = NEURON:DBFixer(NEURON.db.profile, 1.0)
 		end
+	end
 
-		NEURON.db.profile.DBVersion = latestDBVersion
+	if NEURON.db.profile.NeuronCDB.DBVersion ~= latestDBVersion then --checks if the DB version is out of date, and if so it calls the DB Fixer
+		NEURON.db.profile = NEURON:DBFixer(NEURON.db.profile, NEURON.db.profile.NeuronCDB.DBVersion)
+		NEURON.db.profile.NeuronCDB.DBVersion = latestDBVersion
 	end
 	-----------------------------------------------------
 
-	---These set the profile to be the defaults if there isn't already these values set in the profile
-	if (not Neuron.db.profile["NeuronCDB"]) then
-		NEURON.db.profile["NeuronCDB"] = NeuronCDB
-	end
-	if (not Neuron.db.profile["NeuronGDB"]) then
-		NEURON.db.profile["NeuronGDB"] = NeuronGDB
-	end
-	if (not Neuron.db.profile["NeuronItemCache"]) then
-		NEURON.db.profile["NeuronItemCache"] = NeuronItemCache
-	end
-	--------------------------------------------------------------------
-
 
 	---load saved variables into working variable containers
-	NeuronCDB = NEURON.db.profile["NeuronCDB"]
-	NeuronGDB = NEURON.db.profile["NeuronGDB"]
-	NeuronItemCache = NEURON.db.profile["NeuronItemCache"]
+	NeuronCDB = NEURON.db.profile.NeuronCDB
+	NeuronGDB = NEURON.db.profile.NeuronGDB
+	NeuronItemCache = NEURON.db.profile.NeuronItemCache
 
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
 	GDB = NeuronGDB
