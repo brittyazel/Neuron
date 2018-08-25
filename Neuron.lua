@@ -269,7 +269,7 @@ function NEURON:OnInitialize()
 	end
 
 	if NEURON.db.profile.NeuronCDB.DBVersion ~= latestDBVersion then --checks if the DB version is out of date, and if so it calls the DB Fixer
-		NEURON.db.profile = NEURON:DBFixer(NEURON.db.profile, NEURON.db.profile.NeuronCDB.DBVersion)
+		NEURON:DBFixer(NEURON.db.profile, NEURON.db.profile.NeuronCDB.DBVersion)
 		NEURON.db.profile.NeuronCDB.DBVersion = latestDBVersion
 	end
 	-----------------------------------------------------

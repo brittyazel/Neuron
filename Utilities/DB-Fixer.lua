@@ -40,7 +40,4 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
         NEURON:Print("Neuron database migrated to version " .. 1.1)
     end
 
-
-    return profile
-
 end
