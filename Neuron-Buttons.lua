@@ -828,33 +828,21 @@ function NeuronButton:MACRO_SetSpellIcon(button, spell)
 		end
 
 		if (texture) then
-
-			--local shapeshift_texture = NeuronButton:isActiveShapeshiftSpell(spell)
-
-			--if (shapeshift_texture) then
-				--button.iconframeicon:SetTexture(shapeshift_texture)
-			--else
-				button.iconframeicon:SetTexture(texture)
-
-			--end
-
+			button.iconframeicon:SetTexture(texture)
 			button.iconframeicon:Show()
 		else
-			button.iconframeicon:SetTexture("")
-			button.iconframeicon:Hide()
+			--button.iconframeicon:SetTexture("")
+			--button.iconframeicon:Hide()
+			button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK") --show questionmark instead of empty button to avoid confusion
 		end
 
 	else
 		if (button.data.macro_Watch) then
-			--for i=1,select("#",GetMacroInfo(button.data.macro_Watch)) do
-			--	NEURON:Print(select(i,GetMacroInfo(button.data.macro_Watch)))
-			--end
 
 			_, texture = GetMacroInfo(button.data.macro_Watch)
-			--texture = "INTERFACE\\ICONS\\"..texture:match("[%w_]+$"):upper()
+
 			button.data.macro_Icon = texture
-		--elseif (button.data.macro_Equip) then
-			--_,texture = C_EquipmentSet.GetEquipmentSetInfo(button.data.macro_Equip)
+
 		end
 
 		if (texture) then
