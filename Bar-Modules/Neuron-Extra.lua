@@ -350,21 +350,21 @@ function NeuronExtraBar:SetType(button, save)
 	button:SetScript("OnEvent", function(self, event, ...) NeuronExtraBar:OnEvent(self, event, ...) end)
 	button:SetScript("OnEnter", function(self, ...) NeuronExtraBar:OnEnter(self, ...) end)
 	button:SetScript("OnLeave", function(self) NeuronExtraBar:OnLeave(self) end)
-	--button:HookScript("OnShow", function(self) NeuronExtraBar:ExtraButton_Update(self) end)
+	button:HookScript("OnShow", function(self) NeuronExtraBar:ExtraButton_Update(self) end)
 
---	button:WrapScript(button, "OnShow", [[
---					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
---						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
---					end
---					]])
---
---	button:WrapScript(button, "OnHide", [[
---					if (not self:GetParent():GetAttribute("concealed")) then
---						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
---							self:ClearBinding(key)
---						end
---					end
---					]])
+	button:WrapScript(button, "OnShow", [[
+					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
+						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
+					end
+					]])
+
+	button:WrapScript(button, "OnHide", [[
+					if (not self:GetParent():GetAttribute("concealed")) then
+						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
+							self:ClearBinding(key)
+						end
+					end
+					]])
 
 	button:SetSkinned(button)
 
