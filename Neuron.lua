@@ -73,16 +73,11 @@ NeuronGDB = {
 	bars = {},
 	buttons = {},
 
-	buttonLoc = {-0.85, -111.45},
-	buttonRadius = 87.5,
-
 	throttle = 0.2,
 	timerLimit = 4,
 	snapToTol = 28,
 
 	blizzbar = false,
-	zoneabilitybar = false,
-	vehicle = false,
 
 	firstRun = true,
 
