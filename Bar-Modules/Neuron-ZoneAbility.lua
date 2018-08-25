@@ -7,10 +7,10 @@ local CDB
 NEURON.NeuronZoneAbilityBar = NEURON:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronZoneAbilityBar = NEURON.NeuronZoneAbilityBar
 
-local zoneabilitybarsCDB
-local zoneabilitybtnsCDB
+local zoneabilitybarDB
+local zoneabilitybtnDB
 
-local ZONEABILITYRBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+local ZONEABILITYBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -54,28 +54,28 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 	CDB = NeuronCDB
 
-	zoneabilitybarsCDB = CDB.zoneabilitybars
-	zoneabilitybtnsCDB = CDB.zoneabilitybtns
+	zoneabilitybarDB = CDB.zoneabilitybar
+	zoneabilitybtnDB = CDB.zoneabilitybtn
 
 	--create pointers for these functions
-	ZONEABILITYRBTN.SetTimer = NEURON.NeuronButton.SetTimer
+	ZONEABILITYBTN.SetTimer = NEURON.NeuronButton.SetTimer
 
 	----------------------------------------------------------------
-	ZONEABILITYRBTN.SetData = NeuronZoneAbilityBar.SetData
-	ZONEABILITYRBTN.LoadData = NeuronZoneAbilityBar.LoadData
-	ZONEABILITYRBTN.SaveData = NeuronZoneAbilityBar.SaveData
-	ZONEABILITYRBTN.SetAux = NeuronZoneAbilityBar.SetAux
-	ZONEABILITYRBTN.LoadAux = NeuronZoneAbilityBar.LoadAux
-	ZONEABILITYRBTN.SetObjectVisibility = NeuronZoneAbilityBar.SetObjectVisibility
-	ZONEABILITYRBTN.SetDefaults = NeuronZoneAbilityBar.SetDefaults
-	ZONEABILITYRBTN.GetDefaults = NeuronZoneAbilityBar.GetDefaults
-	ZONEABILITYRBTN.SetType = NeuronZoneAbilityBar.SetType
-	ZONEABILITYRBTN.GetSkinned = NeuronZoneAbilityBar.GetSkinned
-	ZONEABILITYRBTN.SetSkinned = NeuronZoneAbilityBar.SetSkinned
+	ZONEABILITYBTN.SetData = NeuronZoneAbilityBar.SetData
+	ZONEABILITYBTN.LoadData = NeuronZoneAbilityBar.LoadData
+	ZONEABILITYBTN.SaveData = NeuronZoneAbilityBar.SaveData
+	ZONEABILITYBTN.SetAux = NeuronZoneAbilityBar.SetAux
+	ZONEABILITYBTN.LoadAux = NeuronZoneAbilityBar.LoadAux
+	ZONEABILITYBTN.SetObjectVisibility = NeuronZoneAbilityBar.SetObjectVisibility
+	ZONEABILITYBTN.SetDefaults = NeuronZoneAbilityBar.SetDefaults
+	ZONEABILITYBTN.GetDefaults = NeuronZoneAbilityBar.GetDefaults
+	ZONEABILITYBTN.SetType = NeuronZoneAbilityBar.SetType
+	ZONEABILITYBTN.GetSkinned = NeuronZoneAbilityBar.GetSkinned
+	ZONEABILITYBTN.SetSkinned = NeuronZoneAbilityBar.SetSkinned
 	----------------------------------------------------------------
 
 
-	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarsCDB, zoneabilitybarsCDB, NeuronZoneAbilityBar, zoneabilitybtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYRBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarDB, zoneabilitybarDB, NeuronZoneAbilityBar, zoneabilitybtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -102,13 +102,13 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 	else
 
-		for id,data in pairs(zoneabilitybarsCDB) do
+		for id,data in pairs(zoneabilitybarDB) do
 			if (data ~= nil) then
 				local newbar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
 			end
 		end
 
-		for id,data in pairs(zoneabilitybtnsCDB) do
+		for id,data in pairs(zoneabilitybtnDB) do
 			if (data ~= nil) then
 				NEURON.NeuronButton:CreateNewObject("zoneabilitybar", id)
 			end
@@ -230,7 +230,7 @@ function NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button)
 	NeuronZoneAbilityBar:SetNeuronButtonTex(button)
 
 
-	if zoneabilitybarsCDB[1].border then
+	if zoneabilitybarDB[1].border then
 		button.style:Show()
 	else
 		button.style:Hide()
@@ -356,7 +356,7 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.CDB = zoneabilitybtnsCDB
+	button.CDB = zoneabilitybtnDB
 
 	if (button.CDB and button.CDB) then
 
@@ -438,7 +438,7 @@ end
 
 
 function NeuronZoneAbilityBar:UpdateFrame(button)
-	if zoneabilitybarsCDB[1].border then
+	if zoneabilitybarDB[1].border then
 
 		NeuronZoneActionButton1.style:Show()
 	else

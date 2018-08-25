@@ -10,8 +10,8 @@ local NeuronExitBar = NEURON.NeuronExitBar
 
 local EXITBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-local exitbarsCDB
-local exitbtnsCDB
+local exitbarDB
+local exitbtnDB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -49,8 +49,8 @@ function NeuronExitBar:OnInitialize()
 
 	CDB = NeuronCDB
 
-	exitbarsCDB = CDB.exitbars
-	exitbtnsCDB = CDB.exitbtns
+	exitbarDB = CDB.exitbar
+	exitbtnDB = CDB.exitbtn
 
 	----------------------------------------------------------------
 	EXITBTN.SetData = NeuronExitBar.SetData
@@ -66,7 +66,7 @@ function NeuronExitBar:OnInitialize()
 	EXITBTN.SetSkinned = NeuronExitBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", exitbarsCDB, exitbarsCDB, NeuronExitBar, exitbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", exitbarDB, exitbarDB, NeuronExitBar, exitbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -92,13 +92,13 @@ function NeuronExitBar:OnInitialize()
 
 	else
 
-		for id,data in pairs(exitbarsCDB) do
+		for id,data in pairs(exitbarDB) do
 			if (data ~= nil) then
 				NEURON.NeuronBar:CreateNewBar("exitbar", id)
 			end
 		end
 
-		for id,data in pairs(exitbtnsCDB) do
+		for id,data in pairs(exitbtnDB) do
 			if (data ~= nil) then
 				NEURON.NeuronButton:CreateNewObject("exitbar", id)
 			end
@@ -188,7 +188,7 @@ function NeuronExitBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.CDB = exitbtnsCDB
+	button.CDB = exitbtnDB
 
 	if (button.CDB) then
 

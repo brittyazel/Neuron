@@ -21,6 +21,8 @@ NEURON.PEW = false --flag that gets set when the player enters the world. It's u
 
 local latestVersionNum = "0.9.34" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
+local latestDBVersion = 1.1
+
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
 
@@ -91,26 +93,26 @@ NeuronCDB = {
 	bars = {},
 	buttons = {},
 
-	xbars = {},
-	xbtns = {},
+	extrabar = {},
+	extrabtn = {},
 
-	exitbars = {},
-	exitbtns = {},
+	exitbar = {},
+	exitbtn = {},
 
-	bagbars = {},
-	bagbtns = {},
+	bagbar = {},
+	bagbtn = {},
 
-	zoneabilitybars = {},
-	zoneabilitybtns = {},
+	zoneabilitybar = {},
+	zoneabilitybtn = {},
 
-	menubars = {},
-	menubtns = {},
+	menubar = {},
+	menubtn = {},
 
-	petbars = {},
-	petbtns = {},
+	petbar = {},
+	petbtn = {},
 
-	statusbars = {},
-	statusbtns = {},
+	statusbar = {},
+	statusbtn = {},
 
 	selfCast = false,
 	focusCast = false,
@@ -123,7 +125,7 @@ NeuronCDB = {
 
 	AutoWatch = 1,
 
-	xbarFirstRun = true,
+	extrabarFirstRun = true,
 	exitbarFirstRun = true,
 	zoneabilitybarFirstRun = true,
 	bagbarFirstRun = true,
@@ -254,6 +256,17 @@ function NEURON:OnInitialize()
 	NEURON.db.RegisterCallback(NEURON, "OnProfileReset", "RefreshConfig")
 	NEURON.db.RegisterCallback(NEURON, "OnDatabaseReset", "RefreshConfig")
 
+	----DATABASE VERSION CHECKING AND MIGRATING----------
+	if not NEURON.db.profile.DBVersion or NEURON.db.profile.DBVersion ~= latestDBVersion then --checks for the existence of a DB version or if the version is out of date
+		NEURON.db.profile = NEURON:fixObjectTable(NEURON.db.profile, NEURON.db.profile.DBVersion)
+
+		if NEURON.db.profile.DBVersion then --only print the message if a previous database existed
+			NEURON:Print("Neuron database migrated to latest version.")
+		end
+
+		NEURON.db.profile.DBVersion = latestDBVersion
+	end
+	-----------------------------------------------------
 
 	---These set the profile to be the defaults if there isn't already these values set in the profile
 	if (not Neuron.db.profile["NeuronCDB"]) then
@@ -267,7 +280,6 @@ function NEURON:OnInitialize()
 	end
 	--------------------------------------------------------------------
 
-	NEURON:fixObjectTable(NEURON.db.profile)
 
 	---load saved variables into working variable containers
 	NeuronCDB = NEURON.db.profile["NeuronCDB"]
@@ -331,6 +343,7 @@ function NEURON:OnEnable()
 	NEURON:RegisterEvent("COMPANION_UPDATE")
 	NEURON:RegisterEvent("UNIT_LEVEL")
 	NEURON:RegisterEvent("UNIT_PET")
+	--NEURON:RegisterEvent("TOYS_UPDATED")
 	--NEURON:RegisterEvent("TOYS_UPDATED")
 	--NEURON:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 

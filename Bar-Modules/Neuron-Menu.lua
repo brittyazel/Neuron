@@ -9,7 +9,7 @@ local DB
 NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar", "AceHook-3.0")
 local NeuronMenuBar = NEURON.NeuronMenuBar
 
-local menubarsDB, menubtnsDB
+local menubarDB, menubtnDB
 
 local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
@@ -42,8 +42,8 @@ function NeuronMenuBar:OnInitialize()
     DB = NeuronCDB
 
 
-    menubarsDB = DB.menubars
-    menubtnsDB = DB.menubtns
+    menubarDB = DB.menubar
+    menubtnDB = DB.menubtn
 
 
 
@@ -74,7 +74,7 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
     ----------------------------------------------------------------
 
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
+    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarDB, menubarDB, NeuronMenuBar, menubtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if NeuronGDB.blizzbar == false then
@@ -134,13 +134,13 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
     else
 
-        for id,data in pairs(menubarsDB) do
+        for id,data in pairs(menubarDB) do
             if (data ~= nil) then
                 NEURON.NeuronBar:CreateNewBar("menu", id)
             end
         end
 
-        for id,data in pairs(menubtnsDB) do
+        for id,data in pairs(menubtnDB) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("menu", id)
             end
@@ -187,7 +187,7 @@ end
 function NeuronMenuBar:LoadData(button, spec, state)
     local id = button.id
 
-    button.DB = menubtnsDB
+    button.DB = menubtnDB
 
     if (button.DB) then
 

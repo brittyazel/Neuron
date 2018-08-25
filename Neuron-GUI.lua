@@ -1202,7 +1202,7 @@ end
 -- @return allow : (boolean)
 function NeuronGUI:MissingBarCheck(bar)
 	local allow = true
-	if ((bar == "extrabar" and NeuronCDB.xbars[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybars[1]))then
+	if ((bar == "extrabar" and NeuronCDB.extrabar[1]) or (bar == "zoneabilitybar" and NeuronCDB.zoneabilitybar[1]))then
 		allow = false
 	end
 	return allow

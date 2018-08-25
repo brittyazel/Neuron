@@ -10,7 +10,8 @@ local NeuronStatusBar = NEURON.NeuronStatusBar
 
 local EDITIndex = NEURON.EDITIndex
 
-local statusbarsDB, statusbtnsDB
+local statusbarDB
+local statusbtnDB
 
 local STATUS = setmetatable({}, { __index = CreateFrame("Button") })
 
@@ -246,8 +247,8 @@ function NeuronStatusBar:OnInitialize()
         DB.AutoWatch = 1
     end
 
-    statusbarsDB = DB.statusbars
-    statusbtnsDB = DB.statusbtns
+    statusbarDB = DB.statusbar
+    statusbtnDB = DB.statusbtn
 
 
 
@@ -265,7 +266,7 @@ function NeuronStatusBar:OnInitialize()
     STATUS.SetSkinned = NeuronStatusBar.SetSkinned
     -------------------------------------------------
 
-    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarsDB, statusbarsDB, NeuronStatusBar, statusbtnsDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, nil, nil, true)
+    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarDB, statusbarDB, NeuronStatusBar, statusbtnDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, nil, nil, true)
 
     NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
         SNAPTO = true,
@@ -300,7 +301,7 @@ function NeuronStatusBar:OnInitialize()
         DB.statusbarFirstRun = false
     else --loads previous bars from saved variable
 
-        for id,data in pairs(statusbarsDB) do
+        for id,data in pairs(statusbarDB) do
             if (data ~= nil) then
                 local newbar = NEURON.NeuronBar:CreateNewBar("status", id)
                 newbar.gdata.showGrid = true
@@ -308,7 +309,7 @@ function NeuronStatusBar:OnInitialize()
         end
 
 
-        for id,data in pairs(statusbtnsDB) do
+        for id,data in pairs(statusbtnDB) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("status", id)
             end
@@ -427,13 +428,13 @@ end
 --------XP Bar--------------------
 ----------------------------------
 
----TODO: right now we are using statusbtnsDB to assign settins ot the status buttons, but I think our indexes are bar specific
+---TODO: right now we are using statusbtnDB to assign settins ot the status buttons, but I think our indexes are bar specific
 function NeuronStatusBar:xpstrings_Update(button) --handles updating all the strings for the play XP watch bar
 
     local parent = button.parent
     local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-    local thisBar = statusbtnsDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+    local thisBar = statusbtnDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 
     local currXP, nextXP, restedXP, percentXP, bubbles, rank
@@ -537,7 +538,7 @@ function NeuronStatusBar:XPBar_OnEvent(button, event, ...)
 
     local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-    local thisBar = statusbtnsDB[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+    local thisBar = statusbtnDB[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
     if (not thisBar.curXPType) then
         thisBar.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
@@ -596,7 +597,7 @@ end
 
 function NeuronStatusBar:switchCurXPType(parent, newXPType)
     local id = parent.id
-    statusbtnsDB[id].curXPType = newXPType
+    statusbtnDB[id].curXPType = newXPType
     NeuronStatusBar:XPBar_OnEvent(parent.sb, "changed_curXPType")
 end
 
@@ -615,7 +616,7 @@ function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropd
         info.text = L["Track Character XP"]
         info.func = NeuronStatusBar.switchCurXPType
 
-        if (statusbtnsDB[id].curXPType == "player_xp") then
+        if (statusbtnDB[id].curXPType == "player_xp") then
             info.checked = 1
         else
             info.checked = nil
@@ -630,7 +631,7 @@ function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropd
             info.text = L["Track Azerite Power"]
             info.func = NeuronStatusBar.switchCurXPType
 
-            if (statusbtnsDB[id].curXPType == "azerite_xp") then
+            if (statusbtnDB[id].curXPType == "azerite_xp") then
                 info.checked = 1
             else
                 info.checked = nil
@@ -651,7 +652,7 @@ function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropd
         info.text = L["Track Honor Points"]
         info.func = NeuronStatusBar.switchCurXPType
 
-        if (statusbtnsDB[id].curXPType == "honor_points") then
+        if (statusbtnDB[id].curXPType == "honor_points") then
             info.checked = 1
         else
             info.checked = nil
@@ -2062,30 +2063,30 @@ function NeuronStatusBar:LoadData(button, spec, state)
 
     local id = button.id
 
-    if (statusbtnsDB) then
+    if (statusbtnDB) then
 
-        if (not statusbtnsDB[id]) then
-            statusbtnsDB[id] = {}
+        if (not statusbtnDB[id]) then
+            statusbtnDB[id] = {}
         end
 
-        if (not statusbtnsDB[id].config) then
-            statusbtnsDB[id].config = CopyTable(configDef)
+        if (not statusbtnDB[id].config) then
+            statusbtnDB[id].config = CopyTable(configDef)
         end
 
-        if (not statusbtnsDB[id]) then
-            statusbtnsDB[id] = {}
+        if (not statusbtnDB[id]) then
+            statusbtnDB[id] = {}
         end
 
-        if (not statusbtnsDB[id].data) then
-            statusbtnsDB[id].data = CopyTable(dataDef)
+        if (not statusbtnDB[id].data) then
+            statusbtnDB[id].data = CopyTable(dataDef)
         end
 
-        NEURON:UpdateData(statusbtnsDB[id].config, configDef)
-        NEURON:UpdateData(statusbtnsDB[id].data, dataDef)
+        NEURON:UpdateData(statusbtnDB[id].config, configDef)
+        NEURON:UpdateData(statusbtnDB[id].data, dataDef)
 
-        button.config = statusbtnsDB[id].config
+        button.config = statusbtnDB[id].config
 
-        button.data =statusbtnsDB[id].data
+        button.data =statusbtnDB[id].data
     end
 end
 

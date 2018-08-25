@@ -8,10 +8,10 @@ NEURON.NeuronExtraBar = NEURON:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.
 local NeuronExtraBar = NEURON.NeuronExtraBar
 
 
-local XBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+local EXTRABTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-local xbarsCDB
-local xbtnsCDB
+local extrabarDB
+local extrabtnDB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -50,24 +50,24 @@ function NeuronExtraBar:OnInitialize()
 
 	CDB = NeuronCDB
 
-	xbarsCDB = CDB.xbars
-	xbtnsCDB = CDB.xbtns
+	extrabarDB = CDB.extrabar
+	extrabtnDB = CDB.extrabtn
 
 	----------------------------------------------------------------
-	XBTN.SetData = NeuronExtraBar.SetData
-	XBTN.LoadData = NeuronExtraBar.LoadData
-	XBTN.SaveData = NeuronExtraBar.SaveData
-	XBTN.SetAux = NeuronExtraBar.SetAux
-	XBTN.LoadAux = NeuronExtraBar.LoadAux
-	XBTN.SetObjectVisibility = NeuronExtraBar.SetObjectVisibility
-	XBTN.SetDefaults = NeuronExtraBar.SetDefaults
-	XBTN.GetDefaults = NeuronExtraBar.GetDefaults
-	XBTN.SetType = NeuronExtraBar.SetType
-	XBTN.GetSkinned = NeuronExtraBar.GetSkinned
-	XBTN.SetSkinned = NeuronExtraBar.SetSkinned
+	EXTRABTN.SetData = NeuronExtraBar.SetData
+	EXTRABTN.LoadData = NeuronExtraBar.LoadData
+	EXTRABTN.SaveData = NeuronExtraBar.SaveData
+	EXTRABTN.SetAux = NeuronExtraBar.SetAux
+	EXTRABTN.LoadAux = NeuronExtraBar.LoadAux
+	EXTRABTN.SetDefaults = NeuronExtraBar.SetDefaults
+	EXTRABTN.GetDefaults = NeuronExtraBar.GetDefaults
+	EXTRABTN.GetSkinned = NeuronExtraBar.GetSkinned
+	EXTRABTN.SetSkinned = NeuronExtraBar.SetSkinned
+	EXTRABTN.SetObjectVisibility = NeuronExtraBar.SetObjectVisibility
+	EXTRABTN.SetType = NeuronExtraBar.SetType
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", extrabarDB, extrabarDB, NeuronExtraBar, extrabtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -76,30 +76,29 @@ function NeuronExtraBar:OnInitialize()
 		DOWNCLICKS = true,
 		HIDDEN = true,
 		LOCKBAR = true,
-		--TOOLTIPS = true,
 		BINDTEXT = true,
 		RANGEIND = true,
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (CDB.xbarFirstRun) then
+	if (CDB.extrabarFirstRun) then
 
 		local bar = NEURON.NeuronBar:CreateNewBar("extrabar", 1, true)
 		local object = NEURON.NeuronButton:CreateNewObject("extrabar", 1)
 
 		NEURON.NeuronBar:AddObjectToList(bar, object)
 
-		CDB.xbarFirstRun = false
+		CDB.extrabarFirstRun = false
 
 	else
 
-		for id,data in pairs(xbarsCDB) do
+		for id,data in pairs(extrabarDB) do
 			if (data ~= nil) then
 				NEURON.NeuronBar:CreateNewBar("extrabar", id)
 			end
 		end
 
-		for id,data in pairs(xbtnsCDB) do
+		for id,data in pairs(extrabtnDB) do
 			if (data ~= nil) then
 				NEURON.NeuronButton:CreateNewObject("extrabar", id)
 			end
@@ -188,7 +187,7 @@ function NeuronExtraBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.CDB = xbtnsCDB
+	button.CDB = extrabtnDB
 
 	if (button.CDB) then
 
@@ -296,7 +295,7 @@ function NeuronExtraBar:ExtraButton_Update(button)
 	--This conditional is to show/hide the border of the button, but it ins't fully implemented yet
 	--Some people were hitting a bit be because this option didn't exist it seems
 
-	--[[if xbarsCDB[1].border then
+	--[[if extrabarDB[1].border then
 		button.style:Show()
 	else
 		button.style:Hide()

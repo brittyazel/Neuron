@@ -7,7 +7,7 @@ local DB
 NEURON.NeuronPetBar = NEURON:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronPetBar = NEURON.NeuronPetBar
 
-local petbarsDB, petbtnsDB
+local petbarDB, petbtnDB
 
 local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
@@ -54,8 +54,8 @@ function NeuronPetBar:OnInitialize()
 	DB = NeuronCDB
 
 
-	petbarsDB = DB.petbars
-	petbtnsDB = DB.petbtns
+	petbarDB = DB.petbar
+	petbtnDB = DB.petbtn
 
 
 	----------------------------------------------------------------
@@ -72,7 +72,7 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarsDB, petbarsDB, NeuronPetBar, petbtnsDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, gDef, nil, false)
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarDB, petbarDB, NeuronPetBar, petbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
@@ -132,13 +132,13 @@ function NeuronPetBar:CreateBarsAndButtons()
 
     else
 
-        for id,data in pairs(petbarsDB) do
+        for id,data in pairs(petbarDB) do
             if (data ~= nil) then
                 NEURON.NeuronBar:CreateNewBar("pet", id)
             end
         end
 
-        for id,data in pairs(petbtnsDB) do
+        for id,data in pairs(petbtnDB) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("pet", id)
             end
@@ -659,7 +659,7 @@ function NeuronPetBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = petbtnsDB
+	button.DB = petbtnDB
 
 	if (button.DB and button.DB) then
 
