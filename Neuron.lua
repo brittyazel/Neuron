@@ -109,12 +109,8 @@ NeuronCDB = {
 	statusbar = {},
 	statusbtn = {},
 
-	selfCast = false,
-	focusCast = false,
 	mouseOverMod= "NONE",
-
-	layOut = 1,
-
+	
 	perCharBinds = false,
 	firstRun = true,
 
