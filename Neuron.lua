@@ -70,67 +70,65 @@ local BTNIndex = NEURON.BTNIndex
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 
-NeuronDB = {
-	bars = {},
-	buttons = {},
+NeuronDB = {} --this is the working database object for the whole addon, this ends up being a pointer for the main profile
+NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 
-	throttle = 0.2,
-	timerLimit = 4,
-	snapToTol = 28,
+NeuronDefaults = {
+	profile = {
+		bars = {},
+		buttons = {},
 
-	blizzbar = false,
+		throttle = 0.2,
+		timerLimit = 4,
+		snapToTol = 28,
 
-	NeuronIcon = {hide = false,},
+		blizzbar = false,
 
-	bars = {},
-	buttons = {},
+		NeuronIcon = {hide = false,},
 
-	extrabar = {},
-	extrabtn = {},
+		bars = {},
+		buttons = {},
 
-	exitbar = {},
-	exitbtn = {},
+		extrabar = {},
+		extrabtn = {},
 
-	bagbar = {},
-	bagbtn = {},
+		exitbar = {},
+		exitbtn = {},
 
-	zoneabilitybar = {},
-	zoneabilitybtn = {},
+		bagbar = {},
+		bagbtn = {},
 
-	menubar = {},
-	menubtn = {},
+		zoneabilitybar = {},
+		zoneabilitybtn = {},
 
-	petbar = {},
-	petbtn = {},
+		menubar = {},
+		menubtn = {},
 
-	statusbar = {},
-	statusbtn = {},
+		petbar = {},
+		petbtn = {},
 
-	mouseOverMod= "NONE",
+		statusbar = {},
+		statusbtn = {},
 
-	perCharBinds = false,
-	firstRun = true,
+		mouseOverMod= "NONE",
 
-	AutoWatch = 1,
+		perCharBinds = false,
+		firstRun = true,
 
-	extrabarFirstRun = true,
-	exitbarFirstRun = true,
-	zoneabilitybarFirstRun = true,
-	bagbarFirstRun = true,
-	menubarFirstRun = true,
-	petbarFirstRun = true,
-	statusbarFirstRun = true,
+		AutoWatch = 1,
+
+		extrabarFirstRun = true,
+		exitbarFirstRun = true,
+		zoneabilitybarFirstRun = true,
+		bagbarFirstRun = true,
+		menubarFirstRun = true,
+		petbarFirstRun = true,
+		statusbarFirstRun = true,
+
+		NeuronItemCache = {},
+	}
 
 }
-
-NeuronItemCache = {} --Not sure the practical benefit of this, it's used a bunch in Neuron-Button and Neuron-FLyout though
-
-
----this is the Default profile when you "load defaults" in the ace profile window
-NeuronDefaults = {}
-NeuronDefaults['profile'] = {} --populate the Default profile with globals
-NeuronDefaults.profile = NeuronDB
-NeuronDefaults.profile['NeuronItemCache'] = NeuronItemCache
 
 
 --I think this is only used in Neuron-Flyouts

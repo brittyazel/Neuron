@@ -44,6 +44,7 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
 
     ---Added on 8/26/2018. Remove at some point in the future
     ---The purpose of this migrate is to get rid of the GDB/CDB divide
+    ---this code takes everything that was in the NeuronCDB and NeuronGDB databases and merges them with all their contents taking the top level
     if oldDBVersion < 1.2 then
 
         for k1,v1 in pairs(profile.NeuronGDB) do
@@ -80,5 +81,4 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
 
     end
 
-    return profile
 end
