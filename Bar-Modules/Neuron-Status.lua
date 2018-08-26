@@ -240,7 +240,7 @@ local BrawlerGuildFactions = {
 --- or setting up slash commands.
 function NeuronStatusBar:OnInitialize()
 
-    DB = NeuronCDB
+    DB = NeuronDB
 
 
     if not DB.AutoWatch then
@@ -266,7 +266,7 @@ function NeuronStatusBar:OnInitialize()
     STATUS.SetSkinned = NeuronStatusBar.SetSkinned
     -------------------------------------------------
 
-    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarDB, statusbarDB, NeuronStatusBar, statusbtnDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, nil, nil, true)
+    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarDB, NeuronStatusBar, statusbtnDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, nil, nil, true)
 
     NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
         SNAPTO = true,
@@ -304,7 +304,7 @@ function NeuronStatusBar:OnInitialize()
         for id,data in pairs(statusbarDB) do
             if (data ~= nil) then
                 local newbar = NEURON.NeuronBar:CreateNewBar("status", id)
-                newbar.gdata.showGrid = true
+                newbar.data.showGrid = true
             end
         end
 
@@ -1518,13 +1518,13 @@ function NeuronStatusBar:OnEnter(button)
 
         if (button.bar) then
 
-            if (button.bar.cdata.tooltipsCombat and InCombatLockdown()) then
+            if (button.bar.data.tooltipsCombat and InCombatLockdown()) then
                 return
             end
 
-            if (button.bar.cdata.tooltips) then
+            if (button.bar.data.tooltips) then
 
-                if (button.bar.cdata.tooltipsEnhanced) then
+                if (button.bar.data.tooltipsEnhanced) then
                     GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
                 else
                     GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
@@ -1937,11 +1937,11 @@ function NeuronStatusBar:SetData(button, bar, skipupdate)
     if (bar) then
 
         button.bar = bar
-        button.alpha = bar.gdata.alpha
-        button.showGrid = bar.gdata.showGrid
+        button.alpha = bar.data.alpha
+        button.showGrid = bar.data.showGrid
 
-        button:SetFrameStrata(bar.gdata.objectStrata)
-        button:SetScale(bar.gdata.scale)
+        button:SetFrameStrata(bar.data.objectStrata)
+        button:SetScale(bar.data.scale)
 
     end
 

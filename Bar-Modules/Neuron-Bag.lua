@@ -47,7 +47,7 @@ function NeuronBagBar:OnInitialize()
     bagElements[2] = CharacterBag2Slot
     bagElements[1] = CharacterBag3Slot
 
-    DB = NeuronCDB
+    DB = NeuronDB
 
 
     bagbarDB = DB.bagbar
@@ -68,12 +68,12 @@ function NeuronBagBar:OnInitialize()
     ----------------------------------------------------------------
 
 
-    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarDB, bagbarDB, NeuronBagBar, bagbtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, gDef, nil, true)
+    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarDB, NeuronBagBar, bagbtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, gDef, nil, true)
 
 
     NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
 
-    if NeuronGDB.blizzbar == false then
+    if NeuronDB.blizzbar == false then
         NeuronBagBar:CreateBarsAndButtons()
 
         ---hide the weird color border around bag bars
@@ -160,7 +160,7 @@ function NeuronBagBar:SetSkinned(button)
                 Count = button.count,
             }
 
-            SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+            SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 
         end
     end
@@ -179,8 +179,8 @@ function NeuronBagBar:SetData(button, bar)
 
         button.bar = bar
 
-        button:SetFrameStrata(bar.gdata.objectStrata)
-        button:SetScale(bar.gdata.scale)
+        button:SetFrameStrata(bar.data.objectStrata)
+        button:SetScale(bar.data.scale)
 
     end
 

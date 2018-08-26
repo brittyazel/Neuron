@@ -10,6 +10,7 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
 
 
     ---Added on 8/25/2018. Remove at some point in the future
+    ---The purpose of this migration was to rename many of the DB tables to values that make more sense
     if oldDBVersion < 1.1 then --this is the first of many DB fixes. This should be run first before the rest to migrate us into the DBVersion 1.1 state
 
         local barDBLocationsName = {"bagbar", "menubar", "petbar", "statusbar", "extrabar", "zoneabilitybar", "exitbar" }
@@ -40,4 +41,44 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
         NEURON:Print("Neuron database migrated to version " .. 1.1)
     end
 
+
+    ---Added on 8/26/2018. Remove at some point in the future
+    ---The purpose of this migrate is to get rid of the GDB/CDB divide
+    if oldDBVersion < 1.2 then
+
+        for k1,v1 in pairs(profile.NeuronGDB) do
+
+           if k1 == "bars" or k1 == "buttons" or k1 == "throttle" or k1 == "timerLimit" or k1 == "snapToTol" or k1 == "blizzbar" or k1 == "firstRun" or k1 == "NeuronIcon" then
+               profile[k1] = v1
+           end
+
+        end
+
+        for k1,v1 in pairs(profile.NeuronCDB) do
+            if k1 ~= "bars" and k1 ~= "buttons" then
+                profile[k1] = v1
+            end
+        end
+
+        for k1,v1 in pairs(profile.NeuronCDB.bars) do
+
+            for k2,v2 in pairs(v1) do
+                profile.bars[k1][k2] = v2
+            end
+
+
+        end
+
+        for k1,v1 in pairs(profile.NeuronCDB.buttons) do
+            for k2,v2 in pairs(v1) do
+                profile.buttons[k1][k2] = v2
+            end
+        end
+
+        oldDBVersion = 1.2 --increment oldDBVersion up to the latest that this set of code fixes
+        NEURON:Print("Neuron database migrated to version " .. 1.2)
+
+    end
+
+    return profile
 end

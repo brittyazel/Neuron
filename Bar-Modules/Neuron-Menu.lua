@@ -39,7 +39,7 @@ local configData = {
 --- or setting up slash commands.
 function NeuronMenuBar:OnInitialize()
 
-    DB = NeuronCDB
+    DB = NeuronDB
 
 
     menubarDB = DB.menubar
@@ -74,10 +74,10 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
     ----------------------------------------------------------------
 
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarDB, menubarDB, NeuronMenuBar, menubtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
+    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarDB, NeuronMenuBar, menubtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
-    if NeuronGDB.blizzbar == false then
+    if NeuronDB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
     end
 end
@@ -172,8 +172,8 @@ function NeuronMenuBar:SetData(button, bar)
 
         button.bar = bar
 
-        button:SetFrameStrata(bar.gdata.objectStrata)
-        button:SetScale(bar.gdata.scale)
+        button:SetFrameStrata(bar.data.objectStrata)
+        button:SetScale(bar.data.scale)
 
     end
 

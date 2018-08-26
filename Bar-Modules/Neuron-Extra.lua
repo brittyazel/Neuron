@@ -48,7 +48,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronExtraBar:OnInitialize()
 
-	DB = NeuronCDB
+	DB = NeuronDB
 
 	extrabarDB = DB.extrabar
 	extrabtnDB = DB.extrabtn
@@ -67,7 +67,7 @@ function NeuronExtraBar:OnInitialize()
 	EXTRABTN.SetType = NeuronExtraBar.SetType
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", extrabarDB, extrabarDB, NeuronExtraBar, extrabtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", extrabarDB, NeuronExtraBar, extrabtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -170,7 +170,7 @@ function NeuronExtraBar:SetSkinned(button)
 				Normal = button.normaltexture,
 			}
 
-			SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 
 		end
 

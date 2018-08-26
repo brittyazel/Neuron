@@ -51,7 +51,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronPetBar:OnInitialize()
 
-	DB = NeuronCDB
+	DB = NeuronDB
 
 
 	petbarDB = DB.petbar
@@ -72,7 +72,7 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarDB, petbarDB, NeuronPetBar, petbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, gDef, nil, false)
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarDB, NeuronPetBar, petbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
@@ -89,7 +89,7 @@ function NeuronPetBar:OnInitialize()
 		CDALPHA = true }, false, 65)
 
 
-    if NeuronGDB.blizzbar == false then
+    if NeuronDB.blizzbar == false then
         NeuronPetBar:CreateBarsAndButtons()
     end
 
@@ -266,7 +266,7 @@ function NeuronPetBar:PET_UpdateCooldown(button)
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
-		if (duration and duration >= NeuronGDB.timerLimit and button.iconframeaurawatch.active) then
+		if (duration and duration >= NeuronDB.timerLimit and button.iconframeaurawatch.active) then
 			button.auraQueue = button.iconframeaurawatch.queueinfo
 			button.iconframeaurawatch.duration = 0
 			button.iconframeaurawatch:Hide()
@@ -334,7 +334,7 @@ end
 
 function NeuronPetBar:OnUpdate(button, elapsed)
 
-	if (button.elapsed > NeuronGDB.throttle) then --throttle down this code to ease up on the CPU a bit
+	if (button.elapsed > NeuronDB.throttle) then --throttle down this code to ease up on the CPU a bit
 		if (button.mac_flash) then
 
 			button.mac_flashing = true
@@ -550,51 +550,51 @@ function NeuronPetBar:SetData(button, bar)
 
 		button.bar = bar
 
-		button.cdText = bar.cdata.cdText
+		button.cdText = bar.data.cdText
 
-		if (bar.cdata.cdAlpha) then
+		if (bar.data.cdAlpha) then
 			button.cdAlpha = 0.2
 		else
 			button.cdAlpha = 1
 		end
 
 		if (not button.cdcolor1) then
-			button.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
+			button.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
 		else
-			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
+			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
 		end
 
 		if (not button.cdcolor2) then
-			button.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
+			button.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
 		else
-			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
+			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
 		end
 
-		button.showGrid = bar.gdata.showGrid
+		button.showGrid = bar.data.showGrid
 
-		button.barLock = bar.cdata.barLock
-		button.barLockAlt = bar.cdata.barLockAlt
-		button.barLockCtrl = bar.cdata.barLockCtrl
-		button.barLockShift = bar.cdata.barLockShift
+		button.barLock = bar.data.barLock
+		button.barLockAlt = bar.data.barLockAlt
+		button.barLockCtrl = bar.data.barLockCtrl
+		button.barLockShift = bar.data.barLockShift
 
-		button.upClicks = bar.cdata.upClicks
-		button.downClicks = bar.cdata.downClicks
+		button.upClicks = bar.data.upClicks
+		button.downClicks = bar.data.downClicks
 
-		button.bindText = bar.cdata.bindText
-		button.macroText = bar.cdata.macroText
-		button.countText = bar.cdata.countText
+		button.bindText = bar.data.bindText
+		button.macroText = bar.data.macroText
+		button.countText = bar.data.countText
 
-		button.bindColor = bar.gdata.bindColor
-		button.macroColor = bar.gdata.macroColor
-		button.countColor = bar.gdata.countColor
+		button.bindColor = bar.data.bindColor
+		button.macroColor = bar.data.macroColor
+		button.countColor = bar.data.countColor
 
-		button.tooltips = bar.cdata.tooltips
-		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
-		button.tooltipsCombat = bar.cdata.tooltipsCombat
+		button.tooltips = bar.data.tooltips
+		button.tooltipsEnhanced = bar.data.tooltipsEnhanced
+		button.tooltipsCombat = bar.data.tooltipsCombat
 
-		button:SetFrameStrata(bar.gdata.objectStrata)
+		button:SetFrameStrata(bar.data.objectStrata)
 
-		button:SetScale(bar.gdata.scale)
+		button:SetScale(bar.data.scale)
 
 	end
 

@@ -52,7 +52,7 @@ local alphaTimer, alphaDir = 0, 0
 --- or setting up slash commands.
 function NeuronZoneAbilityBar:OnInitialize()
 
-	DB = NeuronCDB
+	DB = NeuronDB
 
 	zoneabilitybarDB = DB.zoneabilitybar
 	zoneabilitybtnDB = DB.zoneabilitybtn
@@ -75,7 +75,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 	----------------------------------------------------------------
 
 
-	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarDB, zoneabilitybarDB, NeuronZoneAbilityBar, zoneabilitybtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarDB, NeuronZoneAbilityBar, zoneabilitybtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -198,7 +198,7 @@ end
 function NeuronZoneAbilityBar:OnUpdate(button, elapsed)
 	button.elapsed = button.elapsed + elapsed
 
-	if (button.elapsed > NeuronGDB.throttle) then
+	if (button.elapsed > NeuronDB.throttle) then
 
 		NeuronZoneAbilityBar:STANCE_UpdateButton(button, button.actionID)
 
@@ -490,25 +490,25 @@ end
 
 function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, query)
 	if (query) then
-		return NEURON.CurrentBar.gdata.border
+		return NEURON.CurrentBar.data.border
 	end
 
 	if (gui) then
 
 		if (checked) then
-			NEURON.CurrentBar.gdata.border = true
+			NEURON.CurrentBar.data.border = true
 		else
-			NEURON.CurrentBar.gdata.border = false
+			NEURON.CurrentBar.data.border = false
 		end
 
 	else
 
-		local toggle = NEURON.CurrentBar.gdata.border
+		local toggle = NEURON.CurrentBar.data.border
 
 		if (toggle) then
-			NEURON.CurrentBar.gdata.border = false
+			NEURON.CurrentBar.data.border = false
 		else
-			NEURON.CurrentBar.gdata.border = true
+			NEURON.CurrentBar.data.border = true
 		end
 	end
 

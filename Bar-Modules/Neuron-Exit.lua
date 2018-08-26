@@ -47,7 +47,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronExitBar:OnInitialize()
 
-	DB = NeuronCDB
+	DB = NeuronDB
 
 	exitbarDB = DB.exitbar
 	exitbtnDB = DB.exitbtn
@@ -66,7 +66,7 @@ function NeuronExitBar:OnInitialize()
 	EXITBTN.SetSkinned = NeuronExitBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", exitbarDB, exitbarDB, NeuronExitBar, exitbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", exitbarDB, NeuronExitBar, exitbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, gDef, nil, false)
 
 	NEURON:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -171,7 +171,7 @@ function NeuronExitBar:SetSkinned(button)
 
 			}
 
-			SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 
 		end
 
