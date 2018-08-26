@@ -76,6 +76,9 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
             end
         end
 
+        profile.NeuronGDB = nil
+        profile.NeuronCDB = nil
+
         oldDBVersion = 1.2 --increment oldDBVersion up to the latest that this set of code fixes
         NEURON:Print("Neuron database migrated to version " .. 1.2)
 
