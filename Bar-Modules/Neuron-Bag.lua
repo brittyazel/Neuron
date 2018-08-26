@@ -14,7 +14,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local SKIN = LibStub("Masque", true)
 
 
-local gDef = {
+local defaultBarOptions = {
     padH = 0,
     scale = 1.1,
     snapTo = false,
@@ -68,7 +68,7 @@ function NeuronBagBar:OnInitialize()
     ----------------------------------------------------------------
 
 
-    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarDB, NeuronBagBar, bagbtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, gDef, nil, true)
+    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarDB, NeuronBagBar, bagbtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, true)
 
 
     NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)

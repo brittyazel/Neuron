@@ -17,7 +17,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local gDef = {
+local defaultBarOptions = {
 	snapTo = false,
 	snapToFrame = false,
 	snapToPoint = false,
@@ -66,7 +66,7 @@ function NeuronExitBar:OnInitialize()
 	EXITBTN.SetSkinned = NeuronExitBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", exitbarDB, NeuronExitBar, exitbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", exitbarDB, NeuronExitBar, exitbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, false)
 
 	NEURON:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 		SHOWGRID = false,

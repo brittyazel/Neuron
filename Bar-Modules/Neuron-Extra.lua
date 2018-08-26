@@ -17,7 +17,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local gDef = {
+local defaultBarOptions = {
 	hidestates = ":extrabar0:",
 	snapTo = false,
 	snapToFrame = false,
@@ -67,7 +67,7 @@ function NeuronExtraBar:OnInitialize()
 	EXTRABTN.SetType = NeuronExtraBar.SetType
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", extrabarDB, NeuronExtraBar, extrabtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", extrabarDB, NeuronExtraBar, extrabtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 		SHOWGRID = false,

@@ -80,7 +80,7 @@ local BarRepColors = {
 local CastWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}
 
 
-local gDef = {
+local defaultBarOptions = {
 
     [1] = {
 
@@ -266,7 +266,7 @@ function NeuronStatusBar:OnInitialize()
     STATUS.SetSkinned = NeuronStatusBar.SetSkinned
     -------------------------------------------------
 
-    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarDB, NeuronStatusBar, statusbtnDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, nil, nil, true)
+    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarDB, NeuronStatusBar, statusbtnDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, true)
 
     NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
         SNAPTO = true,
@@ -277,9 +277,7 @@ function NeuronStatusBar:OnInitialize()
 
         local oid, offset = 1, 0
 
-        for id, defaults in ipairs(gDef) do
-
-            NEURON.RegisteredBarData["status"].gDef = defaults
+        for id, defaults in ipairs(defaultBarOptions) do
 
             local bar, object = NEURON.NeuronBar:CreateNewBar("status", id, true)
 
@@ -294,8 +292,6 @@ function NeuronStatusBar:OnInitialize()
                 NEURON.NeuronBar:AddObjectToList(bar, object)
                 offset = offset + 1
             end
-
-            NEURON.RegisteredBarData["status"].gDef = nil
         end
 
         DB.statusbarFirstRun = false

@@ -15,7 +15,7 @@ local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local gDef = {
+local defaultBarOptions = {
     snapTo = false,
     snapToFrame = false,
     snapToPoint = false,
@@ -74,7 +74,7 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
     ----------------------------------------------------------------
 
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarDB, NeuronMenuBar, menubtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
+    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarDB, NeuronMenuBar, menubtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if NeuronDB.blizzbar == false then

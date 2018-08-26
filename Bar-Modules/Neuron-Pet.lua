@@ -15,7 +15,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local sIndex = NEURON.sIndex
 
-local gDef = {
+local defaultBarOptions = {
 
 	hidestates = ":pet0:",
     showGrid = true,
@@ -72,7 +72,7 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarDB, NeuronPetBar, petbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, gDef, nil, false)
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarDB, NeuronPetBar, petbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false)
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,

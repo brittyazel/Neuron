@@ -203,7 +203,7 @@ function NeuronBar:OnInitialize()
 	DB = NeuronDB
 	barDB = DB.bars
 
-	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barDB, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000, nil, nil, true)
+	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barDB, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000, true)
 
 	NEURON:RegisterGUIOptions("bar", {
 		AUTOHIDE = true,
@@ -303,7 +303,6 @@ function NeuronBar:SetUpBars()
 		local oid, offset = 1, 0
 
 		for id, defaults in ipairs(defaultBarOptions) do
-			NEURON.RegisteredBarData["bar"].defaults = defaults
 
 			local bar = NeuronBar:CreateNewBar("bar", id, true) --this calls the bar constructor
 			local object
@@ -312,8 +311,6 @@ function NeuronBar:SetUpBars()
 				object = NEURON.NeuronButton:CreateNewObject("bar", i, true) --this calls the object (button) constructor
 				NeuronBar:AddObjectToList(bar, object)
 			end
-
-			NEURON.RegisteredBarData["bar"].defaults = nil
 
 			offset = offset + 12
 		end
