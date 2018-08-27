@@ -13,14 +13,16 @@ local SKIN = LibStub("Masque", true)
 
 
 local defaultBarOptions = {
-    padH = 0,
-    scale = 1.1,
-    snapTo = false,
-    snapToFrame = false,
-    snapToPoint = false,
-    point = "BOTTOMRIGHT",
-    x = -102,
-    y = 24,
+    [1] = {
+        padH = 0,
+        scale = 1.1,
+        snapTo = false,
+        snapToFrame = false,
+        snapToPoint = false,
+        point = "BOTTOMRIGHT",
+        x = -102,
+        y = 24,
+    }
 }
 
 local bagElements = {}
@@ -113,12 +115,21 @@ function NeuronBagBar:CreateBarsAndButtons()
 
     if (DB.bagbarFirstRun) then
 
-        local bar = NEURON.NeuronBar:CreateNewBar("bag", 1, true)
-        local object
+        for id, defaults in ipairs(defaultBarOptions) do
 
-        for i=1,#bagElements do
-            object = NEURON.NeuronButton:CreateNewObject("bag", i)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
+            local bar = NEURON.NeuronBar:CreateNewBar("bag", id, true) --this calls the bar constructor
+
+            for	k,v in pairs(defaults) do
+                bar.data[k] = v
+            end
+
+            local object
+
+            for i=1,#bagElements do
+                object = NEURON.NeuronButton:CreateNewObject("bag", i, true)
+                NEURON.NeuronBar:AddObjectToList(bar, object)
+            end
+
         end
 
         DB.bagbarFirstRun = false

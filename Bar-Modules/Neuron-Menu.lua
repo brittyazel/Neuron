@@ -14,12 +14,14 @@ local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local defaultBarOptions = {
-    snapTo = false,
-    snapToFrame = false,
-    snapToPoint = false,
-    point = "BOTTOMRIGHT",
-    x = -348,
-    y = 24,
+    [1] = {
+        snapTo = false,
+        snapToFrame = false,
+        snapToPoint = false,
+        point = "BOTTOMRIGHT",
+        x = -348,
+        y = 24,
+    }
 }
 
 local menuElements = {}
@@ -114,13 +116,21 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
 
     if (DB.menubarFirstRun) then
-        local bar = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
-        local object
 
-        for i=1,#menuElements do
-            object = NEURON.NeuronButton:CreateNewObject("menu", i)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
+        for id, defaults in ipairs(defaultBarOptions) do
 
+            local bar = NEURON.NeuronBar:CreateNewBar("menu", id, true) --this calls the bar constructor
+
+            for	k,v in pairs(defaults) do
+                bar.data[k] = v
+            end
+
+            local object
+
+            for i=1,#menuElements do
+                object = NEURON.NeuronButton:CreateNewObject("menu", i, true)
+                NEURON.NeuronBar:AddObjectToList(bar, object)
+            end
         end
 
         DB.menubarFirstRun = false

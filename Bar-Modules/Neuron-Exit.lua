@@ -15,12 +15,14 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local SKIN = LibStub("Masque", true)
 
 local defaultBarOptions = {
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	point = "BOTTOM",
-	x = 0,
-	y = 305,
+	[1] = {
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = 0,
+		y = 305,
+	}
 }
 
 local configData = {
@@ -75,29 +77,8 @@ function NeuronExitBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (DB.exitbarFirstRun) then
 
-		local bar = NEURON.NeuronBar:CreateNewBar("exitbar", 1, true)
-		local object = NEURON.NeuronButton:CreateNewObject("exitbar", 1)
-
-		NEURON.NeuronBar:AddObjectToList(bar, object)
-
-		DB.exitbarFirstRun = false
-
-	else
-
-		for id,data in pairs(DB.exitbar) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("exitbar", id)
-			end
-		end
-
-		for id,data in pairs(DB.exitbtn) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("exitbar", id)
-			end
-		end
-	end
+	NeuronExitBar:CreateBarsAndButtons()
 
 end
 
@@ -125,6 +106,43 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronExitBar:CreateBarsAndButtons()
+
+	if (DB.exitbarFirstRun) then
+
+		for id, defaults in ipairs(defaultBarOptions) do
+
+			local bar = NEURON.NeuronBar:CreateNewBar("exitbar", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			object = NEURON.NeuronButton:CreateNewObject("exitbar", 1, true)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.exitbarFirstRun = false
+
+	else
+
+		for id,data in pairs(DB.exitbar) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("exitbar", id)
+			end
+		end
+
+		for id,data in pairs(DB.exitbtn) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("exitbar", id)
+			end
+		end
+	end
+
+end
 
 function NeuronExitBar:DisableDefault()
 

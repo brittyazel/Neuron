@@ -15,13 +15,15 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local SKIN = LibStub("Masque", true)
 
 local defaultBarOptions = {
-	hidestates = ":extrabar0:",
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	point = "BOTTOM",
-	x = 0,
-	y = 205,
+	[1] = {
+		hidestates = ":extrabar0:",
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = 0,
+		y = 205,
+	}
 }
 
 local configData = {
@@ -75,29 +77,7 @@ function NeuronExtraBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (DB.extrabarFirstRun) then
-
-		local bar = NEURON.NeuronBar:CreateNewBar("extrabar", 1, true)
-		local object = NEURON.NeuronButton:CreateNewObject("extrabar", 1)
-
-		NEURON.NeuronBar:AddObjectToList(bar, object)
-
-		DB.extrabarFirstRun = false
-
-	else
-
-		for id,data in pairs(DB.extrabar) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("extrabar", id)
-			end
-		end
-
-		for id,data in pairs(DB.extrabtn) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("extrabar", id)
-			end
-		end
-	end
+	NeuronExtraBar:CreateBarsAndButtons()
 
 end
 
@@ -125,6 +105,44 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronExtraBar:CreateBarsAndButtons()
+
+	if (DB.extrabarFirstRun) then
+
+		for id, defaults in ipairs(defaultBarOptions) do
+
+			local bar = NEURON.NeuronBar:CreateNewBar("extrabar", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			object = NEURON.NeuronButton:CreateNewObject("extrabar", 1, true)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.extrabarFirstRun = false
+
+	else
+
+		for id,data in pairs(DB.extrabar) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("extrabar", id)
+			end
+		end
+
+		for id,data in pairs(DB.extrabtn) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("extrabar", id)
+			end
+		end
+	end
+
+end
+
 
 function NeuronExtraBar:DisableDefault()
 

@@ -15,15 +15,17 @@ local sIndex = NEURON.sIndex
 
 local defaultBarOptions = {
 
-	hidestates = ":pet0:",
-    showGrid = true,
-	scale = 0.8,
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	point = "BOTTOM",
-	x = -440,
-	y = 75,
+	[1] = {
+		hidestates = ":pet0:",
+		showGrid = true,
+		scale = 0.8,
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = -440,
+		y = 75,
+	}
 }
 
 local configData = {
@@ -114,12 +116,21 @@ function NeuronPetBar:CreateBarsAndButtons()
 
     if (DB.petbarFirstRun) then
 
-        local bar, object = NEURON.NeuronBar:CreateNewBar("pet", 1, true)
+		for id, defaults in ipairs(defaultBarOptions) do
 
-        for i=1,NEURON.maxPetID do
-            object = NEURON.NeuronButton:CreateNewObject("pet", i)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
-        end
+			local bar = NEURON.NeuronBar:CreateNewBar("pet", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			for i=1,NEURON.maxPetID do
+				object = NEURON.NeuronButton:CreateNewObject("pet", i, true)
+				NEURON.NeuronBar:AddObjectToList(bar, object)
+			end
+		end
 
         DB.petbarFirstRun = false
 

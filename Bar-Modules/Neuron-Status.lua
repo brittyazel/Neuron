@@ -80,7 +80,6 @@ local CastWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}
 local defaultBarOptions = {
 
     [1] = {
-
         showGrid = true,
         snapTo = false,
         snapToFrame = false,
@@ -259,37 +258,7 @@ function NeuronStatusBar:OnInitialize()
         HIDDEN = true,
         TOOLTIPS = true }, false, false)
 
-    if (DB.statusbarFirstRun) then --makes the initial 4 status bars
-
-        local oid, offset = 1, 0
-
-        for id, defaults in ipairs(defaultBarOptions) do
-
-            local bar, object = NEURON.NeuronBar:CreateNewBar("status", id, true)
-
-            object = NEURON.NeuronButton:CreateNewObject("status", oid+offset, true)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
-            offset = offset + 1
-
-        end
-
-        DB.statusbarFirstRun = false
-    else --loads previous bars from saved variable
-
-        for id,data in pairs(DB.statusbar) do
-            if (data ~= nil) then
-                local newbar = NEURON.NeuronBar:CreateNewBar("status", id)
-                newbar.data.showGrid = true
-            end
-        end
-
-
-        for id,data in pairs(DB.statusbtn) do
-            if (data ~= nil) then
-                NEURON.NeuronButton:CreateNewObject("status", id)
-            end
-        end
-    end
+    NeuronStatusBar:CreateBarsAndButtons()
 
 end
 
@@ -361,6 +330,44 @@ function NeuronStatusBar:MIRROR_TIMER_STOP(eventName, ...)
 end
 
 -------------------------------------------------------------------------------
+
+function NeuronStatusBar:CreateBarsAndButtons()
+
+    if (DB.statusbarFirstRun) then
+
+        for id, defaults in ipairs(defaultBarOptions) do
+
+            local bar = NEURON.NeuronBar:CreateNewBar("status", id, true) --this calls the bar constructor
+
+            for	k,v in pairs(defaults) do
+                bar.data[k] = v
+            end
+
+            local object
+
+            object = NEURON.NeuronButton:CreateNewObject("status", id, true)
+            NEURON.NeuronBar:AddObjectToList(bar, object)
+        end
+
+        DB.statusbarFirstRun = false
+
+    else
+
+        for id,data in pairs(DB.statusbar) do
+            if (data ~= nil) then
+                NEURON.NeuronBar:CreateNewBar("status", id)
+            end
+        end
+
+        for id,data in pairs(DB.statusbtn) do
+            if (data ~= nil) then
+                NEURON.NeuronButton:CreateNewObject("status", id)
+            end
+        end
+    end
+
+end
+
 
 function NeuronStatusBar:DisableDefault()
 

@@ -12,15 +12,17 @@ local ZONEABILITYBTN = setmetatable({}, { __index = CreateFrame("CheckButton") }
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local defaultBarOptions = {
-	hidestates = ":",
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	showGrid = false,
-	point = "BOTTOM",
-	x = 350,
-	y = 75,
-	border = true,
+	[1] = {
+		hidestates = ":",
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		showGrid = false,
+		point = "BOTTOM",
+		x = 350,
+		y = 75,
+		border = true,
+	}
 }
 
 
@@ -88,29 +90,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 		CDALPHA = true,
 		ZONEABILITY = true}, false, 65)
 
-	if (DB.zoneabilitybarFirstRun) then
-
-		local bar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", 1, true)
-		local object = NEURON.NeuronButton:CreateNewObject("zoneabilitybar", 1)
-
-		NEURON.NeuronBar:AddObjectToList(bar, object)
-
-		DB.zoneabilitybarFirstRun = false
-
-	else
-
-		for id,data in pairs(DB.zoneabilitybar) do
-			if (data ~= nil) then
-				local newbar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
-			end
-		end
-
-		for id,data in pairs(DB.zoneabilitybtn) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("zoneabilitybar", id)
-			end
-		end
-	end
+	NeuronZoneAbilityBar:CreateBarsAndButtons()
 
 end
 
@@ -138,6 +118,44 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronZoneAbilityBar:CreateBarsAndButtons()
+
+	if (DB.zoneabilitybarFirstRun) then
+
+		for id, defaults in ipairs(defaultBarOptions) do
+
+			local bar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			object = NEURON.NeuronButton:CreateNewObject("zoneabilitybar", 1, true)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.zoneabilitybarFirstRun = false
+
+	else
+
+		for id,data in pairs(DB.zoneabilitybar) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
+			end
+		end
+
+		for id,data in pairs(DB.zoneabilitybtn) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("zoneabilitybar", id)
+			end
+		end
+	end
+
+end
+
 
 function NeuronZoneAbilityBar:DisableDefault()
 

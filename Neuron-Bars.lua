@@ -230,7 +230,7 @@ function NeuronBar:OnInitialize()
 	end
 	NEURON.CreateNewBar = NeuronBar.CreateNewBar --temp just so slash functions still work
 
-	NeuronBar:SetUpBars()
+	NeuronBar:CreateBarsAndButtons()
 
 end
 
@@ -283,18 +283,23 @@ end
 --------------------Intermediate Functions------------------
 ------------------------------------------------------------
 
-function NeuronBar:SetUpBars()
+function NeuronBar:CreateBarsAndButtons()
 
 	---TODO: clean up the onload part of this addon. This way of creating all the objects is terribly clunky
 	if (DB.firstRun) then
-		local oid, offset = 1, 0
+		local offset = 0
 
 		for id, defaults in ipairs(defaultBarOptions) do
 
 			local bar = NeuronBar:CreateNewBar("bar", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
 			local object
 
-			for i=oid+offset,oid+11+offset do
+			for i=1+offset, 12+offset do
 				object = NEURON.NeuronButton:CreateNewObject("bar", i, true) --this calls the object (button) constructor
 				NeuronBar:AddObjectToList(bar, object)
 			end
