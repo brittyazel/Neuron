@@ -10,21 +10,20 @@ local NeuronExtraBar = NEURON.NeuronExtraBar
 
 local EXTRABTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-local extrabarDB
-local extrabtnDB
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local gDef = {
-	hidestates = ":extrabar0:",
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	point = "BOTTOM",
-	x = 0,
-	y = 205,
+local defaultBarOptions = {
+	[1] = {
+		hidestates = ":extrabar0:",
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = 0,
+		y = 205,
+	}
 }
 
 local configData = {
@@ -48,10 +47,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronExtraBar:OnInitialize()
 
-	DB = NeuronCDB
-
-	extrabarDB = DB.extrabar
-	extrabtnDB = DB.extrabtn
+	DB = NEURON.db.profile
 
 	----------------------------------------------------------------
 	EXTRABTN.SetData = NeuronExtraBar.SetData
@@ -67,7 +63,7 @@ function NeuronExtraBar:OnInitialize()
 	EXTRABTN.SetType = NeuronExtraBar.SetType
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", extrabarDB, extrabarDB, NeuronExtraBar, extrabtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, NeuronExtraBar, DB.extrabtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -81,29 +77,7 @@ function NeuronExtraBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (DB.extrabarFirstRun) then
-
-		local bar = NEURON.NeuronBar:CreateNewBar("extrabar", 1, true)
-		local object = NEURON.NeuronButton:CreateNewObject("extrabar", 1)
-
-		NEURON.NeuronBar:AddObjectToList(bar, object)
-
-		DB.extrabarFirstRun = false
-
-	else
-
-		for id,data in pairs(extrabarDB) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("extrabar", id)
-			end
-		end
-
-		for id,data in pairs(extrabtnDB) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("extrabar", id)
-			end
-		end
-	end
+	NeuronExtraBar:CreateBarsAndButtons()
 
 end
 
@@ -131,6 +105,44 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronExtraBar:CreateBarsAndButtons()
+
+	if (DB.extrabarFirstRun) then
+
+		for id, defaults in ipairs(defaultBarOptions) do
+
+			local bar = NEURON.NeuronBar:CreateNewBar("extrabar", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			object = NEURON.NeuronButton:CreateNewObject("extrabar", 1, true)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.extrabarFirstRun = false
+
+	else
+
+		for id,data in pairs(DB.extrabar) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("extrabar", id)
+			end
+		end
+
+		for id,data in pairs(DB.extrabtn) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("extrabar", id)
+			end
+		end
+	end
+
+end
+
 
 function NeuronExtraBar:DisableDefault()
 
@@ -170,7 +182,7 @@ function NeuronExtraBar:SetSkinned(button)
 				Normal = button.normaltexture,
 			}
 
-			SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 
 		end
 
@@ -187,7 +199,7 @@ function NeuronExtraBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = extrabtnDB
+	button.DB = DB.extrabtn
 
 	if (button.DB) then
 
@@ -203,28 +215,13 @@ function NeuronExtraBar:LoadData(button, spec, state)
 			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.DB[id]) then
-			button.DB[id] = {}
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
 		if (not button.DB[id].data) then
 			button.DB[id].data = {}
 		end
 
-		NEURON:UpdateData(button.DB[id].config, configData)
-		NEURON:UpdateData(button.DB[id].keys, keyData)
-
 		button.config = button.DB [id].config
 
-		if (DB.perCharBinds) then
-			button.keys = button.DB[id].keys
-		else
-			button.keys = button.DB[id].keys
-		end
+		button.keys = button.DB[id].keys
 
 		button.data = button.DB[id].data
 	end
@@ -295,7 +292,7 @@ function NeuronExtraBar:ExtraButton_Update(button)
 	--This conditional is to show/hide the border of the button, but it ins't fully implemented yet
 	--Some people were hitting a bit be because this option didn't exist it seems
 
-	--[[if extrabarDB[1].border then
+	--[[if DB.extrabar[1].border then
 		button.style:Show()
 	else
 		button.style:Hide()

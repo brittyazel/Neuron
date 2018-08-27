@@ -7,7 +7,7 @@
 -------------------------------------------------------------------------------
 
 local NEURON = Neuron
-local GDB, CDB, SPEC, btnGDB, btnCDB, control
+local DB, SPEC, btnDB, control
 
 local BUTTON = NEURON.BUTTON
 
@@ -63,8 +63,7 @@ local flyoutBarUpdater
 --- or setting up slash commands.
 function NeuronFlyouts:OnInitialize()
 
-	GDB = NeuronGDB
-	CDB = NeuronCDB
+	DB = NEURON.db.profile
 
 	local strings = { NeuronTooltipScan:GetRegions() }
 
@@ -992,7 +991,7 @@ function NeuronFlyouts:Flyout_UpdateButtons(fbutton, init)
 		end
 
 		flyout.bar.objCount = count
-		flyout.bar.gdata.objectList = list
+		flyout.bar.data.objectList = list
 
 		if (not init) then
 			tinsert(barsToUpdate, flyout.bar)
@@ -1045,27 +1044,27 @@ function NeuronFlyouts:Flyout_UpdateBar(button)
 	end
 
 	if (shape) then
-		flyout.bar.gdata.shape = shape
+		flyout.bar.data.shape = shape
 	else
-		flyout.bar.gdata.shape = 1
+		flyout.bar.data.shape = 1
 	end
 
 	if (columns) then
-		flyout.bar.gdata.columns = columns
+		flyout.bar.data.columns = columns
 	else
-		flyout.bar.gdata.columns = 12
+		flyout.bar.data.columns = 12
 	end
 
 	if (pad) then
-		flyout.bar.gdata.padH = pad
-		flyout.bar.gdata.padV = pad
-		flyout.bar.gdata.arcStart = 0
-		flyout.bar.gdata.arcLength = 359
+		flyout.bar.data.padH = pad
+		flyout.bar.data.padV = pad
+		flyout.bar.data.arcStart = 0
+		flyout.bar.data.arcLength = 359
 	else
-		flyout.bar.gdata.padH = 0
-		flyout.bar.gdata.padV = 0
-		flyout.bar.gdata.arcStart = 0
-		flyout.bar.gdata.arcLength = 359
+		flyout.bar.data.padH = 0
+		flyout.bar.data.padV = 0
+		flyout.bar.data.arcStart = 0
+		flyout.bar.data.arcLength = 359
 	end
 	flyout.bar:ClearAllPoints()
 	flyout.bar:SetPoint(pointA, button, pointB, 0, 0)
@@ -1197,9 +1196,9 @@ function NeuronFlyouts:Flyout_SetData(button, bar)
 
 		button.tooltips = true
 		button.tooltipsEnhanced = true
-		--self.tooltipsCombat = bar.cdata.tooltipsCombat
-		--self:SetFrameStrata(bar.gdata.objectStrata)
-		--self:SetScale(bar.gdata.scale)
+		--self.tooltipsCombat = bar.data.tooltipsCombat
+		--self:SetFrameStrata(bar.data.objectStrata)
+		--self:SetScale(bar.data.scale)
 	end
 
 	button.hotkey:Hide()
@@ -1351,7 +1350,7 @@ function NeuronFlyouts:Flyout_GetBar(button)
 	bar.index = id
 	bar.class = "bar"
 	bar.elapsed = 0
-	bar.gdata = { scale = 1 }
+	bar.data = { scale = 1 }
 	bar.objPrefix = "NeuronFlyoutButton"
 
 	bar.text:Hide()
@@ -1484,7 +1483,7 @@ function NeuronFlyouts:updateAnchors(button, elapsed)
 
 	button.elapsed = button.elapsed + elapsed
 
-	if (button.elapsed > GDB.throttle and NEURON.PEW) then
+	if (button.elapsed > DB.throttle and NEURON.PEW) then
 
 		if (not InCombatLockdown()) then
 			local anchor = tremove(needsUpdate)
@@ -1510,7 +1509,7 @@ function NeuronFlyouts:linkScanOnUpdate(button, elapsed)
 
 	button.elapsed = button.elapsed + elapsed
 
-	if (button.elapsed > GDB.throttle and NEURON.PEW) then
+	if (button.elapsed > DB.throttle and NEURON.PEW) then
 		-- scan X items per frame draw, where X is the for limit
 		for i=1,2 do
 			button.link = itemLinks[button.index]
@@ -1573,7 +1572,7 @@ function NeuronFlyouts:ANCHOR_DelayedUpdate(button, elapsed)
 
 	button.elapsed = button.elapsed + elapsed
 
-	if (button.elapsed > GDB.throttle and NEURON.PEW) then
+	if (button.elapsed > DB.throttle and NEURON.PEW) then
 
 		for anchor in pairs(ANCHORIndex) do
 			tinsert(needsUpdate, anchor)

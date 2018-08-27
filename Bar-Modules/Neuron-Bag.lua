@@ -5,8 +5,6 @@ local  DB
 NEURON.NeuronBagBar = NEURON:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBagBar = NEURON.NeuronBagBar
 
-local  bagbarDB, bagbtnDB
-
 local BAGBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -14,15 +12,17 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local SKIN = LibStub("Masque", true)
 
 
-local gDef = {
-    padH = 0,
-    scale = 1.1,
-    snapTo = false,
-    snapToFrame = false,
-    snapToPoint = false,
-    point = "BOTTOMRIGHT",
-    x = -102,
-    y = 24,
+local defaultBarOptions = {
+    [1] = {
+        padH = 0,
+        scale = 1.1,
+        snapTo = false,
+        snapToFrame = false,
+        snapToPoint = false,
+        point = "BOTTOMRIGHT",
+        x = -102,
+        y = 24,
+    }
 }
 
 local bagElements = {}
@@ -40,6 +40,7 @@ local configData = {
 --- or setting up slash commands.
 function NeuronBagBar:OnInitialize()
 
+    DB = NEURON.db.profile
 
     bagElements[5] = MainMenuBarBackpackButton
     bagElements[4] = CharacterBag0Slot
@@ -47,11 +48,6 @@ function NeuronBagBar:OnInitialize()
     bagElements[2] = CharacterBag2Slot
     bagElements[1] = CharacterBag3Slot
 
-    DB = NeuronCDB
-
-
-    bagbarDB = DB.bagbar
-    bagbtnDB = DB.bagbtn
 
     ----------------------------------------------------------------
     BAGBTN.SetData = NeuronBagBar.SetData
@@ -68,12 +64,12 @@ function NeuronBagBar:OnInitialize()
     ----------------------------------------------------------------
 
 
-    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarDB, bagbarDB, NeuronBagBar, bagbtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, gDef, nil, true)
+    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, NeuronBagBar, DB.bagbtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, true)
 
 
     NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
 
-    if NeuronGDB.blizzbar == false then
+    if DB.blizzbar == false then
         NeuronBagBar:CreateBarsAndButtons()
 
         ---hide the weird color border around bag bars
@@ -119,25 +115,34 @@ function NeuronBagBar:CreateBarsAndButtons()
 
     if (DB.bagbarFirstRun) then
 
-        local bar = NEURON.NeuronBar:CreateNewBar("bag", 1, true)
-        local object
+        for id, defaults in ipairs(defaultBarOptions) do
 
-        for i=1,#bagElements do
-            object = NEURON.NeuronButton:CreateNewObject("bag", i)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
+            local bar = NEURON.NeuronBar:CreateNewBar("bag", id, true) --this calls the bar constructor
+
+            for	k,v in pairs(defaults) do
+                bar.data[k] = v
+            end
+
+            local object
+
+            for i=1,#bagElements do
+                object = NEURON.NeuronButton:CreateNewObject("bag", i, true)
+                NEURON.NeuronBar:AddObjectToList(bar, object)
+            end
+
         end
 
         DB.bagbarFirstRun = false
 
     else
 
-        for id,data in pairs(bagbarDB) do
+        for id,data in pairs(DB.bagbar) do
             if (data ~= nil) then
                 NEURON.NeuronBar:CreateNewBar("bag", id)
             end
         end
 
-        for id,data in pairs(bagbtnDB) do
+        for id,data in pairs(DB.bagbtn) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("bag", id)
             end
@@ -160,7 +165,7 @@ function NeuronBagBar:SetSkinned(button)
                 Count = button.count,
             }
 
-            SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+            SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 
         end
     end
@@ -179,8 +184,8 @@ function NeuronBagBar:SetData(button, bar)
 
         button.bar = bar
 
-        button:SetFrameStrata(bar.gdata.objectStrata)
-        button:SetScale(bar.gdata.scale)
+        button:SetFrameStrata(bar.data.objectStrata)
+        button:SetScale(bar.data.scale)
 
     end
 
@@ -197,7 +202,7 @@ function NeuronBagBar:LoadData(button, spec, state)
 
     local id = button.id
 
-    button.DB = bagbtnDB
+    button.DB = DB.bagbtn
 
     if (button.DB) then
 
@@ -207,10 +212,6 @@ function NeuronBagBar:LoadData(button, spec, state)
 
         if (not button.DB[id].config) then
             button.DB[id].config = CopyTable(configData)
-        end
-
-        if (not button.DB[id]) then
-            button.DB[id] = {}
         end
 
         if (not button.DB[id].data) then

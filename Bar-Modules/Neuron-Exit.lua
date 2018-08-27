@@ -10,20 +10,19 @@ local NeuronExitBar = NEURON.NeuronExitBar
 
 local EXITBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-local exitbarDB
-local exitbtnDB
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local gDef = {
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	point = "BOTTOM",
-	x = 0,
-	y = 305,
+local defaultBarOptions = {
+	[1] = {
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = 0,
+		y = 305,
+	}
 }
 
 local configData = {
@@ -47,10 +46,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronExitBar:OnInitialize()
 
-	DB = NeuronCDB
-
-	exitbarDB = DB.exitbar
-	exitbtnDB = DB.exitbtn
+	DB = NEURON.db.profile
 
 	----------------------------------------------------------------
 	EXITBTN.SetData = NeuronExitBar.SetData
@@ -66,7 +62,7 @@ function NeuronExitBar:OnInitialize()
 	EXITBTN.SetSkinned = NeuronExitBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", exitbarDB, exitbarDB, NeuronExitBar, exitbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, false)
 
 	NEURON:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -81,29 +77,8 @@ function NeuronExitBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (DB.exitbarFirstRun) then
 
-		local bar = NEURON.NeuronBar:CreateNewBar("exitbar", 1, true)
-		local object = NEURON.NeuronButton:CreateNewObject("exitbar", 1)
-
-		NEURON.NeuronBar:AddObjectToList(bar, object)
-
-		DB.exitbarFirstRun = false
-
-	else
-
-		for id,data in pairs(exitbarDB) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("exitbar", id)
-			end
-		end
-
-		for id,data in pairs(exitbtnDB) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("exitbar", id)
-			end
-		end
-	end
+	NeuronExitBar:CreateBarsAndButtons()
 
 end
 
@@ -131,6 +106,43 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronExitBar:CreateBarsAndButtons()
+
+	if (DB.exitbarFirstRun) then
+
+		for id, defaults in ipairs(defaultBarOptions) do
+
+			local bar = NEURON.NeuronBar:CreateNewBar("exitbar", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			object = NEURON.NeuronButton:CreateNewObject("exitbar", 1, true)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.exitbarFirstRun = false
+
+	else
+
+		for id,data in pairs(DB.exitbar) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("exitbar", id)
+			end
+		end
+
+		for id,data in pairs(DB.exitbtn) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("exitbar", id)
+			end
+		end
+	end
+
+end
 
 function NeuronExitBar:DisableDefault()
 
@@ -171,7 +183,7 @@ function NeuronExitBar:SetSkinned(button)
 
 			}
 
-			SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 
 		end
 
@@ -188,7 +200,7 @@ function NeuronExitBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = exitbtnDB
+	button.DB = DB.exitbtn
 
 	if (button.DB) then
 
@@ -204,28 +216,13 @@ function NeuronExitBar:LoadData(button, spec, state)
 			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.DB[id]) then
-			button.DB[id] = {}
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
 		if (not button.DB[id].data) then
 			button.DB[id].data = {}
 		end
 
-		NEURON:UpdateData(button.DB[id].config, configData)
-		NEURON:UpdateData(button.DB[id].keys, keyData)
-
 		button.config = button.DB [id].config
 
-		if (DB.perCharBinds) then
-			button.keys = button.DB[id].keys
-		else
-			button.keys = button.DB[id].keys
-		end
+		button.keys = button.DB[id].keys
 
 		button.data = button.DB[id].data
 	end

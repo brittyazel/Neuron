@@ -7,25 +7,25 @@ local DB
 NEURON.NeuronPetBar = NEURON:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronPetBar = NEURON.NeuronPetBar
 
-local petbarDB, petbtnDB
-
 local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local sIndex = NEURON.sIndex
 
-local gDef = {
+local defaultBarOptions = {
 
-	hidestates = ":pet0:",
-    showGrid = true,
-	scale = 0.8,
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	point = "BOTTOM",
-	x = -440,
-	y = 75,
+	[1] = {
+		hidestates = ":pet0:",
+		showGrid = true,
+		scale = 0.8,
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = -440,
+		y = 75,
+	}
 }
 
 local configData = {
@@ -51,12 +51,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronPetBar:OnInitialize()
 
-	DB = NeuronCDB
-
-
-	petbarDB = DB.petbar
-	petbtnDB = DB.petbtn
-
+	DB = NEURON.db.profile
 
 	----------------------------------------------------------------
 	PETBTN.SetData = NeuronPetBar.SetData
@@ -72,7 +67,7 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarDB, petbarDB, NeuronPetBar, petbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, gDef, nil, false)
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, NeuronPetBar, DB.petbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false)
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
@@ -89,7 +84,7 @@ function NeuronPetBar:OnInitialize()
 		CDALPHA = true }, false, 65)
 
 
-    if NeuronGDB.blizzbar == false then
+    if DB.blizzbar == false then
         NeuronPetBar:CreateBarsAndButtons()
     end
 
@@ -121,24 +116,33 @@ function NeuronPetBar:CreateBarsAndButtons()
 
     if (DB.petbarFirstRun) then
 
-        local bar, object = NEURON.NeuronBar:CreateNewBar("pet", 1, true)
+		for id, defaults in ipairs(defaultBarOptions) do
 
-        for i=1,NEURON.maxPetID do
-            object = NEURON.NeuronButton:CreateNewObject("pet", i)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
-        end
+			local bar = NEURON.NeuronBar:CreateNewBar("pet", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			for i=1,NEURON.maxPetID do
+				object = NEURON.NeuronButton:CreateNewObject("pet", i, true)
+				NEURON.NeuronBar:AddObjectToList(bar, object)
+			end
+		end
 
         DB.petbarFirstRun = false
 
     else
 
-        for id,data in pairs(petbarDB) do
+        for id,data in pairs(DB.petbar) do
             if (data ~= nil) then
                 NEURON.NeuronBar:CreateNewBar("pet", id)
             end
         end
 
-        for id,data in pairs(petbtnDB) do
+        for id,data in pairs(DB.petbtn) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("pet", id)
             end
@@ -266,7 +270,7 @@ function NeuronPetBar:PET_UpdateCooldown(button)
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
-		if (duration and duration >= NeuronGDB.timerLimit and button.iconframeaurawatch.active) then
+		if (duration and duration >= DB.timerLimit and button.iconframeaurawatch.active) then
 			button.auraQueue = button.iconframeaurawatch.queueinfo
 			button.iconframeaurawatch.duration = 0
 			button.iconframeaurawatch:Hide()
@@ -334,7 +338,7 @@ end
 
 function NeuronPetBar:OnUpdate(button, elapsed)
 
-	if (button.elapsed > NeuronGDB.throttle) then --throttle down this code to ease up on the CPU a bit
+	if (button.elapsed > DB.throttle) then --throttle down this code to ease up on the CPU a bit
 		if (button.mac_flash) then
 
 			button.mac_flashing = true
@@ -550,51 +554,51 @@ function NeuronPetBar:SetData(button, bar)
 
 		button.bar = bar
 
-		button.cdText = bar.cdata.cdText
+		button.cdText = bar.data.cdText
 
-		if (bar.cdata.cdAlpha) then
+		if (bar.data.cdAlpha) then
 			button.cdAlpha = 0.2
 		else
 			button.cdAlpha = 1
 		end
 
 		if (not button.cdcolor1) then
-			button.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
+			button.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
 		else
-			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
+			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
 		end
 
 		if (not button.cdcolor2) then
-			button.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
+			button.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
 		else
-			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
+			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
 		end
 
-		button.showGrid = bar.gdata.showGrid
+		button.showGrid = bar.data.showGrid
 
-		button.barLock = bar.cdata.barLock
-		button.barLockAlt = bar.cdata.barLockAlt
-		button.barLockCtrl = bar.cdata.barLockCtrl
-		button.barLockShift = bar.cdata.barLockShift
+		button.barLock = bar.data.barLock
+		button.barLockAlt = bar.data.barLockAlt
+		button.barLockCtrl = bar.data.barLockCtrl
+		button.barLockShift = bar.data.barLockShift
 
-		button.upClicks = bar.cdata.upClicks
-		button.downClicks = bar.cdata.downClicks
+		button.upClicks = bar.data.upClicks
+		button.downClicks = bar.data.downClicks
 
-		button.bindText = bar.cdata.bindText
-		button.macroText = bar.cdata.macroText
-		button.countText = bar.cdata.countText
+		button.bindText = bar.data.bindText
+		button.macroText = bar.data.macroText
+		button.countText = bar.data.countText
 
-		button.bindColor = bar.gdata.bindColor
-		button.macroColor = bar.gdata.macroColor
-		button.countColor = bar.gdata.countColor
+		button.bindColor = bar.data.bindColor
+		button.macroColor = bar.data.macroColor
+		button.countColor = bar.data.countColor
 
-		button.tooltips = bar.cdata.tooltips
-		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
-		button.tooltipsCombat = bar.cdata.tooltipsCombat
+		button.tooltips = bar.data.tooltips
+		button.tooltipsEnhanced = bar.data.tooltipsEnhanced
+		button.tooltipsCombat = bar.data.tooltipsCombat
 
-		button:SetFrameStrata(bar.gdata.objectStrata)
+		button:SetFrameStrata(bar.data.objectStrata)
 
-		button:SetScale(bar.gdata.scale)
+		button:SetScale(bar.data.scale)
 
 	end
 
@@ -659,7 +663,7 @@ function NeuronPetBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = petbtnDB
+	button.DB = DB.petbtn
 
 	if (button.DB and button.DB) then
 
@@ -675,28 +679,13 @@ function NeuronPetBar:LoadData(button, spec, state)
 			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.DB[id]) then
-			button.DB[id] = {}
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
 		if (not button.DB[id].data) then
 			button.DB[id].data = {}
 		end
 
-		NEURON:UpdateData(button.DB[id].config, configData)
-		NEURON:UpdateData(button.DB[id].keys, keyData)
-
 		button.config = button.DB [id].config
 
-		if (DB.perCharBinds) then
-			button.keys = button.DB[id].keys
-		else
-			button.keys = button.DB[id].keys
-		end
+		button.keys = button.DB[id].keys
 
 		button.data = button.DB[id].data
 	end
