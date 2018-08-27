@@ -82,7 +82,7 @@ NEURON.barDEF = {
 	snapToFrame = false,
 
 	autoHide = false,
-	showGrid = false,
+	showGrid = true,
 
 	bindColor = "1;1;1;1",
 	macroColor = "1;1;1;1",
@@ -230,6 +230,9 @@ function NeuronBar:OnInitialize()
 		NeuronBar.HideZoneAbilityBorder = NEURON.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
 	end
 	NEURON.CreateNewBar = NeuronBar.CreateNewBar --temp just so slash functions still work
+
+	NeuronBar:SetUpBars()
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -237,21 +240,6 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function NeuronBar:OnEnable()
-
-	NeuronBar:SetUpBars()
-
-	for _,bar in pairs(BARIndex) do
-		if (DB.firstRun) and bar.class == "bar" then
-			for id, defaults in ipairs(defaultBarOptions) do
-				if (id == bar:GetID()) then
-					NeuronBar:SetDefaults(bar, defaults)
-				end
-			end
-		end
-
-		NeuronBar:Load(bar)
-	end
-
 
 	local stackWatch = CreateFrame("Frame", nil, UIParent)
 	stackWatch:SetScript("OnUpdate", function(self) self.bar = GetMouseFocus():GetName() if (not BARNameIndex[self.bar]) then wipe(barStack); self:Hide() end end)

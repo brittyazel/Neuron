@@ -350,6 +350,10 @@ function NEURON:OnEnable()
 
 	NEURON:LoginMessage()
 
+	for _,bar in pairs(BARIndex) do
+		NEURON.NeuronBar:Load(bar)
+	end
+
 
 end
 

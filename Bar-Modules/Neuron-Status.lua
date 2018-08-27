@@ -187,8 +187,6 @@ local configDefaults = {
     [2] = { sbType = "xp", cIndex = 2, lIndex = 6, rIndex = 4, mIndex = 3, width = 450},
     [3] = { sbType = "rep", cIndex = 3, lIndex = 2, rIndex = 4, mIndex = 6, width = 450},
     [4] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
-    [5] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
-    [6] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
 }
 
 
@@ -281,17 +279,10 @@ function NeuronStatusBar:OnInitialize()
 
             local bar, object = NEURON.NeuronBar:CreateNewBar("status", id, true)
 
-            if (id == 4) then --I'm guessing this is meant to make 4 bars by default
-                for i=1,3 do
-                    object = NEURON.NeuronButton:CreateNewObject("status", oid+offset, true)
-                    NEURON.NeuronBar:AddObjectToList(bar, object)
-                    offset = offset + 1
-                end
-            else
-                object = NEURON.NeuronButton:CreateNewObject("status", oid+offset, true)
-                NEURON.NeuronBar:AddObjectToList(bar, object)
-                offset = offset + 1
-            end
+            object = NEURON.NeuronButton:CreateNewObject("status", oid+offset, true)
+            NEURON.NeuronBar:AddObjectToList(bar, object)
+            offset = offset + 1
+
         end
 
         DB.statusbarFirstRun = false
