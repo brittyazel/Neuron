@@ -1794,7 +1794,6 @@ function NeuronBar:LoadData(bar)
 		bar.DB[id] = CopyTable(NEURON.barDEF)
 	end
 
-	NEURON:UpdateData(bar.DB[id], NEURON.barDEF)
 	bar.data = CopyTable(bar.DB[id])
 
 	if (#bar.data.name < 1) then

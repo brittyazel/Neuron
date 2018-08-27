@@ -3182,8 +3182,6 @@ function NeuronButton:LoadData(button, spec, state)
 			button.DB[id].keys[spec] = CopyTable(keyData)
 		end
 
-		NEURON:UpdateData(button.DB[id].keys[spec], keyData)
-
 		if (not button.DB[id][spec]) then
 			button.DB[id][spec] = { homestate = CopyTable(stateData) }
 		end
@@ -3194,19 +3192,6 @@ function NeuronButton:LoadData(button, spec, state)
 
 		if (not button.DB[id][spec][state]) then
 			button.DB[id][spec][state] = CopyTable(stateData)
-		end
-
-		NEURON:UpdateData(button.DB[id].config, configData)
-		NEURON:UpdateData(button.DB[id].keys, keyData)
-
-		for spec,states in pairs(button.DB[id]) do
-			if (spec ~= "keys") then
-				for state,data in pairs(states) do
-					if (type(data) == "table") then
-						NEURON:UpdateData(data, stateData)
-					end
-				end
-			end
 		end
 
 		button.config = button.DB[id].config

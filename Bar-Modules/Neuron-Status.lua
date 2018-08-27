@@ -2065,8 +2065,6 @@ function NeuronStatusBar:LoadData(button, spec, state)
             statusbtnDB[id].data = CopyTable(dataDef)
         end
 
-        NEURON:UpdateData(statusbtnDB[id].config, configDef)
-        NEURON:UpdateData(statusbtnDB[id].data, dataDef)
 
         button.config = statusbtnDB[id].config
         button.data =statusbtnDB[id].data

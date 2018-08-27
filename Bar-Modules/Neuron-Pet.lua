@@ -679,9 +679,6 @@ function NeuronPetBar:LoadData(button, spec, state)
 			button.DB[id].data = {}
 		end
 
-		NEURON:UpdateData(button.DB[id].config, configData)
-		NEURON:UpdateData(button.DB[id].keys, keyData)
-
 		button.config = button.DB [id].config
 
 		button.keys = button.DB[id].keys

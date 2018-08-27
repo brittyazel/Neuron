@@ -1058,41 +1058,6 @@ function NEURON:UpdateStanceStrings()
 end
 
 
-function NEURON:UpdateData(data, defaults)
-	-- Add new vars
-	for key,value in pairs(defaults) do
-
-		if (data[key] == nil) then
-
-			if (data[key:lower()] ~= nil) then
-
-				data[key] = data[key:lower()]
-				data[key:lower()] = nil
-			else
-				data[key] = value
-			end
-		end
-	end
-	-- Add new vars
-
-	-- Var fixes
-
-	---none
-
-	-- Var fixes
-
-	-- Kill old vars
-	for key,value in pairs(data) do
-
-		if (defaults[key] == nil) then
-			data[key] = nil
-		end
-
-	end
-	-- Kill old vars
-end
-
-
 ---this is taken from Bartender4, thanks guys!
 function NEURON:HideBlizzard()
 	if (InCombatLockdown()) then
