@@ -1069,42 +1069,30 @@ function NEURON:HideBlizzard()
 	UIHider:Hide()
 	self.UIHider = UIHider
 
-	MultiBarBottomLeft:SetParent(UIHider)
-	MultiBarBottomRight:SetParent(UIHider)
-	MultiBarLeft:SetParent(UIHider)
-	MultiBarRight:SetParent(UIHider)
-
-	-- Hide MultiBar Buttons, but keep the bars alive
-	for i=1,12 do
-		_G["ActionButton" .. i]:Hide()
-		_G["ActionButton" .. i]:UnregisterAllEvents()
-		_G["ActionButton" .. i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarBottomLeftButton" .. i]:Hide()
-		_G["MultiBarBottomLeftButton" .. i]:UnregisterAllEvents()
-		_G["MultiBarBottomLeftButton" .. i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarBottomRightButton" .. i]:Hide()
-		_G["MultiBarBottomRightButton" .. i]:UnregisterAllEvents()
-		_G["MultiBarBottomRightButton" .. i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarRightButton" .. i]:Hide()
-		_G["MultiBarRightButton" .. i]:UnregisterAllEvents()
-		_G["MultiBarRightButton" .. i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarLeftButton" .. i]:Hide()
-		_G["MultiBarLeftButton" .. i]:UnregisterAllEvents()
-		_G["MultiBarLeftButton" .. i]:SetAttribute("statehidden", true)
+	if MultiBarBottomLeft then
+		MultiBarBottomLeft:Hide()
+		MultiBarBottomLeft:SetParent(UIHider)
 	end
 
-	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarRight"] = nil
-	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarLeft"] = nil
-	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomLeft"] = nil
-	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomRight"] = nil
+	if MultiBarBottomRight then
+		MultiBarBottomRight:Hide()
+		MultiBarBottomRight:SetParent(UIHider)
+	end
 
-	--MainMenuBar:UnregisterAllEvents()
-	--MainMenuBar:SetParent(UIHider)
-	--MainMenuBar:Hide()
+	if MultiBarLeft then
+		MultiBarLeft:Hide()
+		MultiBarLeft:SetParent(UIHider)
+	end
+
+	if MultiBarRight then
+		MultiBarRight:Hide()
+		MultiBarRight:SetParent(UIHider)
+	end
+
+
+	MainMenuBar:UnregisterAllEvents()
+	MainMenuBar:SetParent(UIHider)
+	MainMenuBar:Hide()
 	MainMenuBar:EnableMouse(false)
 	MainMenuBar:UnregisterEvent("DISPLAY_SIZE_CHANGED")
 	MainMenuBar:UnregisterEvent("UI_SCALE_CHANGED")
@@ -1125,8 +1113,8 @@ function NEURON:HideBlizzard()
 	end
 
 	if MainMenuExpBar then
-		--MainMenuExpBar:UnregisterAllEvents()
-		--MainMenuExpBar:Hide()
+		MainMenuExpBar:UnregisterAllEvents()
+		MainMenuExpBar:Hide()
 		MainMenuExpBar:SetParent(UIHider)
 		MainMenuExpBar:SetDeferAnimationCallback(nil)
 	end
@@ -1137,8 +1125,8 @@ function NEURON:HideBlizzard()
 	end
 
 	if ReputationWatchBar then
-		--ReputationWatchBar:UnregisterAllEvents()
-		--ReputationWatchBar:Hide()
+		ReputationWatchBar:UnregisterAllEvents()
+		ReputationWatchBar:Hide()
 		ReputationWatchBar:SetParent(UIHider)
 	end
 
@@ -1152,39 +1140,18 @@ function NEURON:HideBlizzard()
 		HonorWatchBar.StatusBar:SetDeferAnimationCallback(nil)
 	end
 
-	if StatusTrackingBarManager then
-		StatusTrackingBarManager:Hide()
-		--StatusTrackingBarManager:SetParent(UIHider)
-	end
-
 	StanceBarFrame:UnregisterAllEvents()
 	StanceBarFrame:Hide()
 	StanceBarFrame:SetParent(UIHider)
 
-	--BonusActionBarFrame:UnregisterAllEvents()
-	--BonusActionBarFrame:Hide()
-	--BonusActionBarFrame:SetParent(UIHider)
-
 	PossessBarFrame:UnregisterAllEvents()
-	--PossessBarFrame:Hide()
+	PossessBarFrame:Hide()
 	PossessBarFrame:SetParent(UIHider)
 
 	PetActionBarFrame:UnregisterAllEvents()
-	--PetActionBarFrame:Hide()
+	PetActionBarFrame:Hide()
 	PetActionBarFrame:SetParent(UIHider)
 
-	--[[if PlayerTalentFrame then
-		PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-	else
-		hooksecurefunc("TalentFrame_LoadUI", function() PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED") end)
-	end]]
-
-
-	--MainMenuBarArtFrame:UnregisterAllEvents()
-	--MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
-	--OverrideActionBar:UnregisterAllEvents()
-	--ActionBarController:UnregisterAllEvents()
-	--:UnregisterAllEvents()
 
 end
 
