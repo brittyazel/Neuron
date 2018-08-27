@@ -10,9 +10,6 @@ local NeuronExtraBar = NEURON.NeuronExtraBar
 
 local EXTRABTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-local extrabarDB
-local extrabtnDB
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
@@ -48,10 +45,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronExtraBar:OnInitialize()
 
-	DB = NeuronDB
-
-	extrabarDB = DB.extrabar
-	extrabtnDB = DB.extrabtn
+	DB = NEURON.db.profile
 
 	----------------------------------------------------------------
 	EXTRABTN.SetData = NeuronExtraBar.SetData
@@ -67,7 +61,7 @@ function NeuronExtraBar:OnInitialize()
 	EXTRABTN.SetType = NeuronExtraBar.SetType
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", extrabarDB, NeuronExtraBar, extrabtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, false)
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, NeuronExtraBar, DB.extrabtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -92,13 +86,13 @@ function NeuronExtraBar:OnInitialize()
 
 	else
 
-		for id,data in pairs(extrabarDB) do
+		for id,data in pairs(DB.extrabar) do
 			if (data ~= nil) then
 				NEURON.NeuronBar:CreateNewBar("extrabar", id)
 			end
 		end
 
-		for id,data in pairs(extrabtnDB) do
+		for id,data in pairs(DB.extrabtn) do
 			if (data ~= nil) then
 				NEURON.NeuronButton:CreateNewObject("extrabar", id)
 			end
@@ -187,7 +181,7 @@ function NeuronExtraBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = extrabtnDB
+	button.DB = DB.extrabtn
 
 	if (button.DB) then
 
@@ -280,7 +274,7 @@ function NeuronExtraBar:ExtraButton_Update(button)
 	--This conditional is to show/hide the border of the button, but it ins't fully implemented yet
 	--Some people were hitting a bit be because this option didn't exist it seems
 
-	--[[if extrabarDB[1].border then
+	--[[if DB.extrabar[1].border then
 		button.style:Show()
 	else
 		button.style:Hide()

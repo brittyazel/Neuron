@@ -7,9 +7,6 @@ local DB
 NEURON.NeuronZoneAbilityBar = NEURON:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronZoneAbilityBar = NEURON.NeuronZoneAbilityBar
 
-local zoneabilitybarDB
-local zoneabilitybtnDB
-
 local ZONEABILITYBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -52,10 +49,10 @@ local alphaTimer, alphaDir = 0, 0
 --- or setting up slash commands.
 function NeuronZoneAbilityBar:OnInitialize()
 
-	DB = NeuronDB
+	DB = NEURON.db.profile
 
-	zoneabilitybarDB = DB.zoneabilitybar
-	zoneabilitybtnDB = DB.zoneabilitybtn
+	DB.zoneabilitybar = DB.zoneabilitybar
+	DB.zoneabilitybtn = DB.zoneabilitybtn
 
 	--create pointers for these functions
 	ZONEABILITYBTN.SetTimer = NEURON.NeuronButton.SetTimer
@@ -75,7 +72,7 @@ function NeuronZoneAbilityBar:OnInitialize()
 	----------------------------------------------------------------
 
 
-	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", zoneabilitybarDB, NeuronZoneAbilityBar, zoneabilitybtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1, false)
+	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, NeuronZoneAbilityBar, DB.zoneabilitybtn, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1, false)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -102,13 +99,13 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 	else
 
-		for id,data in pairs(zoneabilitybarDB) do
+		for id,data in pairs(DB.zoneabilitybar) do
 			if (data ~= nil) then
 				local newbar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
 			end
 		end
 
-		for id,data in pairs(zoneabilitybtnDB) do
+		for id,data in pairs(DB.zoneabilitybtn) do
 			if (data ~= nil) then
 				NEURON.NeuronButton:CreateNewObject("zoneabilitybar", id)
 			end
@@ -198,7 +195,7 @@ end
 function NeuronZoneAbilityBar:OnUpdate(button, elapsed)
 	button.elapsed = button.elapsed + elapsed
 
-	if (button.elapsed > NeuronDB.throttle) then
+	if (button.elapsed > DB.throttle) then
 
 		NeuronZoneAbilityBar:STANCE_UpdateButton(button, button.actionID)
 
@@ -230,7 +227,7 @@ function NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button)
 	NeuronZoneAbilityBar:SetNeuronButtonTex(button)
 
 
-	if zoneabilitybarDB[1].border then
+	if DB.zoneabilitybar[1].border then
 		button.style:Show()
 	else
 		button.style:Hide()
@@ -356,7 +353,7 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = zoneabilitybtnDB
+	button.DB = DB.zoneabilitybtn
 
 	if (button.DB and button.DB) then
 
@@ -421,7 +418,7 @@ end
 
 
 function NeuronZoneAbilityBar:UpdateFrame(button)
-	if zoneabilitybarDB[1].border then
+	if DB.zoneabilitybar[1].border then
 
 		NeuronZoneActionButton1.style:Show()
 	else

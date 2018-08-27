@@ -63,7 +63,7 @@ local flyoutBarUpdater
 --- or setting up slash commands.
 function NeuronFlyouts:OnInitialize()
 
-	DB = NeuronDB
+	DB = NEURON.db.profile
 
 	local strings = { NeuronTooltipScan:GetRegions() }
 

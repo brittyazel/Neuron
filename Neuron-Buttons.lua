@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local DB, player, realm, btnDB
+local DB, player, realm
 
 NEURON.NeuronButton = NEURON:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
 local NeuronButton = NEURON.NeuronButton
@@ -168,9 +168,7 @@ local BUTTON = NEURON.BUTTON
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
 function NeuronButton:OnInitialize()
-	DB = NeuronDB
-
-	btnDB = DB.buttons
+	DB = NEURON.db.profile
 
 	ItemCache = NeuronItemCache
 
@@ -3114,34 +3112,34 @@ function NeuronButton:SaveData(button, state)
 
 	if (index and spec and state) then
 
-		if (not btnDB[index].config) then
-			btnDB[index].config = CopyTable(configData)
+		if (not DB.buttons[index].config) then
+			DB.buttons[index].config = CopyTable(configData)
 		end
 
 		for key,value in pairs(button.config) do
-			btnDB[index].config[key] = value
+			DB.buttons[index].config[key] = value
 		end
 
-		if (not btnDB[index].keys) then
-			btnDB[index].keys = CopyTable(keyData)
+		if (not DB.buttons[index].keys) then
+			DB.buttons[index].keys = CopyTable(keyData)
 		end
 
 		if (DB.perCharBinds) then
 			for key,value in pairs(button.keys) do
-				btnDB[index].keys[key] = value
+				DB.buttons[index].keys[key] = value
 			end
 		end
 
-		if (not btnDB[index][spec]) then
-			btnDB[index][spec] = { homestate = CopyTable(stateData) }
+		if (not DB.buttons[index][spec]) then
+			DB.buttons[index][spec] = { homestate = CopyTable(stateData) }
 		end
 
-		if (not btnDB[index][spec][state]) then
-			btnDB[index][spec][state] = CopyTable(stateData)
+		if (not DB.buttons[index][spec][state]) then
+			DB.buttons[index][spec][state] = CopyTable(stateData)
 		end
 
 		for key,value in pairs(button.data) do
-			btnDB[index][spec][state][key] = value
+			DB.buttons[index][spec][state][key] = value
 		end
 
 		NeuronButton:BuildStateData(button)
@@ -3156,7 +3154,7 @@ end
 function NeuronButton:LoadData(button, spec, state)
 	local id = button.id
 
-	button.DB = btnDB
+	button.DB = DB.buttons
 
 	if (button.DB) then
 
@@ -3194,14 +3192,11 @@ function NeuronButton:LoadData(button, spec, state)
 			button.DB[id][spec][state] = CopyTable(stateData)
 		end
 
+
 		button.config = button.DB[id].config
-
 		button.keys = button.DB[id].keys
-
 		button.spedata = button.DB[id]
-
 		button.statedata = button.spedata[spec]
-
 		button.data = button.statedata[state]
 
 		NeuronButton:BuildStateData(button)
@@ -3516,8 +3511,8 @@ function NeuronButton:AutoWriteMacro(button, spell)
 	local modifier, modKey = " ", nil
 	local bar = Neuron.CurrentBar or button.bar
 
-	if (bar.data.mouseOverCast and NeuronDB.mouseOverMod ~= "NONE" ) then
-		modKey = NeuronDB.mouseOverMod; modifier = modifier.."[@mouseover,mod:"..modKey.."]"
+	if (bar.data.mouseOverCast and DB.mouseOverMod ~= "NONE" ) then
+		modKey = DB.mouseOverMod; modifier = modifier.."[@mouseover,mod:"..modKey.."]"
 	elseif (bar.data.mouseOverCast and NeuroDB.mouseOverMod == "NONE" ) then
 		modifier = modifier.."[@mouseover,exists]"
 	end
@@ -3558,9 +3553,9 @@ function NeuronButton:AutoUpdateMacro(button, macro)
 		macro = macro:gsub("%[@focus,mod:%u+%]", "")
 	end
 
-	if (NeuronDB.mouseOverMod ~= "NONE" ) then
-		macro = macro:gsub("%[@mouseover,mod:%u+%]", "[@mouseover,mod:"..NeuronDB.mouseOverMod .."]")
-		macro = macro:gsub("%[@mouseover,exists]", "[@mouseover,mod:"..NeuronDB.mouseOverMod .."]")
+	if (DB.mouseOverMod ~= "NONE" ) then
+		macro = macro:gsub("%[@mouseover,mod:%u+%]", "[@mouseover,mod:"..DB.mouseOverMod .."]")
+		macro = macro:gsub("%[@mouseover,exists]", "[@mouseover,mod:"..DB.mouseOverMod .."]")
 	else
 		macro = macro:gsub("%[@mouseover,mod:%u+%]", "[@mouseover,exists]")
 	end
@@ -3616,8 +3611,8 @@ end
 
 
 function NeuronButton.ButtonProfileUpdate()
-	DB = NeuronDB
-	btnDB = DB.buttons
+	DB = NEURON.db.profile
+	DB.buttons = DB.buttons
 end
 
 

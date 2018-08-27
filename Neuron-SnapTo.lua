@@ -116,9 +116,11 @@ end
 
 function NEURON.NeuronBar:StickToEdge(bar)
 
+	local DB = NEURON.db.profile
+
 	local point, x, y= NEURON.NeuronBar:GetPosition(bar)
 	local changed
-	local w, h, rTol = bar:GetWidth()/2, bar:GetHeight()/2, NeuronDB.snapToTol
+	local w, h, rTol = bar:GetWidth()/2, bar:GetHeight()/2, DB.snapToTol
 
 	local function calcX(opt)
 		if (opt == 1) then if (x <= w+rTol) then x = w; changed = true end

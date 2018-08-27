@@ -9,8 +9,6 @@ local DB
 NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar", "AceHook-3.0")
 local NeuronMenuBar = NEURON.NeuronMenuBar
 
-local menubarDB, menubtnDB
-
 local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -39,12 +37,7 @@ local configData = {
 --- or setting up slash commands.
 function NeuronMenuBar:OnInitialize()
 
-    DB = NeuronDB
-
-
-    menubarDB = DB.menubar
-    menubtnDB = DB.menubtn
-
+    DB = NEURON.db.profile
 
 
     menuElements[1] = CharacterMicroButton
@@ -74,10 +67,10 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
     ----------------------------------------------------------------
 
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarDB, NeuronMenuBar, menubtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, false)
+    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, DB.menubtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
-    if NeuronDB.blizzbar == false then
+    if DB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
     end
 end
@@ -134,13 +127,13 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
     else
 
-        for id,data in pairs(menubarDB) do
+        for id,data in pairs(DB.menubar) do
             if (data ~= nil) then
                 NEURON.NeuronBar:CreateNewBar("menu", id)
             end
         end
 
-        for id,data in pairs(menubtnDB) do
+        for id,data in pairs(DB.menubtn) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("menu", id)
             end
@@ -187,7 +180,7 @@ end
 function NeuronMenuBar:LoadData(button, spec, state)
     local id = button.id
 
-    button.DB = menubtnDB
+    button.DB = DB.menubtn
 
     if (button.DB) then
 

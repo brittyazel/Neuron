@@ -5,8 +5,6 @@ local  DB
 NEURON.NeuronBagBar = NEURON:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBagBar = NEURON.NeuronBagBar
 
-local  bagbarDB, bagbtnDB
-
 local BAGBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -40,6 +38,7 @@ local configData = {
 --- or setting up slash commands.
 function NeuronBagBar:OnInitialize()
 
+    DB = NEURON.db.profile
 
     bagElements[5] = MainMenuBarBackpackButton
     bagElements[4] = CharacterBag0Slot
@@ -47,11 +46,6 @@ function NeuronBagBar:OnInitialize()
     bagElements[2] = CharacterBag2Slot
     bagElements[1] = CharacterBag3Slot
 
-    DB = NeuronDB
-
-
-    bagbarDB = DB.bagbar
-    bagbtnDB = DB.bagbtn
 
     ----------------------------------------------------------------
     BAGBTN.SetData = NeuronBagBar.SetData
@@ -68,12 +62,12 @@ function NeuronBagBar:OnInitialize()
     ----------------------------------------------------------------
 
 
-    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", bagbarDB, NeuronBagBar, bagbtnDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, true)
+    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, NeuronBagBar, DB.bagbtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements, true)
 
 
     NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
 
-    if NeuronDB.blizzbar == false then
+    if DB.blizzbar == false then
         NeuronBagBar:CreateBarsAndButtons()
 
         ---hide the weird color border around bag bars
@@ -131,13 +125,13 @@ function NeuronBagBar:CreateBarsAndButtons()
 
     else
 
-        for id,data in pairs(bagbarDB) do
+        for id,data in pairs(DB.bagbar) do
             if (data ~= nil) then
                 NEURON.NeuronBar:CreateNewBar("bag", id)
             end
         end
 
-        for id,data in pairs(bagbtnDB) do
+        for id,data in pairs(DB.bagbtn) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("bag", id)
             end
@@ -197,7 +191,7 @@ function NeuronBagBar:LoadData(button, spec, state)
 
     local id = button.id
 
-    button.DB = bagbtnDB
+    button.DB = DB.bagbtn
 
     if (button.DB) then
 

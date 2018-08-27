@@ -7,8 +7,6 @@ local DB
 NEURON.NeuronPetBar = NEURON:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronPetBar = NEURON.NeuronPetBar
 
-local petbarDB, petbtnDB
-
 local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -51,12 +49,7 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronPetBar:OnInitialize()
 
-	DB = NeuronDB
-
-
-	petbarDB = DB.petbar
-	petbtnDB = DB.petbtn
-
+	DB = NEURON.db.profile
 
 	----------------------------------------------------------------
 	PETBTN.SetData = NeuronPetBar.SetData
@@ -72,7 +65,7 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", petbarDB, NeuronPetBar, petbtnDB, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false)
+	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, NeuronPetBar, DB.petbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID, false)
 
 	NEURON:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
@@ -89,7 +82,7 @@ function NeuronPetBar:OnInitialize()
 		CDALPHA = true }, false, 65)
 
 
-    if NeuronDB.blizzbar == false then
+    if DB.blizzbar == false then
         NeuronPetBar:CreateBarsAndButtons()
     end
 
@@ -132,13 +125,13 @@ function NeuronPetBar:CreateBarsAndButtons()
 
     else
 
-        for id,data in pairs(petbarDB) do
+        for id,data in pairs(DB.petbar) do
             if (data ~= nil) then
                 NEURON.NeuronBar:CreateNewBar("pet", id)
             end
         end
 
-        for id,data in pairs(petbtnDB) do
+        for id,data in pairs(DB.petbtn) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("pet", id)
             end
@@ -266,7 +259,7 @@ function NeuronPetBar:PET_UpdateCooldown(button)
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
-		if (duration and duration >= NeuronDB.timerLimit and button.iconframeaurawatch.active) then
+		if (duration and duration >= DB.timerLimit and button.iconframeaurawatch.active) then
 			button.auraQueue = button.iconframeaurawatch.queueinfo
 			button.iconframeaurawatch.duration = 0
 			button.iconframeaurawatch:Hide()
@@ -334,7 +327,7 @@ end
 
 function NeuronPetBar:OnUpdate(button, elapsed)
 
-	if (button.elapsed > NeuronDB.throttle) then --throttle down this code to ease up on the CPU a bit
+	if (button.elapsed > DB.throttle) then --throttle down this code to ease up on the CPU a bit
 		if (button.mac_flash) then
 
 			button.mac_flashing = true
@@ -659,7 +652,7 @@ function NeuronPetBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = petbtnDB
+	button.DB = DB.petbtn
 
 	if (button.DB and button.DB) then
 

@@ -1,7 +1,7 @@
 --Neuron, a World of Warcraft® user interface addon.
 
 local NEURON = Neuron
-local DB, SPEC, player, realm, barDB
+local DB, SPEC, player, realm
 
 NEURON.NeuronBar = NEURON:NewModule("Bar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBar = NEURON.NeuronBar
@@ -200,10 +200,9 @@ local barStack = {}
 --- or setting up slash commands.
 function NeuronBar:OnInitialize()
 
-	DB = NeuronDB
-	barDB = DB.bars
+	DB = NEURON.db.profile
 
-	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", barDB, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000, true)
+	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000, true)
 
 	NEURON:RegisterGUIOptions("bar", {
 		AUTOHIDE = true,
@@ -304,7 +303,7 @@ function NeuronBar:SetUpBars()
 		end
 
 	else
-		for id,data in pairs(barDB) do
+		for id,data in pairs(DB.bars) do
 			if (data ~= nil) then
 				NeuronBar:CreateNewBar("bar", id) --this calls the bar constructor
 			end
@@ -1769,17 +1768,17 @@ end
 function NeuronBar:SaveData(bar)
 	local id = bar:GetID()
 
-	if (bar.DB[id]) then
+	if (bar.barDB[id]) then
 		for key,value in pairs(bar.data) do
-			bar.DB[id][key] = value
+			bar.barDB[id][key] = value
 		end
 	else
 		NEURON:Print("DEBUG: Bad Global Save Data for "..bar:GetName().." ?")
 	end
 
-	if (bar.DB[id]) then
+	if (bar.barDB[id]) then
 		for key,value in pairs(bar.data) do
-			bar.DB[id][key] = value
+			bar.barDB[id][key] = value
 		end
 	else
 		NEURON:Print("DEBUG: Bad Character Save Data for "..bar:GetName().." ?")
@@ -1790,11 +1789,11 @@ end
 function NeuronBar:LoadData(bar)
 	local id = bar:GetID()
 
-	if (not bar.DB[id]) then
-		bar.DB[id] = CopyTable(NEURON.barDEF)
+	if (not bar.barDB[id]) then
+		bar.barDB[id] = CopyTable(NEURON.barDEF)
 	end
 
-	bar.data = CopyTable(bar.DB[id])
+	bar.data = CopyTable(bar.barDB[id])
 
 	if (#bar.data.name < 1) then
 		bar.data.name = bar.barLabel.." "..bar:GetID()
@@ -2073,7 +2072,7 @@ function NeuronBar:DeleteBar(bar)
 	BARIndex[bar.index] = nil
 	BARNameIndex[bar:GetName()] = nil
 
-	bar.DB[bar:GetID()] = nil
+	bar.barDB[bar:GetID()] = nil
 
 	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		NEURON.NeuronGUI:UpdateBarGUI()

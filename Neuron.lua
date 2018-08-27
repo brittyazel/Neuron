@@ -70,7 +70,6 @@ local BTNIndex = NEURON.BTNIndex
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 
-NeuronDB = {} --this is the working database object for the whole addon, this ends up being a pointer for the main profile
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 
 NeuronDefaults = {
@@ -241,32 +240,31 @@ function NEURON:OnInitialize()
 	NEURON.db.RegisterCallback(NEURON, "OnProfileReset", "RefreshConfig")
 	NEURON.db.RegisterCallback(NEURON, "OnDatabaseReset", "RefreshConfig")
 
+	DB = NEURON.db.profile
+
 	----DATABASE VERSION CHECKING AND MIGRATING----------
 
-	if not NEURON.db.profile.DBVersion then
+	if not DB.DBVersion then
 		--we need to know if a profile doesn't have a DBVersion because it is brand new, or because it pre-dates DB versioning
 		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
 		--eventually we can get rid of this check and just assume that having no DBVersion means that it is a fresh profile
-		if not NEURON.db.profile.NeuronCDB then --"NeuronCDB" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
-			NEURON.db.profile.DBVersion = latestDBVersion
+		if not DB.NeuronCDB then --"NeuronCDB" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
+			DB.DBVersion = latestDBVersion
 		else
-			NEURON.db.profile.DBVersion = 1.0
+			DB.DBVersion = 1.0
 		end
 	end
 
-	if NEURON.db.profile.DBVersion ~= latestDBVersion then --checks if the DB version is out of date, and if so it calls the DB Fixer
-		NEURON:DBFixer(NEURON.db.profile, NEURON.db.profile.DBVersion)
-		NEURON.db.profile.DBVersion = latestDBVersion
+	if DB.DBVersion ~= latestDBVersion then --checks if the DB version is out of date, and if so it calls the DB Fixer
+		NEURON:DBFixer(DB, DB.DBVersion)
+		DB.DBVersion = latestDBVersion
 	end
 	-----------------------------------------------------
 
 	---load saved variables into working variable containers
-	NeuronDB = NEURON.db.profile
-	NeuronItemCache = NEURON.db.profile.NeuronItemCache
+	NeuronItemCache = DB.NeuronItemCache
 
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
-	DB = NeuronDB
-
 	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
 	NEURON.MBS = Neuron.MANAGED_BAR_STATES
 
@@ -474,9 +472,7 @@ end
 -------------------------------------------------------------------------
 
 function NEURON:RefreshConfig()
-	NeuronDB = NEURON.db.profile
-
-	DB = NeuronDB
+	DB = NEURON.db.profile
 	NEURON.NeuronButton.ButtonProfileUpdate()
 
 	StaticPopup_Show("ReloadUI")
@@ -1373,7 +1369,7 @@ function NEURON:RegisterBarClass(class, barType, barLabel, objType, barDB, objTa
 		barType = barType,
 		barLabel = barLabel,
 		barCreateMore = barCreateMore,
-		DB = barDB,
+		barDB = barDB,
 		objTable = objTable, --this is all the buttons associated with a given bar
 		objDB = objDB,
 		objPrefix = "Neuron"..objType:gsub("%s+", ""),

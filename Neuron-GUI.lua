@@ -99,6 +99,8 @@ function NeuronGUI:OnInitialize()
 	NOE = NeuronObjectEditor
 	NBTNE = NeuronButtonEditor
 
+	DB = NEURON.db.profile
+
 	MAS = NEURON.MANAGED_ACTION_STATES
 
 	---This loads the Neuron interface panel
@@ -1202,7 +1204,7 @@ end
 -- @return allow : (boolean)
 function NeuronGUI:MissingBarCheck(bar)
 	local allow = true
-	if ((bar == "extrabar" and NeuronDB.extrabar[1]) or (bar == "zoneabilitybar" and NeuronDB.zoneabilitybar[1]))then
+	if ((bar == "extrabar" and DB.extrabar[1]) or (bar == "zoneabilitybar" and DB.zoneabilitybar[1]))then
 		allow = false
 	end
 	return allow
@@ -3690,8 +3692,8 @@ NeuronGUI.target_options = {
 			type = "select",
 			name = L["Mouse-Over Casting Modifier"],
 			desc = L["Select a modifier for Mouse-Over Casting"],
-			get = function() return NeuronDB.mouseOverMod end, --getFunc,
-			set = function(info, value) NeuronDB.mouseOverMod = value; NEURON.NeuronButton:UpdateMacroCastTargets(true) end,
+			get = function() return DB.mouseOverMod end, --getFunc,
+			set = function(info, value) DB.mouseOverMod = value; NEURON.NeuronButton:UpdateMacroCastTargets(true) end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
 		mouseovermod_desc = {
@@ -3851,7 +3853,7 @@ NeuronGUI.interfaceOptions = {
 					desc = L["Shows / Hides the Default Blizzard UI"],
 					type = "toggle",
 					set = function() NEURON:ToggleBlizzUI() end,
-					get = function() return NeuronDB.blizzbar end,
+					get = function() return DB.blizzbar end,
 					width = "full",
 				},
 				NeuronMinimapButton = {
@@ -3860,7 +3862,7 @@ NeuronGUI.interfaceOptions = {
 					desc = L["Toggles the minimap button."],
 					type = "toggle",
 					set =  function() NEURON.NeuronMinimapIcon:ToggleIcon() end,
-					get = function() return not NeuronDB.NeuronIcon.hide end,
+					get = function() return not DB.NeuronIcon.hide end,
 					width = "full"
 				},
 			},

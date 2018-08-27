@@ -24,7 +24,7 @@ local icon
 --- or setting up slash commands.
 function NeuronMinimapIcon:OnInitialize()
 
-    DB = NeuronDB
+    DB = NEURON.db.profile
 
     neuronIconLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Neuron", {
         type = "launcher",

@@ -10,9 +10,6 @@ local NeuronStatusBar = NEURON.NeuronStatusBar
 
 local EDITIndex = NEURON.EDITIndex
 
-local statusbarDB
-local statusbtnDB
-
 local STATUS = setmetatable({}, { __index = CreateFrame("Button") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -238,16 +235,7 @@ local BrawlerGuildFactions = {
 --- or setting up slash commands.
 function NeuronStatusBar:OnInitialize()
 
-    DB = NeuronDB
-
-
-    if not DB.AutoWatch then
-        DB.AutoWatch = 1
-    end
-
-    statusbarDB = DB.statusbar
-    statusbtnDB = DB.statusbtn
-
+    DB = NEURON.db.profile
 
 
     -------------------------------------------------
@@ -264,7 +252,7 @@ function NeuronStatusBar:OnInitialize()
     STATUS.SetSkinned = NeuronStatusBar.SetSkinned
     -------------------------------------------------
 
-    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", statusbarDB, NeuronStatusBar, statusbtnDB, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, true)
+    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, NeuronStatusBar, DB.statusbtn, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, true)
 
     NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
         SNAPTO = true,
@@ -288,7 +276,7 @@ function NeuronStatusBar:OnInitialize()
         DB.statusbarFirstRun = false
     else --loads previous bars from saved variable
 
-        for id,data in pairs(statusbarDB) do
+        for id,data in pairs(DB.statusbar) do
             if (data ~= nil) then
                 local newbar = NEURON.NeuronBar:CreateNewBar("status", id)
                 newbar.data.showGrid = true
@@ -296,7 +284,7 @@ function NeuronStatusBar:OnInitialize()
         end
 
 
-        for id,data in pairs(statusbtnDB) do
+        for id,data in pairs(DB.statusbtn) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("status", id)
             end
@@ -415,13 +403,13 @@ end
 --------XP Bar--------------------
 ----------------------------------
 
----TODO: right now we are using statusbtnDB to assign settins ot the status buttons, but I think our indexes are bar specific
+---TODO: right now we are using DB.statusbtn to assign settins ot the status buttons, but I think our indexes are bar specific
 function NeuronStatusBar:xpstrings_Update(button) --handles updating all the strings for the play XP watch bar
 
     local parent = button.parent
     local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-    local thisBar = statusbtnDB[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+    local thisBar = DB.statusbtn[id] --we are refrencing a specific bar instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
 
     local currXP, nextXP, restedXP, percentXP, bubbles, rank
@@ -525,7 +513,7 @@ function NeuronStatusBar:XPBar_OnEvent(button, event, ...)
 
     local id = parent.id --this is a really hacked together way of storing this info. We need the ID to identify this specific bar instance
 
-    local thisBar = statusbtnDB[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
+    local thisBar = DB.statusbtn[id] --we are refrencing a specific button instance out of a list. I'm not entirely sure why the points are the way they are but it works so whatever
 
     if (not thisBar.curXPType) then
         thisBar.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
@@ -584,7 +572,7 @@ end
 
 function NeuronStatusBar:switchCurXPType(parent, newXPType)
     local id = parent.id
-    statusbtnDB[id].curXPType = newXPType
+    DB.statusbtn[id].curXPType = newXPType
     NeuronStatusBar:XPBar_OnEvent(parent.sb, "changed_curXPType")
 end
 
@@ -603,7 +591,7 @@ function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropd
         info.text = L["Track Character XP"]
         info.func = NeuronStatusBar.switchCurXPType
 
-        if (statusbtnDB[id].curXPType == "player_xp") then
+        if (DB.statusbtn[id].curXPType == "player_xp") then
             info.checked = 1
         else
             info.checked = nil
@@ -618,7 +606,7 @@ function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropd
             info.text = L["Track Azerite Power"]
             info.func = NeuronStatusBar.switchCurXPType
 
-            if (statusbtnDB[id].curXPType == "azerite_xp") then
+            if (DB.statusbtn[id].curXPType == "azerite_xp") then
                 info.checked = 1
             else
                 info.checked = nil
@@ -639,7 +627,7 @@ function NeuronStatusBar:xpDropDown_Initialize(dropdown) -- initialize the dropd
         info.text = L["Track Honor Points"]
         info.func = NeuronStatusBar.switchCurXPType
 
-        if (statusbtnDB[id].curXPType == "honor_points") then
+        if (DB.statusbtn[id].curXPType == "honor_points") then
             info.checked = 1
         else
             info.checked = nil
@@ -2050,24 +2038,24 @@ function NeuronStatusBar:LoadData(button, spec, state)
 
     local id = button.id
 
-    if (statusbtnDB) then
+    if (DB.statusbtn) then
 
-        if (not statusbtnDB[id]) then
-            statusbtnDB[id] = {}
+        if (not DB.statusbtn[id]) then
+            DB.statusbtn[id] = {}
         end
 
-        if (not statusbtnDB[id].config) then
-            statusbtnDB[id].config = CopyTable(configDef)
-        end
-
-
-        if (not statusbtnDB[id].data) then
-            statusbtnDB[id].data = CopyTable(dataDef)
+        if (not DB.statusbtn[id].config) then
+            DB.statusbtn[id].config = CopyTable(configDef)
         end
 
 
-        button.config = statusbtnDB[id].config
-        button.data =statusbtnDB[id].data
+        if (not DB.statusbtn[id].data) then
+            DB.statusbtn[id].data = CopyTable(dataDef)
+        end
+
+
+        button.config = DB.statusbtn[id].config
+        button.data =DB.statusbtn[id].data
     end
 end
 
