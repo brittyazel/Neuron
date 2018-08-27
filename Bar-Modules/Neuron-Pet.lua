@@ -675,14 +675,6 @@ function NeuronPetBar:LoadData(button, spec, state)
 			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.DB[id]) then
-			button.DB[id] = {}
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
 		if (not button.DB[id].data) then
 			button.DB[id].data = {}
 		end
@@ -692,11 +684,7 @@ function NeuronPetBar:LoadData(button, spec, state)
 
 		button.config = button.DB [id].config
 
-		if (DB.perCharBinds) then
-			button.keys = button.DB[id].keys
-		else
-			button.keys = button.DB[id].keys
-		end
+		button.keys = button.DB[id].keys
 
 		button.data = button.DB[id].data
 	end

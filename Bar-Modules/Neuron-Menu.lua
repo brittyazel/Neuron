@@ -199,16 +199,11 @@ function NeuronMenuBar:LoadData(button, spec, state)
             button.DB[id].config = CopyTable(configData)
         end
 
-        if (not button.DB[id]) then
-            button.DB[id] = {}
-        end
-
         if (not button.DB[id].data) then
             button.DB[id].data = {}
         end
 
         button.config = button.DB [id].config
-
         button.data = button.DB[id].data
     end
 end

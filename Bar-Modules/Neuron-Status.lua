@@ -2069,9 +2069,6 @@ function NeuronStatusBar:LoadData(button, spec, state)
             statusbtnDB[id].config = CopyTable(configDef)
         end
 
-        if (not statusbtnDB[id]) then
-            statusbtnDB[id] = {}
-        end
 
         if (not statusbtnDB[id].data) then
             statusbtnDB[id].data = CopyTable(dataDef)
@@ -2081,7 +2078,6 @@ function NeuronStatusBar:LoadData(button, spec, state)
         NEURON:UpdateData(statusbtnDB[id].data, dataDef)
 
         button.config = statusbtnDB[id].config
-
         button.data =statusbtnDB[id].data
     end
 end

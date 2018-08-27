@@ -241,7 +241,7 @@ function NeuronBar:OnEnable()
 	NeuronBar:SetUpBars()
 
 	for _,bar in pairs(BARIndex) do
-		if (DB.firstRun) then
+		if (DB.firstRun) and bar.class == "bar" then
 			for id, defaults in ipairs(defaultBarOptions) do
 				if (id == bar:GetID()) then
 					NeuronBar:SetDefaults(bar, defaults)

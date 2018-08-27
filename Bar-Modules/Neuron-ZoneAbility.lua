@@ -372,14 +372,6 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.DB[id]) then
-			button.DB[id] = {}
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
 		if (not button.DB[id].data) then
 			button.DB[id].data = {}
 		end
@@ -387,14 +379,8 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 		NEURON:UpdateData(button.DB[id].config, configData)
 		NEURON:UpdateData(button.DB[id].keys, keyData)
 
-		button.config = button.DB [id].config
-
-		if (DB.perCharBinds) then
-			button.keys = button.DB[id].keys
-		else
-			button.keys = button.DB[id].keys
-		end
-
+		button.config = button.DB[id].config
+		button.keys = button.DB[id].keys
 		button.data = button.DB[id].data
 	end
 end
