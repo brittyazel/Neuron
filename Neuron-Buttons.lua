@@ -3176,16 +3176,12 @@ function NeuronButton:LoadData(button, spec, state)
 			end
 		end
 
-		if (not button.DB[id].keys[spec]) then
-			button.DB[id].keys[spec] = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
 		if (not button.DB[id][spec]) then
 			button.DB[id][spec] = { homestate = CopyTable(stateData) }
-		end
-
-		if (button.DB[id][spec].keys) then
-			button.DB[id][spec].keys = nil
 		end
 
 		if (not button.DB[id][spec][state]) then

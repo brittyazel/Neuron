@@ -231,7 +231,6 @@ function NeuronBar:OnInitialize()
 	NEURON.CreateNewBar = NeuronBar.CreateNewBar --temp just so slash functions still work
 
 	NeuronBar:CreateBarsAndButtons()
-
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.

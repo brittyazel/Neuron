@@ -190,6 +190,16 @@ end
 function NeuronBinder:ApplyBindings(button)
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 
+	------weird fix during the database migration with these values not getting assigned
+	if not button.keys.hotKeys then
+		button.keys.hotKeys = ":"
+	end
+
+	if not button.keys.hotKeyText then
+		button.keys.hotKeyText = ":"
+	end
+	------------------------------
+
 	if (button:IsVisible() or button:GetParent():GetAttribute("concealed")) then
 		gsub(button.keys.hotKeys, "[^:]+", function(key) SetOverrideBindingClick(button, button.keys.hotKeyPri, key, button:GetName()) end)
 	end
