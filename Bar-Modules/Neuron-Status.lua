@@ -122,62 +122,6 @@ local defaultBarOptions = {
 }
 
 
-
-
-local configDef = {
-
-    sbType = "statusbar",
-
-    width = 250,
-    height = 18,
-    scale = 1,
-    XOffset = 0,
-    YOffset = 0
-    ,
-    texture = 7,
-    border = 1,
-
-    orientation = 1,
-
-    cIndex = 1,
-    cColor = "1;1;1;1",
-
-    lIndex = 1,
-    lColor = "1;1;1;1",
-
-    rIndex = 1,
-    rColor = "1;1;1;1",
-
-    mIndex = 1,
-    mColor = "1;1;1;1",
-
-    tIndex = 1,
-    tColor = "1;1;1;1",
-
-    bordercolor = "1;1;1;1",
-
-    norestColor = "1;0;1;1",
-    restColor = "0;0;1;1",
-
-    castColor = "1;0.7;0;1",
-    channelColor = "0;1;0;1",
-    successColor = "0;1;0;1",
-    failColor = "1;0;0;1",
-
-    showIcon = false,
-
-}
-
-
-
-local dataDef = {
-    unit = 2,
-    repID = 0,
-    repAuto = 0,
-}
-
-
-
 local configDefaults = {
     [1] = { sbType = "cast", cIndex = 1, lIndex = 2, rIndex = 3, showIcon = true},
     [2] = { sbType = "xp", cIndex = 2, lIndex = 6, rIndex = 4, mIndex = 3, width = 450},
@@ -2051,18 +1995,10 @@ function NeuronStatusBar:LoadData(button, spec, state)
             DB.statusbtn[id] = {}
         end
 
-        if (not DB.statusbtn[id].config) then
-            DB.statusbtn[id].config = CopyTable(configDef)
-        end
-
-
-        if (not DB.statusbtn[id].data) then
-            DB.statusbtn[id].data = CopyTable(dataDef)
-        end
-
 
         button.config = DB.statusbtn[id].config
-        button.data =DB.statusbtn[id].data
+        button.data = DB.statusbtn[id].data
+
     end
 end
 

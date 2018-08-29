@@ -16,7 +16,7 @@
 Libs\embeds.xml
 Localizations\Neuron_Localizations.xml
 
-
+Neuron-Defaults.lua
 Neuron.lua
 
 Utilities/DB-Fixer.lua

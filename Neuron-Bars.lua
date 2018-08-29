@@ -48,113 +48,7 @@ NEURON.BarShapes = {
 local barShapes = NEURON.BarShapes
 
 
-NEURON.barDEF = {
-	name = "",
 
-	objectList = {},
-
-	hidestates = ":",
-
-	point = "BOTTOM",
-	x = 0,
-	y = 190,
-
-	scale = 1,
-	shape = 1,
-	columns = false,
-
-	alpha = 1,
-	alphaUp = 1,
-	alphaMax = 1,
-	fadeSpeed = 0.5,
-
-	barStrata = "MEDIUM",
-	objectStrata = "LOW",
-
-	padH = 0,
-	padV = 0,
-	arcStart = 0,
-	arcLength = 359,
-
-	snapTo = false,
-	snapToPad = 0,
-	snapToPoint = false,
-	snapToFrame = false,
-
-	autoHide = false,
-	showGrid = true,
-
-	bindColor = "1;1;1;1",
-	macroColor = "1;1;1;1",
-	countColor = "1;1;1;1",
-	cdcolor1 = "1;0.82;0;1",
-	cdcolor2 = "1;0.1;0.1;1",
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
-	buffcolor = "0;0.8;0;1",
-	debuffcolor = "0.8;0;0;1",
-	rangecolor = "0.7;0.15;0.15;1",
-	border = true,
-
-	upClicks = true,
-	downClicks = false,
-
-	conceal = false,
-
-	multiSpec = false,
-
-	spellGlow = true,
-	spellGlowDef = true,
-	spellGlowAlt = false,
-
-	barLock = false,
-	barLockAlt = false,
-	barLockCtrl = false,
-	barLockShift = false,
-
-	tooltips = true,
-	tooltipsEnhanced = true,
-	tooltipsCombat = false,
-
-	bindText = true,
-	macroText = true,
-	countText = true,
-	rangeInd = true,
-
-	cdText = false,
-	cdAlpha = false,
-	auraText = false,
-	auraInd = false,
-
-	homestate = true,
-	paged = false,
-	stance = false,
-	stealth = false,
-	reaction = false,
-	combat = false,
-	group = false,
-	pet = false,
-	fishing = false,
-	vehicle = false,
-	possess = false,
-	override = false,
-	extrabar = false,
-	alt = false,
-	ctrl = false,
-	shift = false,
-	target = false,
-
-	selfCast = false,
-	focusCast = false,
-	rightClickTarget = false,
-	mouseOverCast = false,
-
-	custom = false,
-	customRange = false,
-	customNames = false,
-
-	remap = false,
-}
 
 
 
@@ -1793,11 +1687,7 @@ end
 function NeuronBar:LoadData(bar)
 	local id = bar:GetID()
 
-	if (not bar.barDB[id]) then
-		bar.barDB[id] = CopyTable(NEURON.barDEF)
-	end
-
-	bar.data = CopyTable(bar.barDB[id])
+	bar.data = bar.barDB[id]
 
 	if (#bar.data.name < 1) then
 		bar.data.name = bar.barLabel.." "..bar:GetID()
@@ -1840,7 +1730,7 @@ function NeuronBar:CreateBar(index, class, id)
 		if (not id) then
 			id = 1
 
-			for _ in ipairs(data.DB) do
+			for _ in ipairs(data.barDB) do
 				id = id + 1
 			end
 

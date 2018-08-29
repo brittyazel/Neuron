@@ -28,68 +28,6 @@ local cmdSlash
 local macroCache = {}
 
 
-local configData = {
-	btnType = "macro",
-
-	mouseAnchor = false,
-	clickAnchor = false,
-	anchorDelay = false,
-	anchoredBar = false,
-
-	upClicks = true,
-	downClicks = false,
-	copyDrag = false,
-	muteSFX = false,
-	clearerrors= false,
-	cooldownAlpha = 1,
-
-	bindText = true,
-	bindColor = "1;1;1;1",
-
-	countText = true,
-	spellCounts = false,
-	comboCounts = false,
-	countColor = "1;1;1;1",
-
-	macroText = true,
-	macroColor = "1;1;1;1",
-
-	cdText = false,
-	cdcolor1 = "1;0.82;0;1",
-	cdcolor2 = "1;0.1;0.1;1",
-
-	auraText = false,
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
-
-	auraInd = false,
-	buffcolor = "0;0.8;0;1",
-	debuffcolor = "0.8;0;0;1",
-
-	rangeInd = true,
-	rangecolor = "0.7;0.15;0.15;1",
-
-	skincolor = "1;1;1;1",
-	hovercolor = "0.1;0.1;1;1",
-	equipcolor = "0.1;1;0.1;1",
-
-	scale = 1,
-	alpha = 1,
-	XOffset = 0,
-	YOffset = 0,
-	HHitBox = 0,
-	VHitBox = 0,
-}
-
-
-local keyData = {
-	hotKeys = ":",
-	hotKeyText = ":",
-	hotKeyLock = false,
-	hotKeyPri = false,
-}
-
-
 local keyDefaults = {
 	[1] = { hotKeys = ":1:", hotKeyText = ":1:" },
 	[2] = { hotKeys = ":2:", hotKeyText = ":2:" },
@@ -103,20 +41,6 @@ local keyDefaults = {
 	[10] = { hotKeys = ":0:", hotKeyText = ":0:" },
 	[11] = { hotKeys = ":-:", hotKeyText = ":-:" },
 	[12] = { hotKeys = ":=:", hotKeyText = ":=:" },
-}
-
-
-local stateData = {
-	actionID = false,
-
-	macro_Text = "",
-	macro_Icon = false,
-	macro_Name = "",
-	macro_Auto = false,
-	macro_Watch = false,
-	macro_Equip = false,
-	macro_Note = "",
-	macro_UseNote = false,
 }
 
 
@@ -2683,12 +2607,8 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 				button.actionID = button:GetAttribute("*action*")
 			else
 
-				if (not button.statedata) then
-					button.statedata = { homestate = CopyTable(stateData) }
-				end
-
 				if (not button.statedata[value]) then
-					button.statedata[value] = CopyTable(stateData)
+					button.statedata[value] = {}
 				end
 
 				---Part 2 of Druid Prowl overwrite fix
@@ -2729,12 +2649,6 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 	end
 
 
-end
-
-
-function NeuronButton:MACRO_build()
-	local button = CopyTable(stateData)
-	return button
 end
 
 
@@ -3112,30 +3026,14 @@ function NeuronButton:SaveData(button, state)
 
 	if (index and spec and state) then
 
-		if (not DB.buttons[index].config) then
-			DB.buttons[index].config = CopyTable(configData)
-		end
-
 		for key,value in pairs(button.config) do
 			DB.buttons[index].config[key] = value
-		end
-
-		if (not DB.buttons[index].keys) then
-			DB.buttons[index].keys = CopyTable(keyData)
 		end
 
 		if (DB.perCharBinds) then
 			for key,value in pairs(button.keys) do
 				DB.buttons[index].keys[key] = value
 			end
-		end
-
-		if (not DB.buttons[index][spec]) then
-			DB.buttons[index][spec] = { homestate = CopyTable(stateData) }
-		end
-
-		if (not DB.buttons[index][spec][state]) then
-			DB.buttons[index][spec][state] = CopyTable(stateData)
 		end
 
 		for key,value in pairs(button.data) do
@@ -3161,33 +3059,6 @@ function NeuronButton:LoadData(button, spec, state)
 		if (not button.DB[id]) then
 			button.DB[id] = {}
 		end
-
-		if (not button.DB[id].config) then
-			button.DB[id].config = CopyTable(configData)
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
-		for i=1,4 do
-			if (not button.DB[id][i]) then
-				button.DB[id][i] = { homestate = CopyTable(stateData) }
-			end
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
-		if (not button.DB[id][spec]) then
-			button.DB[id][spec] = { homestate = CopyTable(stateData) }
-		end
-
-		if (not button.DB[id][spec][state]) then
-			button.DB[id][spec][state] = CopyTable(stateData)
-		end
-
 
 		button.config = button.DB[id].config
 		button.keys = button.DB[id].keys

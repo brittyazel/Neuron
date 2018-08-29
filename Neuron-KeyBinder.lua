@@ -190,6 +190,7 @@ end
 function NeuronBinder:ApplyBindings(button)
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 
+	---TODO: Fix this better
 	------weird fix during the database migration with these values not getting assigned
 	if not button.keys.hotKeys then
 		button.keys.hotKeys = ":"
