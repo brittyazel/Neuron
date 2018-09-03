@@ -178,8 +178,14 @@ function NeuronExtraBar:SetSkinned(button)
 		if (bar) then
 
 			local btnData = {
-				Icon = button.icontexture,
 				Normal = button.normaltexture,
+				Icon = button.iconframeicon,
+				Cooldown = button.iconframecooldown,
+				HotKey = button.hotkey,
+				Count = button.count,
+				Name = button.name,
+				Border = button.border,
+				AutoCast = false,
 			}
 
 			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
@@ -298,7 +304,7 @@ function NeuronExtraBar:ExtraButton_Update(button)
 		button.style:Hide()
 	end]]
 
-	button.style:Show()
+	--button.style:Show()
 
 	local start, duration, enable = GetActionCooldown(button.actionID);
 
