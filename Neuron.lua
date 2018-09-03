@@ -72,63 +72,6 @@ local BTNIndex = NEURON.BTNIndex
 
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 
-NeuronDefaults = {
-	profile = {
-		bars = {},
-		buttons = {},
-
-		throttle = 0.2,
-		timerLimit = 4,
-		snapToTol = 28,
-
-		blizzbar = false,
-
-		NeuronIcon = {hide = false,},
-
-		bars = {},
-		buttons = {},
-
-		extrabar = {},
-		extrabtn = {},
-
-		exitbar = {},
-		exitbtn = {},
-
-		bagbar = {},
-		bagbtn = {},
-
-		zoneabilitybar = {},
-		zoneabilitybtn = {},
-
-		menubar = {},
-		menubtn = {},
-
-		petbar = {},
-		petbtn = {},
-
-		statusbar = {},
-		statusbtn = {},
-
-		mouseOverMod= "NONE",
-
-		perCharBinds = false,
-		firstRun = true,
-
-		AutoWatch = 1,
-
-		extrabarFirstRun = true,
-		exitbarFirstRun = true,
-		zoneabilitybarFirstRun = true,
-		bagbarFirstRun = true,
-		menubarFirstRun = true,
-		petbarFirstRun = true,
-		statusbarFirstRun = true,
-
-		NeuronItemCache = {},
-	}
-
-}
-
 
 --I think this is only used in Neuron-Flyouts
 NEURON.Points = {
@@ -265,8 +208,8 @@ function NEURON:OnInitialize()
 	NeuronItemCache = DB.NeuronItemCache
 
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
-	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
-	NEURON.MBS = Neuron.MANAGED_BAR_STATES
+	NEURON.MAS = NEURON.MANAGED_ACTION_STATES
+	NEURON.MBS = NEURON.MANAGED_BAR_STATES
 
 	NEURON.player = UnitName("player")
 	NEURON.class = select(2, UnitClass("player"))
