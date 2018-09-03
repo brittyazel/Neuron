@@ -9,6 +9,8 @@ local NeuronZoneAbilityBar = NEURON.NeuronZoneAbilityBar
 
 local ZONEABILITYBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
+local SKIN = LibStub("Masque", true)
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local defaultBarOptions = {
@@ -359,7 +361,28 @@ function NeuronZoneAbilityBar:GetSkinned(button)
 end
 
 function NeuronZoneAbilityBar:SetSkinned(button)
-	NEURON.NeuronButton:SetSkinned(button)
+	if (SKIN) then
+
+		local bar = button.bar
+
+		if (bar) then
+
+			local btnData = {
+				Normal = button.normaltexture,
+				Icon = button.iconframeicon,
+				Cooldown = button.iconframecooldown,
+				HotKey = button.hotkey,
+				Count = button.count,
+				Name = button.name,
+				Border = button.border,
+				AutoCast = false,
+			}
+
+			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
+
+		end
+
+	end
 end
 
 
