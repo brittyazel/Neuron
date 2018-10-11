@@ -3010,7 +3010,7 @@ function NeuronButton:SetData(button, bar)
 end
 
 
-function NeuronButton:SaveData(button, state)
+--[[function NeuronButton:SaveData(button, state)
 	local index, spec = button.id, GetSpecialization()
 
 	if (not state) then
@@ -3046,7 +3046,7 @@ function NeuronButton:SaveData(button, state)
 		NEURON:Print("DEBUG: Bad Save Data for "..button:GetName().." ?")
 		NEURON:Print(index); NEURON:Print(spec); NEURON:Print(state)
 	end
-end
+end]]
 
 ---TODO refactor this to NeuronButton
 function NeuronButton:LoadData(button, spec, state)
@@ -3304,9 +3304,9 @@ function NeuronButton:SetType(button, save, kill, init)
 
 	end
 
-	if (save) then
+	--[[if (save) then
 		button:SaveData(button, state)
-	end
+	end]]
 end
 
 

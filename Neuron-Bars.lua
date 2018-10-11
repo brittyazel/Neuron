@@ -950,8 +950,8 @@ function NeuronBar:Update(bar, show, hide)
 	local handler, driver = bar.handler, bar.driver
 
 	bar.elapsed = 0;
-	bar.alpha = bar.data.alpha;
-	bar.alphaUp = bar.data.alphaUp
+	--bar.alpha = bar.data.alpha;
+	--bar.alphaUp = bar.data.alphaUp
 
 	if (bar.stateschanged) then
 
@@ -981,7 +981,7 @@ function NeuronBar:Update(bar, show, hide)
 	NeuronBar:SetAutoHide(handler, bar)
 	bar.text:SetText(bar.data.name)
 	handler:SetAlpha(bar.data.alpha)
-	NeuronBar:SaveData(bar)
+	--NeuronBar:SaveData(bar)
 
 	if (not hide and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		NEURON.NeuronGUI:UpdateBarGUI()
@@ -1241,7 +1241,7 @@ function NeuronBar:SetDefaults(bar, defaults)
 		end
 	end
 
-	NeuronBar:SaveData(bar)
+	--NeuronBar:SaveData(bar)
 end
 
 
@@ -1496,7 +1496,7 @@ function NeuronBar:OnKeyDown(bar, key, onupdate)
 		end
 
 		NeuronBar:SetPosition(bar)
-		NeuronBar:SaveData(bar)
+		--NeuronBar:SaveData(bar)
 	end
 end
 
@@ -1663,7 +1663,7 @@ end
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 
-function NeuronBar:SaveData(bar)
+--[[function NeuronBar:SaveData(bar)
 	local id = bar:GetID()
 
 	if (bar.barDB[id]) then
@@ -1681,7 +1681,7 @@ function NeuronBar:SaveData(bar)
 	else
 		NEURON:Print("DEBUG: Bad Character Save Data for "..bar:GetName().." ?")
 	end
-end
+end]]
 
 
 function NeuronBar:LoadData(bar)
