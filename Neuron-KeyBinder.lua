@@ -243,7 +243,7 @@ function NeuronBinder:ProcessBinding(binder, key, button)
 		NeuronBinder:OnEnter(binder)
 	end
 
-	button:SaveData(button)
+	--button:SaveData(button)
 end
 
 

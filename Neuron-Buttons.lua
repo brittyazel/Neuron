@@ -135,7 +135,7 @@ function NeuronButton:OnInitialize()
 	----------------------------------------------------------------
 	BUTTON.SetData = NeuronButton.SetData
 	BUTTON.LoadData = NeuronButton.LoadData
-	BUTTON.SaveData = NeuronButton.SaveData
+	--BUTTON.SaveData = NeuronButton.SaveData
 	BUTTON.SetAux = NeuronButton.SetAux
 	BUTTON.LoadAux = NeuronButton.LoadAux
 	BUTTON.SetObjectVisibility = NeuronButton.SetObjectVisibility
@@ -2764,9 +2764,9 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		object.objType = data.objType:gsub("%s", ""):upper()
 		object:LoadData(object, GetActiveSpecGroup(), "homestate")
 
-		if (firstRun) then
+		--[[if (firstRun) then
 			object:SetDefaults(object, object:GetDefaults(object))
-		end
+		end]]
 
 		object:LoadAux(object)
 
@@ -3140,7 +3140,7 @@ function NeuronButton:LoadAux(button)
 end
 
 ---TODO refactor this to NeuronButton
-function NeuronButton:SetDefaults(button, config, keys)
+--[[function NeuronButton:SetDefaults(button, config, keys)
 	if (config) then
 		for k,v in pairs(config) do
 			button.config[k] = v
@@ -3152,7 +3152,7 @@ function NeuronButton:SetDefaults(button, config, keys)
 			button.keys[k] = v
 		end
 	end
-end
+end]]
 
 ---TODO refactor this to NeuronButton
 function NeuronButton:GetDefaults(button)
@@ -3479,7 +3479,6 @@ end
 
 function NeuronButton.ButtonProfileUpdate()
 	DB = NEURON.db.profile
-	DB.buttons = DB.buttons
 end
 
 
@@ -3491,7 +3490,7 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 	local button_list = {}
 
 	if global_update then
-		local button_count =(#NeuronDB.buttons)
+		local button_count =(#DB.buttons)
 		for index = 1, button_count, 1 do
 			tinsert(button_list, _G["NeuronActionButton"..index])
 		end

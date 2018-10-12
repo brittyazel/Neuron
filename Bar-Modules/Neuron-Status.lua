@@ -184,7 +184,7 @@ function NeuronStatusBar:OnInitialize()
     -------------------------------------------------
     STATUS.SetData = NeuronStatusBar.SetData
     STATUS.LoadData = NeuronStatusBar.LoadData
-    STATUS.SaveData = NeuronStatusBar.SaveData
+    --STATUS.SaveData = NeuronStatusBar.SaveData
     STATUS.SetAux = NeuronStatusBar.SetAux
     STATUS.LoadAux = NeuronStatusBar.LoadAux
     STATUS.SetObjectVisibility = NeuronStatusBar.SetObjectVisibility
@@ -1976,11 +1976,11 @@ end
 
 
 
-function NeuronStatusBar:SaveData(button)
+--[[function NeuronStatusBar:SaveData(button)
 
     -- empty
 
-end
+end]]
 
 
 

@@ -52,7 +52,7 @@ function NeuronBagBar:OnInitialize()
     ----------------------------------------------------------------
     BAGBTN.SetData = NeuronBagBar.SetData
     BAGBTN.LoadData = NeuronBagBar.LoadData
-    BAGBTN.SaveData = NeuronBagBar.SaveData
+    --BAGBTN.SaveData = NeuronBagBar.SaveData
     BAGBTN.SetAux = NeuronBagBar.SetAux
     BAGBTN.LoadAux = NeuronBagBar.LoadAux
     BAGBTN.SetObjectVisibility = NeuronBagBar.SetObjectVisibility
@@ -192,11 +192,11 @@ function NeuronBagBar:SetData(button, bar)
     button:SetFrameLevel(4)
 end
 
-function NeuronBagBar:SaveData(button)
+--[[function NeuronBagBar:SaveData(button)
 
     -- empty
 
-end
+end]]
 
 function NeuronBagBar:LoadData(button, spec, state)
 
