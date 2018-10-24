@@ -1234,7 +1234,7 @@ function NeuronBar:SetPerimeter(bar)
 end
 
 
---[[function NeuronBar:SetDefaults(bar, defaults)
+function NeuronBar:SetDefaults(bar, defaults)
 	if (defaults) then
 		for k,v in pairs(defaults) do
 			bar.data[k] = v
@@ -1242,7 +1242,7 @@ end
 	end
 
 	--NeuronBar:SaveData(bar)
-end]]
+end
 
 
 function NeuronBar:SetRemap_Paged(bar)
@@ -1830,9 +1830,9 @@ function NeuronBar:CreateNewBar(class, id, firstRun)
 
 		local bar, newBar = NeuronBar:CreateBar(index, class, id)
 
-		--[[if (firstRun) then
+		if (firstRun) then
 			NeuronBar:SetDefaults(bar, bar.Def)
-		end]]
+		end
 
 		if (newBar) then
 			NeuronBar:Load(bar)

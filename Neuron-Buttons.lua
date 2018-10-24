@@ -2764,9 +2764,9 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		object.objType = data.objType:gsub("%s", ""):upper()
 		object:LoadData(object, GetActiveSpecGroup(), "homestate")
 
-		--[[if (firstRun) then
+		if (firstRun) then
 			object:SetDefaults(object, object:GetDefaults(object))
-		end]]
+		end
 
 		object:LoadAux(object)
 
@@ -3140,7 +3140,7 @@ function NeuronButton:LoadAux(button)
 end
 
 ---TODO refactor this to NeuronButton
---[[function NeuronButton:SetDefaults(button, config, keys)
+function NeuronButton:SetDefaults(button, config, keys)
 	if (config) then
 		for k,v in pairs(config) do
 			button.config[k] = v
@@ -3152,7 +3152,7 @@ end
 			button.keys[k] = v
 		end
 	end
-end]]
+end
 
 ---TODO refactor this to NeuronButton
 function NeuronButton:GetDefaults(button)

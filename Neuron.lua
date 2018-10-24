@@ -178,8 +178,6 @@ function NEURON:OnInitialize()
 
 	NEURON.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
 
-	print(#NEURON.db.profile.buttons)
-
 	NEURON.db.RegisterCallback(NEURON, "OnProfileChanged", "RefreshConfig")
 	NEURON.db.RegisterCallback(NEURON, "OnProfileCopied", "RefreshConfig")
 	NEURON.db.RegisterCallback(NEURON, "OnProfileReset", "RefreshConfig")
