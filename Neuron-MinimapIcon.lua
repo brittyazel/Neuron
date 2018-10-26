@@ -3,7 +3,7 @@
 --Neuron MinimapIcon makes use of LibDBIcon and LibDataBroker to make sure we play nicely with LDB addons and to simplify dramatically the minimap button
 
 local NEURON = Neuron
-local GDB
+local DB
 
 NEURON.NeuronMinimapIcon = NEURON:NewModule("NeuronMinimapIcon")
 local NeuronMinimapIcon = NEURON.NeuronMinimapIcon
@@ -24,7 +24,7 @@ local icon
 --- or setting up slash commands.
 function NeuronMinimapIcon:OnInitialize()
 
-    GDB = NeuronGDB
+    DB = NEURON.db.profile
 
     neuronIconLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Neuron", {
         type = "launcher",
@@ -35,7 +35,7 @@ function NeuronMinimapIcon:OnInitialize()
     })
 
     icon = LibStub("LibDBIcon-1.0")
-    icon:Register("Neuron", neuronIconLDB, GDB.NeuronIcon)
+    icon:Register("Neuron", neuronIconLDB, DB.NeuronIcon)
 
 end
 
@@ -91,12 +91,12 @@ end
 
 function NeuronMinimapIcon:ToggleIcon()
 
-    if GDB.NeuronIcon.hide == false then
+    if DB.NeuronIcon.hide == false then
         icon:Hide("Neuron")
-        GDB.NeuronIcon.hide = true
-    elseif GDB.NeuronIcon.hide == true then
+        DB.NeuronIcon.hide = true
+    elseif DB.NeuronIcon.hide == true then
         icon:Show("Neuron")
-        GDB.NeuronIcon.hide = false
+        DB.NeuronIcon.hide = false
     end
 
 end

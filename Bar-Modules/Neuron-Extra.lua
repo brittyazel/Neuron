@@ -2,29 +2,28 @@
 
 
 local NEURON = Neuron
-local CDB
+local DB
 
 NEURON.NeuronExtraBar = NEURON:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronExtraBar = NEURON.NeuronExtraBar
 
 
-local XBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
-
-local xbarsCDB
-local xbtnsCDB
+local EXTRABTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local gDef = {
-	hidestates = ":extrabar0:",
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	point = "BOTTOM",
-	x = 0,
-	y = 205,
+local defaultBarOptions = {
+	[1] = {
+		hidestates = ":extrabar0:",
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = 0,
+		y = 205,
+	}
 }
 
 local configData = {
@@ -48,26 +47,23 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronExtraBar:OnInitialize()
 
-	CDB = NeuronCDB
-
-	xbarsCDB = CDB.xbars
-	xbtnsCDB = CDB.xbtns
+	DB = NEURON.db.profile
 
 	----------------------------------------------------------------
-	XBTN.SetData = NeuronExtraBar.SetData
-	XBTN.LoadData = NeuronExtraBar.LoadData
-	XBTN.SaveData = NeuronExtraBar.SaveData
-	XBTN.SetAux = NeuronExtraBar.SetAux
-	XBTN.LoadAux = NeuronExtraBar.LoadAux
-	XBTN.SetObjectVisibility = NeuronExtraBar.SetObjectVisibility
-	XBTN.SetDefaults = NeuronExtraBar.SetDefaults
-	XBTN.GetDefaults = NeuronExtraBar.GetDefaults
-	XBTN.SetType = NeuronExtraBar.SetType
-	XBTN.GetSkinned = NeuronExtraBar.GetSkinned
-	XBTN.SetSkinned = NeuronExtraBar.SetSkinned
+	EXTRABTN.SetData = NeuronExtraBar.SetData
+	EXTRABTN.LoadData = NeuronExtraBar.LoadData
+	--EXTRABTN.SaveData = NeuronExtraBar.SaveData
+	EXTRABTN.SetAux = NeuronExtraBar.SetAux
+	EXTRABTN.LoadAux = NeuronExtraBar.LoadAux
+	EXTRABTN.SetDefaults = NeuronExtraBar.SetDefaults
+	EXTRABTN.GetDefaults = NeuronExtraBar.GetDefaults
+	EXTRABTN.GetSkinned = NeuronExtraBar.GetSkinned
+	EXTRABTN.SetSkinned = NeuronExtraBar.SetSkinned
+	EXTRABTN.SetObjectVisibility = NeuronExtraBar.SetObjectVisibility
+	EXTRABTN.SetType = NeuronExtraBar.SetType
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", xbarsCDB, xbarsCDB, NeuronExtraBar, xbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = XBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, NeuronExtraBar, DB.extrabtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1, false)
 
 	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -76,35 +72,12 @@ function NeuronExtraBar:OnInitialize()
 		DOWNCLICKS = true,
 		HIDDEN = true,
 		LOCKBAR = true,
-		--TOOLTIPS = true,
 		BINDTEXT = true,
 		RANGEIND = true,
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (CDB.xbarFirstRun) then
-
-		local bar = NEURON.NeuronBar:CreateNewBar("extrabar", 1, true)
-		local object = NEURON.NeuronButton:CreateNewObject("extrabar", 1)
-
-		NEURON.NeuronBar:AddObjectToList(bar, object)
-
-		CDB.xbarFirstRun = false
-
-	else
-
-		for id,data in pairs(xbarsCDB) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("extrabar", id)
-			end
-		end
-
-		for id,data in pairs(xbtnsCDB) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("extrabar", id)
-			end
-		end
-	end
+	NeuronExtraBar:CreateBarsAndButtons()
 
 end
 
@@ -132,6 +105,44 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronExtraBar:CreateBarsAndButtons()
+
+	if (DB.extrabarFirstRun) then
+
+		for id, defaults in ipairs(defaultBarOptions) do
+
+			local bar = NEURON.NeuronBar:CreateNewBar("extrabar", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			object = NEURON.NeuronButton:CreateNewObject("extrabar", 1, true)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.extrabarFirstRun = false
+
+	else
+
+		for id,data in pairs(DB.extrabar) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("extrabar", id)
+			end
+		end
+
+		for id,data in pairs(DB.extrabtn) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("extrabar", id)
+			end
+		end
+	end
+
+end
+
 
 function NeuronExtraBar:DisableDefault()
 
@@ -167,67 +178,58 @@ function NeuronExtraBar:SetSkinned(button)
 		if (bar) then
 
 			local btnData = {
-				Icon = button.icontexture,
 				Normal = button.normaltexture,
+				Icon = button.iconframeicon,
+				Cooldown = button.iconframecooldown,
+				HotKey = button.hotkey,
+				Count = button.count,
+				Name = button.name,
+				Border = button.border,
+				AutoCast = false,
 			}
 
-			SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 
 		end
 
 	end
 end
 
-function NeuronExtraBar:SaveData(button)
+--[[function NeuronExtraBar:SaveData(button)
 
 	-- empty
 
-end
+end]]
 
 function NeuronExtraBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.CDB = xbtnsCDB
+	button.DB = DB.extrabtn
 
-	if (button.CDB) then
+	if (button.DB) then
 
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not button.CDB[id].config) then
-			button.CDB[id].config = CopyTable(configData)
+		if (not button.DB[id].config) then
+			button.DB[id].config = CopyTable(configData)
 		end
 
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
+		if (not button.DB[id].data) then
+			button.DB[id].data = {}
 		end
 
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = CopyTable(keyData)
-		end
+		button.config = button.DB [id].config
 
-		if (not button.CDB[id].data) then
-			button.CDB[id].data = {}
-		end
+		button.keys = button.DB[id].keys
 
-		NEURON:UpdateData(button.CDB[id].config, configData)
-		NEURON:UpdateData(button.CDB[id].keys, keyData)
-
-		button.config = button.CDB [id].config
-
-		if (CDB.perCharBinds) then
-			button.keys = button.CDB[id].keys
-		else
-			button.keys = button.CDB[id].keys
-		end
-
-		button.data = button.CDB[id].data
+		button.data = button.DB[id].data
 	end
 end
 
@@ -296,13 +298,13 @@ function NeuronExtraBar:ExtraButton_Update(button)
 	--This conditional is to show/hide the border of the button, but it ins't fully implemented yet
 	--Some people were hitting a bit be because this option didn't exist it seems
 
-	--[[if xbarsCDB[1].border then
+	--[[if DB.extrabar[1].border then
 		button.style:Show()
 	else
 		button.style:Hide()
 	end]]
 
-	button.style:Show()
+	--button.style:Show()
 
 	local start, duration, enable = GetActionCooldown(button.actionID);
 
@@ -351,21 +353,21 @@ function NeuronExtraBar:SetType(button, save)
 	button:SetScript("OnEvent", function(self, event, ...) NeuronExtraBar:OnEvent(self, event, ...) end)
 	button:SetScript("OnEnter", function(self, ...) NeuronExtraBar:OnEnter(self, ...) end)
 	button:SetScript("OnLeave", function(self) NeuronExtraBar:OnLeave(self) end)
-	--button:HookScript("OnShow", function(self) NeuronExtraBar:ExtraButton_Update(self) end)
+	button:HookScript("OnShow", function(self) NeuronExtraBar:ExtraButton_Update(self) end)
 
---	button:WrapScript(button, "OnShow", [[
---					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
---						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
---					end
---					]])
---
---	button:WrapScript(button, "OnHide", [[
---					if (not self:GetParent():GetAttribute("concealed")) then
---						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
---							self:ClearBinding(key)
---						end
---					end
---					]])
+	button:WrapScript(button, "OnShow", [[
+					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
+						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
+					end
+					]])
+
+	button:WrapScript(button, "OnHide", [[
+					if (not self:GetParent():GetAttribute("concealed")) then
+						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
+							self:ClearBinding(key)
+						end
+					end
+					]])
 
 	button:SetSkinned(button)
 

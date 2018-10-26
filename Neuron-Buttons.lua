@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local GDB, CDB, player, realm, btnGDB, btnCDB
+local DB, player, realm
 
 NEURON.NeuronButton = NEURON:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
 local NeuronButton = NEURON.NeuronButton
@@ -28,68 +28,6 @@ local cmdSlash
 local macroCache = {}
 
 
-local configData = {
-	btnType = "macro",
-
-	mouseAnchor = false,
-	clickAnchor = false,
-	anchorDelay = false,
-	anchoredBar = false,
-
-	upClicks = true,
-	downClicks = false,
-	copyDrag = false,
-	muteSFX = false,
-	clearerrors= false,
-	cooldownAlpha = 1,
-
-	bindText = true,
-	bindColor = "1;1;1;1",
-
-	countText = true,
-	spellCounts = false,
-	comboCounts = false,
-	countColor = "1;1;1;1",
-
-	macroText = true,
-	macroColor = "1;1;1;1",
-
-	cdText = false,
-	cdcolor1 = "1;0.82;0;1",
-	cdcolor2 = "1;0.1;0.1;1",
-
-	auraText = false,
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
-
-	auraInd = false,
-	buffcolor = "0;0.8;0;1",
-	debuffcolor = "0.8;0;0;1",
-
-	rangeInd = true,
-	rangecolor = "0.7;0.15;0.15;1",
-
-	skincolor = "1;1;1;1",
-	hovercolor = "0.1;0.1;1;1",
-	equipcolor = "0.1;1;0.1;1",
-
-	scale = 1,
-	alpha = 1,
-	XOffset = 0,
-	YOffset = 0,
-	HHitBox = 0,
-	VHitBox = 0,
-}
-
-
-local keyData = {
-	hotKeys = ":",
-	hotKeyText = ":",
-	hotKeyLock = false,
-	hotKeyPri = false,
-}
-
-
 local keyDefaults = {
 	[1] = { hotKeys = ":1:", hotKeyText = ":1:" },
 	[2] = { hotKeys = ":2:", hotKeyText = ":2:" },
@@ -103,20 +41,6 @@ local keyDefaults = {
 	[10] = { hotKeys = ":0:", hotKeyText = ":0:" },
 	[11] = { hotKeys = ":-:", hotKeyText = ":-:" },
 	[12] = { hotKeys = ":=:", hotKeyText = ":=:" },
-}
-
-
-local stateData = {
-	actionID = false,
-
-	macro_Text = "",
-	macro_Icon = false,
-	macro_Name = "",
-	macro_Auto = false,
-	macro_Watch = false,
-	macro_Equip = false,
-	macro_Note = "",
-	macro_UseNote = false,
 }
 
 
@@ -168,11 +92,7 @@ local BUTTON = NEURON.BUTTON
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
 function NeuronButton:OnInitialize()
-	GDB, CDB = NeuronGDB, NeuronCDB
-
-	btnGDB = GDB.buttons
-
-	btnCDB = CDB.buttons
+	DB = NEURON.db.profile
 
 	ItemCache = NeuronItemCache
 
@@ -215,7 +135,7 @@ function NeuronButton:OnInitialize()
 	----------------------------------------------------------------
 	BUTTON.SetData = NeuronButton.SetData
 	BUTTON.LoadData = NeuronButton.LoadData
-	BUTTON.SaveData = NeuronButton.SaveData
+	--BUTTON.SaveData = NeuronButton.SaveData
 	BUTTON.SetAux = NeuronButton.SetAux
 	BUTTON.LoadAux = NeuronButton.LoadAux
 	BUTTON.SetObjectVisibility = NeuronButton.SetObjectVisibility
@@ -618,7 +538,7 @@ function NeuronButton:SetTimer(cd, start, duration, enable, timer, color1, color
 		CooldownFrame_Set(cd, start, duration, enable)
 		--CooldownFrame_SetTimer(cd, start, duration, enable)
 
-		if (duration >= GDB.timerLimit) then
+		if (duration >= DB.timerLimit) then
 			cd.duration = duration
 			cd.start = start
 			cd.active = true
@@ -828,33 +748,21 @@ function NeuronButton:MACRO_SetSpellIcon(button, spell)
 		end
 
 		if (texture) then
-
-			--local shapeshift_texture = NeuronButton:isActiveShapeshiftSpell(spell)
-
-			--if (shapeshift_texture) then
-				--button.iconframeicon:SetTexture(shapeshift_texture)
-			--else
-				button.iconframeicon:SetTexture(texture)
-
-			--end
-
+			button.iconframeicon:SetTexture(texture)
 			button.iconframeicon:Show()
 		else
-			button.iconframeicon:SetTexture("")
-			button.iconframeicon:Hide()
+			--button.iconframeicon:SetTexture("")
+			--button.iconframeicon:Hide()
+			button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK") --show questionmark instead of empty button to avoid confusion
 		end
 
 	else
 		if (button.data.macro_Watch) then
-			--for i=1,select("#",GetMacroInfo(button.data.macro_Watch)) do
-			--	NEURON:Print(select(i,GetMacroInfo(button.data.macro_Watch)))
-			--end
 
 			_, texture = GetMacroInfo(button.data.macro_Watch)
-			--texture = "INTERFACE\\ICONS\\"..texture:match("[%w_]+$"):upper()
+
 			button.data.macro_Icon = texture
-		--elseif (button.data.macro_Equip) then
-			--_,texture = C_EquipmentSet.GetEquipmentSetInfo(button.data.macro_Equip)
+
 		end
 
 		if (texture) then
@@ -1223,7 +1131,7 @@ function NeuronButton:MACRO_SetSpellCooldown(button, spell)
 	local charges, maxCharges, chStart, chDuration = GetSpellCharges(spell)
 	start, duration, enable = GetSpellCooldown(spell)
 
-	if (duration and duration >= GDB.timerLimit and button.iconframeaurawatch.active) then
+	if (duration and duration >= DB.timerLimit and button.iconframeaurawatch.active) then
 		button.auraQueue = button.iconframeaurawatch.queueinfo
 		button.iconframeaurawatch.duration = 0
 		button.iconframeaurawatch:Hide()
@@ -1244,7 +1152,7 @@ function NeuronButton:MACRO_SetItemCooldown(button, item)
 
 		local start, duration, enable = GetItemCooldown(id)
 
-		if (duration and duration >= GDB.timerLimit and button.iconframeaurawatch.active) then
+		if (duration and duration >= DB.timerLimit and button.iconframeaurawatch.active) then
 			button.auraQueue = button.iconframeaurawatch.queueinfo
 			button.iconframeaurawatch.duration = 0
 			button.iconframeaurawatch:Hide()
@@ -1264,7 +1172,7 @@ function NeuronButton:ACTION_SetCooldown(button, action)
 
 			local start, duration, enable = GetActionCooldown(actionID)
 
-			if (duration and duration >= GDB.timerLimit and button.iconframeaurawatch.active) then
+			if (duration and duration >= DB.timerLimit and button.iconframeaurawatch.active) then
 				button.auraQueue = button.iconframeaurawatch.queueinfo
 				button.iconframeaurawatch.duration = 0
 				button.iconframeaurawatch:Hide()
@@ -1464,7 +1372,7 @@ end
 ---Update: Seems to be important for range indication (i.e. button going red)
 function NeuronButton:MACRO_OnUpdate(button, elapsed) --this function uses A TON of resources
 
-	if (button.elapsed > GDB.throttle) then --throttle down this code to ease up on the CPU a bit
+	if (button.elapsed > DB.throttle) then --throttle down this code to ease up on the CPU a bit
 
 		if (button.mac_flash) then
 
@@ -2017,7 +1925,7 @@ function NeuronButton:MACRO_PlaceFlyout(button, action1, action2, hasAction)
 		return
 	else
 		local count = button.bar.objCount
-		local columns = button.bar.gdata.columns or count
+		local columns = button.bar.data.columns or count
 		local rows = count/columns
 
 		local point = NeuronButton:GetPosition(button, UIParent)
@@ -2699,12 +2607,8 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 				button.actionID = button:GetAttribute("*action*")
 			else
 
-				if (not button.statedata) then
-					button.statedata = { homestate = CopyTable(stateData) }
-				end
-
 				if (not button.statedata[value]) then
-					button.statedata[value] = CopyTable(stateData)
+					button.statedata[value] = {}
 				end
 
 				---Part 2 of Druid Prowl overwrite fix
@@ -2727,10 +2631,10 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 				button.actionID = false
 			end
 			--This will remove any old button state data from the saved varabiels/memory
-			--for id,data in pairs(button.bar.cdata) do
+			--for id,data in pairs(button.bar.data) do
 			for id,data in pairs(button.statedata) do
-				if (button.bar.cdata[id:match("%a+")]) or (id == "" and button.bar.cdata["custom"])  then
-				elseif not button.bar.cdata[id:match("%a+")] then
+				if (button.bar.data[id:match("%a+")]) or (id == "" and button.bar.data["custom"])  then
+				elseif not button.bar.data[id:match("%a+")] then
 					button.statedata[id]= nil
 				end
 			end
@@ -2745,12 +2649,6 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 	end
 
 
-end
-
-
-function NeuronButton:MACRO_build()
-	local button = CopyTable(stateData)
-	return button
 end
 
 
@@ -2792,9 +2690,9 @@ function NeuronButton:SetSkinned(button, flyout)
 			}
 
 			if (flyout) then
-				SKIN:Group("Neuron", button.anchor.bar.gdata.name):AddButton(button, btnData)
+				SKIN:Group("Neuron", button.anchor.bar.data.name):AddButton(button, btnData)
 			else
-				SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+				SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 			end
 
 			button.skinned = true
@@ -2870,6 +2768,13 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 			object:SetDefaults(object, object:GetDefaults(object))
 		end
 
+		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
+		if object.DB then
+			object.DB[id].config.class = class
+		elseif object.config then --this is for status bars who don't have a DB sub table, and instead have config right at the bar level
+			object.config.class = class
+		end
+
 		object:LoadAux(object)
 
 		data.objTable[index] = object
@@ -2935,12 +2840,12 @@ end
 function NeuronButton:UpdateObjectSpec(bar)
 	local object, spec
 
-	--for objID in gmatch(bar.gdata.objectList, "[^;]+") do
-	for i, objID in ipairs(bar.gdata.objectList) do
+	--for objID in gmatch(bar.data.objectList, "[^;]+") do
+	for i, objID in ipairs(bar.data.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
-			if (bar.cdata.multiSpec) then
+			if (bar.data.multiSpec) then
 				spec = GetSpecialization()
 			else
 				spec = 1
@@ -2964,93 +2869,93 @@ function NeuronButton:SetData(button, bar)
 
 		button.bar = bar
 
-		button.barLock = bar.cdata.barLock
-		button.barLockAlt = bar.cdata.barLockAlt
-		button.barLockCtrl = bar.cdata.barLockCtrl
-		button.barLockShift = bar.cdata.barLockShift
+		button.barLock = bar.data.barLock
+		button.barLockAlt = bar.data.barLockAlt
+		button.barLockCtrl = bar.data.barLockCtrl
+		button.barLockShift = bar.data.barLockShift
 
-		button.tooltips = bar.cdata.tooltips
-		button.tooltipsEnhanced = bar.cdata.tooltipsEnhanced
-		button.tooltipsCombat = bar.cdata.tooltipsCombat
+		button.tooltips = bar.data.tooltips
+		button.tooltipsEnhanced = bar.data.tooltipsEnhanced
+		button.tooltipsCombat = bar.data.tooltipsCombat
 
-		button.spellGlow = bar.cdata.spellGlow
-		button.spellGlowDef = bar.cdata.spellGlowDef
-		button.spellGlowAlt = bar.cdata.spellGlowAlt
+		button.spellGlow = bar.data.spellGlow
+		button.spellGlowDef = bar.data.spellGlowDef
+		button.spellGlowAlt = bar.data.spellGlowAlt
 
-		button.bindText = bar.cdata.bindText
-		button.macroText = bar.cdata.macroText
-		button.countText = bar.cdata.countText
+		button.bindText = bar.data.bindText
+		button.macroText = bar.data.macroText
+		button.countText = bar.data.countText
 
-		button.cdText = bar.cdata.cdText
+		button.cdText = bar.data.cdText
 
-		if (bar.cdata.cdAlpha) then
+		if (bar.data.cdAlpha) then
 			button.cdAlpha = 0.2
 		else
 			button.cdAlpha = 1
 		end
 
-		button.auraText = bar.cdata.auraText
-		button.auraInd = bar.cdata.auraInd
+		button.auraText = bar.data.auraText
+		button.auraInd = bar.data.auraInd
 
-		button.rangeInd = bar.cdata.rangeInd
+		button.rangeInd = bar.data.rangeInd
 
-		button.upClicks = bar.cdata.upClicks
-		button.downClicks = bar.cdata.downClicks
+		button.upClicks = bar.data.upClicks
+		button.downClicks = bar.data.downClicks
 
-		button.showGrid = bar.gdata.showGrid
-		button.multiSpec = bar.cdata.multiSpec
+		button.showGrid = bar.data.showGrid
+		button.multiSpec = bar.data.multiSpec
 
-		button.bindColor = bar.gdata.bindColor
-		button.macroColor = bar.gdata.macroColor
-		button.countColor = bar.gdata.countColor
+		button.bindColor = bar.data.bindColor
+		button.macroColor = bar.data.macroColor
+		button.countColor = bar.data.countColor
 
 		button.macroname:SetText(button.data.macro_Name) --custom macro's weren't showing the name
 
 		if (not button.cdcolor1) then
-			button.cdcolor1 = { (";"):split(bar.gdata.cdcolor1) }
+			button.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
 		else
-			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.gdata.cdcolor1)
+			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
 		end
 
 		if (not button.cdcolor2) then
-			button.cdcolor2 = { (";"):split(bar.gdata.cdcolor2) }
+			button.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
 		else
-			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.gdata.cdcolor2)
+			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
 		end
 
 		if (not button.auracolor1) then
-			button.auracolor1 = { (";"):split(bar.gdata.auracolor1) }
+			button.auracolor1 = { (";"):split(bar.data.auracolor1) }
 		else
-			button.auracolor1[1], button.auracolor1[2], button.auracolor1[3], button.auracolor1[4] = (";"):split(bar.gdata.auracolor1)
+			button.auracolor1[1], button.auracolor1[2], button.auracolor1[3], button.auracolor1[4] = (";"):split(bar.data.auracolor1)
 		end
 
 		if (not button.auracolor2) then
-			button.auracolor2 = { (";"):split(bar.gdata.auracolor2) }
+			button.auracolor2 = { (";"):split(bar.data.auracolor2) }
 		else
-			button.auracolor2[1], button.auracolor2[2], button.auracolor2[3], button.auracolor2[4] = (";"):split(bar.gdata.auracolor2)
+			button.auracolor2[1], button.auracolor2[2], button.auracolor2[3], button.auracolor2[4] = (";"):split(bar.data.auracolor2)
 		end
 
 		if (not button.buffcolor) then
-			button.buffcolor = { (";"):split(bar.gdata.buffcolor) }
+			button.buffcolor = { (";"):split(bar.data.buffcolor) }
 		else
-			button.buffcolor[1], button.buffcolor[2], button.buffcolor[3], button.buffcolor[4] = (";"):split(bar.gdata.buffcolor)
+			button.buffcolor[1], button.buffcolor[2], button.buffcolor[3], button.buffcolor[4] = (";"):split(bar.data.buffcolor)
 		end
 
 		if (not button.debuffcolor) then
-			button.debuffcolor = { (";"):split(bar.gdata.debuffcolor) }
+			button.debuffcolor = { (";"):split(bar.data.debuffcolor) }
 		else
-			button.debuffcolor[1], button.debuffcolor[2], button.debuffcolor[3], button.debuffcolor[4] = (";"):split(bar.gdata.debuffcolor)
+			button.debuffcolor[1], button.debuffcolor[2], button.debuffcolor[3], button.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
 		end
 
 		if (not button.rangecolor) then
-			button.rangecolor = { (";"):split(bar.gdata.rangecolor) }
+			button.rangecolor = { (";"):split(bar.data.rangecolor) }
 		else
-			button.rangecolor[1], button.rangecolor[2], button.rangecolor[3], button.rangecolor[4] = (";"):split(bar.gdata.rangecolor)
+			button.rangecolor[1], button.rangecolor[2], button.rangecolor[3], button.rangecolor[4] = (";"):split(bar.data.rangecolor)
 		end
 
-		button:SetFrameStrata(bar.gdata.objectStrata)
+		button:SetFrameStrata(bar.data.objectStrata)
 
-		button:SetScale(bar.gdata.scale)
+		button:SetScale(bar.data.scale)
 	end
 
 	if (button.bindText) then
@@ -3112,11 +3017,8 @@ function NeuronButton:SetData(button, bar)
 end
 
 
-function NeuronButton:SaveData(button, state)
+--[[function NeuronButton:SaveData(button, state)
 	local index, spec = button.id, GetSpecialization()
-
-
-
 
 	if (not state) then
 		state = button:GetParent():GetAttribute("activestate") or "homestate"
@@ -3131,42 +3033,18 @@ function NeuronButton:SaveData(button, state)
 
 	if (index and spec and state) then
 
-		if (not btnGDB[index].config) then
-			btnGDB[index].config = CopyTable(configData)
-		end
-
 		for key,value in pairs(button.config) do
-			btnGDB[index].config[key] = value
+			DB.buttons[index].config[key] = value
 		end
 
-		if (not btnGDB[index].keys) then
-			btnGDB[index].keys = CopyTable(keyData)
-		end
-
-		if (not btnCDB[index].keys) then
-			btnCDB[index].keys = CopyTable(keyData)
-		end
-
-		if (CDB.perCharBinds) then
+		if (DB.perCharBinds) then
 			for key,value in pairs(button.keys) do
-				btnCDB[index].keys[key] = value
+				DB.buttons[index].keys[key] = value
 			end
-		else
-			for key,value in pairs(button.keys) do
-				btnGDB[index].keys[key] = value
-			end
-		end
-
-		if (not btnCDB[index][spec]) then
-			btnCDB[index][spec] = { homestate = CopyTable(stateData) }
-		end
-
-		if (not btnCDB[index][spec][state]) then
-			btnCDB[index][spec][state] = CopyTable(stateData)
 		end
 
 		for key,value in pairs(button.data) do
-			btnCDB[index][spec][state][key] = value
+			DB.buttons[index][spec][state][key] = value
 		end
 
 		NeuronButton:BuildStateData(button)
@@ -3175,94 +3053,24 @@ function NeuronButton:SaveData(button, state)
 		NEURON:Print("DEBUG: Bad Save Data for "..button:GetName().." ?")
 		NEURON:Print(index); NEURON:Print(spec); NEURON:Print(state)
 	end
-end
+end]]
 
 ---TODO refactor this to NeuronButton
 function NeuronButton:LoadData(button, spec, state)
 	local id = button.id
 
-	button.GDB = btnGDB
-	button.CDB = btnCDB
+	button.DB = DB.buttons
 
-	if (button.GDB and button.CDB) then
+	if (button.DB) then
 
-		if (not button.GDB[id]) then
-			button.GDB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not button.GDB[id].config) then
-			button.GDB[id].config = CopyTable(configData)
-		end
-
-		if (not button.GDB[id].keys) then
-			button.GDB[id].keys = CopyTable(keyData)
-		end
-
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
-		end
-
-		for i=1,4 do
-			if (not button.CDB[id][i]) then
-				button.CDB[id][i] = { homestate = CopyTable(stateData) }
-			end
-		end
-
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = {}
-		end
-
-		-- kill old per character key data
-		if (button.CDB[id].keys.hotKeys) then
-			button.CDB[id].keys.hotKeys = nil
-			button.CDB[id].keys.hotKeyText = nil
-			button.CDB[id].keys.hotKeyLock = nil
-			button.CDB[id].keys.hotKeyPri = nil
-		end
-
-		if (not button.CDB[id].keys[spec]) then
-			button.CDB[id].keys[spec] = CopyTable(keyData)
-		end
-
-		NEURON:UpdateData(button.CDB[id].keys[spec], keyData)
-
-		if (not button.CDB[id][spec]) then
-			button.CDB[id][spec] = { homestate = CopyTable(stateData) }
-		end
-
-		if (button.CDB[id][spec].keys) then
-			button.CDB[id][spec].keys = nil
-		end
-
-		if (not button.CDB[id][spec][state]) then
-			button.CDB[id][spec][state] = CopyTable(stateData)
-		end
-
-		NEURON:UpdateData(button.GDB[id].config, configData)
-		NEURON:UpdateData(button.GDB[id].keys, keyData)
-
-		for spec,states in pairs(button.CDB[id]) do
-			if (spec ~= "keys") then
-				for state,data in pairs(states) do
-					if (type(data) == "table") then
-						NEURON:UpdateData(data, stateData)
-					end
-				end
-			end
-		end
-
-		button.config = button.GDB[id].config
-
-		if (CDB.perCharBinds) then
-			button.keys = button.CDB[id].keys
-		else
-			button.keys = button.GDB[id].keys
-		end
-
-		button.specdata = button.CDB[id]
-
-		button.statedata = button.specdata[spec]
-
+		button.config = button.DB[id].config
+		button.keys = button.DB[id].keys
+		button.spedata = button.DB[id]
+		button.statedata = button.spedata[spec]
 		button.data = button.statedata[state]
 
 		NeuronButton:BuildStateData(button)
@@ -3503,9 +3311,9 @@ function NeuronButton:SetType(button, save, kill, init)
 
 	end
 
-	if (save) then
+	--[[if (save) then
 		button:SaveData(button, state)
-	end
+	end]]
 end
 
 
@@ -3577,21 +3385,21 @@ function NeuronButton:AutoWriteMacro(button, spell)
 	local modifier, modKey = " ", nil
 	local bar = Neuron.CurrentBar or button.bar
 
-	if (bar.cdata.mouseOverCast and NeuronCDB.mouseOverMod ~= "NONE" ) then
-		modKey = NeuronCDB.mouseOverMod; modifier = modifier.."[@mouseover,mod:"..modKey.."]"
-	elseif (bar.cdata.mouseOverCast and NeuronCDB.mouseOverMod == "NONE" ) then
+	if (bar.data.mouseOverCast and DB.mouseOverMod ~= "NONE" ) then
+		modKey = DB.mouseOverMod; modifier = modifier.."[@mouseover,mod:"..modKey.."]"
+	elseif (bar.data.mouseOverCast and NeuroDB.mouseOverMod == "NONE" ) then
 		modifier = modifier.."[@mouseover,exists]"
 	end
 
-	if (bar.cdata.selfCast and GetModifiedClick("SELFCAST") ~= "NONE" ) then
+	if (bar.data.selfCast and GetModifiedClick("SELFCAST") ~= "NONE" ) then
 		modKey = GetModifiedClick("SELFCAST"); modifier = modifier.."[@player,mod:"..modKey.."]"
 	end
 
-	if (bar.cdata.focusCast and GetModifiedClick("FOCUSCAST") ~= "NONE" ) then
+	if (bar.data.focusCast and GetModifiedClick("FOCUSCAST") ~= "NONE" ) then
 		modKey = GetModifiedClick("FOCUSCAST"); modifier = modifier.."[@focus,exists,mod:"..modKey.."]"
 	end
 
-	if (bar.cdata.rightClickTarget) then
+	if (bar.data.rightClickTarget) then
 		modKey = ""; modifier = modifier.."[@player"..modKey..",btn:2]"
 	end
 
@@ -3619,9 +3427,9 @@ function NeuronButton:AutoUpdateMacro(button, macro)
 		macro = macro:gsub("%[@focus,mod:%u+%]", "")
 	end
 
-	if (NeuronCDB.mouseOverMod ~= "NONE" ) then
-		macro = macro:gsub("%[@mouseover,mod:%u+%]", "[@mouseover,mod:"..NeuronCDB.mouseOverMod .."]")
-		macro = macro:gsub("%[@mouseover,exists]", "[@mouseover,mod:"..NeuronCDB.mouseOverMod .."]")
+	if (DB.mouseOverMod ~= "NONE" ) then
+		macro = macro:gsub("%[@mouseover,mod:%u+%]", "[@mouseover,mod:"..DB.mouseOverMod .."]")
+		macro = macro:gsub("%[@mouseover,exists]", "[@mouseover,mod:"..DB.mouseOverMod .."]")
 	else
 		macro = macro:gsub("%[@mouseover,mod:%u+%]", "[@mouseover,exists]")
 	end
@@ -3667,7 +3475,7 @@ end
 function NeuronButton:SKINCallback(button, group,...)
 	if (group) then
 		for btn in pairs(SKINIndex) do
-			if (btn.bar and btn.bar.gdata.name == group) then
+			if (btn.bar and btn.bar.data.name == group) then
 				btn:GetSkinned(btn)
 			end
 		end
@@ -3677,11 +3485,7 @@ end
 
 
 function NeuronButton.ButtonProfileUpdate()
-	GDB, CDB = NeuronGDB, NeuronCDB
-
-	btnGDB = GDB.buttons
-
-	btnCDB = CDB.buttons
+	DB = NEURON.db.profile
 end
 
 
@@ -3693,20 +3497,20 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 	local button_list = {}
 
 	if global_update then
-		local button_count =(#NeuronCDB.buttons)
+		local button_count =(#DB.buttons)
 		for index = 1, button_count, 1 do
 			tinsert(button_list, _G["NeuronActionButton"..index])
 		end
 	else
 		local bar = NEURON.CurrentBar
-		--for index in gmatch(bar.gdata.objectList, "[^;]+") do
-		for i, objID in ipairs(bar.gdata.objectList) do
+		--for index in gmatch(bar.data.objectList, "[^;]+") do
+		for i, objID in ipairs(bar.data.objectList) do
 			tinsert(button_list, _G["NeuronActionButton"..tostring(objID)])
 		end
 	end
 
 	for index, button in pairs(button_list) do
-		local cur_button = button.specdata
+		local cur_button = button.spedata
 		local macro_update = false
 
 		for i = 1,2 do

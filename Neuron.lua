@@ -4,7 +4,7 @@
 -------------------------------------------------------------------------------
 local addonName = ...
 
-local GDB, CDB
+local DB
 
 local NeuronFrame = CreateFrame("Frame", nil, UIParent) --this is a frame mostly used to assign OnEvent functions
 Neuron = LibStub("AceAddon-3.0"):NewAddon(NeuronFrame, "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
@@ -20,6 +20,8 @@ NEURON.PEW = false --flag that gets set when the player enters the world. It's u
 -------------------------------------------------------------------------------
 
 local latestVersionNum = "0.9.34" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+
+local latestDBVersion = 1.2
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Install_Message = [[Thanks for installing Neuron.
@@ -67,81 +69,8 @@ local BARNameIndex = NEURON.BARNameIndex --I'm not sure if we need both BarIndex
 local BTNIndex = NEURON.BTNIndex
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
-NeuronGDB = {
-	bars = {},
-	buttons = {},
 
-	buttonLoc = {-0.85, -111.45},
-	buttonRadius = 87.5,
-
-	throttle = 0.2,
-	timerLimit = 4,
-	snapToTol = 28,
-
-	blizzbar = false,
-	zoneabilitybar = false,
-	vehicle = false,
-
-	firstRun = true,
-
-	NeuronIcon = {hide = false,},
-}
-
-NeuronCDB = {
-	bars = {},
-	buttons = {},
-
-	xbars = {},
-	xbtns = {},
-
-	exitbars = {},
-	exitbtns = {},
-
-	bagbars = {},
-	bagbtns = {},
-
-	zoneabilitybars = {},
-	zoneabilitybtns = {},
-
-	menubars = {},
-	menubtns = {},
-
-	petbars = {},
-	petbtns = {},
-
-	statusbars = {},
-	statusbtns = {},
-
-	selfCast = false,
-	focusCast = false,
-	mouseOverMod= "NONE",
-
-	layOut = 1,
-
-	perCharBinds = false,
-	firstRun = true,
-
-	AutoWatch = 1,
-
-	xbarFirstRun = true,
-	exitbarFirstRun = true,
-	zoneabilitybarFirstRun = true,
-	bagbarFirstRun = true,
-	menubarFirstRun = true,
-	petbarFirstRun = true,
-	statusbarFirstRun = true,
-
-}
-
-NeuronItemCache = {} --Not sure the practical benefit of this, it's used a bunch in Neuron-Button and Neuron-FLyout though
-
-
----this is the Default profile when you "load defaults" in the ace profile window
-NeuronDefaults = {}
-NeuronDefaults['profile'] = {} --populate the Default profile with globals
-NeuronDefaults.profile['NeuronCDB'] = NeuronCDB
-NeuronDefaults.profile['NeuronGDB'] = NeuronGDB
-NeuronDefaults.profile['NeuronItemCache'] = NeuronItemCache
+NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 
 
 --I think this is only used in Neuron-Flyouts
@@ -254,32 +183,33 @@ function NEURON:OnInitialize()
 	NEURON.db.RegisterCallback(NEURON, "OnProfileReset", "RefreshConfig")
 	NEURON.db.RegisterCallback(NEURON, "OnDatabaseReset", "RefreshConfig")
 
+	DB = NEURON.db.profile
 
-	---These set the profile to be the defaults if there isn't already these values set in the profile
-	if (not Neuron.db.profile["NeuronCDB"]) then
-		NEURON.db.profile["NeuronCDB"] = NeuronCDB
-	end
-	if (not Neuron.db.profile["NeuronGDB"]) then
-		NEURON.db.profile["NeuronGDB"] = NeuronGDB
-	end
-	if (not Neuron.db.profile["NeuronItemCache"]) then
-		NEURON.db.profile["NeuronItemCache"] = NeuronItemCache
-	end
-	--------------------------------------------------------------------
+	----DATABASE VERSION CHECKING AND MIGRATING----------
 
-	NEURON:fixObjectTable(NEURON.db.profile)
+	if not DB.DBVersion then
+		--we need to know if a profile doesn't have a DBVersion because it is brand new, or because it pre-dates DB versioning
+		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
+		--eventually we can get rid of this check and just assume that having no DBVersion means that it is a fresh profile
+		if not DB.NeuronCDB then --"NeuronCDB" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
+			DB.DBVersion = latestDBVersion
+		else
+			DB.DBVersion = 1.0
+		end
+	end
+
+	if DB.DBVersion ~= latestDBVersion then --checks if the DB version is out of date, and if so it calls the DB Fixer
+		NEURON:DBFixer(DB, DB.DBVersion)
+		DB.DBVersion = latestDBVersion
+	end
+	-----------------------------------------------------
 
 	---load saved variables into working variable containers
-	NeuronCDB = NEURON.db.profile["NeuronCDB"]
-	NeuronGDB = NEURON.db.profile["NeuronGDB"]
-	NeuronItemCache = NEURON.db.profile["NeuronItemCache"]
+	NeuronItemCache = DB.NeuronItemCache
 
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
-	GDB = NeuronGDB
-	CDB = NeuronCDB
-
-	NEURON.MAS = Neuron.MANAGED_ACTION_STATES
-	NEURON.MBS = Neuron.MANAGED_BAR_STATES
+	NEURON.MAS = NEURON.MANAGED_ACTION_STATES
+	NEURON.MBS = NEURON.MANAGED_BAR_STATES
 
 	NEURON.player = UnitName("player")
 	NEURON.class = select(2, UnitClass("player"))
@@ -332,6 +262,7 @@ function NEURON:OnEnable()
 	NEURON:RegisterEvent("UNIT_LEVEL")
 	NEURON:RegisterEvent("UNIT_PET")
 	--NEURON:RegisterEvent("TOYS_UPDATED")
+	--NEURON:RegisterEvent("TOYS_UPDATED")
 	--NEURON:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 
 	NEURON:HookScript(NEURON, "OnUpdate", "controlOnUpdate")
@@ -359,6 +290,10 @@ function NEURON:OnEnable()
 	end)
 
 	NEURON:LoginMessage()
+
+	for _,bar in pairs(BARIndex) do
+		NEURON.NeuronBar:Load(bar)
+	end
 
 
 end
@@ -391,8 +326,7 @@ end
 
 
 function NEURON:PLAYER_ENTERING_WORLD()
-	GDB.firstRun = false
-	CDB.firstRun = false
+	DB.firstRun = false
 
 	NEURON:UpdateSpellIndex()
 	NEURON:UpdatePetSpellIndex()
@@ -405,7 +339,7 @@ function NEURON:PLAYER_ENTERING_WORLD()
 		TitanUtils_AddonAdjust("MainMenuBar", true)
 	end
 
-	if (GDB.blizzbar == false) then
+	if (DB.blizzbar == false) then
 		NEURON:HideBlizzard()
 	end
 
@@ -481,10 +415,7 @@ end
 -------------------------------------------------------------------------
 
 function NEURON:RefreshConfig()
-	NeuronCDB = NEURON.db.profile["NeuronCDB"]
-	NeuronGDB = NEURON.db.profile["NeuronGDB"]
-
-	GDB, CDB =  NeuronGDB, NeuronCDB
+	DB = NEURON.db.profile
 	NEURON.NeuronButton.ButtonProfileUpdate()
 
 	StaticPopup_Show("ReloadUI")
@@ -624,7 +555,7 @@ function NEURON:controlOnUpdate(frame, elapsed)
 	NEURON.elapsed = NEURON.elapsed + elapsed
 
 	---Throttled OnUpdate calls
-	if (NEURON.elapsed > GDB.throttle and NEURON.PEW) then
+	if (NEURON.elapsed > DB.throttle and NEURON.PEW) then
 
 		NEURON.NeuronButton:cooldownsOnUpdate(frame, elapsed)
 		if NEURON.NeuronZoneAbilityBar then
@@ -656,23 +587,23 @@ function NEURON:LoginMessage()
 		text = Update_Message,
 		button1 = OKAY,
 		timeout = 0,
-		OnAccept = function() GDB.updateWarning = latestVersionNum end
+		OnAccept = function() DB.updateWarning = latestVersionNum end
 	}
 
 	StaticPopupDialogs["NEURON_INSTALL_MESSAGE"] = {
 		text = Install_Message,
 		button1 = OKAY,
 		timeout = 0,
-		OnAccept = function() GDB.updateWarning = latestVersionNum end,
+		OnAccept = function() DB.updateWarning = latestVersionNum end,
 	}
 
 	---displays a info window on login for either fresh installs or updates
-	if (GDB.updateWarning ~= latestVersionNum and GDB.updateWarning~=nil) then
+	if (DB.updateWarning and DB.updateWarning ~= latestVersionNum ) then
 		StaticPopup_Show("NEURON_UPDATE_WARNING")
 
 		NEURON:ChatMessage()
 
-	elseif(GDB.updateWarning==nil) then
+	elseif(DB.updateWarning==nil) then
 		StaticPopup_Show("NEURON_INSTALL_MESSAGE")
 
 		NEURON:ChatMessage()
@@ -1066,41 +997,6 @@ function NEURON:UpdateStanceStrings()
 end
 
 
-function NEURON:UpdateData(data, defaults)
-	-- Add new vars
-	for key,value in pairs(defaults) do
-
-		if (data[key] == nil) then
-
-			if (data[key:lower()] ~= nil) then
-
-				data[key] = data[key:lower()]
-				data[key:lower()] = nil
-			else
-				data[key] = value
-			end
-		end
-	end
-	-- Add new vars
-
-	-- Var fixes
-
-	---none
-
-	-- Var fixes
-
-	-- Kill old vars
-	for key,value in pairs(data) do
-
-		if (defaults[key] == nil) then
-			data[key] = nil
-		end
-
-	end
-	-- Kill old vars
-end
-
-
 ---this is taken from Bartender4, thanks guys!
 function NEURON:HideBlizzard()
 	if (InCombatLockdown()) then
@@ -1112,42 +1008,30 @@ function NEURON:HideBlizzard()
 	UIHider:Hide()
 	self.UIHider = UIHider
 
-	MultiBarBottomLeft:SetParent(UIHider)
-	MultiBarBottomRight:SetParent(UIHider)
-	MultiBarLeft:SetParent(UIHider)
-	MultiBarRight:SetParent(UIHider)
-
-	-- Hide MultiBar Buttons, but keep the bars alive
-	for i=1,12 do
-		_G["ActionButton" .. i]:Hide()
-		_G["ActionButton" .. i]:UnregisterAllEvents()
-		_G["ActionButton" .. i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarBottomLeftButton" .. i]:Hide()
-		_G["MultiBarBottomLeftButton" .. i]:UnregisterAllEvents()
-		_G["MultiBarBottomLeftButton" .. i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarBottomRightButton" .. i]:Hide()
-		_G["MultiBarBottomRightButton" .. i]:UnregisterAllEvents()
-		_G["MultiBarBottomRightButton" .. i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarRightButton" .. i]:Hide()
-		_G["MultiBarRightButton" .. i]:UnregisterAllEvents()
-		_G["MultiBarRightButton" .. i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarLeftButton" .. i]:Hide()
-		_G["MultiBarLeftButton" .. i]:UnregisterAllEvents()
-		_G["MultiBarLeftButton" .. i]:SetAttribute("statehidden", true)
+	if MultiBarBottomLeft then
+		MultiBarBottomLeft:Hide()
+		MultiBarBottomLeft:SetParent(UIHider)
 	end
 
-	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarRight"] = nil
-	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarLeft"] = nil
-	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomLeft"] = nil
-	--UIPARENT_MANAGED_FRAME_POSITIONS["MultiBarBottomRight"] = nil
+	if MultiBarBottomRight then
+		MultiBarBottomRight:Hide()
+		MultiBarBottomRight:SetParent(UIHider)
+	end
 
-	--MainMenuBar:UnregisterAllEvents()
-	--MainMenuBar:SetParent(UIHider)
-	--MainMenuBar:Hide()
+	if MultiBarLeft then
+		MultiBarLeft:Hide()
+		MultiBarLeft:SetParent(UIHider)
+	end
+
+	if MultiBarRight then
+		MultiBarRight:Hide()
+		MultiBarRight:SetParent(UIHider)
+	end
+
+
+	MainMenuBar:UnregisterAllEvents()
+	MainMenuBar:SetParent(UIHider)
+	MainMenuBar:Hide()
 	MainMenuBar:EnableMouse(false)
 	MainMenuBar:UnregisterEvent("DISPLAY_SIZE_CHANGED")
 	MainMenuBar:UnregisterEvent("UI_SCALE_CHANGED")
@@ -1168,8 +1052,8 @@ function NEURON:HideBlizzard()
 	end
 
 	if MainMenuExpBar then
-		--MainMenuExpBar:UnregisterAllEvents()
-		--MainMenuExpBar:Hide()
+		MainMenuExpBar:UnregisterAllEvents()
+		MainMenuExpBar:Hide()
 		MainMenuExpBar:SetParent(UIHider)
 		MainMenuExpBar:SetDeferAnimationCallback(nil)
 	end
@@ -1180,8 +1064,8 @@ function NEURON:HideBlizzard()
 	end
 
 	if ReputationWatchBar then
-		--ReputationWatchBar:UnregisterAllEvents()
-		--ReputationWatchBar:Hide()
+		ReputationWatchBar:UnregisterAllEvents()
+		ReputationWatchBar:Hide()
 		ReputationWatchBar:SetParent(UIHider)
 	end
 
@@ -1195,49 +1079,28 @@ function NEURON:HideBlizzard()
 		HonorWatchBar.StatusBar:SetDeferAnimationCallback(nil)
 	end
 
-	if StatusTrackingBarManager then
-		StatusTrackingBarManager:Hide()
-		--StatusTrackingBarManager:SetParent(UIHider)
-	end
-
 	StanceBarFrame:UnregisterAllEvents()
 	StanceBarFrame:Hide()
 	StanceBarFrame:SetParent(UIHider)
 
-	--BonusActionBarFrame:UnregisterAllEvents()
-	--BonusActionBarFrame:Hide()
-	--BonusActionBarFrame:SetParent(UIHider)
-
 	PossessBarFrame:UnregisterAllEvents()
-	--PossessBarFrame:Hide()
+	PossessBarFrame:Hide()
 	PossessBarFrame:SetParent(UIHider)
 
 	PetActionBarFrame:UnregisterAllEvents()
-	--PetActionBarFrame:Hide()
+	PetActionBarFrame:Hide()
 	PetActionBarFrame:SetParent(UIHider)
 
-	--[[if PlayerTalentFrame then
-		PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-	else
-		hooksecurefunc("TalentFrame_LoadUI", function() PlayerTalentFrame:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED") end)
-	end]]
-
-
-	--MainMenuBarArtFrame:UnregisterAllEvents()
-	--MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
-	--OverrideActionBar:UnregisterAllEvents()
-	--ActionBarController:UnregisterAllEvents()
-	--:UnregisterAllEvents()
 
 end
 
 function NEURON:ToggleBlizzUI()
-	if (GDB.blizzbar == true) then
-		GDB.blizzbar = false
+	if (DB.blizzbar == true) then
+		DB.blizzbar = false
 		NEURON:HideBlizzard()
 		StaticPopup_Show("ReloadUI")
 	else
-		GDB.blizzbar = true
+		DB.blizzbar = true
 		StaticPopup_Show("ReloadUI")
 	end
 end
@@ -1441,7 +1304,7 @@ function NEURON:PrintBarTypes()
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
-function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barCDB, objTable, objGDB, objFrameType, objTemplate, objMetaTable, objMax, gDef, cDef, barCreateMore)
+function NEURON:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objDB, objFrameType, objTemplate, objMetaTable, objMax, barCreateMore)
 
 	NEURON.ModuleIndex = NEURON.ModuleIndex + 1
 
@@ -1449,12 +1312,9 @@ function NEURON:RegisterBarClass(class, barType, barLabel, objType, barGDB, barC
 		barType = barType,
 		barLabel = barLabel,
 		barCreateMore = barCreateMore,
-		GDB = barGDB,
-		CDB = barCDB,
-		gDef = gDef,
-		cDef = cDef,
+		barDB = barDB,
 		objTable = objTable, --this is all the buttons associated with a given bar
-		objGDB = objGDB,
+		objDB = objDB,
 		objPrefix = "Neuron"..objType:gsub("%s+", ""),
 		objFrameT = objFrameType,
 		objTemplate = objTemplate,
@@ -1479,8 +1339,8 @@ function NEURON:SetTimerLimit(msg)
 	local limit = tonumber(msg:match("%d+"))
 
 	if (limit and limit > 0) then
-		GDB.timerLimit = limit
-		NEURON:Print(format(L["Timer_Limit_Set_Message"], GDB.timerLimit))
+		DB.timerLimit = limit
+		NEURON:Print(format(L["Timer_Limit_Set_Message"], DB.timerLimit))
 	else
 		NEURON:Print(L["Timer_Limit_Invalid_Message"])
 	end

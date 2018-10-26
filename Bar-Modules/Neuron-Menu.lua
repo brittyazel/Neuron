@@ -9,19 +9,19 @@ local DB
 NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar", "AceHook-3.0")
 local NeuronMenuBar = NEURON.NeuronMenuBar
 
-local menubarsDB, menubtnsDB
-
 local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local gDef = {
-    snapTo = false,
-    snapToFrame = false,
-    snapToPoint = false,
-    point = "BOTTOMRIGHT",
-    x = -348,
-    y = 24,
+local defaultBarOptions = {
+    [1] = {
+        snapTo = false,
+        snapToFrame = false,
+        snapToPoint = false,
+        point = "BOTTOMRIGHT",
+        x = -348,
+        y = 24,
+    }
 }
 
 local menuElements = {}
@@ -39,12 +39,7 @@ local configData = {
 --- or setting up slash commands.
 function NeuronMenuBar:OnInitialize()
 
-    DB = NeuronCDB
-
-
-    menubarsDB = DB.menubars
-    menubtnsDB = DB.menubtns
-
+    DB = NEURON.db.profile
 
 
     menuElements[1] = CharacterMicroButton
@@ -63,7 +58,7 @@ function NeuronMenuBar:OnInitialize()
     ----------------------------------------------------------------
     MENUBTN.SetData = NeuronMenuBar.SetData
     MENUBTN.LoadData = NeuronMenuBar.LoadData
-    MENUBTN.SaveData = NeuronMenuBar.SaveData
+    --MENUBTN.SaveData = NeuronMenuBar.SaveData
     MENUBTN.SetAux = NeuronMenuBar.SetAux
     MENUBTN.LoadAux = NeuronMenuBar.LoadAux
     MENUBTN.SetObjectVisibility = NeuronMenuBar.SetObjectVisibility
@@ -74,10 +69,10 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
     ----------------------------------------------------------------
 
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", menubarsDB, menubarsDB, NeuronMenuBar, menubtnsDB, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, gDef, nil, false)
+    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, DB.menubtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements, false)
     NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
-    if NeuronGDB.blizzbar == false then
+    if DB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
     end
 end
@@ -121,26 +116,34 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
 
     if (DB.menubarFirstRun) then
-        local bar = NEURON.NeuronBar:CreateNewBar("menu", 1, true)
-        local object
 
-        for i=1,#menuElements do
-            object = NEURON.NeuronButton:CreateNewObject("menu", i)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
+        for id, defaults in ipairs(defaultBarOptions) do
 
+            local bar = NEURON.NeuronBar:CreateNewBar("menu", id, true) --this calls the bar constructor
+
+            for	k,v in pairs(defaults) do
+                bar.data[k] = v
+            end
+
+            local object
+
+            for i=1,#menuElements do
+                object = NEURON.NeuronButton:CreateNewObject("menu", i, true)
+                NEURON.NeuronBar:AddObjectToList(bar, object)
+            end
         end
 
         DB.menubarFirstRun = false
 
     else
 
-        for id,data in pairs(menubarsDB) do
+        for id,data in pairs(DB.menubar) do
             if (data ~= nil) then
                 NEURON.NeuronBar:CreateNewBar("menu", id)
             end
         end
 
-        for id,data in pairs(menubtnsDB) do
+        for id,data in pairs(DB.menubtn) do
             if (data ~= nil) then
                 NEURON.NeuronButton:CreateNewObject("menu", id)
             end
@@ -172,22 +175,22 @@ function NeuronMenuBar:SetData(button, bar)
 
         button.bar = bar
 
-        button:SetFrameStrata(bar.gdata.objectStrata)
-        button:SetScale(bar.gdata.scale)
+        button:SetFrameStrata(bar.data.objectStrata)
+        button:SetScale(bar.data.scale)
 
     end
 
     button:SetFrameLevel(4)
 end
 
-function NeuronMenuBar:SaveData(button)
+--[[function NeuronMenuBar:SaveData(button)
     -- empty
-end
+end]]
 
 function NeuronMenuBar:LoadData(button, spec, state)
     local id = button.id
 
-    button.DB = menubtnsDB
+    button.DB = DB.menubtn
 
     if (button.DB) then
 
@@ -199,16 +202,11 @@ function NeuronMenuBar:LoadData(button, spec, state)
             button.DB[id].config = CopyTable(configData)
         end
 
-        if (not button.DB[id]) then
-            button.DB[id] = {}
-        end
-
         if (not button.DB[id].data) then
             button.DB[id].data = {}
         end
 
         button.config = button.DB [id].config
-
         button.data = button.DB[id].data
     end
 end

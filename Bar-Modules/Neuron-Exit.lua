@@ -2,7 +2,7 @@
 
 
 local NEURON = Neuron
-local CDB
+local DB
 
 NEURON.NeuronExitBar = NEURON:NewModule("ExitBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronExitBar = NEURON.NeuronExitBar
@@ -10,20 +10,19 @@ local NeuronExitBar = NEURON.NeuronExitBar
 
 local EXITBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
-local exitbarsCDB
-local exitbtnsCDB
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local gDef = {
-	snapTo = false,
-	snapToFrame = false,
-	snapToPoint = false,
-	point = "BOTTOM",
-	x = 0,
-	y = 305,
+local defaultBarOptions = {
+	[1] = {
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = 0,
+		y = 305,
+	}
 }
 
 local configData = {
@@ -47,15 +46,12 @@ local keyData = {
 --- or setting up slash commands.
 function NeuronExitBar:OnInitialize()
 
-	CDB = NeuronCDB
-
-	exitbarsCDB = CDB.exitbars
-	exitbtnsCDB = CDB.exitbtns
+	DB = NEURON.db.profile
 
 	----------------------------------------------------------------
 	EXITBTN.SetData = NeuronExitBar.SetData
 	EXITBTN.LoadData = NeuronExitBar.LoadData
-	EXITBTN.SaveData = NeuronExitBar.SaveData
+	--EXITBTN.SaveData = NeuronExitBar.SaveData
 	EXITBTN.SetAux = NeuronExitBar.SetAux
 	EXITBTN.LoadAux = NeuronExitBar.LoadAux
 	EXITBTN.SetObjectVisibility = NeuronExitBar.SetObjectVisibility
@@ -66,7 +62,7 @@ function NeuronExitBar:OnInitialize()
 	EXITBTN.SetSkinned = NeuronExitBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", exitbarsCDB, exitbarsCDB, NeuronExitBar, exitbtnsCDB, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, gDef, nil, false)
+	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, false)
 
 	NEURON:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 		SHOWGRID = false,
@@ -81,29 +77,8 @@ function NeuronExitBar:OnInitialize()
 		CDTEXT = true,
 		CDALPHA = true }, false, 65)
 
-	if (CDB.exitbarFirstRun) then
 
-		local bar = NEURON.NeuronBar:CreateNewBar("exitbar", 1, true)
-		local object = NEURON.NeuronButton:CreateNewObject("exitbar", 1)
-
-		NEURON.NeuronBar:AddObjectToList(bar, object)
-
-		CDB.exitbarFirstRun = false
-
-	else
-
-		for id,data in pairs(exitbarsCDB) do
-			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("exitbar", id)
-			end
-		end
-
-		for id,data in pairs(exitbtnsCDB) do
-			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("exitbar", id)
-			end
-		end
-	end
+	NeuronExitBar:CreateBarsAndButtons()
 
 end
 
@@ -131,6 +106,43 @@ end
 
 
 -------------------------------------------------------------------------------
+
+function NeuronExitBar:CreateBarsAndButtons()
+
+	if (DB.exitbarFirstRun) then
+
+		for id, defaults in ipairs(defaultBarOptions) do
+
+			local bar = NEURON.NeuronBar:CreateNewBar("exitbar", id, true) --this calls the bar constructor
+
+			for	k,v in pairs(defaults) do
+				bar.data[k] = v
+			end
+
+			local object
+
+			object = NEURON.NeuronButton:CreateNewObject("exitbar", 1, true)
+			NEURON.NeuronBar:AddObjectToList(bar, object)
+		end
+
+		DB.exitbarFirstRun = false
+
+	else
+
+		for id,data in pairs(DB.exitbar) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("exitbar", id)
+			end
+		end
+
+		for id,data in pairs(DB.exitbtn) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("exitbar", id)
+			end
+		end
+	end
+
+end
 
 function NeuronExitBar:DisableDefault()
 
@@ -171,63 +183,48 @@ function NeuronExitBar:SetSkinned(button)
 
 			}
 
-			SKIN:Group("Neuron", bar.gdata.name):AddButton(button, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
 
 		end
 
 	end
 end
 
-function NeuronExitBar:SaveData(button)
+--[[function NeuronExitBar:SaveData(button)
 
 	-- empty
 
-end
+end]]
 
 function NeuronExitBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.CDB = exitbtnsCDB
+	button.DB = DB.exitbtn
 
-	if (button.CDB) then
+	if (button.DB) then
 
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
+		if (not button.DB[id]) then
+			button.DB[id] = {}
 		end
 
-		if (not button.CDB[id].config) then
-			button.CDB[id].config = CopyTable(configData)
+		if (not button.DB[id].config) then
+			button.DB[id].config = CopyTable(configData)
 		end
 
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = CopyTable(keyData)
+		if (not button.DB[id].keys) then
+			button.DB[id].keys = CopyTable(keyData)
 		end
 
-		if (not button.CDB[id]) then
-			button.CDB[id] = {}
+		if (not button.DB[id].data) then
+			button.DB[id].data = {}
 		end
 
-		if (not button.CDB[id].keys) then
-			button.CDB[id].keys = CopyTable(keyData)
-		end
+		button.config = button.DB [id].config
 
-		if (not button.CDB[id].data) then
-			button.CDB[id].data = {}
-		end
+		button.keys = button.DB[id].keys
 
-		NEURON:UpdateData(button.CDB[id].config, configData)
-		NEURON:UpdateData(button.CDB[id].keys, keyData)
-
-		button.config = button.CDB [id].config
-
-		if (CDB.perCharBinds) then
-			button.keys = button.CDB[id].keys
-		else
-			button.keys = button.CDB[id].keys
-		end
-
-		button.data = button.CDB[id].data
+		button.data = button.DB[id].data
 	end
 end
 
