@@ -268,6 +268,8 @@ end
 local genericButtonData = {
     btnType = "macro",
 
+    class = "",
+
     mouseAnchor = false,
     clickAnchor = false,
     anchorDelay = false,
@@ -383,8 +385,7 @@ local statusGenericButtonConfig = {
     height = 18,
     scale = 1,
     XOffset = 0,
-    YOffset = 0
-    ,
+    YOffset = 0,
     texture = 7,
     border = 1,
 

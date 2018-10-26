@@ -2768,6 +2768,13 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 			object:SetDefaults(object, object:GetDefaults(object))
 		end
 
+		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
+		if object.DB then
+			object.DB[id].config.class = class
+		elseif object.config then --this is for status bars who don't have a DB sub table, and instead have config right at the bar level
+			object.config.class = class
+		end
+
 		object:LoadAux(object)
 
 		data.objTable[index] = object
