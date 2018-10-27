@@ -751,8 +751,6 @@ function NeuronButton:MACRO_SetSpellIcon(button, spell)
 			button.iconframeicon:SetTexture(texture)
 			button.iconframeicon:Show()
 		else
-			--button.iconframeicon:SetTexture("")
-			--button.iconframeicon:Hide()
 			button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK") --show questionmark instead of empty button to avoid confusion
 		end
 
@@ -837,8 +835,7 @@ function NeuronButton:ACTION_SetIcon(button, action)
 
 		button.iconframeicon:Show()
 	else
-		button.iconframeicon:SetTexture("")
-		button.iconframeicon:Hide()
+		button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
 
 	return button.iconframeicon:GetTexture()
@@ -847,7 +844,7 @@ end
 
 function NeuronButton:MACRO_UpdateIcon(button, ...)
 	button.updateMacroIcon = nil
-	button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+	--button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 
 	local spell, item, show, texture = button.macrospell, button.macroitem, button.macroshow, button.macroicon
 
@@ -1551,6 +1548,7 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
 	button:SetType(button)
+	button:MACRO_UpdateAll(button, true)
 	button:SetObjectVisibility(button)
 
 end
