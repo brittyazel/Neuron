@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7bb7ae98-ede1-4a3b-802e-d20a1f38bd4d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Neuron-Buttons.lua" beforeDir="false" afterPath="$PROJECT_DIR$/Neuron-Buttons.lua" afterDir="false" />
     </list>
@@ -24,6 +25,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
+          <entry key="gitignore" value="1" />
           <entry key="lua" value="10" />
           <entry key="md" value="1" />
           <entry key="toc" value="1" />
@@ -35,19 +37,21 @@
         <counts>
           <entry key="Lua" value="10" />
           <entry key="Markdown" value="1" />
-          <entry key="PLAIN_TEXT" value="1" />
+          <entry key="PLAIN_TEXT" value="2" />
           <entry key="XML" value="1" />
           <entry key="YAML" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
+          <entry key="gitignore" value="7" />
           <entry key="lua" value="838" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Lua" value="838" />
+          <entry key="PLAIN_TEXT" value="7" />
         </counts>
       </usages-collector>
     </session>
@@ -63,11 +67,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Neuron-Buttons.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="857">
+            <state relative-caret-position="515">
               <caret line="1551" column="38" lean-forward="true" selection-start-line="1551" selection-start-column="38" selection-end-line="1551" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="6" selection-start-column="6" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -144,6 +157,7 @@
       <find>ClearAllPoints</find>
       <find>SetTexture(&quot;&quot;</find>
       <find>MACRO_UpdateIcon</find>
+      <find>SetType</find>
     </findStrings>
     <dirStrings>
       <dir>D:\Documents\Github\Neuron\Bar-Modules</dir>
@@ -162,6 +176,7 @@
         <option value="$PROJECT_DIR$/Neuron-Defaults.lua" />
         <option value="$PROJECT_DIR$/Neuron.lua" />
         <option value="$PROJECT_DIR$/Neuron-Buttons.lua" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -260,16 +275,6 @@
             <path>
               <item name="Neuron" type="b2602c69:ProjectViewProjectNode" />
               <item name="Neuron" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Neuron" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Neuron" type="462c0819:PsiDirectoryNode" />
-              <item name="Bar-Modules" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Neuron" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Neuron" type="462c0819:PsiDirectoryNode" />
-              <item name="Localizations" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Neuron" type="b2602c69:ProjectViewProjectNode" />
@@ -416,8 +421,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Neuron-Buttons.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="857">
+        <state relative-caret-position="515">
           <caret line="1551" column="38" lean-forward="true" selection-start-line="1551" selection-start-column="38" selection-end-line="1551" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="6" selection-start-column="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>

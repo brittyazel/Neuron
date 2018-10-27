@@ -1548,7 +1548,7 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
 	button:SetType(button)
-	button:MACRO_UpdateAll(button, true)
+	NeuronButton:MACRO_UpdateAll(button, true)
 	button:SetObjectVisibility(button)
 
 end
