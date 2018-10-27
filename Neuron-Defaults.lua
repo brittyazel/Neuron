@@ -7,6 +7,7 @@ NeuronDefaults = {
         snapToTol = 28,
 
         blizzbar = false,
+        blizzvehiclebar = false,
 
 
         mouseOverMod= "NONE",

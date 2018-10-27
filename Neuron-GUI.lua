@@ -3856,8 +3856,17 @@ NeuronGUI.interfaceOptions = {
 					get = function() return DB.blizzbar end,
 					width = "full",
 				},
-				NeuronMinimapButton = {
+				BlizzardVehicleBar = {
 					order = 2,
+					name = L["Display the Blizzard Vehicle Bar"],
+					desc = L["Shows / Hides the Blizzard Vehicle Bar"],
+					type = "toggle",
+					set = function() NEURON:ToggleBlizzVehicleBar() end,
+					get = function() return DB.blizzvehiclebar end,
+					width = "full",
+				},
+				NeuronMinimapButton = {
+					order = 3,
 					name = L["Display Minimap Button"],
 					desc = L["Toggles the minimap button."],
 					type = "toggle",

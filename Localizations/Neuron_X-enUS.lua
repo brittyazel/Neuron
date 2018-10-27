@@ -372,6 +372,9 @@ L["Y Position"] = true
 L["Display the Blizzard UI"] = true
 L["Shows / Hides the Default Blizzard UI"] = true
 
+L["Display the Blizzard Vehicle Bar"] = true
+L["Shows / Hides the Blizzard Vehicle Bar"] = true
+
 L["Display Minimap Button"] = true
 L["Toggles the minimap button."] = true
 

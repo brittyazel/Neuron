@@ -343,6 +343,10 @@ function NEURON:PLAYER_ENTERING_WORLD()
 		NEURON:HideBlizzard()
 	end
 
+	if (DB.blizzvehiclebar == false) then
+		NEURON:HideBlizzardVehicle()
+	end
+
 	NEURON.PEW = true
 
 end
@@ -1006,7 +1010,6 @@ function NEURON:HideBlizzard()
 	-- Hidden parent frame
 	local UIHider = CreateFrame("Frame")
 	UIHider:Hide()
-	self.UIHider = UIHider
 
 	if MultiBarBottomLeft then
 		MultiBarBottomLeft:Hide()
@@ -1040,11 +1043,9 @@ function NEURON:HideBlizzard()
 	local animations = {MainMenuBar.slideOut:GetAnimations()}
 	animations[1]:SetOffset(0,0)
 
-	animations = {OverrideActionBar.slideOut:GetAnimations()}
-	animations[1]:SetOffset(0,0)
-
 	MainMenuBarArtFrame:Hide()
 	MainMenuBarArtFrame:SetParent(UIHider)
+
 
 	if MicroButtonAndBagsBar then
 		MicroButtonAndBagsBar:Hide()
@@ -1104,6 +1105,35 @@ function NEURON:ToggleBlizzUI()
 		StaticPopup_Show("ReloadUI")
 	end
 end
+
+function NEURON:HideBlizzardVehicle()
+
+	-- Hidden parent frame
+	local UIHider = CreateFrame("Frame")
+	UIHider:Hide()
+
+	local animations = {OverrideActionBar.slideOut:GetAnimations()}
+	animations[1]:SetOffset(0,0)
+
+	OverrideActionBar_OnLoad(OverrideActionBar)
+	OverrideActionBar:SetPoint("BOTTOM", 0, 0)
+
+	OverrideActionBar:Hide()
+	OverrideActionBar:SetParent(UIHider)
+
+end
+
+function NEURON:ToggleBlizzVehicleBar()
+	if (DB.blizzvehiclebar == true) then
+		DB.blizzvehiclebar = false
+		NEURON:HideBlizzardVehicle()
+		StaticPopup_Show("ReloadUI")
+	else
+		DB.blizzvehiclebar = true
+		StaticPopup_Show("ReloadUI")
+	end
+end
+
 
 
 function NEURON:ToggleButtonGrid(show)
