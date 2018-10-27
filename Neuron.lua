@@ -19,7 +19,7 @@ NEURON.PEW = false --flag that gets set when the player enters the world. It's u
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.34" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.36" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local latestDBVersion = 1.2
 
@@ -36,7 +36,11 @@ Cheers,
 
 local Update_Message = [[Thanks for updating Neuron!
 
-New Feature! You can now track Azerite power! Try right-clicking on an XP bar to try it out!
+**IMPORTANT** Due to some necessary changes, your keybinds have been reset. Sorry for the inconvenience.
+
+New: Phase 1 of the full database rewrite has been completed. This new version is MUCH easier to work with going foward. I have also introduced a database versioning scheme, and as of today everyone should be on database version 1.2.
+
+Sorry for the long delay between the last update and this one. With any changed to databases, I wanted to be extra careful to avoid ruining a user's bar layout. This has been a very stressfull release for me.
 
 -Soyier]]
 
