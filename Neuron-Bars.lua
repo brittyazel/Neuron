@@ -950,8 +950,8 @@ function NeuronBar:Update(bar, show, hide)
 	local handler, driver = bar.handler, bar.driver
 
 	bar.elapsed = 0;
-	--bar.alpha = bar.data.alpha;
-	--bar.alphaUp = bar.data.alphaUp
+	bar.alpha = bar.data.alpha;
+	bar.alphaUp = bar.data.alphaUp
 
 	if (bar.stateschanged) then
 

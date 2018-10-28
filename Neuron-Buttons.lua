@@ -844,7 +844,6 @@ end
 
 function NeuronButton:MACRO_UpdateIcon(button, ...)
 	button.updateMacroIcon = nil
-	--button.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 
 	local spell, item, show, texture = button.macrospell, button.macroitem, button.macroshow, button.macroicon
 
