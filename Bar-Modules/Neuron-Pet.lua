@@ -56,7 +56,6 @@ function NeuronPetBar:OnInitialize()
 	----------------------------------------------------------------
 	PETBTN.SetData = NeuronPetBar.SetData
 	PETBTN.LoadData = NeuronPetBar.LoadData
-	--PETBTN.SaveData = NeuronPetBar.SaveData
 	PETBTN.SetAux = NeuronPetBar.SetAux
 	PETBTN.LoadAux = NeuronPetBar.LoadAux
 	PETBTN.SetObjectVisibility = NeuronPetBar.SetObjectVisibility
@@ -653,11 +652,6 @@ function NeuronPetBar:SetData(button, bar)
 	button:GetSkinned(button)
 end
 
---[[function NeuronPetBar:SaveData(button)
-
-	-- empty
-
-end]]
 
 function NeuronPetBar:LoadData(button, spec, state)
 

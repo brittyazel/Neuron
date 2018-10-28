@@ -135,7 +135,6 @@ function NeuronButton:OnInitialize()
 	----------------------------------------------------------------
 	BUTTON.SetData = NeuronButton.SetData
 	BUTTON.LoadData = NeuronButton.LoadData
-	--BUTTON.SaveData = NeuronButton.SaveData
 	BUTTON.SetAux = NeuronButton.SetAux
 	BUTTON.LoadAux = NeuronButton.LoadAux
 	BUTTON.SetObjectVisibility = NeuronButton.SetObjectVisibility
@@ -3014,44 +3013,6 @@ function NeuronButton:SetData(button, bar)
 end
 
 
---[[function NeuronButton:SaveData(button, state)
-	local index, spec = button.id, GetSpecialization()
-
-	if (not state) then
-		state = button:GetParent():GetAttribute("activestate") or "homestate"
-	end
-
-	--Possible fix to keep the home state action from getting overwritten
-
-	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
-		return
-	end
-
-
-	if (index and spec and state) then
-
-		for key,value in pairs(button.config) do
-			DB.buttons[index].config[key] = value
-		end
-
-		if (DB.perCharBinds) then
-			for key,value in pairs(button.keys) do
-				DB.buttons[index].keys[key] = value
-			end
-		end
-
-		for key,value in pairs(button.data) do
-			DB.buttons[index][spec][state][key] = value
-		end
-
-		NeuronButton:BuildStateData(button)
-
-	else
-		NEURON:Print("DEBUG: Bad Save Data for "..button:GetName().." ?")
-		NEURON:Print(index); NEURON:Print(spec); NEURON:Print(state)
-	end
-end]]
-
 ---TODO refactor this to NeuronButton
 function NeuronButton:LoadData(button, spec, state)
 	local id = button.id
@@ -3308,9 +3269,6 @@ function NeuronButton:SetType(button, save, kill, init)
 
 	end
 
-	--[[if (save) then
-		button:SaveData(button, state)
-	end]]
 end
 
 

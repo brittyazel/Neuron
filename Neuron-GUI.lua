@@ -824,8 +824,6 @@ function NeuronGUI:updateBarName(frame)
 
 		bar.text:SetText(bar.data.name)
 
-		--NEURON.NeuronBar:SaveData(bar)
-
 		frame:ClearFocus()
 
 		NeuronGUI:BarListScrollFrameUpdate()

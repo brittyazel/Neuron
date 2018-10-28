@@ -184,7 +184,6 @@ function NeuronStatusBar:OnInitialize()
     -------------------------------------------------
     STATUS.SetData = NeuronStatusBar.SetData
     STATUS.LoadData = NeuronStatusBar.LoadData
-    --STATUS.SaveData = NeuronStatusBar.SaveData
     STATUS.SetAux = NeuronStatusBar.SetAux
     STATUS.LoadAux = NeuronStatusBar.LoadAux
     STATUS.SetObjectVisibility = NeuronStatusBar.SetObjectVisibility
@@ -1972,16 +1971,6 @@ function NeuronStatusBar:SetData(button, bar, skipupdate)
     button.fbframe.feedback.border:SetFrameLevel(button.sb.border:GetFrameLevel()+10)
 
 end
-
-
-
-
---[[function NeuronStatusBar:SaveData(button)
-
-    -- empty
-
-end]]
-
 
 
 

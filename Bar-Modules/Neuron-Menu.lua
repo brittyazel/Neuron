@@ -58,7 +58,6 @@ function NeuronMenuBar:OnInitialize()
     ----------------------------------------------------------------
     MENUBTN.SetData = NeuronMenuBar.SetData
     MENUBTN.LoadData = NeuronMenuBar.LoadData
-    --MENUBTN.SaveData = NeuronMenuBar.SaveData
     MENUBTN.SetAux = NeuronMenuBar.SetAux
     MENUBTN.LoadAux = NeuronMenuBar.LoadAux
     MENUBTN.SetObjectVisibility = NeuronMenuBar.SetObjectVisibility
@@ -183,9 +182,6 @@ function NeuronMenuBar:SetData(button, bar)
     button:SetFrameLevel(4)
 end
 
---[[function NeuronMenuBar:SaveData(button)
-    -- empty
-end]]
 
 function NeuronMenuBar:LoadData(button, spec, state)
     local id = button.id

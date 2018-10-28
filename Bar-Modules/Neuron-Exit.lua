@@ -51,7 +51,6 @@ function NeuronExitBar:OnInitialize()
 	----------------------------------------------------------------
 	EXITBTN.SetData = NeuronExitBar.SetData
 	EXITBTN.LoadData = NeuronExitBar.LoadData
-	--EXITBTN.SaveData = NeuronExitBar.SaveData
 	EXITBTN.SetAux = NeuronExitBar.SetAux
 	EXITBTN.LoadAux = NeuronExitBar.LoadAux
 	EXITBTN.SetObjectVisibility = NeuronExitBar.SetObjectVisibility
@@ -189,12 +188,6 @@ function NeuronExitBar:SetSkinned(button)
 
 	end
 end
-
---[[function NeuronExitBar:SaveData(button)
-
-	-- empty
-
-end]]
 
 function NeuronExitBar:LoadData(button, spec, state)
 

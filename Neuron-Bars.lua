@@ -981,7 +981,6 @@ function NeuronBar:Update(bar, show, hide)
 	NeuronBar:SetAutoHide(handler, bar)
 	bar.text:SetText(bar.data.name)
 	handler:SetAlpha(bar.data.alpha)
-	--NeuronBar:SaveData(bar)
 
 	if (not hide and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		NEURON.NeuronGUI:UpdateBarGUI()
@@ -1241,7 +1240,6 @@ function NeuronBar:SetDefaults(bar, defaults)
 		end
 	end
 
-	--NeuronBar:SaveData(bar)
 end
 
 
@@ -1496,7 +1494,6 @@ function NeuronBar:OnKeyDown(bar, key, onupdate)
 		end
 
 		NeuronBar:SetPosition(bar)
-		--NeuronBar:SaveData(bar)
 	end
 end
 
@@ -1662,26 +1659,6 @@ end
 
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
-
---[[function NeuronBar:SaveData(bar)
-	local id = bar:GetID()
-
-	if (bar.barDB[id]) then
-		for key,value in pairs(bar.data) do
-			bar.barDB[id][key] = value
-		end
-	else
-		NEURON:Print("DEBUG: Bad Global Save Data for "..bar:GetName().." ?")
-	end
-
-	if (bar.barDB[id]) then
-		for key,value in pairs(bar.data) do
-			bar.barDB[id][key] = value
-		end
-	else
-		NEURON:Print("DEBUG: Bad Character Save Data for "..bar:GetName().." ?")
-	end
-end]]
 
 
 function NeuronBar:LoadData(bar)

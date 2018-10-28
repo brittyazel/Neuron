@@ -52,7 +52,6 @@ function NeuronExtraBar:OnInitialize()
 	----------------------------------------------------------------
 	EXTRABTN.SetData = NeuronExtraBar.SetData
 	EXTRABTN.LoadData = NeuronExtraBar.LoadData
-	--EXTRABTN.SaveData = NeuronExtraBar.SaveData
 	EXTRABTN.SetAux = NeuronExtraBar.SetAux
 	EXTRABTN.LoadAux = NeuronExtraBar.LoadAux
 	EXTRABTN.SetDefaults = NeuronExtraBar.SetDefaults
@@ -195,11 +194,6 @@ function NeuronExtraBar:SetSkinned(button)
 	end
 end
 
---[[function NeuronExtraBar:SaveData(button)
-
-	-- empty
-
-end]]
 
 function NeuronExtraBar:LoadData(button, spec, state)
 

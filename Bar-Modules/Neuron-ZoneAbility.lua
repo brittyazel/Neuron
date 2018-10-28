@@ -64,7 +64,6 @@ function NeuronZoneAbilityBar:OnInitialize()
 	----------------------------------------------------------------
 	ZONEABILITYBTN.SetData = NeuronZoneAbilityBar.SetData
 	ZONEABILITYBTN.LoadData = NeuronZoneAbilityBar.LoadData
-	--ZONEABILITYBTN.SaveData = NeuronZoneAbilityBar.SaveData
 	ZONEABILITYBTN.SetAux = NeuronZoneAbilityBar.SetAux
 	ZONEABILITYBTN.LoadAux = NeuronZoneAbilityBar.LoadAux
 	ZONEABILITYBTN.SetObjectVisibility = NeuronZoneAbilityBar.SetObjectVisibility
@@ -385,10 +384,6 @@ function NeuronZoneAbilityBar:SetSkinned(button)
 	end
 end
 
-
---[[function NeuronZoneAbilityBar:SaveData(button)
-	-- empty
-end]]
 
 function NeuronZoneAbilityBar:LoadData(button, spec, state)
 
