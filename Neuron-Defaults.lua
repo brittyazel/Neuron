@@ -34,7 +34,7 @@ NeuronDefaults = {
         buttons = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -48,7 +48,7 @@ NeuronDefaults = {
         extrabtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -62,7 +62,7 @@ NeuronDefaults = {
         exitbtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -76,7 +76,7 @@ NeuronDefaults = {
         bagbtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -90,7 +90,7 @@ NeuronDefaults = {
         zoneabilitybtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -104,7 +104,7 @@ NeuronDefaults = {
         menubtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -118,7 +118,7 @@ NeuronDefaults = {
         petbtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -132,7 +132,7 @@ NeuronDefaults = {
         statusbtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
                 ['data'] = {},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
