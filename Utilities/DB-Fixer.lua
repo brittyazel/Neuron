@@ -61,23 +61,37 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
             end
         end
 
+        if not profile.bars then
+            profile.bars = {}
+        end
+
         for k1,v1 in pairs(profile.NeuronCDB.bars) do
+
+            if not profile.bars[k1] then
+                profile.bars[k1] = {}
+            end
 
             for k2,v2 in pairs(v1) do
                 profile.bars[k1][k2] = v2
             end
 
+        end
 
+        if not profile.buttons then
+            profile.buttons = {}
         end
 
         for k1,v1 in pairs(profile.NeuronCDB.buttons) do
+
+            if not profile.buttons[k1] then
+                profile.buttons[k1] = {}
+            end
+
             for k2,v2 in pairs(v1) do
                 profile.buttons[k1][k2] = v2
             end
         end
 
-        profile.NeuronGDB = nil
-        profile.NeuronCDB = nil
 
         oldDBVersion = 1.2 --increment oldDBVersion up to the latest that this set of code fixes
         NEURON:Print("Neuron database migrated to version " .. 1.2)

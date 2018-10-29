@@ -24,19 +24,9 @@ local latestVersionNum = "0.9.36" --this variable is set to popup a welcome mess
 local latestDBVersion = 1.2
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
-local Install_Message = [[Thanks for installing Neuron.
-
-Neuron is currently in a "|cffffff00release|r" state. However, please be aware that Neuron is still very much a work-in-progress.
-
-If you have any questions or concerns please direct all inquirires our Github page or through Curseforge, which are listed in the F.A.Q.
-
-Cheers,
-
--Soyier]]
-
 local Update_Message = [[Thanks for updating Neuron!
 
-**IMPORTANT** Due to some necessary changes, your keybinds have been reset. Sorry for the inconvenience.
+**IMPORTANT** Due to some necessary changes, your keybinds have been reset. Sorry for the inconvenience. YOU MUST /reload ONCE MORE BEFORE YOU CAN BIND NEW KEYS!
 
 New: Phase 1 of the full database rewrite has been completed. This new version is MUCH easier to work with going foward. I have also introduced a database versioning scheme, and as of today everyone should be on database version 1.2.
 
@@ -594,24 +584,11 @@ function NEURON:LoginMessage()
 		OnAccept = function() DB.updateWarning = latestVersionNum end
 	}
 
-	StaticPopupDialogs["NEURON_INSTALL_MESSAGE"] = {
-		text = Install_Message,
-		button1 = OKAY,
-		timeout = 0,
-		OnAccept = function() DB.updateWarning = latestVersionNum end,
-	}
-
 	---displays a info window on login for either fresh installs or updates
-	if (DB.updateWarning and DB.updateWarning ~= latestVersionNum ) then
+	if (not DB.updateWarning or DB.updateWarning ~= latestVersionNum ) then
 		StaticPopup_Show("NEURON_UPDATE_WARNING")
 
 		NEURON:ChatMessage()
-
-	elseif(DB.updateWarning==nil) then
-		StaticPopup_Show("NEURON_INSTALL_MESSAGE")
-
-		NEURON:ChatMessage()
-
 	end
 
 end
