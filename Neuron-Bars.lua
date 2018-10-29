@@ -1666,7 +1666,7 @@ function NeuronBar:LoadData(bar)
 
 	bar.data = bar.barDB[id]
 
-	if (#bar.data.name < 1) then
+	if (not bar.data.name) then
 		bar.data.name = bar.barLabel.." "..bar:GetID()
 	end
 end
