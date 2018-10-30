@@ -1,4 +1,5 @@
 
+---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 
 NeuronDefaults = {
     profile = {
@@ -34,7 +35,7 @@ NeuronDefaults = {
         buttons = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -48,7 +49,7 @@ NeuronDefaults = {
         extrabtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -62,7 +63,7 @@ NeuronDefaults = {
         exitbtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -76,7 +77,7 @@ NeuronDefaults = {
         bagbtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -90,7 +91,7 @@ NeuronDefaults = {
         zoneabilitybtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -104,7 +105,7 @@ NeuronDefaults = {
         menubtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -118,7 +119,7 @@ NeuronDefaults = {
         petbtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
                 [3] = {['**'] = {}, ['homestate'] = {}},
@@ -132,7 +133,7 @@ NeuronDefaults = {
         statusbtn = {
             ['*'] = {
                 ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = "", hotKeys = ""},
+                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 ['data'] = {},
                 [1] = {['**'] = {}, ['homestate'] = {}},
                 [2] = {['**'] = {}, ['homestate'] = {}},
@@ -145,7 +146,7 @@ NeuronDefaults = {
 }
 
 local genericBarData = {
-    name = "",
+    name = ":",
 
     objectList = {},
 
@@ -268,7 +269,7 @@ end
 local genericButtonData = {
     btnType = "macro",
 
-    class = "",
+    class = ":",
 
     mouseAnchor = false,
     clickAnchor = false,

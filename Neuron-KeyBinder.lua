@@ -231,7 +231,6 @@ function NeuronBinder:ProcessBinding(binder, key, button)
 		NeuronBinder:ClearBindings( button)
 	elseif (key) then
 		for _,binder in pairs(BINDIndex) do
-			test = binder
 			if (button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
 				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then NeuronBinder:ClearBindings(binder.button, binding) NeuronBinder:ApplyBindings(binder.button) end end)
 			end
