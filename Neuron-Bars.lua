@@ -239,32 +239,35 @@ function NeuronBar:controlOnUpdate(frame, elapsed)
 	for k,v in pairs(autoHideIndex) do
 		if (v~=nil) then
 
-			if (k:IsShown()) then
-				v:SetAlpha(1)
-			else
+			if not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
 
-				if (NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
-					if (v:GetAlpha() < k.alpha) then
-						if (v:GetAlpha()+v.fadeSpeed <= 1) then
-							v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+				if (k:IsShown()) then
+					v:SetAlpha(1)
+				else
+
+					if (NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
+						if (v:GetAlpha() < k.alpha) then
+							if (v:GetAlpha()+v.fadeSpeed <= 1) then
+								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
+							else
+								v:SetAlpha(1)
+							end
 						else
-							v:SetAlpha(1)
+							k.seen = 1;
 						end
-					else
-						k.seen = 1;
+
 					end
 
-				end
-
-				if (not NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
-					if (v:GetAlpha() > 0) then
-						if (v:GetAlpha()-v.fadeSpeed >= 0) then
-							v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
+					if (not NeuronBar:IsMouseOverSelfOrWatchFrame(k)) then
+						if (v:GetAlpha() > 0) then
+							if (v:GetAlpha()-v.fadeSpeed >= 0) then
+								v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
+							else
+								v:SetAlpha(0)
+							end
 						else
-							v:SetAlpha(0)
+							k.seen = 0;
 						end
-					else
-						k.seen = 0;
 					end
 				end
 			end
@@ -1816,7 +1819,7 @@ function NeuronBar:CreateNewBar(class, id, firstRun)
 			NeuronBar:ChangeBar(bar)
 
 			---------------------------------
-			 if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+			if (class == "extrabar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
 				bar.data.hidestates = ":extrabar0:"
 				bar.vischanged = true
 				NeuronBar:Update(bar)
