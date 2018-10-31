@@ -271,6 +271,13 @@ end
 
 
 
+function NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD(button, event, ...)
+	if InCombatLockdown() then return end
+	NEURON.NeuronBinder:ApplyBindings(button)
+end
+
+
+
 ---TODO: This should get roped into AceEvent
 function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 
@@ -278,6 +285,10 @@ function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 
 	button.baseName = GetSpellInfo(spellID);
 	ZoneAbilitySpellID = spellID
+
+	if event == "PLAYER_ENTERING_WORLD" then
+		NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD(button, event, ...)
+	end
 
 
 	if (spellID) then
@@ -454,6 +465,7 @@ function NeuronZoneAbilityBar:SetType(button, save)
 	button:RegisterUnitEvent("UNIT_AURA", "player")
 	button:RegisterEvent("SPELLS_CHANGED")
 	button:RegisterEvent("ZONE_CHANGED")
+	button:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 
 	button.actionID = button.id
