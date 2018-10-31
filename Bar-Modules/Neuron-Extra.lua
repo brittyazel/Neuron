@@ -16,7 +16,7 @@ local SKIN = LibStub("Masque", true)
 
 local defaultBarOptions = {
 	[1] = {
-		hidestates = ":extrabar0:",
+		hidestates = ":",
 		snapTo = false,
 		snapToFrame = false,
 		snapToPoint = false,
@@ -118,7 +118,14 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.extrabar) do
 			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("extrabar", id)
+				local extrabar = NEURON.NeuronBar:CreateNewBar("extrabar", id)
+
+
+                --this is a fix for adding a hidestate to the extrabar that kept it hidden even in bind/edit modes
+                if extrabar.barDB[id].hidestates == ":extrabar0:" then
+                    extrabar.barDB[id].hidestates = ":"
+                end
+
 			end
 		end
 
@@ -229,7 +236,7 @@ end
 
 function NeuronExtraBar:LoadAux(button)
 
-	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+    NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
 	button.style = button:CreateTexture(nil, "OVERLAY")
 	button.style:SetPoint("CENTER", -2, 1)
@@ -308,6 +315,7 @@ function NeuronExtraBar:SetType(button, save)
 	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 	button:RegisterEvent("ZONE_CHANGED")
 	button:RegisterEvent("SPELLS_CHANGED")
+    button:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	button.actionID = 169
 
@@ -346,4 +354,13 @@ function NeuronExtraBar:OnEvent(button, event, ...)
 	NeuronExtraBar:ExtraButton_Update(button)
 	button:SetObjectVisibility(button)
 
+    if event == "PLAYER_ENTERING_WORLD" then
+        NeuronExtraBar:PLAYER_ENTERING_WORLD(button, event, ...)
+    end
+
+end
+
+function NeuronExtraBar:PLAYER_ENTERING_WORLD(button, event, ...)
+    if InCombatLockdown() then return end
+    NEURON.NeuronBinder:ApplyBindings(button)
 end
