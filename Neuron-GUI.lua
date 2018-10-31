@@ -2512,13 +2512,10 @@ end
 -- @param data:
 -- @returns: Button texture
 function NeuronGUI:specUpdateIcon(button,state)
-	--data = button.spedata[buttonSpec][state]
-	--specUpdateIcon(button, data))--button.iconframeicon:GetTexture())
-	--((button.bar.data.multiSpec and specoveride) or 1)
-	--data.macro_Icon
-	local texture = "" --"INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
+
+	local texture = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
 	local buttonSpec = GetSpecialization()
-	local data = button.spedata[specoveride][state]
+	local data = button.DB[specoveride][state]
 
 	if (button.bar.data.multiSpec and specoveride ~= buttonSpec) then
 		local spell = data.macro_Text:match("/cast%s+(%C+)") or
@@ -2596,12 +2593,12 @@ function NeuronGUI:MacroEditorUpdate()
 			NBTNE.spec4:Hide()
 		end
 
-		local data = button.spedata[buttonSpec][state]
+		local data = button.DB[buttonSpec][state]
 
 		if not data then
-			button.spedata[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
+			button.DB[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
 
-			data = button.spedata[buttonSpec][state]
+			data = button.DB[buttonSpec][state]
 			NEURON.NeuronFlyouts:UpdateFlyout(button)
 			NEURON.NeuronButton:BuildStateData(button)
 			button:SetType(button)
@@ -2626,9 +2623,9 @@ function NeuronGUI:MacroEditorUpdate()
 
 		else
 			--NEURON:Print("notinghere")
-			--button.spedata[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
-			--NEURON.NeuronButton:MACRO_build(button.spedata[buttonSpec][state])
-			---NEURON:Print(button.spedata[buttonSpec][state])
+			--button.DB[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
+			--NEURON.NeuronButton:MACRO_build(button.DB[buttonSpec][state])
+			---NEURON:Print(button.DB[buttonSpec][state])
 			--end
 		end
 	end
@@ -2694,14 +2691,14 @@ function NeuronGUI:macroText_OnTextChanged(frame)
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
-			if button.spedata[buttonSpec][state] then
-				button.spedata[buttonSpec][state].macro_Text = frame:GetText()
-				button.spedata[buttonSpec][state].macro_Watch = false
+			if button.DB[buttonSpec][state] then
+				button.DB[buttonSpec][state].macro_Text = frame:GetText()
+				button.DB[buttonSpec][state].macro_Watch = false
 			else
 				--NEURON:Print("notinghere")
-				--button.spedata[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
-				--NEURON.NeuronButton:MACRO_build(button.spedata[buttonSpec][state])
-				--NEURON:Print(button.spedata[buttonSpec][state])
+				--button.DB[buttonSpec][state] = NEURON.NeuronButton:MACRO_build()
+				--NEURON.NeuronButton:MACRO_build(button.DB[buttonSpec][state])
+				--NEURON:Print(button.DB[buttonSpec][state])
 			end
 
 		end
@@ -2720,7 +2717,7 @@ function NeuronGUI:macroButton_Changed(frame, button, down)
 
 	--handler to check if viewing non current spec button settings
 	if (specoveride ~= GetSpecialization()) then
-		data = object.spedata[buttonSpec][state]
+		data = object.DB[buttonSpec][state]
 	end
 
 	if (object and data) then
@@ -2763,7 +2760,7 @@ function NeuronGUI:macroNameEdit_OnTextChanged(frame)
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
-			button.spedata[buttonSpec][state].macro_Name = frame:GetText()
+			button.DB[buttonSpec][state].macro_Name = frame:GetText()
 		end
 
 		NEURON.NeuronBar:UpdateObjectData(button.bar)
@@ -2794,7 +2791,7 @@ function NeuronGUI:macroNoteEdit_OnTextChanged(frame)
 		local state = button.bar.handler:GetAttribute("fauxstate")
 
 		if (button and buttonSpec and state) then
-			button.spedata[buttonSpec][state].macro_Note = frame:GetText()
+			button.DB[buttonSpec][state].macro_Note = frame:GetText()
 		end
 	end
 end
@@ -3009,7 +3006,7 @@ function NeuronGUI:ResetButtonFields()
 	local button, NBTNE = NEURON.CurrentObject, NeuronButtonEditor
 	local state = button.bar.handler:GetAttribute("fauxstate")
 	local buttonSpec = ((button.bar.data.multiSpec and specoveride) or 1)
-	local data = button.spedata[buttonSpec][state]
+	local data = button.DB[buttonSpec][state]
 
 	data.actionID = false
 	data.macro_Text = ""
