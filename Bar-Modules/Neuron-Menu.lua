@@ -26,10 +26,6 @@ local defaultBarOptions = {
 
 local menuElements = {}
 
-local configData = {
-    stored = false,
-}
-
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -184,27 +180,19 @@ end
 
 
 function NeuronMenuBar:LoadData(button, spec, state)
+
     local id = button.id
 
-    button.DB = DB.menubtn
-
-    if (button.DB) then
-
-        if (not button.DB[id]) then
-            button.DB[id] = {}
-        end
-
-        if (not button.DB[id].config) then
-            button.DB[id].config = CopyTable(configData)
-        end
-
-        if (not button.DB[id].data) then
-            button.DB[id].data = {}
-        end
-
-        button.config = button.DB [id].config
-        button.data = button.DB[id].data
+    if not DB.menubtn[id] then
+        DB.menubtn[id] = {}
     end
+
+    button.DB = DB.menubtn[id]
+
+    button.config = button.DB.config
+    button.keys = button.DB.keys
+    button.data = button.DB.data
+
 end
 
 

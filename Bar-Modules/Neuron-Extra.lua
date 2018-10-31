@@ -26,17 +26,6 @@ local defaultBarOptions = {
 	}
 }
 
-local configData = {
-	stored = false,
-}
-
-local keyData = {
-	hotKeys = ":",
-	hotKeyText = ":",
-	hotKeyLock = false,
-	hotKeyPri = true,
-}
-
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -199,32 +188,16 @@ function NeuronExtraBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = DB.extrabtn
-
-	if (button.DB) then
-
-		if (not button.DB[id]) then
-			button.DB[id] = {}
-		end
-
-		if (not button.DB[id].config) then
-			button.DB[id].config = CopyTable(configData)
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
-		if (not button.DB[id].data) then
-			button.DB[id].data = {}
-		end
-
-		button.config = button.DB [id].config
-
-		button.keys = button.DB[id].keys
-
-		button.data = button.DB[id].data
+	if not DB.extrabtn[id] then
+		DB.extrabtn[id] = {}
 	end
+
+	button.DB = DB.extrabtn[id]
+
+	button.config = button.DB.config
+	button.keys = button.DB.keys
+	button.data = button.DB.data
+
 end
 
 function NeuronExtraBar:SetObjectVisibility(button, show)

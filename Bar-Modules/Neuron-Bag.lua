@@ -27,10 +27,6 @@ local defaultBarOptions = {
 
 local bagElements = {}
 
-local configData = {
-    stored = false,
-}
-
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -195,26 +191,15 @@ function NeuronBagBar:LoadData(button, spec, state)
 
     local id = button.id
 
-    button.DB = DB.bagbtn
-
-    if (button.DB) then
-
-        if (not button.DB[id]) then
-            button.DB[id] = {}
-        end
-
-        if (not button.DB[id].config) then
-            button.DB[id].config = CopyTable(configData)
-        end
-
-        if (not button.DB[id].data) then
-            button.DB[id].data = {}
-        end
-
-        button.config = button.DB [id].config
-
-        button.data = button.DB[id].data
+    if not DB.bagbtn[id] then
+        DB.bagbtn[id] = {}
     end
+
+    button.DB = DB.bagbtn[id]
+
+    button.config = button.DB.config
+    button.keys = button.DB.keys
+    button.data = button.DB.data
 end
 
 function NeuronBagBar:SetObjectVisibility(button, show, hide)

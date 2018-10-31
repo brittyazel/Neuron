@@ -48,12 +48,9 @@ NeuronDefaults = {
         },
         extrabtn = {
             ['*'] = {
-                ['config'] = {},
+                ['config'] = {stored=false},
                 ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                [1] = {['**'] = {}, ['homestate'] = {}},
-                [2] = {['**'] = {}, ['homestate'] = {}},
-                [3] = {['**'] = {}, ['homestate'] = {}},
-                [4] = {['**'] = {}, ['homestate'] = {}},
+                ['data'] = {},
             }
         },
 
@@ -62,12 +59,9 @@ NeuronDefaults = {
         },
         exitbtn = {
             ['*'] = {
-                ['config'] = {},
+                ['config'] = {stored=false},
                 ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                [1] = {['**'] = {}, ['homestate'] = {}},
-                [2] = {['**'] = {}, ['homestate'] = {}},
-                [3] = {['**'] = {}, ['homestate'] = {}},
-                [4] = {['**'] = {}, ['homestate'] = {}},
+                ['data'] = {},
             }
         },
 
@@ -76,12 +70,9 @@ NeuronDefaults = {
         },
         bagbtn = {
             ['*'] = {
-                ['config'] = {},
+                ['config'] = {stored=false},
                 ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                [1] = {['**'] = {}, ['homestate'] = {}},
-                [2] = {['**'] = {}, ['homestate'] = {}},
-                [3] = {['**'] = {}, ['homestate'] = {}},
-                [4] = {['**'] = {}, ['homestate'] = {}},
+                ['data'] = {},
             }
         },
 
@@ -90,12 +81,9 @@ NeuronDefaults = {
         },
         zoneabilitybtn = {
             ['*'] = {
-                ['config'] = {},
+                ['config'] = {stored=false},
                 ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                [1] = {['**'] = {}, ['homestate'] = {}},
-                [2] = {['**'] = {}, ['homestate'] = {}},
-                [3] = {['**'] = {}, ['homestate'] = {}},
-                [4] = {['**'] = {}, ['homestate'] = {}},
+                ['data'] = {},
             }
         },
 
@@ -104,12 +92,9 @@ NeuronDefaults = {
         },
         menubtn = {
             ['*'] = {
-                ['config'] = {},
+                ['config'] = {stored=false},
                 ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                [1] = {['**'] = {}, ['homestate'] = {}},
-                [2] = {['**'] = {}, ['homestate'] = {}},
-                [3] = {['**'] = {}, ['homestate'] = {}},
-                [4] = {['**'] = {}, ['homestate'] = {}},
+                ['data'] = {},
             }
         },
 
@@ -118,12 +103,9 @@ NeuronDefaults = {
         },
         petbtn = {
             ['*'] = {
-                ['config'] = {},
+                ['config'] = {stored=false},
                 ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                [1] = {['**'] = {}, ['homestate'] = {}},
-                [2] = {['**'] = {}, ['homestate'] = {}},
-                [3] = {['**'] = {}, ['homestate'] = {}},
-                [4] = {['**'] = {}, ['homestate'] = {}},
+                ['data'] = {},
             }
         },
 
@@ -135,10 +117,6 @@ NeuronDefaults = {
                 ['config'] = {},
                 ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
                 ['data'] = {},
-                [1] = {['**'] = {}, ['homestate'] = {}},
-                [2] = {['**'] = {}, ['homestate'] = {}},
-                [3] = {['**'] = {}, ['homestate'] = {}},
-                [4] = {['**'] = {}, ['homestate'] = {}},
             }
         },
 
@@ -321,13 +299,6 @@ local genericButtonData = {
     VHitBox = 0,
 }
 
-local genericKeyData = {
-    hotKeys = ":",
-    hotKeyText = ":",
-    hotKeyLock = false,
-    hotKeyPri = false,
-}
-
 for k,v in pairs(genericButtonData) do
     NeuronDefaults.profile.buttons['*'].config[k] = v
     NeuronDefaults.profile.extrabtn['*'].config[k] = v
@@ -336,17 +307,6 @@ for k,v in pairs(genericButtonData) do
     NeuronDefaults.profile.zoneabilitybtn['*'].config[k] = v
     NeuronDefaults.profile.petbtn['*'].config[k] = v
     NeuronDefaults.profile.statusbtn['*'].config[k] = v
-    NeuronDefaults.profile.menubtn['*'].config[k] = v
-end
-
-for k,v in pairs(genericKeyData) do
-    NeuronDefaults.profile.buttons['*'].keys[k] = v
-    NeuronDefaults.profile.extrabtn['*'].keys[k] = v
-    NeuronDefaults.profile.exitbtn['*'].keys[k] = v
-    NeuronDefaults.profile.bagbtn['*'].keys[k] = v
-    NeuronDefaults.profile.zoneabilitybtn['*'].keys[k] = v
-    NeuronDefaults.profile.petbtn['*'].keys[k] = v
-    NeuronDefaults.profile.statusbtn['*'].keys[k] = v
     NeuronDefaults.profile.menubtn['*'].config[k] = v
 end
 
@@ -367,13 +327,6 @@ local genericStateData = {
 for k,v in pairs(genericStateData) do
     for i = 1,4 do
         NeuronDefaults.profile.buttons['*'][i]['**'][k] = v
-        NeuronDefaults.profile.extrabtn['*'][i]['**'][k] = v
-        NeuronDefaults.profile.exitbtn['*'][i]['**'][k] = v
-        NeuronDefaults.profile.bagbtn['*'][i]['**'][k] = v
-        NeuronDefaults.profile.zoneabilitybtn['*'][i]['**'][k] = v
-        NeuronDefaults.profile.petbtn['*'][i]['**'][k] = v
-        NeuronDefaults.profile.statusbtn['*'][i]['**'][k] = v
-        NeuronDefaults.profile.menubtn['*'].config[k] = v
     end
 end
 

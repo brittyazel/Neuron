@@ -28,19 +28,6 @@ local defaultBarOptions = {
 	}
 }
 
-local configData = {
-
-	stored = false,
-}
-
-local keyData = {
-
-	hotKeys = ":",
-	hotKeyText = ":",
-	hotKeyLock = false,
-	hotKeyPri = false,
-}
-
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -657,32 +644,15 @@ function NeuronPetBar:LoadData(button, spec, state)
 
 	local id = button.id
 
-	button.DB = DB.petbtn
-
-	if (button.DB and button.DB) then
-
-		if (not button.DB[id]) then
-			button.DB[id] = {}
-		end
-
-		if (not button.DB[id].config) then
-			button.DB[id].config = CopyTable(configData)
-		end
-
-		if (not button.DB[id].keys) then
-			button.DB[id].keys = CopyTable(keyData)
-		end
-
-		if (not button.DB[id].data) then
-			button.DB[id].data = {}
-		end
-
-		button.config = button.DB [id].config
-
-		button.keys = button.DB[id].keys
-
-		button.data = button.DB[id].data
+	if not DB.petbtn[id] then
+		DB.petbtn[id] = {}
 	end
+
+	button.DB = DB.petbtn[id]
+
+	button.config = button.DB.config
+	button.keys = button.DB.keys
+	button.data = button.DB.data
 end
 
 function NeuronPetBar:SetObjectVisibility(button, show, hide)

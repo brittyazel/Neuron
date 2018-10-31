@@ -1978,17 +1978,15 @@ function NeuronStatusBar:LoadData(button, spec, state)
 
     local id = button.id
 
-    if (DB.statusbtn) then
-
-        if (not DB.statusbtn[id]) then
-            DB.statusbtn[id] = {}
-        end
-
-
-        button.config = DB.statusbtn[id].config
-        button.data = DB.statusbtn[id].data
-
+    if not DB.statusbtn[id] then
+        DB.statusbtn[id] = {}
     end
+
+    button.DB = DB.statusbtn[id]
+
+    button.config = button.DB.config
+    button.keys = button.DB.keys
+    button.data = button.DB.data
 end
 
 

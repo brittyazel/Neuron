@@ -2765,10 +2765,8 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		end
 
 		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
-		if object.DB then
-			object.DB[id].config.class = class
-		elseif object.config then --this is for status bars who don't have a DB sub table, and instead have config right at the bar level
-			object.config.class = class
+		if object.DB.config then
+			object.DB.config.date = date("%m/%d/%y %H:%M:%S")
 		end
 
 		object:LoadAux(object)
@@ -3017,22 +3015,18 @@ end
 function NeuronButton:LoadData(button, spec, state)
 	local id = button.id
 
-	button.DB = DB.buttons
-
-	if (button.DB) then
-
-		if (not button.DB[id]) then
-			button.DB[id] = {}
-		end
-
-		button.config = button.DB[id].config
-		button.keys = button.DB[id].keys
-		button.spedata = button.DB[id]
-		button.statedata = button.spedata[spec]
-		button.data = button.statedata[state]
-
-		NeuronButton:BuildStateData(button)
+	if (not DB.buttons[id]) then
+		DB.buttons[id] = {}
 	end
+
+	button.DB = DB.buttons[id]
+
+	button.config = button.DB.config
+	button.keys = button.DB.keys
+	button.statedata = button.DB[spec] --all of the states for a given spec
+	button.data = button.statedata[state] --loads a single state of a single spec into button.data
+
+	NeuronButton:BuildStateData(button)
 end
 
 
@@ -3465,7 +3459,7 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 	end
 
 	for index, button in pairs(button_list) do
-		local cur_button = button.spedata
+		local cur_button = button.DB
 		local macro_update = false
 
 		for i = 1,2 do
