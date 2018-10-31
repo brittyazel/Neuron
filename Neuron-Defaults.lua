@@ -1,127 +1,6 @@
 
 ---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 
-NeuronDefaults = {
-    profile = {
-        throttle = 0.2,
-        timerLimit = 4,
-        snapToTol = 28,
-
-        blizzbar = false,
-
-
-        mouseOverMod= "NONE",
-
-        perCharBinds = false,
-        firstRun = true,
-
-        AutoWatch = 1,
-
-        extrabarFirstRun = true,
-        exitbarFirstRun = true,
-        zoneabilitybarFirstRun = true,
-        bagbarFirstRun = true,
-        menubarFirstRun = true,
-        petbarFirstRun = true,
-        statusbarFirstRun = true,
-
-        NeuronItemCache = {},
-
-        NeuronIcon = {hide = false,},
-
-        bars = {
-            ['*'] = {}
-        },
-        buttons = {
-            ['*'] = {
-                ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                [1] = {['**'] = {}, ['homestate'] = {}},
-                [2] = {['**'] = {}, ['homestate'] = {}},
-                [3] = {['**'] = {}, ['homestate'] = {}},
-                [4] = {['**'] = {}, ['homestate'] = {}},
-            }
-        },
-
-        extrabar = {
-            ['*'] = {}
-        },
-        extrabtn = {
-            ['*'] = {
-                ['config'] = {stored=false},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                ['data'] = {},
-            }
-        },
-
-        exitbar ={
-            ['*'] = {}
-        },
-        exitbtn = {
-            ['*'] = {
-                ['config'] = {stored=false},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                ['data'] = {},
-            }
-        },
-
-        bagbar = {
-            ['*'] = {}
-        },
-        bagbtn = {
-            ['*'] = {
-                ['config'] = {stored=false},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                ['data'] = {},
-            }
-        },
-
-        zoneabilitybar = {
-            ['*'] = {}
-        },
-        zoneabilitybtn = {
-            ['*'] = {
-                ['config'] = {stored=false},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                ['data'] = {},
-            }
-        },
-
-        menubar = {
-            ['*'] = {}
-        },
-        menubtn = {
-            ['*'] = {
-                ['config'] = {stored=false},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                ['data'] = {},
-            }
-        },
-
-        petbar = {
-            ['*'] = {}
-        },
-        petbtn = {
-            ['*'] = {
-                ['config'] = {stored=false},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                ['data'] = {},
-            }
-        },
-
-        statusbar = {
-            ['*'] = {}
-        },
-        statusbtn = {
-            ['*'] = {
-                ['config'] = {},
-                ['keys'] = {hotKeyLock = false, hotKeyPri = false, hotKeyText = ":", hotKeys = ":"},
-                ['data'] = {},
-            }
-        },
-
-    }
-}
 
 local genericBarData = {
     name = ":",
@@ -231,23 +110,8 @@ local genericBarData = {
     remap = false,
 }
 
-
-for k,v in pairs(genericBarData) do
-    NeuronDefaults.profile.bars['*'][k] = v
-    NeuronDefaults.profile.extrabar['*'][k] = v
-    NeuronDefaults.profile.exitbar['*'][k] = v
-    NeuronDefaults.profile.bagbar['*'][k] = v
-    NeuronDefaults.profile.zoneabilitybar['*'][k] = v
-    NeuronDefaults.profile.petbar['*'][k] = v
-    NeuronDefaults.profile.statusbar['*'][k] = v
-    NeuronDefaults.profile.menubar['*'][k] = v
-end
-
-
 local genericButtonData = {
     btnType = "macro",
-
-    class = ":",
 
     mouseAnchor = false,
     clickAnchor = false,
@@ -299,19 +163,8 @@ local genericButtonData = {
     VHitBox = 0,
 }
 
-for k,v in pairs(genericButtonData) do
-    NeuronDefaults.profile.buttons['*'].config[k] = v
-    NeuronDefaults.profile.extrabtn['*'].config[k] = v
-    NeuronDefaults.profile.exitbtn['*'].config[k] = v
-    NeuronDefaults.profile.bagbtn['*'].config[k] = v
-    NeuronDefaults.profile.zoneabilitybtn['*'].config[k] = v
-    NeuronDefaults.profile.petbtn['*'].config[k] = v
-    NeuronDefaults.profile.statusbtn['*'].config[k] = v
-    NeuronDefaults.profile.menubtn['*'].config[k] = v
-end
 
-
-local genericStateData = {
+local genericSpecData = {
     actionID = false,
 
     macro_Text = "",
@@ -324,15 +177,7 @@ local genericStateData = {
     macro_UseNote = false,
 }
 
-for k,v in pairs(genericStateData) do
-    for i = 1,4 do
-        NeuronDefaults.profile.buttons['*'][i]['**'][k] = v
-    end
-end
-
-
-
-local statusGenericButtonConfig = {
+local genericStatusBtnData= {
     sbType = "statusbar",
 
     width = 250,
@@ -374,16 +219,138 @@ local statusGenericButtonConfig = {
 
 }
 
-local statusGenericButtonData = {
-    unit = 2,
-    repID = 0,
-    repAuto = 0,
+local genericKeyData = {
+    hotKeyLock = false,
+    hotKeyPri = false,
+    hotKeyText = ":",
+    hotKeys = ":"
 }
 
-for k,v in pairs(statusGenericButtonConfig) do
-    NeuronDefaults.profile.statusbtn['*'].config[k] = v
-end
 
-for k,v in pairs(statusGenericButtonData) do
-    NeuronDefaults.profile.statusbtn['*'].data[k] = v
-end
+------------------------------------------------------------------------
+----------------------MAIN TABLE----------------------------------------
+------------------------------------------------------------------------
+
+NeuronDefaults = {
+    profile = {
+        throttle = 0.2,
+        timerLimit = 4,
+        snapToTol = 28,
+
+        blizzbar = false,
+
+
+        mouseOverMod= "NONE",
+
+        perCharBinds = false,
+        firstRun = true,
+
+        AutoWatch = 1,
+
+        extrabarFirstRun = true,
+        exitbarFirstRun = true,
+        zoneabilitybarFirstRun = true,
+        bagbarFirstRun = true,
+        menubarFirstRun = true,
+        petbarFirstRun = true,
+        statusbarFirstRun = true,
+
+        NeuronItemCache = {},
+
+        NeuronIcon = {hide = false,},
+
+        bars = {
+            ['*'] = CopyTable(genericBarData)
+        },
+        buttons = {
+            ['*'] = {
+                ['config'] = CopyTable(genericButtonData),
+                ['keys'] = CopyTable(genericKeyData),
+                [1] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+                [2] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+                [3] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+                [4] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+            }
+        },
+
+        extrabar = {
+            ['*'] = CopyTable(genericBarData)
+        },
+        extrabtn = {
+            ['*'] = {
+                ['config'] = CopyTable(genericButtonData),
+                ['keys'] = CopyTable(genericKeyData),
+                ['data'] = {},
+            }
+        },
+
+        exitbar ={
+            ['*'] = CopyTable(genericBarData)
+        },
+        exitbtn = {
+            ['*'] = {
+                ['config'] = CopyTable(genericButtonData),
+                ['keys'] = CopyTable(genericKeyData),
+                ['data'] = {},
+            }
+        },
+
+        bagbar = {
+            ['*'] = CopyTable(genericBarData)
+        },
+        bagbtn = {
+            ['*'] = {
+                ['config'] = CopyTable(genericButtonData),
+                ['keys'] = CopyTable(genericKeyData),
+                ['data'] = {},
+            }
+        },
+
+        zoneabilitybar = {
+            ['*'] = CopyTable(genericBarData)
+        },
+        zoneabilitybtn = {
+            ['*'] = {
+                ['config'] = CopyTable(genericButtonData),
+                ['keys'] = CopyTable(genericKeyData),
+                ['data'] = {},
+            }
+        },
+
+        menubar = {
+            ['*'] = CopyTable(genericBarData)
+        },
+        menubtn = {
+            ['*'] = {
+                ['config'] = CopyTable(genericButtonData),
+                ['keys'] = CopyTable(genericKeyData),
+                ['data'] = {},
+            }
+        },
+
+        petbar = {
+            ['*'] = CopyTable(genericBarData)
+        },
+        petbtn = {
+            ['*'] = {
+                ['config'] = CopyTable(genericButtonData),
+                ['keys'] = CopyTable(genericKeyData),
+                ['data'] = {},
+            }
+        },
+
+        statusbar = {
+            ['*'] = CopyTable(genericBarData)
+        },
+        statusbtn = {
+            ['*'] = {
+                ['config'] = CopyTable(genericStatusBtnData),
+                ['keys'] = CopyTable(genericKeyData),
+                ['data'] = {unit = 2, repID = 0, repAuto = 0,},
+            }
+        },
+
+    }
+}
+
+------------------------------------------------------------------------------
