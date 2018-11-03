@@ -896,7 +896,8 @@ function NeuronBar:CreateHandler(bar)
 					for state in gmatch(message, "[^;]+") do
 						for hidestate in gmatch(self:GetAttribute("hidestates"), "[^:]+") do
 							if (state == hidestate) then
-								self:Hide(); self:SetAttribute("vishide", true)
+								self:Hide()
+								self:SetAttribute("vishide", true)
 							end
 						end
 					end
@@ -1294,14 +1295,14 @@ end
 function NeuronBar:ACTIONBAR_SHOWGRID(bar, ...)
 	if (not InCombatLockdown() and bar:IsVisible()) then
 		bar:Hide()
-		bar.showgrid = true
+		bar.showGrid = true
 	end
 end
 
 function NeuronBar:ACTIONBAR_HIDEGRID(bar, ...)
-	if (not InCombatLockdown() and bar.showgrid) then
-		bar:Show()
-		bar.showgrid = nil
+	if (not InCombatLockdown() and bar.showGrid) then
+		bar:Show() -- hide?
+		bar.showGrid = false
 	end
 end
 

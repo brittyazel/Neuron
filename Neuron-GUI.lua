@@ -4035,23 +4035,7 @@ function NeuronGUI:ObjEditor_OnClick(editor, button)
 	end
 end
 
-function NeuronGUI:ObjEditor_ACTIONBAR_SHOWGRID(editor)
 
-	if (not InCombatLockdown() and editor:IsVisible()) then
-		editor:Hide()
-		editor.showgrid = true
-	end
-
-end
-
-function NeuronGUI:ObjEditor_ACTIONBAR_HIDEGRID(editor)
-
-	if (not InCombatLockdown() and editor.showgrid) then
-		editor:Show()
-		editor.showgrid = nil
-	end
-
-end
 
 function NeuronGUI:ObjEditor_OnEvent(editor, eventName, ...)
 
@@ -4080,8 +4064,6 @@ function NeuronGUI:ObjEditor_CreateEditFrame(button, index)
 	editor:SetScript("OnLeave", function(self) NeuronGUI:ObjEditor_OnLeave(self) end)
 	editor:SetScript("OnClick", function(self, button) NeuronGUI:ObjEditor_OnClick(self, button) end)
 	editor:SetScript("OnEvent", function(self, event, ...) NeuronGUI:ObjEditor_OnEvent(self, event, ...) end)
-	editor:RegisterEvent("ACTIONBAR_SHOWGRID")
-	editor:RegisterEvent("ACTIONBAR_HIDEGRID")
 
 	editor.type:SetText(L["Edit"])
 	editor.object = button

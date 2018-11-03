@@ -70,9 +70,9 @@ function NeuronPetBar:OnInitialize()
 		CDALPHA = true }, false, 65)
 
 
-    if DB.blizzbar == false then
-        NeuronPetBar:CreateBarsAndButtons()
-    end
+	if DB.blizzbar == false then
+		NeuronPetBar:CreateBarsAndButtons()
+	end
 
 end
 
@@ -100,7 +100,7 @@ end
 
 function NeuronPetBar:CreateBarsAndButtons()
 
-    if (DB.petbarFirstRun) then
+	if (DB.petbarFirstRun) then
 
 		for id, defaults in ipairs(defaultBarOptions) do
 
@@ -118,22 +118,22 @@ function NeuronPetBar:CreateBarsAndButtons()
 			end
 		end
 
-        DB.petbarFirstRun = false
+		DB.petbarFirstRun = false
 
-    else
+	else
 
-        for id,data in pairs(DB.petbar) do
-            if (data ~= nil) then
-                NEURON.NeuronBar:CreateNewBar("pet", id)
-            end
-        end
+		for id,data in pairs(DB.petbar) do
+			if (data ~= nil) then
+				NEURON.NeuronBar:CreateNewBar("pet", id)
+			end
+		end
 
-        for id,data in pairs(DB.petbtn) do
-            if (data ~= nil) then
-                NEURON.NeuronButton:CreateNewObject("pet", id)
-            end
-        end
-    end
+		for id,data in pairs(DB.petbtn) do
+			if (data ~= nil) then
+				NEURON.NeuronButton:CreateNewObject("pet", id)
+			end
+		end
+	end
 end
 
 
@@ -473,7 +473,7 @@ function NeuronPetBar:OnReceiveDrag(button)
 		button:SetChecked(0)
 		PickupPetAction(button.actionID)
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
-    end
+	end
 
 end
 
@@ -614,7 +614,7 @@ function NeuronPetBar:SetData(button, bar)
 	else
 		button.count:Hide()
 	end
-	
+
 	local down, up = "", ""
 
 	if (button.upClicks) then up = up.."AnyUp" end
@@ -655,17 +655,13 @@ function NeuronPetBar:LoadData(button, spec, state)
 	button.data = button.DB.data
 end
 
-function NeuronPetBar:SetObjectVisibility(button, show, hide)
+function NeuronPetBar:SetObjectVisibility(button, show)
 
-
-		button:SetAttribute("isshown", button.showGrid)
-		button:SetAttribute("showgrid", show)
-
-		if (show or button.showGrid) then
-			button:SetAlpha(1)
-		elseif not NeuronPetBar:HasPetAction(button.actionID) and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
-			--button:SetAlpha(0) --temporarilly disable Show/Hide grid on Pet bar
-		end
+	if (show or button.showGrid) then
+		button:SetAlpha(1)
+	elseif not NeuronPetBar:HasPetAction(button.actionID) and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
+		button:SetAlpha(0)
+	end
 
 end
 

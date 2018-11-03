@@ -1408,23 +1408,12 @@ end
 
 
 function NeuronButton:MACRO_ShowGrid(button)
-	if (not InCombatLockdown()) then
-		button:Show()
-	end
-
-	NeuronButton:MACRO_UpdateState(button)
+	NeuronButton:SetObjectVisibility(button, true)
 end
 
 
 function NeuronButton:MACRO_HideGrid(button)
-	if (not InCombatLockdown()) then
-
-		if not button.showGrid and not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
-			button:Hide()
-		end
-	end
-
-	NeuronButton:MACRO_UpdateState(button)
+	NeuronButton:SetObjectVisibility(button)
 end
 
 ------------------------------------------------------------------------------
@@ -1541,7 +1530,7 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 		spec = 1
 	end
 
-	button:Show()
+	--button:Show()
 
 	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
@@ -2249,6 +2238,11 @@ function NeuronButton:OnMouseDown()
 	if MacroDrag[1] then
 		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 		wipe(MacroDrag)
+
+		for index, bar in pairs(NEURON.BARIndex) do
+			NEURON.NeuronBar:UpdateObjectVisibility(bar)
+		end
+
 	end
 end
 
@@ -2845,7 +2839,7 @@ function NeuronButton:UpdateObjectSpec(bar)
 				spec = 1
 			end
 
-			bar:Show()
+			--bar:Show()
 
 			object:SetData(object, bar)
 			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
@@ -3068,17 +3062,12 @@ end
 
 ---TODO refactor this to NeuronButton
 function NeuronButton:SetObjectVisibility(button, show)
-	if (not InCombatLockdown()) then
-
-		button:SetAttribute("isshown", button.showGrid)
-		button:SetAttribute("showgrid", show)
 
 		if (show or button.showGrid) then
-			button:Show()
+			button:SetAlpha(1)
 		elseif not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
-			button:Hide()
+			button:SetAlpha(0)
 		end
-	end
 end
 
 
@@ -3199,7 +3188,7 @@ function NeuronButton:SetType(button, save, kill, init)
 
 						self:SetAttribute("SpecialAction", "vehicle")
 						self:SetAttribute("HasActionID", true)
-						self:Show()
+						self:SetAlpha(1)
 
 					elseif (msg:find("possess")) then
 						if (not self:GetAttribute(msg.."-actionID")) then
@@ -3211,7 +3200,7 @@ function NeuronButton:SetType(button, save, kill, init)
 
 						self:SetAttribute("SpecialAction", "possess")
 						self:SetAttribute("HasActionID", true)
-						self:Show()
+						self:SetAlpha(1)
 
 					elseif (msg:find("override")) then
 						if (not self:GetAttribute(msg.."-actionID")) then
@@ -3226,7 +3215,7 @@ function NeuronButton:SetType(button, save, kill, init)
 
 						self:SetAttribute("HasActionID", true)
 
-						self:Show()
+						self:SetAlpha(1)
 
 					else
 						if (not self:GetAttribute(msg.."-actionID")) then
@@ -3234,10 +3223,10 @@ function NeuronButton:SetType(button, save, kill, init)
 							self:SetAttribute("type", "macro")
 							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
 
-							if ((self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or (self:GetAttribute("showgrid"))) then
-								self:Show()
-							elseif (not self:GetAttribute("isshown")) then
-								self:Hide()
+							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self.showGrid then
+								self:SetAlpha(1)
+							else
+								--self:SetAlpha(0)
 							end
 
 							self:SetAttribute("HasActionID", false)
@@ -3280,7 +3269,7 @@ function NeuronButton:SetFauxState(button, state)
 
 			end
 
-			button:Show()
+			button:SetAlpha(1)
 		elseif (msg:find("possess")) then
 			if (not button:GetAttribute(msg.."-actionID")) then
 
@@ -3290,7 +3279,7 @@ function NeuronButton:SetFauxState(button, state)
 
 			end
 
-			button:Show()
+			button:SetAlpha(0)
 
 		elseif (msg:find("override")) then
 			if (not button:GetAttribute(msg.."-actionID")) then
@@ -3301,7 +3290,7 @@ function NeuronButton:SetFauxState(button, state)
 
 			end
 
-			button:Show()
+			button:SetAlpha(1)
 
 		else
 			if (not button:GetAttribute(msg.."-actionID")) then
@@ -3310,10 +3299,10 @@ function NeuronButton:SetFauxState(button, state)
 
 				button:SetAttribute("*macrotext*", button:GetAttribute(msg.."-macro_Text"))
 
-				if ((button:GetAttribute("*macrotext*") and #button:GetAttribute("*macrotext*") > 0) or (button:GetAttribute("showgrid"))) then
-					button:Show()
-				elseif (not button:GetAttribute("isshown")) then
-					button:Hide()
+				if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self.showGrid then
+					button:SetAlpha(1)
+				else
+					--button:SetAlpha(0)
 				end
 
 				button:SetAttribute("HasActionID", false)
