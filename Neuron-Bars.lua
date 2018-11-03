@@ -48,10 +48,6 @@ NEURON.BarShapes = {
 local barShapes = NEURON.BarShapes
 
 
-
-
-
-
 local defaultBarOptions = {
 	[1] = {
 		snapTo = false,
@@ -882,9 +878,6 @@ function NeuronBar:CreateHandler(bar)
 
 		end)
 
-	--handler:SetAttribute("_onshow", [[ control:ChildUpdate("onshow", "show") ]])
-
-	--handler:SetAttribute("_onhide", [[ control:ChildUpdate("onshow", "hide") ]])
 
 	handler:SetAttribute("_childupdate", [[
 
@@ -1052,13 +1045,13 @@ function NeuronBar:SetPosition(bar)
 end
 
 
+---Fakes a state change for a given bar, calls up the counterpart function in NeuronButton
 function NeuronBar:SetFauxState(bar, state)
 	local object
 
 	bar.objCount = 0
 	bar.handler:SetAttribute("fauxstate", state)
 
-	--for objID in gmatch(bar.data.objectList, "[^;]+") do
 	for i, objID in ipairs(bar.data.objectList) do
 
 		object = _G[bar.objPrefix..tostring(objID)]
@@ -1087,7 +1080,6 @@ function NeuronBar:LoadObjects(bar, init)
 	bar.objCount = 0
 
 
-	--for objID in gmatch(bar.data.objectList, "[^;]+") do
 	for i, objID in ipairs(bar.data.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
@@ -1122,7 +1114,6 @@ function NeuronBar:SetObjectLoc(bar)
 		rows = (round(ceil(count/bar.data.columns), 1)/2)+0.5
 	end
 
-	--for objID in gmatch(bar.data.objectList, "[^;]+") do
 	for i, objID in ipairs(bar.data.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
@@ -1203,7 +1194,6 @@ function NeuronBar:SetPerimeter(bar)
 	bar.objCount = 0
 	bar.top = nil; bar.bottom = nil; bar.left = nil; bar.right = nil
 
-	--for objID in gmatch(bar.data.objectList, "[^;]+") do
 	for i, objID in ipairs(bar.data.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
@@ -1679,7 +1669,6 @@ end
 function NeuronBar:UpdateObjectData(bar)
 	local object
 
-	--for objID in gmatch(bar.data.objectList, "[^;]+") do
 	for _, objID in pairs(bar.data.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 

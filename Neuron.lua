@@ -991,25 +991,21 @@ function NEURON:HideBlizzard()
 	if MultiBarBottomLeft then
 		MultiBarBottomLeft:Hide()
 		MultiBarBottomLeft:SetParent(UIHider)
-		NEURON:RawHookScript(MultiBarBottomLeft, "OnShow", function() end)
 	end
 
 	if MultiBarBottomRight then
 		MultiBarBottomRight:Hide()
 		MultiBarBottomRight:SetParent(UIHider)
-		NEURON:RawHookScript(MultiBarBottomRight, "OnShow", function() end)
 	end
 
 	if MultiBarLeft then
 		MultiBarLeft:Hide()
 		MultiBarLeft:SetParent(UIHider)
-		NEURON:RawHookScript(MultiBarLeft, "OnShow", function() end)
 	end
 
 	if MultiBarRight then
 		MultiBarRight:Hide()
 		MultiBarRight:SetParent(UIHider)
-		NEURON:RawHookScript(MultiBarRight, "OnShow", function() end)
 	end
 
 
@@ -1020,8 +1016,6 @@ function NEURON:HideBlizzard()
 	MainMenuBar:UnregisterEvent("DISPLAY_SIZE_CHANGED")
 	MainMenuBar:UnregisterEvent("UI_SCALE_CHANGED")
 
-	NEURON:RawHookScript(MainMenuBar, "OnShow", function() end)
-
 
 	MainMenuBarArtFrame:Hide()
 	MainMenuBarArtFrame:SetParent(UIHider)
@@ -1030,7 +1024,6 @@ function NEURON:HideBlizzard()
 	if MicroButtonAndBagsBar then
 		MicroButtonAndBagsBar:Hide()
 		MicroButtonAndBagsBar:SetParent(UIHider)
-		NEURON:RawHookScript(MicroButtonAndBagsBar, "OnShow", function() end)
 	end
 
 	if MainMenuExpBar then
@@ -1065,22 +1058,18 @@ function NEURON:HideBlizzard()
 	OverrideActionBar:UnregisterAllEvents()
 	OverrideActionBar:Hide()
 	OverrideActionBar:SetParent(UIHider)
-	NEURON:RawHookScript(OverrideActionBar, "OnShow", function() end)
 
 	StanceBarFrame:UnregisterAllEvents()
 	StanceBarFrame:Hide()
 	StanceBarFrame:SetParent(UIHider)
-	NEURON:RawHookScript(StanceBarFrame, "OnShow", function() end)
 
 	PossessBarFrame:UnregisterAllEvents()
 	PossessBarFrame:Hide()
 	PossessBarFrame:SetParent(UIHider)
-	NEURON:RawHookScript(PossessBarFrame, "OnShow", function() end)
 
 	PetActionBarFrame:UnregisterAllEvents()
 	PetActionBarFrame:Hide()
 	PetActionBarFrame:SetParent(UIHider)
-	NEURON:RawHookScript(PetActionBarFrame, "OnShow", function() end)
 
 
 end

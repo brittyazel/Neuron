@@ -2828,7 +2828,6 @@ end
 function NeuronButton:UpdateObjectSpec(bar)
 	local object, spec
 
-	--for objID in gmatch(bar.data.objectList, "[^;]+") do
 	for i, objID in ipairs(bar.data.objectList) do
 		object = _G[bar.objPrefix..tostring(objID)]
 
@@ -3259,63 +3258,76 @@ function NeuronButton:SetType(button, save, kill, init)
 end
 
 
+---This function is used to "fake" a state change in the button editor so you can see what each state will look like
 function NeuronButton:SetFauxState(button, state)
-	if (state)  then
+    if (state) then
 
-		local msg = (":"):split(state)
+        local msg = (":"):split(state)
 
-		if (msg:find("vehicle")) then
-			if (not button:GetAttribute(msg.."-actionID")) then
+        if (msg:find("vehicle")) then
 
-				button:SetAttribute("type", "action")
-				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
-				button:SetAttribute("HasActionID", true)
+            if (not button:GetAttribute(msg.."-actionID")) then
 
-			end
+                button:SetAttribute("type", "action")
+                button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
 
-			button:SetAlpha(1)
-		elseif (msg:find("possess")) then
-			if (not button:GetAttribute(msg.."-actionID")) then
+            end
 
-				button:SetAttribute("type", "action")
-				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
-				button:SetAttribute("HasActionID", true)
+            button:SetAttribute("SpecialAction", "vehicle")
+            button:SetAttribute("HasActionID", true)
+            button:SetAlpha(1)
 
-			end
+        elseif (msg:find("possess")) then
+            if (not button:GetAttribute(msg.."-actionID")) then
 
-			button:SetAlpha(0)
+                button:SetAttribute("type", "action")
+                button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
 
-		elseif (msg:find("override")) then
-			if (not button:GetAttribute(msg.."-actionID")) then
+            end
 
-				button:SetAttribute("type", "action")
-				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("overrideID_Offset"))
-				button:SetAttribute("HasActionID", true)
+            button:SetAttribute("SpecialAction", "possess")
+            button:SetAttribute("HasActionID", true)
+            button:SetAlpha(1)
 
-			end
+        elseif (msg:find("override")) then
+            if (not button:GetAttribute(msg.."-actionID")) then
 
-			button:SetAlpha(1)
+                button:SetAttribute("type", "action")
+                button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("overrideID_Offset"))
+                button:SetAttribute("HasActionID", true)
 
-		else
-			if (not button:GetAttribute(msg.."-actionID")) then
+            end
 
-				button:SetAttribute("type", "macro")
+            button:SetAttribute("SpecialAction", "override")
 
-				button:SetAttribute("*macrotext*", button:GetAttribute(msg.."-macro_Text"))
+            button:SetAttribute("HasActionID", true)
 
-				if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("showGrid") then
-					button:SetAlpha(1)
-				else
-					--button:SetAlpha(0)
-				end
+            button:SetAlpha(1)
 
-				button:SetAttribute("HasActionID", false)
-			else
-				button:SetAttribute("HasActionID", true)
-			end
-		end
-		button:SetAttribute("activestate", msg)
-	end
+        else
+            if (not button:GetAttribute(msg.."-actionID")) then
+
+                button:SetAttribute("type", "macro")
+                button:SetAttribute("*macrotext*", button:GetAttribute(msg.."-macro_Text"))
+
+                if (button:GetAttribute("*macrotext*") and #button:GetAttribute("*macrotext*") > 0) or button:GetAttribute("showGrid") then
+                    button:SetAlpha(1)
+                else
+                    button:SetAlpha(0)
+                end
+
+                button:SetAttribute("HasActionID", false)
+            else
+                button:SetAttribute("HasActionID", true)
+            end
+
+            button:SetAttribute("SpecialAction", nil)
+        end
+
+        button:SetAttribute("useparent-unit", nil)
+        button:SetAttribute("activestate", msg)
+
+    end
 end
 
 
@@ -3445,7 +3457,6 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 		end
 	else
 		local bar = NEURON.CurrentBar
-		--for index in gmatch(bar.data.objectList, "[^;]+") do
 		for i, objID in ipairs(bar.data.objectList) do
 			tinsert(button_list, _G["NeuronActionButton"..tostring(objID)])
 		end
