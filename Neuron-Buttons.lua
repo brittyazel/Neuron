@@ -3063,7 +3063,9 @@ end
 ---TODO refactor this to NeuronButton
 function NeuronButton:SetObjectVisibility(button, show)
 
-	button:SetAttribute("showGrid", button.showGrid)
+	if not InCombatLockdown() then
+		button:SetAttribute("showGrid", button.showGrid) --this is important because in our state switching code, we can't querry button.showGrid directly
+	end
 
 	if (show or button.showGrid) then
 		button:SetAlpha(1)
