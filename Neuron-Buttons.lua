@@ -3063,11 +3063,13 @@ end
 ---TODO refactor this to NeuronButton
 function NeuronButton:SetObjectVisibility(button, show)
 
-		if (show or button.showGrid) then
-			button:SetAlpha(1)
-		elseif not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
-			button:SetAlpha(0)
-		end
+	button:SetAttribute("showGrid", button.showGrid)
+
+	if (show or button.showGrid) then
+		button:SetAlpha(1)
+	elseif not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
+		button:SetAlpha(0)
+	end
 end
 
 
@@ -3223,10 +3225,10 @@ function NeuronButton:SetType(button, save, kill, init)
 							self:SetAttribute("type", "macro")
 							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
 
-							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self.showGrid then
+							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("showGrid") then
 								self:SetAlpha(1)
 							else
-								--self:SetAlpha(0)
+								self:SetAlpha(0)
 							end
 
 							self:SetAttribute("HasActionID", false)
@@ -3299,7 +3301,7 @@ function NeuronButton:SetFauxState(button, state)
 
 				button:SetAttribute("*macrotext*", button:GetAttribute(msg.."-macro_Text"))
 
-				if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self.showGrid then
+				if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("showGrid") then
 					button:SetAlpha(1)
 				else
 					--button:SetAlpha(0)

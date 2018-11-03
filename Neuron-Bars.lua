@@ -1293,17 +1293,17 @@ end
 ------------------------Event Handlers __-----------------------------
 ---TODO:I need to figure out what to do with this
 function NeuronBar:ACTIONBAR_SHOWGRID(bar, ...)
-	if (not InCombatLockdown() and bar:IsVisible()) then
+	--[[if (not InCombatLockdown() and bar:IsVisible()) then
 		bar:Hide()
 		bar.showGrid = true
-	end
+	end]]
 end
 
 function NeuronBar:ACTIONBAR_HIDEGRID(bar, ...)
-	if (not InCombatLockdown() and bar.showGrid) then
+	--[[if (not InCombatLockdown() and bar.showGrid) then
 		bar:Show() -- hide?
 		bar.showGrid = false
-	end
+	end]]
 end
 
 function NeuronBar:ACTIVE_TALENT_GROUP_CHANGED(bar, ...)
