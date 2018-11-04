@@ -262,7 +262,8 @@ function NeuronButton:AutoCastStart(shine, r, g, b)
 	end
 
 	for _,sparkle in pairs(shine.sparkles) do
-		sparkle:Show(); sparkle:SetVertexColor(r, g, b)
+		sparkle:Show()
+		sparkle:SetVertexColor(r, g, b)
 	end
 end
 
@@ -1237,7 +1238,6 @@ function NeuronButton:MACRO_UpdateAll(button, updateTexture)
 end
 
 
---local garrisonAbility = GetSpellInfo(161691):lower()
 function NeuronButton:MACRO_UpdateUsableSpell(button, spell)
 	local isUsable, notEnoughMana, alt_Name
 	local spellName = spell:lower()
@@ -1255,28 +1255,20 @@ function NeuronButton:MACRO_UpdateUsableSpell(button, spell)
 
 	if (notEnoughMana) then
 		button.iconframeicon:SetVertexColor(button.manacolor[1], button.manacolor[2], button.manacolor[3])
-		--button.iconframerange:SetVertexColor(button.manacolor[1], button.manacolor[2], button.manacolor[3], 0.5)
-		--button.iconframerange:Show()
 	elseif (isUsable) then
 		if (button.rangeInd and IsSpellInRange(spellName, button.unit) == 0) then
 			button.iconframeicon:SetVertexColor(button.rangecolor[1], button.rangecolor[2], button.rangecolor[3])
-			--button.iconframerange:SetVertexColor(button.rangecolor[1], button.rangecolor[2], button.rangecolor[3], 0.5)
-			--button.iconframerange:Show()
 		elseif sIndex[spellName] and (button.rangeInd and IsSpellInRange(sIndex[spellName].index,"spell", button.unit) == 0) then
 			button.iconframeicon:SetVertexColor(button.rangecolor[1], button.rangecolor[2], button.rangecolor[3])
 		else
 			button.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-			--button.iconframerange:Hide()
 		end
 
 	else
 		if (sIndex[(spell):lower()]) then
 			button.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
-			--button.iconframerange:SetVertexColor(0.4, 0.4, 0.4, 0.5)
-			--button.iconframerange:Show()
 		else
 			button.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-			--button.iconframerange:Hide()
 		end
 	end
 end
@@ -1529,8 +1521,6 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 	else
 		spec = 1
 	end
-
-	--button:Show()
 
 	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	NEURON.NeuronFlyouts:UpdateFlyout(button)
@@ -2837,8 +2827,6 @@ function NeuronButton:UpdateObjectSpec(bar)
 			else
 				spec = 1
 			end
-
-			--bar:Show()
 
 			object:SetData(object, bar)
 			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
