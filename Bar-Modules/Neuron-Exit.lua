@@ -50,7 +50,7 @@ function NeuronExitBar:OnInitialize()
 	EXITBTN.SetSkinned = NeuronExitBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1, false)
+	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1)
 
 	NEURON:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 		SHOWGRID = false,

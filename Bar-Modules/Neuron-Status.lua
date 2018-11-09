@@ -194,7 +194,7 @@ function NeuronStatusBar:OnInitialize()
     STATUS.SetSkinned = NeuronStatusBar.SetSkinned
     -------------------------------------------------
 
-    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, NeuronStatusBar, DB.statusbtn, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000, true)
+    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, NeuronStatusBar, DB.statusbtn, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000)
 
     NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
         SNAPTO = true,

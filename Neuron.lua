@@ -1256,17 +1256,16 @@ function NEURON:PrintBarTypes()
 	local data, index, high = {}, 1, 0
 
 	for k,v in pairs(NEURON.RegisteredBarData) do
-		if (v.barCreateMore) then
 
-			local barType;
-			index = tonumber(v.createMsg:match("%d+"))
-			barType = v.createMsg:gsub("%d+","")
+        local barType;
+        index = tonumber(v.createMsg:match("%d+"))
+        barType = v.createMsg:gsub("%d+","")
 
-			if (index and barType) then
-				data[index] = {k, barType}
-				if (index > high) then high = index end
-			end
-		end
+        if (index and barType) then
+            data[index] = {k, barType}
+            if (index > high) then high = index end
+        end
+
 	end
 
 	for i=1,high do if (not data[i]) then data[i] = 0 end end
@@ -1285,14 +1284,13 @@ function NEURON:PrintBarTypes()
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
-function NEURON:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objDB, objFrameType, objTemplate, objMetaTable, objMax, barCreateMore)
+function NEURON:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objDB, objFrameType, objTemplate, objMetaTable, objMax)
 
 	NEURON.ModuleIndex = NEURON.ModuleIndex + 1
 
 	NEURON.RegisteredBarData[class] = {
 		barType = barType,
 		barLabel = barLabel,
-		barCreateMore = barCreateMore,
 		barDB = barDB,
 		objTable = objTable, --this is all the buttons associated with a given bar
 		objDB = objDB,

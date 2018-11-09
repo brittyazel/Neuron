@@ -1196,19 +1196,6 @@ function NeuronGUI:CreateButton_OnLoad(button)
 end
 
 
---- Checks to see if a one only bar type has been deleted.  If so it will allow the bar
--- to be created
--- @param bar: type of bar being checked
--- @return allow : (boolean)
-function NeuronGUI:MissingBarCheck(bar)
-	local allow = true
-	if ((bar == "extrabar" and DB.extrabar[1]) or (bar == "zoneabilitybar" and DB.zoneabilitybar[1]))then
-		allow = false
-	end
-	return allow
-end
-
-
 function NeuronGUI:BarEditor_CreateNewBar(button)
 	if (button.type == "create") then
 
@@ -1216,9 +1203,8 @@ function NeuronGUI:BarEditor_CreateNewBar(button)
 
 		for class,info in pairs(NEURON.RegisteredBarData) do
 
-			if (info.barCreateMore or NeuronGUI:MissingBarCheck(class)) then
-				data[info.barLabel] = class
-			end
+			data[info.barLabel] = class
+
 		end
 
 		NeuronGUI:BarListScrollFrameUpdate(nil, data, true)

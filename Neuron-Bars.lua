@@ -92,7 +92,7 @@ function NeuronBar:OnInitialize()
 
 	DB = NEURON.db.profile
 
-	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000, true)
+	NEURON:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000)
 
 	NEURON:RegisterGUIOptions("bar", {
 		AUTOHIDE = true,
