@@ -3052,12 +3052,13 @@ function NeuronButton:SetObjectVisibility(button, show)
 
 	if not InCombatLockdown() then
 		button:SetAttribute("showGrid", button.showGrid) --this is important because in our state switching code, we can't querry button.showGrid directly
+		button:SetAttribute("isshown", show)
 	end
 
 	if (show or button.showGrid) then
-		button:SetAlpha(1)
+		button:Show()
 	elseif not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
-		button:SetAlpha(0)
+		button:Hide()
 	end
 end
 
@@ -3214,9 +3215,9 @@ function NeuronButton:SetType(button, save, kill, init)
 							self:SetAttribute("type", "macro")
 							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
 
-							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("showGrid") then
+							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("isshown") then
 								self:Show()
-							else
+							elseif (not self:GetAttribute("showGrid")) then
 								self:Hide()
 							end
 
@@ -3298,11 +3299,11 @@ function NeuronButton:SetFauxState(button, state)
                 button:SetAttribute("type", "macro")
                 button:SetAttribute("*macrotext*", button:GetAttribute(msg.."-macro_Text"))
 
-                if (button:GetAttribute("*macrotext*") and #button:GetAttribute("*macrotext*") > 0) or button:GetAttribute("showGrid") then
-                    button:Show()
-                else
-                    button:Hide()
-                end
+				if (button:GetAttribute("*macrotext*") and #button:GetAttribute("*macrotext*") > 0) or button:GetAttribute("isshown") then
+					button:Show()
+				elseif (not button:GetAttribute("showGrid")) then
+					button:Hide()
+				end
 
                 button:SetAttribute("HasActionID", false)
             else
