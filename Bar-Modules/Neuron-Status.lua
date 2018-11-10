@@ -378,7 +378,7 @@ function NeuronStatusBar:xpstrings_Update(button) --handles updating all the str
         percentXP = (currXP/nextXP)*100;
 
         bubbles = tostring(math.floor(currXP/(nextXP/20))).." / 20 "..L["Bubbles"]
-        percentXP = string.format("%.1f", (percentXP)).."%"
+        percentXP = string.format("%.2f", (percentXP)).."%"
 
 
         if (restedXP) then
