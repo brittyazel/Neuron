@@ -382,7 +382,7 @@ function NeuronStatusBar:xpstrings_Update(button) --handles updating all the str
 
 
         if (restedXP) then
-            restedXP = string.format("%.1f", (tostring(restedXP/nextXP))).." "..L["Levels"]
+            restedXP = string.format("%.2f", (tostring(restedXP/nextXP))).." "..L["Levels"]
         else
             restedXP = "0".." "..L["Levels"]
         end
@@ -412,7 +412,7 @@ function NeuronStatusBar:xpstrings_Update(button) --handles updating all the str
             rank = tostring(0).." "..L["Points"]
         end
 
-        percentXP = string.format("%.1f", percentXP).."%"; --format
+        percentXP = string.format("%.2f", percentXP).."%"; --format
 
 
         --honor points option
@@ -427,7 +427,7 @@ function NeuronStatusBar:xpstrings_Update(button) --handles updating all the str
 
 
         bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
-        percentXP = string.format("%.1f", percentXP).."%"; --format
+        percentXP = string.format("%.2f", percentXP).."%"; --format
 
 
         rank = L["Level"] .. " " .. tostring(UnitHonorLevel("player"))
