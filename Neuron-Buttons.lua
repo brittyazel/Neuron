@@ -3330,7 +3330,7 @@ function NeuronButton:AutoWriteMacro(button, spell)
 
 	if (bar.data.mouseOverCast and DB.mouseOverMod ~= "NONE" ) then
 		modKey = DB.mouseOverMod; modifier = modifier.."[@mouseover,mod:"..modKey.."]"
-	elseif (bar.data.mouseOverCast and NeuroDB.mouseOverMod == "NONE" ) then
+	elseif (bar.data.mouseOverCast and DB.mouseOverMod == "NONE" ) then
 		modifier = modifier.."[@mouseover,exists]"
 	end
 
