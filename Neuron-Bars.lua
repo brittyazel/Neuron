@@ -657,9 +657,9 @@ function NeuronBar:CreateDriver(bar)
 
 	driver:HookScript("OnAttributeChanged",
 
-		function(self,name,value)
+			function(self,name,value)
 
-		end)
+			end)
 
 	driver:SetAllPoints(bar)
 
@@ -874,9 +874,9 @@ function NeuronBar:CreateHandler(bar)
 
 	handler:HookScript("OnAttributeChanged",
 
-		function(self,name,value)
+			function(self,name,value)
 
-		end)
+			end)
 
 
 	handler:SetAttribute("_childupdate", [[
@@ -1741,9 +1741,9 @@ function NeuronBar:CreateBar(index, class, id)
 		bar:SetWidth(375)
 		bar:SetHeight(40)
 		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-			tile = true, tileSize = 16, edgeSize = 12,
-			insets = {left = 4, right = 4, top = 4, bottom = 4}})
+						 edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+						 tile = true, tileSize = 16, edgeSize = 12,
+						 insets = {left = 4, right = 4, top = 4, bottom = 4}})
 		bar:SetBackdropColor(0,0,0,0.4)
 		bar:SetBackdropBorderColor(0,0,0,0)
 		bar:SetFrameLevel(2)

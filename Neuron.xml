@@ -49,9 +49,9 @@
 			<CheckButton name="$parentKeyBind" parentKey="keybind" inherits="SecureActionButtonTemplate">
 				<Scripts>
 					<OnLoad>
-							self:RegisterForClicks("AnyUp, AnyDown")
-							self:RegisterEvent("ADDON_LOADED")
-							self.config = {	clickAnchor = true, mouseoverAnchor = true }
+						self:RegisterForClicks("AnyUp, AnyDown")
+						self:RegisterEvent("ADDON_LOADED")
+						self.config = {	clickAnchor = true, mouseoverAnchor = true }
 					</OnLoad>
 					<OnEvent>
 
@@ -270,11 +270,11 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-									self:SetFrameLevel(3)
-									self.button = self:GetParent():GetParent()
+								self:SetFrameLevel(3)
+								self.button = self:GetParent():GetParent()
 							</OnLoad>
 							<OnHide>
-									self.active = nil
+								self.active = nil
 							</OnHide>
 						</Scripts>
 					</Cooldown>
@@ -296,31 +296,31 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-									self:SetFrameLevel(3)
-									self.button = self:GetParent():GetParent()
-									self.alphafade = true
+								self:SetFrameLevel(3)
+								self.button = self:GetParent():GetParent()
+								self.alphafade = true
 							</OnLoad>
 							<OnHide>
-									self.active = nil
+								self.active = nil
 							</OnHide>
 						</Scripts>
 					</Cooldown>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							self:SetFrameLevel(2)
+						self:SetFrameLevel(2)
 
-							local icon = _G[self:GetName().."Icon"]
-							icon.filler = _G[self:GetName().."Filler"]
+						local icon = _G[self:GetName().."Icon"]
+						icon.filler = _G[self:GetName().."Filler"]
 
-							if (icon and icon.filler) then
+						if (icon and icon.filler) then
 
-								icon.oShow = icon.Show
-								icon.oHide = icon.Hide
+						icon.oShow = icon.Show
+						icon.oHide = icon.Hide
 
-								icon.Show = function(self) self.filler:Show() self:oShow() end
-								icon.Hide = function(self) self.filler:Hide() self:oHide() end
-							end
+						icon.Show = function(self) self.filler:Show() self:oShow() end
+						icon.Hide = function(self) self.filler:Hide() self:oHide() end
+						end
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -529,30 +529,30 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
-									self:SetFrameLevel(3)
-									self.button = self:GetParent():GetParent()
+								self:SetFrameLevel(3)
+								self.button = self:GetParent():GetParent()
 							</OnLoad>
 							<OnHide>
-									self.active = nil
+								self.active = nil
 							</OnHide>
 						</Scripts>
 					</Cooldown>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							self:SetFrameLevel(2)
+						self:SetFrameLevel(2)
 
-							local icon = _G[self:GetName().."Icon"]
-							icon.filler = _G[self:GetName().."Filler"]
+						local icon = _G[self:GetName().."Icon"]
+						icon.filler = _G[self:GetName().."Filler"]
 
-							if (icon and icon.filler) then
+						if (icon and icon.filler) then
 
-								icon.oShow = icon.Show
-								icon.oHide = icon.Hide
+						icon.oShow = icon.Show
+						icon.oHide = icon.Hide
 
-								icon.Show = function(self) self.filler:Show() self:oShow() end
-								icon.Hide = function(self) self.filler:Hide() self:oHide() end
-							end
+						icon.Show = function(self) self.filler:Show() self:oShow() end
+						icon.Hide = function(self) self.filler:Hide() self:oHide() end
+						end
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -593,7 +593,7 @@
 		<Size x="36" y="36"/>
 		<Scripts>
 			<OnLoad>
-					self:SetFrameLevel(2)
+				self:SetFrameLevel(2)
 			</OnLoad>
 		</Scripts>
 		<NormalTexture name="$parentIcon" parentKey="icon">

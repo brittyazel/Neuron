@@ -238,15 +238,15 @@ function NeuronBagBar:SetType(button, save)
 
     if (bagElements[button.id]) then
 
-		if button.id == 5 then --this corrects for some large ass margins on the main backpack button
-			button:SetWidth(bagElements[button.id]:GetWidth()-5)
-			button:SetHeight(bagElements[button.id]:GetHeight()-5)
-		else
-			button:SetWidth(bagElements[button.id]:GetWidth()+3)
-			button:SetHeight(bagElements[button.id]:GetHeight()+3)
-		end
+        if button.id == 5 then --this corrects for some large ass margins on the main backpack button
+            button:SetWidth(bagElements[button.id]:GetWidth()-5)
+            button:SetHeight(bagElements[button.id]:GetHeight()-5)
+        else
+            button:SetWidth(bagElements[button.id]:GetWidth()+3)
+            button:SetHeight(bagElements[button.id]:GetHeight()+3)
+        end
 
-		button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
+        button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
 
         button.element = bagElements[button.id]
 
@@ -263,7 +263,7 @@ function NeuronBagBar:SetType(button, save)
         button.element:SetPoint("CENTER", button, "CENTER")
         button.element:SetScale(1)
 
-		button:SetSkinned(button)
-	end
+        button:SetSkinned(button)
+    end
 end
 

@@ -33,54 +33,54 @@
 		</HighlightTexture>
 		<Scripts>
 			<OnLoad>
-					self:SetBackdropColor(0, 0, 0)
-					self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+				self:SetBackdropColor(0, 0, 0)
+				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnClick>
-					local text = self.text:GetText()
-					local parent = self:GetParent()
-					local parentparent = self:GetParent():GetParent()
-					local edit = parentparent.edit
+				local text = self.text:GetText()
+				local parent = self:GetParent()
+				local parentparent = self:GetParent():GetParent()
+				local edit = parentparent.edit
 
-					if (text) then
+				if (text) then
 
-						if (parentparent:GetObjectType() == "EditBox") then
+				if (parentparent:GetObjectType() == "EditBox") then
 
-							parentparent:SetText("")
-							parentparent:SetText(text)
-							parentparent:SetFocus()
-							parentparent:ClearFocus()
+				parentparent:SetText("")
+				parentparent:SetText(text)
+				parentparent:SetFocus()
+				parentparent:ClearFocus()
 
-							if (self.value) then
-								parentparent.value = self.value
-							end
+				if (self.value) then
+				parentparent.value = self.value
+				end
 
-						elseif (edit and self.value) then
+				elseif (edit and self.value) then
 
-							Neuron:Print("hit2")
+				Neuron:Print("hit2")
 
-							edit:SetText("")
-							edit:SetText(self.value)
+				edit:SetText("")
+				edit:SetText(self.value)
 
-						elseif (edit) then
+				elseif (edit) then
 
-							Neuron:Print("hit3")
+				Neuron:Print("hit3")
 
-							edit:SetText("")
-							edit:SetText(text)
-						end
-					end
+				edit:SetText("")
+				edit:SetText(text)
+				end
+				end
 
-					parent:Hide()
+				parent:Hide()
 			</OnClick>
 			<OnEnter>
-					if (self.tooltip) then
-						GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-						GameTooltip:SetText(self.tooltip)
-					end
+				if (self.tooltip) then
+				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+				GameTooltip:SetText(self.tooltip)
+				end
 			</OnEnter>
 			<OnLeave>
-					GameTooltip:Hide()
+				GameTooltip:Hide()
 			</OnLeave>
 		</Scripts>
 		<ButtonText name="$parentText" inherits="GameFontHighlight" justifyH="CENTER" parentKey="text">
@@ -224,11 +224,11 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									self.elapsed = 0
-									self:RegisterForClicks("AnyUp","AnyDown")
+								self.elapsed = 0
+								self:RegisterForClicks("AnyUp","AnyDown")
 							</OnLoad>
 							<OnClick>
-									Neuron.NeuronGUI:NeuronAdjustOption_AddOnClick(self, button, down)
+								Neuron.NeuronGUI:NeuronAdjustOption_AddOnClick(self, button, down)
 							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\Neuron\Images\AdjustOptionRight-Up"/>
@@ -244,11 +244,11 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									self.elapsed = 0
-									self:RegisterForClicks("AnyUp","AnyDown")
+								self.elapsed = 0
+								self:RegisterForClicks("AnyUp","AnyDown")
 							</OnLoad>
 							<OnClick>
-									Neuron.NeuronGUI:NeuronAdjustOption_SubOnClick(self, button, down)
+								Neuron.NeuronGUI:NeuronAdjustOption_SubOnClick(self, button, down)
 							</OnClick>
 						</Scripts>
 						<NormalTexture file="Interface\AddOns\Neuron\Images\AdjustOptionLeft-Up"/>
@@ -264,9 +264,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									--Neuron.SubFrameBlankBackdrop_OnLoad(self)
-									self:SetBackdropColor(0, 0, 0, 0)
-									self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+								--Neuron.SubFrameBlankBackdrop_OnLoad(self)
+								self:SetBackdropColor(0, 0, 0, 0)
+								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
 							<OnTabPressed>
 								self.hasfocus = nil
@@ -309,9 +309,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									--Neuron.NeuronGUI:SubFrameBlankBackdrop_OnLoad(self)
-									self:SetBackdropColor(0, 0, 0, 0)
-									self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
+								--Neuron.NeuronGUI:SubFrameBlankBackdrop_OnLoad(self)
+								self:SetBackdropColor(0, 0, 0, 0)
+								self:SetBackdropBorderColor(0.3, 0.3, 0.3, 0)
 							</OnLoad>
 						</Scripts>
 					</EditBox>
@@ -320,10 +320,10 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					self.method1.add:Show()
-					self.method1.sub:Show()
-					self.method1.edit:SetBackdropBorderColor(1, 0.82, 0, 1)
-					self.shown = true
+				self.method1.add:Show()
+				self.method1.sub:Show()
+				self.method1.edit:SetBackdropBorderColor(1, 0.82, 0, 1)
+				self.shown = true
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -345,22 +345,22 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-							self:GetParent().show = nil
-							self:GetParent().popup.timer = 0;
-							if (self:GetParent().popup:IsVisible()) then
-								self:GetParent().popup:Hide()
-							else
-								if (self:GetParent().popup.data) then
-									self:GetParent().popup:Show()
-								end
-							end
-							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+						self:GetParent().show = nil
+						self:GetParent().popup.timer = 0;
+						if (self:GetParent().popup:IsVisible()) then
+						self:GetParent().popup:Hide()
+						else
+						if (self:GetParent().popup.data) then
+						self:GetParent().popup:Show()
+						end
+						end
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 					</OnClick>
 					<OnEnter>
-							self:GetParent():SetBackdropBorderColor(1, 0.82, 0, 1)
+						self:GetParent():SetBackdropBorderColor(1, 0.82, 0, 1)
 					</OnEnter>
 					<OnLeave>
-							self:GetParent():SetBackdropBorderColor(0, 0, 0, 0)
+						self:GetParent():SetBackdropBorderColor(0, 0, 0, 0)
 					</OnLeave>
 				</Scripts>
 			</Button>
@@ -383,35 +383,35 @@
 				</Backdrop>
 				<Scripts>
 					<OnLoad>
-							self.timer = 0
-							self.options = {}
-							self:RegisterEvent("ADDON_LOADED")
-							self:SetBackdropColor(0, 0, 0)
-							self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
-							self:Hide()
+						self.timer = 0
+						self.options = {}
+						self:RegisterEvent("ADDON_LOADED")
+						self:SetBackdropColor(0, 0, 0)
+						self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+						self:Hide()
 					</OnLoad>
 					<OnShow>
-							self.timer = 0
+						self.timer = 0
 					</OnShow>
 					<OnHide>
-							self:GetParent().click = nil
+						self:GetParent().click = nil
 					</OnHide>
 					<OnUpdate>
-							self.timer = self.timer + elapsed
-							if (self:IsVisible() and self.timer > 5) then
-								if (not self:IsMouseOver()) then
-									self:Hide()
-								end
-							end
+						self.timer = self.timer + elapsed
+						if (self:IsVisible() and self.timer > 5) then
+						if (not self:IsMouseOver()) then
+						self:Hide()
+						end
+						end
 					</OnUpdate>
 				</Scripts>
 			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					self:RegisterEvent("PLAYER_LOGIN")
-					self:SetBackdropColor(0, 0, 0)
-					self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+				self:RegisterEvent("PLAYER_LOGIN")
+				self:SetBackdropColor(0, 0, 0)
+				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnTabPressed>
 				self:ClearFocus()
@@ -469,25 +469,25 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							self:RegisterEvent("ADDON_LOADED")
+						self:RegisterEvent("ADDON_LOADED")
 					</OnLoad>
 					<OnEvent>
-							if (... == "Neuron") then
-								self:SetWidth(self:GetParent():GetHeight())
-								self:SetHeight(self:GetParent():GetHeight())
-							end
+						if (... == "Neuron") then
+						self:SetWidth(self:GetParent():GetHeight())
+						self:SetHeight(self:GetParent():GetHeight())
+						end
 					</OnEvent>
 					<OnClick>
-							self:GetParent().show = nil
-							self:GetParent().popup.timer = 0;
-							if (self:GetParent().popup:IsVisible()) then
-								self:GetParent().popup:Hide()
-							else
-								if (self:GetParent().popup.data) then
-									self:GetParent().popup:Show()
-								end
-							end
-							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+						self:GetParent().show = nil
+						self:GetParent().popup.timer = 0;
+						if (self:GetParent().popup:IsVisible()) then
+						self:GetParent().popup:Hide()
+						else
+						if (self:GetParent().popup.data) then
+						self:GetParent().popup:Show()
+						end
+						end
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 					</OnClick>
 				</Scripts>
 				<NormalTexture name="$parentNormalTexture" file="Interface\AddOns\Neuron\Images\UI-Panel-ExpandButton-Up"/>
@@ -514,35 +514,35 @@
 				</Backdrop>
 				<Scripts>
 					<OnLoad>
-							self.timer = 0
-							self.options = {}
-							self:RegisterEvent("ADDON_LOADED")
-							self:SetBackdropColor(0, 0, 0)
-							self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
-							self:Hide()
+						self.timer = 0
+						self.options = {}
+						self:RegisterEvent("ADDON_LOADED")
+						self:SetBackdropColor(0, 0, 0)
+						self:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+						self:Hide()
 					</OnLoad>
 					<OnShow>
-							self.timer = 0
+						self.timer = 0
 					</OnShow>
 					<OnHide>
-							self:GetParent().click = nil
+						self:GetParent().click = nil
 					</OnHide>
 					<OnUpdate>
-							self.timer = self.timer + elapsed
-							if (self:IsVisible() and self.timer > 5) then
-								if (not self:IsMouseOver()) then
-									self:Hide()
-								end
-							end
+						self.timer = self.timer + elapsed
+						if (self:IsVisible() and self.timer > 5) then
+						if (not self:IsMouseOver()) then
+						self:Hide()
+						end
+						end
 					</OnUpdate>
 				</Scripts>
 			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					self:RegisterEvent("PLAYER_LOGIN")
-					self:SetBackdropColor(0, 0, 0, 0)
-					self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+				self:RegisterEvent("PLAYER_LOGIN")
+				self:SetBackdropColor(0, 0, 0, 0)
+				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnTabPressed>
 				self:ClearFocus()
@@ -582,24 +582,24 @@
 		</Layers>
 		<Scripts>
 			<OnClick>
-					if ( self:GetChecked() ) then
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-					else
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-					end
+				if ( self:GetChecked() ) then
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+				else
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+				end
 			</OnClick>
 			<OnEnter>
-					if ( self.tooltipText ) then
-						GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-						GameTooltip:SetText(self.tooltipText)
-					end
-					if ( self.tooltipRequirement ) then
-						GameTooltip:AddLine(self.tooltipRequirement)
-					end
-					GameTooltip:Show();
+				if ( self.tooltipText ) then
+				GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+				GameTooltip:SetText(self.tooltipText)
+				end
+				if ( self.tooltipRequirement ) then
+				GameTooltip:AddLine(self.tooltipRequirement)
+				end
+				GameTooltip:Show();
 			</OnEnter>
 			<OnLeave>
-					GameTooltip:Hide();
+				GameTooltip:Hide();
 			</OnLeave>
 		</Scripts>
 		<NormalTexture file="Interface\Addons\Neuron\Images\RoundCheckBox.tga"/>
@@ -777,19 +777,19 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-					self:GetNormalTexture():SetVertexColor(0,0,0,1)
+				self:GetNormalTexture():SetVertexColor(0,0,0,1)
 			</OnLoad>
 			<OnEnter>
-					self.left:SetTexture(1, 0.82, 0, 1)
-					self.right:SetTexture(1, 0.82, 0, 1)
-					self.top:SetTexture(1, 0.82, 0, 1)
-					self.bottom:SetTexture(1, 0.82, 0, 1)
+				self.left:SetTexture(1, 0.82, 0, 1)
+				self.right:SetTexture(1, 0.82, 0, 1)
+				self.top:SetTexture(1, 0.82, 0, 1)
+				self.bottom:SetTexture(1, 0.82, 0, 1)
 			</OnEnter>
 			<OnLeave>
-					self.left:SetTexture(0.5, 0.5, 0.5, 1)
-					self.right:SetTexture(0.5, 0.5, 0.5, 1)
-					self.top:SetTexture(0.5, 0.5, 0.5, 1)
-					self.bottom:SetTexture(0.5, 0.5, 0.5, 1)
+				self.left:SetTexture(0.5, 0.5, 0.5, 1)
+				self.right:SetTexture(0.5, 0.5, 0.5, 1)
+				self.top:SetTexture(0.5, 0.5, 0.5, 1)
+				self.bottom:SetTexture(0.5, 0.5, 0.5, 1)
 			</OnLeave>
 		</Scripts>
 		<NormalTexture name="$parentNormalTexture" drawLayer="ARTWORK" file="Interface\ChatFrame\ChatFrameColorSwatch">
@@ -819,17 +819,17 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-					if ( self.tooltipText ) then
-						GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-						GameTooltip:SetText(self.tooltipText)
-					end
-					if ( self.tooltipRequirement ) then
-						GameTooltip:AddLine(self.tooltipRequirement)
-					end
-					GameTooltip:Show();
+				if ( self.tooltipText ) then
+				GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+				GameTooltip:SetText(self.tooltipText)
+				end
+				if ( self.tooltipRequirement ) then
+				GameTooltip:AddLine(self.tooltipRequirement)
+				end
+				GameTooltip:Show();
 			</OnEnter>
 			<OnLeave>
-					GameTooltip:Hide();
+				GameTooltip:Hide();
 			</OnLeave>
 		</Scripts>
 		<NormalTexture file="Interface\AddOns\Neuron\Images\UI-Panel-Button-Up">
@@ -879,16 +879,16 @@
 		<DisabledFont inherits="GameFontDisableSmall"/>
 		<Scripts>
 			<OnLoad>
-					self:SetBackdropBorderColor(0.35, 0.35, 0.35, 1)
-					self:SetBackdropColor(0.7,0.7,0.7,1)
+				self:SetBackdropBorderColor(0.35, 0.35, 0.35, 1)
+				self:SetBackdropColor(0.7,0.7,0.7,1)
 			</OnLoad>
 			<OnEnter>
-					self:SetBackdropColor(1,1,1,1)
+				self:SetBackdropColor(1,1,1,1)
 			</OnEnter>
 			<OnLeave>
-					if (not self.selected) then
-						self:SetBackdropColor(0.7,0.7,0.7,1)
-					end
+				if (not self.selected) then
+				self:SetBackdropColor(0.7,0.7,0.7,1)
+				end
 			</OnLeave>
 		</Scripts>
 	</CheckButton>
@@ -985,18 +985,18 @@
 		</HighlightTexture>
 		<Scripts>
 			<OnLoad>
-					self:GetNormalTexture():SetVertexColor(0.7,0.7,0.7)
-					self:SetBackdropColor(0, 0, 0)
-					self:SetBackdropBorderColor(0.5, 0.5, 0.5)
+				self:GetNormalTexture():SetVertexColor(0.7,0.7,0.7)
+				self:SetBackdropColor(0, 0, 0)
+				self:SetBackdropBorderColor(0.5, 0.5, 0.5)
 			</OnLoad>
 			<OnEnter>
-					if (self.tooltip) then
-						GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-						GameTooltip:SetText(self.tooltip)
-					end
+				if (self.tooltip) then
+				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+				GameTooltip:SetText(self.tooltip)
+				end
 			</OnEnter>
 			<OnLeave>
-					GameTooltip:Hide()
+				GameTooltip:Hide()
 			</OnLeave>
 		</Scripts>
 	</CheckButton>
@@ -1031,19 +1031,19 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-					self.elapsed = 0
-					self.click = false
-					self:RegisterForClicks("AnyUp")
+				self.elapsed = 0
+				self.click = false
+				self:RegisterForClicks("AnyUp")
 			</OnLoad>
 			<OnClick>
-					if (self.onclick_func) then
-						self.onclick_func(self, button, down)
-					end
+				if (self.onclick_func) then
+				self.onclick_func(self, button, down)
+				end
 			</OnClick>
 			<OnUpdate>
-					if (self.onupdate_func) then
-						self.onupdate_func(self, elapsed)
-					end
+				if (self.onupdate_func) then
+				self.onupdate_func(self, elapsed)
+				end
 			</OnUpdate>
 		</Scripts>
 		<NormalTexture name="$parentIcon" drawLayer="ARTWORK" parentKey="icon">
@@ -1094,24 +1094,24 @@
 		</Frames>
 		<Scripts>
 			<OnClick>
-					if ( self:GetChecked() ) then
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-					else
-						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-					end
+				if ( self:GetChecked() ) then
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+				else
+				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+				end
 			</OnClick>
 			<OnEnter>
-					if ( self.tooltipText ) then
-						GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-						GameTooltip:SetText(self.tooltipText)
-					end
-					if ( self.tooltipRequirement ) then
-						GameTooltip:AddLine(self.tooltipRequirement)
-					end
-					GameTooltip:Show();
+				if ( self.tooltipText ) then
+				GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+				GameTooltip:SetText(self.tooltipText)
+				end
+				if ( self.tooltipRequirement ) then
+				GameTooltip:AddLine(self.tooltipRequirement)
+				end
+				GameTooltip:Show();
 			</OnEnter>
 			<OnLeave>
-					GameTooltip:Hide();
+				GameTooltip:Hide();
 			</OnLeave>
 		</Scripts>
 		<NormalTexture file="Interface\Addons\Neuron\Images\RoundCheckBox.tga"/>
@@ -1127,20 +1127,20 @@
 	<ScrollFrame name="NeuronScrollFrameTemplate1" toplevel="true"  inherits="UIPanelScrollFrameTemplate" virtual="true">
 		<Scripts>
 			<OnLoad>
-					self.offset = 0
-					self.scrollbar = _G[self:GetName().."ScrollBar"]
-					self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
-					self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
-					self.thumbtexture = _G[self.scrollbar:GetName().."ThumbTexture"]
+				self.offset = 0
+				self.scrollbar = _G[self:GetName().."ScrollBar"]
+				self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
+				self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
+				self.thumbtexture = _G[self.scrollbar:GetName().."ThumbTexture"]
 
-					self.scrollbar:ClearAllPoints()
-					self.scrollbar:SetPoint("TOPLEFT", self, "TOPRIGHT", -18, -10)
-					self.scrollbar:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", -18, 8)
+				self.scrollbar:ClearAllPoints()
+				self.scrollbar:SetPoint("TOPLEFT", self, "TOPRIGHT", -18, -10)
+				self.scrollbar:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", -18, 8)
 
-					self.scrollbarup:SetPoint("BOTTOM", self.scrollbar, "TOP", 0, -4)
-					self.scrollbardown:SetPoint("TOP", self.scrollbar, "BOTTOM", 0, 4)
+				self.scrollbarup:SetPoint("BOTTOM", self.scrollbar, "TOP", 0, -4)
+				self.scrollbardown:SetPoint("TOP", self.scrollbar, "BOTTOM", 0, 4)
 
-					self.parent = self:GetParent()
+				self.parent = self:GetParent()
 			</OnLoad>
 			<OnScrollRangeChanged>
 				ScrollFrame_OnScrollRangeChanged(self, yrange)
@@ -1149,18 +1149,18 @@
 				self.scrollbar:SetValue(offset)
 				local min, max = self.scrollbar:GetMinMaxValues()
 				if ( offset == 0 ) then
-					self.scrollbarup:Disable()
+				self.scrollbarup:Disable()
 				else
-					self.scrollbarup:Enable()
+				self.scrollbarup:Enable()
 				end
 				if ((self.scrollbar:GetValue() - max) == 0) then
-					self.scrollbardown:Disable()
+				self.scrollbardown:Disable()
 				else
-					self.scrollbardown:Enable()
+				self.scrollbardown:Enable()
 				end
 			</OnVerticalScroll>
 			<OnMouseWheel>
-					ScrollFrameTemplate_OnMouseWheel(self, delta)
+				ScrollFrameTemplate_OnMouseWheel(self, delta)
 			</OnMouseWheel>
 		</Scripts>
 	</ScrollFrame>
@@ -1181,10 +1181,10 @@
 						self:ClearFocus()
 					</OnTabPressed>
 					<OnHide>
-							self:ClearFocus()
+						self:ClearFocus()
 					</OnHide>
 					<OnUpdate>
-							ScrollingEdit_OnUpdate(self, elapsed, self:GetParent())
+						ScrollingEdit_OnUpdate(self, elapsed, self:GetParent())
 					</OnUpdate>
 				</Scripts>
 				<FontString inherits="GameFontHighlight"/>
@@ -1192,16 +1192,16 @@
 		</ScrollChild>
 		<Scripts>
 			<OnLoad>
-					self.scrollbar = _G[self:GetName().."ScrollBar"]
-					self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
-					self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
+				self.scrollbar = _G[self:GetName().."ScrollBar"]
+				self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
+				self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
 
-					self.scrollbar:ClearAllPoints()
-					self.scrollbar:SetPoint("TOPLEFT", self, "TOPRIGHT", -18, -10)
-					self.scrollbar:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", -18, 8)
+				self.scrollbar:ClearAllPoints()
+				self.scrollbar:SetPoint("TOPLEFT", self, "TOPRIGHT", -18, -10)
+				self.scrollbar:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", -18, 8)
 
-					self.scrollbarup:SetPoint("BOTTOM", self.scrollbar, "TOP", 0, -4)
-					self.scrollbardown:SetPoint("TOP", self.scrollbar, "BOTTOM", 0, 4)
+				self.scrollbarup:SetPoint("BOTTOM", self.scrollbar, "TOP", 0, -4)
+				self.scrollbardown:SetPoint("TOP", self.scrollbar, "BOTTOM", 0, 4)
 			</OnLoad>
 		</Scripts>
 	</ScrollFrame>
@@ -1221,13 +1221,13 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron.NeuronGUI:MainMenu_OnLoad(self)
+				Neuron.NeuronGUI:MainMenu_OnLoad(self)
 			</OnLoad>
 			<OnDragStart>
-					self:StartMoving()
+				self:StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-					self:StopMovingOrSizing()
+				self:StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</Frame>
@@ -1271,16 +1271,16 @@
 							</Frame>
 							<Scripts>
 								<OnShow>
-										--self:SetValue(0)
+									--self:SetValue(0)
 								</OnShow>
 							</Scripts>
 						</ScrollChild>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:BarListScrollFrame_OnLoad(self)
+								Neuron.NeuronGUI:BarListScrollFrame_OnLoad(self)
 							</OnLoad>
 							<OnShow>
-									Neuron.NeuronGUI:BarListScrollFrameUpdate(self)
+								Neuron.NeuronGUI:BarListScrollFrameUpdate(self)
 							</OnShow>
 							<OnVerticalScroll>
 								FauxScrollFrame_OnVerticalScroll(self, offset, 2, Neuron.BarListScrollFrameUpdate)
@@ -1290,7 +1290,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:BarList_OnLoad(self)
+						Neuron.NeuronGUI:BarList_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1316,7 +1316,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:BarOptions_OnLoad(self)
+								Neuron.NeuronGUI:BarOptions_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -1335,7 +1335,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:AdjustableOptions_OnLoad(self)
+								Neuron.NeuronGUI:AdjustableOptions_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -1351,7 +1351,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:VisiualOptions_OnLoad(self)
+								Neuron.NeuronGUI:VisiualOptions_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -1370,10 +1370,10 @@
 						</Frames>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:BarEditorColorPicker_OnLoad(self)
+								Neuron.NeuronGUI:BarEditorColorPicker_OnLoad(self)
 							</OnLoad>
 							<OnShow>
-									Neuron.NeuronGUI:BarEditorColorPicker_OnShow(self)
+								Neuron.NeuronGUI:BarEditorColorPicker_OnShow(self)
 							</OnShow>
 						</Scripts>
 					</Frame>
@@ -1447,7 +1447,7 @@
 										</Anchors>
 										<Scripts>
 											<OnLoad>
-													Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+												Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -1484,16 +1484,16 @@
 													</Frame>
 													<Scripts>
 														<OnShow>
-																--self:SetValue(0)
+															--self:SetValue(0)
 														</OnShow>
 													</Scripts>
 												</ScrollChild>
 												<Scripts>
 													<OnLoad>
-															Neuron.NeuronGUI:SecondaryPresetsScrollFrame_OnLoad(self)
+														Neuron.NeuronGUI:SecondaryPresetsScrollFrame_OnLoad(self)
 													</OnLoad>
 													<OnShow>
-															Neuron.NeuronGUI:SecondaryPresetsScrollFrameUpdate(self)
+														Neuron.NeuronGUI:SecondaryPresetsScrollFrameUpdate(self)
 													</OnShow>
 													<OnVerticalScroll>
 														FauxScrollFrame_OnVerticalScroll(self, offset, 18, Neuron.SecondaryPresetsScrollFrameUpdate)
@@ -1504,7 +1504,7 @@
 
 										<Scripts>
 											<OnLoad>
-													Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+												Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 											</OnLoad>
 										</Scripts>
 									</Frame>
@@ -1557,7 +1557,7 @@
 						</Frames>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:ActionEditor_OnLoad(self)
+								Neuron.NeuronGUI:ActionEditor_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -1593,16 +1593,16 @@
 									</Frame>
 									<Scripts>
 										<OnShow>
-												--self:SetValue(0)
+											--self:SetValue(0)
 										</OnShow>
 									</Scripts>
 								</ScrollChild>
 								<Scripts>
 									<OnLoad>
-											Neuron.NeuronGUI:VisEditorScrollFrame_OnLoad(self)
+										Neuron.NeuronGUI:VisEditorScrollFrame_OnLoad(self)
 									</OnLoad>
 									<OnShow>
-											Neuron.NeuronGUI:VisEditorScrollFrameUpdate(self)
+										Neuron.NeuronGUI:VisEditorScrollFrameUpdate(self)
 									</OnShow>
 									<OnVerticalScroll>
 										FauxScrollFrame_OnVerticalScroll(self, offset, 18, Neuron.VisEditorScrollFrameUpdate)
@@ -1612,7 +1612,7 @@
 						</Frames>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:VisEditor_OnLoad(self)
+								Neuron.NeuronGUI:VisEditor_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -1628,14 +1628,14 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:StateList_OnLoad(self)
+								Neuron.NeuronGUI:StateList_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:BarStates_OnLoad(self)
+						Neuron.NeuronGUI:BarStates_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1693,16 +1693,16 @@
 									</Frame>
 									<Scripts>
 										<OnShow>
-												--self:SetValue(0)
+											--self:SetValue(0)
 										</OnShow>
 									</Scripts>
 								</ScrollChild>
 								<Scripts>
 									<OnLoad>
-											--Neuron.BarGroupScrollFrame_OnLoad(self)
+										--Neuron.BarGroupScrollFrame_OnLoad(self)
 									</OnLoad>
 									<OnShow>
-											--Neuron.BarGroupScrollFrameUpdate()
+										--Neuron.BarGroupScrollFrameUpdate()
 									</OnShow>
 									<OnVerticalScroll>
 										--FauxScrollFrame_OnVerticalScroll(self, offset, 2, Neuron.BarGroupScrollFrameUpdate)
@@ -1712,14 +1712,14 @@
 						</Frames>
 						<Scripts>
 							<OnLoad>
-									--Neuron.BarGroup_OnLoad(self)
+								--Neuron.BarGroup_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:TargetOptions_OnLoad(self)
+						Neuron.NeuronGUI:TargetOptions_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1736,10 +1736,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:CreateButton_OnLoad(self)
+						Neuron.NeuronGUI:CreateButton_OnLoad(self)
 					</OnLoad>
 					<OnClick>
-							Neuron.NeuronGUI:BarEditor_CreateNewBar(self)
+						Neuron.NeuronGUI:BarEditor_CreateNewBar(self)
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -1753,10 +1753,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:DeleteButton_OnLoad(self)
+						Neuron.NeuronGUI:DeleteButton_OnLoad(self)
 					</OnLoad>
 					<OnClick>
-							Neuron.NeuronGUI:BarEditor_DeleteBar(self)
+						Neuron.NeuronGUI:BarEditor_DeleteBar(self)
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -1789,10 +1789,10 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:ConfirmYes_OnLoad(self)
+								Neuron.NeuronGUI:ConfirmYes_OnLoad(self)
 							</OnLoad>
 							<OnClick>
-									Neuron.NeuronGUI:BarEditor_ConfirmYes(self)
+								Neuron.NeuronGUI:BarEditor_ConfirmYes(self)
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -1805,17 +1805,17 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:ConfirmNo_OnLoad(self)
+								Neuron.NeuronGUI:ConfirmNo_OnLoad(self)
 							</OnLoad>
 							<OnClick>
-									Neuron.NeuronGUI:BarEditor_ConfirmNo(self)
+								Neuron.NeuronGUI:BarEditor_ConfirmNo(self)
 							</OnClick>
 						</Scripts>
 					</Button>
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:Confirm_OnLoad(self)
+						Neuron.NeuronGUI:Confirm_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1829,10 +1829,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							self.button = "close"
+						self.button = "close"
 					</OnLoad>
 					<OnClick>
-							self:GetParent():Hide()
+						self:GetParent():Hide()
 					</OnClick>
 				</Scripts>
 				<NormalTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
@@ -1842,13 +1842,13 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron.NeuronGUI:BarEditor_OnLoad(self)
+				Neuron.NeuronGUI:BarEditor_OnLoad(self)
 			</OnLoad>
 			<OnDragStart>
-					self:StartMoving()
+				self:StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-					self:StopMovingOrSizing()
+				self:StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</Frame>
@@ -1870,10 +1870,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							self.button = "close"
+						self.button = "close"
 					</OnLoad>
 					<OnClick>
-							self:GetParent():Hide()
+						self:GetParent():Hide()
 					</OnClick>
 				</Scripts>
 				<NormalTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
@@ -1883,19 +1883,19 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron.NeuronGUI:ObjectEditor_OnLoad(self)
+				Neuron.NeuronGUI:ObjectEditor_OnLoad(self)
 			</OnLoad>
 			<OnShow>
-					Neuron.NeuronGUI:ObjectEditor_OnShow(self)
+				Neuron.NeuronGUI:ObjectEditor_OnShow(self)
 			</OnShow>
 			<OnHide>
-					Neuron.NeuronGUI:ObjectEditor_OnHide(self)
+				Neuron.NeuronGUI:ObjectEditor_OnHide(self)
 			</OnHide>
 			<OnDragStart>
-					self:StartMoving()
+				self:StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-					self:StopMovingOrSizing()
+				self:StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</Frame>
@@ -1953,16 +1953,16 @@
 							</Frame>
 							<Scripts>
 								<OnShow>
-										--self:SetValue(0)
+									--self:SetValue(0)
 								</OnShow>
 							</Scripts>
 						</ScrollChild>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:ActionListScrollFrame_OnLoad(self)
+								Neuron.NeuronGUI:ActionListScrollFrame_OnLoad(self)
 							</OnLoad>
 							<OnShow>
-									Neuron.NeuronGUI:ActionListScrollFrameUpdate(self)
+								Neuron.NeuronGUI:ActionListScrollFrameUpdate(self)
 							</OnShow>
 							<OnVerticalScroll>
 								FauxScrollFrame_OnVerticalScroll(self, offset, 2, Neuron.NeuronGUI:ActionListScrollFrameUpdate(self))
@@ -1972,7 +1972,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:ActionList_OnLoad(self)
+						Neuron.NeuronGUI:ActionList_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1998,7 +1998,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-									Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+								Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -2011,10 +2011,10 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-									self:GetParent():Hide()
+								self:GetParent():Hide()
 							</OnClick>
 							<OnHide>
-									Neuron.NeuronGUI:ButtonEditorIconList_ResetCustom(self:GetParent():GetParent())
+								Neuron.NeuronGUI:ButtonEditorIconList_ResetCustom(self:GetParent():GetParent())
 							</OnHide>
 						</Scripts>
 						<NormalTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
@@ -2035,17 +2035,17 @@
 					</Frame>
 					<Scripts>
 						<OnShow>
-								--self:SetValue(0)
+							--self:SetValue(0)
 						</OnShow>
 					</Scripts>
 				</ScrollChild>
 				<Scripts>
 					<OnLoad>
-							self.offset = 0
-							self.scrollbar = _G[self:GetName().."ScrollBar"]
-							self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
-							self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
-							self.parent = self:GetParent()
+						self.offset = 0
+						self.scrollbar = _G[self:GetName().."ScrollBar"]
+						self.scrollbarup = _G[self.scrollbar:GetName().."ScrollUpButton"]
+						self.scrollbardown = _G[self.scrollbar:GetName().."ScrollDownButton"]
+						self.parent = self:GetParent()
 					</OnLoad>
 					<OnVerticalScroll>
 						FauxScrollFrame_OnVerticalScroll(self, offset, 1, Neuron.NeuronGUI:MacroIconListUpdate(self))
@@ -2055,19 +2055,19 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					C_Timer.After(1, function() Neuron.NeuronGUI:ButtonEditor_OnLoad(self) Neuron.NeuronGUI:FlyoutOptions_OnLoad(self) end)
+				C_Timer.After(1, function() Neuron.NeuronGUI:ButtonEditor_OnLoad(self) Neuron.NeuronGUI:FlyoutOptions_OnLoad(self) end)
 			</OnLoad>
 			<OnShow>
-					Neuron.NeuronGUI:ButtonEditor_OnShow(self)
+				Neuron.NeuronGUI:ButtonEditor_OnShow(self)
 			</OnShow>
 			<OnHide>
-					Neuron.NeuronGUI:ButtonEditor_OnHide(self)
+				Neuron.NeuronGUI:ButtonEditor_OnHide(self)
 			</OnHide>
 			<OnDragStart>
-					self:GetParent():StartMoving()
+				self:GetParent():StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-					self:GetParent():StopMovingOrSizing()
+				self:GetParent():StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</Frame>
@@ -2108,7 +2108,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+						Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 					</OnLoad>
 					<OnValueChanged>
 						if (NeuronColorPicker.opacityFunc) then
@@ -2145,7 +2145,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+						Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 					</OnLoad>
 					<OnTabPressed>
 						self:GetParent().greenvalue:SetFocus()
@@ -2178,7 +2178,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+						Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 					</OnLoad>
 					<OnTabPressed>
 						self:GetParent().bluevalue:SetFocus()
@@ -2211,7 +2211,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+						Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 					</OnLoad>
 					<OnTabPressed>
 						self:GetParent().hexvalue:SetFocus()
@@ -2244,7 +2244,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+						Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 					</OnLoad>
 					<OnTextChanged>
 						self:SetText((self:GetText()):gsub("%X", ""):upper())
@@ -2292,7 +2292,7 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
+						Neuron.NeuronGUI:SubFrameBlackBackdrop_OnLoad(self)
 					</OnLoad>
 					<OnTabPressed>
 						local value = self:GetText()
@@ -2319,19 +2319,19 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							self.parent = self:GetParent()
+						self.parent = self:GetParent()
 					</OnLoad>
 					<OnClick>
-							PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
-							if (self.parent.frame) then
+						PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+						if (self.parent.frame) then
 
-								if (self.parent.frame.updateFunc) then
-									self.parent.frame.updateFunc(self.parent.frame)
-								end
+						if (self.parent.frame.updateFunc) then
+						self.parent.frame.updateFunc(self.parent.frame)
+						end
 
-								self.parent.frame:Hide()
+						self.parent.frame:Hide()
 
-							end
+						end
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -2344,26 +2344,26 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							self.parent = self:GetParent()
+						self.parent = self:GetParent()
 					</OnLoad>
 					<OnClick>
-							PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
-							if (self.parent.frame) then
-								self.parent.frame:Hide()
-							end
+						PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
+						if (self.parent.frame) then
+						self.parent.frame:Hide()
+						end
 					</OnClick>
 				</Scripts>
 			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron.NeuronGUI:ColorPicker_OnLoad(self)
+				Neuron.NeuronGUI:ColorPicker_OnLoad(self)
 			</OnLoad>
 			<OnShow>
-					Neuron.NeuronGUI:ColorPicker_OnShow(self)
+				Neuron.NeuronGUI:ColorPicker_OnShow(self)
 			</OnShow>
 			<OnColorSelect>
-					Neuron.NeuronGUI:ColorPicker_OnColorSelect(self, r, g, b)
+				Neuron.NeuronGUI:ColorPicker_OnColorSelect(self, r, g, b)
 			</OnColorSelect>
 		</Scripts>
 	</ColorSelect>
@@ -2385,7 +2385,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:SB_EditorTypes_OnLoad(self)
+						Neuron.NeuronGUI:SB_EditorTypes_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -2403,26 +2403,26 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-							Neuron.NeuronGUI:SB_AdjustableOptions_OnLoad(self)
+						Neuron.NeuronGUI:SB_AdjustableOptions_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
 		</Frames>
 		<Scripts>
 			<OnLoad>
-					Neuron.NeuronGUI:StatusBarEditor_OnLoad(self)
+				Neuron.NeuronGUI:StatusBarEditor_OnLoad(self)
 			</OnLoad>
 			<OnShow>
-					Neuron.NeuronGUI:StatusBarEditor_OnShow(self)
+				Neuron.NeuronGUI:StatusBarEditor_OnShow(self)
 			</OnShow>
 			<OnHide>
-					Neuron.NeuronGUI:StatusBarEditor_OnHide(self)
+				Neuron.NeuronGUI:StatusBarEditor_OnHide(self)
 			</OnHide>
 			<OnDragStart>
-					self:GetParent():StartMoving()
+				self:GetParent():StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-					self:GetParent():StopMovingOrSizing()
+				self:GetParent():StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
 	</Frame>

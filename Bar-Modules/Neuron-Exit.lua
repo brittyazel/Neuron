@@ -53,17 +53,17 @@ function NeuronExitBar:OnInitialize()
 	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1)
 
 	NEURON:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
-		SHOWGRID = false,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		HIDDEN = true,
-		LOCKBAR = true,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true }, false, 65)
+										   SHOWGRID = false,
+										   SNAPTO = true,
+										   UPCLICKS = true,
+										   DOWNCLICKS = true,
+										   HIDDEN = true,
+										   LOCKBAR = true,
+										   TOOLTIPS = true,
+										   BINDTEXT = true,
+										   RANGEIND = true,
+										   CDTEXT = true,
+										   CDALPHA = true }, false, 65)
 
 
 	NeuronExitBar:CreateBarsAndButtons()

@@ -279,7 +279,7 @@ end
 --- OnEnter Event handler
 function NeuronBinder:OnEnter(binder)
 
-    local button = binder.button
+	local button = binder.button
 
 	local name = binder.bindType:gsub("^%l", string.upper).. " " .. button.id --default to "button #" in the case that a button is empty
 
@@ -303,10 +303,10 @@ function NeuronBinder:OnEnter(binder)
 	GameTooltip:SetOwner(binder, "ANCHOR_RIGHT")
 
 	GameTooltip:ClearLines()
-    GameTooltip:SetText("Neuron", 1.0, 1.0, 1.0)
+	GameTooltip:SetText("Neuron", 1.0, 1.0, 1.0)
 	GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffffff" .. name  .. "|r")
 	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffffff" .. NeuronBinder:GetBindkeyList(button) .. "|r")
-    GameTooltip:AddLine(" ")
+	GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(L["Keybind_Tooltip_3"])
 	GameTooltip:AddLine(L["Keybind_Tooltip_4"])
 	GameTooltip:AddLine(L["Keybind_Tooltip_5"])
@@ -318,7 +318,7 @@ end
 --- OnLeave Event handler
 function NeuronBinder:OnLeave(binder)
 	binder.select:Hide()
-    GameTooltip:Hide()
+	GameTooltip:Hide()
 end
 
 

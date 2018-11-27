@@ -1027,66 +1027,66 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 		button:SetScript("OnClick",
 
-			function(self)
+				function(self)
 
-				local button
+					local button
 
-				for i=1,numShown do
+					for i=1,numShown do
 
-					button = _G["NeuronBarEditorBarListScrollFrameButton"..i]
+						button = _G["NeuronBarEditorBarListScrollFrameButton"..i]
 
-					if (i == self:GetID()) then
+						if (i == self:GetID()) then
 
-						if (self.alt) then
+							if (self.alt) then
 
-							if (self.bar) then
+								if (self.bar) then
 
-								NEURON.NeuronBar:CreateNewBar(self.bar)
+									NEURON.NeuronBar:CreateNewBar(self.bar)
 
-								NeuronBarEditorCreate:Click()
+									NeuronBarEditorCreate:Click()
+								end
+
+								self.alt = nil
+
+							elseif (self.bar) then
+
+								NEURON.NeuronBar:ChangeBar(self.bar)
+
+								if (NBE and NBE:IsVisible()) then
+									NeuronGUI:UpdateBarGUI()
+								end
+
 							end
-
-							self.alt = nil
-
-						elseif (self.bar) then
-
-							NEURON.NeuronBar:ChangeBar(self.bar)
-
-							if (NBE and NBE:IsVisible()) then
-								NeuronGUI:UpdateBarGUI()
-							end
-
+						else
+							button:SetChecked(nil)
 						end
-					else
-						button:SetChecked(nil)
+
 					end
 
-				end
-
-			end)
+				end)
 
 		button:SetScript("OnEnter",
-			function(self)
-				if (self.alt) then
+				function(self)
+					if (self.alt) then
 
-				elseif (self.bar) then
-					NEURON.NeuronBar:OnEnter(self.bar)
-				end
-			end)
+					elseif (self.bar) then
+						NEURON.NeuronBar:OnEnter(self.bar)
+					end
+				end)
 
 		button:SetScript("OnLeave",
-			function(self)
-				if (self.alt) then
+				function(self)
+					if (self.alt) then
 
-				elseif (self.bar) then
-					NEURON.NeuronBar:OnLeave(self.bar)
-				end
-			end)
+					elseif (self.bar) then
+						NEURON.NeuronBar:OnLeave(self.bar)
+					end
+				end)
 
 		button:SetScript("OnShow",
-			function(self)
-				self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
-			end)
+				function(self)
+					self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
+				end)
 
 		button.name = button:CreateFontString(button:GetName().."Index", "ARTWORK", "GameFontNormalSmall")
 		button.name:SetPoint("TOPLEFT", button, "TOPLEFT", 5, 0)
@@ -1943,9 +1943,9 @@ function NeuronGUI:VisEditorScrollFrame_OnLoad(frame)
 
 
 		button:SetScript("OnShow",
-			function(self)
-				self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
-			end)
+				function(self)
+					self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
+				end)
 
 
 		button:SetWidth(18)
@@ -2093,9 +2093,9 @@ function NeuronGUI:SecondaryPresetsScrollFrame_OnLoad(frame)
 
 
 		button:SetScript("OnShow",
-			function(self)
-				self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
-			end)
+				function(self)
+					self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
+				end)
 
 		--f = CreateFrame("CheckButton", nil, frame.visscroll, "NeuronOptionsCheckButtonTemplate")
 		--f:SetID(index)
@@ -2315,56 +2315,56 @@ function NeuronGUI:ActionListScrollFrame_OnLoad(frame)
 
 		button:SetScript("OnClick",
 
-			function(self)
+				function(self)
 
-				NeuronButtonEditor.macroedit.edit:ClearFocus()
+					NeuronButtonEditor.macroedit.edit:ClearFocus()
 
-				local button
+					local button
 
-				for i=1,numShown do
+					for i=1,numShown do
 
-					button = _G["NeuronBarEditorBarListScrollFrameButton"..i]
+						button = _G["NeuronBarEditorBarListScrollFrameButton"..i]
 
-					if (i == self:GetID()) then
+						if (i == self:GetID()) then
 
-						if (self.bar) then
-							NEURON.NeuronBar:SetFauxState(self.bar, self.state)
+							if (self.bar) then
+								NEURON.NeuronBar:SetFauxState(self.bar, self.state)
+							end
+
+						else
+							button:SetChecked(nil)
 						end
 
-					else
-						button:SetChecked(nil)
 					end
 
-				end
-
-			end)
+				end)
 
 		button:SetScript("OnEnter",
-			function(self)
+				function(self)
 
-			end)
+				end)
 
 		button:SetScript("OnLeave",
-			function(self)
+				function(self)
 
-			end)
+				end)
 
 		button:SetScript("OnShow",
-			function(self)
-				self.elapsed = 0; self.setheight = true
-			end)
+				function(self)
+					self.elapsed = 0; self.setheight = true
+				end)
 
 		button:SetScript("OnUpdate",
 
-			function(self,elapsed)
+				function(self,elapsed)
 
-				self.elapsed = self.elapsed + elapsed
+					self.elapsed = self.elapsed + elapsed
 
-				if (self.setheight and self.elapsed > 0.03) then
-					self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
-					self.setheight = nil
-				end
-			end)
+					if (self.setheight and self.elapsed > 0.03) then
+						self:SetHeight((self.frame:GetHeight()-10)/self.numShown)
+						self.setheight = nil
+					end
+				end)
 
 		button.name = button:CreateFontString(button:GetName().."Index", "ARTWORK", "GameFontNormalSmall")
 		button.name:SetPoint("TOPLEFT", button, "TOPLEFT", 5, 0)

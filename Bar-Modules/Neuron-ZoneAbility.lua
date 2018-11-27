@@ -66,18 +66,18 @@ function NeuronZoneAbilityBar:OnInitialize()
 	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, NeuronZoneAbilityBar, DB.zoneabilitybtn, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1)
 
 	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
-		SHOWGRID = false,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		HIDDEN = true,
-		LOCKBAR = false,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true,
-		ZONEABILITY = true}, false, 65)
+												  SHOWGRID = false,
+												  SNAPTO = true,
+												  UPCLICKS = true,
+												  DOWNCLICKS = true,
+												  HIDDEN = true,
+												  LOCKBAR = false,
+												  TOOLTIPS = true,
+												  BINDTEXT = true,
+												  RANGEIND = true,
+												  CDTEXT = true,
+												  CDALPHA = true,
+												  ZONEABILITY = true}, false, 65)
 
 	NeuronZoneAbilityBar:CreateBarsAndButtons()
 
@@ -153,7 +153,7 @@ function NeuronZoneAbilityBar:DisableDefault()
 	for i,v in ipairs(NEURON.NeuronZoneAbilityBar) do
 
 		if (v["bar"]) then --only disable if a specific button has an associated bar
-				disableZoneAbility = true
+			disableZoneAbility = true
 		end
 	end
 
@@ -400,7 +400,7 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 end
 
 function NeuronZoneAbilityBar:SetObjectVisibility(button, show)
-	
+
 	if (GetZoneAbilitySpellInfo() or show) then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		button:SetAlpha(1)
 	elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then

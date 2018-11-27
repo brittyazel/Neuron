@@ -197,9 +197,9 @@ function NeuronStatusBar:OnInitialize()
     NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, NeuronStatusBar, DB.statusbtn, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000)
 
     NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
-        SNAPTO = true,
-        HIDDEN = true,
-        TOOLTIPS = true }, false, false)
+                                          SNAPTO = true,
+                                          HIDDEN = true,
+                                          TOOLTIPS = true }, false, false)
 
     NeuronStatusBar:CreateBarsAndButtons()
 
@@ -1360,15 +1360,15 @@ end
 function NeuronStatusBar:SetBorder(button, config, bordercolor)
 
     button.border:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = BarBorders[config.border][2],
-        tile = true,
-        tileSize = BarBorders[config.border][7],
-        edgeSize = BarBorders[config.border][8],
-        insets = { left = BarBorders[config.border][3],
-            right = BarBorders[config.border][4],
-            top = BarBorders[config.border][5],
-            bottom = BarBorders[config.border][6]
-        }
+                                edgeFile = BarBorders[config.border][2],
+                                tile = true,
+                                tileSize = BarBorders[config.border][7],
+                                edgeSize = BarBorders[config.border][8],
+                                insets = { left = BarBorders[config.border][3],
+                                           right = BarBorders[config.border][4],
+                                           top = BarBorders[config.border][5],
+                                           bottom = BarBorders[config.border][6]
+                                }
     })
 
     button.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
@@ -1384,15 +1384,15 @@ function NeuronStatusBar:SetBorder(button, config, bordercolor)
 
     if (button.barflash) then
         button.barflash:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-            edgeFile = BarBorders[config.border][2],
-            tile = true,
-            tileSize = BarBorders[config.border][7],
-            edgeSize = BarBorders[config.border][8],
-            insets = { left = BarBorders[config.border][3],
-                right = BarBorders[config.border][4],
-                top = BarBorders[config.border][5],
-                bottom = BarBorders[config.border][6]
-            }
+                                      edgeFile = BarBorders[config.border][2],
+                                      tile = true,
+                                      tileSize = BarBorders[config.border][7],
+                                      edgeSize = BarBorders[config.border][8],
+                                      insets = { left = BarBorders[config.border][3],
+                                                 right = BarBorders[config.border][4],
+                                                 top = BarBorders[config.border][5],
+                                                 bottom = BarBorders[config.border][6]
+                                      }
         })
     end
 end

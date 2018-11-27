@@ -1,21 +1,21 @@
 package-as: Neuron
 
 
-#this will eventually be necessary for curse to automagically pull in all the necessary and up-to-date libraries
-#for wowinterface, I should just upload the versions that curse spits out, which means I need to plug in all of curse's feature sets.
-#externals:
-    #Neuron/Libs/AceAddon-3.0: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
-    #Neuron/Libs/AceConfig-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
-    #Neuron/Libs/AceDB-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDB-3.0
-    #Neuron/Libs/AceDBOptions-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDBOptions-3.0
-    #Neuron/Libs/AceEvent-3.0: https://repos.wowace.com/wow/ace3/trunk/AceEvent-3.0
-    #Neuron/Libs/AceGUI-3.0: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
-    #Neuron/Libs/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
-    #Neuron/Libs/CallbackHandler-1.0: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
-    #Neuron/Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
-    #Neuron/Libs/LibDataBroker-1.1: https://repos.wowace.com/wow/libdatabroker-1-1
-    #Neuron/Libs/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
-    #Neuron/Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
+  #this will eventually be necessary for curse to automagically pull in all the necessary and up-to-date libraries
+  #for wowinterface, I should just upload the versions that curse spits out, which means I need to plug in all of curse's feature sets.
+  #externals:
+  #Neuron/Libs/AceAddon-3.0: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
+  #Neuron/Libs/AceConfig-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
+  #Neuron/Libs/AceDB-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDB-3.0
+  #Neuron/Libs/AceDBOptions-3.0: https://repos.wowace.com/wow/ace3/trunk/AceDBOptions-3.0
+  #Neuron/Libs/AceEvent-3.0: https://repos.wowace.com/wow/ace3/trunk/AceEvent-3.0
+  #Neuron/Libs/AceGUI-3.0: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
+  #Neuron/Libs/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
+  #Neuron/Libs/CallbackHandler-1.0: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
+  #Neuron/Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
+  #Neuron/Libs/LibDataBroker-1.1: https://repos.wowace.com/wow/libdatabroker-1-1
+  #Neuron/Libs/AceLocale-3.0: https://repos.wowace.com/wow/ace3/trunk/AceLocale-3.0
+#Neuron/Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
 
 enable-nolib-creation: no
 
@@ -24,4 +24,4 @@ ignore:
   #- Neuron/Libs/
 
 optional-dependencies:
-    - masque
+  - masque

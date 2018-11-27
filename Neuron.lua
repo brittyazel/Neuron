@@ -385,13 +385,13 @@ function NEURON:UNIT_PET(eventName, ...)
 		if (NEURON.PEW) then
 			NEURON:UpdatePetSpellIndex()
 		end
-    end
+	end
 end
 
 function NEURON:UNIT_LEVEL(eventName, ...)
 	if ... == "player" then
 		NEURON.level = UnitLevel("player")
-    end
+	end
 end
 
 function NEURON:TOYS_UPDATED()
@@ -944,7 +944,7 @@ function NEURON:UpdateStanceStrings()
 				}
 
 				--compare the current i's Shapeshift Form spellID to the ones in the druidFormTable, and choose the appropriate string
-			 	for j=1,#druidFormTable do
+				for j=1,#druidFormTable do
 					if spellID == druidFormTable[j][2] then
 						NEURON.STATES["stance"..i] = druidFormTable[j][1]
 						states = states.."[stance:"..i.."] stance"..i.."; "
@@ -1257,14 +1257,14 @@ function NEURON:PrintBarTypes()
 
 	for k,v in pairs(NEURON.RegisteredBarData) do
 
-        local barType;
-        index = tonumber(v.createMsg:match("%d+"))
-        barType = v.createMsg:gsub("%d+","")
+		local barType;
+		index = tonumber(v.createMsg:match("%d+"))
+		barType = v.createMsg:gsub("%d+","")
 
-        if (index and barType) then
-            data[index] = {k, barType}
-            if (index > high) then high = index end
-        end
+		if (index and barType) then
+			data[index] = {k, barType}
+			if (index > high) then high = index end
+		end
 
 	end
 

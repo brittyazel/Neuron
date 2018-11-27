@@ -49,9 +49,9 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
 
         for k1,v1 in pairs(profile.NeuronGDB) do
 
-           if k1 == "bars" or k1 == "buttons" or k1 == "throttle" or k1 == "timerLimit" or k1 == "snapToTol" or k1 == "blizzbar" or k1 == "firstRun" or k1 == "NeuronIcon" then
-               profile[k1] = v1
-           end
+            if k1 == "bars" or k1 == "buttons" or k1 == "throttle" or k1 == "timerLimit" or k1 == "snapToTol" or k1 == "blizzbar" or k1 == "firstRun" or k1 == "NeuronIcon" then
+                profile[k1] = v1
+            end
 
         end
 

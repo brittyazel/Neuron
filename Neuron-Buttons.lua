@@ -873,7 +873,6 @@ function NeuronButton:MACRO_UpdateIcon(button, ...)
 		button.border:Hide()
 	end
 
-
 	--druid fix for thrash glow not showing for feral druids.
 	--Thrash Guardian: 77758
 	--Thrash Feral: 106832
@@ -2208,7 +2207,7 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 
 		button.border:Hide()
 
-	---shows all action bar buttons in the case you have show grid turned off
+		---shows all action bar buttons in the case you have show grid turned off
 
 
 	else
@@ -2416,7 +2415,7 @@ function NeuronButton:MACRO_OnEnter(button, ...)
 		end
 
 		if(MacroDrag[1]) then ---puts the icon back to the interact icon when moving abilities around and the mouse enteres the WorldFrame
-			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
+		SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 		end
 
 		if (button.tooltips) then
@@ -3249,55 +3248,55 @@ end
 
 ---This function is used to "fake" a state change in the button editor so you can see what each state will look like
 function NeuronButton:SetFauxState(button, state)
-    if (state) then
+	if (state) then
 
-        local msg = (":"):split(state)
+		local msg = (":"):split(state)
 
-        if (msg:find("vehicle")) then
+		if (msg:find("vehicle")) then
 
-            if (not button:GetAttribute(msg.."-actionID")) then
+			if (not button:GetAttribute(msg.."-actionID")) then
 
-                button:SetAttribute("type", "action")
-                button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
+				button:SetAttribute("type", "action")
+				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
 
-            end
+			end
 
-            button:SetAttribute("SpecialAction", "vehicle")
-            button:SetAttribute("HasActionID", true)
-            button:Show()
+			button:SetAttribute("SpecialAction", "vehicle")
+			button:SetAttribute("HasActionID", true)
+			button:Show()
 
-        elseif (msg:find("possess")) then
-            if (not button:GetAttribute(msg.."-actionID")) then
+		elseif (msg:find("possess")) then
+			if (not button:GetAttribute(msg.."-actionID")) then
 
-                button:SetAttribute("type", "action")
-                button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
+				button:SetAttribute("type", "action")
+				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("vehicleID_Offset"))
 
-            end
+			end
 
-            button:SetAttribute("SpecialAction", "possess")
-            button:SetAttribute("HasActionID", true)
-            button:Show()
+			button:SetAttribute("SpecialAction", "possess")
+			button:SetAttribute("HasActionID", true)
+			button:Show()
 
-        elseif (msg:find("override")) then
-            if (not button:GetAttribute(msg.."-actionID")) then
+		elseif (msg:find("override")) then
+			if (not button:GetAttribute(msg.."-actionID")) then
 
-                button:SetAttribute("type", "action")
-                button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("overrideID_Offset"))
-                button:SetAttribute("HasActionID", true)
+				button:SetAttribute("type", "action")
+				button:SetAttribute("*action*", button:GetAttribute("barPos")+button:GetAttribute("overrideID_Offset"))
+				button:SetAttribute("HasActionID", true)
 
-            end
+			end
 
-            button:SetAttribute("SpecialAction", "override")
+			button:SetAttribute("SpecialAction", "override")
 
-            button:SetAttribute("HasActionID", true)
+			button:SetAttribute("HasActionID", true)
 
-            button:Show()
+			button:Show()
 
-        else
-            if (not button:GetAttribute(msg.."-actionID")) then
+		else
+			if (not button:GetAttribute(msg.."-actionID")) then
 
-                button:SetAttribute("type", "macro")
-                button:SetAttribute("*macrotext*", button:GetAttribute(msg.."-macro_Text"))
+				button:SetAttribute("type", "macro")
+				button:SetAttribute("*macrotext*", button:GetAttribute(msg.."-macro_Text"))
 
 				if (button:GetAttribute("*macrotext*") and #button:GetAttribute("*macrotext*") > 0) or button:GetAttribute("isshown") then
 					button:Show()
@@ -3305,18 +3304,18 @@ function NeuronButton:SetFauxState(button, state)
 					button:Hide()
 				end
 
-                button:SetAttribute("HasActionID", false)
-            else
-                button:SetAttribute("HasActionID", true)
-            end
+				button:SetAttribute("HasActionID", false)
+			else
+				button:SetAttribute("HasActionID", true)
+			end
 
-            button:SetAttribute("SpecialAction", nil)
-        end
+			button:SetAttribute("SpecialAction", nil)
+		end
 
-        button:SetAttribute("useparent-unit", nil)
-        button:SetAttribute("activestate", msg)
+		button:SetAttribute("useparent-unit", nil)
+		button:SetAttribute("activestate", msg)
 
-    end
+	end
 end
 
 
