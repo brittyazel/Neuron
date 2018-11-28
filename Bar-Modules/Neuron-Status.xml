@@ -1,8 +1,6 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 
 	<!-- Neuron Status Bars, a World of WarcraftÂ® user interface addon. -->
-	<!-- CopyrightÂ© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved. -->
 
 	<Button name="NeuronStatusBarTemplate" frameStrata="LOW" virtual="true">
 		<Size x="195" y="16"/>

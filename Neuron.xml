@@ -1,5 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 
 
 	<Texture name="NeuronCheckButtonTextureTemplate" virtual="true">
@@ -315,11 +314,11 @@
 
 						if (icon and icon.filler) then
 
-						icon.oShow = icon.Show
-						icon.oHide = icon.Hide
+							icon.oShow = icon.Show
+							icon.oHide = icon.Hide
 
-						icon.Show = function(self) self.filler:Show() self:oShow() end
-						icon.Hide = function(self) self.filler:Hide() self:oHide() end
+							icon.Show = function(self) self.filler:Show() self:oShow() end
+							icon.Hide = function(self) self.filler:Hide() self:oHide() end
 						end
 					</OnLoad>
 				</Scripts>
@@ -547,11 +546,11 @@
 
 						if (icon and icon.filler) then
 
-						icon.oShow = icon.Show
-						icon.oHide = icon.Hide
+							icon.oShow = icon.Show
+							icon.oHide = icon.Hide
 
-						icon.Show = function(self) self.filler:Show() self:oShow() end
-						icon.Hide = function(self) self.filler:Hide() self:oHide() end
+							icon.Show = function(self) self.filler:Show() self:oShow() end
+							icon.Hide = function(self) self.filler:Hide() self:oHide() end
 						end
 					</OnLoad>
 				</Scripts>
