@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7bb7ae98-ede1-4a3b-802e-d20a1f38bd4d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/Bar-Modules/Neuron-Status.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Bar-Modules/Neuron-Status.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Neuron-Buttons.lua" beforeDir="false" afterPath="$PROJECT_DIR$/Neuron-Buttons.lua" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Neuron.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Neuron.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,11 +22,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Bar-Modules/Neuron-Status.xml">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret selection-end-column="170" />
+              <caret column="218" selection-start-column="218" selection-end-column="218" />
             </state>
           </provider>
         </entry>
@@ -50,11 +49,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Neuron.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="810">
-              <caret line="544" selection-start-line="544" selection-end-line="544" />
+            <state>
+              <caret selection-end-column="218" />
             </state>
           </provider>
         </entry>
@@ -133,14 +132,14 @@
         <option value="$PROJECT_DIR$/Bar-Modules/Neuron-ZoneAbility.lua" />
         <option value="$PROJECT_DIR$/Neuron.lua" />
         <option value="$PROJECT_DIR$/Neuron-Buttons.lua" />
-        <option value="$PROJECT_DIR$/Bar-Modules/Neuron-Status.xml" />
         <option value="$PROJECT_DIR$/Neuron.xml" />
+        <option value="$PROJECT_DIR$/Bar-Modules/Neuron-Status.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="776" />
-    <option name="y" value="32" />
+    <option name="x" value="759" />
+    <option name="y" value="41" />
     <option name="width" value="2568" />
     <option name="height" value="1303" />
   </component>
@@ -280,7 +279,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="776" y="32" width="2568" height="1303" extended-state="0" />
+    <frame x="759" y="41" width="2568" height="1303" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17075099" />
@@ -483,17 +482,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Bar-Modules/Neuron-Status.xml">
+    <entry file="file://$PROJECT_DIR$/Neuron.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret selection-end-column="170" />
+          <caret selection-end-column="218" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Neuron.xml">
+    <entry file="file://$PROJECT_DIR$/Bar-Modules/Neuron-Status.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
-          <caret line="544" selection-start-line="544" selection-end-line="544" />
+        <state>
+          <caret column="218" selection-start-column="218" selection-end-column="218" />
         </state>
       </provider>
     </entry>
