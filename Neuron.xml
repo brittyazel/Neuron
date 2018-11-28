@@ -1,4 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
 
 	<Texture name="NeuronCheckButtonTextureTemplate" virtual="true">
@@ -13,10 +13,10 @@
 
 
 
-	<Button name="NeuronBarTemplate" enableMouse="true" movable="true" frameStrata="MEDIUM" virtual="true" inherits="SecureHandlerStateTemplate" clampedToScreen="false">
+	<Button name="NeuronBarTemplate" enableMouse="true" movable="true" frameStrata="MEDIUM" virtual="true" inherits="SecureHandlerStateTemplate" >
 		<Layers>
 			<Layer level="BACKGROUND">
-				<FontString name="$parentText" parentKey="text" inherits="GameFontNormal" justifyH="CENTER">
+				<FontString name="$parentText" parentKey="text" inherits="GameFontNormal">
 					<Anchors>
 						<Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP">
 							<Offset x="0" y="1"/>
@@ -32,7 +32,7 @@
 					</Anchors>
 					<Color r="0" g="0" b="0" a="0.9"/>
 				</Texture>
-				<FontString name="$parentMessage" parentKey="message" inherits="FriendsFont_UserText" justifyH="CENTER" justifyV="TOP">
+				<FontString name="$parentMessage" parentKey="message" inherits="FriendsFont_UserText" justifyV="TOP">
 					<Anchors>
 						<Anchor point="CENTER" relativeTo="$parentMessageBG" relativePoint="CENTER">
 							<Offset x="0" y="0"/>
@@ -68,8 +68,8 @@
 
 	<Button name="NeuronBindFrameTemplate" frameStrata="DIALOG" hidden="true" virtual="true">
 		<Layers>
-			<Layer level="ARTWORK">
-				<FontString name="$parentType" parentKey="type" inherits="ChatFontSmall" justifyH="CENTER" justifyV="CENTER" nonspacewrap="true" text="bind">
+			<Layer>
+				<FontString name="$parentType" parentKey="type" inherits="ChatFontSmall" nonspacewrap="true" text="bind">
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset x="0" y="-1"/>
@@ -103,10 +103,10 @@
 
 
 
-	<CheckButton name="NeuronActionButtonTemplate" inherits="SecureActionButtonTemplate, SecureHandlerEnterLeaveTemplate" virtual="true" clampedToScreen="false">
+	<CheckButton name="NeuronActionButtonTemplate" inherits="SecureActionButtonTemplate, SecureHandlerEnterLeaveTemplate" virtual="true">
 		<Size x="43" y="43"/>
 		<Layers>
-			<Layer level="ARTWORK">
+			<Layer>
 				<Texture name="$parentFlyoutArrow" parentKey="FlyoutArrow" hidden="true"/>
 				<Texture name="$parentFlyoutBorder" parentKey="FlyoutBorder" hidden="true"/>
 				<Texture name="$parentFlyoutBorderShadow" parentKey="FlyoutBorderShadow" hidden="true"/>
@@ -130,7 +130,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture name="$parentGloss" file="Interface\Buttons\UI-PassiveHighlight" hidden="false" alphaMode="ADD">
+				<Texture name="$parentGloss" file="Interface\Buttons\UI-PassiveHighlight" alphaMode="ADD">
 					<Size x="63" y="63"/>
 					<Anchors>
 						<Anchor point="CENTER">
@@ -174,7 +174,7 @@
 					</Anchors>
 					<TexCoords left="0.71875" right="1" top="0" bottom="1"/>
 				</Texture>
-				<FontString name="$parentHotKey" parentKey="hotkey" inherits="NumberFontNormal" monochrome="false" justifyH="RIGHT">
+				<FontString name="$parentHotKey" parentKey="hotkey" inherits="NumberFontNormal" justifyH="RIGHT">
 					<Size x="43" y="10"/>
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -182,7 +182,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentCount" inherits="NumberFontNormal" monochrome="false" justifyH="RIGHT">
+				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT">
 							<Offset x="-2" y="2"/>
@@ -200,7 +200,7 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame name="$parentIconFrame" hidden="false">
+			<Frame name="$parentIconFrame">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="3" y="-3"/>
@@ -210,7 +210,7 @@
 					</Anchor>
 				</Anchors>
 				<Layers>
-					<Layer level="ARTWORK">
+					<Layer>
 						<Texture name="$parentIcon">
 							<TexCoords left="0.01" right="0.99" top="0.01" bottom="0.99"/>
 						</Texture>
@@ -258,7 +258,7 @@
 						</Anchors>
 						<Layers>
 							<Layer level="OVERLAY" textureSubLevel="3">
-								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" justifyH="CENTER" justifyV="CENTER" hidden="true">
+								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" hidden="true">
 									<Anchors>
 										<Anchor point="CENTER">
 											<Offset x="0.5" y="0"/>
@@ -284,7 +284,7 @@
 						</Anchors>
 						<Layers>
 							<Layer level="OVERLAY" textureSubLevel="3">
-								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" justifyH="CENTER" justifyV="CENTER" hidden="true">
+								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" hidden="true">
 									<Anchors>
 										<Anchor point="CENTER">
 											<Offset x="0.5" y="0"/>
@@ -337,7 +337,7 @@
 					<Anchor point="BOTTOMRIGHT"/>
 				</Anchors>
 				<Layers>
-					<Layer level="ARTWORK">
+					<Layer>
 						<Texture>
 							<Size x="1" y="1"/>
 							<Anchors>
@@ -420,7 +420,7 @@
 
 
 
-	<CheckButton name="NeuronNonSecureButtonTemplate" virtual="true" clampedToScreen="false">
+	<CheckButton name="NeuronNonSecureButtonTemplate" virtual="true">
 		<Size x="43" y="43"/>
 		<Layers>
 			<Layer level="OVERLAY">
@@ -432,7 +432,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture name="$parentGloss" file="Interface\Buttons\UI-PassiveHighlight" hidden="false" alphaMode="ADD">
+				<Texture name="$parentGloss" file="Interface\Buttons\UI-PassiveHighlight" alphaMode="ADD">
 					<Size x="63" y="63"/>
 					<Anchors>
 						<Anchor point="CENTER">
@@ -440,7 +440,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString name="$parentHotKey" parentKey="hotkey" inherits="NumberFontNormal" monochrome="false" justifyH="RIGHT">
+				<FontString name="$parentHotKey" parentKey="hotkey" inherits="NumberFontNormal" justifyH="RIGHT">
 					<Size x="43" y="10"/>
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -448,7 +448,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentCount" inherits="NumberFontNormal" monochrome="false" justifyH="RIGHT">
+				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT">
 							<Offset x="-2" y="2"/>
@@ -466,7 +466,7 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame name="$parentIconFrame" hidden="false">
+			<Frame name="$parentIconFrame">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="3" y="-3"/>
@@ -476,7 +476,7 @@
 					</Anchor>
 				</Anchors>
 				<Layers>
-					<Layer level="ARTWORK">
+					<Layer>
 						<Texture name="$parentIcon">
 							<TexCoords left="0.01" right="0.99" top="0.01" bottom="0.99"/>
 						</Texture>
@@ -517,7 +517,7 @@
 						</Anchors>
 						<Layers>
 							<Layer level="OVERLAY">
-								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" justifyH="CENTER" justifyV="CENTER" hidden="true">
+								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" hidden="true">
 									<Anchors>
 										<Anchor point="CENTER">
 											<Offset x="0.5" y="0"/>

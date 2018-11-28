@@ -183,8 +183,7 @@ function NeuronButton:OnDisable()
 
 end
 
-
-------------------------------------------------------------------------------
+----------------------------------------------------------------------------
 
 function NeuronButton:PLAYER_TARGET_CHANGED()
 	for k in pairs(unitAuras) do
