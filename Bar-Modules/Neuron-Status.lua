@@ -1,14 +1,14 @@
 --Neuron Status Bars, a World of Warcraft® user interface addon.
 
 
-local NEURON = Neuron
+
 
 local DB
 
-NEURON.NeuronStatusBar = NEURON:NewModule("StatusBar", "AceEvent-3.0", "AceHook-3.0")
-local NeuronStatusBar = NEURON.NeuronStatusBar
+Neuron.NeuronStatusBar = Neuron:NewModule("StatusBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronStatusBar = Neuron.NeuronStatusBar
 
-local EDITIndex = NEURON.EDITIndex
+local EDITIndex = Neuron.EDITIndex
 
 local STATUS = setmetatable({}, { __index = CreateFrame("Button") })
 
@@ -24,7 +24,7 @@ local BarTextures = {
     [6] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Soft_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Soft_2", L["Soft"] },
     [7] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Velvet_3", L["Velvet"] },
 }
-NEURON.BarTextures = BarTextures
+Neuron.BarTextures = BarTextures
 
 
 local BarBorders = {
@@ -33,13 +33,13 @@ local BarBorders = {
     [3] = { L["Dialog"], "Interface\\AddOns\\Neuron\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
     [4] = { L["None"], "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 }
-NEURON.BarBorders = BarBorders
+Neuron.BarBorders = BarBorders
 
 local BarOrientations = {
     [1] = L["Horizontal"],
     [2] = L["Vertical"],
 }
-NEURON.BarOrientations = BarOrientations
+Neuron.BarOrientations = BarOrientations
 
 
 local BarUnits = {
@@ -55,7 +55,7 @@ local BarUnits = {
     [10] = "party3",
     [11] = "party4",
 }
-NEURON.BarUnits = BarUnits
+Neuron.BarUnits = BarUnits
 
 local BarRepColors = {
     [0] = { l="a_Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
@@ -158,7 +158,7 @@ local sbStrings = {
         [3] = { L["Timer"], function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].timer end end },
     },
 }
-NEURON.sbStrings = sbStrings
+Neuron.sbStrings = sbStrings
 
 
 
@@ -178,7 +178,7 @@ local BrawlerGuildFactions = {
 --- or setting up slash commands.
 function NeuronStatusBar:OnInitialize()
 
-    DB = NEURON.db.profile
+    DB = Neuron.db.profile
 
 
     -------------------------------------------------
@@ -194,9 +194,9 @@ function NeuronStatusBar:OnInitialize()
     STATUS.SetSkinned = NeuronStatusBar.SetSkinned
     -------------------------------------------------
 
-    NEURON:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, NeuronStatusBar, DB.statusbtn, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000)
+    Neuron:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, NeuronStatusBar, DB.statusbtn, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000)
 
-    NEURON:RegisterGUIOptions("status", { AUTOHIDE = true,
+    Neuron:RegisterGUIOptions("status", { AUTOHIDE = true,
                                           SNAPTO = true,
                                           HIDDEN = true,
                                           TOOLTIPS = true }, false, false)
@@ -280,7 +280,7 @@ function NeuronStatusBar:CreateBarsAndButtons()
 
         for id, defaults in ipairs(defaultBarOptions) do
 
-            local bar = NEURON.NeuronBar:CreateNewBar("status", id, true) --this calls the bar constructor
+            local bar = Neuron.NeuronBar:CreateNewBar("status", id, true) --this calls the bar constructor
 
             for	k,v in pairs(defaults) do
                 bar.data[k] = v
@@ -288,8 +288,8 @@ function NeuronStatusBar:CreateBarsAndButtons()
 
             local object
 
-            object = NEURON.NeuronButton:CreateNewObject("status", id, true)
-            NEURON.NeuronBar:AddObjectToList(bar, object)
+            object = Neuron.NeuronButton:CreateNewObject("status", id, true)
+            Neuron.NeuronBar:AddObjectToList(bar, object)
         end
 
         DB.statusbarFirstRun = false
@@ -298,13 +298,13 @@ function NeuronStatusBar:CreateBarsAndButtons()
 
         for id,data in pairs(DB.statusbar) do
             if (data ~= nil) then
-                NEURON.NeuronBar:CreateNewBar("status", id)
+                Neuron.NeuronBar:CreateNewBar("status", id)
             end
         end
 
         for id,data in pairs(DB.statusbtn) do
             if (data ~= nil) then
-                NEURON.NeuronButton:CreateNewObject("status", id)
+                Neuron.NeuronButton:CreateNewObject("status", id)
             end
         end
     end
@@ -317,7 +317,7 @@ function NeuronStatusBar:DisableDefault()
     local disableDefaultCast = false
     local disableDefaultMirror = false
 
-    for i,v in ipairs(NEURON.NeuronStatusBar) do
+    for i,v in ipairs(Neuron.NeuronStatusBar) do
 
         if (v["bar"]) then --only disable if a specific button has an associated bar
             if v.config.sbType == "cast" then
@@ -1499,15 +1499,15 @@ function NeuronStatusBar:UpdateWidth(button, command, gui, query, skipupdate)
 
         button:SetWidth(button.config.width)
 
-        NEURON.NeuronBar:SetObjectLoc(button.bar)
+        Neuron.NeuronBar:SetObjectLoc(button.bar)
 
-        NEURON.NeuronBar:SetPerimeter(button.bar)
+        Neuron.NeuronBar:SetPerimeter(button.bar)
 
-        NEURON.NeuronBar:SetSize(button.bar)
+        Neuron.NeuronBar:SetSize(button.bar)
 
         if (not skipupdate) then
-            NEURON.NeuronGUI:Status_UpdateEditor()
-            NEURON.NeuronBar:Update(button.bar)
+            Neuron.NeuronGUI:Status_UpdateEditor()
+            Neuron.NeuronBar:Update(button.bar)
         end
     end
 end
@@ -1529,15 +1529,15 @@ function NeuronStatusBar:UpdateHeight(button, command, gui, query, skipupdate)
 
         button:SetHeight(button.config.height)
 
-        NEURON.NeuronBar:SetObjectLoc(button.bar)
+        Neuron.NeuronBar:SetObjectLoc(button.bar)
 
-        NEURON.NeuronBar:SetPerimeter(button.bar)
+        Neuron.NeuronBar:SetPerimeter(button.bar)
 
-        NEURON.NeuronBar:SetSize(button.bar)
+        Neuron.NeuronBar:SetSize(button.bar)
 
         if (not skipupdate) then
-            NEURON.NeuronGUI:Status_UpdateEditor()
-            NEURON.NeuronBar:Update(button.bar)
+            Neuron.NeuronGUI:Status_UpdateEditor()
+            Neuron.NeuronBar:Update(button.bar)
         end
     end
 end
@@ -1561,7 +1561,7 @@ function NeuronStatusBar:UpdateTexture(button, command, gui, query)
         button.fbframe.feedback:SetStatusBarTexture(BarTextures[button.config.texture][button.config.orientation])
 
         if (not skipupdate) then
-            NEURON.NeuronGUI:Status_UpdateEditor()
+            Neuron.NeuronGUI:Status_UpdateEditor()
         end
 
     end
@@ -1587,7 +1587,7 @@ function NeuronStatusBar:UpdateBorder(button, command, gui, query)
         NeuronStatusBar:SetBorder(button.fbframe.feedback, button.config, button.bordercolor)
 
         if (not skipupdate) then
-            NEURON.NeuronGUI:Status_UpdateEditor()
+            Neuron.NeuronGUI:Status_UpdateEditor()
         end
     end
 end
@@ -1632,15 +1632,15 @@ function NeuronStatusBar:UpdateOrientation(button, command, gui, query)
 
         button:SetHeight(button.config.height)
 
-        NEURON.NeuronBar:SetObjectLoc(button.bar)
+        Neuron.NeuronBar:SetObjectLoc(button.bar)
 
-        NEURON.NeuronBar:SetPerimeter(button.bar)
+        Neuron.NeuronBar:SetPerimeter(button.bar)
 
-        NEURON.NeuronBar:SetSize(button.bar)
+        Neuron.NeuronBar:SetSize(button.bar)
 
         if (not skipupdate) then
-            NEURON.NeuronGUI:Status_UpdateEditor()
-            NEURON.NeuronBar:Update(button.bar)
+            Neuron.NeuronGUI:Status_UpdateEditor()
+            Neuron.NeuronBar:Update(button.bar)
         end
     end
 end
@@ -2022,7 +2022,7 @@ end
 
 function NeuronStatusBar:LoadAux(button)
 
-    NEURON.NeuronGUI:SB_CreateEditFrame(button, button.objTIndex)
+    Neuron.NeuronGUI:SB_CreateEditFrame(button, button.objTIndex)
 
 end
 

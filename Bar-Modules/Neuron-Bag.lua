@@ -1,9 +1,8 @@
 ﻿--Neuron Bag Bar, a World of Warcraft® user interface addon.
-local NEURON = Neuron
 local  DB
 
-NEURON.NeuronBagBar = NEURON:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
-local NeuronBagBar = NEURON.NeuronBagBar
+Neuron.NeuronBagBar = Neuron:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronBagBar = Neuron.NeuronBagBar
 
 local BAGBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
@@ -36,7 +35,7 @@ local bagElements = {}
 --- or setting up slash commands.
 function NeuronBagBar:OnInitialize()
 
-    DB = NEURON.db.profile
+    DB = Neuron.db.profile
 
     bagElements[5] = MainMenuBarBackpackButton
     bagElements[4] = CharacterBag0Slot
@@ -59,10 +58,10 @@ function NeuronBagBar:OnInitialize()
     ----------------------------------------------------------------
 
 
-    NEURON:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, NeuronBagBar, DB.bagbtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements)
+    Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, NeuronBagBar, DB.bagbtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements)
 
 
-    NEURON:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
+    Neuron:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
 
     if DB.blizzbar == false then
         NeuronBagBar:CreateBarsAndButtons()
@@ -112,7 +111,7 @@ function NeuronBagBar:CreateBarsAndButtons()
 
         for id, defaults in ipairs(defaultBarOptions) do
 
-            local bar = NEURON.NeuronBar:CreateNewBar("bag", id, true) --this calls the bar constructor
+            local bar = Neuron.NeuronBar:CreateNewBar("bag", id, true) --this calls the bar constructor
 
             for	k,v in pairs(defaults) do
                 bar.data[k] = v
@@ -121,8 +120,8 @@ function NeuronBagBar:CreateBarsAndButtons()
             local object
 
             for i=1,#bagElements do
-                object = NEURON.NeuronButton:CreateNewObject("bag", i, true)
-                NEURON.NeuronBar:AddObjectToList(bar, object)
+                object = Neuron.NeuronButton:CreateNewObject("bag", i, true)
+                Neuron.NeuronBar:AddObjectToList(bar, object)
             end
 
         end
@@ -133,13 +132,13 @@ function NeuronBagBar:CreateBarsAndButtons()
 
         for id,data in pairs(DB.bagbar) do
             if (data ~= nil) then
-                NEURON.NeuronBar:CreateNewBar("bag", id)
+                Neuron.NeuronBar:CreateNewBar("bag", id)
             end
         end
 
         for id,data in pairs(DB.bagbtn) do
             if (data ~= nil) then
-                NEURON.NeuronButton:CreateNewObject("bag", id)
+                Neuron.NeuronButton:CreateNewObject("bag", id)
             end
         end
     end
@@ -250,7 +249,7 @@ function NeuronBagBar:SetType(button, save)
 
         button.element = bagElements[button.id]
 
-        local objects = NEURON:GetParentKeys(button.element)
+        local objects = Neuron:GetParentKeys(button.element)
 
         for k,v in pairs(objects) do
             local name = v:gsub(button.element:GetName(), "")

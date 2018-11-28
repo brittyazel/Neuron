@@ -1,8 +1,6 @@
 ﻿--Neuron , a World of Warcraft® user interface addon.
 --SnapTo code is a modified version of FlyPaper by Tuller
 
-local NEURON = Neuron
-
 local function frameIsDependentOnFrame(frame, otherFrame)
 
 	if (frame and otherFrame) then
@@ -114,11 +112,11 @@ end
 --[[ Usable Functions ]]--
 
 
-function NEURON.NeuronBar:StickToEdge(bar)
+function Neuron.NeuronBar:StickToEdge(bar)
 
-	local DB = NEURON.db.profile
+	local DB = Neuron.db.profile
 
-	local point, x, y= NEURON.NeuronBar:GetPosition(bar)
+	local point, x, y= Neuron.NeuronBar:GetPosition(bar)
 	local changed
 	local w, h, rTol = bar:GetWidth()/2, bar:GetHeight()/2, DB.snapToTol
 
@@ -148,11 +146,11 @@ function NEURON.NeuronBar:StickToEdge(bar)
 
 	if (changed) then
 		bar.data.point = point; bar.data.x = x; bar.data.y = y
-		NEURON.NeuronBar:SetPosition(bar)
+		Neuron.NeuronBar:SetPosition(bar)
 	end
 end
 
-function NEURON.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
+function Neuron.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 
@@ -214,7 +212,7 @@ function NEURON.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
 	end
 end
 
-function NEURON.NeuronBar:StickToPoint(bar, oFrame, point, xOff, yOff)
+function Neuron.NeuronBar:StickToPoint(bar, oFrame, point, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 

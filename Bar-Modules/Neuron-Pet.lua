@@ -1,17 +1,17 @@
 ﻿--Neuron Pet Action Bar, a World of Warcraft® user interface addon.
 
 
-local NEURON = Neuron
+
 local DB
 
-NEURON.NeuronPetBar = NEURON:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
-local NeuronPetBar = NEURON.NeuronPetBar
+Neuron.NeuronPetBar = Neuron:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronPetBar = Neuron.NeuronPetBar
 
 local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local sIndex = NEURON.sIndex
+local sIndex = Neuron.sIndex
 
 local defaultBarOptions = {
 
@@ -38,7 +38,7 @@ local defaultBarOptions = {
 --- or setting up slash commands.
 function NeuronPetBar:OnInitialize()
 
-	DB = NEURON.db.profile
+	DB = Neuron.db.profile
 
 	----------------------------------------------------------------
 	PETBTN.SetData = NeuronPetBar.SetData
@@ -53,9 +53,9 @@ function NeuronPetBar:OnInitialize()
 	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, NeuronPetBar, DB.petbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, NEURON.maxPetID)
+	Neuron:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, NeuronPetBar, DB.petbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, Neuron.maxPetID)
 
-	NEURON:RegisterGUIOptions("pet", {
+	Neuron:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
 		SHOWGRID = false,
 		SNAPTO = true,
@@ -104,7 +104,7 @@ function NeuronPetBar:CreateBarsAndButtons()
 
 		for id, defaults in ipairs(defaultBarOptions) do
 
-			local bar = NEURON.NeuronBar:CreateNewBar("pet", id, true) --this calls the bar constructor
+			local bar = Neuron.NeuronBar:CreateNewBar("pet", id, true) --this calls the bar constructor
 
 			for	k,v in pairs(defaults) do
 				bar.data[k] = v
@@ -112,9 +112,9 @@ function NeuronPetBar:CreateBarsAndButtons()
 
 			local object
 
-			for i=1,NEURON.maxPetID do
-				object = NEURON.NeuronButton:CreateNewObject("pet", i, true)
-				NEURON.NeuronBar:AddObjectToList(bar, object)
+			for i=1,Neuron.maxPetID do
+				object = Neuron.NeuronButton:CreateNewObject("pet", i, true)
+				Neuron.NeuronBar:AddObjectToList(bar, object)
 			end
 		end
 
@@ -124,13 +124,13 @@ function NeuronPetBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.petbar) do
 			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("pet", id)
+				Neuron.NeuronBar:CreateNewBar("pet", id)
 			end
 		end
 
 		for id,data in pairs(DB.petbtn) do
 			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("pet", id)
+				Neuron.NeuronButton:CreateNewObject("pet", id)
 			end
 		end
 	end
@@ -233,12 +233,12 @@ function NeuronPetBar:PET_UpdateState(button, isActive, allowed, enabled)
 
 	if (enabled) then
 
-		NEURON.NeuronButton:AutoCastStart(button.shine)
+		Neuron.NeuronButton:AutoCastStart(button.shine)
 		button.autocastable:Hide()
 		button.autocastenabled = true
 
 	else
-		NEURON.NeuronButton:AutoCastStop(button.shine)
+		Neuron.NeuronButton:AutoCastStop(button.shine)
 
 		if (allowed) then
 			button.autocastable:Show()
@@ -262,7 +262,7 @@ function NeuronPetBar:PET_UpdateCooldown(button)
 			button.iconframeaurawatch:Hide()
 		end
 
-		NEURON.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
+		Neuron.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
 	end
 end
 
@@ -408,12 +408,12 @@ end
 
 function NeuronPetBar:PLAYER_ENTERING_WORLD(button, event, ...)
 	if InCombatLockdown() then return end
-	NEURON.NeuronBinder:ApplyBindings(button)
+	Neuron.NeuronBinder:ApplyBindings(button)
 	button.updateRightClick = true
 	button:SetObjectVisibility(button, true) --have to set true at login or the buttons on the bar don't show
 
 	---This part is so that the grid get's set properly on login
-	C_Timer.After(2, function() NEURON.NeuronBar:UpdateObjectVisibility(button.bar) end)
+	C_Timer.After(2, function() Neuron.NeuronBar:UpdateObjectVisibility(button.bar) end)
 
 end
 
@@ -454,9 +454,9 @@ function NeuronPetBar:OnDragStart(button)
 		NeuronPetBar:PET_UpdateOnEvent(button, true)
 	end
 
-	for i,bar in pairs(NEURON.BARIndex) do
+	for i,bar in pairs(Neuron.BARIndex) do
 		if bar.class == "pet" then
-			NEURON.NeuronBar:UpdateObjectVisibility(bar, true)
+			Neuron.NeuronBar:UpdateObjectVisibility(bar, true)
 		end
 	end
 end
@@ -659,7 +659,7 @@ function NeuronPetBar:SetObjectVisibility(button, show)
 
 	if (show or button.showGrid) then
 		button:SetAlpha(1)
-	elseif not NeuronPetBar:HasPetAction(button.actionID) and (not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode) then
+	elseif not NeuronPetBar:HasPetAction(button.actionID) and (not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode) then
 		button:SetAlpha(0)
 	end
 
@@ -669,13 +669,13 @@ end
 
 function NeuronPetBar:SetAux(button)
 
-	NEURON.NeuronButton:SetSkinned(button)
+	Neuron.NeuronButton:SetSkinned(button)
 
 end
 
 function NeuronPetBar:LoadAux(button)
 
-	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
 end
 
@@ -693,13 +693,13 @@ end
 
 function NeuronPetBar:SetSkinned(button)
 
-	NEURON.NeuronButton:SetSkinned(button)
+	Neuron.NeuronButton:SetSkinned(button)
 
 end
 
 function NeuronPetBar:GetSkinned(button)
 
-	NEURON.NeuronButton:GetSkinned(button)
+	Neuron.NeuronButton:GetSkinned(button)
 
 end
 

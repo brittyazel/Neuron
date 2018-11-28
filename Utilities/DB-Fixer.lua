@@ -1,12 +1,12 @@
 
-local NEURON = Neuron
+
 
 
 ------------------------------------------------------------
 --------------------Data Fixing Functions-------------------
 ------------------------------------------------------------
 
-function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a single string to a table of ints, this fixes the table on login
+function Neuron:DBFixer(profile, oldDBVersion) --converted objectTable from a single string to a table of ints, this fixes the table on login
 
 
     ---Added on 8/25/2018. Remove at some point in the future
@@ -38,7 +38,7 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
         profile["NeuronCDB"]["xbarFirstRun"] = nil
 
         oldDBVersion = 1.1 --increment oldDBVersion up to the latest that this set of code fixes
-        NEURON:Print("Neuron database migrated to version " .. 1.1)
+        Neuron:Print("Neuron database migrated to version " .. 1.1)
     end
 
 
@@ -94,7 +94,7 @@ function NEURON:DBFixer(profile, oldDBVersion) --converted objectTable from a si
 
 
         oldDBVersion = 1.2 --increment oldDBVersion up to the latest that this set of code fixes
-        NEURON:Print("Neuron database migrated to version " .. 1.2)
+        Neuron:Print("Neuron database migrated to version " .. 1.2)
 
     end
 

@@ -1,11 +1,9 @@
 --Neuron , a World of Warcraft® user interface addon.
 
-
-local NEURON = Neuron
 local DB
 
-NEURON.NeuronExtraBar = NEURON:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.0")
-local NeuronExtraBar = NEURON.NeuronExtraBar
+Neuron.NeuronExtraBar = Neuron:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronExtraBar = Neuron.NeuronExtraBar
 
 
 local EXTRABTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
@@ -36,7 +34,7 @@ local defaultBarOptions = {
 --- or setting up slash commands.
 function NeuronExtraBar:OnInitialize()
 
-	DB = NEURON.db.profile
+	DB = Neuron.db.profile
 
 	----------------------------------------------------------------
 	EXTRABTN.SetData = NeuronExtraBar.SetData
@@ -51,9 +49,9 @@ function NeuronExtraBar:OnInitialize()
 	EXTRABTN.SetType = NeuronExtraBar.SetType
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, NeuronExtraBar, DB.extrabtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1)
+	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, NeuronExtraBar, DB.extrabtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1)
 
-	NEURON:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
+	Neuron:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 											SHOWGRID = false,
 											SNAPTO = true,
 											UPCLICKS = true,
@@ -100,7 +98,7 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 		for id, defaults in ipairs(defaultBarOptions) do
 
-			local bar = NEURON.NeuronBar:CreateNewBar("extrabar", id, true) --this calls the bar constructor
+			local bar = Neuron.NeuronBar:CreateNewBar("extrabar", id, true) --this calls the bar constructor
 
 			for	k,v in pairs(defaults) do
 				bar.data[k] = v
@@ -108,8 +106,8 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 			local object
 
-			object = NEURON.NeuronButton:CreateNewObject("extrabar", 1, true)
-			NEURON.NeuronBar:AddObjectToList(bar, object)
+			object = Neuron.NeuronButton:CreateNewObject("extrabar", 1, true)
+			Neuron.NeuronBar:AddObjectToList(bar, object)
 		end
 
 		DB.extrabarFirstRun = false
@@ -118,7 +116,7 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.extrabar) do
 			if (data ~= nil) then
-				local extrabar = NEURON.NeuronBar:CreateNewBar("extrabar", id)
+				local extrabar = Neuron.NeuronBar:CreateNewBar("extrabar", id)
 
 
 				--this is a fix for adding a hidestate to the extrabar that kept it hidden even in bind/edit modes
@@ -131,7 +129,7 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.extrabtn) do
 			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("extrabar", id)
+				Neuron.NeuronButton:CreateNewObject("extrabar", id)
 			end
 		end
 	end
@@ -143,7 +141,7 @@ function NeuronExtraBar:DisableDefault()
 
 	local disableExtraButton = false
 
-	for i,v in ipairs(NEURON.NeuronExtraBar) do
+	for i,v in ipairs(Neuron.NeuronExtraBar) do
 
 		if (v["bar"]) then --only disable if a specific button has an associated bar
 			disableExtraButton = true
@@ -212,7 +210,7 @@ function NeuronExtraBar:SetObjectVisibility(button, show)
 	if HasExtraActionBar() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		button:SetAlpha(1)
 
-	elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
+	elseif not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
 		button:SetAlpha(0)
 	end
 
@@ -236,7 +234,7 @@ end
 
 function NeuronExtraBar:LoadAux(button)
 
-	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
 	button.style = button:CreateTexture(nil, "OVERLAY")
 	button.style:SetPoint("CENTER", -2, 1)
@@ -261,7 +259,7 @@ function NeuronExtraBar:GetDefaults(button)
 end
 
 function NeuronExtraBar:SetData(button, bar)
-	NEURON.NeuronButton:SetData(button, bar)
+	Neuron.NeuronButton:SetData(button, bar)
 end
 
 
@@ -283,7 +281,7 @@ function NeuronExtraBar:ExtraButton_Update(button)
 	local start, duration, enable = GetActionCooldown(button.actionID);
 
 	if (start) then
-		NEURON.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
+		Neuron.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
 	end
 end
 
@@ -362,5 +360,5 @@ end
 
 function NeuronExtraBar:PLAYER_ENTERING_WORLD(button, event, ...)
 	if InCombatLockdown() then return end
-	NEURON.NeuronBinder:ApplyBindings(button)
+	Neuron.NeuronBinder:ApplyBindings(button)
 end

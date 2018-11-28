@@ -6,18 +6,17 @@
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local NEURON = Neuron
 local DB, SPEC, btnDB, control
 
-local BUTTON = NEURON.BUTTON
+local BUTTON = Neuron.BUTTON
 
-NEURON.NeuronFlyouts = NEURON:NewModule("Flyouts", "AceEvent-3.0", "AceHook-3.0")
-local NeuronFlyouts = NEURON.NeuronFlyouts
+Neuron.NeuronFlyouts = Neuron:NewModule("Flyouts", "AceEvent-3.0", "AceHook-3.0")
+local NeuronFlyouts = Neuron.NeuronFlyouts
 
 local FOBARIndex, FOBTNIndex, ANCHORIndex = {}, {}, {}
 
 
-local tIndex = NEURON.tIndex
+local tIndex = Neuron.tIndex
 
 
 
@@ -63,7 +62,7 @@ local flyoutBarUpdater
 --- or setting up slash commands.
 function NeuronFlyouts:OnInitialize()
 
-	DB = NEURON.db.profile
+	DB = Neuron.db.profile
 
 	local strings = { NeuronTooltipScan:GetRegions() }
 
@@ -144,7 +143,7 @@ function NeuronFlyouts:BAG_UPDATE(eventName, ...)
 	local bag = ...
 	if bag>=0 and bag<=4 then
 		f.bagsToCache[bag] = true
-		if NEURON.PEW then
+		if Neuron.PEW then
 			f.StartTimer(0.05,f.CacheBags)
 		end
 	end
@@ -265,7 +264,7 @@ function NeuronFlyouts:PLAYER_EQUIPMENT_CHANGED(eventName, ...)
 	local slot, equipped = ...
 	if equipped then
 		f.bagsToCache.Worn = true
-		if NEURON.PEW then
+		if Neuron.PEW then
 			f.StartTimer(0.05,f.CacheBags)
 		end
 	end
@@ -290,7 +289,7 @@ end
 -------------------------------------------------------------------------------
 
 function NeuronFlyouts:timerFrame_OnUpdate(frame, elapsed)
-	if NEURON.PEW then
+	if Neuron.PEW then
 		local tick
 		local times = f.timerTimes
 		local timers = f.timersRunning
@@ -840,13 +839,13 @@ end
 
 function NeuronFlyouts:updateFlyoutBars(button, elapsed)
 
-	if (not InCombatLockdown() and NEURON.PEW) then  --Workarout for protected taint if UI reload in combat
+	if (not InCombatLockdown() and Neuron.PEW) then  --Workarout for protected taint if UI reload in combat
 		local bar = tremove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
-			NEURON.NeuronBar:SetObjectLoc(bar)
-			NEURON.NeuronBar:SetPerimeter(bar)
-			NEURON.NeuronBar:SetSize(bar)
+			Neuron.NeuronBar:SetObjectLoc(bar)
+			Neuron.NeuronBar:SetPerimeter(bar)
+			Neuron.NeuronBar:SetSize(bar)
 		else
 			button:Hide()
 		end
@@ -980,9 +979,9 @@ function NeuronFlyouts:Flyout_UpdateButtons(fbutton, init)
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
-				NEURON.NeuronButton:MACRO_UpdateParse(button)
-				NEURON.NeuronButton:MACRO_Reset(button)
-				NEURON.NeuronButton:MACRO_UpdateAll(button, true)
+				Neuron.NeuronButton:MACRO_UpdateParse(button)
+				Neuron.NeuronButton:MACRO_Reset(button)
+				Neuron.NeuronButton:MACRO_UpdateAll(button, true)
 
 				list[#list+1] = button.id--table.insert(list, button.id)
 
@@ -1018,11 +1017,11 @@ function NeuronFlyouts:Flyout_UpdateBar(button)
 	end
 
 	if (flyout.point) then
-		pointA = flyout.point:match("%a+"):upper() pointA = NEURON.Points[pointA] or "RIGHT"
+		pointA = flyout.point:match("%a+"):upper() pointA = Neuron.Points[pointA] or "RIGHT"
 	end
 
 	if (flyout.relPoint) then
-		pointB = flyout.relPoint:upper() pointB = NEURON.Points[pointB] or "LEFT"
+		pointB = flyout.relPoint:upper() pointB = Neuron.Points[pointB] or "LEFT"
 	end
 
 	if (flyout.colrad and tonumber(flyout.colrad)) then
@@ -1230,11 +1229,11 @@ function NeuronFlyouts:Flyout_PostClick(fbutton)
 	button.data.macro_Icon = fbutton:GetAttribute("macro_Icon") or false
 	button.data.macro_Name = fbutton:GetAttribute("macro_Name") or nil
 
-	NEURON.NeuronButton:MACRO_UpdateParse(button)
-	NEURON.NeuronButton:MACRO_Reset(button)
-	NEURON.NeuronButton:MACRO_UpdateAll(button, true)
+	Neuron.NeuronButton:MACRO_UpdateParse(button)
+	Neuron.NeuronButton:MACRO_Reset(button)
+	Neuron.NeuronButton:MACRO_UpdateAll(button, true)
 
-	NEURON.NeuronButton:MACRO_UpdateState(fbutton)
+	Neuron.NeuronButton:MACRO_UpdateState(fbutton)
 end
 
 function NeuronFlyouts:Flyout_GetButton(fbutton)
@@ -1260,7 +1259,7 @@ function NeuronFlyouts:Flyout_GetButton(fbutton)
 
 	button.elapsed = 0
 
-	local objects = NEURON:GetParentKeys(button)
+	local objects = Neuron:GetParentKeys(button)
 
 	for k,v in pairs(objects) do
 		local name = (v):gsub(button:GetName(), "")
@@ -1285,13 +1284,13 @@ function NeuronFlyouts:Flyout_GetButton(fbutton)
 	button:SetAttribute("*macrotext1", "")
 
 	button:SetScript("PostClick", function(self) NeuronFlyouts:Flyout_PostClick(self) end)
-	button:SetScript("OnEnter", function(self, ...) NEURON.NeuronButton:MACRO_OnEnter(self, ...) end)
-	button:SetScript("OnLeave", function(self, ...) NEURON.NeuronButton:MACRO_OnLeave(self, ...) end)
+	button:SetScript("OnEnter", function(self, ...) Neuron.NeuronButton:MACRO_OnEnter(self, ...) end)
+	button:SetScript("OnLeave", function(self, ...) Neuron.NeuronButton:MACRO_OnLeave(self, ...) end)
 	--button:SetScript("OnEvent", self:GetScript("OnEvent"))
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
-	button:HookScript("OnShow", function(self) NEURON.NeuronButton:MACRO_UpdateButton(self) NEURON.NeuronButton:MACRO_UpdateIcon(self); NEURON.NeuronButton:MACRO_UpdateState(self) end)
-	button:HookScript("OnHide", function(self) NEURON.NeuronButton:MACRO_UpdateButton(self) NEURON.NeuronButton:MACRO_UpdateIcon(self) NEURON.NeuronButton:MACRO_UpdateState(self) end)
+	button:HookScript("OnShow", function(self) Neuron.NeuronButton:MACRO_UpdateButton(self) Neuron.NeuronButton:MACRO_UpdateIcon(self); Neuron.NeuronButton:MACRO_UpdateState(self) end)
+	button:HookScript("OnHide", function(self) Neuron.NeuronButton:MACRO_UpdateButton(self) Neuron.NeuronButton:MACRO_UpdateIcon(self) Neuron.NeuronButton:MACRO_UpdateState(self) end)
 
 	button:WrapScript(button, "OnClick", [[
 			local button = self:GetParent():GetParent()
@@ -1363,7 +1362,7 @@ function NeuronFlyouts:Flyout_GetBar(button)
 	bar:SetFrameLevel(2)
 
 	bar:RegisterEvent("PLAYER_ENTERING_WORLD")
-	bar:SetScript("OnEvent", function(self) NEURON.NeuronBar:SetObjectLoc(self) NEURON.NeuronBar:SetPerimeter(self) NEURON.NeuronBar:SetSize(self) end)
+	bar:SetScript("OnEvent", function(self) Neuron.NeuronBar:SetObjectLoc(self) Neuron.NeuronBar:SetPerimeter(self) Neuron.NeuronBar:SetSize(self) end)
 
 	bar:Hide()
 
@@ -1483,7 +1482,7 @@ function NeuronFlyouts:updateAnchors(button, elapsed)
 
 	button.elapsed = button.elapsed + elapsed
 
-	if (button.elapsed > DB.throttle and NEURON.PEW) then
+	if (button.elapsed > DB.throttle and Neuron.PEW) then
 
 		if (not InCombatLockdown()) then
 			local anchor = tremove(needsUpdate)
@@ -1509,7 +1508,7 @@ function NeuronFlyouts:linkScanOnUpdate(button, elapsed)
 
 	button.elapsed = button.elapsed + elapsed
 
-	if (button.elapsed > DB.throttle and NEURON.PEW) then
+	if (button.elapsed > DB.throttle and Neuron.PEW) then
 		-- scan X items per frame draw, where X is the for limit
 		for i=1,2 do
 			button.link = itemLinks[button.index]
@@ -1536,7 +1535,7 @@ function NeuronFlyouts:linkScanOnUpdate(button, elapsed)
 			button.index = next(itemLinks, button.index)
 
 			if not (button.index) then
-				--NEURON:Print("Scanned "..button.count.." items in "..button.elapsed.." seconds")
+				--Neuron:Print("Scanned "..button.count.." items in "..button.elapsed.." seconds")
 				button:Hide(); anchorUpdater:Show()
 			end
 		end
@@ -1553,11 +1552,11 @@ function NeuronFlyouts:command_flyout(options)
 		return
 	end
 
-	local button = NEURON.ClickedButton
+	local button = Neuron.ClickedButton
 
 	if (button) then
 		if (not button.options or button.options ~= options) then
-			NEURON.NeuronFlyouts:UpdateFlyout(button, options)
+			Neuron.NeuronFlyouts:UpdateFlyout(button, options)
 		end
 	end
 end
@@ -1572,7 +1571,7 @@ function NeuronFlyouts:ANCHOR_DelayedUpdate(button, elapsed)
 
 	button.elapsed = button.elapsed + elapsed
 
-	if (button.elapsed > DB.throttle and NEURON.PEW) then
+	if (button.elapsed > DB.throttle and Neuron.PEW) then
 
 		for anchor in pairs(ANCHORIndex) do
 			tinsert(needsUpdate, anchor)

@@ -1,17 +1,13 @@
 ﻿--Neuron , a World of Warcraft® user interface addon.
 
-
-local NEURON = Neuron
-
-
-NEURON.NeuronBinder = NEURON:NewModule("Binder", "AceEvent-3.0", "AceHook-3.0")
-local NeuronBinder = NEURON.NeuronBinder
+Neuron.NeuronBinder = Neuron:NewModule("Binder", "AceEvent-3.0", "AceHook-3.0")
+local NeuronBinder = Neuron.NeuronBinder
 
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-local BINDIndex = NEURON.BINDIndex
+local BINDIndex = Neuron.BINDIndex
 
 
 
@@ -324,7 +320,7 @@ end
 
 --- OnUpdate Event handler
 function NeuronBinder:OnUpdate(binder)
-	if(NEURON.PEW) then
+	if(Neuron.PEW) then
 		if (binder:IsMouseOver()) then
 			binder:EnableKeyboard(true)
 		else

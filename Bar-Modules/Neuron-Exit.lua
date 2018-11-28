@@ -1,11 +1,9 @@
 --Neuron , a World of Warcraft® user interface addon.
 
-
-local NEURON = Neuron
 local DB
 
-NEURON.NeuronExitBar = NEURON:NewModule("ExitBar", "AceEvent-3.0", "AceHook-3.0")
-local NeuronExitBar = NEURON.NeuronExitBar
+Neuron.NeuronExitBar = Neuron:NewModule("ExitBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronExitBar = Neuron.NeuronExitBar
 
 
 local EXITBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
@@ -35,7 +33,7 @@ local defaultBarOptions = {
 --- or setting up slash commands.
 function NeuronExitBar:OnInitialize()
 
-	DB = NEURON.db.profile
+	DB = Neuron.db.profile
 
 	----------------------------------------------------------------
 	EXITBTN.SetData = NeuronExitBar.SetData
@@ -50,9 +48,9 @@ function NeuronExitBar:OnInitialize()
 	EXITBTN.SetSkinned = NeuronExitBar.SetSkinned
 	----------------------------------------------------------------
 
-	NEURON:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1)
+	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1)
 
-	NEURON:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
+	Neuron:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 										   SHOWGRID = false,
 										   SNAPTO = true,
 										   UPCLICKS = true,
@@ -101,7 +99,7 @@ function NeuronExitBar:CreateBarsAndButtons()
 
 		for id, defaults in ipairs(defaultBarOptions) do
 
-			local bar = NEURON.NeuronBar:CreateNewBar("exitbar", id, true) --this calls the bar constructor
+			local bar = Neuron.NeuronBar:CreateNewBar("exitbar", id, true) --this calls the bar constructor
 
 			for	k,v in pairs(defaults) do
 				bar.data[k] = v
@@ -109,8 +107,8 @@ function NeuronExitBar:CreateBarsAndButtons()
 
 			local object
 
-			object = NEURON.NeuronButton:CreateNewObject("exitbar", 1, true)
-			NEURON.NeuronBar:AddObjectToList(bar, object)
+			object = Neuron.NeuronButton:CreateNewObject("exitbar", 1, true)
+			Neuron.NeuronBar:AddObjectToList(bar, object)
 		end
 
 		DB.exitbarFirstRun = false
@@ -119,13 +117,13 @@ function NeuronExitBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.exitbar) do
 			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("exitbar", id)
+				Neuron.NeuronBar:CreateNewBar("exitbar", id)
 			end
 		end
 
 		for id,data in pairs(DB.exitbtn) do
 			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("exitbar", id)
+				Neuron.NeuronButton:CreateNewObject("exitbar", id)
 			end
 		end
 	end
@@ -136,7 +134,7 @@ function NeuronExitBar:DisableDefault()
 
 	local disableExitButton = false
 
-	for i,v in ipairs(NEURON.NeuronExitBar) do
+	for i,v in ipairs(Neuron.NeuronExitBar) do
 
 		if (v["bar"]) then --only disable if a specific button has an associated bar
 			disableExitButton = true
@@ -200,7 +198,7 @@ function NeuronExitBar:SetObjectVisibility(button, show)
 		button:SetAlpha(1)
 		NeuronExitBar:SetExitButtonIcon(button)
 
-	elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
+	elseif not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
 		button:SetAlpha(0)
 	end
 
@@ -232,7 +230,7 @@ function NeuronExitBar:GetDefaults(button)
 end
 
 function NeuronExitBar:SetData(button, bar)
-	NEURON.NeuronButton:SetData(button, bar)
+	Neuron.NeuronButton:SetData(button, bar)
 end
 
 
@@ -241,9 +239,9 @@ function NeuronExitBar:SetExitButtonIcon(button)
 	local texture
 
 	if UnitOnTaxi("player") then
-		texture = NEURON.SpecialActions.taxi
+		texture = Neuron.SpecialActions.taxi
 	else
-		texture = NEURON.SpecialActions.vehicle
+		texture = Neuron.SpecialActions.vehicle
 	end
 
 	button.iconframeicon:SetTexture(texture)
@@ -264,7 +262,7 @@ function NeuronExitBar:SetType(button, save)
 	button:SetScript("OnEnter", function(self) NeuronExitBar:OnEnter(self) end)
 	button:SetScript("OnLeave", GameTooltip_Hide)
 
-	local objects = NEURON:GetParentKeys(button)
+	local objects = Neuron:GetParentKeys(button)
 
 	for k,v in pairs(objects) do
 		local name = (v):gsub(button:GetName(), "")

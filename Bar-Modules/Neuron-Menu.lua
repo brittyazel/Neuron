@@ -3,11 +3,11 @@
 -------------------------------------------------------------------------------
 -- AddOn namespace.
 -------------------------------------------------------------------------------
-local NEURON = Neuron
+
 local DB
 
-NEURON.NeuronMenuBar = NEURON:NewModule("MenuBar", "AceHook-3.0")
-local NeuronMenuBar = NEURON.NeuronMenuBar
+Neuron.NeuronMenuBar = Neuron:NewModule("MenuBar", "AceHook-3.0")
+local NeuronMenuBar = Neuron.NeuronMenuBar
 
 local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
 
@@ -35,7 +35,7 @@ local menuElements = {}
 --- or setting up slash commands.
 function NeuronMenuBar:OnInitialize()
 
-    DB = NEURON.db.profile
+    DB = Neuron.db.profile
 
 
     menuElements[1] = CharacterMicroButton
@@ -64,8 +64,8 @@ function NeuronMenuBar:OnInitialize()
     MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
     ----------------------------------------------------------------
 
-    NEURON:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, DB.menubtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements)
-    NEURON:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
+    Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, DB.menubtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements)
+    Neuron:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if DB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
@@ -78,8 +78,8 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronMenuBar:OnEnable()
 
-    NEURON:RegisterEvent("PET_BATTLE_OPENING_START")
-    NEURON:RegisterEvent("PET_BATTLE_CLOSE")
+    Neuron:RegisterEvent("PET_BATTLE_OPENING_START")
+    Neuron:RegisterEvent("PET_BATTLE_CLOSE")
 
     NeuronMenuBar:DisableDefault()
 
@@ -98,10 +98,10 @@ end
 ------------------------------------------------------------------------------
 
 
-function NEURON:PET_BATTLE_OPENING_START()
+function Neuron:PET_BATTLE_OPENING_START()
 end
 
-function NEURON:PET_BATTLE_CLOSE()
+function Neuron:PET_BATTLE_CLOSE()
 end
 
 -------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
         for id, defaults in ipairs(defaultBarOptions) do
 
-            local bar = NEURON.NeuronBar:CreateNewBar("menu", id, true) --this calls the bar constructor
+            local bar = Neuron.NeuronBar:CreateNewBar("menu", id, true) --this calls the bar constructor
 
             for	k,v in pairs(defaults) do
                 bar.data[k] = v
@@ -123,8 +123,8 @@ function NeuronMenuBar:CreateBarsAndButtons()
             local object
 
             for i=1,#menuElements do
-                object = NEURON.NeuronButton:CreateNewObject("menu", i, true)
-                NEURON.NeuronBar:AddObjectToList(bar, object)
+                object = Neuron.NeuronButton:CreateNewObject("menu", i, true)
+                Neuron.NeuronBar:AddObjectToList(bar, object)
             end
         end
 
@@ -134,13 +134,13 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
         for id,data in pairs(DB.menubar) do
             if (data ~= nil) then
-                NEURON.NeuronBar:CreateNewBar("menu", id)
+                Neuron.NeuronBar:CreateNewBar("menu", id)
             end
         end
 
         for id,data in pairs(DB.menubtn) do
             if (data ~= nil) then
-                NEURON.NeuronButton:CreateNewObject("menu", id)
+                Neuron.NeuronButton:CreateNewObject("menu", id)
             end
         end
     end
@@ -150,7 +150,7 @@ function NeuronMenuBar:DisableDefault()
 
     local disableMenuBarFunctions = false
 
-    for i,v in ipairs(NEURON.NeuronMenuBar) do
+    for i,v in ipairs(Neuron.NeuronMenuBar) do
         if (v["bar"]) then --only disable if a specific button has an associated bar
             disableMenuBarFunctions = true
         end
@@ -234,7 +234,7 @@ function NeuronMenuBar:SetType(button, save)
 
         button.element = menuElements[button.id]
 
-        local objects = NEURON:GetParentKeys(button.element)
+        local objects = Neuron:GetParentKeys(button.element)
 
         for k,v in pairs(objects) do
             local name = v:gsub(button.element:GetName(), "")

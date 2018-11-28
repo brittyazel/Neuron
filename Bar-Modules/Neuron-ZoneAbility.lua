@@ -1,11 +1,11 @@
 --Neuron , a World of Warcraft® user interface addon.
 
 
-local NEURON = Neuron
+
 local DB
 
-NEURON.NeuronZoneAbilityBar = NEURON:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
-local NeuronZoneAbilityBar = NEURON.NeuronZoneAbilityBar
+Neuron.NeuronZoneAbilityBar = Neuron:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
+local NeuronZoneAbilityBar = Neuron.NeuronZoneAbilityBar
 
 local ZONEABILITYBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
@@ -41,13 +41,13 @@ local alphaTimer, alphaDir = 0, 0
 --- or setting up slash commands.
 function NeuronZoneAbilityBar:OnInitialize()
 
-	DB = NEURON.db.profile
+	DB = Neuron.db.profile
 
 	DB.zoneabilitybar = DB.zoneabilitybar
 	DB.zoneabilitybtn = DB.zoneabilitybtn
 
 	--create pointers for these functions
-	ZONEABILITYBTN.SetTimer = NEURON.NeuronButton.SetTimer
+	ZONEABILITYBTN.SetTimer = Neuron.NeuronButton.SetTimer
 
 	----------------------------------------------------------------
 	ZONEABILITYBTN.SetData = NeuronZoneAbilityBar.SetData
@@ -63,9 +63,9 @@ function NeuronZoneAbilityBar:OnInitialize()
 	----------------------------------------------------------------
 
 
-	NEURON:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, NeuronZoneAbilityBar, DB.zoneabilitybtn, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1)
+	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, NeuronZoneAbilityBar, DB.zoneabilitybtn, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1)
 
-	NEURON:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
+	Neuron:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 												  SHOWGRID = false,
 												  SNAPTO = true,
 												  UPCLICKS = true,
@@ -114,7 +114,7 @@ function NeuronZoneAbilityBar:CreateBarsAndButtons()
 
 		for id, defaults in ipairs(defaultBarOptions) do
 
-			local bar = NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id, true) --this calls the bar constructor
+			local bar = Neuron.NeuronBar:CreateNewBar("zoneabilitybar", id, true) --this calls the bar constructor
 
 			for	k,v in pairs(defaults) do
 				bar.data[k] = v
@@ -122,8 +122,8 @@ function NeuronZoneAbilityBar:CreateBarsAndButtons()
 
 			local object
 
-			object = NEURON.NeuronButton:CreateNewObject("zoneabilitybar", 1, true)
-			NEURON.NeuronBar:AddObjectToList(bar, object)
+			object = Neuron.NeuronButton:CreateNewObject("zoneabilitybar", 1, true)
+			Neuron.NeuronBar:AddObjectToList(bar, object)
 		end
 
 		DB.zoneabilitybarFirstRun = false
@@ -132,13 +132,13 @@ function NeuronZoneAbilityBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.zoneabilitybar) do
 			if (data ~= nil) then
-				NEURON.NeuronBar:CreateNewBar("zoneabilitybar", id)
+				Neuron.NeuronBar:CreateNewBar("zoneabilitybar", id)
 			end
 		end
 
 		for id,data in pairs(DB.zoneabilitybtn) do
 			if (data ~= nil) then
-				NEURON.NeuronButton:CreateNewObject("zoneabilitybar", id)
+				Neuron.NeuronButton:CreateNewObject("zoneabilitybar", id)
 			end
 		end
 	end
@@ -150,7 +150,7 @@ function NeuronZoneAbilityBar:DisableDefault()
 
 	local disableZoneAbility = false
 
-	for i,v in ipairs(NEURON.NeuronZoneAbilityBar) do
+	for i,v in ipairs(Neuron.NeuronZoneAbilityBar) do
 
 		if (v["bar"]) then --only disable if a specific button has an associated bar
 			disableZoneAbility = true
@@ -258,7 +258,7 @@ function NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button)
 	end
 
 	if (start) then
-		NEURON.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
+		Neuron.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
 	end
 
 	button.spellName = button.CurrentSpell;
@@ -273,7 +273,7 @@ end
 
 function NeuronZoneAbilityBar:PLAYER_ENTERING_WORLD(button, event, ...)
 	if InCombatLockdown() then return end
-	NEURON.NeuronBinder:ApplyBindings(button)
+	Neuron.NeuronBinder:ApplyBindings(button)
 end
 
 
@@ -350,12 +350,12 @@ end
 
 
 function NeuronZoneAbilityBar:SetData(button, bar)
-	NEURON.NeuronButton:SetData(button, bar)
+	Neuron.NeuronButton:SetData(button, bar)
 end
 
 
 function NeuronZoneAbilityBar:GetSkinned(button)
-	NEURON.NeuronButton:GetSkinned(button)
+	Neuron.NeuronButton:GetSkinned(button)
 end
 
 function NeuronZoneAbilityBar:SetSkinned(button)
@@ -403,18 +403,18 @@ function NeuronZoneAbilityBar:SetObjectVisibility(button, show)
 
 	if (GetZoneAbilitySpellInfo() or show) then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		button:SetAlpha(1)
-	elseif not NEURON.ButtonEditMode and not NEURON.BarEditMode and not NEURON.BindingMode then
+	elseif not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
 		button:SetAlpha(0)
 	end
 end
 
 function NeuronZoneAbilityBar:SetAux(button)
-	NEURON.NeuronButton:SetSkinned(button)
+	Neuron.NeuronButton:SetSkinned(button)
 end
 
 function NeuronZoneAbilityBar:LoadAux(button)
 	button.spellID = ZoneAbilitySpellID;
-	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 	button.style = button:CreateTexture(nil, "OVERLAY")
 	button.style:SetPoint("CENTER", -2, 1)
 	button.style:SetWidth(190)
@@ -491,28 +491,28 @@ end
 
 function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, query)
 	if (query) then
-		return NEURON.CurrentBar.data.border
+		return Neuron.CurrentBar.data.border
 	end
 
 	if (gui) then
 
 		if (checked) then
-			NEURON.CurrentBar.data.border = true
+			Neuron.CurrentBar.data.border = true
 		else
-			NEURON.CurrentBar.data.border = false
+			Neuron.CurrentBar.data.border = false
 		end
 
 	else
 
-		local toggle = NEURON.CurrentBar.data.border
+		local toggle = Neuron.CurrentBar.data.border
 
 		if (toggle) then
-			NEURON.CurrentBar.data.border = false
+			Neuron.CurrentBar.data.border = false
 		else
-			NEURON.CurrentBar.data.border = true
+			Neuron.CurrentBar.data.border = true
 		end
 	end
 
-	NEURON.NeuronBar:Update(bar)
+	Neuron.NeuronBar:Update(bar)
 	NeuronZoneAbilityBar:UpdateFrame()
 end

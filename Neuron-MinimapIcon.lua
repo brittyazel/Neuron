@@ -2,11 +2,10 @@
 
 --Neuron MinimapIcon makes use of LibDBIcon and LibDataBroker to make sure we play nicely with LDB addons and to simplify dramatically the minimap button
 
-local NEURON = Neuron
 local DB
 
-NEURON.NeuronMinimapIcon = NEURON:NewModule("NeuronMinimapIcon")
-local NeuronMinimapIcon = NEURON.NeuronMinimapIcon
+Neuron.NeuronMinimapIcon = Neuron:NewModule("NeuronMinimapIcon")
+local NeuronMinimapIcon = Neuron.NeuronMinimapIcon
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -24,7 +23,7 @@ local icon
 --- or setting up slash commands.
 function NeuronMinimapIcon:OnInitialize()
 
-    DB = NEURON.db.profile
+    DB = Neuron.db.profile
 
     neuronIconLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Neuron", {
         type = "launcher",
@@ -66,13 +65,13 @@ function NeuronMinimapIcon:OnClickHandler(frame, button)
     PlaySound(SOUNDKIT.IG_CHAT_SCROLL_DOWN)
 
     if (button == "LeftButton" and not IsShiftKeyDown()) then
-        NEURON:ToggleBarEditMode(true)
+        Neuron:ToggleBarEditMode(true)
     elseif (button == "RightButton" and not IsShiftKeyDown()) then
-        NEURON:ToggleButtonEditMode(true)
+        Neuron:ToggleButtonEditMode(true)
     elseif (button == "LeftButton" and IsShiftKeyDown()) then
-        NEURON:ToggleBindingMode(true)
+        Neuron:ToggleBindingMode(true)
     elseif (button == "RightButton" and IsShiftKeyDown()) then
-        NEURON:ToggleMainMenu()
+        Neuron:ToggleMainMenu()
     end
 
 end

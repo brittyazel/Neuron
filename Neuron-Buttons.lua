@@ -1,25 +1,23 @@
 --Neuron, a World of Warcraft® user interface addon.
 
+local DB
 
-local NEURON = Neuron
-local DB, player, realm
+Neuron.NeuronButton = Neuron:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
+local NeuronButton = Neuron.NeuronButton
 
-NEURON.NeuronButton = NEURON:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
-local NeuronButton = NEURON.NeuronButton
-
-local BTNIndex, SKINIndex = NEURON.BTNIndex, NEURON.SKINIndex
+local BTNIndex, SKINIndex = Neuron.BTNIndex, Neuron.SKINIndex
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
 
-local MacroDrag = NEURON.MacroDrag
-local StartDrag = NEURON.StartDrag
+local MacroDrag = Neuron.MacroDrag
+local StartDrag = Neuron.StartDrag
 
-local sIndex = NEURON.sIndex  --Spell index
-local cIndex = NEURON.cIndex  --Battle pet & Mount index
-local iIndex = NEURON.iIndex  --Items Index
-local tIndex = NEURON.tIndex  --Toys Index
+local sIndex = Neuron.sIndex  --Spell index
+local cIndex = Neuron.cIndex  --Battle pet & Mount index
+local iIndex = Neuron.iIndex  --Items Index
+local tIndex = Neuron.tIndex  --Toys Index
 
 local ItemCache
 
@@ -44,11 +42,11 @@ local keyDefaults = {
 }
 
 
-NEURON.SpecialActions = { vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit", possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield", taxi = "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up",}
+Neuron.SpecialActions = { vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit", possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield", taxi = "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up",}
 
-local SpecialActions = NEURON.SpecialActions
+local SpecialActions = Neuron.SpecialActions
 
-NEURON.PetActions = {
+Neuron.PetActions = {
 	petattack = { "Interface\\Icons\\Ability_GhoulFrenzy", L["Attack"], { 0, 1, 0, 1 }, "/petattack" },
 	petfollow = { "Interface\\Icons\\Ability_Tracking", L["Follow"], { 0, 1, 0, 1 }, "/petfollow" },
 	petmoveto = { "Interface\\Icons\\Ability_Hunter_Pet_Goto", L["Move To"], { 0, 1, 0, 1 }, "/petmoveto" },
@@ -57,7 +55,7 @@ NEURON.PetActions = {
 	petpassive = { "Interface\\Icons\\Ability_Seal", L["Passive"], { 0, 1, 0, 1 }, "/petpassive" },
 }
 
---local PetActions = NEURON.PetActions
+--local PetActions = Neuron.PetActions
 
 
 --Spells that need their primary spell name overwritten
@@ -81,8 +79,8 @@ local cooldowns, cdAlphas = {}, {}
 local CurrentMountSpellID
 
 
-NEURON.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
-local BUTTON = NEURON.BUTTON
+Neuron.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
+local BUTTON = Neuron.BUTTON
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -92,7 +90,7 @@ local BUTTON = NEURON.BUTTON
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
 function NeuronButton:OnInitialize()
-	DB = NEURON.db.profile
+	DB = Neuron.db.profile
 
 	ItemCache = NeuronItemCache
 
@@ -1521,7 +1519,7 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 	end
 
 	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
-	NEURON.NeuronFlyouts:UpdateFlyout(button)
+	Neuron.NeuronFlyouts:UpdateFlyout(button)
 	button:SetType(button)
 	NeuronButton:MACRO_UpdateAll(button, true)
 	button:SetObjectVisibility(button)
@@ -1533,7 +1531,7 @@ function NeuronButton:MACRO_PLAYER_ENTERING_WORLD(button, ...)
 
 	NeuronButton:MACRO_Reset(button)
 	NeuronButton:MACRO_UpdateAll(button, true)
-	NEURON.NeuronBinder:ApplyBindings(button)
+	Neuron.NeuronBinder:ApplyBindings(button)
 end
 
 ---super broken with 8.0
@@ -1579,14 +1577,14 @@ end
 
 
 function NeuronButton:MACRO_UPDATE_MACROS(button, ...)
-	if (NEURON.PEW and not InCombatLockdown() and button.data.macro_Watch) then
+	if (Neuron.PEW and not InCombatLockdown() and button.data.macro_Watch) then
 		NeuronButton:MACRO_PlaceBlizzMacro(button, button.data.macro_Watch)
 	end
 end
 
 
 function NeuronButton:MACRO_EQUIPMENT_SETS_CHANGED(button, ...)
-	if (NEURON.PEW and not InCombatLockdown() and button.data.macro_Equip) then
+	if (Neuron.PEW and not InCombatLockdown() and button.data.macro_Equip) then
 		NeuronButton:MACRO_PlaceBlizzEquipSet(button, button.data.macro_Equip)
 	end
 end
@@ -1939,7 +1937,7 @@ function NeuronButton:MACRO_PlaceFlyout(button, action1, action2, hasAction)
 		button.data.macro_Note = ""
 		button.data.macro_UseNote = false
 
-		NEURON.NeuronFlyouts:UpdateFlyout(button, true)
+		Neuron.NeuronFlyouts:UpdateFlyout(button, true)
 
 		if (not button.cursor) then
 			button:SetType(button, true)
@@ -2001,8 +1999,8 @@ function NeuronButton:MACRO_PlaceMacro(button)
 	wipe(MacroDrag);
 	ClearCursor();
 	SetCursor(nil);
-	NEURON.NeuronFlyouts:UpdateFlyout(button)
-	NEURON:ToggleButtonGrid(false)
+	Neuron.NeuronFlyouts:UpdateFlyout(button)
+	Neuron:ToggleButtonGrid(false)
 
 end
 
@@ -2065,7 +2063,7 @@ function NeuronButton:MACRO_PickUpMacro(button)
 			button.macroshow = nil
 			button.macroicon = nil
 
-			NEURON.NeuronFlyouts:UpdateFlyout(button)
+			Neuron.NeuronFlyouts:UpdateFlyout(button)
 
 			button:SetType(button, true)
 
@@ -2126,13 +2124,13 @@ function NeuronButton:MACRO_OnReceiveDrag(button, preclick)
 	elseif (cursorType == "battlepet") then
 		NeuronButton:MACRO_PlaceBattlePet(button, action1, action2, NeuronButton:MACRO_HasAction(button))
 	elseif (cursorType == "petaction") then
-		NEURON:Print(L["Pet Actions can not be added to Neuron bars at this time."])
+		Neuron:Print(L["Pet Actions can not be added to Neuron bars at this time."])
 	end
 
 
 	if (StartDrag and macroCache[1]) then
 		NeuronButton:MACRO_PickUpMacro(button)
-		NEURON:ToggleButtonGrid(true)
+		Neuron:ToggleButtonGrid(true)
 	end
 
 	NeuronButton:MACRO_UpdateAll(button, true)
@@ -2140,7 +2138,7 @@ function NeuronButton:MACRO_OnReceiveDrag(button, preclick)
 	StartDrag = false
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
-		NEURON.NeuronGUI:UpdateObjectGUI()
+		Neuron.NeuronGUI:UpdateObjectGUI()
 	end
 end
 
@@ -2177,7 +2175,7 @@ function NeuronButton:MACRO_OnDragStart(button, mousebutton)
 				button.dragbutton = nil
 			end
 
-			NEURON:ToggleButtonGrid(true)
+			Neuron:ToggleButtonGrid(true)
 		else
 			button.dragbutton = nil
 		end
@@ -2227,8 +2225,8 @@ function NeuronButton:OnMouseDown()
 		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 		wipe(MacroDrag)
 
-		for index, bar in pairs(NEURON.BARIndex) do
-			NEURON.NeuronBar:UpdateObjectVisibility(bar)
+		for index, bar in pairs(Neuron.BARIndex) do
+			Neuron.NeuronBar:UpdateObjectVisibility(bar)
 		end
 
 	end
@@ -2249,7 +2247,7 @@ function NeuronButton:MACRO_PreClick(button, mousebutton)
 
 			button:SetType(button, true, true)
 
-			NEURON:ToggleButtonGrid(true)
+			Neuron:ToggleButtonGrid(true)
 
 			NeuronButton:MACRO_OnReceiveDrag(button, true)
 
@@ -2261,7 +2259,7 @@ function NeuronButton:MACRO_PreClick(button, mousebutton)
 		end
 	end
 
-	NEURON.ClickedButton = button
+	Neuron.ClickedButton = button
 end
 
 
@@ -2571,9 +2569,9 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 			---Part 1 of Druid Prowl overwrite fix
 			-----------------------------------------------------
 			---breaks out of the loop due to flag set below
-			if (NEURON.class == "DRUID" and button.ignoreNextOverrideStance == true and value == "homestate") then
+			if (Neuron.class == "DRUID" and button.ignoreNextOverrideStance == true and value == "homestate") then
 				button.ignoreNextOverrideStance = nil
-				NEURON.NeuronBar:SetState(button.bar, "stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
+				Neuron.NeuronBar:SetState(button.bar, "stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
 				return
 			else
 				button.ignoreNextOverrideStance = nil
@@ -2593,7 +2591,7 @@ function NeuronButton:MACRO_OnAttributeChanged(button, name, value)
 				---------------------------------------------------
 				---druids have an issue where once stance will get immediately overwritten by another. I.E. stealth immediately getting overwritten by homestate if they go immediately into prowl from caster form
 				---this conditional sets a flag to ignore the next most stance flag, as that one is most likely in error and should be ignored
-				if(NEURON.class == "DRUID" and value == "stealth1") then
+				if(Neuron.class == "DRUID" and value == "stealth1") then
 					button.ignoreNextOverrideStance = true
 				end
 				------------------------------------------------------
@@ -2713,7 +2711,7 @@ end
 
 
 function NeuronButton:CreateNewObject(class, id, firstRun)
-	local data = NEURON.RegisteredBarData[class]
+	local data = Neuron.RegisteredBarData[class]
 
 	if (data) then
 
@@ -2727,7 +2725,7 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		object.elapsed = 0
 
 		--returns a table of the names of all the child objects for a given frame
-		local objects = NEURON:GetParentKeys(object)
+		local objects = Neuron:GetParentKeys(object)
 
 		--I think this is creating a pointer inside the object to where the child object resides in the global namespace
 		for k,v in pairs(objects) do
@@ -2762,23 +2760,23 @@ end
 
 function NeuronButton:ChangeObject(object)
 
-	if not NEURON.CurrentObject then
-		NEURON.CurrentObject = object
+	if not Neuron.CurrentObject then
+		Neuron.CurrentObject = object
 	end
 
 	local newObj, newEditor = false, false
 
-	if (NEURON.PEW) then
+	if (Neuron.PEW) then
 
-		if (object and object ~= NEURON.CurrentObject) then
+		if (object and object ~= Neuron.CurrentObject) then
 
-			if (NEURON.CurrentObject and NEURON.CurrentObject.editor.editType ~= object.editor.editType) then
+			if (Neuron.CurrentObject and Neuron.CurrentObject.editor.editType ~= object.editor.editType) then
 				newEditor = true
 			end
 
-			if (NEURON.CurrentObject and NEURON.CurrentObject.bar ~= object.bar) then
+			if (Neuron.CurrentObject and Neuron.CurrentObject.bar ~= object.bar) then
 
-				local bar = NEURON.CurrentObject.bar
+				local bar = Neuron.CurrentObject.bar
 
 				if (bar.handler:GetAttribute("assertstate")) then
 					bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
@@ -2788,7 +2786,7 @@ function NeuronButton:ChangeObject(object)
 
 			end
 
-			NEURON.CurrentObject = object
+			Neuron.CurrentObject = object
 
 			object.editor.select:Show()
 
@@ -2799,10 +2797,10 @@ function NeuronButton:ChangeObject(object)
 		end
 
 		if (not object) then
-			NEURON.CurrentObject = nil
+			Neuron.CurrentObject = nil
 		end
 
-		for k,v in pairs(NEURON.EDITIndex) do
+		for k,v in pairs(Neuron.EDITIndex) do
 			if (not object or v ~= object.editor) then
 				v.select:Hide()
 			end
@@ -2828,7 +2826,7 @@ function NeuronButton:UpdateObjectSpec(bar)
 
 			object:SetData(object, bar)
 			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
-			NEURON.NeuronFlyouts:UpdateFlyout(object)
+			Neuron.NeuronFlyouts:UpdateFlyout(object)
 			object:SetType(object)
 			object:SetObjectVisibility(object)
 		end
@@ -3055,7 +3053,7 @@ function NeuronButton:SetObjectVisibility(button, show)
 
 	if (show or button.showGrid) then
 		button:Show()
-	elseif not NeuronButton:MACRO_HasAction(button) and (not NEURON.ButtonEditMode or not NEURON.BarEditMode or not NEURON.BindingMode) then
+	elseif not NeuronButton:MACRO_HasAction(button) and (not Neuron.ButtonEditMode or not Neuron.BarEditMode or not Neuron.BindingMode) then
 		button:Hide()
 	end
 end
@@ -3064,16 +3062,16 @@ end
 ---TODO refactor this to NeuronButton
 function NeuronButton:SetAux(button)
 	button:SetSkinned(button)
-	NEURON.NeuronFlyouts:UpdateFlyout(button, true)
+	Neuron.NeuronFlyouts:UpdateFlyout(button, true)
 end
 
 ---TODO refactor this to NeuronButton
 function NeuronButton:LoadAux(button)
 
-	if NEURON.NeuronGUI then
-		NEURON.NeuronGUI:ObjEditor_CreateEditFrame(button, button.objTIndex)
+	if Neuron.NeuronGUI then
+		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(button, button.objTIndex)
 	end
-	NEURON.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
 end
 
@@ -3426,7 +3424,7 @@ end
 
 
 function NeuronButton.ButtonProfileUpdate()
-	DB = NEURON.db.profile
+	DB = Neuron.db.profile
 end
 
 
@@ -3443,7 +3441,7 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 			tinsert(button_list, _G["NeuronActionButton"..index])
 		end
 	else
-		local bar = NEURON.CurrentBar
+		local bar = Neuron.CurrentBar
 		for i, objID in ipairs(bar.data.objectList) do
 			tinsert(button_list, _G["NeuronActionButton"..tostring(objID)])
 		end
@@ -3475,7 +3473,7 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 		end
 
 		if macro_update then
-			NEURON.NeuronFlyouts:UpdateFlyout(button)
+			Neuron.NeuronFlyouts:UpdateFlyout(button)
 			NeuronButton:BuildStateData(button)
 			button:SetType(button)
 		end
