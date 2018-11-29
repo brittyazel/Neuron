@@ -1841,136 +1841,136 @@ end
 
 
 
-function STATUS:SetData(button, bar, skipupdate)
+function STATUS:SetData(bar)
 
     if (bar) then
 
-        button.bar = bar
-        button.alpha = bar.data.alpha
-        button.showGrid = bar.data.showGrid
+        self.bar = bar
+        self.alpha = bar.data.alpha
+        self.showGrid = bar.data.showGrid
 
-        button:SetFrameStrata(bar.data.objectStrata)
-        button:SetScale(bar.data.scale)
+        self:SetFrameStrata(bar.data.objectStrata)
+        self:SetScale(bar.data.scale)
 
     end
 
-    button:SetWidth(button.config.width)
-    button:SetHeight(button.config.height)
+    self:SetWidth(self.config.width)
+    self:SetHeight(self.config.height)
 
-    button.bordercolor = { (";"):split(button.config.bordercolor) }
+    self.bordercolor = { (";"):split(self.config.bordercolor) }
 
-    button.cColor = { (";"):split(button.config.cColor) }
-    button.lColor = { (";"):split(button.config.lColor) }
-    button.rColor = { (";"):split(button.config.rColor) }
-    button.mColor = { (";"):split(button.config.mColor) }
-    button.tColor = { (";"):split(button.config.tColor) }
+    self.cColor = { (";"):split(self.config.cColor) }
+    self.lColor = { (";"):split(self.config.lColor) }
+    self.rColor = { (";"):split(self.config.rColor) }
+    self.mColor = { (";"):split(self.config.mColor) }
+    self.tColor = { (";"):split(self.config.tColor) }
 
-    button.sb.parent = button
+    self.sb.parent = self
 
-    button.sb.cText:SetTextColor(button.cColor[1], button.cColor[2], button.cColor[3], button.cColor[4])
-    button.sb.lText:SetTextColor(button.lColor[1], button.lColor[2], button.lColor[3], button.lColor[4])
-    button.sb.rText:SetTextColor(button.rColor[1], button.rColor[2], button.rColor[3], button.rColor[4])
-    button.sb.mText:SetTextColor(button.mColor[1], button.mColor[2], button.mColor[3], button.mColor[4])
+    self.sb.cText:SetTextColor(self.cColor[1], self.cColor[2], self.cColor[3], self.cColor[4])
+    self.sb.lText:SetTextColor(self.lColor[1], self.lColor[2], self.lColor[3], self.lColor[4])
+    self.sb.rText:SetTextColor(self.rColor[1], self.rColor[2], self.rColor[3], self.rColor[4])
+    self.sb.mText:SetTextColor(self.mColor[1], self.mColor[2], self.mColor[3], self.mColor[4])
 
-    if (sbStrings[button.config.sbType]) then
+    if (sbStrings[self.config.sbType]) then
 
-        if (not sbStrings[button.config.sbType][button.config.cIndex]) then
-            button.config.cIndex = 1
+        if (not sbStrings[self.config.sbType][self.config.cIndex]) then
+            self.config.cIndex = 1
         end
-        button.sb.cFunc = sbStrings[button.config.sbType][button.config.cIndex][2]
+        self.sb.cFunc = sbStrings[self.config.sbType][self.config.cIndex][2]
 
-        if (not sbStrings[button.config.sbType][button.config.lIndex]) then
-            button.config.lIndex = 1
+        if (not sbStrings[self.config.sbType][self.config.lIndex]) then
+            self.config.lIndex = 1
         end
-        button.sb.lFunc = sbStrings[button.config.sbType][button.config.lIndex][2]
+        self.sb.lFunc = sbStrings[self.config.sbType][self.config.lIndex][2]
 
-        if (not sbStrings[button.config.sbType][button.config.rIndex]) then
-            button.config.rIndex = 1
+        if (not sbStrings[self.config.sbType][self.config.rIndex]) then
+            self.config.rIndex = 1
         end
-        button.sb.rFunc = sbStrings[button.config.sbType][button.config.rIndex][2]
+        self.sb.rFunc = sbStrings[self.config.sbType][self.config.rIndex][2]
 
-        if (not sbStrings[button.config.sbType][button.config.mIndex]) then
-            button.config.mIndex = 1
+        if (not sbStrings[self.config.sbType][self.config.mIndex]) then
+            self.config.mIndex = 1
         end
-        button.sb.mFunc = sbStrings[button.config.sbType][button.config.mIndex][2]
+        self.sb.mFunc = sbStrings[self.config.sbType][self.config.mIndex][2]
 
-        if (not sbStrings[button.config.sbType][button.config.tIndex]) then
-            button.config.tIndex = 1
+        if (not sbStrings[self.config.sbType][self.config.tIndex]) then
+            self.config.tIndex = 1
         end
-        button.sb.tFunc = sbStrings[button.config.sbType][button.config.tIndex][2]
+        self.sb.tFunc = sbStrings[self.config.sbType][self.config.tIndex][2]
 
     else
-        button.sb.cFunc = function() return "" end
-        button.sb.lFunc = function() return "" end
-        button.sb.rFunc = function() return "" end
-        button.sb.mFunc = function() return "" end
-        button.sb.tFunc = function() return "" end
+        self.sb.cFunc = function() return "" end
+        self.sb.lFunc = function() return "" end
+        self.sb.rFunc = function() return "" end
+        self.sb.mFunc = function() return "" end
+        self.sb.tFunc = function() return "" end
     end
 
-    button.sb.cText:SetText(button.sb.cFunc(button.sb))
-    button.sb.lText:SetText(button.sb.lFunc(button.sb))
-    button.sb.rText:SetText(button.sb.rFunc(button.sb))
-    button.sb.mText:SetText(button.sb.mFunc(button.sb))
+    self.sb.cText:SetText(self.sb.cFunc(self.sb))
+    self.sb.lText:SetText(self.sb.lFunc(self.sb))
+    self.sb.rText:SetText(self.sb.rFunc(self.sb))
+    self.sb.mText:SetText(self.sb.mFunc(self.sb))
 
-    button.sb.norestColor = { (";"):split(button.config.norestColor) }
-    button.sb.restColor = { (";"):split(button.config.restColor) }
+    self.sb.norestColor = { (";"):split(self.config.norestColor) }
+    self.sb.restColor = { (";"):split(self.config.restColor) }
 
-    button.sb.castColor = { (";"):split(button.config.castColor) }
-    button.sb.channelColor = { (";"):split(button.config.channelColor) }
-    button.sb.successColor = { (";"):split(button.config.successColor) }
-    button.sb.failColor = { (";"):split(button.config.failColor) }
+    self.sb.castColor = { (";"):split(self.config.castColor) }
+    self.sb.channelColor = { (";"):split(self.config.channelColor) }
+    self.sb.successColor = { (";"):split(self.config.successColor) }
+    self.sb.failColor = { (";"):split(self.config.failColor) }
 
-    button.sb.orientation = button.config.orientation
-    button.sb:SetOrientation(BarOrientations[button.config.orientation]:upper())
-    button.fbframe.feedback:SetOrientation(BarOrientations[button.config.orientation]:upper())
+    self.sb.orientation = self.config.orientation
+    self.sb:SetOrientation(BarOrientations[self.config.orientation]:upper())
+    self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
 
-    if (button.config.orientation == 2) then
-        button.sb.cText:SetAlpha(0)
-        button.sb.lText:SetAlpha(0)
-        button.sb.rText:SetAlpha(0)
-        button.sb.mText:SetAlpha(0)
+    if (self.config.orientation == 2) then
+        self.sb.cText:SetAlpha(0)
+        self.sb.lText:SetAlpha(0)
+        self.sb.rText:SetAlpha(0)
+        self.sb.mText:SetAlpha(0)
     else
-        button.sb.cText:SetAlpha(1)
-        button.sb.lText:SetAlpha(1)
-        button.sb.rText:SetAlpha(1)
-        button.sb.mText:SetAlpha(1)
+        self.sb.cText:SetAlpha(1)
+        self.sb.lText:SetAlpha(1)
+        self.sb.rText:SetAlpha(1)
+        self.sb.mText:SetAlpha(1)
     end
 
-    if (BarTextures[button.config.texture]) then
-        button.sb:SetStatusBarTexture(BarTextures[button.config.texture][button.config.orientation])
-        button.fbframe.feedback:SetStatusBarTexture(BarTextures[button.config.texture][button.config.orientation])
+    if (BarTextures[self.config.texture]) then
+        self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+        self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
     else
-        button.sb:SetStatusBarTexture(BarTextures[1][button.config.orientation])
-        button.fbframe.feedback:SetStatusBarTexture(BarTextures[1][button.config.orientation])
+        self.sb:SetStatusBarTexture(BarTextures[1][self.config.orientation])
+        self.fbframe.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
     end
 
-    NeuronStatusBar:SetBorder(button.sb, button.config, button.bordercolor)
-    NeuronStatusBar:SetBorder(button.fbframe.feedback, button.config, button.bordercolor)
+    NeuronStatusBar:SetBorder(self.sb, self.config, self.bordercolor)
+    NeuronStatusBar:SetBorder(self.fbframe.feedback, self.config, self.bordercolor)
 
-    button:SetFrameLevel(4)
+    self:SetFrameLevel(4)
 
-    button.fbframe:SetFrameLevel(button:GetFrameLevel()+10)
-    button.fbframe.feedback:SetFrameLevel(button.sb:GetFrameLevel()+10)
-    button.fbframe.feedback.bg:SetFrameLevel(button.sb.bg:GetFrameLevel()+10)
-    button.fbframe.feedback.border:SetFrameLevel(button.sb.border:GetFrameLevel()+10)
+    self.fbframe:SetFrameLevel(self:GetFrameLevel()+10)
+    self.fbframe.feedback:SetFrameLevel(self.sb:GetFrameLevel()+10)
+    self.fbframe.feedback.bg:SetFrameLevel(self.sb.bg:GetFrameLevel()+10)
+    self.fbframe.feedback.border:SetFrameLevel(self.sb.border:GetFrameLevel()+10)
 
 end
 
 
 
-function STATUS:LoadData(button, spec, state)
+function STATUS:LoadData(spec, state)
 
-    local id = button.id
+    local id = self.id
 
     if not DB.statusbtn[id] then
         DB.statusbtn[id] = {}
     end
 
-    button.DB = DB.statusbtn[id]
+    self.DB = DB.statusbtn[id]
 
-    button.config = button.DB.config
-    button.keys = button.DB.keys
-    button.data = button.DB.data
+    self.config = self.DB.config
+    self.keys = self.DB.keys
+    self.data = self.DB.data
 end
 
 
@@ -2198,7 +2198,7 @@ function STATUS:SetType(button, save)
 
     end
 
-    button:SetData(button, button.bar)
+    button:SetData(button.bar)
 
 end
 

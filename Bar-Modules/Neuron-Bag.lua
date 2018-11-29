@@ -158,33 +158,33 @@ function BAGBTN:GetSkinned(button)
 end
 
 
-function BAGBTN:SetData(button, bar)
+function BAGBTN:SetData(bar)
 
     if (bar) then
 
-        button.bar = bar
+        self.bar = bar
 
-        button:SetFrameStrata(bar.data.objectStrata)
-        button:SetScale(bar.data.scale)
+        self:SetFrameStrata(bar.data.objectStrata)
+        self:SetScale(bar.data.scale)
 
     end
 
-    button:SetFrameLevel(4)
+    self:SetFrameLevel(4)
 end
 
-function BAGBTN:LoadData(button, spec, state)
+function BAGBTN:LoadData(spec, state)
 
-    local id = button.id
+    local id = self.id
 
     if not DB.bagbtn[id] then
         DB.bagbtn[id] = {}
     end
 
-    button.DB = DB.bagbtn[id]
+    self.DB = DB.bagbtn[id]
 
-    button.config = button.DB.config
-    button.keys = button.DB.keys
-    button.data = button.DB.data
+    self.config = self.DB.config
+    self.keys = self.DB.keys
+    self.data = self.DB.data
 end
 
 function BAGBTN:SetObjectVisibility(button, show, hide)

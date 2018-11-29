@@ -360,19 +360,19 @@ function ZONEABILITYBTN:SetSkinned(button)
 end
 
 
-function ZONEABILITYBTN:LoadData(button, spec, state)
+function ZONEABILITYBTN:LoadData(spec, state)
 
-	local id = button.id
+	local id = self.id
 
 	if not DB.zoneabilitybtn[id] then
 		DB.zoneabilitybtn[id] = {}
 	end
 
-	button.DB = DB.zoneabilitybtn[id]
+	self.DB = DB.zoneabilitybtn[id]
 
-	button.config = button.DB.config
-	button.keys = button.DB.keys
-	button.data = button.DB.data
+	self.config = self.DB.config
+	self.keys = self.DB.keys
+	self.data = self.DB.data
 end
 
 function ZONEABILITYBTN:SetObjectVisibility(button, show)

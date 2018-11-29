@@ -32,7 +32,10 @@ local keyDefaults = {
 
 
 ---Button Constructor
-
+---@param name string @ Name given to the new button frame
+---@param frameType string @ Type of frame to create
+---@param frameTemplate @ Template used for our new frame
+---@param objMetaTable @ Metatable object to be assigned as the template for our new button
 function ButtonObj:new(name, frameType, frameTemplate, objMetaTable)
 
 	local object = CreateFrame(frameType, name, UIParent, frameTemplate)
@@ -44,178 +47,182 @@ end
 
 
 
-function ButtonObj:SetData(button, bar)
+-------------------------------------------------
+-----Base Methods that all buttons have----------
+---These will often be overwritten per bar type--
+-------------------------------------------------
+function ButtonObj:SetData(bar)
 	if (bar) then
 
-		button.bar = bar
+		self.bar = bar
 
-		button.barLock = bar.data.barLock
-		button.barLockAlt = bar.data.barLockAlt
-		button.barLockCtrl = bar.data.barLockCtrl
-		button.barLockShift = bar.data.barLockShift
+		self.barLock = bar.data.barLock
+		self.barLockAlt = bar.data.barLockAlt
+		self.barLockCtrl = bar.data.barLockCtrl
+		self.barLockShift = bar.data.barLockShift
 
-		button.tooltips = bar.data.tooltips
-		button.tooltipsEnhanced = bar.data.tooltipsEnhanced
-		button.tooltipsCombat = bar.data.tooltipsCombat
+		self.tooltips = bar.data.tooltips
+		self.tooltipsEnhanced = bar.data.tooltipsEnhanced
+		self.tooltipsCombat = bar.data.tooltipsCombat
 
-		button.spellGlow = bar.data.spellGlow
-		button.spellGlowDef = bar.data.spellGlowDef
-		button.spellGlowAlt = bar.data.spellGlowAlt
+		self.spellGlow = bar.data.spellGlow
+		self.spellGlowDef = bar.data.spellGlowDef
+		self.spellGlowAlt = bar.data.spellGlowAlt
 
-		button.bindText = bar.data.bindText
-		button.macroText = bar.data.macroText
-		button.countText = bar.data.countText
+		self.bindText = bar.data.bindText
+		self.macroText = bar.data.macroText
+		self.countText = bar.data.countText
 
-		button.cdText = bar.data.cdText
+		self.cdText = bar.data.cdText
 
 		if (bar.data.cdAlpha) then
-			button.cdAlpha = 0.2
+			self.cdAlpha = 0.2
 		else
-			button.cdAlpha = 1
+			self.cdAlpha = 1
 		end
 
-		button.auraText = bar.data.auraText
-		button.auraInd = bar.data.auraInd
+		self.auraText = bar.data.auraText
+		self.auraInd = bar.data.auraInd
 
-		button.rangeInd = bar.data.rangeInd
+		self.rangeInd = bar.data.rangeInd
 
-		button.upClicks = bar.data.upClicks
-		button.downClicks = bar.data.downClicks
+		self.upClicks = bar.data.upClicks
+		self.downClicks = bar.data.downClicks
 
-		button.showGrid = bar.data.showGrid
-		button.multiSpec = bar.data.multiSpec
+		self.showGrid = bar.data.showGrid
+		self.multiSpec = bar.data.multiSpec
 
-		button.bindColor = bar.data.bindColor
-		button.macroColor = bar.data.macroColor
-		button.countColor = bar.data.countColor
+		self.bindColor = bar.data.bindColor
+		self.macroColor = bar.data.macroColor
+		self.countColor = bar.data.countColor
 
-		button.macroname:SetText(button.data.macro_Name) --custom macro's weren't showing the name
+		self.macroname:SetText(self.data.macro_Name) --custom macro's weren't showing the name
 
-		if (not button.cdcolor1) then
-			button.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+		if (not self.cdcolor1) then
+			self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
 		else
-			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
+			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
 		end
 
-		if (not button.cdcolor2) then
-			button.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+		if (not self.cdcolor2) then
+			self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
 		else
-			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
+			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
 		end
 
-		if (not button.auracolor1) then
-			button.auracolor1 = { (";"):split(bar.data.auracolor1) }
+		if (not self.auracolor1) then
+			self.auracolor1 = { (";"):split(bar.data.auracolor1) }
 		else
-			button.auracolor1[1], button.auracolor1[2], button.auracolor1[3], button.auracolor1[4] = (";"):split(bar.data.auracolor1)
+			self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], self.auracolor1[4] = (";"):split(bar.data.auracolor1)
 		end
 
-		if (not button.auracolor2) then
-			button.auracolor2 = { (";"):split(bar.data.auracolor2) }
+		if (not self.auracolor2) then
+			self.auracolor2 = { (";"):split(bar.data.auracolor2) }
 		else
-			button.auracolor2[1], button.auracolor2[2], button.auracolor2[3], button.auracolor2[4] = (";"):split(bar.data.auracolor2)
+			self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], self.auracolor2[4] = (";"):split(bar.data.auracolor2)
 		end
 
-		if (not button.buffcolor) then
-			button.buffcolor = { (";"):split(bar.data.buffcolor) }
+		if (not self.buffcolor) then
+			self.buffcolor = { (";"):split(bar.data.buffcolor) }
 		else
-			button.buffcolor[1], button.buffcolor[2], button.buffcolor[3], button.buffcolor[4] = (";"):split(bar.data.buffcolor)
+			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.data.buffcolor)
 		end
 
-		if (not button.debuffcolor) then
-			button.debuffcolor = { (";"):split(bar.data.debuffcolor) }
+		if (not self.debuffcolor) then
+			self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
 		else
-			button.debuffcolor[1], button.debuffcolor[2], button.debuffcolor[3], button.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
+			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
 		end
 
-		if (not button.rangecolor) then
-			button.rangecolor = { (";"):split(bar.data.rangecolor) }
+		if (not self.rangecolor) then
+			self.rangecolor = { (";"):split(bar.data.rangecolor) }
 		else
-			button.rangecolor[1], button.rangecolor[2], button.rangecolor[3], button.rangecolor[4] = (";"):split(bar.data.rangecolor)
+			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.data.rangecolor)
 		end
 
-		button:SetFrameStrata(bar.data.objectStrata)
+		self:SetFrameStrata(bar.data.objectStrata)
 
-		button:SetScale(bar.data.scale)
+		self:SetScale(bar.data.scale)
 	end
 
-	if (button.bindText) then
-		button.hotkey:Show()
-		if (button.bindColor) then
-			button.hotkey:SetTextColor((";"):split(button.bindColor))
+	if (self.bindText) then
+		self.hotkey:Show()
+		if (self.bindColor) then
+			self.hotkey:SetTextColor((";"):split(self.bindColor))
 		end
 	else
-		button.hotkey:Hide()
+		self.hotkey:Hide()
 	end
 
-	if (button.macroText) then
-		button.macroname:Show()
-		if (button.macroColor) then
-			button.macroname:SetTextColor((";"):split(button.macroColor))
+	if (self.macroText) then
+		self.macroname:Show()
+		if (self.macroColor) then
+			self.macroname:SetTextColor((";"):split(self.macroColor))
 		end
 	else
-		button.macroname:Hide()
+		self.macroname:Hide()
 	end
 
-	if (button.countText) then
-		button.count:Show()
-		if (button.countColor) then
-			button.count:SetTextColor((";"):split(button.countColor))
+	if (self.countText) then
+		self.count:Show()
+		if (self.countColor) then
+			self.count:SetTextColor((";"):split(self.countColor))
 		end
 	else
-		button.count:Hide()
+		self.count:Hide()
 	end
 
 	local down, up = "", ""
 
-	if (button.upClicks) then up = up.."AnyUp" end
-	if (button.downClicks) then down = down.."AnyDown" end
+	if (self.upClicks) then up = up.."AnyUp" end
+	if (self.downClicks) then down = down.."AnyDown" end
 
-	button:RegisterForClicks(down, up)
-	button:RegisterForDrag("LeftButton", "RightButton")
-	button:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterForClicks(down, up)
+	self:RegisterForDrag("LeftButton", "RightButton")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-	if (not button.equipcolor) then
-		button.equipcolor = { 0.1, 1, 0.1, 1 }
+	if (not self.equipcolor) then
+		self.equipcolor = { 0.1, 1, 0.1, 1 }
 	else
-		button.equipcolor[1], button.equipcolor[2], button.equipcolor[3], button.equipcolor[4] = 0.1, 1, 0.1, 1
+		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3], self.equipcolor[4] = 0.1, 1, 0.1, 1
 	end
 
-	if (not button.manacolor) then
-		button.manacolor = { 0.5, 0.5, 1.0, 1 }
+	if (not self.manacolor) then
+		self.manacolor = { 0.5, 0.5, 1.0, 1 }
 	else
-		button.manacolor[1], button.manacolor[2], button.manacolor[3], button.manacolor[4] = 0.5, 0.5, 1.0, 1
+		self.manacolor[1], self.manacolor[2], self.manacolor[3], self.manacolor[4] = 0.5, 0.5, 1.0, 1
 	end
 
-	button:SetFrameLevel(4)
-	button.iconframe:SetFrameLevel(2)
-	button.iconframecooldown:SetFrameLevel(3)
-	button.iconframeaurawatch:SetFrameLevel(3)
+	self:SetFrameLevel(4)
+	self.iconframe:SetFrameLevel(2)
+	self.iconframecooldown:SetFrameLevel(3)
+	self.iconframeaurawatch:SetFrameLevel(3)
 
-	button:GetSkinned(button)
+	self:GetSkinned(self)
 
-	Neuron.NeuronButton:MACRO_UpdateTimers(button)
+	Neuron.NeuronButton:MACRO_UpdateTimers(self)
 end
 
 
 
-function ButtonObj:LoadData(button, spec, state)
+function ButtonObj:LoadData(spec, state)
 
 	local DB = Neuron.db.profile
 
-	local id = button.id
+	local id = self.id
 
 	if (not DB.buttons[id]) then
 		DB.buttons[id] = {}
 	end
 
-	button.DB = DB.buttons[id]
+	self.DB = DB.buttons[id]
 
-	button.config = button.DB.config
-	button.keys = button.DB.keys
-	button.statedata = button.DB[spec] --all of the states for a given spec
-	button.data = button.statedata[state] --loads a single state of a single spec into button.data
+	self.config = self.DB.config
+	self.keys = self.DB.keys
+	self.statedata = self.DB[spec] --all of the states for a given spec
+	self.data = self.statedata[state] --loads a single state of a single spec into button.data
 
-	Neuron.NeuronButton:BuildStateData(button)
+	Neuron.NeuronButton:BuildStateData(self)
 end
 
 
@@ -481,3 +488,7 @@ function ButtonObj:GetSkinned(button)
 		return false
 	end
 end
+
+------------------------------------------------------------
+--------------General Button Methods--------------------------
+------------------------------------------------------------

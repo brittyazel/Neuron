@@ -1085,8 +1085,8 @@ function NeuronBar:LoadObjects(bar, init)
 		if (object) then
 
 			---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
-			object:SetData(object, bar)
-			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
+			object:SetData(bar)
+			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
 			object:SetAux(object)
 			object:SetType(object, nil, nil, init)
 
@@ -1175,7 +1175,7 @@ function NeuronBar:SetObjectLoc(bar)
 			lastObj = object
 			num = num + 1
 			object:SetAttribute("barPos", num)
-			object:SetData(object, bar)
+			object:SetData(bar)
 		end
 	end
 
@@ -1671,7 +1671,7 @@ function NeuronBar:UpdateObjectData(bar)
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
-			object:SetData(object, bar)
+			object:SetData(bar)
 		end
 	end
 end

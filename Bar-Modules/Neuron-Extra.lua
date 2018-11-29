@@ -176,19 +176,19 @@ function EXTRABTN:SetSkinned(button)
 end
 
 
-function EXTRABTN:LoadData(button, spec, state)
+function EXTRABTN:LoadData(spec, state)
 
-	local id = button.id
+	local id = self.id
 
 	if not DB.extrabtn[id] then
 		DB.extrabtn[id] = {}
 	end
 
-	button.DB = DB.extrabtn[id]
+	self.DB = DB.extrabtn[id]
 
-	button.config = button.DB.config
-	button.keys = button.DB.keys
-	button.data = button.DB.data
+	self.config = self.DB.config
+	self.keys = self.DB.keys
+	self.data = self.DB.data
 
 end
 

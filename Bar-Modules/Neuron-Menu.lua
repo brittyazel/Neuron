@@ -152,33 +152,33 @@ function NeuronMenuBar:DisableDefault()
 end
 
 
-function MENUBTN:SetData(button, bar)
+function MENUBTN:SetData( bar)
     if (bar) then
 
-        button.bar = bar
+        self.bar = bar
 
-        button:SetFrameStrata(bar.data.objectStrata)
-        button:SetScale(bar.data.scale)
+        self:SetFrameStrata(bar.data.objectStrata)
+        self:SetScale(bar.data.scale)
 
     end
 
-    button:SetFrameLevel(4)
+    self:SetFrameLevel(4)
 end
 
 
-function MENUBTN:LoadData(button, spec, state)
+function MENUBTN:LoadData(spec, state)
 
-    local id = button.id
+    local id = self.id
 
     if not DB.menubtn[id] then
         DB.menubtn[id] = {}
     end
 
-    button.DB = DB.menubtn[id]
+    self.DB = DB.menubtn[id]
 
-    button.config = button.DB.config
-    button.keys = button.DB.keys
-    button.data = button.DB.data
+    self.config = self.DB.config
+    self.keys = self.DB.keys
+    self.data = self.DB.data
 
 end
 

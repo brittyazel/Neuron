@@ -163,19 +163,19 @@ function EXITBTN:SetSkinned(button)
 	end
 end
 
-function EXITBTN:LoadData(button, spec, state)
+function EXITBTN:LoadData(spec, state)
 
-	local id = button.id
+	local id = self.id
 
 	if not DB.exitbtn[id] then
 		DB.exitbtn[id] = {}
 	end
 
-	button.DB = DB.exitbtn[id]
+	self.DB = DB.exitbtn[id]
 
-	button.config = button.DB.config
-	button.keys = button.DB.keys
-	button.data = button.DB.data
+	self.config = self.DB.config
+	self.keys = self.DB.keys
+	self.data = self.DB.data
 end
 
 function EXITBTN:SetObjectVisibility(button, show)

@@ -481,56 +481,41 @@ function NeuronButton:updateAuraInfo(unit)
 end
 
 
----TODO: This no longer works in BfA
---[[function NeuronButton:isActiveShapeshiftSpell(spell)
-
-	local shapeshift = spell:match("^[^(]+")
-	local texture, isActive
-
-	if (shapeshift) then
-		for i=1, GetNumShapeshiftForms() do
-			texture, isActive = GetShapeshiftFormInfo(i)
-			if (isActive) then
-				return texture
-			end
-		end
-	end
-end]]
 
 
-
-function NeuronButton:SetTimer(cd, start, duration, enable, timer, color1, color2, cdAlpha)
+function NeuronButton:SetTimer(frame, start, duration, enable, timer, color1, color2, cdAlpha)
 	if ( start and start > 0 and duration > 0 and enable > 0) then
-		cd:SetAlpha(1)
-		CooldownFrame_Set(cd, start, duration, enable)
-		--CooldownFrame_SetTimer(cd, start, duration, enable)
+		frame:SetAlpha(1)
+		CooldownFrame_Set(frame, start, duration, enable)
+		--CooldownFrame_SetTimer(frame, start, duration, enable)
 
 		if (duration >= DB.timerLimit) then
-			cd.duration = duration
-			cd.start = start
-			cd.active = true
+			frame.duration = duration
+			frame.start = start
+			frame.active = true
 
 			if (timer) then
-				cd.timer:Show()
-				if (not cd.expiry) then
-					cd.timer:SetTextColor(color1[1], color1[2], color1[3])
+				frame.timer:Show()
+				if (not frame.expiry) then
+					frame.timer:SetTextColor(color1[1], color1[2], color1[3])
 				end
-				cd.expirecolor = color2
+				frame.expirecolor = color2
 			end
 
-			cooldowns[cd] = true
+			cooldowns[frame] = true
 
 			if (cdAlpha) then
-				cdAlphas[cd] = true
+				cdAlphas[frame] = true
 			end
 
-		elseif (cooldowns[cd]) then
-			cd.duration = 1
+		elseif (cooldowns[frame]) then
+			frame.duration = 1
 		end
 
 	else
-		cd.duration = 0; cd.start = 0;
-		CooldownFrame_Set(cd, 0, 0, 0)
+		frame.duration = 0
+		frame.start = 0
+		CooldownFrame_Set(frame, 0, 0, 0)
 	end
 end
 
@@ -1488,7 +1473,7 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 		spec = 1
 	end
 
-	button:LoadData(button, spec, button:GetParent():GetAttribute("activestate") or "homestate")
+	button:LoadData(spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	Neuron.NeuronFlyouts:UpdateFlyout(button)
 	button:SetType(button)
 	NeuronButton:MACRO_UpdateAll(button, true)
@@ -2645,7 +2630,7 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		object:SetID(0)
 		object.objTIndex = index
 		object.objType = data.objType:gsub("%s", ""):upper()
-		object:LoadData(object, GetActiveSpecGroup(), "homestate")
+		object:LoadData(GetActiveSpecGroup(), "homestate")
 
 		if (firstRun) then
 			object:SetDefaults(object, object:GetDefaults(object))
@@ -2731,8 +2716,8 @@ function NeuronButton:UpdateObjectSpec(bar)
 				spec = 1
 			end
 
-			object:SetData(object, bar)
-			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
+			object:SetData(bar)
+			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
 			Neuron.NeuronFlyouts:UpdateFlyout(object)
 			object:SetType(object)
 			object:SetObjectVisibility(object)

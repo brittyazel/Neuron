@@ -521,125 +521,125 @@ function NeuronPetBar:OnLeave(button)
 end
 
 
-function PETBTN:SetData(button, bar)
+function PETBTN:SetData(bar)
 
 	if (bar) then
 
-		button.bar = bar
+		self.bar = bar
 
-		button.cdText = bar.data.cdText
+		self.cdText = bar.data.cdText
 
 		if (bar.data.cdAlpha) then
-			button.cdAlpha = 0.2
+			self.cdAlpha = 0.2
 		else
-			button.cdAlpha = 1
+			self.cdAlpha = 1
 		end
 
-		if (not button.cdcolor1) then
-			button.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+		if (not self.cdcolor1) then
+			self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
 		else
-			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
+			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
 		end
 
-		if (not button.cdcolor2) then
-			button.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+		if (not self.cdcolor2) then
+			self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
 		else
-			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
+			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
 		end
 
-		button.showGrid = bar.data.showGrid
+		self.showGrid = bar.data.showGrid
 
-		button.barLock = bar.data.barLock
-		button.barLockAlt = bar.data.barLockAlt
-		button.barLockCtrl = bar.data.barLockCtrl
-		button.barLockShift = bar.data.barLockShift
+		self.barLock = bar.data.barLock
+		self.barLockAlt = bar.data.barLockAlt
+		self.barLockCtrl = bar.data.barLockCtrl
+		self.barLockShift = bar.data.barLockShift
 
-		button.upClicks = bar.data.upClicks
-		button.downClicks = bar.data.downClicks
+		self.upClicks = bar.data.upClicks
+		self.downClicks = bar.data.downClicks
 
-		button.bindText = bar.data.bindText
-		button.macroText = bar.data.macroText
-		button.countText = bar.data.countText
+		self.bindText = bar.data.bindText
+		self.macroText = bar.data.macroText
+		self.countText = bar.data.countText
 
-		button.bindColor = bar.data.bindColor
-		button.macroColor = bar.data.macroColor
-		button.countColor = bar.data.countColor
+		self.bindColor = bar.data.bindColor
+		self.macroColor = bar.data.macroColor
+		self.countColor = bar.data.countColor
 
-		button.tooltips = bar.data.tooltips
-		button.tooltipsEnhanced = bar.data.tooltipsEnhanced
-		button.tooltipsCombat = bar.data.tooltipsCombat
+		self.tooltips = bar.data.tooltips
+		self.tooltipsEnhanced = bar.data.tooltipsEnhanced
+		self.tooltipsCombat = bar.data.tooltipsCombat
 
-		button:SetFrameStrata(bar.data.objectStrata)
+		self:SetFrameStrata(bar.data.objectStrata)
 
-		button:SetScale(bar.data.scale)
+		self:SetScale(bar.data.scale)
 
 	end
 
-	if (button.bindText) then
-		button.hotkey:Show()
-		if (button.bindColor) then
-			button.hotkey:SetTextColor((";"):split(button.bindColor))
+	if (self.bindText) then
+		self.hotkey:Show()
+		if (self.bindColor) then
+			self.hotkey:SetTextColor((";"):split(self.bindColor))
 		end
 	else
-		button.hotkey:Hide()
+		self.hotkey:Hide()
 	end
 
-	if (button.macroText) then
-		button.macroname:Show()
-		if (button.macroColor) then
-			button.macroname:SetTextColor((";"):split(button.macroColor))
+	if (self.macroText) then
+		self.macroname:Show()
+		if (self.macroColor) then
+			self.macroname:SetTextColor((";"):split(self.macroColor))
 		end
 	else
-		button.macroname:Hide()
+		self.macroname:Hide()
 	end
 
-	if (button.countText) then
-		button.count:Show()
-		if (button.countColor) then
-			button.count:SetTextColor((";"):split(button.countColor))
+	if (self.countText) then
+		self.count:Show()
+		if (self.countColor) then
+			self.count:SetTextColor((";"):split(self.countColor))
 		end
 	else
-		button.count:Hide()
+		self.count:Hide()
 	end
 
 	local down, up = "", ""
 
-	if (button.upClicks) then up = up.."AnyUp" end
-	if (button.downClicks) then down = down.."AnyDown" end
+	if (self.upClicks) then up = up.."AnyUp" end
+	if (self.downClicks) then down = down.."AnyDown" end
 
-	button:RegisterForClicks(down, up)
-	button:RegisterForDrag("LeftButton", "RightButton")
+	self:RegisterForClicks(down, up)
+	self:RegisterForDrag("LeftButton", "RightButton")
 
-	button.auracolor1 = { 0, 0.82, 0, 1 }
-	button.auracolor2 = { 1, 0.1, 0.1, 1 }
-	button.buffcolor = { 0, 0.8, 0, 1 }
-	button.debuffcolor = { 0.8, 0, 0, 1 }
-	button.manacolor = { 0.5, 0.5, 1.0 }
-	button.rangecolor = { 0.7, 0.15, 0.15, 1 }
+	self.auracolor1 = { 0, 0.82, 0, 1 }
+	self.auracolor2 = { 1, 0.1, 0.1, 1 }
+	self.buffcolor = { 0, 0.8, 0, 1 }
+	self.debuffcolor = { 0.8, 0, 0, 1 }
+	self.manacolor = { 0.5, 0.5, 1.0 }
+	self.rangecolor = { 0.7, 0.15, 0.15, 1 }
 
-	button:SetFrameLevel(4)
-	button.iconframe:SetFrameLevel(2)
-	button.iconframecooldown:SetFrameLevel(3)
-	button.iconframeaurawatch:SetFrameLevel(3)
-	button.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
+	self:SetFrameLevel(4)
+	self.iconframe:SetFrameLevel(2)
+	self.iconframecooldown:SetFrameLevel(3)
+	self.iconframeaurawatch:SetFrameLevel(3)
+	self.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
 
-	button:GetSkinned(button)
+	self:GetSkinned(self)
 end
 
 
-function PETBTN:LoadData(button, spec, state)
+function PETBTN:LoadData(spec, state)
 
-	local id = button.id
+	local id = self.id
 
 	if not DB.petbtn[id] then
 		DB.petbtn[id] = {}
 	end
 
-	button.DB = DB.petbtn[id]
+	self.DB = DB.petbtn[id]
 
-	button.config = button.DB.config
-	button.keys = button.DB.keys
-	button.data = button.DB.data
+	self.config = self.DB.config
+	self.keys = self.DB.keys
+	self.data = self.DB.data
 end
 
 function PETBTN:SetObjectVisibility(button, show)
