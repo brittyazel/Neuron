@@ -14,8 +14,6 @@ local BAR = Neuron.BAR
 local TRASHCAN = CreateFrame("Frame", nil, UIParent)
 TRASHCAN:Hide()
 
-local BUTTON = Neuron.BUTTON
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local BARIndex = Neuron.BARIndex
@@ -92,7 +90,7 @@ function NeuronBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000)
+	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = Neuron.ButtonObj }, 1000)
 
 	Neuron:RegisterGUIOptions("bar", {
 		AUTOHIDE = true,

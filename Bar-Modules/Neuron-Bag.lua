@@ -4,7 +4,7 @@ local  DB
 Neuron.NeuronBagBar = Neuron:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBagBar = Neuron.NeuronBagBar
 
-local BAGBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
+local BAGBTN = setmetatable({}, {__index = Neuron.ButtonObj})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -42,20 +42,6 @@ function NeuronBagBar:OnInitialize()
     bagElements[3] = CharacterBag1Slot
     bagElements[2] = CharacterBag2Slot
     bagElements[1] = CharacterBag3Slot
-
-
-    ----------------------------------------------------------------
-    BAGBTN.SetData = NeuronBagBar.SetData
-    BAGBTN.LoadData = NeuronBagBar.LoadData
-    BAGBTN.SetAux = NeuronBagBar.SetAux
-    BAGBTN.LoadAux = NeuronBagBar.LoadAux
-    BAGBTN.SetObjectVisibility = NeuronBagBar.SetObjectVisibility
-    BAGBTN.SetDefaults = NeuronBagBar.SetDefaults
-    BAGBTN.GetDefaults = NeuronBagBar.GetDefaults
-    BAGBTN.SetType = NeuronBagBar.SetType
-    BAGBTN.GetSkinned = NeuronBagBar.GetSkinned
-    BAGBTN.SetSkinned = NeuronBagBar.SetSkinned
-    ----------------------------------------------------------------
 
 
     Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, NeuronBagBar, DB.bagbtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements)
@@ -145,7 +131,7 @@ function NeuronBagBar:CreateBarsAndButtons()
 end
 
 
-function NeuronBagBar:SetSkinned(button)
+function BAGBTN:SetSkinned(button)
 
     if (SKIN) then
 
@@ -167,12 +153,12 @@ function NeuronBagBar:SetSkinned(button)
 end
 
 
-function NeuronBagBar:GetSkinned(button)
+function BAGBTN:GetSkinned(button)
     -- empty
 end
 
 
-function NeuronBagBar:SetData(button, bar)
+function BAGBTN:SetData(button, bar)
 
     if (bar) then
 
@@ -186,7 +172,7 @@ function NeuronBagBar:SetData(button, bar)
     button:SetFrameLevel(4)
 end
 
-function NeuronBagBar:LoadData(button, spec, state)
+function BAGBTN:LoadData(button, spec, state)
 
     local id = button.id
 
@@ -201,19 +187,19 @@ function NeuronBagBar:LoadData(button, spec, state)
     button.data = button.DB.data
 end
 
-function NeuronBagBar:SetObjectVisibility(button, show, hide)
+function BAGBTN:SetObjectVisibility(button, show, hide)
 
     --empty
 
 end
 
-function NeuronBagBar:SetAux(button)
+function BAGBTN:SetAux(button)
 
     -- empty
 
 end
 
-function NeuronBagBar:LoadAux(button)
+function BAGBTN:LoadAux(button)
 
     ---hide the color border around these buttons
     --C_Timer.NewTimer(1, function() button.element.IconBorder:Hide() end)
@@ -221,19 +207,19 @@ function NeuronBagBar:LoadAux(button)
 
 end
 
-function NeuronBagBar:SetDefaults(button)
+function BAGBTN:SetDefaults(button)
 
     -- empty
 
 end
 
-function NeuronBagBar:GetDefaults(button)
+function BAGBTN:GetDefaults(button)
 
     --empty
 
 end
 
-function NeuronBagBar:SetType(button, save)
+function BAGBTN:SetType(button, save)
 
     if (bagElements[button.id]) then
 

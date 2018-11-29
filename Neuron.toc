@@ -22,6 +22,7 @@ Neuron.lua
 Utilities/DB-Fixer.lua
 
 Neuron-States.lua
+Button.lua
 Neuron-Buttons.lua
 Neuron-Bars.lua
 Neuron-KeyBinder.lua

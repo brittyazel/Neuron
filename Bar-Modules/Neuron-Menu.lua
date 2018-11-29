@@ -9,7 +9,7 @@ local DB
 Neuron.NeuronMenuBar = Neuron:NewModule("MenuBar", "AceHook-3.0")
 local NeuronMenuBar = Neuron.NeuronMenuBar
 
-local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
+local MENUBTN = setmetatable({}, {__index = Neuron.ButtonObj})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -50,19 +50,6 @@ function NeuronMenuBar:OnInitialize()
     menuElements[10] = StoreMicroButton
     menuElements[11] = MainMenuMicroButton
 
-
-    ----------------------------------------------------------------
-    MENUBTN.SetData = NeuronMenuBar.SetData
-    MENUBTN.LoadData = NeuronMenuBar.LoadData
-    MENUBTN.SetAux = NeuronMenuBar.SetAux
-    MENUBTN.LoadAux = NeuronMenuBar.LoadAux
-    MENUBTN.SetObjectVisibility = NeuronMenuBar.SetObjectVisibility
-    MENUBTN.SetDefaults = NeuronMenuBar.SetDefaults
-    MENUBTN.GetDefaults = NeuronMenuBar.GetDefaults
-    MENUBTN.SetType = NeuronMenuBar.SetType
-    MENUBTN.GetSkinned = NeuronMenuBar.GetSkinned
-    MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
-    ----------------------------------------------------------------
 
     Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, DB.menubtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements)
     Neuron:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
@@ -165,7 +152,7 @@ function NeuronMenuBar:DisableDefault()
 end
 
 
-function NeuronMenuBar:SetData(button, bar)
+function MENUBTN:SetData(button, bar)
     if (bar) then
 
         button.bar = bar
@@ -179,7 +166,7 @@ function NeuronMenuBar:SetData(button, bar)
 end
 
 
-function NeuronMenuBar:LoadData(button, spec, state)
+function MENUBTN:LoadData(button, spec, state)
 
     local id = button.id
 
@@ -196,35 +183,35 @@ function NeuronMenuBar:LoadData(button, spec, state)
 end
 
 
-function NeuronMenuBar:SetObjectVisibility(button, show, hide)
+function MENUBTN:SetObjectVisibility(button, show, hide)
     --empty
 end
 
-function NeuronMenuBar:SetAux(button)
+function MENUBTN:SetAux(button)
     -- empty
 end
 
-function NeuronMenuBar:LoadAux(button)
+function MENUBTN:LoadAux(button)
     -- empty
 end
 
-function NeuronMenuBar:SetDefaults(button)
+function MENUBTN:SetDefaults(button)
     -- empty
 end
 
-function NeuronMenuBar:GetDefaults(button)
+function MENUBTN:GetDefaults(button)
     --empty
 end
 
-function NeuronMenuBar:SetSkinned(button)
+function MENUBTN:SetSkinned(button)
     --empty
 end
 
-function NeuronMenuBar:GetSkinned(button)
+function MENUBTN:GetSkinned(button)
     --empty
 end
 
-function NeuronMenuBar:SetType(button, save)
+function MENUBTN:SetType(button, save)
     if (menuElements[button.id]) then
 
         button:SetWidth(menuElements[button.id]:GetWidth()-2)

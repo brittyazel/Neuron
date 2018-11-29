@@ -6,7 +6,7 @@ Neuron.NeuronExtraBar = Neuron:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.
 local NeuronExtraBar = Neuron.NeuronExtraBar
 
 
-local EXTRABTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+local EXTRABTN = setmetatable({}, { __index = Neuron.ButtonObj })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -35,19 +35,6 @@ local defaultBarOptions = {
 function NeuronExtraBar:OnInitialize()
 
 	DB = Neuron.db.profile
-
-	----------------------------------------------------------------
-	EXTRABTN.SetData = NeuronExtraBar.SetData
-	EXTRABTN.LoadData = NeuronExtraBar.LoadData
-	EXTRABTN.SetAux = NeuronExtraBar.SetAux
-	EXTRABTN.LoadAux = NeuronExtraBar.LoadAux
-	EXTRABTN.SetDefaults = NeuronExtraBar.SetDefaults
-	EXTRABTN.GetDefaults = NeuronExtraBar.GetDefaults
-	EXTRABTN.GetSkinned = NeuronExtraBar.GetSkinned
-	EXTRABTN.SetSkinned = NeuronExtraBar.SetSkinned
-	EXTRABTN.SetObjectVisibility = NeuronExtraBar.SetObjectVisibility
-	EXTRABTN.SetType = NeuronExtraBar.SetType
-	----------------------------------------------------------------
 
 	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, NeuronExtraBar, DB.extrabtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1)
 
@@ -158,11 +145,11 @@ function NeuronExtraBar:DisableDefault()
 end
 
 
-function NeuronExtraBar:GetSkinned(button)
+function EXTRABTN:GetSkinned(button)
 	--empty
 end
 
-function NeuronExtraBar:SetSkinned(button)
+function EXTRABTN:SetSkinned(button)
 
 	if (SKIN) then
 
@@ -189,7 +176,7 @@ function NeuronExtraBar:SetSkinned(button)
 end
 
 
-function NeuronExtraBar:LoadData(button, spec, state)
+function EXTRABTN:LoadData(button, spec, state)
 
 	local id = button.id
 
@@ -205,7 +192,7 @@ function NeuronExtraBar:LoadData(button, spec, state)
 
 end
 
-function NeuronExtraBar:SetObjectVisibility(button, show)
+function EXTRABTN:SetObjectVisibility(button, show)
 
 	if HasExtraActionBar() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		button:SetAlpha(1)
@@ -216,7 +203,7 @@ function NeuronExtraBar:SetObjectVisibility(button, show)
 
 end
 
-function NeuronExtraBar:SetAux(button)
+function EXTRABTN:SetAux(button)
 
 
 end
@@ -232,7 +219,7 @@ function NeuronExtraBar:SetExtraButtonTex(button)
 end
 
 
-function NeuronExtraBar:LoadAux(button)
+function EXTRABTN:LoadAux(button)
 
 	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
@@ -246,20 +233,16 @@ function NeuronExtraBar:LoadAux(button)
 	button.hotkey:SetPoint("TOPLEFT", -4, -6)
 end
 
-function NeuronExtraBar:SetDefaults(button)
+function EXTRABTN:SetDefaults(button)
 
 	-- empty
 
 end
 
-function NeuronExtraBar:GetDefaults(button)
+function EXTRABTN:GetDefaults(button)
 
 	--empty
 
-end
-
-function NeuronExtraBar:SetData(button, bar)
-	Neuron.NeuronButton:SetData(button, bar)
 end
 
 
@@ -308,7 +291,7 @@ function NeuronExtraBar:OnLeave(button)
 	GameTooltip:Hide()
 end
 
-function NeuronExtraBar:SetType(button, save)
+function EXTRABTN:SetType(button, save)
 
 	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
 	button:RegisterEvent("ZONE_CHANGED")

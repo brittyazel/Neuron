@@ -8,8 +8,6 @@
 
 local DB, SPEC, btnDB, control
 
-local BUTTON = Neuron.BUTTON
-
 Neuron.NeuronFlyouts = Neuron:NewModule("Flyouts", "AceEvent-3.0", "AceHook-3.0")
 local NeuronFlyouts = Neuron.NeuronFlyouts
 
@@ -1124,7 +1122,11 @@ function NeuronFlyouts:Flyout_RemoveBar(button)
 end
 
 function NeuronFlyouts:UpdateFlyout(button, init)
-	local options = button.data.macro_Text:match("/flyout%s(%C+)")
+
+	if button.data.macro_Text then
+		local options = button.data.macro_Text:match("/flyout%s(%C+)")
+	end
+
 	if (button.flyout) then
 		NeuronFlyouts:Flyout_RemoveButtons(button)
 		NeuronFlyouts:Flyout_RemoveBar(button)
@@ -1255,7 +1257,7 @@ function NeuronFlyouts:Flyout_GetButton(fbutton)
 	end
 
 	local button = CreateFrame("CheckButton", "NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate")
-	setmetatable(button, { __index = BUTTON })
+	setmetatable(button, { __index = ButtonObj})
 
 	button.elapsed = 0
 

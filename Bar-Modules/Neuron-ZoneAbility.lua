@@ -1,13 +1,11 @@
 --Neuron , a World of Warcraft® user interface addon.
 
-
-
 local DB
 
 Neuron.NeuronZoneAbilityBar = Neuron:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronZoneAbilityBar = Neuron.NeuronZoneAbilityBar
 
-local ZONEABILITYBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+local ZONEABILITYBTN = setmetatable({}, { __index = Neuron.ButtonObj })
 
 local SKIN = LibStub("Masque", true)
 
@@ -48,19 +46,6 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 	--create pointers for these functions
 	ZONEABILITYBTN.SetTimer = Neuron.NeuronButton.SetTimer
-
-	----------------------------------------------------------------
-	ZONEABILITYBTN.SetData = NeuronZoneAbilityBar.SetData
-	ZONEABILITYBTN.LoadData = NeuronZoneAbilityBar.LoadData
-	ZONEABILITYBTN.SetAux = NeuronZoneAbilityBar.SetAux
-	ZONEABILITYBTN.LoadAux = NeuronZoneAbilityBar.LoadAux
-	ZONEABILITYBTN.SetObjectVisibility = NeuronZoneAbilityBar.SetObjectVisibility
-	ZONEABILITYBTN.SetDefaults = NeuronZoneAbilityBar.SetDefaults
-	ZONEABILITYBTN.GetDefaults = NeuronZoneAbilityBar.GetDefaults
-	ZONEABILITYBTN.SetType = NeuronZoneAbilityBar.SetType
-	ZONEABILITYBTN.GetSkinned = NeuronZoneAbilityBar.GetSkinned
-	ZONEABILITYBTN.SetSkinned = NeuronZoneAbilityBar.SetSkinned
-	----------------------------------------------------------------
 
 
 	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, NeuronZoneAbilityBar, DB.zoneabilitybtn, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1)
@@ -349,16 +334,7 @@ function NeuronZoneAbilityBar:OnLeave(button)
 end
 
 
-function NeuronZoneAbilityBar:SetData(button, bar)
-	Neuron.NeuronButton:SetData(button, bar)
-end
-
-
-function NeuronZoneAbilityBar:GetSkinned(button)
-	Neuron.NeuronButton:GetSkinned(button)
-end
-
-function NeuronZoneAbilityBar:SetSkinned(button)
+function ZONEABILITYBTN:SetSkinned(button)
 	if (SKIN) then
 
 		local bar = button.bar
@@ -384,7 +360,7 @@ function NeuronZoneAbilityBar:SetSkinned(button)
 end
 
 
-function NeuronZoneAbilityBar:LoadData(button, spec, state)
+function ZONEABILITYBTN:LoadData(button, spec, state)
 
 	local id = button.id
 
@@ -399,7 +375,7 @@ function NeuronZoneAbilityBar:LoadData(button, spec, state)
 	button.data = button.DB.data
 end
 
-function NeuronZoneAbilityBar:SetObjectVisibility(button, show)
+function ZONEABILITYBTN:SetObjectVisibility(button, show)
 
 	if (GetZoneAbilitySpellInfo() or show) then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		button:SetAlpha(1)
@@ -408,11 +384,7 @@ function NeuronZoneAbilityBar:SetObjectVisibility(button, show)
 	end
 end
 
-function NeuronZoneAbilityBar:SetAux(button)
-	Neuron.NeuronButton:SetSkinned(button)
-end
-
-function NeuronZoneAbilityBar:LoadAux(button)
+function ZONEABILITYBTN:LoadAux(button)
 	button.spellID = ZoneAbilitySpellID;
 	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 	button.style = button:CreateTexture(nil, "OVERLAY")
@@ -424,7 +396,7 @@ function NeuronZoneAbilityBar:LoadAux(button)
 end
 
 
-function NeuronZoneAbilityBar:OnLoad(button)
+function ZONEABILITYBTN:OnLoad(button)
 	-- empty
 end
 
@@ -451,16 +423,16 @@ function NeuronZoneAbilityBar:OnDragStart(button)
 	PickupSpell(ZoneAbilitySpellID)
 end
 
-function NeuronZoneAbilityBar:SetDefaults(button)
+function ZONEABILITYBTN:SetDefaults(button)
 	-- empty
 end
 
-function NeuronZoneAbilityBar:GetDefaults(button)
+function ZONEABILITYBTN:GetDefaults(button)
 	--empty
 end
 
 
-function NeuronZoneAbilityBar:SetType(button, save)
+function ZONEABILITYBTN:SetType(button, save)
 
 	button:RegisterUnitEvent("UNIT_AURA", "player")
 	button:RegisterEvent("SPELLS_CHANGED")
@@ -486,7 +458,7 @@ function NeuronZoneAbilityBar:SetType(button, save)
 	button:SetScript("OnUpdate", function(self, elapsed) NeuronZoneAbilityBar:OnUpdate(self, elapsed) end)
 	button:SetScript("OnAttributeChanged", nil)
 
-	NeuronZoneAbilityBar:SetObjectVisibility(button)
+	button:SetObjectVisibility(button)
 end
 
 function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, query)

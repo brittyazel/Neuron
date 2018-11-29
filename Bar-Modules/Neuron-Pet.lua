@@ -7,7 +7,7 @@ local DB
 Neuron.NeuronPetBar = Neuron:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronPetBar = Neuron.NeuronPetBar
 
-local PETBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+local PETBTN = setmetatable({}, { __index = Neuron.ButtonObj })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -39,19 +39,6 @@ local defaultBarOptions = {
 function NeuronPetBar:OnInitialize()
 
 	DB = Neuron.db.profile
-
-	----------------------------------------------------------------
-	PETBTN.SetData = NeuronPetBar.SetData
-	PETBTN.LoadData = NeuronPetBar.LoadData
-	PETBTN.SetAux = NeuronPetBar.SetAux
-	PETBTN.LoadAux = NeuronPetBar.LoadAux
-	PETBTN.SetObjectVisibility = NeuronPetBar.SetObjectVisibility
-	PETBTN.SetDefaults = NeuronPetBar.SetDefaults
-	PETBTN.GetDefaults = NeuronPetBar.GetDefaults
-	PETBTN.SetType = NeuronPetBar.SetType
-	PETBTN.GetSkinned = NeuronPetBar.GetSkinned
-	PETBTN.SetSkinned = NeuronPetBar.SetSkinned
-	----------------------------------------------------------------
 
 	Neuron:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, NeuronPetBar, DB.petbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = PETBTN }, Neuron.maxPetID)
 
@@ -534,7 +521,7 @@ function NeuronPetBar:OnLeave(button)
 end
 
 
-function NeuronPetBar:SetData(button, bar)
+function PETBTN:SetData(button, bar)
 
 	if (bar) then
 
@@ -640,7 +627,7 @@ function NeuronPetBar:SetData(button, bar)
 end
 
 
-function NeuronPetBar:LoadData(button, spec, state)
+function PETBTN:LoadData(button, spec, state)
 
 	local id = button.id
 
@@ -655,7 +642,7 @@ function NeuronPetBar:LoadData(button, spec, state)
 	button.data = button.DB.data
 end
 
-function NeuronPetBar:SetObjectVisibility(button, show)
+function PETBTN:SetObjectVisibility(button, show)
 
 	if (show or button.showGrid) then
 		button:SetAlpha(1)
@@ -667,43 +654,26 @@ end
 
 
 
-function NeuronPetBar:SetAux(button)
-
-	Neuron.NeuronButton:SetSkinned(button)
-
-end
-
-function NeuronPetBar:LoadAux(button)
+function PETBTN:LoadAux(button)
 
 	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
 
 end
 
-function NeuronPetBar:SetDefaults(button)
+function PETBTN:SetDefaults(button)
 
 	-- empty
 
 end
 
-function NeuronPetBar:GetDefaults(button)
+function PETBTN:GetDefaults(button)
 
 	--empty
 
 end
 
-function NeuronPetBar:SetSkinned(button)
 
-	Neuron.NeuronButton:SetSkinned(button)
-
-end
-
-function NeuronPetBar:GetSkinned(button)
-
-	Neuron.NeuronButton:GetSkinned(button)
-
-end
-
-function NeuronPetBar:SetType(button, save)
+function PETBTN:SetType(button, save)
 
 	button:RegisterEvent("PET_BAR_UPDATE")
 	button:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")

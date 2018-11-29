@@ -5,11 +5,10 @@ local DB
 Neuron.NeuronButton = Neuron:NewModule("Button", "AceEvent-3.0", "AceHook-3.0")
 local NeuronButton = Neuron.NeuronButton
 
-local BTNIndex, SKINIndex = Neuron.BTNIndex, Neuron.SKINIndex
+
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local SKIN = LibStub("Masque", true)
 
 local MacroDrag = Neuron.MacroDrag
 local StartDrag = Neuron.StartDrag
@@ -25,21 +24,6 @@ local cmdSlash
 
 local macroCache = {}
 
-
-local keyDefaults = {
-	[1] = { hotKeys = ":1:", hotKeyText = ":1:" },
-	[2] = { hotKeys = ":2:", hotKeyText = ":2:" },
-	[3] = { hotKeys = ":3:", hotKeyText = ":3:" },
-	[4] = { hotKeys = ":4:", hotKeyText = ":4:" },
-	[5] = { hotKeys = ":5:", hotKeyText = ":5:" },
-	[6] = { hotKeys = ":6:", hotKeyText = ":6:" },
-	[7] = { hotKeys = ":7:", hotKeyText = ":7:" },
-	[8] = { hotKeys = ":8:", hotKeyText = ":8:" },
-	[9] = { hotKeys = ":9:", hotKeyText = ":9:" },
-	[10] = { hotKeys = ":0:", hotKeyText = ":0:" },
-	[11] = { hotKeys = ":-:", hotKeyText = ":-:" },
-	[12] = { hotKeys = ":=:", hotKeyText = ":=:" },
-}
 
 
 Neuron.SpecialActions = { vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit", possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield", taxi = "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up",}
@@ -79,8 +63,6 @@ local cooldowns, cdAlphas = {}, {}
 local CurrentMountSpellID
 
 
-Neuron.BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
-local BUTTON = Neuron.BUTTON
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -130,18 +112,6 @@ function NeuronButton:OnInitialize()
 		SKIN:Register("Neuron", NeuronButton:SKINCallback(self, SKIN), true)
 	end
 
-	----------------------------------------------------------------
-	BUTTON.SetData = NeuronButton.SetData
-	BUTTON.LoadData = NeuronButton.LoadData
-	BUTTON.SetAux = NeuronButton.SetAux
-	BUTTON.LoadAux = NeuronButton.LoadAux
-	BUTTON.SetObjectVisibility = NeuronButton.SetObjectVisibility
-	BUTTON.SetDefaults = NeuronButton.SetDefaults
-	BUTTON.GetDefaults = NeuronButton.GetDefaults
-	BUTTON.SetType = NeuronButton.SetType
-	BUTTON.GetSkinned = NeuronButton.GetSkinned
-	BUTTON.SetSkinned = NeuronButton.SetSkinned
-	----------------------------------------------------------------
 
 end
 
@@ -2649,67 +2619,6 @@ function NeuronButton:MACRO_UpdateParse(button)
 end
 
 
-function NeuronButton:SetSkinned(button, flyout)
-	if (SKIN) then
-		local bar = button.bar
-
-		if (bar) then
-			local btnData = {
-				Normal = button.normaltexture,
-				Icon = button.iconframeicon,
-				Cooldown = button.iconframecooldown,
-				HotKey = button.hotkey,
-				Count = button.count,
-				Name = button.name,
-				Border = button.border,
-				AutoCast = false,
-			}
-
-			if (flyout) then
-				SKIN:Group("Neuron", button.anchor.bar.data.name):AddButton(button, btnData)
-			else
-				SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
-			end
-
-			button.skinned = true
-
-			SKINIndex[button] = true
-		end
-	end
-end
-
-
-function NeuronButton:GetSkinned(button)
-	if (button.__MSQ_NormalTexture) then
-		local Skin = button.__MSQ_NormalSkin
-
-		if (Skin) then
-			button.hasAction = Skin.Texture or false
-			button.noAction = Skin.EmptyTexture or false
-
-			if (button.__MSQ_Shape) then
-				button.shape = button.__MSQ_Shape:lower()
-			else
-				button.shape = "square"
-			end
-		else
-			button.hasAction = false
-			button.noAction = false
-			button.shape = "square"
-		end
-
-		button.shine.shape = button.shape
-
-		return true
-	else
-		button.hasAction = "Interface\\Buttons\\UI-Quickslot2"
-		button.noAction = "Interface\\Buttons\\UI-Quickslot"
-
-		return false
-	end
-end
-
-
 function NeuronButton:CreateNewObject(class, id, firstRun)
 	local data = Neuron.RegisteredBarData[class]
 
@@ -2718,9 +2627,7 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		--this is the same as 'id', I'm not sure why we need both
 		local index = #data.objTable + 1 --sets the current index to 1 greater than the current number of object in the table
 
-		local object = CreateFrame(data.objFrameT, data.objPrefix..id, UIParent, data.objTemplate)
-
-		setmetatable(object, data.objMetaT)
+		local object = Neuron.ButtonObj:new(data.objPrefix..id, data.objFrameT, data.objTemplate, data.objMetaT)
 
 		object.elapsed = 0
 
@@ -2834,179 +2741,6 @@ function NeuronButton:UpdateObjectSpec(bar)
 end
 
 
----TODO refactor this to NeuronButton
-function NeuronButton:SetData(button, bar)
-	if (bar) then
-
-		button.bar = bar
-
-		button.barLock = bar.data.barLock
-		button.barLockAlt = bar.data.barLockAlt
-		button.barLockCtrl = bar.data.barLockCtrl
-		button.barLockShift = bar.data.barLockShift
-
-		button.tooltips = bar.data.tooltips
-		button.tooltipsEnhanced = bar.data.tooltipsEnhanced
-		button.tooltipsCombat = bar.data.tooltipsCombat
-
-		button.spellGlow = bar.data.spellGlow
-		button.spellGlowDef = bar.data.spellGlowDef
-		button.spellGlowAlt = bar.data.spellGlowAlt
-
-		button.bindText = bar.data.bindText
-		button.macroText = bar.data.macroText
-		button.countText = bar.data.countText
-
-		button.cdText = bar.data.cdText
-
-		if (bar.data.cdAlpha) then
-			button.cdAlpha = 0.2
-		else
-			button.cdAlpha = 1
-		end
-
-		button.auraText = bar.data.auraText
-		button.auraInd = bar.data.auraInd
-
-		button.rangeInd = bar.data.rangeInd
-
-		button.upClicks = bar.data.upClicks
-		button.downClicks = bar.data.downClicks
-
-		button.showGrid = bar.data.showGrid
-		button.multiSpec = bar.data.multiSpec
-
-		button.bindColor = bar.data.bindColor
-		button.macroColor = bar.data.macroColor
-		button.countColor = bar.data.countColor
-
-		button.macroname:SetText(button.data.macro_Name) --custom macro's weren't showing the name
-
-		if (not button.cdcolor1) then
-			button.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
-		else
-			button.cdcolor1[1], button.cdcolor1[2], button.cdcolor1[3], button.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
-		end
-
-		if (not button.cdcolor2) then
-			button.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
-		else
-			button.cdcolor2[1], button.cdcolor2[2], button.cdcolor2[3], button.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
-		end
-
-		if (not button.auracolor1) then
-			button.auracolor1 = { (";"):split(bar.data.auracolor1) }
-		else
-			button.auracolor1[1], button.auracolor1[2], button.auracolor1[3], button.auracolor1[4] = (";"):split(bar.data.auracolor1)
-		end
-
-		if (not button.auracolor2) then
-			button.auracolor2 = { (";"):split(bar.data.auracolor2) }
-		else
-			button.auracolor2[1], button.auracolor2[2], button.auracolor2[3], button.auracolor2[4] = (";"):split(bar.data.auracolor2)
-		end
-
-		if (not button.buffcolor) then
-			button.buffcolor = { (";"):split(bar.data.buffcolor) }
-		else
-			button.buffcolor[1], button.buffcolor[2], button.buffcolor[3], button.buffcolor[4] = (";"):split(bar.data.buffcolor)
-		end
-
-		if (not button.debuffcolor) then
-			button.debuffcolor = { (";"):split(bar.data.debuffcolor) }
-		else
-			button.debuffcolor[1], button.debuffcolor[2], button.debuffcolor[3], button.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
-		end
-
-		if (not button.rangecolor) then
-			button.rangecolor = { (";"):split(bar.data.rangecolor) }
-		else
-			button.rangecolor[1], button.rangecolor[2], button.rangecolor[3], button.rangecolor[4] = (";"):split(bar.data.rangecolor)
-		end
-
-		button:SetFrameStrata(bar.data.objectStrata)
-
-		button:SetScale(bar.data.scale)
-	end
-
-	if (button.bindText) then
-		button.hotkey:Show()
-		if (button.bindColor) then
-			button.hotkey:SetTextColor((";"):split(button.bindColor))
-		end
-	else
-		button.hotkey:Hide()
-	end
-
-	if (button.macroText) then
-		button.macroname:Show()
-		if (button.macroColor) then
-			button.macroname:SetTextColor((";"):split(button.macroColor))
-		end
-	else
-		button.macroname:Hide()
-	end
-
-	if (button.countText) then
-		button.count:Show()
-		if (button.countColor) then
-			button.count:SetTextColor((";"):split(button.countColor))
-		end
-	else
-		button.count:Hide()
-	end
-
-	local down, up = "", ""
-
-	if (button.upClicks) then up = up.."AnyUp" end
-	if (button.downClicks) then down = down.."AnyDown" end
-
-	button:RegisterForClicks(down, up)
-	button:RegisterForDrag("LeftButton", "RightButton")
-	button:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-	if (not button.equipcolor) then
-		button.equipcolor = { 0.1, 1, 0.1, 1 }
-	else
-		button.equipcolor[1], button.equipcolor[2], button.equipcolor[3], button.equipcolor[4] = 0.1, 1, 0.1, 1
-	end
-
-	if (not button.manacolor) then
-		button.manacolor = { 0.5, 0.5, 1.0, 1 }
-	else
-		button.manacolor[1], button.manacolor[2], button.manacolor[3], button.manacolor[4] = 0.5, 0.5, 1.0, 1
-	end
-
-	button:SetFrameLevel(4)
-	button.iconframe:SetFrameLevel(2)
-	button.iconframecooldown:SetFrameLevel(3)
-	button.iconframeaurawatch:SetFrameLevel(3)
-
-	button:GetSkinned(button)
-
-	NeuronButton:MACRO_UpdateTimers(button)
-end
-
-
----TODO refactor this to NeuronButton
-function NeuronButton:LoadData(button, spec, state)
-	local id = button.id
-
-	if (not DB.buttons[id]) then
-		DB.buttons[id] = {}
-	end
-
-	button.DB = DB.buttons[id]
-
-	button.config = button.DB.config
-	button.keys = button.DB.keys
-	button.statedata = button.DB[spec] --all of the states for a given spec
-	button.data = button.statedata[state] --loads a single state of a single spec into button.data
-
-	NeuronButton:BuildStateData(button)
-end
-
-
 function NeuronButton:BuildStateData(button)
 	for state, data in pairs(button.statedata) do
 		button:SetAttribute(state.."-macro_Text", data.macro_Text)
@@ -3042,206 +2776,6 @@ function NeuronButton:Reset(button)
 
 	NeuronButton:MACRO_Reset(button)
 end
-
----TODO refactor this to NeuronButton
-function NeuronButton:SetObjectVisibility(button, show)
-
-	if not InCombatLockdown() then
-		button:SetAttribute("showGrid", button.showGrid) --this is important because in our state switching code, we can't querry button.showGrid directly
-		button:SetAttribute("isshown", show)
-	end
-
-	if (show or button.showGrid) then
-		button:Show()
-	elseif not NeuronButton:MACRO_HasAction(button) and (not Neuron.ButtonEditMode or not Neuron.BarEditMode or not Neuron.BindingMode) then
-		button:Hide()
-	end
-end
-
-
----TODO refactor this to NeuronButton
-function NeuronButton:SetAux(button)
-	button:SetSkinned(button)
-	Neuron.NeuronFlyouts:UpdateFlyout(button, true)
-end
-
----TODO refactor this to NeuronButton
-function NeuronButton:LoadAux(button)
-
-	if Neuron.NeuronGUI then
-		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(button, button.objTIndex)
-	end
-	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
-
-end
-
----TODO refactor this to NeuronButton
-function NeuronButton:SetDefaults(button, config, keys)
-	if (config) then
-		for k,v in pairs(config) do
-			button.config[k] = v
-		end
-	end
-
-	if (keys) then
-		for k,v in pairs(keys) do
-			button.keys[k] = v
-		end
-	end
-end
-
----TODO refactor this to NeuronButton
-function NeuronButton:GetDefaults(button)
-	return nil, keyDefaults[button.id]
-end
-
----TODO refactor this to NeuronButton
-function NeuronButton:SetType(button, save, kill, init)
-	local state = button:GetParent():GetAttribute("activestate")
-
-	NeuronButton:Reset(button)
-
-	if (kill) then
-
-		button:SetScript("OnEvent", function() end)
-		button:SetScript("OnUpdate", function() end)
-		button:SetScript("OnAttributeChanged", function() end)
-
-	else
-		SecureHandler_OnLoad(button)
-
-		button:RegisterEvent("ITEM_LOCK_CHANGED")
-		button:RegisterEvent("ACTIONBAR_SHOWGRID")
-		button:RegisterEvent("ACTIONBAR_HIDEGRID")
-
-		button:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-		button:RegisterEvent("UPDATE_MACROS")
-		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-		button:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-
-		NeuronButton:MACRO_UpdateParse(button)
-
-		button:SetAttribute("type", "macro")
-		button:SetAttribute("*macrotext*", button.macroparse)
-
-		button:SetScript("OnEvent", function(self, event, ...) NeuronButton:MACRO_OnEvent(self, event, ...) end)
-		button:SetScript("PreClick", function(self, mousebutton) NeuronButton:MACRO_PreClick(self, mousebutton) end)
-		button:SetScript("PostClick", function(self, mousebutton) NeuronButton:MACRO_PostClick(self, mousebutton) end)
-		button:SetScript("OnReceiveDrag", function(self, preclick) NeuronButton:MACRO_OnReceiveDrag(self, preclick) end)
-		button:SetScript("OnDragStart", function(self, mousebutton) NeuronButton:MACRO_OnDragStart(self, mousebutton) end)
-		button:SetScript("OnDragStop", function(self) NeuronButton:MACRO_OnDragStop(self) end)
-		button:SetScript("OnUpdate", function(self, elapsed) NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
-		button:SetScript("OnShow", function(self, ...) NeuronButton:MACRO_OnShow(self, ...) end)
-		button:SetScript("OnHide", function(self, ...) NeuronButton:MACRO_OnHide(self, ...) end)
-		button:SetScript("OnAttributeChanged", function(self, name, value)NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
-
-		button:HookScript("OnEnter", function(self, ...) NeuronButton:MACRO_OnEnter(self, ...) end)
-		button:HookScript("OnLeave", function(self, ...) NeuronButton:MACRO_OnLeave(self, ...) end)
-
-		button:WrapScript(button, "OnShow", [[
-						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
-							self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
-						end
-						]])
-
-		button:WrapScript(button, "OnHide", [[
-						if (not self:GetParent():GetAttribute("concealed")) then
-							for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
-								self:ClearBinding(key)
-							end
-						end
-						]])
-
-		--new action ID's for vehicle 133-138
-		--new action ID's for possess 133-138
-		--new action ID's for override 157-162
-
-		button:SetAttribute("overrideID_Offset", 156)
-		button:SetAttribute("vehicleID_Offset", 132)
-
-		button:SetAttribute("_childupdate", [=[
-
-				if (message) then
-
-					local msg = (":"):split(message)
-
-					if (msg:find("vehicle")) then
-
-						if (not self:GetAttribute(msg.."-actionID")) then
-
-							self:SetAttribute("type", "action")
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-
-						end
-
-						self:SetAttribute("SpecialAction", "vehicle")
-						self:SetAttribute("HasActionID", true)
-						self:Show()
-
-					elseif (msg:find("possess")) then
-						if (not self:GetAttribute(msg.."-actionID")) then
-
-							self:SetAttribute("type", "action")
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-
-						end
-
-						self:SetAttribute("SpecialAction", "possess")
-						self:SetAttribute("HasActionID", true)
-						self:Show()
-
-					elseif (msg:find("override")) then
-						if (not self:GetAttribute(msg.."-actionID")) then
-
-							self:SetAttribute("type", "action")
-							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
-							self:SetAttribute("HasActionID", true)
-
-						end
-
-						self:SetAttribute("SpecialAction", "override")
-
-						self:SetAttribute("HasActionID", true)
-
-						self:Show()
-
-					else
-						if (not self:GetAttribute(msg.."-actionID")) then
-
-							self:SetAttribute("type", "macro")
-							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
-
-							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("isshown") then
-								self:Show()
-							elseif (not self:GetAttribute("showGrid")) then
-								self:Hide()
-							end
-
-							self:SetAttribute("HasActionID", false)
-						else
-							self:SetAttribute("HasActionID", true)
-						end
-
-						self:SetAttribute("SpecialAction", nil)
-					end
-
-					self:SetAttribute("useparent-unit", nil)
-					self:SetAttribute("activestate", msg)
-
-				end
-
-			]=])
-
-		if (not init) then
-			NeuronButton:MACRO_UpdateAll(button, true)
-		end
-
-		NeuronButton:MACRO_OnShow(button)
-
-	end
-
-end
-
 
 ---This function is used to "fake" a state change in the button editor so you can see what each state will look like
 function NeuronButton:SetFauxState(button, state)

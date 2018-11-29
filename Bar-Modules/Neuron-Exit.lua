@@ -6,7 +6,7 @@ Neuron.NeuronExitBar = Neuron:NewModule("ExitBar", "AceEvent-3.0", "AceHook-3.0"
 local NeuronExitBar = Neuron.NeuronExitBar
 
 
-local EXITBTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
+local EXITBTN = setmetatable({}, { __index = Neuron.ButtonObj })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -34,19 +34,6 @@ local defaultBarOptions = {
 function NeuronExitBar:OnInitialize()
 
 	DB = Neuron.db.profile
-
-	----------------------------------------------------------------
-	EXITBTN.SetData = NeuronExitBar.SetData
-	EXITBTN.LoadData = NeuronExitBar.LoadData
-	EXITBTN.SetAux = NeuronExitBar.SetAux
-	EXITBTN.LoadAux = NeuronExitBar.LoadAux
-	EXITBTN.SetObjectVisibility = NeuronExitBar.SetObjectVisibility
-	EXITBTN.SetDefaults = NeuronExitBar.SetDefaults
-	EXITBTN.GetDefaults = NeuronExitBar.GetDefaults
-	EXITBTN.SetType = NeuronExitBar.SetType
-	EXITBTN.GetSkinned = NeuronExitBar.GetSkinned
-	EXITBTN.SetSkinned = NeuronExitBar.SetSkinned
-	----------------------------------------------------------------
 
 	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1)
 
@@ -151,11 +138,11 @@ function NeuronExitBar:DisableDefault()
 end
 
 
-function NeuronExitBar:GetSkinned(button)
+function EXITBTN:GetSkinned(button)
 	--empty
 end
 
-function NeuronExitBar:SetSkinned(button)
+function EXITBTN:SetSkinned(button)
 
 	if (SKIN) then
 
@@ -176,7 +163,7 @@ function NeuronExitBar:SetSkinned(button)
 	end
 end
 
-function NeuronExitBar:LoadData(button, spec, state)
+function EXITBTN:LoadData(button, spec, state)
 
 	local id = button.id
 
@@ -191,7 +178,7 @@ function NeuronExitBar:LoadData(button, spec, state)
 	button.data = button.DB.data
 end
 
-function NeuronExitBar:SetObjectVisibility(button, show)
+function EXITBTN:SetObjectVisibility(button, show)
 
 	if CanExitVehicle() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 
@@ -204,33 +191,29 @@ function NeuronExitBar:SetObjectVisibility(button, show)
 
 end
 
-function NeuronExitBar:SetAux(button)
+function EXITBTN:SetAux(button)
 
 	-- empty
 
 end
 
 
-function NeuronExitBar:LoadAux(button)
+function EXITBTN:LoadAux(button)
 
 	-- empty
 
 end
 
-function NeuronExitBar:SetDefaults(button)
+function EXITBTN:SetDefaults(button)
 
 	-- empty
 
 end
 
-function NeuronExitBar:GetDefaults(button)
+function EXITBTN:GetDefaults(button)
 
 	--empty
 
-end
-
-function NeuronExitBar:SetData(button, bar)
-	Neuron.NeuronButton:SetData(button, bar)
 end
 
 
@@ -247,7 +230,7 @@ function NeuronExitBar:SetExitButtonIcon(button)
 	button.iconframeicon:SetTexture(texture)
 end
 
-function NeuronExitBar:SetType(button, save)
+function EXITBTN:SetType(button, save)
 
 	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 	button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
@@ -277,13 +260,13 @@ function NeuronExitBar:SetType(button, save)
 
 	button:SetSkinned(button)
 
-	NeuronExitBar:SetObjectVisibility(button)
+	button:SetObjectVisibility(button)
 end
 
 
 function NeuronExitBar:OnEvent(button, event, ...)
 
-	NeuronExitBar:SetObjectVisibility(button)
+	button:SetObjectVisibility(button)
 
 end
 

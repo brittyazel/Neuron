@@ -1,8 +1,5 @@
 --Neuron Status Bars, a World of Warcraft® user interface addon.
 
-
-
-
 local DB
 
 Neuron.NeuronStatusBar = Neuron:NewModule("StatusBar", "AceEvent-3.0", "AceHook-3.0")
@@ -10,7 +7,7 @@ local NeuronStatusBar = Neuron.NeuronStatusBar
 
 local EDITIndex = Neuron.EDITIndex
 
-local STATUS = setmetatable({}, { __index = CreateFrame("Button") })
+local STATUS = setmetatable({}, { __index = Neuron.ButtonObj })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -180,19 +177,6 @@ function NeuronStatusBar:OnInitialize()
 
     DB = Neuron.db.profile
 
-
-    -------------------------------------------------
-    STATUS.SetData = NeuronStatusBar.SetData
-    STATUS.LoadData = NeuronStatusBar.LoadData
-    STATUS.SetAux = NeuronStatusBar.SetAux
-    STATUS.LoadAux = NeuronStatusBar.LoadAux
-    STATUS.SetObjectVisibility = NeuronStatusBar.SetObjectVisibility
-    STATUS.SetDefaults = NeuronStatusBar.SetDefaults
-    STATUS.GetDefaults = NeuronStatusBar.GetDefaults
-    STATUS.SetType = NeuronStatusBar.SetType
-    STATUS.GetSkinned = NeuronStatusBar.GetSkinned
-    STATUS.SetSkinned = NeuronStatusBar.SetSkinned
-    -------------------------------------------------
 
     Neuron:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, NeuronStatusBar, DB.statusbtn, "Button", "NeuronStatusBarTemplate", { __index = STATUS }, 1000)
 
@@ -1857,7 +1841,7 @@ end
 
 
 
-function NeuronStatusBar:SetData(button, bar, skipupdate)
+function STATUS:SetData(button, bar, skipupdate)
 
     if (bar) then
 
@@ -1974,7 +1958,7 @@ end
 
 
 
-function NeuronStatusBar:LoadData(button, spec, state)
+function STATUS:LoadData(button, spec, state)
 
     local id = button.id
 
@@ -1992,7 +1976,7 @@ end
 
 
 
-function NeuronStatusBar:SetObjectVisibility(button, show, hide)
+function STATUS:SetObjectVisibility(button, show, hide)
 
     if (show) then
 
@@ -2011,7 +1995,7 @@ end
 
 
 
-function NeuronStatusBar:SetAux(button)
+function STATUS:SetAux(button)
 
     -- empty
 
@@ -2020,27 +2004,27 @@ end
 
 
 
-function NeuronStatusBar:LoadAux(button)
+function STATUS:LoadAux(button)
 
     Neuron.NeuronGUI:SB_CreateEditFrame(button, button.objTIndex)
 
 end
 
-function NeuronStatusBar:SetSkinned(button)
+function STATUS:SetSkinned(button)
 
     -- empty
 
 end
 
 
-function NeuronStatusBar:GetSkinned(button)
+function STATUS:GetSkinned(button)
 
     -- empty
 
 end
 
 
-function NeuronStatusBar:SetDefaults(button, config)
+function STATUS:SetDefaults(button, config)
 
     if (config) then
         for k,v in pairs(config) do
@@ -2053,7 +2037,7 @@ end
 
 
 
-function NeuronStatusBar:GetDefaults(button)
+function STATUS:GetDefaults(button)
 
     return configDefaults[button.id]
 
@@ -2093,7 +2077,7 @@ end
 
 
 
-function NeuronStatusBar:SetType(button, save)
+function STATUS:SetType(button, save)
 
     if (InCombatLockdown()) then
         return
