@@ -6,7 +6,7 @@ Neuron.NeuronExitBar = Neuron:NewModule("ExitBar", "AceEvent-3.0", "AceHook-3.0"
 local NeuronExitBar = Neuron.NeuronExitBar
 
 
-local EXITBTN = setmetatable({}, { __index = Neuron.ButtonObj })
+local EXITBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -138,25 +138,21 @@ function NeuronExitBar:DisableDefault()
 end
 
 
-function EXITBTN:GetSkinned(button)
-	--empty
-end
-
-function EXITBTN:SetSkinned(button)
+function EXITBTN:SetSkinned()
 
 	if (SKIN) then
 
-		local bar = button.bar
+		local bar = self.bar
 
 		if (bar) then
 
 			local btnData = {
-				Icon = button.icontexture,
-				Normal = button.normaltexture,
+				Icon = self.icontexture,
+				Normal = self.normaltexture,
 
 			}
 
-			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
 
 		end
 
@@ -178,41 +174,19 @@ function EXITBTN:LoadData(spec, state)
 	self.data = self.DB.data
 end
 
-function EXITBTN:SetObjectVisibility(button, show)
+EXITBTN.SetData = Neuron.ACTIONBUTTON.SetData
+
+
+function EXITBTN:SetObjectVisibility(show)
 
 	if CanExitVehicle() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 
-		button:SetAlpha(1)
-		NeuronExitBar:SetExitButtonIcon(button)
+		self:SetAlpha(1)
+		NeuronExitBar:SetExitButtonIcon(self)
 
 	elseif not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
-		button:SetAlpha(0)
+		self:SetAlpha(0)
 	end
-
-end
-
-function EXITBTN:SetAux(button)
-
-	-- empty
-
-end
-
-
-function EXITBTN:LoadAux(button)
-
-	-- empty
-
-end
-
-function EXITBTN:SetDefaults(button)
-
-	-- empty
-
-end
-
-function EXITBTN:GetDefaults(button)
-
-	--empty
 
 end
 
@@ -230,43 +204,43 @@ function NeuronExitBar:SetExitButtonIcon(button)
 	button.iconframeicon:SetTexture(texture)
 end
 
-function EXITBTN:SetType(button, save)
+function EXITBTN:SetType(save)
 
-	button:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-	button:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	button:RegisterEvent("UPDATE_POSSESS_BAR");
-	button:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR");
-	button:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	button:RegisterEvent("UNIT_EXITED_VEHICLE")
-	button:RegisterEvent("VEHICLE_UPDATE")
+	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+	self:RegisterEvent("UPDATE_POSSESS_BAR");
+	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR");
+	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+	self:RegisterEvent("UNIT_EXITED_VEHICLE")
+	self:RegisterEvent("VEHICLE_UPDATE")
 
-	button:SetScript("OnEvent", function(self, event, ...) NeuronExitBar:OnEvent(self, event, ...) end)
-	button:SetScript("OnClick", function(self) NeuronExitBar:OnClick(self) end)
-	button:SetScript("OnEnter", function(self) NeuronExitBar:OnEnter(self) end)
-	button:SetScript("OnLeave", GameTooltip_Hide)
+	self:SetScript("OnEvent", function(self, event, ...) NeuronExitBar:OnEvent(self, event, ...) end)
+	self:SetScript("OnClick", function(self) NeuronExitBar:OnClick(self) end)
+	self:SetScript("OnEnter", function(self) NeuronExitBar:OnEnter(self) end)
+	self:SetScript("OnLeave", GameTooltip_Hide)
 
-	local objects = Neuron:GetParentKeys(button)
+	local objects = Neuron:GetParentKeys(self)
 
 	for k,v in pairs(objects) do
-		local name = (v):gsub(button:GetName(), "")
-		button[name:lower()] = _G[v]
+		local name = (v):gsub(self:GetName(), "")
+		self[name:lower()] = _G[v]
 	end
 
-	NeuronExitBar:SetExitButtonIcon(button)
+	NeuronExitBar:SetExitButtonIcon(self)
 
-	button:SetFrameLevel(4)
-	button.iconframe:SetFrameLevel(2)
-	button.iconframecooldown:SetFrameLevel(3)
+	self:SetFrameLevel(4)
+	self.iconframe:SetFrameLevel(2)
+	self.iconframecooldown:SetFrameLevel(3)
 
-	button:SetSkinned(button)
+	self:SetSkinned()
 
-	button:SetObjectVisibility(button)
+	self:SetObjectVisibility()
 end
 
 
 function NeuronExitBar:OnEvent(button, event, ...)
 
-	button:SetObjectVisibility(button)
+	button:SetObjectVisibility()
 
 end
 

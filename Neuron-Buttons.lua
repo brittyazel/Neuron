@@ -1164,7 +1164,7 @@ end
 function NeuronButton:MACRO_UpdateTexture(button, force)
 	local hasAction = NeuronButton:MACRO_HasAction(button)
 
-	if (not button:GetSkinned(button)) then
+	if (not button:GetSkinned()) then
 		if (hasAction or force) then
 			button:SetNormalTexture(button.hasAction or "")
 			button:GetNormalTexture():SetVertexColor(1,1,1,1)
@@ -1351,12 +1351,12 @@ end
 
 
 function NeuronButton:MACRO_ShowGrid(button)
-	NeuronButton:SetObjectVisibility(button, true)
+	NeuronButton:SetObjectVisibility(true)
 end
 
 
 function NeuronButton:MACRO_HideGrid(button)
-	NeuronButton:SetObjectVisibility(button)
+	NeuronButton:SetObjectVisibility()
 end
 
 ------------------------------------------------------------------------------
@@ -1475,9 +1475,9 @@ function NeuronButton:MACRO_ACTIVE_TALENT_GROUP_CHANGED(button, ...)
 
 	button:LoadData(spec, button:GetParent():GetAttribute("activestate") or "homestate")
 	Neuron.NeuronFlyouts:UpdateFlyout(button)
-	button:SetType(button)
+	button:SetType()
 	NeuronButton:MACRO_UpdateAll(button, true)
-	button:SetObjectVisibility(button)
+	button:SetObjectVisibility()
 
 end
 
@@ -1623,7 +1623,7 @@ function NeuronButton:MACRO_PlaceSpell(button, action1, action2, spellID)
 	button.data.macro_UseNote = false
 
 	if (not button.cursor) then
-		button:SetType(button, true)
+		button:SetType(true)
 	end
 
 	MacroDrag[1] = false
@@ -1658,7 +1658,7 @@ function NeuronButton:MACRO_PlaceItem(button, action1, action2, hasAction)
 	button.data.macro_UseNote = false
 
 	if (not button.cursor) then
-		button:SetType(button, true)
+		button:SetType(true)
 	end
 	MacroDrag[1] = false
 	ClearCursor()
@@ -1692,7 +1692,7 @@ function NeuronButton:MACRO_PlaceBlizzMacro(button, action1)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(button, true)
+			button:SetType(true)
 		end
 
 		MacroDrag[1] = false
@@ -1736,7 +1736,7 @@ function NeuronButton:MACRO_PlaceBlizzEquipSet(button, equipmentSetName)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(button, true)
+			button:SetType(true)
 		end
 
 		MacroDrag[1] = false
@@ -1798,7 +1798,7 @@ function NeuronButton:MACRO_PlaceMount(button, action1, action2, hasAction)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(button, true)
+			button:SetType(true)
 		end
 
 		MacroDrag[1] = false
@@ -1835,7 +1835,7 @@ function NeuronButton:MACRO_PlaceCompanion(button, action1, action2, hasAction)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(button, true)
+			button:SetType(true)
 		end
 
 		MacroDrag[1] = false
@@ -1895,7 +1895,7 @@ function NeuronButton:MACRO_PlaceFlyout(button, action1, action2, hasAction)
 		Neuron.NeuronFlyouts:UpdateFlyout(button, true)
 
 		if (not button.cursor) then
-			button:SetType(button, true)
+			button:SetType(true)
 		end
 
 		MacroDrag[1] = false
@@ -1925,7 +1925,7 @@ function NeuronButton:MACRO_PlaceBattlePet(button, action1, action2, hasAction)
 		button.data.macro_UseNote = false
 
 		if (not button.cursor) then
-			button:SetType(button, true)
+			button:SetType(true)
 		end
 
 		MacroDrag[1] = false
@@ -1946,7 +1946,7 @@ function NeuronButton:MACRO_PlaceMacro(button)
 	button.data.macro_UseNote = MacroDrag[10]
 
 	if (not button.cursor) then
-		button:SetType(button, true)
+		button:SetType(true)
 	end
 
 	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
@@ -2020,7 +2020,7 @@ function NeuronButton:MACRO_PickUpMacro(button)
 
 			Neuron.NeuronFlyouts:UpdateFlyout(button)
 
-			button:SetType(button, true)
+			button:SetType(true)
 
 		end
 
@@ -2200,7 +2200,7 @@ function NeuronButton:MACRO_PreClick(button, mousebutton)
 
 			StartDrag = button:GetParent():GetAttribute("activestate")
 
-			button:SetType(button, true, true)
+			button:SetType(true)
 
 			Neuron:ToggleButtonGrid(true)
 
@@ -2222,7 +2222,7 @@ function NeuronButton:MACRO_PostClick(button, mousebutton)
 	if (not InCombatLockdown() and MouseIsOver(button)) then
 
 		if (button.cursor) then
-			button:SetType(button, true)
+			button:SetType(true)
 
 			button.cursor = nil
 
@@ -2612,7 +2612,7 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		--this is the same as 'id', I'm not sure why we need both
 		local index = #data.objTable + 1 --sets the current index to 1 greater than the current number of object in the table
 
-		local object = Neuron.ButtonObj:new(data.objPrefix..id, data.objFrameT, data.objTemplate, data.objMetaT)
+		local object = Neuron.BUTTON:new(data.objPrefix..id, data.objFrameT, data.objTemplate, data.objMetaT)
 
 		object.elapsed = 0
 
@@ -2633,7 +2633,7 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 		object:LoadData(GetActiveSpecGroup(), "homestate")
 
 		if (firstRun) then
-			object:SetDefaults(object, object:GetDefaults(object))
+			object:SetDefaults(object:GetDefaults())
 		end
 
 		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
@@ -2641,7 +2641,7 @@ function NeuronButton:CreateNewObject(class, id, firstRun)
 			object.DB.config.date = date("%m/%d/%y %H:%M:%S")
 		end
 
-		object:LoadAux(object)
+		object:LoadAux()
 
 		data.objTable[index] = object
 
@@ -2719,8 +2719,8 @@ function NeuronButton:UpdateObjectSpec(bar)
 			object:SetData(bar)
 			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
 			Neuron.NeuronFlyouts:UpdateFlyout(object)
-			object:SetType(object)
-			object:SetObjectVisibility(object)
+			object:SetType()
+			object:SetObjectVisibility()
 		end
 	end
 end
@@ -2934,7 +2934,7 @@ function NeuronButton:SKINCallback(button, group,...)
 	if (group) then
 		for btn in pairs(SKINIndex) do
 			if (btn.bar and btn.bar.data.name == group) then
-				btn:GetSkinned(btn)
+				btn:GetSkinned()
 			end
 		end
 	end
@@ -2994,7 +2994,7 @@ function NeuronButton:UpdateMacroCastTargets(global_update)
 		if macro_update then
 			Neuron.NeuronFlyouts:UpdateFlyout(button)
 			NeuronButton:BuildStateData(button)
-			button:SetType(button)
+			button:SetType()
 		end
 	end
 end

@@ -5,8 +5,8 @@
 ---
 
 
-local ButtonObj = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
-Neuron.ButtonObj = ButtonObj
+local ACTIONBUTTON = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
+Neuron.ACTIONBUTTON = ACTIONBUTTON
 
 local SKIN = LibStub("Masque", true)
 
@@ -29,29 +29,11 @@ local keyDefaults = {
 }
 
 
-
-
----Button Constructor
----@param name string @ Name given to the new button frame
----@param frameType string @ Type of frame to create
----@param frameTemplate @ Template used for our new frame
----@param objMetaTable @ Metatable object to be assigned as the template for our new button
-function ButtonObj:new(name, frameType, frameTemplate, objMetaTable)
-
-	local object = CreateFrame(frameType, name, UIParent, frameTemplate)
-
-	setmetatable(object, objMetaTable)
-
-	return object
-end
-
-
-
 -------------------------------------------------
 -----Base Methods that all buttons have----------
 ---These will often be overwritten per bar type--
 -------------------------------------------------
-function ButtonObj:SetData(bar)
+function ACTIONBUTTON:SetData(bar)
 	if (bar) then
 
 		self.bar = bar
@@ -198,14 +180,14 @@ function ButtonObj:SetData(bar)
 	self.iconframecooldown:SetFrameLevel(3)
 	self.iconframeaurawatch:SetFrameLevel(3)
 
-	self:GetSkinned(self)
+	self:GetSkinned()
 
 	Neuron.NeuronButton:MACRO_UpdateTimers(self)
 end
 
 
 
-function ButtonObj:LoadData(spec, state)
+function ACTIONBUTTON:LoadData(spec, state)
 
 	local DB = Neuron.db.profile
 
@@ -228,109 +210,109 @@ end
 
 
 
-function ButtonObj:SetObjectVisibility(button, show)
+function ACTIONBUTTON:SetObjectVisibility(show)
 
 	if not InCombatLockdown() then
-		button:SetAttribute("showGrid", button.showGrid) --this is important because in our state switching code, we can't querry button.showGrid directly
-		button:SetAttribute("isshown", show)
+		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry button.showGrid directly
+		self:SetAttribute("isshown", show)
 	end
 
-	if (show or button.showGrid) then
-		button:Show()
-	elseif not Neuron.NeuronButton:MACRO_HasAction(button) and (not Neuron.ButtonEditMode or not Neuron.BarEditMode or not Neuron.BindingMode) then
-		button:Hide()
+	if (show or self.showGrid) then
+		self:Show()
+	elseif not Neuron.NeuronButton:MACRO_HasAction(self) and (not Neuron.ButtonEditMode or not Neuron.BarEditMode or not Neuron.BindingMode) then
+		self:Hide()
 	end
 end
 
 
 
-function ButtonObj:SetAux(button)
-	button:SetSkinned(button)
-	Neuron.NeuronFlyouts:UpdateFlyout(button, true)
+function ACTIONBUTTON:SetAux()
+	self:SetSkinned()
+	Neuron.NeuronFlyouts:UpdateFlyout(self, true)
 end
 
 
-function ButtonObj:LoadAux(button)
+function ACTIONBUTTON:LoadAux()
 
 	if Neuron.NeuronGUI then
-		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(button, button.objTIndex)
+		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self, self.objTIndex)
 	end
-	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(self, self.objTIndex)
 
 end
 
 
-function ButtonObj:SetDefaults(button, config, keys)
+function ACTIONBUTTON:SetDefaults(config, keys)
 	if (config) then
 		for k,v in pairs(config) do
-			button.config[k] = v
+			self.config[k] = v
 		end
 	end
 
 	if (keys) then
 		for k,v in pairs(keys) do
-			button.keys[k] = v
+			self.keys[k] = v
 		end
 	end
 end
 
 
-function ButtonObj:GetDefaults(button)
-	return nil, keyDefaults[button.id]
+function ACTIONBUTTON:GetDefaults()
+	return nil, keyDefaults[self.id]
 end
 
 
 
 
-function ButtonObj:SetType(button, save, kill, init)
-	local state = button:GetParent():GetAttribute("activestate")
+function ACTIONBUTTON:SetType(save, kill, init)
+	local state = self:GetParent():GetAttribute("activestate")
 
-	Neuron.NeuronButton:Reset(button)
+	Neuron.NeuronButton:Reset(self)
 
 	if (kill) then
 
-		button:SetScript("OnEvent", function() end)
-		button:SetScript("OnUpdate", function() end)
-		button:SetScript("OnAttributeChanged", function() end)
+		self:SetScript("OnEvent", function() end)
+		self:SetScript("OnUpdate", function() end)
+		self:SetScript("OnAttributeChanged", function() end)
 
 	else
-		SecureHandler_OnLoad(button)
+		SecureHandler_OnLoad(self)
 
-		button:RegisterEvent("ITEM_LOCK_CHANGED")
-		button:RegisterEvent("ACTIONBAR_SHOWGRID")
-		button:RegisterEvent("ACTIONBAR_HIDEGRID")
+		self:RegisterEvent("ITEM_LOCK_CHANGED")
+		self:RegisterEvent("ACTIONBAR_SHOWGRID")
+		self:RegisterEvent("ACTIONBAR_HIDEGRID")
 
-		button:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-		button:RegisterEvent("UPDATE_MACROS")
-		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-		button:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+		self:RegisterEvent("UPDATE_MACROS")
+		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
-		Neuron.NeuronButton:MACRO_UpdateParse(button)
+		Neuron.NeuronButton:MACRO_UpdateParse(self)
 
-		button:SetAttribute("type", "macro")
-		button:SetAttribute("*macrotext*", button.macroparse)
+		self:SetAttribute("type", "macro")
+		self:SetAttribute("*macrotext*", self.macroparse)
 
-		button:SetScript("OnEvent", function(self, event, ...) Neuron.NeuronButton:MACRO_OnEvent(self, event, ...) end)
-		button:SetScript("PreClick", function(self, mousebutton) Neuron.NeuronButton:MACRO_PreClick(self, mousebutton) end)
-		button:SetScript("PostClick", function(self, mousebutton) Neuron.NeuronButton:MACRO_PostClick(self, mousebutton) end)
-		button:SetScript("OnReceiveDrag", function(self, preclick) Neuron.NeuronButton:MACRO_OnReceiveDrag(self, preclick) end)
-		button:SetScript("OnDragStart", function(self, mousebutton) Neuron.NeuronButton:MACRO_OnDragStart(self, mousebutton) end)
-		button:SetScript("OnDragStop", function(self) Neuron.NeuronButton:MACRO_OnDragStop(self) end)
-		button:SetScript("OnUpdate", function(self, elapsed) Neuron.NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
-		button:SetScript("OnShow", function(self, ...) Neuron.NeuronButton:MACRO_OnShow(self, ...) end)
-		button:SetScript("OnHide", function(self, ...) Neuron.NeuronButton:MACRO_OnHide(self, ...) end)
-		button:SetScript("OnAttributeChanged", function(self, name, value) Neuron.NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
+		self:SetScript("OnEvent", function(self, event, ...) Neuron.NeuronButton:MACRO_OnEvent(self, event, ...) end)
+		self:SetScript("PreClick", function(self, mousebutton) Neuron.NeuronButton:MACRO_PreClick(self, mousebutton) end)
+		self:SetScript("PostClick", function(self, mousebutton) Neuron.NeuronButton:MACRO_PostClick(self, mousebutton) end)
+		self:SetScript("OnReceiveDrag", function(self, preclick) Neuron.NeuronButton:MACRO_OnReceiveDrag(self, preclick) end)
+		self:SetScript("OnDragStart", function(self, mousebutton) Neuron.NeuronButton:MACRO_OnDragStart(self, mousebutton) end)
+		self:SetScript("OnDragStop", function(self) Neuron.NeuronButton:MACRO_OnDragStop(self) end)
+		self:SetScript("OnUpdate", function(self, elapsed) Neuron.NeuronButton:MACRO_OnUpdate(self, elapsed) end)--this function uses A LOT of CPU resources
+		self:SetScript("OnShow", function(self, ...) Neuron.NeuronButton:MACRO_OnShow(self, ...) end)
+		self:SetScript("OnHide", function(self, ...) Neuron.NeuronButton:MACRO_OnHide(self, ...) end)
+		self:SetScript("OnAttributeChanged", function(self, name, value) Neuron.NeuronButton:MACRO_OnAttributeChanged(self, name, value) end)
 
-		button:HookScript("OnEnter", function(self, ...) Neuron.NeuronButton:MACRO_OnEnter(self, ...) end)
-		button:HookScript("OnLeave", function(self, ...) Neuron.NeuronButton:MACRO_OnLeave(self, ...) end)
+		self:HookScript("OnEnter", function(self, ...) Neuron.NeuronButton:MACRO_OnEnter(self, ...) end)
+		self:HookScript("OnLeave", function(self, ...) Neuron.NeuronButton:MACRO_OnLeave(self, ...) end)
 
-		button:WrapScript(button, "OnShow", [[
+		self:WrapScript(self, "OnShow", [[
 						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
 							self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
 						end
 						]])
 
-		button:WrapScript(button, "OnHide", [[
+		self:WrapScript(self, "OnHide", [[
 						if (not self:GetParent():GetAttribute("concealed")) then
 							for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
 								self:ClearBinding(key)
@@ -342,10 +324,10 @@ function ButtonObj:SetType(button, save, kill, init)
 		--new action ID's for possess 133-138
 		--new action ID's for override 157-162
 
-		button:SetAttribute("overrideID_Offset", 156)
-		button:SetAttribute("vehicleID_Offset", 132)
+		self:SetAttribute("overrideID_Offset", 156)
+		self:SetAttribute("vehicleID_Offset", 132)
 
-		button:SetAttribute("_childupdate", [=[
+		self:SetAttribute("_childupdate", [=[
 
 				if (message) then
 
@@ -419,71 +401,71 @@ function ButtonObj:SetType(button, save, kill, init)
 			]=])
 
 		if (not init) then
-			Neuron.NeuronButton:MACRO_UpdateAll(button, true)
+			Neuron.NeuronButton:MACRO_UpdateAll(self, true)
 		end
 
-		Neuron.NeuronButton:MACRO_OnShow(button)
+		Neuron.NeuronButton:MACRO_OnShow(self)
 
 	end
 
 end
 
 
-function ButtonObj:SetSkinned(button, flyout)
+function ACTIONBUTTON:SetSkinned(flyout)
 	if (SKIN) then
-		local bar = button.bar
+		local bar = self.bar
 
 		if (bar) then
 			local btnData = {
-				Normal = button.normaltexture,
-				Icon = button.iconframeicon,
-				Cooldown = button.iconframecooldown,
-				HotKey = button.hotkey,
-				Count = button.count,
-				Name = button.name,
-				Border = button.border,
+				Normal = self.normaltexture,
+				Icon = self.iconframeicon,
+				Cooldown = self.iconframecooldown,
+				HotKey = self.hotkey,
+				Count = self.count,
+				Name = self.name,
+				Border = self.border,
 				AutoCast = false,
 			}
 
 			if (flyout) then
-				SKIN:Group("Neuron", button.anchor.bar.data.name):AddButton(button, btnData)
+				SKIN:Group("Neuron", self.anchor.bar.data.name):AddButton(self, btnData)
 			else
-				SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
+				SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
 			end
 
-			button.skinned = true
+			self.skinned = true
 
-			SKINIndex[button] = true
+			SKINIndex[self] = true
 		end
 	end
 end
 
 
-function ButtonObj:GetSkinned(button)
-	if (button.__MSQ_NormalTexture) then
-		local Skin = button.__MSQ_NormalSkin
+function ACTIONBUTTON:GetSkinned()
+	if (self.__MSQ_NormalTexture) then
+		local Skin = self.__MSQ_NormalSkin
 
 		if (Skin) then
-			button.hasAction = Skin.Texture or false
-			button.noAction = Skin.EmptyTexture or false
+			self.hasAction = Skin.Texture or false
+			self.noAction = Skin.EmptyTexture or false
 
-			if (button.__MSQ_Shape) then
-				button.shape = button.__MSQ_Shape:lower()
+			if (self.__MSQ_Shape) then
+				self.shape = self.__MSQ_Shape:lower()
 			else
-				button.shape = "square"
+				self.shape = "square"
 			end
 		else
-			button.hasAction = false
-			button.noAction = false
-			button.shape = "square"
+			self.hasAction = false
+			self.noAction = false
+			self.shape = "square"
 		end
 
-		button.shine.shape = button.shape
+		self.shine.shape = self.shape
 
 		return true
 	else
-		button.hasAction = "Interface\\Buttons\\UI-Quickslot2"
-		button.noAction = "Interface\\Buttons\\UI-Quickslot"
+		self.hasAction = "Interface\\Buttons\\UI-Quickslot2"
+		self.noAction = "Interface\\Buttons\\UI-Quickslot"
 
 		return false
 	end

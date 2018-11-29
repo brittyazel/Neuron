@@ -1089,7 +1089,7 @@ end
 
 function Neuron:ToggleButtonGrid(show)
 	for id,btn in pairs(Neuron.BTNIndex) do
-		btn:SetObjectVisibility(btn, show)
+		btn:SetObjectVisibility(show)
 	end
 end
 

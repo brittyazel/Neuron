@@ -90,7 +90,7 @@ function NeuronBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = Neuron.ButtonObj }, 1000)
+	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = Neuron.ACTIONBUTTON }, 1000)
 
 	Neuron:RegisterGUIOptions("bar", {
 		AUTOHIDE = true,
@@ -1087,10 +1087,10 @@ function NeuronBar:LoadObjects(bar, init)
 			---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
 			object:SetData(bar)
 			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
-			object:SetAux(object)
-			object:SetType(object, nil, nil, init)
+			object:SetAux()
+			object:SetType()
 
-			object:SetObjectVisibility(object)
+			object:SetObjectVisibility()
 
 			bar.objCount = bar.objCount + 1
 			bar.countChanged = true
@@ -1683,7 +1683,7 @@ function NeuronBar:UpdateObjectVisibility(bar, show)
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
-			object:SetObjectVisibility(object, show)
+			object:SetObjectVisibility(show)
 		end
 	end
 end

@@ -4,7 +4,7 @@ local  DB
 Neuron.NeuronBagBar = Neuron:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBagBar = Neuron.NeuronBagBar
 
-local BAGBTN = setmetatable({}, {__index = Neuron.ButtonObj})
+local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -131,21 +131,21 @@ function NeuronBagBar:CreateBarsAndButtons()
 end
 
 
-function BAGBTN:SetSkinned(button)
+function BAGBTN:SetSkinned()
 
     if (SKIN) then
 
-        local bar = button.bar
+        local bar = self.bar
 
         if (bar) then
 
             local btnData = {
-                Icon = button.icontexture,
-                Normal = button.normaltexture,
-                Count = button.count,
+                Icon = self.icontexture,
+                Normal = self.normaltexture,
+                Count = self.count,
             }
 
-            SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
+            SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
 
         end
     end
@@ -153,7 +153,7 @@ function BAGBTN:SetSkinned(button)
 end
 
 
-function BAGBTN:GetSkinned(button)
+function BAGBTN:GetSkinned()
     -- empty
 end
 
@@ -187,68 +187,37 @@ function BAGBTN:LoadData(spec, state)
     self.data = self.DB.data
 end
 
-function BAGBTN:SetObjectVisibility(button, show, hide)
 
-    --empty
+function BAGBTN:SetType(save)
 
-end
+    if (bagElements[self.id]) then
 
-function BAGBTN:SetAux(button)
-
-    -- empty
-
-end
-
-function BAGBTN:LoadAux(button)
-
-    ---hide the color border around these buttons
-    --C_Timer.NewTimer(1, function() button.element.IconBorder:Hide() end)
-
-
-end
-
-function BAGBTN:SetDefaults(button)
-
-    -- empty
-
-end
-
-function BAGBTN:GetDefaults(button)
-
-    --empty
-
-end
-
-function BAGBTN:SetType(button, save)
-
-    if (bagElements[button.id]) then
-
-        if button.id == 5 then --this corrects for some large ass margins on the main backpack button
-            button:SetWidth(bagElements[button.id]:GetWidth()-5)
-            button:SetHeight(bagElements[button.id]:GetHeight()-5)
+        if self.id == 5 then --this corrects for some large ass margins on the main backpack button
+            self:SetWidth(bagElements[self.id]:GetWidth()-5)
+            self:SetHeight(bagElements[self.id]:GetHeight()-5)
         else
-            button:SetWidth(bagElements[button.id]:GetWidth()+3)
-            button:SetHeight(bagElements[button.id]:GetHeight()+3)
+            self:SetWidth(bagElements[self.id]:GetWidth()+3)
+            self:SetHeight(bagElements[self.id]:GetHeight()+3)
         end
 
-        button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
+        self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
 
-        button.element = bagElements[button.id]
+        self.element = bagElements[self.id]
 
-        local objects = Neuron:GetParentKeys(button.element)
+        local objects = Neuron:GetParentKeys(self.element)
 
         for k,v in pairs(objects) do
-            local name = v:gsub(button.element:GetName(), "")
-            button[name:lower()] = _G[v]
+            local name = v:gsub(self.element:GetName(), "")
+            self[name:lower()] = _G[v]
         end
 
-        button.element:ClearAllPoints()
-        button.element:SetParent(button)
-        button.element:Show()
-        button.element:SetPoint("CENTER", button, "CENTER")
-        button.element:SetScale(1)
+        self.element:ClearAllPoints()
+        self.element:SetParent(self)
+        self.element:Show()
+        self.element:SetPoint("CENTER", self, "CENTER")
+        self.element:SetScale(1)
 
-        button:SetSkinned(button)
+        self:SetSkinned()
     end
 end
 

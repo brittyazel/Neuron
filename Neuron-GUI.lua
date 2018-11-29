@@ -2584,7 +2584,7 @@ function NeuronGUI:MacroEditorUpdate()
 			data = button.DB[buttonSpec][state]
 			Neuron.NeuronFlyouts:UpdateFlyout(button)
 			Neuron.NeuronButton:BuildStateData(button)
-			button:SetType(button)
+			button:SetType()
 		end
 
 		if (data) then
@@ -2657,7 +2657,7 @@ function NeuronGUI:macroText_OnEditFocusLost()
 
 		Neuron.NeuronFlyouts:UpdateFlyout(button)
 		Neuron.NeuronButton:BuildStateData(button)
-		button:SetType(button)
+		button:SetType()
 
 		NeuronGUI:MacroEditorUpdate()
 	end
@@ -4286,7 +4286,7 @@ function NeuronGUI:sbTypeOnClick(button, down)
 			sb.config.rIndex = 3
 		end
 
-		sb:SetType(sb)
+		sb:SetType()
 
 		NeuronGUI:Status_UpdateEditor()
 	end

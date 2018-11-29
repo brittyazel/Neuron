@@ -9,7 +9,7 @@ local DB
 Neuron.NeuronMenuBar = Neuron:NewModule("MenuBar", "AceHook-3.0")
 local NeuronMenuBar = Neuron.NeuronMenuBar
 
-local MENUBTN = setmetatable({}, {__index = Neuron.ButtonObj})
+local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -182,57 +182,28 @@ function MENUBTN:LoadData(spec, state)
 
 end
 
+function MENUBTN:SetType(save)
+    if (menuElements[self.id]) then
 
-function MENUBTN:SetObjectVisibility(button, show, hide)
-    --empty
-end
+        self:SetWidth(menuElements[self.id]:GetWidth()-2)
+        self:SetHeight(menuElements[self.id]:GetHeight()-2)
 
-function MENUBTN:SetAux(button)
-    -- empty
-end
+        self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
 
-function MENUBTN:LoadAux(button)
-    -- empty
-end
+        self.element = menuElements[self.id]
 
-function MENUBTN:SetDefaults(button)
-    -- empty
-end
-
-function MENUBTN:GetDefaults(button)
-    --empty
-end
-
-function MENUBTN:SetSkinned(button)
-    --empty
-end
-
-function MENUBTN:GetSkinned(button)
-    --empty
-end
-
-function MENUBTN:SetType(button, save)
-    if (menuElements[button.id]) then
-
-        button:SetWidth(menuElements[button.id]:GetWidth()-2)
-        button:SetHeight(menuElements[button.id]:GetHeight()-2)
-
-        button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
-
-        button.element = menuElements[button.id]
-
-        local objects = Neuron:GetParentKeys(button.element)
+        local objects = Neuron:GetParentKeys(self.element)
 
         for k,v in pairs(objects) do
-            local name = v:gsub(button.element:GetName(), "")
-            button[name:lower()] = _G[v]
+            local name = v:gsub(self.element:GetName(), "")
+            self[name:lower()] = _G[v]
         end
 
-        button.element:ClearAllPoints()
-        button.element:SetParent(button)
-        button.element:Show()
-        button.element:SetPoint("CENTER", button, "CENTER")
-        button.element:SetScale(1)
+        self.element:ClearAllPoints()
+        self.element:SetParent(self)
+        self.element:Show()
+        self.element:SetPoint("CENTER", self, "CENTER")
+        self.element:SetScale(1)
     end
 
 end

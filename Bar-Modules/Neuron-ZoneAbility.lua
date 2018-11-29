@@ -5,7 +5,7 @@ local DB
 Neuron.NeuronZoneAbilityBar = Neuron:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronZoneAbilityBar = Neuron.NeuronZoneAbilityBar
 
-local ZONEABILITYBTN = setmetatable({}, { __index = Neuron.ButtonObj })
+local ZONEABILITYBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 local SKIN = LibStub("Masque", true)
 
@@ -290,7 +290,7 @@ function NeuronZoneAbilityBar:OnEvent(button, event, ...)
 	end
 
 	button.spellID = spellID;
-	button:SetObjectVisibility(button)
+	button:SetObjectVisibility()
 end
 
 
@@ -334,30 +334,34 @@ function NeuronZoneAbilityBar:OnLeave(button)
 end
 
 
-function ZONEABILITYBTN:SetSkinned(button)
+function ZONEABILITYBTN:SetSkinned()
 	if (SKIN) then
 
-		local bar = button.bar
+		local bar = self.bar
 
 		if (bar) then
 
 			local btnData = {
-				Normal = button.normaltexture,
-				Icon = button.iconframeicon,
-				Cooldown = button.iconframecooldown,
-				HotKey = button.hotkey,
-				Count = button.count,
-				Name = button.name,
-				Border = button.border,
+				Normal = self.normaltexture,
+				Icon = self.iconframeicon,
+				Cooldown = self.iconframecooldown,
+				HotKey = self.hotkey,
+				Count = self.count,
+				Name = self.name,
+				Border = self.border,
 				AutoCast = false,
 			}
 
-			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
 
 		end
 
 	end
 end
+
+ZONEABILITYBTN.GetSkinned = Neuron.ACTIONBUTTON.GetSkinned
+
+ZONEABILITYBTN.SetData = Neuron.ACTIONBUTTON.SetData
 
 
 function ZONEABILITYBTN:LoadData(spec, state)
@@ -375,24 +379,30 @@ function ZONEABILITYBTN:LoadData(spec, state)
 	self.data = self.DB.data
 end
 
-function ZONEABILITYBTN:SetObjectVisibility(button, show)
+function ZONEABILITYBTN:SetObjectVisibility(show)
 
 	if (GetZoneAbilitySpellInfo() or show) then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-		button:SetAlpha(1)
+		self:SetAlpha(1)
 	elseif not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
-		button:SetAlpha(0)
+		self:SetAlpha(0)
 	end
 end
 
-function ZONEABILITYBTN:LoadAux(button)
-	button.spellID = ZoneAbilitySpellID;
-	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
-	button.style = button:CreateTexture(nil, "OVERLAY")
-	button.style:SetPoint("CENTER", -2, 1)
-	button.style:SetWidth(190)
-	button.style:SetHeight(95)
-	button.hotkey:SetPoint("TOPLEFT", -4, -6)
-	button.style:SetTexture("Interface\\ExtraButton\\GarrZoneAbility-Armory")
+function ZONEABILITYBTN:LoadAux()
+	self.spellID = ZoneAbilitySpellID;
+	Neuron.NeuronBinder:CreateBindFrame(self, self.objTIndex)
+	self.style = self:CreateTexture(nil, "OVERLAY")
+	self.style:SetPoint("CENTER", -2, 1)
+	self.style:SetWidth(190)
+	self.style:SetHeight(95)
+	self.hotkey:SetPoint("TOPLEFT", -4, -6)
+	self.style:SetTexture("Interface\\ExtraButton\\GarrZoneAbility-Armory")
+end
+
+function ZONEABILITYBTN:SetAux()
+
+	self:SetSkinned()
+
 end
 
 
@@ -423,42 +433,34 @@ function NeuronZoneAbilityBar:OnDragStart(button)
 	PickupSpell(ZoneAbilitySpellID)
 end
 
-function ZONEABILITYBTN:SetDefaults(button)
-	-- empty
-end
 
-function ZONEABILITYBTN:GetDefaults(button)
-	--empty
-end
+function ZONEABILITYBTN:SetType(save)
 
-
-function ZONEABILITYBTN:SetType(button, save)
-
-	button:RegisterUnitEvent("UNIT_AURA", "player")
-	button:RegisterEvent("SPELLS_CHANGED")
-	button:RegisterEvent("ZONE_CHANGED")
-	button:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterUnitEvent("UNIT_AURA", "player")
+	self:RegisterEvent("SPELLS_CHANGED")
+	self:RegisterEvent("ZONE_CHANGED")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 
-	button.actionID = button.id
+	self.actionID = self.id
 
-	button:SetAttribute("type1", "macro")
-	button:SetAttribute("*action1", button.actionID)
+	self:SetAttribute("type1", "macro")
+	self:SetAttribute("*action1", self.actionID)
 
-	button:SetAttribute("useparent-unit", false)
-	button:SetAttribute("unit", ATTRIBUTE_NOOP)
+	self:SetAttribute("useparent-unit", false)
+	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
-	button:SetScript("OnEvent", function(self, event, ...) NeuronZoneAbilityBar:OnEvent(self, event, ...) end)
-	button:SetScript("OnDragStart", function(self) NeuronZoneAbilityBar:OnDragStart(self) end)
-	button:SetScript("OnLoad", function(self) NeuronZoneAbilityBar:OnLoad(self) end)
-	button:SetScript("OnShow", function(self) NeuronZoneAbilityBar:OnShow(self) end)
-	button:SetScript("OnHide", function(self) NeuronZoneAbilityBar:OnHide(self) end)
-	button:SetScript("OnEnter", function(self, ...) NeuronZoneAbilityBar:OnEnter(self, ...) end)
-	button:SetScript("OnLeave", function(self) NeuronZoneAbilityBar:OnLeave(self) end)
-	button:SetScript("OnUpdate", function(self, elapsed) NeuronZoneAbilityBar:OnUpdate(self, elapsed) end)
-	button:SetScript("OnAttributeChanged", nil)
+	self:SetScript("OnEvent", function(self, event, ...) NeuronZoneAbilityBar:OnEvent(self, event, ...) end)
+	self:SetScript("OnDragStart", function(self) NeuronZoneAbilityBar:OnDragStart(self) end)
+	self:SetScript("OnLoad", function(self) NeuronZoneAbilityBar:OnLoad(self) end)
+	self:SetScript("OnShow", function(self) NeuronZoneAbilityBar:OnShow(self) end)
+	self:SetScript("OnHide", function(self) NeuronZoneAbilityBar:OnHide(self) end)
+	self:SetScript("OnEnter", function(self, ...) NeuronZoneAbilityBar:OnEnter(self, ...) end)
+	self:SetScript("OnLeave", function(self) NeuronZoneAbilityBar:OnLeave(self) end)
+	self:SetScript("OnUpdate", function(self, elapsed) NeuronZoneAbilityBar:OnUpdate(self, elapsed) end)
+	self:SetScript("OnAttributeChanged", nil)
 
-	button:SetObjectVisibility(button)
+	self:SetObjectVisibility()
 end
 
 function NeuronZoneAbilityBar:HideZoneAbilityBorder(bar, msg, gui, checked, query)

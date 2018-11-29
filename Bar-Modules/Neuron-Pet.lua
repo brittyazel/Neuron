@@ -7,7 +7,7 @@ local DB
 Neuron.NeuronPetBar = Neuron:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronPetBar = Neuron.NeuronPetBar
 
-local PETBTN = setmetatable({}, { __index = Neuron.ButtonObj })
+local PETBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -122,6 +122,8 @@ function NeuronPetBar:CreateBarsAndButtons()
 		end
 	end
 end
+
+
 
 
 
@@ -257,7 +259,7 @@ function NeuronPetBar:PET_UpdateTexture(button, force)
 
 	local actionID = button.actionID
 
-	if (not button:GetSkinned(button)) then
+	if (not button:GetSkinned()) then
 
 		if (NeuronPetBar:HasPetAction(actionID, true) or force) then
 			button:SetNormalTexture(button.hasAction or "")
@@ -397,7 +399,7 @@ function NeuronPetBar:PLAYER_ENTERING_WORLD(button, event, ...)
 	if InCombatLockdown() then return end
 	Neuron.NeuronBinder:ApplyBindings(button)
 	button.updateRightClick = true
-	button:SetObjectVisibility(button, true) --have to set true at login or the buttons on the bar don't show
+	button:SetObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
 
 	---This part is so that the grid get's set properly on login
 	C_Timer.After(2, function() Neuron.NeuronBar:UpdateObjectVisibility(button.bar) end)
@@ -521,6 +523,11 @@ function NeuronPetBar:OnLeave(button)
 end
 
 
+PETBTN.SetSkinned = Neuron.ACTIONBUTTON.SetSkinned
+PETBTN.GetSkinned = Neuron.ACTIONBUTTON.GetSkinned
+
+
+
 function PETBTN:SetData(bar)
 
 	if (bar) then
@@ -623,7 +630,7 @@ function PETBTN:SetData(bar)
 	self.iconframeaurawatch:SetFrameLevel(3)
 	self.iconframeicon:SetTexCoord(0.05,0.95,0.05,0.95)
 
-	self:GetSkinned(self)
+	self:GetSkinned()
 end
 
 
@@ -642,71 +649,65 @@ function PETBTN:LoadData(spec, state)
 	self.data = self.DB.data
 end
 
-function PETBTN:SetObjectVisibility(button, show)
+function PETBTN:SetObjectVisibility(show)
 
-	if (show or button.showGrid) then
-		button:SetAlpha(1)
-	elseif not NeuronPetBar:HasPetAction(button.actionID) and (not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode) then
-		button:SetAlpha(0)
+	if (show or self.showGrid) then
+		self:SetAlpha(1)
+	elseif not NeuronPetBar:HasPetAction(self.actionID) and (not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode) then
+		self:SetAlpha(0)
 	end
 
 end
 
 
+function PETBTN:SetAux()
 
-function PETBTN:LoadAux(button)
-
-	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
-
-end
-
-function PETBTN:SetDefaults(button)
-
-	-- empty
-
-end
-
-function PETBTN:GetDefaults(button)
-
-	--empty
+	self:SetSkinned()
 
 end
 
 
-function PETBTN:SetType(button, save)
+function PETBTN:LoadAux()
 
-	button:RegisterEvent("PET_BAR_UPDATE")
-	button:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
-	button:RegisterEvent("PET_BAR_SHOWGRID")
-	button:RegisterEvent("PET_BAR_HIDEGRID")
-	button:RegisterEvent("PET_SPECIALIZATION_CHANGED")
-	button:RegisterEvent("PET_DISMISS_START")
-	button:RegisterEvent("PLAYER_CONTROL_LOST")
-	button:RegisterEvent("PLAYER_CONTROL_GAINED")
-	button:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
-	button:RegisterEvent("PLAYER_ENTERING_WORLD")
-	button:RegisterEvent("UNIT_PET")
-	button:RegisterEvent("UNIT_FLAGS")
-	button:RegisterEvent("UNIT_AURA")
+	Neuron.NeuronBinder:CreateBindFrame(self, self.objTIndex)
 
-	button.actionID = button.id
+end
 
-	button:SetAttribute("type1", "pet")
-	button:SetAttribute("type2", "macro")
-	button:SetAttribute("*action1", button.actionID)
 
-	button:SetAttribute("useparent-unit", false)
-	button:SetAttribute("unit", ATTRIBUTE_NOOP)
+function PETBTN:SetType(save)
 
-	button:SetScript("OnEvent", function(self, event, ...) NeuronPetBar:PET_OnEvent(self, event, ...) end)
-	button:SetScript("PostClick", function(self) NeuronPetBar:PostClick(self) end)
-	button:SetScript("OnDragStart", function(self) NeuronPetBar:OnDragStart(self) end)
-	button:SetScript("OnDragStop", function(self) NeuronPetBar:OnDragStop(self) end)
-	button:SetScript("OnReceiveDrag", function(self) NeuronPetBar:OnReceiveDrag(self) end)
-	button:SetScript("OnEnter", function(self, ...) NeuronPetBar:OnEnter(self, ...) end)
-	button:SetScript("OnLeave", function(self) NeuronPetBar:OnLeave(self) end)
-	button:SetScript("OnUpdate", function(self, elapsed) NeuronPetBar:OnUpdate(self, elapsed) end)
+	self:RegisterEvent("PET_BAR_UPDATE")
+	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
+	self:RegisterEvent("PET_BAR_SHOWGRID")
+	self:RegisterEvent("PET_BAR_HIDEGRID")
+	self:RegisterEvent("PET_SPECIALIZATION_CHANGED")
+	self:RegisterEvent("PET_DISMISS_START")
+	self:RegisterEvent("PLAYER_CONTROL_LOST")
+	self:RegisterEvent("PLAYER_CONTROL_GAINED")
+	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("UNIT_PET")
+	self:RegisterEvent("UNIT_FLAGS")
+	self:RegisterEvent("UNIT_AURA")
 
-	button:SetScript("OnAttributeChanged", nil)
+	self.actionID = self.id
+
+	self:SetAttribute("type1", "pet")
+	self:SetAttribute("type2", "macro")
+	self:SetAttribute("*action1", self.actionID)
+
+	self:SetAttribute("useparent-unit", false)
+	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+
+	self:SetScript("OnEvent", function(self, event, ...) NeuronPetBar:PET_OnEvent(self, event, ...) end)
+	self:SetScript("PostClick", function(self) NeuronPetBar:PostClick(self) end)
+	self:SetScript("OnDragStart", function(self) NeuronPetBar:OnDragStart(self) end)
+	self:SetScript("OnDragStop", function(self) NeuronPetBar:OnDragStop(self) end)
+	self:SetScript("OnReceiveDrag", function(self) NeuronPetBar:OnReceiveDrag(self) end)
+	self:SetScript("OnEnter", function(self, ...) NeuronPetBar:OnEnter(self, ...) end)
+	self:SetScript("OnLeave", function(self) NeuronPetBar:OnLeave(self) end)
+	self:SetScript("OnUpdate", function(self, elapsed) NeuronPetBar:OnUpdate(self, elapsed) end)
+
+	self:SetScript("OnAttributeChanged", nil)
 
 end

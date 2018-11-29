@@ -1221,7 +1221,7 @@ function NeuronFlyouts:Flyout_SetData(bar)
 	self.iconframecooldown:SetFrameLevel(3)
 	self.iconframeaurawatch:SetFrameLevel(3)
 
-	self:GetSkinned(self)
+	self:GetSkinned()
 end
 
 
@@ -1257,7 +1257,7 @@ function NeuronFlyouts:Flyout_GetButton(fbutton)
 	end
 
 	local button = CreateFrame("CheckButton", "NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate")
-	setmetatable(button, { __index = ButtonObj})
+	setmetatable(button, { __index = BUTTON})
 
 	button.elapsed = 0
 
@@ -1307,7 +1307,7 @@ function NeuronFlyouts:Flyout_GetButton(fbutton)
 
 
 	button:SetData(fbutton.flyout.bar)
-	button:SetSkinned(button, true)
+	button:SetSkinned(true)
 	button:Show()
 
 	fbutton.flyout.buttons[id] = button
