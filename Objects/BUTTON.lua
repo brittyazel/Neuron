@@ -23,6 +23,8 @@ function BUTTON:new(name, frameType, frameTemplate, objMetaTable)
 	return object
 end
 
+
+
 function BUTTON:SetData(bar)
 	--empty--
 end

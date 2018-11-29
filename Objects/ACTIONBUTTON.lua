@@ -1,7 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
 
-
 ---@class ACTIONBUTTON : BUTTON
 local ACTIONBUTTON = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
 Neuron.ACTIONBUTTON = ACTIONBUTTON
