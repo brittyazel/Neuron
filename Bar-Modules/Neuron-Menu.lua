@@ -9,8 +9,6 @@ local DB
 Neuron.NeuronMenuBar = Neuron:NewModule("MenuBar", "AceHook-3.0")
 local NeuronMenuBar = Neuron.NeuronMenuBar
 
-local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local defaultBarOptions = {
@@ -25,6 +23,12 @@ local defaultBarOptions = {
 }
 
 local menuElements = {}
+
+
+
+---@class MENUBTN : BUTTON
+local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
+
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------

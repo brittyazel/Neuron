@@ -7,8 +7,6 @@ local NeuronStatusBar = Neuron.NeuronStatusBar
 
 local EDITIndex = Neuron.EDITIndex
 
-local STATUS = setmetatable({}, { __index = Neuron.BUTTON })
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
@@ -164,6 +162,12 @@ local BrawlerGuildFactions = {
     [1419] = true, --Aliance
     [1374] = true, --Horde
 }
+
+
+
+
+---@class STATUS : BUTTON
+local STATUS = setmetatable({}, { __index = Neuron.BUTTON })
 
 
 -----------------------------------------------------------------------------

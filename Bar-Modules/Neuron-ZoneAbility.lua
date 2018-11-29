@@ -5,7 +5,6 @@ local DB
 Neuron.NeuronZoneAbilityBar = Neuron:NewModule("ZoneAbilityBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronZoneAbilityBar = Neuron.NeuronZoneAbilityBar
 
-local ZONEABILITYBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 local SKIN = LibStub("Masque", true)
 
@@ -29,6 +28,9 @@ local ZoneAbilitySpellID
 
 local alphaTimer, alphaDir = 0, 0
 
+
+---@class ZONEABILITYBTN : BUTTON
+local ZONEABILITYBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------

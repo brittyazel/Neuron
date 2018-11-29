@@ -6,8 +6,6 @@ Neuron.NeuronExitBar = Neuron:NewModule("ExitBar", "AceEvent-3.0", "AceHook-3.0"
 local NeuronExitBar = Neuron.NeuronExitBar
 
 
-local EXITBTN = setmetatable({}, { __index = Neuron.BUTTON })
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local SKIN = LibStub("Masque", true)
@@ -23,6 +21,8 @@ local defaultBarOptions = {
 	}
 }
 
+---@class EXITBTN : BUTTON
+local EXITBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------

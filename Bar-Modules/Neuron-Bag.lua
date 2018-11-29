@@ -1,10 +1,10 @@
 ﻿--Neuron Bag Bar, a World of Warcraft® user interface addon.
+
+
 local  DB
 
 Neuron.NeuronBagBar = Neuron:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBagBar = Neuron.NeuronBagBar
-
-local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -25,6 +25,11 @@ local defaultBarOptions = {
 }
 
 local bagElements = {}
+
+
+
+---@class BAGBTN : BUTTON
+local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------

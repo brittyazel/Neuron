@@ -1,13 +1,10 @@
 ﻿--Neuron Pet Action Bar, a World of Warcraft® user interface addon.
 
-
-
 local DB
 
 Neuron.NeuronPetBar = Neuron:NewModule("PetBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronPetBar = Neuron.NeuronPetBar
 
-local PETBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -27,6 +24,12 @@ local defaultBarOptions = {
 		y = 75,
 	}
 }
+
+
+
+
+---@class PETBTN : BUTTON
+local PETBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 
 -----------------------------------------------------------------------------
