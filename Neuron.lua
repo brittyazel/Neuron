@@ -1246,7 +1246,7 @@ function Neuron:ToggleButtonEditMode(show)
 			end
 		end
 
-		Neuron.ACTIONBUTTON:ChangeObject()
+		Neuron:ChangeObject()
 
 	end
 end

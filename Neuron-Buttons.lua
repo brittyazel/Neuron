@@ -6,7 +6,7 @@ local cooldowns, cdAlphas = {}, {}
 
 
 ------------------------------------------------------------
---------------------Intermediate Functions------------------
+--------------------Button General Functions----------------
 ------------------------------------------------------------
 
 
@@ -419,7 +419,58 @@ function Neuron:UpdateMacroCastTargets(global_update)
 	end
 end
 
---TODO: THis is the start of the object code
+
+function Neuron:ChangeObject(object)
+
+	if not Neuron.CurrentObject then
+		Neuron.CurrentObject = object
+	end
+
+	local newObj, newEditor = false, false
+
+	if (Neuron.PEW) then
+
+		if (object and object ~= Neuron.CurrentObject) then
+
+			if (Neuron.CurrentObject and Neuron.CurrentObject.editor.editType ~= object.editor.editType) then
+				newEditor = true
+			end
+
+			if (Neuron.CurrentObject and Neuron.CurrentObject.bar ~= object.bar) then
+
+				local bar = Neuron.CurrentObject.bar
+
+				if (bar.handler:GetAttribute("assertstate")) then
+					bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
+				end
+
+				object.bar.handler:SetAttribute("fauxstate", bar.handler:GetAttribute("activestate"))
+
+			end
+
+			Neuron.CurrentObject = object
+
+			object.editor.select:Show()
+
+			object.selected = true
+			object.action = nil
+
+			newObj = true
+		end
+
+		if (not object) then
+			Neuron.CurrentObject = nil
+		end
+
+		for k,v in pairs(Neuron.EDITIndex) do
+			if (not object or v ~= object.editor) then
+				v.select:Hide()
+			end
+		end
+	end
+
+	return newObj, newEditor
+end
 
 
 

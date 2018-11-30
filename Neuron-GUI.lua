@@ -4006,7 +4006,7 @@ end
 
 function NeuronGUI:ObjEditor_OnClick(editor, button)
 
-	local newObj, newEditor = button:ChangeObject(editor.object)
+	local newObj, newEditor = Neuron:ChangeObject(editor.object)
 
 	if (button == "RightButton") then
 
