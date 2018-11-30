@@ -858,7 +858,7 @@ function ACTIONBUTTON:MACRO_StartGlow()
 	if (self.spellGlowDef) then
 		ActionButton_ShowOverlayGlow(self)
 	elseif (self.spellGlowAlt) then
-		self:AutoCastStart(self.shine)
+		Neuron:AutoCastStart(self.shine)
 	end
 
 	self.glowing = true
@@ -868,7 +868,7 @@ function ACTIONBUTTON:MACRO_StopGlow()
 	if (self.spellGlowDef) then
 		ActionButton_HideOverlayGlow(self)
 	elseif (self.spellGlowAlt) then
-		self:AutoCastStop(self.shine)
+		Neuron:AutoCastStop(self.shine)
 	end
 
 	self.glowing = nil
@@ -1495,7 +1495,7 @@ end
 
 
 function ACTIONBUTTON:MACRO_PlaceSpell(action1, action2, spellID)
-	local modifier, spell, texture, _
+	local spell
 
 	if (action1 == 0) then
 		-- I am unsure under what conditions (if any) we wouldn't have a spell ID
@@ -1517,7 +1517,42 @@ function ACTIONBUTTON:MACRO_PlaceSpell(action1, action2, spellID)
 		self.data.macro_Auto = spell
 	end
 
-	self.data.macro_Icon = false
+	self.data.macro_Icon = icon
+	self.data.macro_Name = spellInfoName
+	self.data.macro_Watch = false
+	self.data.macro_Equip = false
+	self.data.macro_Note = ""
+	self.data.macro_UseNote = false
+
+	if (not self.cursor) then
+		self:SetType(true)
+	end
+
+	Neuron.MacroDrag[1] = false
+
+	ClearCursor()
+	SetCursor(nil)
+
+end
+
+function ACTIONBUTTON:MACRO_PlacePetAbility(action1, action2)
+
+	local spellID = action1
+	local spellIndex = action2
+
+	if not spellID or spellID == 0 then
+		return
+	end
+
+
+	local spellInfoName , _, icon, castTime, minRange, maxRange= GetSpellInfo(action1)
+
+	self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
+
+	self.data.macro_Auto = spellInfoName
+
+
+	self.data.macro_Icon = icon
 	self.data.macro_Name = spellInfoName
 	self.data.macro_Watch = false
 	self.data.macro_Equip = false
@@ -1973,7 +2008,7 @@ function ACTIONBUTTON:MACRO_OnReceiveDrag(preclick)
 	elseif(cursorType == "companion") then
 		self:MACRO_PlaceCompanion(action1, action2, self:MACRO_HasAction())
 	elseif (cursorType == "petaction") then
-		Neuron:Print(L["Pet Actions can not be added to Neuron bars at this time."])
+		self:MACRO_PlacePetAbility(action1, action2)
 	end
 
 

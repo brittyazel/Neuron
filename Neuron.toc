@@ -26,6 +26,11 @@ Utilities/DB-Fixer.lua
 
 Objects/BUTTON.lua
 Objects/ACTIONBUTTON.lua
+Objects/BAGBTN.lua
+Objects/EXITBTN.lua
+Objects/EXTRABTN.lua
+Objects/MENUBTN.lua
+Objects/PETBTN.lua
 
 Neuron-Buttons.lua
 Neuron-Bars.lua

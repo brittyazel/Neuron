@@ -22,13 +22,6 @@ local defaultBarOptions = {
     }
 }
 
-local menuElements = {}
-
-
-
----@class MENUBTN : BUTTON
-local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
-
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -41,21 +34,7 @@ function NeuronMenuBar:OnInitialize()
 
     DB = Neuron.db.profile
 
-
-    menuElements[1] = CharacterMicroButton
-    menuElements[2] = SpellbookMicroButton
-    menuElements[3] = TalentMicroButton
-    menuElements[4] = AchievementMicroButton
-    menuElements[5] = QuestLogMicroButton
-    menuElements[6] = GuildMicroButton
-    menuElements[7] = LFDMicroButton
-    menuElements[8] = CollectionsMicroButton
-    menuElements[9] = EJMicroButton
-    menuElements[10] = StoreMicroButton
-    menuElements[11] = MainMenuMicroButton
-
-
-    Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, DB.menubtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements)
+    Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, "CheckButton", "NeuronAnchorButtonTemplate", { __index = Neuron.MENUBTN }, 11)
     Neuron:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if DB.blizzbar == false then
@@ -68,9 +47,6 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function NeuronMenuBar:OnEnable()
-
-    Neuron:RegisterEvent("PET_BATTLE_OPENING_START")
-    Neuron:RegisterEvent("PET_BATTLE_CLOSE")
 
     NeuronMenuBar:DisableDefault()
 
@@ -86,15 +62,7 @@ function NeuronMenuBar:OnDisable()
 end
 
 
-------------------------------------------------------------------------------
-
-
-function Neuron:PET_BATTLE_OPENING_START()
-end
-
-function Neuron:PET_BATTLE_CLOSE()
-end
-
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
 
@@ -151,63 +119,6 @@ function NeuronMenuBar:DisableDefault()
         ---This stops PetBattles from taking over the Micro Buttons
         NeuronMenuBar:RawHook("MoveMicroButtons", function() end, true)
         NeuronMenuBar:RawHook("UpdateMicroButtonsParent", function() end, true)
-    end
-
-end
-
-
-function MENUBTN:SetData( bar)
-    if (bar) then
-
-        self.bar = bar
-
-        self:SetFrameStrata(bar.data.objectStrata)
-        self:SetScale(bar.data.scale)
-
-    end
-
-    self:SetFrameLevel(4)
-end
-
-
-function MENUBTN:LoadData(spec, state)
-
-    local id = self.id
-
-    if not DB.menubtn[id] then
-        DB.menubtn[id] = {}
-    end
-
-    self.DB = DB.menubtn[id]
-
-    self.config = self.DB.config
-    self.keys = self.DB.keys
-    self.data = self.DB.data
-
-end
-
-function MENUBTN:SetType(save)
-    if (menuElements[self.id]) then
-
-        self:SetWidth(menuElements[self.id]:GetWidth()-2)
-        self:SetHeight(menuElements[self.id]:GetHeight()-2)
-
-        self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
-
-        self.element = menuElements[self.id]
-
-        local objects = Neuron:GetParentKeys(self.element)
-
-        for k,v in pairs(objects) do
-            local name = v:gsub(self.element:GetName(), "")
-            self[name:lower()] = _G[v]
-        end
-
-        self.element:ClearAllPoints()
-        self.element:SetParent(self)
-        self.element:Show()
-        self.element:SetPoint("CENTER", self, "CENTER")
-        self.element:SetScale(1)
     end
 
 end

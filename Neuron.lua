@@ -678,6 +678,7 @@ function Neuron:GetParentKeys(frame)
 	end
 
 	local data, childData = {}, {}
+	test = frame
 	local children = {frame:GetChildren()}
 	local regions = {frame:GetRegions()}
 
@@ -1352,7 +1353,7 @@ function Neuron:PrintBarTypes()
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objDB, objFrameType, objTemplate, objMetaTable, objMax)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objFrameType, objTemplate, objMetaTable, objMax)
 
 	Neuron.ModuleIndex = Neuron.ModuleIndex + 1
 
@@ -1361,7 +1362,6 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTa
 		barLabel = barLabel,
 		barDB = barDB,
 		objTable = objTable, --this is all the buttons associated with a given bar
-		objDB = objDB,
 		objPrefix = "Neuron"..objType:gsub("%s+", ""),
 		objFrameT = objFrameType,
 		objTemplate = objTemplate,

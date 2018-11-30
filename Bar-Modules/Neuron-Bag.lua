@@ -1,14 +1,11 @@
 ﻿--Neuron Bag Bar, a World of Warcraft® user interface addon.
 
-
 local  DB
 
 Neuron.NeuronBagBar = Neuron:NewModule("BagBar", "AceEvent-3.0", "AceHook-3.0")
 local NeuronBagBar = Neuron.NeuronBagBar
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
-local SKIN = LibStub("Masque", true)
 
 
 local defaultBarOptions = {
@@ -24,12 +21,6 @@ local defaultBarOptions = {
     }
 }
 
-local bagElements = {}
-
-
-
----@class BAGBTN : BUTTON
-local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -42,14 +33,8 @@ function NeuronBagBar:OnInitialize()
 
     DB = Neuron.db.profile
 
-    bagElements[5] = MainMenuBarBackpackButton
-    bagElements[4] = CharacterBag0Slot
-    bagElements[3] = CharacterBag1Slot
-    bagElements[2] = CharacterBag2Slot
-    bagElements[1] = CharacterBag3Slot
 
-
-    Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, NeuronBagBar, DB.bagbtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = BAGBTN }, #bagElements)
+    Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, NeuronBagBar,"CheckButton", "NeuronAnchorButtonTemplate", { __index = Neuron.BAGBTN }, 5)
 
 
     Neuron:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
@@ -132,97 +117,6 @@ function NeuronBagBar:CreateBarsAndButtons()
                 Neuron:CreateNewObject("bag", id)
             end
         end
-    end
-end
-
-
-function BAGBTN:SetSkinned()
-
-    if (SKIN) then
-
-        local bar = self.bar
-
-        if (bar) then
-
-            local btnData = {
-                Icon = self.icontexture,
-                Normal = self.normaltexture,
-                Count = self.count,
-            }
-
-            SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
-
-        end
-    end
-
-end
-
-
-function BAGBTN:GetSkinned()
-    -- empty
-end
-
-
-function BAGBTN:SetData(bar)
-
-    if (bar) then
-
-        self.bar = bar
-
-        self:SetFrameStrata(bar.data.objectStrata)
-        self:SetScale(bar.data.scale)
-
-    end
-
-    self:SetFrameLevel(4)
-end
-
-function BAGBTN:LoadData(spec, state)
-
-    local id = self.id
-
-    if not DB.bagbtn[id] then
-        DB.bagbtn[id] = {}
-    end
-
-    self.DB = DB.bagbtn[id]
-
-    self.config = self.DB.config
-    self.keys = self.DB.keys
-    self.data = self.DB.data
-end
-
-
-function BAGBTN:SetType(save)
-
-    if (bagElements[self.id]) then
-
-        if self.id == 5 then --this corrects for some large ass margins on the main backpack button
-            self:SetWidth(bagElements[self.id]:GetWidth()-5)
-            self:SetHeight(bagElements[self.id]:GetHeight()-5)
-        else
-            self:SetWidth(bagElements[self.id]:GetWidth()+3)
-            self:SetHeight(bagElements[self.id]:GetHeight()+3)
-        end
-
-        self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
-
-        self.element = bagElements[self.id]
-
-        local objects = Neuron:GetParentKeys(self.element)
-
-        for k,v in pairs(objects) do
-            local name = v:gsub(self.element:GetName(), "")
-            self[name:lower()] = _G[v]
-        end
-
-        self.element:ClearAllPoints()
-        self.element:SetParent(self)
-        self.element:Show()
-        self.element:SetPoint("CENTER", self, "CENTER")
-        self.element:SetScale(1)
-
-        self:SetSkinned()
     end
 end
 

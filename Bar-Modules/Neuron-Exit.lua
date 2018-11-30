@@ -8,8 +8,6 @@ local NeuronExitBar = Neuron.NeuronExitBar
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local SKIN = LibStub("Masque", true)
-
 local defaultBarOptions = {
 	[1] = {
 		snapTo = false,
@@ -20,9 +18,6 @@ local defaultBarOptions = {
 		y = 305,
 	}
 }
-
----@class EXITBTN : BUTTON
-local EXITBTN = setmetatable({}, { __index = Neuron.BUTTON })
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -35,7 +30,7 @@ function NeuronExitBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar, DB.exitbtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXITBTN }, 1)
+	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar,"CheckButton", "NeuronActionButtonTemplate", { __index = Neuron.EXITBTN }, 1)
 
 	Neuron:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 										   SHOWGRID = false,
@@ -135,131 +130,4 @@ function NeuronExitBar:DisableDefault()
 		MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", 0, -250)
 	end
 
-end
-
-
-function EXITBTN:SetSkinned()
-
-	if (SKIN) then
-
-		local bar = self.bar
-
-		if (bar) then
-
-			local btnData = {
-				Icon = self.icontexture,
-				Normal = self.normaltexture,
-
-			}
-
-			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
-
-		end
-
-	end
-end
-
-function EXITBTN:LoadData(spec, state)
-
-	local id = self.id
-
-	if not DB.exitbtn[id] then
-		DB.exitbtn[id] = {}
-	end
-
-	self.DB = DB.exitbtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-end
-
-EXITBTN.SetData = Neuron.ACTIONBUTTON.SetData
-
-
-function EXITBTN:SetObjectVisibility(show)
-
-	if CanExitVehicle() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-
-		self:SetAlpha(1)
-		NeuronExitBar:SetExitButtonIcon(self)
-
-	elseif not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
-		self:SetAlpha(0)
-	end
-
-end
-
-
-function NeuronExitBar:SetExitButtonIcon(button)
-
-	local texture
-
-	if UnitOnTaxi("player") then
-		texture = Neuron.SpecialActions.taxi
-	else
-		texture = Neuron.SpecialActions.vehicle
-	end
-
-	button.iconframeicon:SetTexture(texture)
-end
-
-function EXITBTN:SetType(save)
-
-	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	self:RegisterEvent("UPDATE_POSSESS_BAR");
-	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR");
-	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	self:RegisterEvent("UNIT_EXITED_VEHICLE")
-	self:RegisterEvent("VEHICLE_UPDATE")
-
-	self:SetScript("OnEvent", function(self, event, ...) NeuronExitBar:OnEvent(self, event, ...) end)
-	self:SetScript("OnClick", function(self) NeuronExitBar:OnClick(self) end)
-	self:SetScript("OnEnter", function(self) NeuronExitBar:OnEnter(self) end)
-	self:SetScript("OnLeave", GameTooltip_Hide)
-
-	local objects = Neuron:GetParentKeys(self)
-
-	for k,v in pairs(objects) do
-		local name = (v):gsub(self:GetName(), "")
-		self[name:lower()] = _G[v]
-	end
-
-	NeuronExitBar:SetExitButtonIcon(self)
-
-	self:SetFrameLevel(4)
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-
-	self:SetSkinned()
-
-	self:SetObjectVisibility()
-end
-
-
-function NeuronExitBar:OnEvent(button, event, ...)
-
-	button:SetObjectVisibility()
-
-end
-
-
-function NeuronExitBar:OnEnter(button)
-	if ( UnitOnTaxi("player") ) then
-
-		GameTooltip:SetOwner(button, "ANCHOR_RIGHT");
-		GameTooltip:ClearLines()
-		GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1);
-		GameTooltip:AddLine(TAXI_CANCEL_DESCRIPTION, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
-		GameTooltip:Show();
-	end
-end
-
-function NeuronExitBar:OnClick(button)
-	if ( UnitOnTaxi("player") ) then
-		TaxiRequestEarlyLanding();
-	else
-		VehicleExit();
-	end
 end

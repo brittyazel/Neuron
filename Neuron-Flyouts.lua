@@ -6,7 +6,7 @@
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local DB, SPEC, btnDB, control
+local DB, control
 
 Neuron.NeuronFlyouts = Neuron:NewModule("Flyouts", "AceEvent-3.0", "AceHook-3.0")
 local NeuronFlyouts = Neuron.NeuronFlyouts
