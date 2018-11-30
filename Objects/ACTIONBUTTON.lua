@@ -810,7 +810,7 @@ function ACTIONBUTTON:MACRO_UpdateIcon(...)
 	local spell, item, texture = self.macrospell, self.macroitem, self.data.macro_Icon
 
 
-	if(texture)then
+	if(texture)then --saves an unnecessary lookup as it was set to self.data.macro_Icon when dragged to the bar initially
 		self.iconframeicon:SetTexture(texture)
 		self.iconframeicon:Show()
 	else
@@ -1517,7 +1517,7 @@ function ACTIONBUTTON:MACRO_PlaceSpell(action1, action2, spellID)
 		self.data.macro_Auto = spell
 	end
 
-	self.data.macro_Icon = icon
+	self.data.macro_Icon = icon  --also set later in SetSpellIcon
 	self.data.macro_Name = spellInfoName
 	self.data.macro_Watch = false
 	self.data.macro_Equip = false
@@ -1540,27 +1540,26 @@ function ACTIONBUTTON:MACRO_PlacePetAbility(action1, action2)
 	local spellID = action1
 	local spellIndex = action2
 
-	if not spellID or spellID == 0 then
-		return
-	end
+	if spellIndex then --if the ability doesn't have a spellIndex, i.e (passive, follow, defensive, etc, print a warning)
+		local spellInfoName , _, icon, castTime, minRange, maxRange= GetSpellInfo(spellID)
+
+		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
+
+		self.data.macro_Auto = spellInfoName
 
 
-	local spellInfoName , _, icon, castTime, minRange, maxRange= GetSpellInfo(action1)
+		self.data.macro_Icon = icon --also set later in SetSpellIcon
+		self.data.macro_Name = spellInfoName
+		self.data.macro_Watch = false
+		self.data.macro_Equip = false
+		self.data.macro_Note = ""
+		self.data.macro_UseNote = false
 
-	self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
-
-	self.data.macro_Auto = spellInfoName
-
-
-	self.data.macro_Icon = icon
-	self.data.macro_Name = spellInfoName
-	self.data.macro_Watch = false
-	self.data.macro_Equip = false
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
-
-	if (not self.cursor) then
-		self:SetType(true)
+		if (not self.cursor) then
+			self:SetType(true)
+		end
+	else
+		Neuron:Print("Sorry, you cannot place that ability at this time.")
 	end
 
 	Neuron.MacroDrag[1] = false
@@ -1655,12 +1654,12 @@ function ACTIONBUTTON:MACRO_PlaceBlizzEquipSet(equipmentSetName)
 		end
 
 
-		local name, texture = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
+		local name, icon = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
 		if (texture) then
 			self.data.macro_Text = "/equipset "..equipmentSetName
 			self.data.macro_Equip = equipmentSetName
 			self.data.macro_Name = name
-			self.data.macro_Icon = texture
+			self.data.macro_Icon = icon
 		else
 			self.data.macro_Text = ""
 			self.data.macro_Equip = false
@@ -1739,7 +1738,7 @@ function ACTIONBUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 		return
 
 	else
-		local _, _, spellID = GetCompanionInfo(action2, action1)
+		local _, _, spellID, icon = GetCompanionInfo(action2, action1)
 		local name = GetSpellInfo(spellID)
 
 		if (name) then
@@ -1752,11 +1751,41 @@ function ACTIONBUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 			self.data.macro_Auto = false
 		end
 
-		self.data.macro_Icon = false
+		self.data.macro_Icon = icon
 		self.data.macro_Watch = false
 		self.data.macro_Equip = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
+
+		if (not self.cursor) then
+			self:SetType(true)
+		end
+
+		Neuron.MacroDrag[1] = false
+
+		ClearCursor()
+		SetCursor(nil)
+	end
+end
+
+function ACTIONBUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
+	local petName, petIcon
+	local _ --variable used to discard unwanted return values
+
+	if (action1 == 0) then
+		return
+	else
+		_, _, _, _, _, _, _,petName, petIcon = C_PetJournal.GetPetInfoByPetID(action1)
+
+		self.data.macro_Text = "#autowrite\n/summonpet "..petName
+		self.data.macro_Auto = petName..";"
+		self.data.macro_Icon = petIcon
+		self.data.macro_Name = petName
+		self.data.macro_Watch = false
+		self.data.macro_Equip = false
+		self.data.macro_Note = ""
+		self.data.macro_UseNote = false
+
 
 		if (not self.cursor) then
 			self:SetType(true)
@@ -1829,36 +1858,6 @@ function ACTIONBUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 	end
 end
 
-
-function ACTIONBUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
-	local petName, petIcon
-	local _ --variable used to discard unwanted return values
-
-	if (action1 == 0) then
-		return
-	else
-		_, _, _, _, _, _, _,petName, petIcon = C_PetJournal.GetPetInfoByPetID(action1)
-
-		self.data.macro_Text = "#autowrite\n/summonpet "..petName
-		self.data.macro_Auto = petName..";"
-		self.data.macro_Icon = petIcon
-		self.data.macro_Name = petName
-		self.data.macro_Watch = false
-		self.data.macro_Equip = false
-		self.data.macro_Note = ""
-		self.data.macro_UseNote = false
-
-
-		if (not self.cursor) then
-			self:SetType(true)
-		end
-
-		Neuron.MacroDrag[1] = false
-
-		ClearCursor()
-		SetCursor(nil)
-	end
-end
 
 function ACTIONBUTTON:MACRO_PlaceMacro()
 	self.data.macro_Text = Neuron.MacroDrag[3]
