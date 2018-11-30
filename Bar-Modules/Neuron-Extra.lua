@@ -97,7 +97,7 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 			local object
 
-			object = Neuron.NeuronButton:CreateNewObject("extrabar", 1, true)
+			object = Neuron:CreateNewObject("extrabar", 1, true)
 			Neuron.NeuronBar:AddObjectToList(bar, object)
 		end
 
@@ -120,7 +120,7 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.extrabtn) do
 			if (data ~= nil) then
-				Neuron.NeuronButton:CreateNewObject("extrabar", id)
+				Neuron:CreateNewObject("extrabar", id)
 			end
 		end
 	end
@@ -248,7 +248,7 @@ function NeuronExtraBar:ExtraButton_Update(button)
 	local start, duration, enable = GetActionCooldown(button.actionID);
 
 	if (start) then
-		Neuron.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
+		Neuron:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
 	end
 end
 

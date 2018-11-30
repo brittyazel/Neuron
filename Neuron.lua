@@ -161,6 +161,14 @@ Neuron.BarEditMode = false
 Neuron.ButtonEditMode = false
 Neuron.BindingMode = false
 
+Neuron.SpecialActions = {
+	vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit",
+	possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield",
+	taxi = "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up",
+}
+
+Neuron.unitAuras = { player = {}, target = {}, focus = {} }
+
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
@@ -258,6 +266,14 @@ function Neuron:OnEnable()
 	--Neuron:RegisterEvent("TOYS_UPDATED")
 	--Neuron:RegisterEvent("TOYS_UPDATED")
 	--Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+
+	Neuron:RegisterEvent("PLAYER_TARGET_CHANGED")
+	Neuron:RegisterEvent("ACTIONBAR_SHOWGRID")
+	Neuron:RegisterEvent("UNIT_AURA")
+	Neuron:RegisterEvent("UNIT_SPELLCAST_SENT")
+	Neuron:RegisterEvent("UNIT_SPELLCAST_START")
+	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
 	Neuron:HookScript(Neuron, "OnUpdate", "controlOnUpdate")
 
@@ -400,9 +416,63 @@ function Neuron:TOYS_UPDATED()
 	end
 end
 
+function Neuron:PLAYER_TARGET_CHANGED()
+	for k in pairs(Neuron.unitAuras) do
+		Neuron:updateAuraInfo(k)
+	end
+end
 
+function Neuron:ACTIONBAR_SHOWGRID()
+	Neuron.StartDrag = true
+end
 
+function Neuron:UNIT_AURA(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
 
+function Neuron:UNIT_SPELLCAST_SENT(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_START(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_CHANNEL_START(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
 
 -------------------------------------------------------------------------
 --------------------Profiles---------------------------------------------
@@ -410,8 +480,6 @@ end
 
 function Neuron:RefreshConfig()
 	DB = Neuron.db.profile
-	Neuron.NeuronButton.ButtonProfileUpdate()
-
 	StaticPopup_Show("ReloadUI")
 end
 
@@ -551,7 +619,7 @@ function Neuron:controlOnUpdate(frame, elapsed)
 	---Throttled OnUpdate calls
 	if (Neuron.elapsed > DB.throttle and Neuron.PEW) then
 
-		Neuron.NeuronButton:cooldownsOnUpdate(frame, elapsed)
+		Neuron:cooldownsOnUpdate(frame, elapsed)
 		if Neuron.NeuronZoneAbilityBar then
 			Neuron.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
 		end
@@ -562,12 +630,12 @@ function Neuron:controlOnUpdate(frame, elapsed)
 			Neuron.NeuronStatusBar:controlOnUpdate(frame, elapsed)
 		end
 
-		Neuron.elapsed = 0;
+		Neuron.elapsed = 0
 	end
 
 	---UnThrottled OnUpdate calls
 	if(Neuron.PEW) then
-		Neuron.NeuronButton:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+		Neuron:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 		Neuron.NeuronBar:controlOnUpdate(frame, elapsed)
 	end
 end
@@ -1178,7 +1246,7 @@ function Neuron:ToggleButtonEditMode(show)
 			end
 		end
 
-		Neuron.NeuronButton:ChangeObject()
+		Neuron.ACTIONBUTTON:ChangeObject()
 
 	end
 end

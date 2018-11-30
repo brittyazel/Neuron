@@ -187,7 +187,7 @@ function NeuronBar:CreateBarsAndButtons()
 			local object
 
 			for i=1+offset, 12+offset do
-				object = Neuron.NeuronButton:CreateNewObject("bar", i, true) --this calls the object (button) constructor
+				object = Neuron:CreateNewObject("bar", i, true) --this calls the object (button) constructor
 				NeuronBar:AddObjectToList(bar, object)
 			end
 
@@ -204,7 +204,7 @@ function NeuronBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.buttons) do
 			if (data ~= nil) then
-				Neuron.NeuronButton:CreateNewObject("bar", id) --this calls the object (button) constructor
+				Neuron:CreateNewObject("bar", id) --this calls the object (button) constructor
 			end
 		end
 	end
@@ -1055,7 +1055,7 @@ function NeuronBar:SetFauxState(bar, state)
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
-			Neuron.NeuronButton:SetFauxState(object, state)
+			object:SetFauxState(state)
 		end
 	end
 
@@ -1980,7 +1980,7 @@ function NeuronBar:AddObjectsToBar(bar, num)
 			if bar.objTable[id] and not bar.objTable[id]["bar"] then --checks to see if the object exists in the object table, and if the object belongs to a bar
 				object = bar.objTable[id]
 			else
-				object = Neuron.NeuronButton:CreateNewObject(bar.class, id)
+				object = Neuron:CreateNewObject(bar.class, id)
 			end
 			NeuronBar:AddObjectToList(bar, object)
 		end
@@ -2517,7 +2517,15 @@ function NeuronBar:MultiSpecSet(bar, msg, gui, checked, query)
 		end
 	end
 
-	Neuron.NeuronButton:UpdateObjectSpec(bar)
+	for i, btnID in ipairs(bar.data.objectList) do
+		local button = _G[bar.objPrefix..tostring(btnID)]
+
+		if button then
+			button:UpdateButtonSpec(bar)
+		end
+
+	end
+
 	NeuronBar:Update(bar)
 end
 
@@ -3279,7 +3287,7 @@ function NeuronBar:SetCastingTarget(bar, value, gui, checked, query)
 			end
 		end
 
-		Neuron.NeuronButton:UpdateMacroCastTargets()
+		Neuron:UpdateMacroCastTargets()
 		NeuronBar:Update(bar)
 	end
 end

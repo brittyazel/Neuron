@@ -103,7 +103,7 @@ function NeuronPetBar:CreateBarsAndButtons()
 			local object
 
 			for i=1,Neuron.maxPetID do
-				object = Neuron.NeuronButton:CreateNewObject("pet", i, true)
+				object = Neuron:CreateNewObject("pet", i, true)
 				Neuron.NeuronBar:AddObjectToList(bar, object)
 			end
 		end
@@ -120,7 +120,7 @@ function NeuronPetBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.petbtn) do
 			if (data ~= nil) then
-				Neuron.NeuronButton:CreateNewObject("pet", id)
+				Neuron:CreateNewObject("pet", id)
 			end
 		end
 	end
@@ -225,12 +225,12 @@ function NeuronPetBar:PET_UpdateState(button, isActive, allowed, enabled)
 
 	if (enabled) then
 
-		Neuron.NeuronButton:AutoCastStart(button.shine)
+		button:AutoCastStart(button.shine)
 		button.autocastable:Hide()
 		button.autocastenabled = true
 
 	else
-		Neuron.NeuronButton:AutoCastStop(button.shine)
+		button:AutoCastStop(button.shine)
 
 		if (allowed) then
 			button.autocastable:Show()
@@ -254,7 +254,7 @@ function NeuronPetBar:PET_UpdateCooldown(button)
 			button.iconframeaurawatch:Hide()
 		end
 
-		Neuron.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
+		Neuron:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
 	end
 end
 

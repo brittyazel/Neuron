@@ -977,9 +977,9 @@ function NeuronFlyouts:Flyout_UpdateButtons(fbutton, init)
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
-				Neuron.NeuronButton:MACRO_UpdateParse(button)
-				Neuron.NeuronButton:MACRO_Reset(button)
-				Neuron.NeuronButton:MACRO_UpdateAll(button, true)
+				button:MACRO_UpdateParse()
+				button:MACRO_Reset()
+				button:MACRO_UpdateAll(true)
 
 				list[#list+1] = button.id--table.insert(list, button.id)
 
@@ -1231,11 +1231,11 @@ function NeuronFlyouts:Flyout_PostClick(fbutton)
 	button.data.macro_Icon = fbutton:GetAttribute("macro_Icon") or false
 	button.data.macro_Name = fbutton:GetAttribute("macro_Name") or nil
 
-	Neuron.NeuronButton:MACRO_UpdateParse(button)
-	Neuron.NeuronButton:MACRO_Reset(button)
-	Neuron.NeuronButton:MACRO_UpdateAll(button, true)
+	button:MACRO_UpdateParse()
+	button:MACRO_Reset()
+	button:MACRO_UpdateAll(true)
 
-	Neuron.NeuronButton:MACRO_UpdateState(fbutton)
+	fbutton:MACRO_UpdateState()
 end
 
 function NeuronFlyouts:Flyout_GetButton(fbutton)
@@ -1285,14 +1285,14 @@ function NeuronFlyouts:Flyout_GetButton(fbutton)
 	button:SetAttribute("type1", "macro")
 	button:SetAttribute("*macrotext1", "")
 
-	button:SetScript("PostClick", function(self) NeuronFlyouts:Flyout_PostClick(self) end)
-	button:SetScript("OnEnter", function(self, ...) Neuron.NeuronButton:MACRO_OnEnter(self, ...) end)
-	button:SetScript("OnLeave", function(self, ...) Neuron.NeuronButton:MACRO_OnLeave(self, ...) end)
+	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
+	button:SetScript("OnEnter", function(self, ...) self:MACRO_OnEnter(...) end)
+	button:SetScript("OnLeave", function(self, ...) self:MACRO_OnLeave(...) end)
 	--button:SetScript("OnEvent", self:GetScript("OnEvent"))
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
-	button:HookScript("OnShow", function(self) Neuron.NeuronButton:MACRO_UpdateButton(self) Neuron.NeuronButton:MACRO_UpdateIcon(self); Neuron.NeuronButton:MACRO_UpdateState(self) end)
-	button:HookScript("OnHide", function(self) Neuron.NeuronButton:MACRO_UpdateButton(self) Neuron.NeuronButton:MACRO_UpdateIcon(self) Neuron.NeuronButton:MACRO_UpdateState(self) end)
+	button:HookScript("OnShow", function(self) self:MACRO_UpdateButton(); self:MACRO_UpdateIcon(); self:MACRO_UpdateState() end)
+	button:HookScript("OnHide", function(self) self:MACRO_UpdateButton(); self:MACRO_UpdateIcon(); self:MACRO_UpdateState() end)
 
 	button:WrapScript(button, "OnClick", [[
 			local button = self:GetParent():GetParent()

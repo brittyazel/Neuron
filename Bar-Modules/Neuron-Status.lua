@@ -276,7 +276,7 @@ function NeuronStatusBar:CreateBarsAndButtons()
 
             local object
 
-            object = Neuron.NeuronButton:CreateNewObject("status", id, true)
+            object = Neuron:CreateNewObject("status", id, true)
             Neuron.NeuronBar:AddObjectToList(bar, object)
         end
 
@@ -292,7 +292,7 @@ function NeuronStatusBar:CreateBarsAndButtons()
 
         for id,data in pairs(DB.statusbtn) do
             if (data ~= nil) then
-                Neuron.NeuronButton:CreateNewObject("status", id)
+                Neuron:CreateNewObject("status", id)
             end
         end
     end

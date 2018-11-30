@@ -114,7 +114,7 @@ function NeuronMenuBar:CreateBarsAndButtons()
             local object
 
             for i=1,#menuElements do
-                object = Neuron.NeuronButton:CreateNewObject("menu", i, true)
+                object = Neuron:CreateNewObject("menu", i, true)
                 Neuron.NeuronBar:AddObjectToList(bar, object)
             end
         end
@@ -131,7 +131,7 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
         for id,data in pairs(DB.menubtn) do
             if (data ~= nil) then
-                Neuron.NeuronButton:CreateNewObject("menu", id)
+                Neuron:CreateNewObject("menu", id)
             end
         end
     end

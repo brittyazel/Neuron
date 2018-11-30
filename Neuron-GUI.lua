@@ -2579,11 +2579,11 @@ function NeuronGUI:MacroEditorUpdate()
 		local data = button.DB[buttonSpec][state]
 
 		if not data then
-			button.DB[buttonSpec][state] = Neuron.NeuronButton:MACRO_build()
+			button.DB[buttonSpec][state] = button:MACRO_build()
 
 			data = button.DB[buttonSpec][state]
 			Neuron.NeuronFlyouts:UpdateFlyout(button)
-			Neuron.NeuronButton:BuildStateData(button)
+			button:BuildStateData()
 			button:SetType()
 		end
 
@@ -2605,10 +2605,10 @@ function NeuronGUI:MacroEditorUpdate()
 			NBTNE.usenote:SetChecked(data.macro_UseNote)
 
 		else
-			--Neuron:Print("notinghere")
-			--button.DB[buttonSpec][state] = Neuron.NeuronButton:MACRO_build()
-			--Neuron.NeuronButton:MACRO_build(button.DB[buttonSpec][state])
-			---Neuron:Print(button.DB[buttonSpec][state])
+			--Neuron:Print("nothinghere")
+			--button.DB[buttonSpec][state] = button:MACRO_build()
+			--button:MACRO_build(button.DB[buttonSpec][state])
+			--Neuron:Print(button.DB[buttonSpec][state])
 			--end
 		end
 	end
@@ -2656,7 +2656,7 @@ function NeuronGUI:macroText_OnEditFocusLost()
 	if (button) then
 
 		Neuron.NeuronFlyouts:UpdateFlyout(button)
-		Neuron.NeuronButton:BuildStateData(button)
+		button:BuildStateData()
 		button:SetType()
 
 		NeuronGUI:MacroEditorUpdate()
@@ -2678,9 +2678,9 @@ function NeuronGUI:macroText_OnTextChanged(frame)
 				button.DB[buttonSpec][state].macro_Text = frame:GetText()
 				button.DB[buttonSpec][state].macro_Watch = false
 			else
-				--Neuron:Print("notinghere")
-				--button.DB[buttonSpec][state] = Neuron.NeuronButton:MACRO_build()
-				--Neuron.NeuronButton:MACRO_build(button.DB[buttonSpec][state])
+				--Neuron:Print("nothinghere")
+				--button.DB[buttonSpec][state] = button:MACRO_build()
+				--button:MACRO_build(button.DB[buttonSpec][state])
 				--Neuron:Print(button.DB[buttonSpec][state])
 			end
 
@@ -2710,7 +2710,7 @@ function NeuronGUI:macroButton_Changed(frame, button, down)
 		else
 			data.macro_Icon = frame.texture
 		end
-		Neuron.NeuronButton:MACRO_UpdateIcon(object)
+		object:MACRO_UpdateIcon()
 
 		NeuronGUI:UpdateObjectGUI()
 	end
@@ -2789,7 +2789,7 @@ function NeuronGUI:macroOnEditFocusLost(frame)
 	local button = Neuron.CurrentObject
 
 	if (button) then
-		Neuron.NeuronButton:MACRO_UpdateAll(button, true)
+		button:MACRO_UpdateAll(true)
 	end
 
 	if (frame.text and strlen(frame:GetText()) <= 0) then
@@ -2975,7 +2975,7 @@ function NeuronGUI:customDoneOnClick(frame)
 
 			button.data.macro_Icon = text
 
-			Neuron.NeuronButton:MACRO_UpdateIcon(button)
+			button:MACRO_UpdateIcon()
 
 			NeuronGUI:UpdateObjectGUI()
 		end
@@ -3614,7 +3614,11 @@ NeuronGUI.target_options = {
 			name = L["Self-Cast by modifier"],
 			desc = L["Select the Self-Cast Modifier"],
 			get = function(info) return GetModifiedClick("SELFCAST") end,
-			set = function(info, value) SetModifiedClick("SELFCAST", value); SaveBindings(GetCurrentBindingSet() or 1); Neuron.NeuronButton:UpdateMacroCastTargets(true) end,
+			set = function(info, value)
+				SetModifiedClick("SELFCAST", value)
+				SaveBindings(GetCurrentBindingSet() or 1)
+				Neuron:UpdateMacroCastTargets(true)
+			end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
 		selfcast_nl = {
@@ -3636,7 +3640,11 @@ NeuronGUI.target_options = {
 			name = L["Focus-Cast by modifier"],
 			desc = L["Select the Focus-Cast Modifier"],
 			get = function(info) return GetModifiedClick("FOCUSCAST") end,
-			set = function(info, value) SetModifiedClick("FOCUSCAST", value); SaveBindings(GetCurrentBindingSet() or 1); Neuron.NeuronButton:UpdateMacroCastTargets(true) end,
+			set = function(info, value)
+				SetModifiedClick("FOCUSCAST", value)
+				SaveBindings(GetCurrentBindingSet() or 1)
+				Neuron:UpdateMacroCastTargets(true)
+			end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
 		focuscast_nl = {
@@ -3671,7 +3679,10 @@ NeuronGUI.target_options = {
 			name = L["Mouse-Over Casting Modifier"],
 			desc = L["Select a modifier for Mouse-Over Casting"],
 			get = function() return DB.mouseOverMod end, --getFunc,
-			set = function(info, value) DB.mouseOverMod = value; Neuron.NeuronButton:UpdateMacroCastTargets(true) end,
+			set = function(info, value)
+				DB.mouseOverMod = value
+				Neuron:UpdateMacroCastTargets(true)
+			end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
 		mouseovermod_desc = {
@@ -3995,7 +4006,7 @@ end
 
 function NeuronGUI:ObjEditor_OnClick(editor, button)
 
-	local newObj, newEditor = Neuron.NeuronButton:ChangeObject(editor.object)
+	local newObj, newEditor = button:ChangeObject(editor.object)
 
 	if (button == "RightButton") then
 

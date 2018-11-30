@@ -46,9 +46,6 @@ function NeuronZoneAbilityBar:OnInitialize()
 	DB.zoneabilitybar = DB.zoneabilitybar
 	DB.zoneabilitybtn = DB.zoneabilitybtn
 
-	--create pointers for these functions
-	ZONEABILITYBTN.SetTimer = Neuron.NeuronButton.SetTimer
-
 
 	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, NeuronZoneAbilityBar, DB.zoneabilitybtn, "CheckButton", "NeuronActionButtonTemplate", { __index = ZONEABILITYBTN }, 1)
 
@@ -109,7 +106,7 @@ function NeuronZoneAbilityBar:CreateBarsAndButtons()
 
 			local object
 
-			object = Neuron.NeuronButton:CreateNewObject("zoneabilitybar", 1, true)
+			object = Neuron:CreateNewObject("zoneabilitybar", 1, true)
 			Neuron.NeuronBar:AddObjectToList(bar, object)
 		end
 
@@ -125,7 +122,7 @@ function NeuronZoneAbilityBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.zoneabilitybtn) do
 			if (data ~= nil) then
-				Neuron.NeuronButton:CreateNewObject("zoneabilitybar", id)
+				Neuron:CreateNewObject("zoneabilitybar", id)
 			end
 		end
 	end
@@ -245,7 +242,7 @@ function NeuronZoneAbilityBar:ZoneAbilityFrame_Update(button)
 	end
 
 	if (start) then
-		Neuron.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
+		Neuron:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
 	end
 
 	button.spellName = button.CurrentSpell;
