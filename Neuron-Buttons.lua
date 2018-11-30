@@ -1,7 +1,5 @@
 --Neuron, a World of Warcraft® user interface addon.
 
-local unitAuras = Neuron.unitAuras
-
 local autoCast = { speeds = { 2, 4, 6, 8 }, timers = { 0, 0, 0, 0 }, circle = { 0, 22, 44, 66 }, shines = {}, r = 0.95, g = 0.95, b = 0.32 }
 
 local cooldowns, cdAlphas = {}, {}
@@ -246,14 +244,14 @@ function Neuron:updateAuraInfo(unit)
 	local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID, _
 	uai_index = 1
 
-	wipe(unitAuras[unit])
+	wipe(Neuron.unitAuras[unit])
 
 	repeat
 		uai_spell, _, uai_count, _, uai_duration, uai_timeLeft, uai_caster, _, _, uai_spellID = UnitAura(unit, uai_index, "HELPFUL")
 
 		if (uai_duration and (uai_caster == "player" or uai_caster == "pet")) then
-			unitAuras[unit][uai_spell:lower()] = "buff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
-			unitAuras[unit][uai_spell:lower().."()"] = "buff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
+			Neuron.unitAuras[unit][uai_spell:lower()] = "buff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
+			Neuron.unitAuras[unit][uai_spell:lower().."()"] = "buff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
 		end
 
 		uai_index = uai_index + 1
@@ -266,8 +264,8 @@ function Neuron:updateAuraInfo(unit)
 		uai_spell, _, uai_count, _, uai_duration, uai_timeLeft, uai_caster = UnitAura(unit, uai_index, "HARMFUL")
 
 		if (uai_duration and (uai_caster == "player" or uai_caster == "pet")) then
-			unitAuras[unit][uai_spell:lower()] = "debuff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
-			unitAuras[unit][uai_spell:lower().."()"] = "debuff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
+			Neuron.unitAuras[unit][uai_spell:lower()] = "debuff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
+			Neuron.unitAuras[unit][uai_spell:lower().."()"] = "debuff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
 		end
 
 		uai_index = uai_index + 1
@@ -316,29 +314,6 @@ function Neuron:SetTimer(frame, start, duration, enable, timer, color1, color2, 
 		CooldownFrame_Set(frame, 0, 0, 0)
 	end
 end
-
-
-
---[[function Neuron:ToggleCollectionsJournal()
-
-	local MountButtonsHookIsSet
-
-	if CollectionsJournal:IsShown() then
-		if not MountButtonsHookIsSet then
-			for i = 1, 20 do
-				local bName = "MountJournalListScrollFrameButton"..i
-				local f = _G[bName]
-				if f then
-					if f.DragButton then
-						f.DragButton:HookScript("OnEnter", function(self) ACTIONBUTTON.CurrentMountSpellID = self:GetParent().spellID end)
-					end
-				end
-			end
-			MountButtonsHookIsSet = true
-		end
-	end
-end]]
-
 
 
 function Neuron:CreateNewObject(class, id, firstRun)

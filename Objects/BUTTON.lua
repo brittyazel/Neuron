@@ -7,12 +7,6 @@ Neuron.BUTTON = BUTTON
 
 
 
-local ItemCache = NeuronItemCache
-
-
-
-
-
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
 ---@param frameType string @ Type of frame to create
@@ -91,7 +85,7 @@ function BUTTON:MACRO_UpdateCooldown(update)
 	if (self.actionID) then
 		self:ACTION_SetCooldown(self.actionID)
 	elseif (show and #show>0) then
-		if (ItemCache[show]) then
+		if (NeuronItemCache[show]) then
 			self:MACRO_SetItemCooldown(show)
 		else
 			self:MACRO_SetSpellCooldown(show)
