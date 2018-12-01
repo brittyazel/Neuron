@@ -66,7 +66,7 @@ function NeuronFlyouts:OnInitialize()
 
 	for k,v in pairs(strings) do
 		if (v:GetObjectType() == "FontString") then
-			tinsert(tooltipStrings, v)
+			table.insert(tooltipStrings, v)
 		end
 	end
 
@@ -149,7 +149,7 @@ function NeuronFlyouts:BAG_UPDATE(eventName, ...)
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^i")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -161,7 +161,7 @@ function NeuronFlyouts:LEARNED_SPELL_IN_TAB()
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^s") or types:find("^b")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -174,7 +174,7 @@ function NeuronFlyouts:SPELLS_CHANGED()
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^s") or types:find("^b")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -187,7 +187,7 @@ function NeuronFlyouts:CHARACTER_POINTS_CHANGED()
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^s") or types:find("^b")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -200,7 +200,7 @@ function NeuronFlyouts:PET_STABLE_UPDATE()
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^s") or types:find("^b")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -213,7 +213,7 @@ function NeuronFlyouts:COMPANION_LEARNED()
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^c")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -226,7 +226,7 @@ function NeuronFlyouts:COMPANION_UPDATE()
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^c")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -240,7 +240,7 @@ function NeuronFlyouts:EQUIPMENT_SETS_CHANGED()
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^e")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -276,7 +276,7 @@ function NeuronFlyouts:TOYS_UPDATED()
 	for anchor in pairs(ANCHORIndex) do
 		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
 			if (types:find("^f")) then
-				tinsert(needsUpdate, anchor)
+				table.insert(needsUpdate, anchor)
 			end
 		end
 	end
@@ -296,7 +296,7 @@ function NeuronFlyouts:timerFrame_OnUpdate(frame, elapsed)
 			local func = timers[i]
 			times[func] = times[func] - elapsed
 			if times[func] < 0 then
-				tremove(timers,i)
+				table.remove(timers,i)
 				func()
 			end
 			tick = true
@@ -312,7 +312,7 @@ end
 function f.StartTimer(duration,func)
 	f.timerTimes[func] = duration
 	if not tContains(f.timersRunning,func) then
-		tinsert(f.timersRunning,func)
+		table.insert(f.timersRunning,func)
 	end
 	f.timerFrame:Show()
 end
@@ -411,8 +411,8 @@ local function addToTable(actionType,actionValue)
 	--return
 	--end
 	--end
-	--tinsert(rtable,actionType)
-	--tinsert(rtable,actionValue)
+	--table.insert(rtable,actionType)
+	--table.insert(rtable,actionValue)
 	scanData[actionValue:lower()] = actionType
 end
 
@@ -630,7 +630,7 @@ function NeuronFlyouts:filter_profession(button, data)
 			excluded = false
 		end
 
-		RunForEach(function(entry) tinsert(f.professions,entry or false) end, GetProfessions())
+		RunForEach(function(entry) table.insert(f.professions,entry or false) end, GetProfessions())
 		local any = compare(arg,"Any")
 		local primaryOnly = compare(arg,"Primary")
 		local secondaryOnly = compare(arg,"Secondary")
@@ -648,7 +648,7 @@ function NeuronFlyouts:filter_profession(button, data)
 						local isPassive = IsPassiveSpell(offset+i,"professions")
 
 						if not isPassive then
-							tinsert(profSpells, spellName:lower())
+							table.insert(profSpells, spellName:lower())
 							data[spellName:lower()] = "spell"
 						end
 					end
@@ -759,7 +759,7 @@ local function keySort(list)
 	local i = 0
 
 	for n in pairs(list) do
-		tinsert(array, n)
+		table.insert(array, n)
 	end
 
 	table.sort(array)
@@ -838,7 +838,7 @@ end
 function NeuronFlyouts:updateFlyoutBars(button, elapsed)
 
 	if (not InCombatLockdown() and Neuron.PEW) then  --Workarout for protected taint if UI reload in combat
-		local bar = tremove(barsToUpdate) ---this does nothing. It makes bar empty
+		local bar = table.remove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
 			Neuron.NeuronBar:SetObjectLoc(bar)
@@ -991,7 +991,7 @@ function NeuronFlyouts:Flyout_UpdateButtons(fbutton, init)
 		flyout.bar.data.objectList = list
 
 		if (not init) then
-			tinsert(barsToUpdate, flyout.bar)
+			table.insert(barsToUpdate, flyout.bar)
 			flyoutBarUpdater:Show()
 		end
 	end
@@ -1098,7 +1098,7 @@ function NeuronFlyouts:Flyout_UpdateBar(button)
 
 	NeuronFlyouts:Anchor_Update(button)
 
-	tinsert(barsToUpdate, flyout.bar)
+	table.insert(barsToUpdate, flyout.bar)
 
 	flyoutBarUpdater:Show()
 end
@@ -1487,7 +1487,7 @@ function NeuronFlyouts:updateAnchors(button, elapsed)
 	if (button.elapsed > DB.throttle and Neuron.PEW) then
 
 		if (not InCombatLockdown()) then
-			local anchor = tremove(needsUpdate)
+			local anchor = table.remove(needsUpdate)
 
 			if (anchor) then
 				NeuronFlyouts:Flyout_UpdateButtons(anchor, nil)
@@ -1576,7 +1576,7 @@ function NeuronFlyouts:ANCHOR_DelayedUpdate(button, elapsed)
 	if (button.elapsed > DB.throttle and Neuron.PEW) then
 
 		for anchor in pairs(ANCHORIndex) do
-			tinsert(needsUpdate, anchor)
+			table.insert(needsUpdate, anchor)
 		end
 
 		anchorUpdater:Show()

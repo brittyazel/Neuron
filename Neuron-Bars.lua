@@ -1530,7 +1530,7 @@ function NeuronBar:OnMouseWheel(delta)
 						end
 
 						if (not added) then
-							tinsert(barStack, bar)
+							table.insert(barStack, bar)
 						end
 					end
 				end
@@ -1538,7 +1538,7 @@ function NeuronBar:OnMouseWheel(delta)
 		end
 	end
 
-	bar = tremove(barStack, 1)
+	bar = table.remove(barStack, 1)
 
 	if (bar) then
 		NeuronBar:ChangeBar(bar)
@@ -2190,9 +2190,9 @@ function NeuronBar:SetState(bar, msg, gui, checked, query)
 		for k,v in pairs(Neuron.STATEINDEX) do
 
 			if (bar.data[k]) then
-				tinsert(statetable, k..": on")
+				table.insert(statetable, k..": on")
 			else
-				tinsert(statetable, k..": off")
+				table.insert(statetable, k..": off")
 			end
 		end
 

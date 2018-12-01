@@ -678,20 +678,19 @@ function Neuron:GetParentKeys(frame)
 	end
 
 	local data, childData = {}, {}
-	test = frame
 	local children = {frame:GetChildren()}
 	local regions = {frame:GetRegions()}
 
 	for k,v in pairs(children) do
-		tinsert(data, v:GetName())
+		table.insert(data, v:GetName())
 		childData = Neuron:GetParentKeys(v)
 		for key,value in pairs(childData) do
-			tinsert(data, value)
+			table.insert(data, value)
 		end
 	end
 
 	for k,v in pairs(regions) do
-		tinsert(data, v:GetName())
+		table.insert(data, v:GetName())
 	end
 
 	return data

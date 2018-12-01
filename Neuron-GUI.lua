@@ -1331,7 +1331,7 @@ function NeuronGUI:BarOptions_OnLoad(frame)
 			primary = f
 		end
 
-		tinsert(barOpt.chk, f)
+		table.insert(barOpt.chk, f)
 	end
 end
 
@@ -1529,7 +1529,7 @@ function NeuronGUI:AdjustableOptions_OnLoad(frame)
 		f.addfunc = (function(self) NeuronGUI:adjOptionAdd(self) end)
 		f.subfunc = (function(self) NeuronGUI:adjOptionSub(self) end)
 
-		tinsert(barOpt.adj, f)
+		table.insert(barOpt.adj, f)
 	end
 end
 
@@ -1623,7 +1623,7 @@ function NeuronGUI:VisiualOptions_OnLoad(frame)
 			f.swatch2.option = options[8]
 		end
 
-		tinsert(barOpt.swatch, f)
+		table.insert(barOpt.swatch, f)
 	end
 end
 
@@ -1814,7 +1814,7 @@ function NeuronGUI:ActionEditor_OnLoad(frame)
 				last = f
 			end
 
-			tinsert(barOpt.pri, f)
+			table.insert(barOpt.pri, f)
 		end
 	end
 
@@ -1829,7 +1829,7 @@ function NeuronGUI:ActionEditor_OnLoad(frame)
 	f.text:SetText(L["Custom"])
 	f.option = "custom"
 	f:SetPoint("TOPLEFT", frame.custom, "TOPLEFT", 10, -10)
-	tinsert(barOpt.sec, f)
+	table.insert(barOpt.sec, f)
 
 
 	f = CreateFrame("EditBox", "$parentRemap", frame.presets, "NeuronDropDownOptionFull")
@@ -2889,10 +2889,10 @@ function NeuronGUI:updateIconList()
 			end
 			if (icon_path and type(icon_path)~="number" and icon_path:lower():find(search:lower())) then
 				--if (icon_path:lower():find(search:lower()) or index == 1) then
-				tinsert(IconList, icon)
+				table.insert(IconList, icon)
 			end
 		else
-			tinsert(IconList, icon)
+			table.insert(IconList, icon)
 		end
 	end
 
@@ -3306,7 +3306,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 			x = x + 35.5
 		end
 
-		tinsert(frame.iconlist.buttons, f)
+		table.insert(frame.iconlist.buttons, f)
 
 	end
 
@@ -4340,7 +4340,7 @@ function NeuronGUI:SB_EditorTypes_OnLoad(frame)
 			last = f
 		end
 
-		tinsert(sbOpt.types, f)
+		table.insert(sbOpt.types, f)
 	end
 
 	frame.line = frame:CreateTexture(nil, "OVERLAY")
@@ -4363,7 +4363,7 @@ function NeuronGUI:SB_EditorTypes_OnLoad(frame)
 		f.index = options[4]
 		f.parent = frame
 
-		tinsert(sbOpt.chk, f)
+		table.insert(sbOpt.chk, f)
 	end
 
 end
@@ -4557,7 +4557,7 @@ function NeuronGUI:SB_AdjustableOptions_OnLoad(frame)
 		f.addfunc = function(self) NeuronGUI:SB_adjOptionAdd(self) end
 		f.subfunc = function(self) NeuronGUI:SB_adjOptionSub(self) end
 
-		tinsert(sbOpt.adj, f)
+		table.insert(sbOpt.adj, f)
 	end
 
 end

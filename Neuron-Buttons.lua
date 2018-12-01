@@ -377,12 +377,12 @@ function Neuron:UpdateMacroCastTargets(global_update)
 	if global_update then
 		local button_count =(#DB.buttons)
 		for index = 1, button_count, 1 do
-			tinsert(button_list, _G["NeuronActionButton"..index])
+			table.insert(button_list, _G["NeuronActionButton"..index])
 		end
 	else
 		local bar = Neuron.CurrentBar
 		for i, objID in ipairs(bar.data.objectList) do
-			tinsert(button_list, _G["NeuronActionButton"..tostring(objID)])
+			table.insert(button_list, _G["NeuronActionButton"..tostring(objID)])
 		end
 	end
 

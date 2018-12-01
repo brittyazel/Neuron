@@ -229,8 +229,6 @@ function ACTIONBUTTON:SetData(bar)
 
 	self:GetSkinned()
 
-	test = self
-
 	self:MACRO_UpdateTimers()
 end
 
