@@ -194,9 +194,6 @@ function ZONEABILITYBTN:OnLeave()
 end
 
 
-ZONEABILITYBTN.SetData = Neuron.ACTIONBUTTON.SetData
-
-
 function ZONEABILITYBTN:LoadData(spec, state)
 
 	local DB = Neuron.db.profile

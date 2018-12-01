@@ -35,6 +35,8 @@ function NeuronPetBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
+	Neuron:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, Neuron.NeuronPetBar, Neuron.PETBTN, 10)
+
 	Neuron:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
 		SHOWGRID = false,
@@ -47,7 +49,8 @@ function NeuronPetBar:OnInitialize()
 		BINDTEXT = true,
 		RANGEIND = true,
 		CDTEXT = true,
-		CDALPHA = true }, false, 65)
+		CDALPHA = true },
+			false, 65)
 
 
 	if DB.blizzbar == false then

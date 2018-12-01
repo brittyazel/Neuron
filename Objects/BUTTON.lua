@@ -21,9 +21,159 @@ end
 ------------------------------------------------
 
 function BUTTON:SetData(bar)
-	--empty--
+	if (bar) then
+
+		self.bar = bar
+
+		self.barLock = bar.data.barLock
+		self.barLockAlt = bar.data.barLockAlt
+		self.barLockCtrl = bar.data.barLockCtrl
+		self.barLockShift = bar.data.barLockShift
+
+		self.tooltips = bar.data.tooltips
+		self.tooltipsEnhanced = bar.data.tooltipsEnhanced
+		self.tooltipsCombat = bar.data.tooltipsCombat
+
+		self.spellGlow = bar.data.spellGlow
+		self.spellGlowDef = bar.data.spellGlowDef
+		self.spellGlowAlt = bar.data.spellGlowAlt
+
+		self.bindText = bar.data.bindText
+		self.macroText = bar.data.macroText
+		self.countText = bar.data.countText
+
+		self.cdText = bar.data.cdText
+
+		if (bar.data.cdAlpha) then
+			self.cdAlpha = 0.2
+		else
+			self.cdAlpha = 1
+		end
+
+		self.auraText = bar.data.auraText
+		self.auraInd = bar.data.auraInd
+
+		self.rangeInd = bar.data.rangeInd
+
+		self.upClicks = bar.data.upClicks
+		self.downClicks = bar.data.downClicks
+
+		self.showGrid = bar.data.showGrid
+		self.multiSpec = bar.data.multiSpec
+
+		self.bindColor = bar.data.bindColor
+		self.macroColor = bar.data.macroColor
+		self.countColor = bar.data.countColor
+
+		self.macroname:SetText(self.data.macro_Name) --custom macro's weren't showing the name
+
+		if (not self.cdcolor1) then
+			self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+		else
+			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
+		end
+
+		if (not self.cdcolor2) then
+			self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+		else
+			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
+		end
+
+		if (not self.auracolor1) then
+			self.auracolor1 = { (";"):split(bar.data.auracolor1) }
+		else
+			self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], self.auracolor1[4] = (";"):split(bar.data.auracolor1)
+		end
+
+		if (not self.auracolor2) then
+			self.auracolor2 = { (";"):split(bar.data.auracolor2) }
+		else
+			self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], self.auracolor2[4] = (";"):split(bar.data.auracolor2)
+		end
+
+		if (not self.buffcolor) then
+			self.buffcolor = { (";"):split(bar.data.buffcolor) }
+		else
+			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.data.buffcolor)
+		end
+
+		if (not self.debuffcolor) then
+			self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
+		else
+			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
+		end
+
+		if (not self.rangecolor) then
+			self.rangecolor = { (";"):split(bar.data.rangecolor) }
+		else
+			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.data.rangecolor)
+		end
+
+		self:SetFrameStrata(bar.data.objectStrata)
+
+		self:SetScale(bar.data.scale)
+	end
+
+	if (self.bindText) then
+		self.hotkey:Show()
+		if (self.bindColor) then
+			self.hotkey:SetTextColor((";"):split(self.bindColor))
+		end
+	else
+		self.hotkey:Hide()
+	end
+
+	if (self.macroText) then
+		self.macroname:Show()
+		if (self.macroColor) then
+			self.macroname:SetTextColor((";"):split(self.macroColor))
+		end
+	else
+		self.macroname:Hide()
+	end
+
+	if (self.countText) then
+		self.count:Show()
+		if (self.countColor) then
+			self.count:SetTextColor((";"):split(self.countColor))
+		end
+	else
+		self.count:Hide()
+	end
+
+	local down, up = "", ""
+
+	if (self.upClicks) then up = up.."AnyUp" end
+	if (self.downClicks) then down = down.."AnyDown" end
+
+	self:RegisterForClicks(down, up)
+	self:RegisterForDrag("LeftButton", "RightButton")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+	if (not self.equipcolor) then
+		self.equipcolor = { 0.1, 1, 0.1, 1 }
+	else
+		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3], self.equipcolor[4] = 0.1, 1, 0.1, 1
+	end
+
+	if (not self.manacolor) then
+		self.manacolor = { 0.5, 0.5, 1.0, 1 }
+	else
+		self.manacolor[1], self.manacolor[2], self.manacolor[3], self.manacolor[4] = 0.5, 0.5, 1.0, 1
+	end
+
+	self:SetFrameLevel(4)
+	self.iconframe:SetFrameLevel(2)
+	self.iconframecooldown:SetFrameLevel(3)
+	self.iconframeaurawatch:SetFrameLevel(3)
+
+	self:GetSkinned()
+
+	self:MACRO_UpdateTimers()
 end
 
+
+--TODO: This should be consolodated as each child has a VERY similar function
 function BUTTON:LoadData(spec,state)
 	--empty--
 end

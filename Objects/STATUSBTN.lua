@@ -130,9 +130,6 @@ end
 function STATUSBTN:SetSkinned()
 end
 
-function STATUSBTN:GetSkinned()
-end
-
 ----------------------------------
 --------XP Bar--------------------
 ----------------------------------

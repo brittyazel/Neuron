@@ -70,11 +70,14 @@ function NeuronStatusBar:OnInitialize()
 
     DB = Neuron.db.profile
 
+    Neuron:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, Neuron.NeuronStatusBar, Neuron.STATUSBTN, 20)
 
-    Neuron:RegisterGUIOptions("status", { AUTOHIDE = true,
-                                          SNAPTO = true,
-                                          HIDDEN = true,
-                                          TOOLTIPS = true }, false, false)
+    Neuron:RegisterGUIOptions("status", {
+        AUTOHIDE = true,
+        SNAPTO = true,
+        HIDDEN = true,
+        TOOLTIPS = true },
+            false, false)
 
     NeuronStatusBar:CreateBarsAndButtons()
 

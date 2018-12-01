@@ -33,17 +33,21 @@ function NeuronExtraBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
-											SHOWGRID = false,
-											SNAPTO = true,
-											UPCLICKS = true,
-											DOWNCLICKS = true,
-											HIDDEN = true,
-											LOCKBAR = true,
-											BINDTEXT = true,
-											RANGEIND = true,
-											CDTEXT = true,
-											CDALPHA = true }, false, 65)
+	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, Neuron.NeuronExtraBar, Neuron.EXTRABTN,1)
+
+	Neuron:RegisterGUIOptions("extrabar", {
+		AUTOHIDE = true,
+		SHOWGRID = false,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		HIDDEN = true,
+		LOCKBAR = true,
+		BINDTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true },
+			false, 65)
 
 	NeuronExtraBar:CreateBarsAndButtons()
 

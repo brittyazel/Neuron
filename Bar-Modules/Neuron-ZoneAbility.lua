@@ -36,23 +36,23 @@ function NeuronZoneAbilityBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	DB.zoneabilitybar = DB.zoneabilitybar
-	DB.zoneabilitybtn = DB.zoneabilitybtn
+	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, Neuron.NeuronZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
 
-
-	Neuron:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
-												  SHOWGRID = false,
-												  SNAPTO = true,
-												  UPCLICKS = true,
-												  DOWNCLICKS = true,
-												  HIDDEN = true,
-												  LOCKBAR = false,
-												  TOOLTIPS = true,
-												  BINDTEXT = true,
-												  RANGEIND = true,
-												  CDTEXT = true,
-												  CDALPHA = true,
-												  ZONEABILITY = true}, false, 65)
+	Neuron:RegisterGUIOptions("zoneabilitybar", {
+		AUTOHIDE = true,
+		SHOWGRID = false,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		HIDDEN = true,
+		LOCKBAR = false,
+		TOOLTIPS = true,
+		BINDTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true,
+		ZONEABILITY = true},
+			false, 65)
 
 	NeuronZoneAbilityBar:CreateBarsAndButtons()
 

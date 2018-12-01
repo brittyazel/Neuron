@@ -35,10 +35,6 @@ function MENUBTN:SetSkinned()
 	--empty--
 end
 
-function MENUBTN:GetSkinned()
-	--empty--
-end
-
 function MENUBTN:SetAux()
 	--empty--
 end

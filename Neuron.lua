@@ -8,7 +8,7 @@ local DB
 
 local NeuronFrame = CreateFrame("Frame", nil, UIParent) --this is a frame mostly used to assign OnEvent functions
 Neuron = LibStub("AceAddon-3.0"):NewAddon(NeuronFrame, "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
- --this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
+--this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -246,13 +246,27 @@ function Neuron:OnInitialize()
 
 
 	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, Neuron.BTNIndex, Neuron.ACTIONBUTTON, 250)
-	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, Neuron.NeuronExitBar, Neuron.EXITBTN,1)
-	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, Neuron.NeuronZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
-	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, Neuron.NeuronExtraBar, Neuron.EXTRABTN,1)
-	Neuron:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, Neuron.NeuronPetBar, Neuron.PETBTN, 10)
-	Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, Neuron.NeuronMenuBar, Neuron.MENUBTN, 11)
-	Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, Neuron.NeuronBagBar, Neuron.BAGBTN,5)
-	Neuron:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, Neuron.NeuronStatusBar, Neuron.STATUSBTN, 20)
+
+	Neuron:RegisterGUIOptions("bar", {
+		AUTOHIDE = true,
+		SHOWGRID = true,
+		SPELLGLOW = true,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		MULTISPEC = true,
+		HIDDEN = true,
+		LOCKBAR = true,
+		TOOLTIPS = true,
+		BINDTEXT = true,
+		MACROTEXT = true,
+		COUNTTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true,
+		AURATEXT = true,
+		AURAIND = true },
+			true, 115)
 
 
 

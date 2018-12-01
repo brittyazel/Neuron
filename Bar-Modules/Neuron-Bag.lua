@@ -33,7 +33,18 @@ function NeuronBagBar:OnInitialize()
 
     DB = Neuron.db.profile
 
-    Neuron:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
+    Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, Neuron.NeuronBagBar, Neuron.BAGBTN,5)
+
+    Neuron:RegisterGUIOptions("bag", {
+        AUTOHIDE = true,
+        SHOWGRID = false,
+        SPELLGLOW = false,
+        SNAPTO = true,
+        MULTISPEC = false,
+        HIDDEN = true,
+        LOCKBAR = false,
+        TOOLTIPS = true, },
+            false, false)
 
     if DB.blizzbar == false then
         NeuronBagBar:CreateBarsAndButtons()

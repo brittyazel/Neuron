@@ -90,27 +90,6 @@ function NeuronBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterGUIOptions("bar", {
-		AUTOHIDE = true,
-		SHOWGRID = true,
-		SPELLGLOW = true,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		MULTISPEC = true,
-		HIDDEN = true,
-		LOCKBAR = true,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		MACROTEXT = true,
-		COUNTTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true,
-		AURATEXT = true,
-		AURAIND = true
-	}, true, 115)
-
 	if Neuron.NeuronZoneAbilityBar then
 		NeuronBar.HideZoneAbilityBorder = Neuron.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
 	end

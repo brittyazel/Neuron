@@ -40,8 +40,6 @@ function EXITBTN:LoadData(spec, state)
 	self.data = self.DB.data
 end
 
-EXITBTN.SetData = Neuron.ACTIONBUTTON.SetData
-
 
 function EXITBTN:SetObjectVisibility(show)
 

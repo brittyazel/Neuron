@@ -52,7 +52,6 @@ function EXTRABTN:SetObjectVisibility(show)
 
 end
 
-EXTRABTN.SetData = Neuron.ACTIONBUTTON.SetData
 
 function EXTRABTN:SetExtraButtonTex()
 

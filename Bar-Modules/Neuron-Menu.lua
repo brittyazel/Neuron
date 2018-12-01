@@ -34,7 +34,18 @@ function NeuronMenuBar:OnInitialize()
 
     DB = Neuron.db.profile
 
-    Neuron:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
+    Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, Neuron.NeuronMenuBar, Neuron.MENUBTN, 11)
+
+    Neuron:RegisterGUIOptions("menu", {
+        AUTOHIDE = true,
+        SHOWGRID = false,
+        SPELLGLOW = false,
+        SNAPTO = true,
+        MULTISPEC = false,
+        HIDDEN = true,
+        LOCKBAR = false,
+        TOOLTIPS = true },
+            false, false)
 
     if DB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
