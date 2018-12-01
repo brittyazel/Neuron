@@ -17,11 +17,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 ---@param name string @ Name given to the new button frame
 ---@return BUTTON @ A newly created BUTTON object
 function EXITBTN:new(name)
-
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
-
 	setmetatable(object, {__index = EXITBTN})
-
 	return object
 end
 
@@ -30,27 +27,6 @@ end
 -----Base Methods that all buttons have----------
 ---These will often be overwritten per bar type--
 ------------------------------------------------
-
-function EXITBTN:SetSkinned()
-
-	if (SKIN) then
-
-		local bar = self.bar
-
-		if (bar) then
-
-			local btnData = {
-				Icon = self.icontexture,
-				Normal = self.normaltexture,
-
-			}
-
-			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
-
-		end
-
-	end
-end
 
 function EXITBTN:LoadData(spec, state)
 

@@ -20,11 +20,8 @@ local ZoneAbilitySpellID
 ---@param name string @ Name given to the new button frame
 ---@return BUTTON @ A newly created BUTTON object
 function ZONEABILITYBTN:new(name)
-
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
-
 	setmetatable(object, {__index = ZONEABILITYBTN})
-
 	return object
 end
 
@@ -202,33 +199,6 @@ function ZONEABILITYBTN:OnLeave()
 	GameTooltip:Hide()
 end
 
-
-function ZONEABILITYBTN:SetSkinned()
-	if (SKIN) then
-
-		local bar = self.bar
-
-		if (bar) then
-
-			local btnData = {
-				Normal = self.normaltexture,
-				Icon = self.iconframeicon,
-				Cooldown = self.iconframecooldown,
-				HotKey = self.hotkey,
-				Count = self.count,
-				Name = self.name,
-				Border = self.border,
-				AutoCast = false,
-			}
-
-			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
-
-		end
-
-	end
-end
-
-ZONEABILITYBTN.GetSkinned = Neuron.ACTIONBUTTON.GetSkinned
 
 ZONEABILITYBTN.SetData = Neuron.ACTIONBUTTON.SetData
 

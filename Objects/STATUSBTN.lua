@@ -135,7 +135,11 @@ end
 ---These will often be overwritten per bar type--
 -------------------------------------------------
 
+function STATUSBTN:SetSkinned()
+end
 
+function STATUSBTN:GetSkinned()
+end
 
 ----------------------------------
 --------XP Bar--------------------

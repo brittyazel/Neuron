@@ -19,11 +19,8 @@ local sIndex = Neuron.sIndex
 ---@param name string @ Name given to the new button frame
 ---@return BUTTON @ A newly created BUTTON object
 function PETBTN:new(name)
-
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
-
 	setmetatable(object, {__index = PETBTN})
-
 	return object
 end
 
@@ -390,10 +387,6 @@ end
 function PETBTN:OnLeave()
 	GameTooltip:Hide()
 end
-
-
-PETBTN.SetSkinned = Neuron.ACTIONBUTTON.SetSkinned
-PETBTN.GetSkinned = Neuron.ACTIONBUTTON.GetSkinned
 
 
 

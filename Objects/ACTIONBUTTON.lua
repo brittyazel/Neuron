@@ -80,11 +80,8 @@ local alphaTimer, alphaDir = 0, 0
 ---@param name string @ Name given to the new button frame
 ---@return BUTTON @ A newly created BUTTON object
 function ACTIONBUTTON:new(name)
-
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
-
 	setmetatable(object, {__index = ACTIONBUTTON})
-
 	return object
 end
 
@@ -470,68 +467,6 @@ function ACTIONBUTTON:SetType(save, kill, init)
 	end
 
 end
-
-
-function ACTIONBUTTON:SetSkinned(flyout)
-	if (SKIN) then
-		local bar = self.bar
-
-		if (bar) then
-			local btnData = {
-				Normal = self.normaltexture,
-				Icon = self.iconframeicon,
-				Cooldown = self.iconframecooldown,
-				HotKey = self.hotkey,
-				Count = self.count,
-				Name = self.name,
-				Border = self.border,
-				AutoCast = false,
-			}
-
-			if (flyout) then
-				SKIN:Group("Neuron", self.anchor.bar.data.name):AddButton(self, btnData)
-			else
-				SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
-			end
-
-			self.skinned = true
-
-			Neuron.SKINIndex[self] = true
-		end
-	end
-end
-
-
-function ACTIONBUTTON:GetSkinned()
-	if (self.__MSQ_NormalTexture) then
-		local Skin = self.__MSQ_NormalSkin
-
-		if (Skin) then
-			self.hasAction = Skin.Texture or false
-			self.noAction = Skin.EmptyTexture or false
-
-			if (self.__MSQ_Shape) then
-				self.shape = self.__MSQ_Shape:lower()
-			else
-				self.shape = "square"
-			end
-		else
-			self.hasAction = false
-			self.noAction = false
-			self.shape = "square"
-		end
-
-		self.shine.shape = self.shape
-
-		return true
-	else
-		self.hasAction = "Interface\\Buttons\\UI-Quickslot2"
-		self.noAction = "Interface\\Buttons\\UI-Quickslot"
-
-		return false
-	end
-end
-
 
 
 

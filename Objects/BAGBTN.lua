@@ -5,7 +5,6 @@
 local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.BAGBTN = BAGBTN
 
-
 local SKIN = LibStub("Masque", true)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -19,11 +18,8 @@ local bagElements = {CharacterBag3Slot, CharacterBag2Slot, CharacterBag1Slot, Ch
 ---@param name string @ Name given to the new button frame
 ---@return BUTTON @ A newly created BUTTON object
 function BAGBTN:new(name)
-
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronAnchorButtonTemplate")
-
 	setmetatable(object, {__index = BAGBTN})
-
 	return object
 end
 
@@ -39,25 +35,21 @@ function BAGBTN:SetSkinned()
 		local bar = self.bar
 
 		if (bar) then
-
 			local btnData = {
-				Icon = self.icontexture,
 				Normal = self.normaltexture,
+				Icon = self.icontexture,
 				Count = self.count,
 			}
 
+
 			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
 
+			self.skinned = true
+
+			Neuron.SKINIndex[self] = true
 		end
 	end
-
 end
-
-
-function BAGBTN:GetSkinned()
-	-- empty
-end
-
 
 function BAGBTN:SetData(bar)
 

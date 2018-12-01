@@ -5,11 +5,7 @@
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
-
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
-
 
 local menuElements = {
 	CharacterMicroButton,
@@ -30,11 +26,8 @@ local menuElements = {
 ---@param name string @ Name given to the new button frame
 ---@return BUTTON @ A newly created BUTTON object
 function MENUBTN:new(name)
-
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronAnchorButtonTemplate")
-
 	setmetatable(object, {__index = MENUBTN})
-
 	return object
 end
 
@@ -42,7 +35,11 @@ end
 -----Base Methods that all buttons have----------
 ---These will often be overwritten per bar type--
 ------------------------------------------------
+function MENUBTN:SetSkinned()
+end
 
+function MENUBTN:GetSkinned()
+end
 
 function MENUBTN:SetData( bar)
 	if (bar) then

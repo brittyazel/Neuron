@@ -245,14 +245,14 @@ function Neuron:OnInitialize()
 	}
 
 
-	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", Neuron.db.profile.bars, Neuron.BTNIndex, Neuron.ACTIONBUTTON, 250)
-	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", Neuron.db.profile.exitbar, Neuron.NeuronExitBar, Neuron.EXITBTN,1)
-	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", Neuron.db.profile.zoneabilitybar, Neuron.NeuronZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
-	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", Neuron.db.profile.extrabar, Neuron.NeuronExtraBar, Neuron.EXTRABTN,1)
-	Neuron:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", Neuron.db.profile.petbar, Neuron.NeuronPetBar, Neuron.PETBTN, 10)
-	Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", Neuron.db.profile.menubar, Neuron.NeuronMenuBar, Neuron.MENUBTN, 11)
-	Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", Neuron.db.profile.bagbar, Neuron.NeuronBagBar, Neuron.BAGBTN,5)
-	Neuron:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", Neuron.db.profile.statusbar, Neuron.NeuronStatusBar, Neuron.STATUSBTN, 20)
+	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, Neuron.BTNIndex, Neuron.ACTIONBUTTON, 250)
+	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, Neuron.NeuronExitBar, Neuron.EXITBTN,1)
+	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, Neuron.NeuronZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
+	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, Neuron.NeuronExtraBar, Neuron.EXTRABTN,1)
+	Neuron:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, Neuron.NeuronPetBar, Neuron.PETBTN, 10)
+	Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, Neuron.NeuronMenuBar, Neuron.MENUBTN, 11)
+	Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, Neuron.NeuronBagBar, Neuron.BAGBTN,5)
+	Neuron:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", DB.statusbar, Neuron.NeuronStatusBar, Neuron.STATUSBTN, 20)
 
 
 
