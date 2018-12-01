@@ -126,10 +126,6 @@ function STATUSBTN:new(name)
 end
 
 
--------------------------------------------------
------Base Methods that all buttons have----------
----These will often be overwritten per bar type--
--------------------------------------------------
 
 function STATUSBTN:SetSkinned()
 end

@@ -22,11 +22,6 @@ function EXTRABTN:new(name)
 end
 
 
--------------------------------------------------
------Base Methods that all buttons have----------
----These will often be overwritten per bar type--
-------------------------------------------------
-
 
 function EXTRABTN:LoadData(spec, state)
 

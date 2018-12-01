@@ -30,10 +30,7 @@ function MENUBTN:new(name)
 	return object
 end
 
--------------------------------------------------
------Base Methods that all buttons have----------
----These will often be overwritten per bar type--
-------------------------------------------------
+
 function MENUBTN:SetSkinned()
 	--empty--
 end

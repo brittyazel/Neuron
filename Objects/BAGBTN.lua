@@ -22,15 +22,9 @@ function BAGBTN:new(name)
 	return object
 end
 
--------------------------------------------------
------Base Methods that all buttons have----------
----These will often be overwritten per bar type--
-------------------------------------------------
 
 
 function BAGBTN:SetSkinned()
-
-	print("test")
 
 	if (SKIN) then
 

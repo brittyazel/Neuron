@@ -85,11 +85,6 @@ function ACTIONBUTTON:new(name)
 end
 
 
--------------------------------------------------
------Base Methods that all buttons have----------
----These will often be overwritten per bar type--
--------------------------------------------------
-
 function ACTIONBUTTON:SetData(bar)
 	if (bar) then
 

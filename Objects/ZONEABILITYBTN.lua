@@ -25,11 +25,6 @@ function ZONEABILITYBTN:new(name)
 end
 
 
--------------------------------------------------
------Base Methods that all buttons have----------
----These will often be overwritten per bar type--
--------------------------------------------------
-
 
 function ZONEABILITYBTN:STANCE_UpdateButton(actionID)
 	if (self.editmode) then
