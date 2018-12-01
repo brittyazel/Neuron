@@ -32,6 +32,7 @@ Objects/EXTRABTN.lua
 Objects/MENUBTN.lua
 Objects/PETBTN.lua
 Objects/STATUSBTN.lua
+Objects/ZONEABILITYBTN.lua
 
 Neuron-Buttons.lua
 Neuron-Bars.lua
