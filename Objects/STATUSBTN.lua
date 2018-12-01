@@ -672,13 +672,13 @@ end
 
 function STATUSBTN:CastBar_FinishSpell()
 
-	self.spark:Hide()
-	self.barflash:SetAlpha(0.0)
-	self.barflash:Show()
-	self.flash = 1
-	self.fadeOut = 1
-	self.casting = nil
-	self.channeling = nil
+	self.sb.spark:Hide()
+	self.sb.barflash:SetAlpha(0.0)
+	self.sb.barflash:Show()
+	self.sb.flash = 1
+	self.sb.fadeOut = 1
+	self.sb.casting = false
+	self.sb.channeling = false
 end
 
 
@@ -688,12 +688,12 @@ end
 function STATUSBTN:CastBar_Reset()
 
 	self.sb.fadeOut = 1
-	self.sb.casting = nil
-	self.sb.channeling = nil
+	self.sb.casting = false
+	self.sb.channeling = false
 	self.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
 
 	if (not self.editmode) then
-		self:Hide()
+		self.sb:Hide()
 	end
 end
 
@@ -704,7 +704,6 @@ end
 function STATUSBTN:CastBar_OnEvent(event, ...)
 
 	local unit = ...
-
 
 	if (unit ~= self.sb.unit) then
 		return
@@ -759,16 +758,20 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		self.sb:SetAlpha(1.0)
 		self.sb.holdTime = 0
-		self.sb.casting = 1
+		self.sb.casting = true
 		self.sb.castID = castID
-		self.sb.channeling = nil
+		self.sb.channeling = false
 		self.sb.fadeOut = nil
 
 		self.sb:Show()
 
-	elseif (event == "UNIT_SPELLCAST_SUCCEEDED") then
+	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then
 
 		self.sb:SetStatusBarColor(self.sb.successColor[1], self.sb.successColor[2], self.sb.successColor[3], self.sb.successColor[4])
+
+	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and self.sb.channeling) then
+
+		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
 
 	elseif (event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") then
 
@@ -782,9 +785,9 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 			self.sb:SetValue(self.sb.maxValue)
 
 			if (event == "UNIT_SPELLCAST_STOP") then
-				self.sb.casting = nil
+				self.sb.casting = false
 			else
-				self.sb.channeling = nil
+				self.sb.channeling = false
 			end
 
 			self.sb.flash = 1
@@ -810,8 +813,8 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 				CastWatch[unit].spell = INTERRUPTED
 			end
 
-			self.sb.casting = nil
-			self.sb.channeling = nil
+			self.sb.casting = false
+			self.sb.channeling = false
 			self.sb.fadeOut = 1
 			self.sb.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
 		end
@@ -823,7 +826,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
 
 			if (not name or (not self.sb.showTradeSkills and isTradeSkill)) then
-				self.sb:CastBar_Reset()
+				self:CastBar_Reset()
 				return
 			end
 
@@ -839,8 +842,8 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 				self.sb.barflash:SetAlpha(0.0)
 				self.sb.barflash:Hide()
 
-				self.sb.casting = 1
-				self.sb.channeling = nil
+				self.sb.casting = true
+				self.sb.channeling = false
 				self.sb.flash = 0
 				self.sb.fadeOut = 0
 			end
@@ -851,7 +854,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 
 		if (not name or (not self.sb.showTradeSkills and isTradeSkill)) then
-			self.sb:CastBar_Reset()
+			self:CastBar_Reset()
 			return
 		end
 
@@ -859,8 +862,8 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		self.sb.value = ((endTime/1000)-GetTime())
 		self.sb.maxValue = (endTime - startTime) / 1000;
-		self.sb.sb:SetMinMaxValues(0, self.sb.maxValue);
-		self.sb.sb:SetValue(self.sb.value)
+		self.sb:SetMinMaxValues(0, self.sb.maxValue);
+		self.sb:SetValue(self.sb.value)
 
 		CastWatch[unit].spell = text
 
@@ -886,8 +889,8 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		self.sb:SetAlpha(1.0)
 		self.sb.holdTime = 0
-		self.sb.casting = nil
-		self.sb.channeling = 1
+		self.sb.casting = false
+		self.sb.channeling = true
 		self.sb.fadeOut = nil
 
 		self.sb:Show()
@@ -899,7 +902,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
 
 			if (not name or (not self.sb.showTradeSkills and isTradeSkill)) then
-				self.sb:CastBar_Reset()
+				self:CastBar_Reset()
 				return
 			end
 
@@ -918,7 +921,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 		self.sb.shield:Show()
 
 	else
-		self.sb:CastBar_Reset()
+		self:CastBar_Reset()
 	end
 
 	self.sb.cText:SetText(self.sb.cFunc(self.sb))
@@ -955,7 +958,7 @@ function STATUSBTN:CastBar_OnUpdate(elapsed)
 
 			if (self.sb.value >= self.sb.maxValue) then
 				self.sb:SetValue(self.sb.maxValue)
-				self.sb:CastBar_FinishSpell()
+				self:CastBar_FinishSpell()
 				return
 			end
 
@@ -988,7 +991,7 @@ function STATUSBTN:CastBar_OnUpdate(elapsed)
 			self.sb.value = self.sb.value - elapsed
 
 			if (self.sb.value <= 0) then
-				self.sb:CastBar_FinishSpell()
+				self:CastBar_FinishSpell()
 				return
 			end
 
@@ -1018,7 +1021,7 @@ function STATUSBTN:CastBar_OnUpdate(elapsed)
 			if (alpha > 0) then
 				self.sb:SetAlpha(alpha)
 			else
-				self.sb:CastBar_Reset()
+				self:CastBar_Reset()
 			end
 		end
 	end
@@ -1863,8 +1866,8 @@ function STATUSBTN:SetType(save)
 			self.sb.showIcon = self.config.showIcon
 
 			self.sb.showTradeSkills = true
-			self.sb.casting = nil
-			self.sb.channeling = nil
+			self.sb.casting = false
+			self.sb.channeling = false
 			self.sb.holdTime = 0
 
 			self.sb:SetScript("OnEvent", function(self, event, ...) self:GetParent():CastBar_OnEvent(event, ...) end)
