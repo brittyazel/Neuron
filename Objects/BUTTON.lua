@@ -5,21 +5,11 @@ local BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this i
 Neuron.BUTTON = BUTTON
 
 
-
-
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@param frameType string @ Type of frame to create
----@param frameTemplate @ Template used for our new frame
----@param objMetaTable  @ Metatable object to be assigned as the template for our new button
 ---@return BUTTON @ A newly created BUTTON object
-function BUTTON:new(name, frameType, frameTemplate, objMetaTable)
-
-	local object = CreateFrame(frameType, name, UIParent, frameTemplate)
-
-	setmetatable(object, objMetaTable)
-
-	return object
+function BUTTON:new(name)
+	--must be overwritten in extended classes!
 end
 
 -------------------------------------------------

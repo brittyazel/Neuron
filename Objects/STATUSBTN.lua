@@ -8,8 +8,6 @@ Neuron.STATUSBTN = STATUSBTN
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-
-
 local BarRepColors = {
 	[0] = { l="a_Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
 	[1] = { l="b_Hated", r=0.6, g=0.1, b=0.1, a=1.0 },
@@ -113,6 +111,23 @@ local BarOrientations = {
 	[2] = L["Vertical"],
 }
 Neuron.BarOrientations = BarOrientations
+
+
+
+
+
+
+---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
+---@param name string @ Name given to the new button frame
+---@return BUTTON @ A newly created BUTTON object
+function STATUSBTN:new(name)
+
+	local object = CreateFrame("Button", name, UIParent, "NeuronStatusBarTemplate")
+
+	setmetatable(object, {__index = STATUSBTN})
+
+	return object
+end
 
 
 -------------------------------------------------

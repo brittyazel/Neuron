@@ -34,7 +34,6 @@ function NeuronMenuBar:OnInitialize()
 
     DB = Neuron.db.profile
 
-    Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, "CheckButton", "NeuronAnchorButtonTemplate", { __index = Neuron.MENUBTN }, 11)
     Neuron:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
 
     if DB.blizzbar == false then

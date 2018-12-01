@@ -33,10 +33,6 @@ function NeuronBagBar:OnInitialize()
 
     DB = Neuron.db.profile
 
-
-    Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, NeuronBagBar,"CheckButton", "NeuronAnchorButtonTemplate", { __index = Neuron.BAGBTN }, 5)
-
-
     Neuron:RegisterGUIOptions("bag", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true, }, false, false)
 
     if DB.blizzbar == false then

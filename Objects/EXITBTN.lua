@@ -6,11 +6,24 @@ local EXITBTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.EXITBTN = EXITBTN
 
 
+
 local SKIN = LibStub("Masque", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
 
+
+---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
+---@param name string @ Name given to the new button frame
+---@return BUTTON @ A newly created BUTTON object
+function EXITBTN:new(name)
+
+	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
+
+	setmetatable(object, {__index = EXITBTN})
+
+	return object
+end
 
 
 -------------------------------------------------

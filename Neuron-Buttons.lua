@@ -324,7 +324,7 @@ function Neuron:CreateNewObject(class, id, firstRun)
 		--this is the same as 'id', I'm not sure why we need both
 		local index = #data.objTable + 1 --sets the current index to 1 greater than the current number of object in the table
 
-		local object = Neuron.BUTTON:new(data.objPrefix..id, data.objFrameT, data.objTemplate, data.objMetaT)
+		local object = data.objTemplate:new(data.objPrefix..id)
 
 		object.elapsed = 0
 

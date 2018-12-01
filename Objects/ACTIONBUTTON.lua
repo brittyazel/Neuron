@@ -10,7 +10,6 @@ local SKIN = LibStub("Masque", true)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-
 ---------------------------------------------------------
 -------------------declare globals-----------------------
 ---------------------------------------------------------
@@ -74,6 +73,21 @@ local AlternateSpellNameList = {
 }
 
 local alphaTimer, alphaDir = 0, 0
+
+
+
+---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
+---@param name string @ Name given to the new button frame
+---@return BUTTON @ A newly created BUTTON object
+function ACTIONBUTTON:new(name)
+
+	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
+
+	setmetatable(object, {__index = ACTIONBUTTON})
+
+	return object
+end
+
 
 -------------------------------------------------
 -----Base Methods that all buttons have----------

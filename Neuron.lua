@@ -52,9 +52,6 @@ Neuron['RegisteredBarData'] = {}
 Neuron['RegisteredGUIData'] = {}
 Neuron['MacroDrag'] = {}
 Neuron['StartDrag'] = false
-Neuron['maxActionID'] = 132
-Neuron['maxPetID'] = 10
-Neuron['maxStanceID'] = NUM_STANCE_SLOTS
 
 
 --working variable pointers
@@ -246,6 +243,19 @@ function Neuron:OnInitialize()
 		end,
 		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
 	}
+
+
+	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", Neuron.db.profile.bars, Neuron.BTNIndex, Neuron.ACTIONBUTTON, 250)
+	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", Neuron.db.profile.exitbar, Neuron.NeuronExitBar, Neuron.EXITBTN,1)
+	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", Neuron.db.profile.zoneabilitybar, Neuron.NeuronZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
+	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", Neuron.db.profile.extrabar, Neuron.NeuronExtraBar, Neuron.EXTRABTN,1)
+	Neuron:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", Neuron.db.profile.petbar, Neuron.NeuronPetBar, Neuron.PETBTN, 10)
+	Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", Neuron.db.profile.menubar, Neuron.NeuronMenuBar, Neuron.MENUBTN, 11)
+	Neuron:RegisterBarClass("bag", "BagBar", L["Bag Bar"], "Bag Button", Neuron.db.profile.bagbar, Neuron.NeuronBagBar, Neuron.BAGBTN,5)
+	Neuron:RegisterBarClass("status", "StatusBarGroup", L["Status Bar"], "Status Bar", Neuron.db.profile.statusbar, Neuron.NeuronStatusBar, Neuron.STATUSBTN, 20)
+
+
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -1352,7 +1362,7 @@ function Neuron:PrintBarTypes()
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objFrameType, objTemplate, objMetaTable, objMax)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objTemplate, objMax)
 
 	Neuron.ModuleIndex = Neuron.ModuleIndex + 1
 
@@ -1362,10 +1372,8 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTa
 		barDB = barDB,
 		objTable = objTable, --this is all the buttons associated with a given bar
 		objPrefix = "Neuron"..objType:gsub("%s+", ""),
-		objFrameT = objFrameType,
-		objTemplate = objTemplate,
-		objMetaT = objMetaTable,
 		objType = objType,
+		objTemplate = objTemplate,
 		objMax = objMax,
 		createMsg = Neuron.ModuleIndex..objType,
 	}

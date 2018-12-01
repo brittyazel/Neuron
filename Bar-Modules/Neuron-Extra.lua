@@ -33,8 +33,6 @@ function NeuronExtraBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, NeuronExtraBar, "CheckButton", "NeuronActionButtonTemplate", { __index = Neuron.EXTRABTN }, 1)
-
 	Neuron:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
 											SHOWGRID = false,
 											SNAPTO = true,

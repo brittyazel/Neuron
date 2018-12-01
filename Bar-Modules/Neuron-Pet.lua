@@ -35,8 +35,6 @@ function NeuronPetBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterBarClass("pet", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, NeuronPetBar, "CheckButton", "NeuronActionButtonTemplate", { __index = Neuron.PETBTN }, Neuron.maxPetID)
-
 	Neuron:RegisterGUIOptions("pet", {
 		AUTOHIDE = true,
 		SHOWGRID = false,

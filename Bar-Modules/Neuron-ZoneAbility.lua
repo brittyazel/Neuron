@@ -40,8 +40,6 @@ function NeuronZoneAbilityBar:OnInitialize()
 	DB.zoneabilitybtn = DB.zoneabilitybtn
 
 
-	Neuron:RegisterBarClass("zoneabilitybar", "ZoneActionBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, NeuronZoneAbilityBar, "CheckButton", "NeuronActionButtonTemplate", { __index = Neuron.ZONEABILITYBTN }, 1)
-
 	Neuron:RegisterGUIOptions("zoneabilitybar", { AUTOHIDE = true,
 												  SHOWGRID = false,
 												  SNAPTO = true,

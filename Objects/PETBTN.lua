@@ -6,11 +6,26 @@ local PETBTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.PETBTN = PETBTN
 
 
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
 local sIndex = Neuron.sIndex
 
+
+
+
+---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
+---@param name string @ Name given to the new button frame
+---@return BUTTON @ A newly created BUTTON object
+function PETBTN:new(name)
+
+	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
+
+	setmetatable(object, {__index = PETBTN})
+
+	return object
+end
 
 
 -------------------------------------------------

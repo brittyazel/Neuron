@@ -30,8 +30,6 @@ function NeuronExitBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterBarClass("exitbar", "VehicleExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, NeuronExitBar,"CheckButton", "NeuronActionButtonTemplate", { __index = Neuron.EXITBTN }, 1)
-
 	Neuron:RegisterGUIOptions("exitbar", { AUTOHIDE = true,
 										   SHOWGRID = false,
 										   SNAPTO = true,

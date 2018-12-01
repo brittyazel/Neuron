@@ -7,11 +7,25 @@ Neuron.BAGBTN = BAGBTN
 
 
 local SKIN = LibStub("Masque", true)
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
 local bagElements = {CharacterBag3Slot, CharacterBag2Slot, CharacterBag1Slot, CharacterBag0Slot, MainMenuBarBackpackButton}
 
+
+
+---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
+---@param name string @ Name given to the new button frame
+---@return BUTTON @ A newly created BUTTON object
+function BAGBTN:new(name)
+
+	local object = CreateFrame("CheckButton", name, UIParent, "NeuronAnchorButtonTemplate")
+
+	setmetatable(object, {__index = BAGBTN})
+
+	return object
+end
 
 -------------------------------------------------
 -----Base Methods that all buttons have----------

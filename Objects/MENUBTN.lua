@@ -26,6 +26,17 @@ local menuElements = {
 }
 
 
+---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
+---@param name string @ Name given to the new button frame
+---@return BUTTON @ A newly created BUTTON object
+function MENUBTN:new(name)
+
+	local object = CreateFrame("CheckButton", name, UIParent, "NeuronAnchorButtonTemplate")
+
+	setmetatable(object, {__index = MENUBTN})
+
+	return object
+end
 
 -------------------------------------------------
 -----Base Methods that all buttons have----------
