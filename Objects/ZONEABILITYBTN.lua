@@ -1,7 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----Class ZONEABILITYBTN inherits from class BUTTON
----@class ZONEABILITYBTN : BUTTON
+---@class ZONEABILITYBTN : BUTTON @define class ZONEABILITYBTN inherits from class BUTTON
 local ZONEABILITYBTN = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
 Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 
@@ -18,7 +17,7 @@ local ZoneAbilitySpellID
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@return BUTTON @ A newly created BUTTON object
+---@return ZONEABILITYBTN @ A newly created ZONEABILITYBTN object
 function ZONEABILITYBTN:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
 	setmetatable(object, {__index = ZONEABILITYBTN})
@@ -240,11 +239,6 @@ function ZONEABILITYBTN:LoadAux()
 	self.style:SetTexture("Interface\\ExtraButton\\GarrZoneAbility-Armory")
 end
 
-function ZONEABILITYBTN:SetAux()
-
-	self:SetSkinned()
-
-end
 
 
 function ZONEABILITYBTN:OnLoad()

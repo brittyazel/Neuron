@@ -1,7 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----Class EXTRABTN inherits from class BUTTON
----@class EXTRABTN : BUTTON
+---@class EXTRABTN : BUTTON @define class EXTRABTN inherits from class BUTTON
 local EXTRABTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.EXTRABTN = EXTRABTN
 
@@ -15,7 +14,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@return BUTTON @ A newly created BUTTON object
+---@return EXTRABTN @ A newly created EXTRABTN object
 function EXTRABTN:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
 	setmetatable(object, {__index = EXTRABTN})
@@ -165,7 +164,6 @@ function EXTRABTN:SetType(save)
 					end
 					]])
 
-	self:SetSkinned()
 
 end
 

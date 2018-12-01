@@ -1,10 +1,8 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----Class PETBTN inherits from class BUTTON
----@class PETBTN : BUTTON
+---@class PETBTN : BUTTON @define class PETBTN inherits from class BUTTON
 local PETBTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.PETBTN = PETBTN
-
 
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -17,7 +15,7 @@ local sIndex = Neuron.sIndex
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@return BUTTON @ A newly created BUTTON object
+---@return PETBTN @ A newly created PETBTN object
 function PETBTN:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
 	setmetatable(object, {__index = PETBTN})
@@ -523,12 +521,6 @@ function PETBTN:SetObjectVisibility(show)
 
 end
 
-
-function PETBTN:SetAux()
-
-	self:SetSkinned()
-
-end
 
 
 function PETBTN:LoadAux()

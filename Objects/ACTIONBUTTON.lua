@@ -1,7 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----Class ACTIONBUTTON inherits from class BUTTON
----@class ACTIONBUTTON : BUTTON
+---@class ACTIONBUTTON : BUTTON @define class ACTIONBUTTON inherits from class BUTTON
 local ACTIONBUTTON = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
 Neuron.ACTIONBUTTON = ACTIONBUTTON
 
@@ -78,7 +77,7 @@ local alphaTimer, alphaDir = 0, 0
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@return BUTTON @ A newly created BUTTON object
+---@return ACTIONBUTTON @ A newly created ACTIONBUTTON object
 function ACTIONBUTTON:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
 	setmetatable(object, {__index = ACTIONBUTTON})

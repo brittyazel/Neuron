@@ -1,7 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----Class EXITBTN inherits from class BUTTON
----@class EXITBTN : BUTTON
+---@class EXITBTN : BUTTON @define class EXITBTN inherits from class BUTTON
 local EXITBTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.EXITBTN = EXITBTN
 
@@ -15,7 +14,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@return BUTTON @ A newly created BUTTON object
+---@return EXITBTN @ A newly created EXITBTN object
 function EXITBTN:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
 	setmetatable(object, {__index = EXITBTN})
@@ -101,8 +100,6 @@ function EXITBTN:SetType(save)
 	self:SetFrameLevel(4)
 	self.iconframe:SetFrameLevel(2)
 	self.iconframecooldown:SetFrameLevel(3)
-
-	self:SetSkinned()
 
 	self:SetObjectVisibility()
 end

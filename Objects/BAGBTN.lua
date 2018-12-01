@@ -1,7 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----Class BAGBTN inherits from class BUTTON
----@class BAGBTN : BUTTON
+---@class BAGBTN : BUTTON @class BAGBTN inherits from class BUTTON
 local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.BAGBTN = BAGBTN
 
@@ -16,7 +15,7 @@ local bagElements = {CharacterBag3Slot, CharacterBag2Slot, CharacterBag1Slot, Ch
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@return BUTTON @ A newly created BUTTON object
+---@return BAGBTN @ A newly created BAGBTN object
 function BAGBTN:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronAnchorButtonTemplate")
 	setmetatable(object, {__index = BAGBTN})
@@ -28,7 +27,10 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
+
 function BAGBTN:SetSkinned()
+
+	print("test")
 
 	if (SKIN) then
 
@@ -112,6 +114,5 @@ function BAGBTN:SetType(save)
 		self.element:SetPoint("CENTER", self, "CENTER")
 		self.element:SetScale(1)
 
-		self:SetSkinned()
 	end
 end

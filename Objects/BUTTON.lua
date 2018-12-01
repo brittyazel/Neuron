@@ -1,6 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----@class BUTTON : CheckButton
+---@class BUTTON : CheckButton @define BUTTON as inheriting from CheckButton
 local BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.BUTTON = BUTTON
 
@@ -33,7 +33,7 @@ function BUTTON:SetObjectVisibility(show)
 end
 
 function BUTTON:SetAux()
-	--empty--
+	self:SetSkinned()
 end
 
 function BUTTON:LoadAux()

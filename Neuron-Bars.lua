@@ -1085,8 +1085,8 @@ function NeuronBar:LoadObjects(bar, init)
 			---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
 			object:SetData(bar)
 			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
-			object:SetAux()
 			object:SetType()
+			object:SetAux()
 
 			object:SetObjectVisibility()
 

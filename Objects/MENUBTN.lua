@@ -1,7 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----Class MENUBTN inherits from class BUTTON
----@class MENUBTN : BUTTON
+---@class MENUBTN : BUTTON @define class MENUBTN inherits from class BUTTON
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
@@ -24,7 +23,7 @@ local menuElements = {
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@return BUTTON @ A newly created BUTTON object
+---@return MENUBTN @ A newly created MENUBTN object
 function MENUBTN:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronAnchorButtonTemplate")
 	setmetatable(object, {__index = MENUBTN})
@@ -36,9 +35,15 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 function MENUBTN:SetSkinned()
+	--empty--
 end
 
 function MENUBTN:GetSkinned()
+	--empty--
+end
+
+function MENUBTN:SetAux()
+	--empty--
 end
 
 function MENUBTN:SetData( bar)

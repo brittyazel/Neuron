@@ -1,7 +1,6 @@
 --Neuron, a World of Warcraft® user interface addon.
 
----Class STATUSBTN inherits from class BUTTON
----@class STATUS : BUTTON
+---@class STATUSBTN : BUTTON @define class STATUSBTN inherits from class BUTTON
 local STATUSBTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.STATUSBTN = STATUSBTN
 
@@ -119,13 +118,10 @@ Neuron.BarOrientations = BarOrientations
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
----@return BUTTON @ A newly created BUTTON object
+---@return STATUSBTN @ A newly created STATUSBTN object
 function STATUSBTN:new(name)
-
 	local object = CreateFrame("Button", name, UIParent, "NeuronStatusBarTemplate")
-
 	setmetatable(object, {__index = STATUSBTN})
-
 	return object
 end
 
@@ -1851,6 +1847,9 @@ function STATUSBTN:StatusBar_Reset()
 end
 
 
+function STATUSBTN:SetAux()
+	--empty--
+end
 
 
 function STATUSBTN:SetType(save)
