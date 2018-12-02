@@ -993,8 +993,6 @@ function ACTIONBUTTON:Flyout_OnEvent(event, ...)
 
 	if event == "PLAYER_ENTERING_WORLD" then
 
-		test = self
-
 		ACTIONBUTTON.CacheBags()
 
 		local strings = { NeuronTooltipScan:GetRegions() }
@@ -1108,12 +1106,12 @@ function ACTIONBUTTON:Flyout_GetBar()
 		ANCHOR_LOGIN_Updater.elapsed = 0
 
 	end
-	if not itemScanner then
+	--[[if not itemScanner then
 		itemScanner = CreateFrame("Frame", nil, UIParent)
 		itemScanner:SetScript("OnUpdate", function(_, elapsed) bar:linkScanOnUpdate(elapsed) end)
 		itemScanner:Hide()
 
-	end
+	end]]
 	if not flyoutBarUpdater then
 		flyoutBarUpdater = CreateFrame("Frame", nil, UIParent)
 		flyoutBarUpdater:SetScript("OnUpdate", function(_, elapsed) bar:updateFlyoutBars(elapsed) end)
@@ -1249,7 +1247,7 @@ function ACTIONBUTTON:updateAnchors(elapsed)
 end
 
 
-function ACTIONBUTTON:linkScanOnUpdate(elapsed)
+--[[function ACTIONBUTTON:linkScanOnUpdate(elapsed)
 
 	local DB = Neuron.db.profile
 
@@ -1293,7 +1291,7 @@ function ACTIONBUTTON:linkScanOnUpdate(elapsed)
 
 		self.elapsed = 0
 	end
-end
+end]]
 
 
 
