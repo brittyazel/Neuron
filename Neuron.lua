@@ -269,7 +269,6 @@ function Neuron:OnInitialize()
 			true, 115)
 
 
-
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.

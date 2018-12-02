@@ -412,7 +412,7 @@ function Neuron:UpdateMacroCastTargets(global_update)
 		end
 
 		if macro_update then
-			Neuron.NeuronFlyouts:UpdateFlyout(button)
+			button:UpdateFlyout()
 			button:BuildStateData(button)
 			button:SetType()
 		end

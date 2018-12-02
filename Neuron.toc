@@ -33,13 +33,14 @@ Objects/MENUBTN.lua
 Objects/PETBTN.lua
 Objects/STATUSBTN.lua
 Objects/ZONEABILITYBTN.lua
+Objects/ACTIONBUTTON_FLYOUTBTN.lua
 
 Neuron-Buttons.lua
 Neuron-Bars.lua
 Neuron-KeyBinder.lua
 Neuron-SnapTo.lua
 Neuron-MinimapIcon.lua
-Neuron-Flyouts.lua
+Neuron-Flyout.lua
 
 Neuron.xml
 

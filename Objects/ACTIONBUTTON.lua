@@ -128,7 +128,7 @@ end
 
 function ACTIONBUTTON:SetAux()
 	self:SetSkinned()
-	Neuron.NeuronFlyouts:UpdateFlyout(self, true)
+	self:UpdateFlyout(true)
 end
 
 
@@ -1161,7 +1161,7 @@ function ACTIONBUTTON:MACRO_ACTIVE_TALENT_GROUP_CHANGED(...)
 	end
 
 	self:LoadData(spec, self:GetParent():GetAttribute("activestate") or "homestate")
-	Neuron.NeuronFlyouts:UpdateFlyout(self)
+	self:UpdateFlyout()
 	self:SetType()
 	self:MACRO_UpdateAll(true)
 	self:SetObjectVisibility()
@@ -1634,7 +1634,7 @@ function ACTIONBUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-		Neuron.NeuronFlyouts:UpdateFlyout(self, true)
+		self:UpdateFlyout(true)
 
 		if (not self.cursor) then
 			self:SetType(true)
@@ -1668,7 +1668,7 @@ function ACTIONBUTTON:MACRO_PlaceMacro()
 	ClearCursor();
 	SetCursor(nil);
 
-	Neuron.NeuronFlyouts:UpdateFlyout(self)
+	self:UpdateFlyout()
 	Neuron:ToggleButtonGrid(false)
 
 end
@@ -1733,7 +1733,7 @@ function ACTIONBUTTON:MACRO_PickUpMacro()
 			self.macroshow = nil
 			self.macroicon = nil
 
-			Neuron.NeuronFlyouts:UpdateFlyout(self)
+			self:UpdateFlyout()
 
 			self:SetType(true)
 
@@ -2334,7 +2334,7 @@ function ACTIONBUTTON:UpdateButtonSpec(bar)
 
 	self:SetData(bar)
 	self:LoadData(spec, bar.handler:GetAttribute("activestate"))
-	Neuron.NeuronFlyouts:UpdateFlyout(self)
+	self:UpdateFlyout()
 	self:SetType()
 	self:SetObjectVisibility()
 

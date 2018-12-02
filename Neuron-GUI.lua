@@ -2582,7 +2582,7 @@ function NeuronGUI:MacroEditorUpdate()
 			button.DB[buttonSpec][state] = button:MACRO_build()
 
 			data = button.DB[buttonSpec][state]
-			Neuron.NeuronFlyouts:UpdateFlyout(button)
+			button:UpdateFlyout(button)
 			button:BuildStateData()
 			button:SetType()
 		end
@@ -2655,7 +2655,7 @@ function NeuronGUI:macroText_OnEditFocusLost()
 
 	if (button) then
 
-		Neuron.NeuronFlyouts:UpdateFlyout(button)
+		button:UpdateFlyout()
 		button:BuildStateData()
 		button:SetType()
 
@@ -2670,18 +2670,20 @@ function NeuronGUI:macroText_OnTextChanged(frame)
 
 	if (frame.hasfocus) then
 		local button = Neuron.CurrentObject
-		local buttonSpec = ((button.bar.data.multiSpec and specoveride) or 1)
-		local state = button.bar.handler:GetAttribute("fauxstate")
+		if(button) then
+			local buttonSpec = ((button.bar.data.multiSpec and specoveride) or 1)
+			local state = button.bar.handler:GetAttribute("fauxstate")
 
-		if (button and buttonSpec and state) then
-			if button.DB[buttonSpec][state] then
-				button.DB[buttonSpec][state].macro_Text = frame:GetText()
-				button.DB[buttonSpec][state].macro_Watch = false
-			else
-				--Neuron:Print("nothinghere")
-				--button.DB[buttonSpec][state] = button:MACRO_build()
-				--button:MACRO_build(button.DB[buttonSpec][state])
-				--Neuron:Print(button.DB[buttonSpec][state])
+			if (button and buttonSpec and state) then
+				if button.DB[buttonSpec][state] then
+					button.DB[buttonSpec][state].macro_Text = frame:GetText()
+					button.DB[buttonSpec][state].macro_Watch = false
+				else
+					--Neuron:Print("nothinghere")
+					--button.DB[buttonSpec][state] = button:MACRO_build()
+					--button:MACRO_build(button.DB[buttonSpec][state])
+					--Neuron:Print(button.DB[buttonSpec][state])
+				end
 			end
 
 		end
@@ -2693,6 +2695,10 @@ end
 function NeuronGUI:macroButton_Changed(frame, button, down)
 
 	local object = Neuron.CurrentObject
+
+	if not object then
+		return
+	end
 
 	local data = object.data
 	local buttonSpec = ((object.bar.data.multiSpec and specoveride) or 1)
