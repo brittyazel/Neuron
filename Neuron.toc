@@ -40,7 +40,6 @@ Neuron-Bars.lua
 Neuron-KeyBinder.lua
 Neuron-SnapTo.lua
 Neuron-MinimapIcon.lua
-Neuron-Flyout.lua
 
 Neuron.xml
 
