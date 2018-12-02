@@ -236,11 +236,11 @@ end
 
 function STATUSBTN:XPBar_OnEvent(event, ...)
 
-	local DB = Neuron.db.profile
-
-	if (not self.sb.curXPType) then
-		self.sb.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
+	if (not self.DB.curXPType) then
+		self.DB.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
 	end
+
+	self.sb.curXPType = self.DB.curXPType
 
 	local currXP, nextXP, isRested
 	local hasChanged = false;
@@ -295,7 +295,7 @@ end
 
 function STATUSBTN:switchCurXPType(newXPType)
 
-	self.sb.curXPType = newXPType
+	self.DB.curXPType = newXPType
 	self:XPBar_OnEvent("changed_curXPType")
 end
 
