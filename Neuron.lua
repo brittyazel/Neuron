@@ -643,9 +643,9 @@ function Neuron:controlOnUpdate(frame, elapsed)
 	if (Neuron.elapsed > DB.throttle and Neuron.PEW) then
 
 		Neuron:cooldownsOnUpdate(frame, elapsed)
-		if Neuron.NeuronZoneAbilityBar then
+		--[[if Neuron.NeuronZoneAbilityBar then
 			Neuron.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
-		end
+		end]]
 		if Neuron.NeuronPetBar then
 			Neuron.NeuronPetBar:controlOnUpdate(frame, elapsed)
 		end

@@ -6,8 +6,6 @@ local ACTIONBUTTON = Neuron.ACTIONBUTTON
 local itemTooltips, itemLinks, spellTooltips, companionTooltips = {}, {}, {}, {}
 local needsUpdate, scanData = {}, {}
 
-local array = {}
-
 
 local petIcons = {}
 
@@ -36,12 +34,7 @@ local tIndex = Neuron.tIndex
 --[[ Timer Management ]]
 local timerFrame
 
-
-
-local anchorUpdater
-local ANCHOR_LOGIN_Updater
-local itemScanner
-local flyoutBarUpdater
+local exclusions = {}
 
 
 
@@ -60,7 +53,8 @@ end
 
 --- Sorting function
 local function keySort(list)
-	wipe(array)
+
+	local array = {}
 
 	local i = 0
 
@@ -106,6 +100,17 @@ local function timerFrame_OnUpdate(frame, elapsed)
 	end
 end
 
+-- ad ds a type/value attribute pair to rtable if it's not already there
+local function addToTable(actionType,actionValue)
+	--for i=1,#rtable,2 do
+	--if rtable[i]==actionType and rtable[i+1]==actionValue then
+	--return
+	--end
+	--end
+	--tinsert(rtable,actionType)
+	--tinsert(rtable,actionValue)
+	scanData[actionValue:lower()] = actionType
+end
 
 
 --- Filter handler for items
@@ -148,6 +153,7 @@ function ACTIONBUTTON:filter_spell(data)
 	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
+
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
 
 		if (cmd == "!") then
@@ -160,30 +166,12 @@ function ACTIONBUTTON:filter_spell(data)
 			local name = GetSpellInfo(arg)
 			if name then
 				data[name:lower()] = "spell"
-				return
 			end
-		end
-		-- look for arg in the spellbook
-		for i=1,2 do
-			local _,_,offset,numSpells = GetSpellTabInfo(i)
-			for j=offset+1, offset+numSpells do
-				local spellType,spellID = GetSpellBookItemInfo(j,"spell")
-				local name = (GetSpellBookItemName(j,"spell")):lower()
-				local isPassive = IsPassiveSpell(j,"spell")
-				if name and name:match(arg) and not isPassive then
-					if spellType=="SPELL" and IsSpellKnown(spellID) then
-						data[name] = "spell"
-					elseif spellType=="FLYOUT" then
-						local _, _, numFlyoutSlots, isFlyoutKnown = GetFlyoutInfo(spellID)
-						if isFlyoutKnown then
-							for k=1,numFlyoutSlots do
-								local _,_,flyoutSpellKnown,flyoutSpellName = GetFlyoutSlotInfo(spellID,k)
-								if flyoutSpellKnown then
-									scanData[spell:lower()] = flyoutSpellName
-								end
-							end
-						end
-					end
+		else
+			local name, _, _, _, _, _,spellID = GetSpellInfo(arg)
+			if(name) then
+				if(IsSpellKnown(spellID)) then
+					data[name:lower()] = "spell"
 				end
 			end
 		end
@@ -281,6 +269,8 @@ function ACTIONBUTTON:filter_mount(data)
 		end
 
 	end
+
+
 	ACTIONBUTTON.RemoveExclusions(data)
 end
 
@@ -434,7 +424,10 @@ end
 
 
 --- Handler for Blizzard flyout spells
-function ACTIONBUTTON:GetBlizzData(data)
+function ACTIONBUTTON:GetBlizzData()
+
+	local data = {}
+
 	local visible, spellID, isKnown, petIndex, petName, spell, subName
 	local _, _, numSlots = GetFlyoutInfo(self.flyout.keys)
 
@@ -468,9 +461,7 @@ function ACTIONBUTTON:GetDataList(options)
 		tooltip = types:match("%+")
 
 		if (types:find("^b")) then  --Blizzard Flyout
-			return self:GetBlizzData(scanData)
-			--elseif (types:find("^e")) then  --Equipment set
-			--return self:GetEquipSetData(scanData)
+			return self:GetBlizzData()
 		elseif (types:find("^s")) then  --Spell
 			self:filter_spell(scanData)
 		elseif (types:find("^i")) then  --Item
@@ -647,7 +638,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 		if (not init) then
 			table.insert(barsToUpdate, self.flyout.bar)
-			flyoutBarUpdater:Show()
+			self:updateFlyoutBars()
 		end
 	end
 end
@@ -755,7 +746,7 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 
 	table.insert(barsToUpdate, flyout.bar)
 
-	flyoutBarUpdater:Show()
+	self:updateFlyoutBars()
 end
 
 
@@ -946,6 +937,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 	button:RegisterEvent("PLAYER_ENTERING_WORLD")
 	button:RegisterEvent("BAG_UPDATE")
+--[[
 	button:RegisterEvent("COMPANION_LEARNED")
 	button:RegisterEvent("COMPANION_UPDATE")
 	button:RegisterEvent("LEARNED_SPELL_IN_TAB")
@@ -954,6 +946,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 	button:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 	button:RegisterEvent("SPELLS_CHANGED")
 	button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+]]
 
 	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
 	button:SetScript("OnEnter", function(self, ...) self:MACRO_OnEnter(...) end)
@@ -989,8 +982,6 @@ end
 
 function ACTIONBUTTON:Flyout_OnEvent(event, ...)
 
-
-
 	if event == "PLAYER_ENTERING_WORLD" then
 
 		ACTIONBUTTON.CacheBags()
@@ -1014,15 +1005,6 @@ function ACTIONBUTTON:Flyout_OnEvent(event, ...)
 		end
 
 	end
-
-	for anchor in pairs(ANCHORIndex) do
-		for types in gmatch(anchor.flyout.types, "%a+[%+]*") do
-			if (types:find("^i")) then
-				table.insert(needsUpdate, anchor)
-			end
-		end
-	end
-	ANCHOR_LOGIN_Updater:Show()
 
 end
 
@@ -1093,30 +1075,6 @@ function ACTIONBUTTON:Flyout_GetBar()
 	--bar.handler:SetBackdropBorderColor(0,0,0,1)
 
 	----we need to activate all of these frames at least once. This place is as good as any I guess
-	if not anchorUpdater then
-		anchorUpdater = CreateFrame("Frame", nil, UIParent)
-		anchorUpdater:SetScript("OnUpdate", function(_, elapsed) bar:updateAnchors(elapsed) end)
-		anchorUpdater:Hide()
-
-	end
-	if not ANCHOR_LOGIN_Updater then
-		ANCHOR_LOGIN_Updater = CreateFrame("Frame", nil, UIParent)
-		ANCHOR_LOGIN_Updater:SetScript("OnUpdate", function(_, elapsed) bar:ANCHOR_DelayedUpdate(elapsed) end)
-		ANCHOR_LOGIN_Updater:Hide()
-		ANCHOR_LOGIN_Updater.elapsed = 0
-
-	end
-	--[[if not itemScanner then
-		itemScanner = CreateFrame("Frame", nil, UIParent)
-		itemScanner:SetScript("OnUpdate", function(_, elapsed) bar:linkScanOnUpdate(elapsed) end)
-		itemScanner:Hide()
-
-	end]]
-	if not flyoutBarUpdater then
-		flyoutBarUpdater = CreateFrame("Frame", nil, UIParent)
-		flyoutBarUpdater:SetScript("OnUpdate", function(_, elapsed) bar:updateFlyoutBars(elapsed) end)
-		flyoutBarUpdater:Hide()
-	end
 
 	--[[ Timer Management ]]
 	if not timerFrame then
@@ -1217,106 +1175,6 @@ function ACTIONBUTTON:Anchor_Update(remove)
 	end
 end
 
-function ACTIONBUTTON:updateAnchors(elapsed)
-
-	local DB = Neuron.db.profile
-
-	if not self then --someone had an error when switching profiles and not reloading fast enough. In that case button didn't exist
-		return
-	end
-
-	if not self.elapsed then
-		self.elapsed = 0
-	end
-
-	self.elapsed = self.elapsed + elapsed
-
-	if (self.elapsed > DB.throttle and Neuron.PEW) then
-
-		if (not InCombatLockdown()) then
-			--local anchor = table.remove(needsUpdate)
-
-			self:Flyout_UpdateButtons()
-
-			self:Hide();
-
-		end
-
-		self.elapsed = 0
-	end
-end
-
-
---[[function ACTIONBUTTON:linkScanOnUpdate(elapsed)
-
-	local DB = Neuron.db.profile
-
-	if not self.elapsed then
-		self.elapsed = 0
-	end
-
-	self.elapsed = self.elapsed + elapsed
-
-	if (self.elapsed > DB.throttle and Neuron.PEW) then
-		-- scan X items per frame draw, where X is the for limit
-		for i=1,2 do
-			self.link = itemLinks[self.index]
-			if (self.link) then
-				local name = GetItemInfo(self.link)
-
-				if (name) then
-					local tooltip, text = " ", " "
-					NeuronTooltipScan:SetOwner(control,"ANCHOR_NONE")
-					NeuronTooltipScan:SetHyperlink(self.link)
-
-					for i,string in ipairs(tooltipStrings) do
-						text = string:GetText()
-						if (text) then
-							tooltip = tooltip..text..","
-						end
-					end
-
-					itemTooltips[name:lower()] = tooltip:lower()
-					self.count = self.count + 1
-				end
-			end
-
-			self.index = next(itemLinks, self.index)
-
-			if not (self.index) then
-				self:Hide();
-				anchorUpdater:Show()
-			end
-		end
-
-		self.elapsed = 0
-	end
-end]]
-
-
-
-function ACTIONBUTTON:ANCHOR_DelayedUpdate(elapsed)
-
-	local DB = Neuron.db.profile
-
-	if not self.elapsed then
-		self.elapsed = 0
-	end
-
-	self.elapsed = self.elapsed + elapsed
-
-	if (self.elapsed > DB.throttle and Neuron.PEW) then
-
-		for anchor in pairs(ANCHORIndex) do
-			table.insert(needsUpdate, anchor)
-		end
-
-		anchorUpdater:Show()
-		self:Hide()
-
-		self.elapsed = 0
-	end
-end
 
 
 function ACTIONBUTTON.StartTimer(duration,func)
@@ -1388,28 +1246,3 @@ function ACTIONBUTTON.RemoveExclusions(data)
 	wipe(exclusions)
 	return data
 end
-
---[[ Filters ]]
-
--- for arguments without a search, look for items or spells by that name
---[[function ACTIONBUTTON.filter.none(arg)
-	-- if a regular item in bags/on person
-	if GetItemCount(arg)>0 then
-		local _, link = GetItemInfo(arg)
-		if link then
-			addToTable("item",(link:match("(item:%d+)")))
-			return
-		end
-	end
-	-- if a spell
-	local spellName = GetSpellInfo(arg)
-	if spellName and spellName~="" then
-		addToTable("spell",spellName)
-		return
-	end
-	-- if a toy
-	local toyName = GetItemInfo(arg)
-	if toyName and tIndex[toyName] then
-		addToTable("item",toyName)
-	end
-end]]

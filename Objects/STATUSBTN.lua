@@ -137,8 +137,6 @@ end
 ---TODO: right now we are using DB.statusbtn to assign settins ot the status buttons, but I think our indexes are bar specific
 function STATUSBTN:xpstrings_Update() --handles updating all the strings for the play XP watch bar
 
-	local DB = Neuron.db.profile
-
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
 
 	--player xp option
