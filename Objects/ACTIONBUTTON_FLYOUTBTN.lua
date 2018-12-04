@@ -34,9 +34,6 @@ local tIndex = Neuron.tIndex
 --[[ Timer Management ]]
 local timerFrame
 
-local exclusions = {}
-
-
 
 ------------------------------------------------------------------------------
 
@@ -100,47 +97,23 @@ local function timerFrame_OnUpdate(frame, elapsed)
 	end
 end
 
--- ad ds a type/value attribute pair to rtable if it's not already there
-local function addToTable(actionType,actionValue)
-	--for i=1,#rtable,2 do
-	--if rtable[i]==actionType and rtable[i+1]==actionValue then
-	--return
-	--end
-	--end
-	--tinsert(rtable,actionType)
-	--tinsert(rtable,actionValue)
-	scanData[actionValue:lower()] = actionType
-end
-
 
 --- Filter handler for items
 -- item:id will get all items of that itemID
 -- item:name will get all items that contain "name" in its name
 function ACTIONBUTTON:filter_item(data)
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-	local excluded
 	for ckey in gmatch(keys, "[^,]+") do
 
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
 		local itemID = tonumber(arg)
 		arg = arg:lower()
 
-		if (cmd == "!") then
-			excluded = true
-		else
-			excluded = false
-		end
-
 		if itemID and GetItemCount(itemID)>0 then
 			data[itemID] = "item"
 			return
 		end
-		-- look for arg in itemCache
-		for itemID,name in pairs(itemCache) do
-			if (name:lower()):match(arg) and GetItemCount(name)>0 then
-				data[itemID] = "item"
-			end
-		end
+
 	end
 end
 
@@ -150,33 +123,21 @@ end
 -- spell:name will get all spells that contain "name" in its name or its flyout parent
 function ACTIONBUTTON:filter_spell(data)
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
 
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
 
-		if (cmd == "!") then
-			excluded = true
-		else
-			excluded = false
-		end
 		--revisit
-		if type(arg)=="number" and IsSpellKnown(arg) then
-			local name = GetSpellInfo(arg)
-			if name then
+
+		local name, _, _, _, _, _,spellID = GetSpellInfo(arg)
+		if(name) then
+			if(IsSpellKnown(spellID)) then
 				data[name:lower()] = "spell"
 			end
-		else
-			local name, _, _, _, _, _,spellID = GetSpellInfo(arg)
-			if(name) then
-				if(IsSpellKnown(spellID)) then
-					data[name:lower()] = "spell"
-				end
-			end
 		end
+
 	end
-	ACTIONBUTTON.RemoveExclusions(data)
 end
 
 
@@ -185,17 +146,10 @@ end
 -- type:name will get all items that have "name" in its type, subtype or slot name
 function ACTIONBUTTON:filter_type(data)
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
 		arg = arg:lower()
-
-		if (cmd == "!") then
-			excluded = true
-		else
-			excluded = false
-		end
 
 		if ("quest"):match(arg) then
 			-- many quest items don't have "Quest" in a type field, but GetContainerItemQuestInfo
@@ -219,7 +173,6 @@ function ACTIONBUTTON:filter_type(data)
 			end
 		end
 	end
-	ACTIONBUTTON.RemoveExclusions(data)
 end
 
 
@@ -228,7 +181,6 @@ end
 -- mount:arg filters mounts that include arg in the name or arg="flying" or arg="land" or arg=="any"
 function ACTIONBUTTON:filter_mount(data)
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -240,23 +192,20 @@ function ACTIONBUTTON:filter_mount(data)
 		local favorite = compare(arg,"Favorite") or fflying or fland
 		arg = arg:lower()
 
-		if (cmd == "!") then
-			excluded = true
-		else
-			excluded = false
-		end
-
 		for i,mountID in ipairs(C_MountJournal.GetMountIDs()) do
+
 			local mountName, mountSpellId, mountTexture, _, canSummon, _, isFavorite = C_MountJournal.GetMountInfoByID(mountID)
 			local spellName = GetSpellInfo(mountSpellId) -- sometimes mount name isn't same as spell name >:O
+
 			mountName = mountName:lower()
 			spellName = spellName:lower()
+
 			if mountName and canSummon then
+
 				local _,_,_,_,mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
 				local canFly = mountType==247 or mountType==248
-				if (mountName:match(arg) or spellName:match(arg)) and excluded then
-					exclusions[spellName] = true
-				elseif favorite and isFavorite then
+
+				if favorite and isFavorite then
 					if (fflying and canFly) or (fland and not canFly) or (not fflying and not fland) then
 						data[spellName] = "spell"
 					end
@@ -270,8 +219,6 @@ function ACTIONBUTTON:filter_mount(data)
 
 	end
 
-
-	ACTIONBUTTON.RemoveExclusions(data)
 end
 
 
@@ -290,17 +237,10 @@ function ACTIONBUTTON:filter_profession(data)
 	local professions
 
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-	local excluded
 	local profSpells = {}
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-
-		if (cmd == "!") then
-			excluded = true
-		else
-			excluded = false
-		end
 
 		RunForEach(function(entry) table.insert(professions,entry or false) end, GetProfessions())
 		local any = compare(arg,"Any")
@@ -310,10 +250,7 @@ function ACTIONBUTTON:filter_profession(data)
 		for index,profession in pairs(professions) do
 			if profession then
 				local name, _, _, _, numSpells, offset = GetProfessionInfo(profession)
-				if (name:lower()):match(arg) and excluded then
-					exclusions[name:lower()] = true
-
-				elseif (index<3 and primaryOnly) or (index>2 and secondaryOnly) or any or (name:lower()):match(arg) then
+				if (index<3 and primaryOnly) or (index>2 and secondaryOnly) or any or (name:lower()):match(arg) then
 					for i=1,numSpells do
 						local _, spellID = GetSpellBookItemInfo(offset+i,"professions")
 						local spellName = GetSpellInfo(spellID)
@@ -328,52 +265,31 @@ function ACTIONBUTTON:filter_profession(data)
 			end
 		end
 
-		--Check exclusions a second time for args that dont trigger earlier.
-		for _,name in pairs(profSpells) do
-			if (name:lower()):match(arg) and excluded then
-				exclusions[name:lower()] = true
-			end
-		end
 	end
-	ACTIONBUTTON.RemoveExclusions(data)
 end
 
 
 --- Filter handler for companion pets
 -- pet:arg filters companion pets that include arg in the name or arg="any" or arg="favorite(s)"
 function ACTIONBUTTON:filter_pet(data)
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-	local excluded
+	local keys = self.flyout.keys
 	for ckey in gmatch(keys, "[^,]+") do
 
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-		local any = compare(arg,"Any")
-		local favorite = compare(arg,"Favorite")
 
-		if (cmd == "!") then
-			excluded = true
-		else
-			excluded = false
+
+
+		local speciesID, _ = C_PetJournal.FindPetIDByName(arg)
+
+
+		local speciesName, speciesIcon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+
+		if speciesName then
+			data[speciesName] = "companion"
+			petIcons[speciesName] = speciesIcon
 		end
 
-
-		-- the following can create 150-200k of garbage...why? pets are officially unsupported so this is permitted to stay
-		for i=1,C_PetJournal.GetNumPets() do
-			local petID,_,owned,customName,_,isFavorite,_,realName, icon = C_PetJournal.GetPetInfoByIndex(i)
-			if petID and owned then
-				if any or (favorite and isFavorite) or (customName and (customName:lower()):match(arg)) or (realName and (realName:lower()):match(arg)) then
-
-					if ((customName and (customName:lower()):match(arg)) or (realName and (realName:lower()):match(arg))) and excluded then
-						exclusions[realName] = true
-					else
-						data[realName] = "companion"
-						petIcons[realName] = icon
-					end
-				end
-			end
-		end
 	end
-	ACTIONBUTTON.RemoveExclusions(data)
 end
 
 
@@ -381,7 +297,6 @@ end
 -- toy:arg filters items from the toybox; arg="favorite" "any" or partial name
 function ACTIONBUTTON:filter_toy(data)
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-	local excluded
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -389,37 +304,15 @@ function ACTIONBUTTON:filter_toy(data)
 		local favorite = compare(arg,"Favorite")
 		arg = arg:lower()
 
-		if (cmd == "!") then
-			excluded = true
-		else
-			excluded = false
+
+		local name, _, _, _, _, _, _, _, _, icon = GetItemInfo(arg)
+
+		if name then
+			data[name] = "item"
 		end
 
-		if excluded then
-			for toyName in pairs(tIndex) do
-				if toyName:match(arg) then
-					exclusions[toyName:lower()] = true
-				end
-			end
-		elseif favorite then -- toy:favorite
-			for toyName,itemID in pairs(tIndex) do
-				if C_ToyBox.GetIsFavorite(itemID) then
-					data[toyName:lower()] = "item"
-				end
-			end
-		elseif any then -- toy:any
-			for toyName in pairs(tIndex) do
-				data[toyName:lower()] = "item"
-			end
-		else -- toy:name
-			for toyName in pairs(tIndex) do
-				if toyName:match(arg) then
-					data[toyName:lower()] = "item"
-				end
-			end
-		end
 	end
-	ACTIONBUTTON.RemoveExclusions(data)
+
 end
 
 
@@ -538,17 +431,16 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 					prefix = "/cast "
 
 				elseif (source == "companion") then
+
 					button.macroshow = spell
-					--button.macroicon = petIcons[spell]
+					button.macroicon = petIcons[spell]
 					button:SetAttribute("prefix", "/summonpet ")
-					--button:SetAttribute("showtooltip", "")
 					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
-					--button.data.macro_Icon = petIcons[spell]
-					--button.data.macro_Name = spell
-					--button:SetAttribute("macro_Icon", petIcons[spell])
-					--button:SetAttribute("macro_Name", spell)
+					button.data.macro_Icon = petIcons[spell]
+					button.data.macro_Name = spell
+					button:SetAttribute("macro_Icon", petIcons[spell])
+					button:SetAttribute("macro_Name", spell)
 					prefix = "/summonpet "
-					--pet = spell
 
 				elseif (source == "mount") then
 					button.macroshow = spell
@@ -570,10 +462,21 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 							button:SetAttribute("slot", slot.." ")
 						else
 							prefix = "/equip "
+							button:SetAttribute("prefix", "/equip ")
 						end
 					else
 						prefix = "/use "
+						button:SetAttribute("prefix", "/use ")
 					end
+
+					local itemname, _, _, _, _, _, _, _, _, itemicon = GetItemInfo(spell)
+
+					button.macroicon = itemicon
+					button.data.macro_Icon = itemicon
+					button.data.macro_Name = itemname
+
+					button:SetAttribute("macro_Icon", itemicon)
+					button:SetAttribute("macro_Name", itemname)
 
 					button:SetAttribute("prefix", prefix)
 
@@ -937,16 +840,16 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 	button:RegisterEvent("PLAYER_ENTERING_WORLD")
 	button:RegisterEvent("BAG_UPDATE")
---[[
-	button:RegisterEvent("COMPANION_LEARNED")
-	button:RegisterEvent("COMPANION_UPDATE")
-	button:RegisterEvent("LEARNED_SPELL_IN_TAB")
-	button:RegisterEvent("CHARACTER_POINTS_CHANGED")
-	button:RegisterEvent("PET_STABLE_UPDATE")
-	button:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-	button:RegisterEvent("SPELLS_CHANGED")
-	button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-]]
+	--[[
+		button:RegisterEvent("COMPANION_LEARNED")
+		button:RegisterEvent("COMPANION_UPDATE")
+		button:RegisterEvent("LEARNED_SPELL_IN_TAB")
+		button:RegisterEvent("CHARACTER_POINTS_CHANGED")
+		button:RegisterEvent("PET_STABLE_UPDATE")
+		button:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+		button:RegisterEvent("SPELLS_CHANGED")
+		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+	]]
 
 	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
 	button:SetScript("OnEnter", function(self, ...) self:MACRO_OnEnter(...) end)
@@ -1233,16 +1136,4 @@ function ACTIONBUTTON.CacheBags()
 	else
 		cacheTimeout = (cacheTimeout or 0)+1
 	end
-end
-
-
-local exclusions = {}
-
---- Goes through a data table and removes any items that had been flagged as containing a exclusion keyword.
-function ACTIONBUTTON.RemoveExclusions(data)
-	for spellName,_ in pairs(exclusions) do
-		data[spellName] = nil
-	end
-	wipe(exclusions)
-	return data
 end

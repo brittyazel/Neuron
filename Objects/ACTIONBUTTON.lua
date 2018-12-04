@@ -1558,16 +1558,17 @@ function ACTIONBUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 end
 
 function ACTIONBUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
-	local petName, petIcon
+	local petName, petIcon, description
 	local _ --variable used to discard unwanted return values
 
 	if (action1 == 0) then
 		return
 	else
-		_, _, _, _, _, _, _,petName, petIcon = C_PetJournal.GetPetInfoByPetID(action1)
+		_, _, _, _, _, _, _,petName, petIcon,_,_,_,description = C_PetJournal.GetPetInfoByPetID(action1)
 
-		self.data.macro_Text = "#autowrite\n/summonpet "..petName
+		--self.data.macro_Text = "#autowrite\n/summonpet "..petName
 		self.data.macro_Auto = petName..";"
+		self.data.macro_Text = self:AutoWriteMacro(petName)
 		self.data.macro_Icon = petIcon
 		self.data.macro_Name = petName
 		self.data.macro_Watch = false
@@ -1778,6 +1779,8 @@ function ACTIONBUTTON:MACRO_OnReceiveDrag(preclick)
 
 	elseif (cursorType == "item") then
 		self:MACRO_PlaceItem(action1, action2, self:MACRO_HasAction())
+
+		print("test")
 
 	elseif (cursorType == "macro") then
 		self:MACRO_PlaceBlizzMacro(action1)
