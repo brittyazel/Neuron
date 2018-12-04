@@ -9,8 +9,6 @@ local DB
 Neuron.NeuronMenuBar = Neuron:NewModule("MenuBar", "AceHook-3.0")
 local NeuronMenuBar = Neuron.NeuronMenuBar
 
-local MENUBTN = setmetatable({}, {__index = CreateFrame("CheckButton")})
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local defaultBarOptions = {
@@ -24,7 +22,6 @@ local defaultBarOptions = {
     }
 }
 
-local menuElements = {}
 
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
@@ -37,35 +34,18 @@ function NeuronMenuBar:OnInitialize()
 
     DB = Neuron.db.profile
 
+    Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, Neuron.NeuronMenuBar, Neuron.MENUBTN, 11)
 
-    menuElements[1] = CharacterMicroButton
-    menuElements[2] = SpellbookMicroButton
-    menuElements[3] = TalentMicroButton
-    menuElements[4] = AchievementMicroButton
-    menuElements[5] = QuestLogMicroButton
-    menuElements[6] = GuildMicroButton
-    menuElements[7] = LFDMicroButton
-    menuElements[8] = CollectionsMicroButton
-    menuElements[9] = EJMicroButton
-    menuElements[10] = StoreMicroButton
-    menuElements[11] = MainMenuMicroButton
-
-
-    ----------------------------------------------------------------
-    MENUBTN.SetData = NeuronMenuBar.SetData
-    MENUBTN.LoadData = NeuronMenuBar.LoadData
-    MENUBTN.SetAux = NeuronMenuBar.SetAux
-    MENUBTN.LoadAux = NeuronMenuBar.LoadAux
-    MENUBTN.SetObjectVisibility = NeuronMenuBar.SetObjectVisibility
-    MENUBTN.SetDefaults = NeuronMenuBar.SetDefaults
-    MENUBTN.GetDefaults = NeuronMenuBar.GetDefaults
-    MENUBTN.SetType = NeuronMenuBar.SetType
-    MENUBTN.GetSkinned = NeuronMenuBar.GetSkinned
-    MENUBTN.SetSkinned = NeuronMenuBar.SetSkinned
-    ----------------------------------------------------------------
-
-    Neuron:RegisterBarClass("menu", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, NeuronMenuBar, DB.menubtn, "CheckButton", "NeuronAnchorButtonTemplate", { __index = MENUBTN }, #menuElements)
-    Neuron:RegisterGUIOptions("menu", { AUTOHIDE = true, SHOWGRID = false, SPELLGLOW = false, SNAPTO = true, MULTISPEC = false, HIDDEN = true, LOCKBAR = false, TOOLTIPS = true }, false, false)
+    Neuron:RegisterGUIOptions("menu", {
+        AUTOHIDE = true,
+        SHOWGRID = false,
+        SPELLGLOW = false,
+        SNAPTO = true,
+        MULTISPEC = false,
+        HIDDEN = true,
+        LOCKBAR = false,
+        TOOLTIPS = true },
+            false, false)
 
     if DB.blizzbar == false then
         NeuronMenuBar:CreateBarsAndButtons()
@@ -77,9 +57,6 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function NeuronMenuBar:OnEnable()
-
-    Neuron:RegisterEvent("PET_BATTLE_OPENING_START")
-    Neuron:RegisterEvent("PET_BATTLE_CLOSE")
 
     NeuronMenuBar:DisableDefault()
 
@@ -95,15 +72,7 @@ function NeuronMenuBar:OnDisable()
 end
 
 
-------------------------------------------------------------------------------
-
-
-function Neuron:PET_BATTLE_OPENING_START()
-end
-
-function Neuron:PET_BATTLE_CLOSE()
-end
-
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
 
@@ -123,7 +92,7 @@ function NeuronMenuBar:CreateBarsAndButtons()
             local object
 
             for i=1,#menuElements do
-                object = Neuron.NeuronButton:CreateNewObject("menu", i, true)
+                object = Neuron:CreateNewObject("menu", i, true)
                 Neuron.NeuronBar:AddObjectToList(bar, object)
             end
         end
@@ -140,7 +109,7 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
         for id,data in pairs(DB.menubtn) do
             if (data ~= nil) then
-                Neuron.NeuronButton:CreateNewObject("menu", id)
+                Neuron:CreateNewObject("menu", id)
             end
         end
     end
@@ -160,92 +129,6 @@ function NeuronMenuBar:DisableDefault()
         ---This stops PetBattles from taking over the Micro Buttons
         NeuronMenuBar:RawHook("MoveMicroButtons", function() end, true)
         NeuronMenuBar:RawHook("UpdateMicroButtonsParent", function() end, true)
-    end
-
-end
-
-
-function NeuronMenuBar:SetData(button, bar)
-    if (bar) then
-
-        button.bar = bar
-
-        button:SetFrameStrata(bar.data.objectStrata)
-        button:SetScale(bar.data.scale)
-
-    end
-
-    button:SetFrameLevel(4)
-end
-
-
-function NeuronMenuBar:LoadData(button, spec, state)
-
-    local id = button.id
-
-    if not DB.menubtn[id] then
-        DB.menubtn[id] = {}
-    end
-
-    button.DB = DB.menubtn[id]
-
-    button.config = button.DB.config
-    button.keys = button.DB.keys
-    button.data = button.DB.data
-
-end
-
-
-function NeuronMenuBar:SetObjectVisibility(button, show, hide)
-    --empty
-end
-
-function NeuronMenuBar:SetAux(button)
-    -- empty
-end
-
-function NeuronMenuBar:LoadAux(button)
-    -- empty
-end
-
-function NeuronMenuBar:SetDefaults(button)
-    -- empty
-end
-
-function NeuronMenuBar:GetDefaults(button)
-    --empty
-end
-
-function NeuronMenuBar:SetSkinned(button)
-    --empty
-end
-
-function NeuronMenuBar:GetSkinned(button)
-    --empty
-end
-
-function NeuronMenuBar:SetType(button, save)
-    if (menuElements[button.id]) then
-
-        button:SetWidth(menuElements[button.id]:GetWidth()-2)
-        button:SetHeight(menuElements[button.id]:GetHeight()-2)
-
-        button:SetHitRectInsets(button:GetWidth()/2, button:GetWidth()/2, button:GetHeight()/2, button:GetHeight()/2)
-
-        button.element = menuElements[button.id]
-
-        local objects = Neuron:GetParentKeys(button.element)
-
-        for k,v in pairs(objects) do
-            local name = v:gsub(button.element:GetName(), "")
-            button[name:lower()] = _G[v]
-        end
-
-        button.element:ClearAllPoints()
-        button.element:SetParent(button)
-        button.element:Show()
-        button.element:SetPoint("CENTER", button, "CENTER")
-        button.element:SetScale(1)
     end
 
 end

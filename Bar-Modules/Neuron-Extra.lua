@@ -6,11 +6,8 @@ Neuron.NeuronExtraBar = Neuron:NewModule("ExtraBar", "AceEvent-3.0", "AceHook-3.
 local NeuronExtraBar = Neuron.NeuronExtraBar
 
 
-local EXTRABTN = setmetatable({}, { __index = CreateFrame("CheckButton") })
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
-local SKIN = LibStub("Masque", true)
 
 local defaultBarOptions = {
 	[1] = {
@@ -36,32 +33,21 @@ function NeuronExtraBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	----------------------------------------------------------------
-	EXTRABTN.SetData = NeuronExtraBar.SetData
-	EXTRABTN.LoadData = NeuronExtraBar.LoadData
-	EXTRABTN.SetAux = NeuronExtraBar.SetAux
-	EXTRABTN.LoadAux = NeuronExtraBar.LoadAux
-	EXTRABTN.SetDefaults = NeuronExtraBar.SetDefaults
-	EXTRABTN.GetDefaults = NeuronExtraBar.GetDefaults
-	EXTRABTN.GetSkinned = NeuronExtraBar.GetSkinned
-	EXTRABTN.SetSkinned = NeuronExtraBar.SetSkinned
-	EXTRABTN.SetObjectVisibility = NeuronExtraBar.SetObjectVisibility
-	EXTRABTN.SetType = NeuronExtraBar.SetType
-	----------------------------------------------------------------
+	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, Neuron.NeuronExtraBar, Neuron.EXTRABTN,1)
 
-	Neuron:RegisterBarClass("extrabar", "ExtraActionBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, NeuronExtraBar, DB.extrabtn, "CheckButton", "NeuronActionButtonTemplate", { __index = EXTRABTN }, 1)
-
-	Neuron:RegisterGUIOptions("extrabar", { AUTOHIDE = true,
-											SHOWGRID = false,
-											SNAPTO = true,
-											UPCLICKS = true,
-											DOWNCLICKS = true,
-											HIDDEN = true,
-											LOCKBAR = true,
-											BINDTEXT = true,
-											RANGEIND = true,
-											CDTEXT = true,
-											CDALPHA = true }, false, 65)
+	Neuron:RegisterGUIOptions("extrabar", {
+		AUTOHIDE = true,
+		SHOWGRID = false,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		HIDDEN = true,
+		LOCKBAR = true,
+		BINDTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true },
+			false, 65)
 
 	NeuronExtraBar:CreateBarsAndButtons()
 
@@ -106,7 +92,7 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 			local object
 
-			object = Neuron.NeuronButton:CreateNewObject("extrabar", 1, true)
+			object = Neuron:CreateNewObject("extrabar", 1, true)
 			Neuron.NeuronBar:AddObjectToList(bar, object)
 		end
 
@@ -129,7 +115,7 @@ function NeuronExtraBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.extrabtn) do
 			if (data ~= nil) then
-				Neuron.NeuronButton:CreateNewObject("extrabar", id)
+				Neuron:CreateNewObject("extrabar", id)
 			end
 		end
 	end
@@ -155,210 +141,4 @@ function NeuronExtraBar:DisableDefault()
 		ExtraActionButton1:SetPoint("BOTTOM", 0, -250)
 	end
 
-end
-
-
-function NeuronExtraBar:GetSkinned(button)
-	--empty
-end
-
-function NeuronExtraBar:SetSkinned(button)
-
-	if (SKIN) then
-
-		local bar = button.bar
-
-		if (bar) then
-
-			local btnData = {
-				Normal = button.normaltexture,
-				Icon = button.iconframeicon,
-				Cooldown = button.iconframecooldown,
-				HotKey = button.hotkey,
-				Count = button.count,
-				Name = button.name,
-				Border = button.border,
-				AutoCast = false,
-			}
-
-			SKIN:Group("Neuron", bar.data.name):AddButton(button, btnData)
-
-		end
-
-	end
-end
-
-
-function NeuronExtraBar:LoadData(button, spec, state)
-
-	local id = button.id
-
-	if not DB.extrabtn[id] then
-		DB.extrabtn[id] = {}
-	end
-
-	button.DB = DB.extrabtn[id]
-
-	button.config = button.DB.config
-	button.keys = button.DB.keys
-	button.data = button.DB.data
-
-end
-
-function NeuronExtraBar:SetObjectVisibility(button, show)
-
-	if HasExtraActionBar() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-		button:SetAlpha(1)
-
-	elseif not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
-		button:SetAlpha(0)
-	end
-
-end
-
-function NeuronExtraBar:SetAux(button)
-
-
-end
-
-function NeuronExtraBar:SetExtraButtonTex(button)
-
-	if button.actionID then
-		button.iconframeicon:SetTexture(GetActionTexture(button.actionID))
-	end
-
-	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
-	button.style:SetTexture(texture)
-end
-
-
-function NeuronExtraBar:LoadAux(button)
-
-	Neuron.NeuronBinder:CreateBindFrame(button, button.objTIndex)
-
-	button.style = button:CreateTexture(nil, "OVERLAY")
-	button.style:SetPoint("CENTER", -2, 1)
-	button.style:SetWidth(190)
-	button.style:SetHeight(95)
-
-	NeuronExtraBar:SetExtraButtonTex(button)
-
-	button.hotkey:SetPoint("TOPLEFT", -4, -6)
-end
-
-function NeuronExtraBar:SetDefaults(button)
-
-	-- empty
-
-end
-
-function NeuronExtraBar:GetDefaults(button)
-
-	--empty
-
-end
-
-function NeuronExtraBar:SetData(button, bar)
-	Neuron.NeuronButton:SetData(button, bar)
-end
-
-
-function NeuronExtraBar:ExtraButton_Update(button)
-
-	NeuronExtraBar:SetExtraButtonTex(button)
-
-	--This conditional is to show/hide the border of the button, but it ins't fully implemented yet
-	--Some people were hitting a bit be because this option didn't exist it seems
-
-	--[[if DB.extrabar[1].border then
-		button.style:Show()
-	else
-		button.style:Hide()
-	end]]
-
-	--button.style:Show()
-
-	local start, duration, enable = GetActionCooldown(button.actionID);
-
-	if (start) then
-		Neuron.NeuronButton:SetTimer(button.iconframecooldown, start, duration, enable, button.cdText, button.cdcolor1, button.cdcolor2, button.cdAlpha)
-	end
-end
-
-
-function NeuronExtraBar:OnEnter(button, ...)
-
-	if (button.bar) then
-
-		GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
-
-		if (GetActionInfo(button.actionID)) then
-
-			GameTooltip:SetAction(button.actionID)
-
-		end
-
-		GameTooltip:Show()
-
-	end
-end
-
-
-function NeuronExtraBar:OnLeave(button)
-	GameTooltip:Hide()
-end
-
-function NeuronExtraBar:SetType(button, save)
-
-	button:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
-	button:RegisterEvent("ZONE_CHANGED")
-	button:RegisterEvent("SPELLS_CHANGED")
-	button:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-	button.actionID = 169
-
-	button:SetAttribute("type", "action")
-	button:SetAttribute("*action1", self.actionID)
-
-	button:SetAttribute("useparent-unit", false)
-	button:SetAttribute("unit", ATTRIBUTE_NOOP)
-
-	button:SetScript("OnEvent", function(self, event, ...) NeuronExtraBar:OnEvent(self, event, ...) end)
-	button:SetScript("OnEnter", function(self, ...) NeuronExtraBar:OnEnter(self, ...) end)
-	button:SetScript("OnLeave", function(self) NeuronExtraBar:OnLeave(self) end)
-	button:HookScript("OnShow", function(self) NeuronExtraBar:ExtraButton_Update(self) end)
-
-	button:WrapScript(button, "OnShow", [[
-					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
-						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
-					end
-					]])
-
-	button:WrapScript(button, "OnHide", [[
-					if (not self:GetParent():GetAttribute("concealed")) then
-						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
-							self:ClearBinding(key)
-						end
-					end
-					]])
-
-	button:SetSkinned(button)
-
-end
-
-
-function NeuronExtraBar:OnEvent(button, event, ...)
-
-	NeuronExtraBar:ExtraButton_Update(button)
-	button:SetObjectVisibility(button)
-
-	if event == "PLAYER_ENTERING_WORLD" then
-		NeuronExtraBar:PLAYER_ENTERING_WORLD(button, event, ...)
-	end
-
-end
-
-function NeuronExtraBar:PLAYER_ENTERING_WORLD(button, event, ...)
-	if InCombatLockdown() then return end
-	Neuron.NeuronBinder:ApplyBindings(button)
 end

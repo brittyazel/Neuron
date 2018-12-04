@@ -14,8 +14,6 @@ local BAR = Neuron.BAR
 local TRASHCAN = CreateFrame("Frame", nil, UIParent)
 TRASHCAN:Hide()
 
-local BUTTON = Neuron.BUTTON
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local BARIndex = Neuron.BARIndex
@@ -92,29 +90,6 @@ function NeuronBar:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, BTNIndex, DB.buttons, "CheckButton", "NeuronActionButtonTemplate", { __index = BUTTON }, 1000)
-
-	Neuron:RegisterGUIOptions("bar", {
-		AUTOHIDE = true,
-		SHOWGRID = true,
-		SPELLGLOW = true,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		MULTISPEC = true,
-		HIDDEN = true,
-		LOCKBAR = true,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		MACROTEXT = true,
-		COUNTTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true,
-		AURATEXT = true,
-		AURAIND = true
-	}, true, 115)
-
 	if Neuron.NeuronZoneAbilityBar then
 		NeuronBar.HideZoneAbilityBorder = Neuron.NeuronZoneAbilityBar.HideZoneAbilityBorder --this is so the slash function has access to this function
 	end
@@ -189,7 +164,7 @@ function NeuronBar:CreateBarsAndButtons()
 			local object
 
 			for i=1+offset, 12+offset do
-				object = Neuron.NeuronButton:CreateNewObject("bar", i, true) --this calls the object (button) constructor
+				object = Neuron:CreateNewObject("bar", i, true) --this calls the object (button) constructor
 				NeuronBar:AddObjectToList(bar, object)
 			end
 
@@ -206,7 +181,7 @@ function NeuronBar:CreateBarsAndButtons()
 
 		for id,data in pairs(DB.buttons) do
 			if (data ~= nil) then
-				Neuron.NeuronButton:CreateNewObject("bar", id) --this calls the object (button) constructor
+				Neuron:CreateNewObject("bar", id) --this calls the object (button) constructor
 			end
 		end
 	end
@@ -1057,7 +1032,7 @@ function NeuronBar:SetFauxState(bar, state)
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
-			Neuron.NeuronButton:SetFauxState(object, state)
+			object:SetFauxState(state)
 		end
 	end
 
@@ -1087,12 +1062,12 @@ function NeuronBar:LoadObjects(bar, init)
 		if (object) then
 
 			---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
-			object:SetData(object, bar)
-			object:LoadData(object, spec, bar.handler:GetAttribute("activestate"))
-			object:SetAux(object)
-			object:SetType(object, nil, nil, init)
+			object:SetData(bar)
+			object:LoadData(spec, bar.handler:GetAttribute("activestate"))
+			object:SetType()
+			object:SetAux()
 
-			object:SetObjectVisibility(object)
+			object:SetObjectVisibility()
 
 			bar.objCount = bar.objCount + 1
 			bar.countChanged = true
@@ -1177,7 +1152,7 @@ function NeuronBar:SetObjectLoc(bar)
 			lastObj = object
 			num = num + 1
 			object:SetAttribute("barPos", num)
-			object:SetData(object, bar)
+			object:SetData(bar)
 		end
 	end
 
@@ -1532,7 +1507,7 @@ function NeuronBar:OnMouseWheel(delta)
 						end
 
 						if (not added) then
-							tinsert(barStack, bar)
+							table.insert(barStack, bar)
 						end
 					end
 				end
@@ -1540,7 +1515,7 @@ function NeuronBar:OnMouseWheel(delta)
 		end
 	end
 
-	bar = tremove(barStack, 1)
+	bar = table.remove(barStack, 1)
 
 	if (bar) then
 		NeuronBar:ChangeBar(bar)
@@ -1673,7 +1648,7 @@ function NeuronBar:UpdateObjectData(bar)
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
-			object:SetData(object, bar)
+			object:SetData(bar)
 		end
 	end
 end
@@ -1685,7 +1660,7 @@ function NeuronBar:UpdateObjectVisibility(bar, show)
 		object = _G[bar.objPrefix..tostring(objID)]
 
 		if (object) then
-			object:SetObjectVisibility(object, show)
+			object:SetObjectVisibility(show)
 		end
 	end
 end
@@ -1982,7 +1957,7 @@ function NeuronBar:AddObjectsToBar(bar, num)
 			if bar.objTable[id] and not bar.objTable[id]["bar"] then --checks to see if the object exists in the object table, and if the object belongs to a bar
 				object = bar.objTable[id]
 			else
-				object = Neuron.NeuronButton:CreateNewObject(bar.class, id)
+				object = Neuron:CreateNewObject(bar.class, id)
 			end
 			NeuronBar:AddObjectToList(bar, object)
 		end
@@ -2192,9 +2167,9 @@ function NeuronBar:SetState(bar, msg, gui, checked, query)
 		for k,v in pairs(Neuron.STATEINDEX) do
 
 			if (bar.data[k]) then
-				tinsert(statetable, k..": on")
+				table.insert(statetable, k..": on")
 			else
-				tinsert(statetable, k..": off")
+				table.insert(statetable, k..": off")
 			end
 		end
 
@@ -2519,7 +2494,15 @@ function NeuronBar:MultiSpecSet(bar, msg, gui, checked, query)
 		end
 	end
 
-	Neuron.NeuronButton:UpdateObjectSpec(bar)
+	for i, btnID in ipairs(bar.data.objectList) do
+		local button = _G[bar.objPrefix..tostring(btnID)]
+
+		if button then
+			button:UpdateButtonSpec(bar)
+		end
+
+	end
+
 	NeuronBar:Update(bar)
 end
 
@@ -3281,7 +3264,7 @@ function NeuronBar:SetCastingTarget(bar, value, gui, checked, query)
 			end
 		end
 
-		Neuron.NeuronButton:UpdateMacroCastTargets()
+		Neuron:UpdateMacroCastTargets()
 		NeuronBar:Update(bar)
 	end
 end

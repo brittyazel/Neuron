@@ -8,7 +8,7 @@ local DB
 
 local NeuronFrame = CreateFrame("Frame", nil, UIParent) --this is a frame mostly used to assign OnEvent functions
 Neuron = LibStub("AceAddon-3.0"):NewAddon(NeuronFrame, "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
- --this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
+--this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -52,9 +52,6 @@ Neuron['RegisteredBarData'] = {}
 Neuron['RegisteredGUIData'] = {}
 Neuron['MacroDrag'] = {}
 Neuron['StartDrag'] = false
-Neuron['maxActionID'] = 132
-Neuron['maxPetID'] = 10
-Neuron['maxStanceID'] = NUM_STANCE_SLOTS
 
 
 --working variable pointers
@@ -161,6 +158,14 @@ Neuron.BarEditMode = false
 Neuron.ButtonEditMode = false
 Neuron.BindingMode = false
 
+Neuron.SpecialActions = {
+	vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit",
+	possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield",
+	taxi = "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up",
+}
+
+Neuron.unitAuras = { player = {}, target = {}, focus = {} }
+
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
@@ -238,6 +243,32 @@ function Neuron:OnInitialize()
 		end,
 		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
 	}
+
+
+	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, Neuron.BTNIndex, Neuron.ACTIONBUTTON, 250)
+
+	Neuron:RegisterGUIOptions("bar", {
+		AUTOHIDE = true,
+		SHOWGRID = true,
+		SPELLGLOW = true,
+		SNAPTO = true,
+		UPCLICKS = true,
+		DOWNCLICKS = true,
+		MULTISPEC = true,
+		HIDDEN = true,
+		LOCKBAR = true,
+		TOOLTIPS = true,
+		BINDTEXT = true,
+		MACROTEXT = true,
+		COUNTTEXT = true,
+		RANGEIND = true,
+		CDTEXT = true,
+		CDALPHA = true,
+		AURATEXT = true,
+		AURAIND = true },
+			true, 115)
+
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -258,6 +289,14 @@ function Neuron:OnEnable()
 	--Neuron:RegisterEvent("TOYS_UPDATED")
 	--Neuron:RegisterEvent("TOYS_UPDATED")
 	--Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+
+	Neuron:RegisterEvent("PLAYER_TARGET_CHANGED")
+	Neuron:RegisterEvent("ACTIONBAR_SHOWGRID")
+	Neuron:RegisterEvent("UNIT_AURA")
+	Neuron:RegisterEvent("UNIT_SPELLCAST_SENT")
+	Neuron:RegisterEvent("UNIT_SPELLCAST_START")
+	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
 	Neuron:HookScript(Neuron, "OnUpdate", "controlOnUpdate")
 
@@ -400,9 +439,63 @@ function Neuron:TOYS_UPDATED()
 	end
 end
 
+function Neuron:PLAYER_TARGET_CHANGED()
+	for k in pairs(Neuron.unitAuras) do
+		Neuron:updateAuraInfo(k)
+	end
+end
 
+function Neuron:ACTIONBAR_SHOWGRID()
+	Neuron.StartDrag = true
+end
 
+function Neuron:UNIT_AURA(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
 
+function Neuron:UNIT_SPELLCAST_SENT(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_START(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_CHANNEL_START(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
+	if (Neuron.unitAuras[select(1,...)]) then
+		if (... == "player") then
+		end
+		Neuron:updateAuraInfo(select(1,...))
+	end
+end
 
 -------------------------------------------------------------------------
 --------------------Profiles---------------------------------------------
@@ -410,8 +503,6 @@ end
 
 function Neuron:RefreshConfig()
 	DB = Neuron.db.profile
-	Neuron.NeuronButton.ButtonProfileUpdate()
-
 	StaticPopup_Show("ReloadUI")
 end
 
@@ -551,10 +642,10 @@ function Neuron:controlOnUpdate(frame, elapsed)
 	---Throttled OnUpdate calls
 	if (Neuron.elapsed > DB.throttle and Neuron.PEW) then
 
-		Neuron.NeuronButton:cooldownsOnUpdate(frame, elapsed)
-		if Neuron.NeuronZoneAbilityBar then
+		Neuron:cooldownsOnUpdate(frame, elapsed)
+		--[[if Neuron.NeuronZoneAbilityBar then
 			Neuron.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
-		end
+		end]]
 		if Neuron.NeuronPetBar then
 			Neuron.NeuronPetBar:controlOnUpdate(frame, elapsed)
 		end
@@ -562,12 +653,12 @@ function Neuron:controlOnUpdate(frame, elapsed)
 			Neuron.NeuronStatusBar:controlOnUpdate(frame, elapsed)
 		end
 
-		Neuron.elapsed = 0;
+		Neuron.elapsed = 0
 	end
 
 	---UnThrottled OnUpdate calls
 	if(Neuron.PEW) then
-		Neuron.NeuronButton:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+		Neuron:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 		Neuron.NeuronBar:controlOnUpdate(frame, elapsed)
 	end
 end
@@ -614,15 +705,15 @@ function Neuron:GetParentKeys(frame)
 	local regions = {frame:GetRegions()}
 
 	for k,v in pairs(children) do
-		tinsert(data, v:GetName())
+		table.insert(data, v:GetName())
 		childData = Neuron:GetParentKeys(v)
 		for key,value in pairs(childData) do
-			tinsert(data, value)
+			table.insert(data, value)
 		end
 	end
 
 	for k,v in pairs(regions) do
-		tinsert(data, v:GetName())
+		table.insert(data, v:GetName())
 	end
 
 	return data
@@ -1089,7 +1180,7 @@ end
 
 function Neuron:ToggleButtonGrid(show)
 	for id,btn in pairs(Neuron.BTNIndex) do
-		btn:SetObjectVisibility(btn, show)
+		btn:SetObjectVisibility(show)
 	end
 end
 
@@ -1178,7 +1269,7 @@ function Neuron:ToggleButtonEditMode(show)
 			end
 		end
 
-		Neuron.NeuronButton:ChangeObject()
+		Neuron:ChangeObject()
 
 	end
 end
@@ -1284,7 +1375,7 @@ function Neuron:PrintBarTypes()
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objDB, objFrameType, objTemplate, objMetaTable, objMax)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objTemplate, objMax)
 
 	Neuron.ModuleIndex = Neuron.ModuleIndex + 1
 
@@ -1293,12 +1384,9 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTa
 		barLabel = barLabel,
 		barDB = barDB,
 		objTable = objTable, --this is all the buttons associated with a given bar
-		objDB = objDB,
 		objPrefix = "Neuron"..objType:gsub("%s+", ""),
-		objFrameT = objFrameType,
-		objTemplate = objTemplate,
-		objMetaT = objMetaTable,
 		objType = objType,
+		objTemplate = objTemplate,
 		objMax = objMax,
 		createMsg = Neuron.ModuleIndex..objType,
 	}

@@ -18,16 +18,28 @@ Localizations\Neuron_Localizations.xml
 
 Neuron-Defaults.lua
 Neuron.lua
+Neuron-States.lua
+
 
 Utilities/DB-Fixer.lua
 
-Neuron-States.lua
+
+Objects/BUTTON.lua
+Objects/ACTIONBUTTON.lua
+Objects/BAGBTN.lua
+Objects/EXITBTN.lua
+Objects/EXTRABTN.lua
+Objects/MENUBTN.lua
+Objects/PETBTN.lua
+Objects/STATUSBTN.lua
+Objects/ZONEABILITYBTN.lua
+Objects/ACTIONBUTTON_FLYOUTBTN.lua
+
 Neuron-Buttons.lua
 Neuron-Bars.lua
 Neuron-KeyBinder.lua
 Neuron-SnapTo.lua
 Neuron-MinimapIcon.lua
-Neuron-Flyouts.lua
 
 Neuron.xml
 
