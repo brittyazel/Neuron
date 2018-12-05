@@ -889,13 +889,13 @@ function ACTIONBUTTON:Flyout_OnEvent(event, ...)
 
 		ACTIONBUTTON.CacheBags()
 
-		local strings = { NeuronTooltipScan:GetRegions() }
+		--[[local strings = { NeuronTooltipScan:GetRegions() }
 
 		for k,v in pairs(strings) do
 			if (v:GetObjectType() == "FontString") then
 				tinsert(tooltipStrings, v)
 			end
-		end
+		end]]
 
 	elseif event == "BAG_UPDATE" then
 

@@ -220,10 +220,10 @@ function Neuron:OnInitialize()
 
 
 	---TODO:figure out what to do with this
-	local frame = CreateFrame("GameTooltip", "NeuronTooltipScan", UIParent, "GameTooltipTemplate")
+	--[[local frame = CreateFrame("GameTooltip", "NeuronTooltipScan", UIParent, "GameTooltipTemplate")
 	frame:SetOwner(UIParent, "ANCHOR_NONE")
 	frame:SetFrameStrata("TOOLTIP")
-	frame:Hide()
+	frame:Hide()]]
 
 
 	StaticPopupDialogs["ReloadUI"] = {
@@ -303,7 +303,7 @@ function Neuron:OnEnable()
 
 	Neuron:UpdateStanceStrings()
 
-	GameMenuFrame:HookScript("OnShow", function(self)
+	--[[GameMenuFrame:HookScript("OnShow", function(self)
 
 		if (Neuron.BarEditMode) then
 			HideUIPanel(self)
@@ -320,7 +320,7 @@ function Neuron:OnEnable()
 			Neuron:ToggleBindingMode(false)
 		end
 
-	end)
+	end)]]
 
 	Neuron:LoginMessage()
 

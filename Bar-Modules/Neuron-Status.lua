@@ -91,12 +91,6 @@ function NeuronStatusBar:OnEnable()
 
     NeuronStatusBar:DisableDefault()
 
-    NeuronStatusBar:RegisterEvent("PLAYER_ENTERING_WORLD")
-    NeuronStatusBar:RegisterEvent("UPDATE_FACTION")
-    NeuronStatusBar:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
-    NeuronStatusBar:RegisterEvent("MIRROR_TIMER_START")
-    NeuronStatusBar:RegisterEvent("MIRROR_TIMER_STOP")
-
 end
 
 
@@ -110,45 +104,6 @@ end
 
 
 ------------------------------------------------------------------------------
-
-function NeuronStatusBar:PLAYER_ENTERING_WORLD()
-
-    local timer, value, maxvalue, scale, paused, label
-
-    for i=1,MIRRORTIMER_NUMTIMERS do
-
-        timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
-
-        if (timer ~= "UNKNOWN") then
-            --mbStart(timer, value, maxvalue, scale, paused, label)
-        end
-    end
-
-end
-
-function NeuronStatusBar:UPDATE_FACTION(eventName, ...)
-
-    Neuron.STATUSBTN:repstrings_Update(...)
-
-end
-
-function NeuronStatusBar:CHAT_MSG_COMBAT_FACTION_CHANGE(eventName, ...)
-
-    Neuron.STATUSBTN:repstrings_Update(...)
-
-end
-
-function NeuronStatusBar:MIRROR_TIMER_START(eventName, ...)
-
-    Neuron.STATUSBTN:mirrorbar_Start(...)
-
-end
-
-function NeuronStatusBar:MIRROR_TIMER_STOP(eventName, ...)
-
-    Neuron.STATUSBTN:mirrorbar_Stop(select(1,...))
-
-end
 
 -------------------------------------------------------------------------------
 

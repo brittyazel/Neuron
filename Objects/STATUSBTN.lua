@@ -607,24 +607,47 @@ end
 ----------------------------------------------------
 
 
-function STATUSBTN:mirrorbar_Start(value, maxvalue, scale, paused, label)
+function STATUSBTN: MirrorBar_OnEvent(event, ...)
 
 
-	if (not MirrorWatch[self]) then
-		MirrorWatch[self] = { active = false, mbar = nil, label = "", timer = "" }
+	if event == "MIRROR_TIMER_START" then
+		self:mirrorbar_Start(...)
+	elseif event == "MIRROR_TIMER_STOP" then
+		self:mirrorbar_Stop(...)
+	elseif event == "PLAYER_ENTERING_WORLD" then
+		local timer, value, maxvalue, scale, paused, label
+
+		for i=1,MIRRORTIMER_NUMTIMERS do
+
+			timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
+
+			if (timer ~= "UNKNOWN") then
+				self:mirrorbar_Start(timer, value, maxvalue, scale, paused, label)
+			end
+		end
 	end
 
-	if (not MirrorWatch[self].active) then
+end
+
+
+
+function STATUSBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
+
+	if (not MirrorWatch[type]) then
+		MirrorWatch[type] = { active = false, mbar = nil, label = "", timer = "" }
+	end
+
+	if (not MirrorWatch[type].active) then
 
 		local mbar = table.remove(MirrorBars, 1)
 
 		if (mbar) then
 
-			MirrorWatch[self].active = true
-			MirrorWatch[self].mbar = mbar
-			MirrorWatch[self].label = label
+			MirrorWatch[type].active = true
+			MirrorWatch[type].mbar = mbar
+			MirrorWatch[type].label = label
 
-			mbar.sb.mirror = self
+			mbar.sb.mirror = type
 			mbar.sb.value = (value / 1000)
 			mbar.sb.maxvalue = (maxvalue / 1000)
 			mbar.sb.scale = scale
@@ -635,7 +658,7 @@ function STATUSBTN:mirrorbar_Start(value, maxvalue, scale, paused, label)
 				mbar.sb.paused = nil
 			end
 
-			local color = MirrorTimerColors[self]
+			local color = MirrorTimerColors[type]
 
 			mbar.sb:SetMinMaxValues(0, (maxvalue / 1000))
 			mbar.sb:SetValue(mbar.sb.value)
@@ -651,21 +674,21 @@ end
 
 
 
-function STATUSBTN:mirrorbar_Stop()
+function STATUSBTN:mirrorbar_Stop(type)
 
 
-	if (MirrorWatch[self] and MirrorWatch[self].active) then
+	if (MirrorWatch[type] and MirrorWatch[type].active) then
 
-		local mbar = MirrorWatch[self].mbar
+		local mbar = MirrorWatch[type].mbar
 
 		if (mbar) then
 
 			table.insert(MirrorBars, 1, mbar)
 
-			MirrorWatch[self].active = false
-			MirrorWatch[self].mbar = nil
-			MirrorWatch[self].label = ""
-			MirrorWatch[self].timer = ""
+			MirrorWatch[type].active = false
+			MirrorWatch[type].mbar = nil
+			MirrorWatch[type].label = ""
+			MirrorWatch[type].timer = ""
 
 			mbar.sb.mirror = nil
 		end
@@ -838,11 +861,11 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 			self.sb.value = (GetTime()-(startTime/1000))
 			self.sb.maxValue = (endTime-startTime)/1000
-			self.sb.sb:SetMinMaxValues(0, self.sb.maxValue)
+			self.sb:SetMinMaxValues(0, self.sb.maxValue)
 
 			if (not self.sb.casting) then
 
-				self.sb.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
+				self.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
 
 				self.sb.spark:Show()
 				self.sb.barflash:SetAlpha(0.0)
@@ -914,8 +937,8 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 			self.sb.value = ((endTime/1000)-GetTime())
 			self.sb.maxValue = (endTime-startTime)/1000
-			self.sb.sb:SetMinMaxValues(0, self.sb.maxValue)
-			self.sb.sb:SetValue(self.sb.value)
+			self.sb:SetMinMaxValues(0, self.sb.maxValue)
+			self.sb:SetValue(self.sb.value)
 		end
 
 	elseif (self.sb.showShield and event == "UNIT_SPELLCAST_INTERRUPTIBLE" ) then
@@ -1072,6 +1095,9 @@ end
 
 function STATUSBTN:MirrorBar_OnUpdate(elapsed)
 
+
+	test = self
+
 	if (self.sb.mirror) then
 
 		self.sb.value = GetMirrorTimerProgress(self.sb.mirror)/1000
@@ -1089,7 +1115,7 @@ function STATUSBTN:MirrorBar_OnUpdate(elapsed)
 
 		else
 
-			self.sb.sb:SetValue(self.sb.value)
+			self.sb:SetValue(self.sb.value)
 
 			if (self.sb.value >= 60) then
 				self.sb.value = string.format("%0.1f", self.sb.value/60)
@@ -1938,6 +1964,13 @@ function STATUSBTN:SetType(save)
 			self.sb:Show()
 
 		elseif (self.config.sbType == "mirror") then
+
+			self.sb:RegisterEvent("MIRROR_TIMER_START")
+			self.sb:RegisterEvent("MIRROR_TIMER_STOP")
+			self.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+
+			self.sb:SetScript("OnEvent", function(self, event, ...) self:GetParent():MirrorBar_OnEvent(event, ...) end)
 
 			self.sb:SetScript("OnUpdate", function(self, elapsed) self:GetParent():MirrorBar_OnUpdate(elapsed) end)
 

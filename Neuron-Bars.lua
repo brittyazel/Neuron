@@ -1476,11 +1476,11 @@ function NeuronBar:OnKeyUp(bar, key)
 end
 
 
-function NeuronBar:OnMouseWheel(delta)
+--[[function NeuronBar:OnMouseWheel(delta)
 	stackWatch:Show()
 
-	NeuronTooltipScan:SetOwner(UIParent, "ANCHOR_NONE")
-	NeuronTooltipScan:SetFrameStack()
+	--NeuronTooltipScan:SetOwner(UIParent, "ANCHOR_NONE")
+	--NeuronTooltipScan:SetFrameStack()
 
 	local objects = Neuron:GetParentKeys(NeuronTooltipScan)
 	local _, bar, level, text, added
@@ -1520,7 +1520,7 @@ function NeuronBar:OnMouseWheel(delta)
 	if (bar) then
 		NeuronBar:ChangeBar(bar)
 	end
-end
+end]]
 
 
 function NeuronBar:OnShow(bar)
@@ -1736,7 +1736,7 @@ function NeuronBar:CreateBar(index, class, id)
 		bar:SetScript("OnEvent", function(self, event, ...) NeuronBar:OnEvent(self, event, ...) end)
 		bar:SetScript("OnKeyDown", function(self, key, onupdate) NeuronBar:OnKeyDown(self, key, onupdate) end)
 		bar:SetScript("OnKeyUp", function(self, key) NeuronBar:OnKeyUp(self, key) end)
-		bar:SetScript("OnMouseWheel", function(delta) NeuronBar:OnMouseWheel(delta) end)
+		--bar:SetScript("OnMouseWheel", function(delta) NeuronBar:OnMouseWheel(delta) end)
 		bar:SetScript("OnShow", function(self) NeuronBar:OnShow(self) end)
 		bar:SetScript("OnHide", function(self) NeuronBar:OnHide(self) end)
 		bar:SetScript("OnUpdate", function(self, elapsed) NeuronBar:OnUpdate(self, elapsed) end)
@@ -1893,7 +1893,7 @@ function NeuronBar:DeleteBar(bar)
 	bar:SetScript("OnEvent", function() end)
 	bar:SetScript("OnKeyDown", function() end)
 	bar:SetScript("OnKeyUp", function() end)
-	bar:SetScript("OnMouseWheel", function() end)
+	--bar:SetScript("OnMouseWheel", function() end)
 	bar:SetScript("OnShow", function() end)
 	bar:SetScript("OnHide", function() end)
 	bar:SetScript("OnUpdate", function() end)
