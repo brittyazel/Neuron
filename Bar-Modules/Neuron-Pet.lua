@@ -95,7 +95,7 @@ function NeuronPetBar:CreateBarsAndButtons()
 
 			local object
 
-			for i=1,Neuron.maxPetID do
+			for i=1,10 do
 				object = Neuron:CreateNewObject("pet", i, true)
 				Neuron.NeuronBar:AddObjectToList(bar, object)
 			end

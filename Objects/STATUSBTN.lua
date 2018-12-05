@@ -614,10 +614,11 @@ function STATUSBTN: MirrorBar_OnEvent(event, ...)
 		self:mirrorbar_Start(...)
 	elseif event == "MIRROR_TIMER_STOP" then
 		self:mirrorbar_Stop(...)
-	elseif event == "PLAYER_ENTERING_WORLD" then
+	elseif event == "PLAYER_ENTERING_WORLD" then --this doesn't seem to be working as of 8.0, all report as UNKNOWN
+
 		local type, value, maxvalue, scale, paused, label
 
-		for i=1,MIRRORTIMER_NUMTIMERS do
+		for i=1, MIRRORTIMER_NUMTIMERS do
 
 			type, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
 

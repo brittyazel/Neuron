@@ -91,7 +91,7 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
             local object
 
-            for i=1,#menuElements do
+            for i=1,11 do
                 object = Neuron:CreateNewObject("menu", i, true)
                 Neuron.NeuronBar:AddObjectToList(bar, object)
             end

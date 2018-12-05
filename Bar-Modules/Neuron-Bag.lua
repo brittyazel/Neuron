@@ -102,7 +102,7 @@ function NeuronBagBar:CreateBarsAndButtons()
 
             local object
 
-            for i=1,#bagElements do
+            for i=1,5 do
                 object = Neuron:CreateNewObject("bag", i, true)
                 Neuron.NeuronBar:AddObjectToList(bar, object)
             end
