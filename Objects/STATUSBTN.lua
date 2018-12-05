@@ -615,14 +615,14 @@ function STATUSBTN: MirrorBar_OnEvent(event, ...)
 	elseif event == "MIRROR_TIMER_STOP" then
 		self:mirrorbar_Stop(...)
 	elseif event == "PLAYER_ENTERING_WORLD" then
-		local timer, value, maxvalue, scale, paused, label
+		local type, value, maxvalue, scale, paused, label
 
 		for i=1,MIRRORTIMER_NUMTIMERS do
 
-			timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
+			type, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
 
-			if (timer ~= "UNKNOWN") then
-				self:mirrorbar_Start(timer, value, maxvalue, scale, paused, label)
+			if (type ~= "UNKNOWN") then
+				self:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 			end
 		end
 	end
@@ -1094,9 +1094,6 @@ end
 
 
 function STATUSBTN:MirrorBar_OnUpdate(elapsed)
-
-
-	test = self
 
 	if (self.sb.mirror) then
 
