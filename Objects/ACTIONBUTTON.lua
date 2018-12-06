@@ -73,6 +73,12 @@ local AlternateSpellNameList = {
 
 local alphaTimer, alphaDir = 0, 0
 
+local autoCast = { speeds = { 2, 4, 6, 8 }, timers = { 0, 0, 0, 0 }, circle = { 0, 22, 44, 66 }, shines = {}, r = 0.95, g = 0.95, b = 0.32 }
+
+local cooldowns, cdAlphas = {}, {}
+
+Neuron.cooldowns = cooldowns
+Neuron.cdAlphas = cdAlphas
 
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -85,6 +91,274 @@ function ACTIONBUTTON:new(name)
 end
 
 
+function ACTIONBUTTON.AutoCastStart(shine, r, g, b)
+	autoCast.shines[shine] = shine
+
+	if (not r) then
+		r, g, b = autoCast.r, autoCast.g, autoCast.b
+	end
+
+	for _,sparkle in pairs(shine.sparkles) do
+		sparkle:Show()
+		sparkle:SetVertexColor(r, g, b)
+	end
+end
+
+
+function ACTIONBUTTON.AutoCastStop(shine)
+	autoCast.shines[shine] = nil
+
+	for _,sparkle in pairs(shine.sparkles) do
+		sparkle:Hide()
+	end
+end
+
+
+--this function gets called via controlOnUpdate in the main Neuron.lua
+function ACTIONBUTTON.cooldownsOnUpdate(elapsed)
+
+
+	local coolDown, formatted, size
+
+	for cd in next,cooldowns do
+
+		coolDown = floor(cd.duration-(GetTime()-cd.start))
+		formatted, size = coolDown, cd.button:GetWidth()*0.45
+
+		if (coolDown < 1) then
+			if (coolDown < 0) then
+				cooldowns[cd] = nil
+
+				cd.timer:Hide()
+				cd.timer:SetText("")
+				cd.timerCD = nil
+				cd.expirecolor = nil
+				cd.cdsize = nil
+				cd.active = nil
+				cd.expiry = nil
+
+			elseif (coolDown >= 0) then
+				cd.timer:SetAlpha(cd.duration-(GetTime()-cd.start))
+
+				if (cd.alphafade) then
+					cd:SetAlpha(cd.duration-(GetTime()-cd.start))
+				end
+			end
+
+		elseif (cd.timer:IsShown() and coolDown ~= cd.timerCD) then
+			if (coolDown >= 86400) then
+				formatted = math.ceil(coolDown/86400)
+				formatted = formatted.."d"; size = cd.button:GetWidth()*0.3
+			elseif (coolDown >= 3600) then
+				formatted = math.ceil(coolDown/3600)
+				formatted = formatted.."h"; size = cd.button:GetWidth()*0.3
+			elseif (coolDown >= 60) then
+				formatted = math.ceil(coolDown/60)
+				formatted = formatted.."m"; size = cd.button:GetWidth()*0.3
+			elseif (coolDown < 6) then
+				size = cd.button:GetWidth()*0.6
+				if (cd.expirecolor) then
+					cd.timer:SetTextColor(cd.expirecolor[1], cd.expirecolor[2], cd.expirecolor[3]); cd.expirecolor = nil
+					cd.expiry = true
+				end
+			end
+
+			if (not cd.cdsize or cd.cdsize ~= size) then
+				cd.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE"); cd.cdsize = size
+			end
+
+			cd.timerCD = coolDown
+			cd.timer:SetAlpha(1)
+			cd.timer:SetText(formatted)
+		end
+	end
+
+	for cd in next,cdAlphas do
+		coolDown = ceil(cd.duration-(GetTime()-cd.start))
+
+		if (coolDown < 1) then
+			cdAlphas[cd] = nil
+			cd.button:SetAlpha(1)
+			cd.alphaOn = nil
+
+		elseif (not cd.alphaOn) then
+			cd.button:SetAlpha(cd.button.cdAlpha)
+			cd.alphaOn = true
+		end
+	end
+end
+
+function ACTIONBUTTON.updateAuraInfo(unit)
+
+	local uai_index, uai_spell, uai_count, uai_duration, uai_timeLeft, uai_caster, uai_spellID, _
+	uai_index = 1
+
+	wipe(Neuron.unitAuras[unit])
+
+	repeat
+		uai_spell, _, uai_count, _, uai_duration, uai_timeLeft, uai_caster, _, _, uai_spellID = UnitAura(unit, uai_index, "HELPFUL")
+
+		if (uai_duration and (uai_caster == "player" or uai_caster == "pet")) then
+			Neuron.unitAuras[unit][uai_spell:lower()] = "buff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
+			Neuron.unitAuras[unit][uai_spell:lower().."()"] = "buff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
+		end
+
+		uai_index = uai_index + 1
+
+	until (not uai_spell)
+
+	uai_index = 1
+
+	repeat
+		uai_spell, _, uai_count, _, uai_duration, uai_timeLeft, uai_caster = UnitAura(unit, uai_index, "HARMFUL")
+
+		if (uai_duration and (uai_caster == "player" or uai_caster == "pet")) then
+			Neuron.unitAuras[unit][uai_spell:lower()] = "debuff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
+			Neuron.unitAuras[unit][uai_spell:lower().."()"] = "debuff"..":"..uai_duration..":"..uai_timeLeft..":"..uai_count
+		end
+
+		uai_index = uai_index + 1
+
+	until (not uai_spell)
+end
+
+
+
+
+
+
+
+
+
+--this function gets called via controlOnUpdate in the main Neuron.lua
+---this function controlls the sparkley effects around abilities, if throttled then those effects are throttled down super slow. Be careful.
+function ACTIONBUTTON.controlOnUpdate(elapsed)
+	local cou_distance, cou_radius, cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position
+
+	for i in next,autoCast.timers do
+		autoCast.timers[i] = autoCast.timers[i] + elapsed
+
+		if ( autoCast.timers[i] > autoCast.speeds[i]*4 ) then
+			autoCast.timers[i] = 0
+		end
+	end
+
+	for i in next,autoCast.circle do
+		autoCast.circle[i] = autoCast.circle[i] - i
+
+		if ( autoCast.circle[i] < 0 ) then
+			autoCast.circle[i] = 359
+		end
+	end
+
+	for shine in next, autoCast.shines do
+		cou_distance, cou_radius = shine:GetWidth(), shine:GetWidth()/2.7
+		for i=1,4 do
+			cou_timer, cou_speed, cou_degree = autoCast.timers[i], autoCast.speeds[i], autoCast.circle[i]
+
+			if ( cou_timer <= cou_speed ) then
+				if (shine.shape == "circle") then
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
+					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-90))
+					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-180))
+					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-270))
+					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+				else
+					cou_position = cou_timer/cou_speed*cou_distance
+
+					shine.sparkles[0+i]:SetPoint("CENTER", shine, "TOPLEFT", cou_position, 0)
+					shine.sparkles[4+i]:SetPoint("CENTER", shine, "BOTTOMRIGHT", -cou_position, 0)
+					shine.sparkles[8+i]:SetPoint("CENTER", shine, "TOPRIGHT", 0, -cou_position)
+					shine.sparkles[12+i]:SetPoint("CENTER", shine, "BOTTOMLEFT", 0, cou_position)
+				end
+
+			elseif (cou_timer <= cou_speed*2) then
+				if (shine.shape == "circle") then
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
+					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
+					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
+					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
+					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+				else
+					cou_position = (cou_timer-cou_speed)/cou_speed*cou_distance
+
+					shine.sparkles[0+i]:SetPoint("CENTER", shine, "TOPRIGHT", 0, -cou_position)
+					shine.sparkles[4+i]:SetPoint("CENTER", shine, "BOTTOMLEFT", 0, cou_position)
+					shine.sparkles[8+i]:SetPoint("CENTER", shine, "BOTTOMRIGHT", -cou_position, 0)
+					shine.sparkles[12+i]:SetPoint("CENTER", shine, "TOPLEFT", cou_position, 0)
+				end
+
+			elseif (cou_timer <= cou_speed*3) then
+				if (shine.shape == "circle") then
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
+					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
+					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
+					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
+					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+				else
+					cou_position = (cou_timer-cou_speed*2)/cou_speed*cou_distance
+
+					shine.sparkles[0+i]:SetPoint("CENTER", shine, "BOTTOMRIGHT", -cou_position, 0)
+					shine.sparkles[4+i]:SetPoint("CENTER", shine, "TOPLEFT", cou_position, 0)
+					shine.sparkles[8+i]:SetPoint("CENTER", shine, "BOTTOMLEFT", 0, cou_position)
+					shine.sparkles[12+i]:SetPoint("CENTER", shine, "TOPRIGHT", 0, -cou_position)
+				end
+			else
+				if (shine.shape == "circle") then
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
+					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
+					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
+					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+
+					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
+					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
+				else
+					cou_position = (cou_timer-cou_speed*3)/cou_speed*cou_distance
+
+					shine.sparkles[0+i]:SetPoint("CENTER", shine, "BOTTOMLEFT", 0, cou_position)
+					shine.sparkles[4+i]:SetPoint("CENTER", shine, "TOPRIGHT", 0, -cou_position)
+					shine.sparkles[8+i]:SetPoint("CENTER", shine, "TOPLEFT", cou_position, 0)
+					shine.sparkles[12+i]:SetPoint("CENTER", shine, "BOTTOMRIGHT", -cou_position, 0)
+				end
+			end
+		end
+	end
+
+	alphaTimer = alphaTimer + elapsed * 2.5
+
+	if (alphaDir == 1) then
+		if (1-alphaTimer <= 0) then
+			alphaDir = 0; alphaTimer = 0
+		end
+
+	else
+		if (alphaTimer >= 1) then
+			alphaDir = 1; alphaTimer = 0
+		end
+	end
+end
 
 
 function ACTIONBUTTON:LoadData(spec, state)
@@ -647,7 +921,7 @@ function ACTIONBUTTON:MACRO_StartGlow()
 	if (self.spellGlowDef) then
 		ActionButton_ShowOverlayGlow(self)
 	elseif (self.spellGlowAlt) then
-		Neuron:AutoCastStart(self.shine)
+		self.AutoCastStart(self.shine)
 	end
 
 	self.glowing = true
@@ -657,7 +931,7 @@ function ACTIONBUTTON:MACRO_StopGlow()
 	if (self.spellGlowDef) then
 		ActionButton_HideOverlayGlow(self)
 	elseif (self.spellGlowAlt) then
-		Neuron:AutoCastStop(self.shine)
+		self.AutoCastStop(self.shine)
 	end
 
 	self.glowing = nil

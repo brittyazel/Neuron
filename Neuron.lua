@@ -441,7 +441,7 @@ end
 
 function Neuron:PLAYER_TARGET_CHANGED()
 	for k in pairs(Neuron.unitAuras) do
-		Neuron:updateAuraInfo(k)
+		Neuron.ACTIONBUTTON.updateAuraInfo(k)
 	end
 end
 
@@ -453,7 +453,7 @@ function Neuron:UNIT_AURA(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 		end
-		Neuron:updateAuraInfo(select(1,...))
+		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
@@ -461,7 +461,7 @@ function Neuron:UNIT_SPELLCAST_SENT(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 		end
-		Neuron:updateAuraInfo(select(1,...))
+		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
@@ -469,7 +469,7 @@ function Neuron:UNIT_SPELLCAST_START(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 		end
-		Neuron:updateAuraInfo(select(1,...))
+		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
@@ -477,7 +477,7 @@ function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 		end
-		Neuron:updateAuraInfo(select(1,...))
+		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
@@ -485,7 +485,7 @@ function Neuron:UNIT_SPELLCAST_CHANNEL_START(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 		end
-		Neuron:updateAuraInfo(select(1,...))
+		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
@@ -493,7 +493,7 @@ function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 		end
-		Neuron:updateAuraInfo(select(1,...))
+		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
@@ -642,23 +642,16 @@ function Neuron:controlOnUpdate(frame, elapsed)
 	---Throttled OnUpdate calls
 	if (Neuron.elapsed > DB.throttle and Neuron.PEW) then
 
-		Neuron:cooldownsOnUpdate(frame, elapsed)
-		--[[if Neuron.NeuronZoneAbilityBar then
-			Neuron.NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
-		end]]
-		if Neuron.NeuronPetBar then
-			Neuron.NeuronPetBar:controlOnUpdate(frame, elapsed)
-		end
-		if Neuron.NeuronStatusBar then
-			Neuron.NeuronStatusBar:controlOnUpdate(frame, elapsed)
-		end
+		Neuron.ACTIONBUTTON.cooldownsOnUpdate(elapsed)
+
+		Neuron.PETBTN.controlOnUpdate(frame, elapsed)
 
 		Neuron.elapsed = 0
 	end
 
 	---UnThrottled OnUpdate calls
 	if(Neuron.PEW) then
-		Neuron:controlOnUpdate(frame, elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
+		Neuron.ACTIONBUTTON.controlOnUpdate(elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 		Neuron.NeuronBar:controlOnUpdate(frame, elapsed)
 	end
 end

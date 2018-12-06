@@ -24,7 +24,7 @@ local BarRepColors = {
 
 --These factions return fID but have 8 levels instead of 6
 local BrawlerGuildFactions = {
-	[1419] = true, --Aliance
+	[1419] = true, --Alliance
 	[1374] = true, --Horde
 }
 

@@ -24,6 +24,55 @@ function PETBTN:new(name)
 end
 
 
+-----utilities
+
+--this function gets called from the controlOnUpdate in the Neuron.lua file
+function PETBTN.controlOnUpdate(frame, elapsed)
+	local alphaTimer, alphaDir = 0, 0
+
+	alphaTimer = alphaTimer + elapsed * 2.5
+
+	if (alphaDir == 1) then
+		if (1-alphaTimer <= 0) then
+			alphaDir = 0; alphaTimer = 0
+		end
+	else
+		if (alphaTimer >= 1) then
+			alphaDir = 1; alphaTimer = 0
+		end
+	end
+
+end
+
+function PETBTN.HasPetAction(id, icon)
+
+	if not id then return end --return if there is no id passed in
+
+	local _, texture = GetPetActionInfo(id)
+
+	if (GetPetActionSlotUsable(id)) then
+
+		if (texture) then
+			return true
+		else
+			return false
+		end
+	else
+
+		if (icon and texture) then
+			return true
+		else
+			return false
+		end
+	end
+end
+
+
+-----
+
+
+
+
 function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 
 	self.isToken = isToken
@@ -78,12 +127,12 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 
 	if (enabled) then
 
-		Neuron:AutoCastStart(self.shine)
+		self.AutoCastStart(self.shine)
 		self.autocastable:Hide()
 		self.autocastenabled = true
 
 	else
-		Neuron:AutoCastStop(self.shine)
+		self.AutoCastStop(self.shine)
 
 		if (allowed) then
 			self.autocastable:Show()
@@ -99,7 +148,7 @@ function PETBTN:PET_UpdateCooldown()
 
 	local actionID = self.actionID
 
-	if (Neuron.NeuronPetBar:HasPetAction(actionID)) then
+	if self.HasPetAction(actionID) then
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
@@ -119,7 +168,7 @@ function PETBTN:PET_UpdateTexture(force)
 
 	if (not self:GetSkinned()) then
 
-		if (Neuron.NeuronPetBar:HasPetAction(actionID, true) or force) then
+		if (self.HasPetAction(actionID, true) or force) then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -338,7 +387,7 @@ function PETBTN:PET_SetTooltip(edit)
 		if (self.tooltipSubtext and self.UberTooltips) then
 			GameTooltip:AddLine(self.tooltipSubtext, "", 0.5, 0.5, 0.5)
 		end
-	elseif (Neuron.NeuronPetBar:HasPetAction(actionID)) then
+	elseif (self.HasPetAction(actionID)) then
 		if (self.UberTooltips) then
 			GameTooltip:SetPetAction(actionID)
 		else
@@ -404,7 +453,7 @@ function PETBTN:SetObjectVisibility(show)
 
 	if (show or self.showGrid) then
 		self:SetAlpha(1)
-	elseif not Neuron.NeuronPetBar:HasPetAction(self.actionID) and (not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode) then
+	elseif not self.HasPetAction(self.actionID) and (not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode) then
 		self:SetAlpha(0)
 	end
 
