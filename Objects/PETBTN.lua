@@ -127,12 +127,12 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 
 	if (enabled) then
 
-		self.AutoCastStart(self.shine)
+		Neuron.ACTIONBUTTON.AutoCastStart(self.shine)
 		self.autocastable:Hide()
 		self.autocastenabled = true
 
 	else
-		self.AutoCastStop(self.shine)
+		Neuron.ACTIONBUTTON.AutoCastStop(self.shine)
 
 		if (allowed) then
 			self.autocastable:Show()
