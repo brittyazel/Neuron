@@ -750,7 +750,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
 
-		if (not name or (not self.sb.showTradeSkills and isTradeSkill)) then
+		if (not name) then
 			self:CastBar_Reset()
 			return
 		end
@@ -856,7 +856,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
 
-			if (not name or (not self.sb.showTradeSkills and isTradeSkill)) then
+			if (not name) then
 				self:CastBar_Reset()
 				return
 			end
@@ -884,7 +884,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 
-		if (not name or (not self.sb.showTradeSkills and isTradeSkill)) then
+		if (not name) then
 			self:CastBar_Reset()
 			return
 		end
@@ -932,7 +932,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
 
-			if (not name or (not self.sb.showTradeSkills and isTradeSkill)) then
+			if (not name) then
 				self:CastBar_Reset()
 				return
 			end
@@ -1899,7 +1899,6 @@ function STATUSBTN:SetType(save)
 			self.sb.unit = BarUnits[self.data.unit]
 			self.sb.showIcon = self.config.showIcon
 
-			self.sb.showTradeSkills = true
 			self.sb.casting = false
 			self.sb.channeling = false
 			self.sb.holdTime = 0
