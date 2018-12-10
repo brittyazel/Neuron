@@ -733,6 +733,7 @@ end
 
 function STATUSBTN:CastBar_OnEvent(event, ...)
 
+
 	local unit = ...
 
 	if (unit ~= self.sb.unit) then
@@ -749,7 +750,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
 
-		if (not name or (not self.showTradeSkills and isTradeSkill)) then
+		if (not name or (not self.sb.showTradeSkills and isTradeSkill)) then
 			self:CastBar_Reset()
 			return
 		end
