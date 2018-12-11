@@ -733,7 +733,6 @@ end
 
 function STATUSBTN:CastBar_OnEvent(event, ...)
 
-
 	local unit = ...
 
 	if (unit ~= self.sb.unit) then
@@ -743,8 +742,6 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 	if (not CastWatch[unit] ) then
 		CastWatch[unit] = {}
 	end
-
-
 
 	if (event == "UNIT_SPELLCAST_START") then
 
@@ -1291,15 +1288,15 @@ function STATUSBTN:UpdateWidth(command, gui, query, skipupdate)
 
 		self:SetWidth(self.config.width)
 
-		Neuron.NeuronBar:SetObjectLoc(self.bar)
+		self.bar:SetObjectLoc()
 
-		Neuron.NeuronBar:SetPerimeter(self.bar)
+		self.bar:SetPerimeter()
 
-		Neuron.NeuronBar:SetSize(self.bar)
+		self.bar:SetSize()
 
 		if (not skipupdate) then
 			Neuron.NeuronGUI:Status_UpdateEditor()
-			Neuron.NeuronBar:Update(self.bar)
+			self.bar:Update()
 		end
 	end
 end
@@ -1321,15 +1318,15 @@ function STATUSBTN:UpdateHeight(command, gui, query, skipupdate)
 
 		self:SetHeight(self.config.height)
 
-		Neuron.NeuronBar:SetObjectLoc(self.bar)
+		self.bar:SetObjectLoc()
 
-		Neuron.NeuronBar:SetPerimeter(self.bar)
+		self.bar:SetPerimeter()
 
-		Neuron.NeuronBar:SetSize(self.bar)
+		self.bar:SetSize()
 
 		if (not skipupdate) then
 			Neuron.NeuronGUI:Status_UpdateEditor()
-			Neuron.NeuronBar:Update(self.bar)
+			self.bar:Update()
 		end
 	end
 end
@@ -1424,15 +1421,15 @@ function STATUSBTN:UpdateOrientation(command, gui, query, skipupdate)
 
 		self:SetHeight(self.config.height)
 
-		Neuron.NeuronBar:SetObjectLoc(self.bar)
+		self.bar:SetObjectLoc()
 
-		Neuron.NeuronBar:SetPerimeter(self.bar)
+		self.bar:SetPerimeter()
 
-		Neuron.NeuronBar:SetSize(self.bar)
+		self.bar:SetSize()
 
 		if (not skipupdate) then
 			Neuron.NeuronGUI:Status_UpdateEditor()
-			Neuron.NeuronBar:Update(self.bar)
+			self.bar:Update()
 		end
 	end
 end

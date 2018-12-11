@@ -380,9 +380,9 @@ function ACTIONBUTTON:updateFlyoutBars(elapsed)
 		local bar = table.remove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
-			Neuron.NeuronBar:SetObjectLoc(bar)
-			Neuron.NeuronBar:SetPerimeter(bar)
-			Neuron.NeuronBar:SetSize(bar)
+			bar:SetObjectLoc()
+			bar:SetPerimeter()
+			bar:SetSize()
 		else
 			self:Hide()
 		end
@@ -960,7 +960,7 @@ function ACTIONBUTTON:Flyout_GetBar()
 	bar:SetFrameLevel(2)
 
 	bar:RegisterEvent("PLAYER_ENTERING_WORLD")
-	bar:SetScript("OnEvent", function(self) Neuron.NeuronBar:SetObjectLoc(self) Neuron.NeuronBar:SetPerimeter(self) Neuron.NeuronBar:SetSize(self) end)
+	bar:SetScript("OnEvent", function(self) self:SetObjectLoc() self:SetPerimeter() self:SetSize() end)
 
 	bar:Hide()
 

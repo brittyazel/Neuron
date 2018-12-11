@@ -93,7 +93,7 @@ function NeuronExitBar:CreateBarsAndButtons()
 			local object
 
 			object = Neuron:CreateNewObject("exitbar", 1, true)
-			Neuron.NeuronBar:AddObjectToList(bar, object)
+			bar:AddObjectToList(object)
 		end
 
 		DB.exitbarFirstRun = false

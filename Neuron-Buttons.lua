@@ -1,15 +1,9 @@
 --Neuron, a World of Warcraft® user interface addon.
 
 
-
-
 ------------------------------------------------------------
 --------------------Button General Functions----------------
 ------------------------------------------------------------
-
-
-
-
 
 function Neuron:SetTimer(frame, start, duration, enable, timer, color1, color2, cdAlpha)
 

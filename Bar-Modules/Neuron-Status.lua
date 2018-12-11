@@ -123,7 +123,7 @@ function NeuronStatusBar:CreateBarsAndButtons()
             local object
 
             object = Neuron:CreateNewObject("status", id, true)
-            Neuron.NeuronBar:AddObjectToList(bar, object)
+            bar:AddObjectToList(object)
         end
 
         DB.statusbarFirstRun = false

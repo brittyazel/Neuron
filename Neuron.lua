@@ -325,7 +325,7 @@ function Neuron:OnEnable()
 	Neuron:LoginMessage()
 
 	for _,bar in pairs(BARIndex) do
-		Neuron.NeuronBar:Load(bar)
+		bar:Load()
 	end
 
 
@@ -596,9 +596,9 @@ function Neuron:slashHandler(input)
 
 			if (Neuron[func]) then
 				Neuron[func](Neuron, args[1])
-			elseif (bar and Neuron.NeuronBar[func]) then
+			elseif (bar and bar[func]) then
 				---because we're calling a variable func name, we can't use the ":" notation, so we have to explicitely state the parent object as the first param
-				Neuron.NeuronBar[func](Neuron.NeuronBar, bar, args[1]) --not sure what to do for more than 1 arg input
+				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
 			else
 				Neuron:Print(L["No bar selected or command invalid"])
 			end
@@ -652,7 +652,7 @@ function Neuron:controlOnUpdate(frame, elapsed)
 	---UnThrottled OnUpdate calls
 	if(Neuron.PEW) then
 		Neuron.ACTIONBUTTON.controlOnUpdate(elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
-		Neuron.NeuronBar:controlOnUpdate(frame, elapsed)
+		Neuron.BAR.controlOnUpdate(frame, elapsed)
 	end
 end
 
@@ -1196,8 +1196,8 @@ function Neuron:ToggleBarEditMode(show)
 
 		for index, bar in pairs(BARIndex) do
 			bar:Show() --this shows the transparent overlay over a bar
-			Neuron.NeuronBar:Update(bar, true)
-			Neuron.NeuronBar:UpdateObjectVisibility(bar, true)
+			bar:Update(true)
+			bar:UpdateObjectVisibility(true)
 		end
 
 	else
@@ -1206,11 +1206,11 @@ function Neuron:ToggleBarEditMode(show)
 
 		for index, bar in pairs(BARIndex) do
 			bar:Hide()
-			Neuron.NeuronBar:Update(bar, nil, true)
-			Neuron.NeuronBar:UpdateObjectVisibility(bar)
+			bar:Update(nil, true)
+			bar:UpdateObjectVisibility()
 		end
 
-		Neuron.NeuronBar:ChangeBar(nil)
+		--bar:ChangeBar(nil)
 
 		if (NeuronBarEditor)then
 			NeuronBarEditor:Hide()
@@ -1241,7 +1241,7 @@ function Neuron:ToggleButtonEditMode(show)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			Neuron.NeuronBar:UpdateObjectVisibility(bar, true)
+			bar:UpdateObjectVisibility(true)
 		end
 
 	else
@@ -1255,7 +1255,7 @@ function Neuron:ToggleButtonEditMode(show)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			Neuron.NeuronBar:UpdateObjectVisibility(bar)
+			bar:UpdateObjectVisibility()
 
 			if (bar.handler:GetAttribute("assertstate")) then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
@@ -1290,7 +1290,7 @@ function Neuron:ToggleBindingMode(show)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			Neuron.NeuronBar:UpdateObjectVisibility(bar, true)
+			bar:UpdateObjectVisibility(true)
 		end
 
 	else
@@ -1306,7 +1306,7 @@ function Neuron:ToggleBindingMode(show)
 		end
 
 		for _,bar in pairs(BARIndex) do
-			Neuron.NeuronBar:UpdateObjectVisibility(bar)
+			bar:UpdateObjectVisibility()
 		end
 	end
 end

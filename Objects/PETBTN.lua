@@ -311,7 +311,7 @@ function PETBTN:PLAYER_ENTERING_WORLD(event, ...)
 	self:SetObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
 
 	---This part is so that the grid get's set properly on login
-	C_Timer.After(2, function() Neuron.NeuronBar:UpdateObjectVisibility(self.bar) end)
+	C_Timer.After(2, function() self.bar:UpdateObjectVisibility() end)
 
 end
 
@@ -354,7 +354,7 @@ function PETBTN:OnDragStart()
 
 	for i,bar in pairs(Neuron.BARIndex) do
 		if bar.class == "pet" then
-			Neuron.NeuronBar:UpdateObjectVisibility(bar, true)
+			bar:UpdateObjectVisibility(true)
 		end
 	end
 end

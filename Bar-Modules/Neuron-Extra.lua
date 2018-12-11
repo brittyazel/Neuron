@@ -93,7 +93,7 @@ function NeuronExtraBar:CreateBarsAndButtons()
 			local object
 
 			object = Neuron:CreateNewObject("extrabar", 1, true)
-			Neuron.NeuronBar:AddObjectToList(bar, object)
+			bar:AddObjectToList(object)
 		end
 
 		DB.extrabarFirstRun = false

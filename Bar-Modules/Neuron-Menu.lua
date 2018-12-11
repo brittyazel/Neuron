@@ -93,7 +93,7 @@ function NeuronMenuBar:CreateBarsAndButtons()
 
             for i=1,11 do
                 object = Neuron:CreateNewObject("menu", i, true)
-                Neuron.NeuronBar:AddObjectToList(bar, object)
+                bar:AddObjectToList(object)
             end
         end
 

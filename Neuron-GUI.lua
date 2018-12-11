@@ -523,11 +523,11 @@ function NeuronGUI:UpdateBarGUI(newBar)
 
 				if (GUIData[bar.class].chkOpt[f.option]) then
 
-					if (Neuron.NeuronBar[f.func]) then
+					if (bar[f.func]) then
 						if (f.primary) then
 							if (f.primary:GetChecked()) then
 								f:Enable()
-								f:SetChecked(Neuron.NeuronBar[f.func](Neuron.NeuronBar, bar, f.modtext, true, nil, true))
+								f:SetChecked(bar[f.func](bar, f.modtext, true, nil, true))
 								f.text:SetTextColor(1,0.82,0)
 								f.disabled = nil
 							else
@@ -537,7 +537,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 								f.disabled = true
 							end
 						else
-							f:SetChecked(Neuron.NeuronBar[f.func](Neuron.NeuronBar, bar, f.modtext, true, nil, true))
+							f:SetChecked(bar[f.func](bar, f.modtext, true, nil, true))
 						end
 					end
 
@@ -565,9 +565,9 @@ function NeuronGUI:UpdateBarGUI(newBar)
 
 				f:ClearAllPoints(); f:Hide()
 
-				if (Neuron.NeuronBar[f.func] and f.option == "SHAPE") then
+				if (bar[f.func] and f.option == "SHAPE") then
 
-					shape = Neuron.NeuronBar[f.func](Neuron.NeuronBar, bar, nil, true, true)
+					shape = bar[f.func](bar, nil, true, true)
 
 					if (shape ~= L["Linear"]) then
 						yoff1 = (adjHeight)/8
@@ -628,14 +628,14 @@ function NeuronGUI:UpdateBarGUI(newBar)
 					yoff = yoff-yoff1
 				end
 
-				if (Neuron.NeuronBar[f.func]) then
+				if (bar[f.func]) then
 
 					f.edit.value = nil
 
 					if (f.format) then
-						f.edit:SetText(format(f.format, Neuron.NeuronBar[f.func](Neuron.NeuronBar, bar, nil, true, true)*f.mult)..f.endtext)
+						f.edit:SetText(format(f.format, bar[f.func](bar, nil, true, true)*f.mult)..f.endtext)
 					else
-						f.edit:SetText(Neuron.NeuronBar[f.func](Neuron.NeuronBar, bar, nil, true, true))
+						f.edit:SetText(bar[f.func](bar, nil, true, true))
 					end
 					f.edit:SetCursorPosition(0)
 				end
@@ -651,9 +651,9 @@ function NeuronGUI:UpdateBarGUI(newBar)
 
 				if (GUIData[bar.class].chkOpt[f.option]) then
 
-					if (Neuron.NeuronBar[f.func]) then
+					if (bar[f.func]) then
 
-						local checked, color1, color2 = Neuron.NeuronBar[f.func](Neuron.NeuronBar, bar, f.modtext, true, nil, true)
+						local checked, color1, color2 = bar[f.func](bar, f.modtext, true, nil, true)
 
 						f:SetChecked(checked)
 
@@ -851,9 +851,9 @@ function NeuronGUI:updateCustomState(frame)
 	local state = frame:GetText()
 	local customStateList = ""
 
-	Neuron.NeuronBar:SetState(bar, "custom", true, false)  --turns off custom state to clear any previous stored items
+	bar:SetState("custom", true, false)  --turns off custom state to clear any previous stored items
 	if (bar and state ~= "") then
-		Neuron.NeuronBar:SetState(bar, "custom "..state, true, true)
+		bar:SetState("custom "..state, true, true)
 	end
 
 	if (bar and bar.data.customNames) then
@@ -872,9 +872,9 @@ function NeuronGUI:countOnMouseWheel(delta)
 	if (bar) then
 
 		if (delta > 0) then
-			Neuron.NeuronBar:AddObjectsToBar(bar)
+			Neuron.bar:AddObjectsToBar()
 		else
-			Neuron.NeuronBar:RemoveObjectsFromBar(bar)
+			Neuron.bar:RemoveObjectsFromBar()
 		end
 	end
 end
@@ -981,7 +981,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetNormalTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Up")
 	f:SetPushedTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Down")
 	f:SetHighlightTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Highlight")
-	f:SetScript("OnClick", function() if (Neuron.CurrentBar) then Neuron.NeuronBar:AddObjectsToBar(Neuron.CurrentBar) end end)
+	f:SetScript("OnClick", function() if (Neuron.CurrentBar) then Neuron.CurrentBar:AddObjectsToBar() end end)
 
 	f = CreateFrame("Button", nil, frame.count)
 	f:SetWidth(32)
@@ -990,7 +990,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetNormalTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Up")
 	f:SetPushedTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Down")
 	f:SetHighlightTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionLeft-Highlight")
-	f:SetScript("OnClick", function() if (Neuron.CurrentBar) then Neuron.NeuronBar:RemoveObjectsFromBar(Neuron.CurrentBar) end end)
+	f:SetScript("OnClick", function() if (Neuron.CurrentBar) then Neuron.CurrentBar:RemoveObjectsFromBar() end end)
 
 end
 
@@ -1038,7 +1038,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 								if (self.bar) then
 
-									Neuron.NeuronBar:CreateNewBar(self.bar)
+									Neuron.NeuronBar:CreateNewBar()
 
 									NeuronBarEditorCreate:Click()
 								end
@@ -1047,7 +1047,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 							elseif (self.bar) then
 
-								Neuron.NeuronBar:ChangeBar(self.bar)
+								self.bar:ChangeBar()
 
 								if (NBE and NBE:IsVisible()) then
 									NeuronGUI:UpdateBarGUI()
@@ -1067,7 +1067,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 					if (self.alt) then
 
 					elseif (self.bar) then
-						Neuron.NeuronBar:OnEnter(self.bar)
+						self.bar:OnEnter()
 					end
 				end)
 
@@ -1076,7 +1076,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 					if (self.alt) then
 
 					elseif (self.bar) then
-						Neuron.NeuronBar:OnLeave(self.bar)
+						self.bar:OnLeave()
 					end
 				end)
 
@@ -1267,7 +1267,7 @@ function NeuronGUI:BarEditor_ConfirmYes(button)
 	local bar = Neuron.CurrentBar
 
 	if (bar) then
-		Neuron.NeuronBar:DeleteBar(bar)
+		bar:DeleteBar()
 	end
 
 	NeuronBarEditorDelete:Click()
@@ -1290,7 +1290,7 @@ function NeuronGUI:chkOptionOnClick(button)
 	local bar = Neuron.CurrentBar
 
 	if (bar and button.func) then
-		Neuron.NeuronBar[button.func](Neuron.NeuronBar, bar, button.modtext, true, button:GetChecked())
+		bar[button.func](bar, button.modtext, true, button:GetChecked())
 	end
 end
 
@@ -1345,7 +1345,7 @@ function NeuronGUI:adjOptionOnTextChanged(edit, frame)
 
 		elseif (frame.method == 2 and edit.value) then
 
-			Neuron.NeuronBar[frame.func](Neuron.NeuronBar, bar, edit.value, true)
+			bar[frame.func](bar, edit.value, true)
 
 			edit.value = nil
 		end
@@ -1362,7 +1362,7 @@ function NeuronGUI:adjOptionOnEditFocusLost(edit, frame)
 
 		if (frame.method == 1) then
 
-			Neuron.NeuronBar[frame.func](Neuron.NeuronBar, bar, edit:GetText(), true)
+			bar[frame.func](bar, edit:GetText(), true)
 
 		elseif (frame.method == 2) then
 
@@ -1376,7 +1376,7 @@ function NeuronGUI:adjOptionAdd(frame, onupdate)
 
 	if (bar) then
 
-		local num = Neuron.NeuronBar[frame.func](Neuron.NeuronBar, bar, nil, true, true)
+		local num = bar[frame.func](bar, nil, true, true)
 
 		if (num == L["Off"] or num == "---") then
 			num = 0
@@ -1388,7 +1388,7 @@ function NeuronGUI:adjOptionAdd(frame, onupdate)
 
 			if (frame.max and num >= frame.max) then
 
-				Neuron.NeuronBar[frame.func](Neuron.NeuronBar, bar, frame.max, true, nil, onupdate)
+				bar[frame.func](bar, frame.max, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -1398,7 +1398,7 @@ function NeuronGUI:adjOptionAdd(frame, onupdate)
 					end
 				end
 			else
-				Neuron.NeuronBar[frame.func](Neuron.NeuronBar, bar, num+frame.inc, true, nil, onupdate)
+				bar[frame.func](bar, num+frame.inc, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -1418,7 +1418,7 @@ function NeuronGUI:adjOptionSub(frame, onupdate)
 
 	if (bar) then
 
-		local num = Neuron.NeuronBar[frame.func](Neuron.NeuronBar, bar, nil, true, true)
+		local num = bar[frame.func](bar, nil, true, true)
 
 		if (num == L["Off"] or num == "---") then
 			num = 0
@@ -1430,7 +1430,7 @@ function NeuronGUI:adjOptionSub(frame, onupdate)
 
 			if (frame.min and num <= frame.min) then
 
-				Neuron.NeuronBar[frame.func](Neuron.NeuronBar, bar, frame.min, true, nil, onupdate)
+				bar[frame.func](bar, frame.min, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -1440,7 +1440,7 @@ function NeuronGUI:adjOptionSub(frame, onupdate)
 					end
 				end
 			else
-				Neuron.NeuronBar[frame.func](Neuron.NeuronBar, bar, num-frame.inc, true, nil, onupdate)
+				bar[frame.func](bar, num-frame.inc, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -1538,7 +1538,7 @@ function NeuronGUI:visOptionOnClick(button)
 	local bar = Neuron.CurrentBar
 
 	if (bar and button.func) then
-		Neuron.NeuronBar[button.func](Neuron.NeuronBar, bar, nil, true, button:GetChecked())
+		bar[button.func](bar, nil, true, button:GetChecked())
 	end
 
 end
@@ -1566,9 +1566,9 @@ function NeuronGUI:colorPickerShow(button)
 
 					bar.data[button.option] = value
 
-					Neuron.NeuronBar:UpdateObjectData(bar)
+					bar:UpdateObjectData()
 
-					Neuron.NeuronBar:Update(bar)
+					bar:Update()
 				end
 			end
 		end
@@ -1650,14 +1650,14 @@ function NeuronGUI:setBarActionState(frame)
 	local bar = Neuron.CurrentBar
 
 	if (bar) then
-		Neuron.NeuronBar:SetState(bar, frame.option, true, frame:GetChecked())
+		bar:SetState(frame.option, true, frame:GetChecked())
 	end
 end
 
 function NeuronGUI:SetBarVisibility(button)
 	local bar = Neuron.CurrentBar
 	if (bar) then
-		Neuron.NeuronBar:SetVisibility(bar, button.msg, true)
+		bar:SetVisibility(button.msg, true)
 	end
 end
 
@@ -1708,7 +1708,7 @@ function NeuronGUI:remapToOnTextChanged(frame)
 
 		bar.stateschanged = true
 
-		Neuron.NeuronBar:Update(bar)
+		bar:Update()
 	end
 end
 
@@ -2325,7 +2325,7 @@ function NeuronGUI:ActionListScrollFrame_OnLoad(frame)
 						if (i == self:GetID()) then
 
 							if (self.bar) then
-								Neuron.NeuronBar:SetFauxState(self.bar, self.state)
+								self.bar:SetFauxState(self.state)
 							end
 
 						else
@@ -2752,7 +2752,7 @@ function NeuronGUI:macroNameEdit_OnTextChanged(frame)
 			button.DB[buttonSpec][state].macro_Name = frame:GetText()
 		end
 
-		Neuron.NeuronBar:UpdateObjectData(button.bar)
+		button.bar:UpdateObjectData()
 
 	elseif (strlen(frame:GetText()) <= 0) then
 		frame.text:Show()
@@ -3550,7 +3550,7 @@ end
 
 function NeuronGUI:SetBarCastTarget(value, toggle)
 	if Neuron.CurrentBar then
-		Neuron.NeuronBar:SetCastingTarget(Neuron.CurrentBar, value, true, toggle)
+		Neuron.CurrentBar:SetCastingTarget(value, true, toggle)
 	end
 end
 

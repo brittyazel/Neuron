@@ -2173,7 +2173,7 @@ function ACTIONBUTTON:OnMouseDown()
 		wipe(Neuron.MacroDrag)
 
 		for index, bar in pairs(Neuron.BARIndex) do
-			Neuron.NeuronBar:UpdateObjectVisibility(self.bar)
+			self.bar:UpdateObjectVisibility()
 		end
 
 	end
@@ -2518,7 +2518,7 @@ function ACTIONBUTTON:MACRO_OnAttributeChanged(name, value)
 			---breaks out of the loop due to flag set below
 			if (Neuron.class == "DRUID" and self.ignoreNextOverrideStance == true and value == "homestate") then
 				self.ignoreNextOverrideStance = nil
-				Neuron.NeuronBar:SetState(self.bar, "stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
+				self.bar:SetState("stealth") --have to add this in otherwise the button icons change but still retain the homestate ability actions
 				return
 			else
 				self.ignoreNextOverrideStance = nil

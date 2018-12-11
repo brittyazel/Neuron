@@ -317,6 +317,6 @@ function ZONEABILITYBTN:HideZoneAbilityBorder(bar, msg, gui, checked, query)
 		end
 	end
 
-	Neuron.NeuronBar:Update(bar)
+	bar:Update()
 	self:UpdateFrame()
 end

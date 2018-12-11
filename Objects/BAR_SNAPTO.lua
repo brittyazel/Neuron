@@ -1,6 +1,9 @@
 ﻿--Neuron , a World of Warcraft® user interface addon.
 --SnapTo code is a modified version of FlyPaper by Tuller
 
+
+local BAR = Neuron.BAR
+
 local function frameIsDependentOnFrame(frame, otherFrame)
 
 	if (frame and otherFrame) then
@@ -112,13 +115,13 @@ end
 --[[ Usable Functions ]]--
 
 
-function Neuron.NeuronBar:StickToEdge(bar)
+function BAR:StickToEdge()
 
 	local DB = Neuron.db.profile
 
-	local point, x, y= Neuron.NeuronBar:GetPosition(bar)
+	local point, x, y= self:GetPosition()
 	local changed
-	local w, h, rTol = bar:GetWidth()/2, bar:GetHeight()/2, DB.snapToTol
+	local w, h, rTol = self:GetWidth()/2, self:GetHeight()/2, DB.snapToTol
 
 	local function calcX(opt)
 		if (opt == 1) then if (x <= w+rTol) then x = w; changed = true end
@@ -145,19 +148,19 @@ function Neuron.NeuronBar:StickToEdge(bar)
 	if (not changed and point:find("TOP")) then calcX(3); calcY(2) end
 
 	if (changed) then
-		bar.data.point = point; bar.data.x = x; bar.data.y = y
-		Neuron.NeuronBar:SetPosition(bar)
+		self.data.point = point; self.data.x = x; self.data.y = y
+		self:SetPosition()
 	end
 end
 
-function Neuron.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
+function BAR:Stick(oFrame, tolerance, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 
-	if (not canAttach(bar, oFrame)) then return end
+	if (not canAttach(self, oFrame)) then return end
 
-	local left, right, top, bottom = bar:GetLeft(), bar:GetRight(), bar:GetTop(), bar:GetBottom()
-	local centerX, centerY = bar:GetCenter()
+	local left, right, top, bottom = self:GetLeft(), self:GetRight(), self:GetTop(), self:GetBottom()
+	local centerX, centerY = self:GetCenter()
 
 	if (left and right and top and bottom and centerX) then
 
@@ -175,7 +178,7 @@ function Neuron.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
 
 	if (oLeft and oRight and oTop and oBottom and oCenterX) then
 
-		local scale = bar:GetScale()
+		local scale = self:GetScale()
 
 		oLeft = oLeft/scale; oRight = oRight/scale; oTop = oTop/scale; oBottom = oBottom/scale
 
@@ -188,9 +191,9 @@ function Neuron.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
 		local distCenter, distLeft, distRight = math.abs(oCenterX - centerX), math.abs(oLeft - left), math.abs(right - oRight)
 
 		if (math.abs(oTop - bottom) <= tolerance) then
-			return attachToTop(bar, oFrame, distLeft, distRight, distCenter, yOff)
+			return attachToTop(self, oFrame, distLeft, distRight, distCenter, yOff)
 		elseif math.abs(oBottom - top) <= tolerance then
-			return attachToBottom(bar, oFrame, distLeft, distRight, distCenter, yOff)
+			return attachToBottom(self, oFrame, distLeft, distRight, distCenter, yOff)
 		end
 	end
 
@@ -199,60 +202,60 @@ function Neuron.NeuronBar:Stick(bar, oFrame, tolerance, xOff, yOff)
 		local distCenter, distTop, distBottom = math.abs(oCenterY - centerY), math.abs(oTop - top), math.abs(oBottom - bottom)
 
 		if (math.abs(oLeft - right) <= tolerance) then
-			return attachToLeft(bar, oFrame, distTop, distBottom, distCenter, xOff)
+			return attachToLeft(self, oFrame, distTop, distBottom, distCenter, xOff)
 		end
 
 		if (math.abs(oRight - left) <= tolerance) then
-			return attachToRight(bar, oFrame, distTop, distBottom, distCenter, xOff)
+			return attachToRight(self, oFrame, distTop, distBottom, distCenter, xOff)
 		end
 	end
 
 	if (oCenterX > centerX - tolerance/2 and oCenterX < centerX + tolerance/2 and oCenterY > centerY - tolerance/2 and oCenterY < centerY + tolerance/2) then
-		return attachToCenter(bar, oFrame)
+		return attachToCenter(self, oFrame)
 	end
 end
 
-function Neuron.NeuronBar:StickToPoint(bar, oFrame, point, xOff, yOff)
+function BAR:StickToPoint(oFrame, point, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 
-	if (not (point and canAttach(bar, oFrame))) then return end
+	if (not (point and canAttach(self, oFrame))) then return end
 
-	bar:ClearAllPoints()
+	self:ClearAllPoints()
 
 	if (point == "TL") then
-		bar:SetPoint("BOTTOMLEFT", oFrame, "TOPLEFT", 0, yOff); return point
+		self:SetPoint("BOTTOMLEFT", oFrame, "TOPLEFT", 0, yOff); return point
 	elseif (point == "TC") then
-		bar:SetPoint("BOTTOM", oFrame, "TOP", 0, yOff); return point
+		self:SetPoint("BOTTOM", oFrame, "TOP", 0, yOff); return point
 	elseif (point == "TR") then
-		bar:SetPoint("BOTTOMRIGHT", oFrame, "TOPRIGHT", 0, yOff);	return point
+		self:SetPoint("BOTTOMRIGHT", oFrame, "TOPRIGHT", 0, yOff);	return point
 	end
 
 	if (point == "BL") then
-		bar:SetPoint("TOPLEFT", oFrame, "BOTTOMLEFT", 0, -yOff); return point
+		self:SetPoint("TOPLEFT", oFrame, "BOTTOMLEFT", 0, -yOff); return point
 	elseif (point == "BC") then
-		bar:SetPoint("TOP", oFrame, "BOTTOM", 0, -yOff); return point
+		self:SetPoint("TOP", oFrame, "BOTTOM", 0, -yOff); return point
 	elseif (point == "BR") then
-		bar:SetPoint("TOPRIGHT", oFrame, "BOTTOMRIGHT", 0, -yOff); return point
+		self:SetPoint("TOPRIGHT", oFrame, "BOTTOMRIGHT", 0, -yOff); return point
 	end
 
 	if (point == "LB") then
-		bar:SetPoint("BOTTOMRIGHT", oFrame, "BOTTOMLEFT", -xOff, 0); return point
+		self:SetPoint("BOTTOMRIGHT", oFrame, "BOTTOMLEFT", -xOff, 0); return point
 	elseif (point == "LC") then
-		bar:SetPoint("RIGHT", oFrame, "LEFT", -xOff, 0); return point
+		self:SetPoint("RIGHT", oFrame, "LEFT", -xOff, 0); return point
 	elseif (point == "LT") then
-		bar:SetPoint("TOPRIGHT", oFrame, "TOPLEFT", -xOff, 0); return point
+		self:SetPoint("TOPRIGHT", oFrame, "TOPLEFT", -xOff, 0); return point
 	end
 
 	if (point == "RB") then
-		bar:SetPoint("BOTTOMLEFT", oFrame, "BOTTOMRIGHT", xOff, 0); return point
+		self:SetPoint("BOTTOMLEFT", oFrame, "BOTTOMRIGHT", xOff, 0); return point
 	elseif (point == "RC") then
-		bar:SetPoint("LEFT", oFrame, "RIGHT", xOff, 0); return point
+		self:SetPoint("LEFT", oFrame, "RIGHT", xOff, 0); return point
 	elseif (point == "RT") then
-		bar:SetPoint("TOPLEFT", oFrame, "TOPRIGHT", xOff, 0); return point
+		self:SetPoint("TOPLEFT", oFrame, "TOPRIGHT", xOff, 0); return point
 	end
 
 	if (point == "CT") then
-		bar:SetPoint("CENTER", oFrame, "CENTER", 0, 0); return point
+		self:SetPoint("CENTER", oFrame, "CENTER", 0, 0); return point
 	end
 end

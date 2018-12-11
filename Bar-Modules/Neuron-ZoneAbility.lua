@@ -98,7 +98,7 @@ function NeuronZoneAbilityBar:CreateBarsAndButtons()
 			local object
 
 			object = Neuron:CreateNewObject("zoneabilitybar", 1, true)
-			Neuron.NeuronBar:AddObjectToList(bar, object)
+			bar:AddObjectToList(object)
 		end
 
 		DB.zoneabilitybarFirstRun = false
