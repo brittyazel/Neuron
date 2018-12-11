@@ -19,18 +19,18 @@ Neuron.PEW = false --flag that gets set when the player enters the world. It's u
 -- AddOn namespace.
 -------------------------------------------------------------------------------
 
-local latestVersionNum = "0.9.36" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local latestVersionNum = "0.9.38" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local latestDBVersion = 1.2
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Update_Message = [[Thanks for updating Neuron!
 
-**IMPORTANT** Due to some necessary changes, your keybinds have been reset. Sorry for the inconvenience. YOU MUST /reload ONCE MORE BEFORE YOU CAN BIND NEW KEYS!
+Welcome to path 8.1! Neuron has had a LOT of work done to it over the last few weeks, and you all should notice a significant performance increase, and much more stable frames.
 
-New: Phase 1 of the full database rewrite has been completed. This new version is MUCH easier to work with going foward. I have also introduced a database versioning scheme, and as of today everyone should be on database version 1.2.
+Also, if you didn't know, Neuron is a labor of love for me, and it is just I doing the work. Appreciation in the form of donations are always welcome, though there is absolutely no expectation to do so.
 
-Sorry for the long delay between the last update and this one. With any changed to databases, I wanted to be extra careful to avoid ruining a user's bar layout. This has been a very stressfull release for me.
+I sincerely hope you are enjoying Neuron, and Happy Holidays!
 
 -Soyier]]
 
