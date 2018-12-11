@@ -27,7 +27,7 @@ end
 -----utilities
 
 --this function gets called from the controlOnUpdate in the Neuron.lua file
-function PETBTN.controlOnUpdate(frame, elapsed)
+function PETBTN.controlOnUpdate(elapsed)
 	local alphaTimer, alphaDir = 0, 0
 
 	alphaTimer = alphaTimer + elapsed * 2.5

@@ -24,7 +24,6 @@ local defaultBarOptions = {
 	}
 }
 
---local alphaTimer, alphaDir = 0, 0
 -----------------------------------------------------------------------------
 --------------------------INIT FUNCTIONS-------------------------------------
 -----------------------------------------------------------------------------
@@ -140,19 +139,3 @@ function NeuronZoneAbilityBar:DisableDefault()
 	end
 
 end
-
---[[function NeuronZoneAbilityBar:controlOnUpdate(frame, elapsed)
-
-	alphaTimer = alphaTimer + elapsed * 2.5
-
-	if (alphaDir == 1) then
-		if (1-alphaTimer <= 0) then
-			alphaDir = 0; alphaTimer = 0
-		end
-	else
-		if (alphaTimer >= 1) then
-			alphaDir = 1; alphaTimer = 0
-		end
-	end
-
-end]]

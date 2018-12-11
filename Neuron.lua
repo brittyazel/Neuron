@@ -636,6 +636,7 @@ end
 
 ---this is the new controlOnUpdate function that will control all the other onUpdate functions.
 function Neuron:controlOnUpdate(frame, elapsed)
+
 	if not Neuron.elapsed then
 		Neuron.elapsed = 0
 	end
@@ -647,7 +648,7 @@ function Neuron:controlOnUpdate(frame, elapsed)
 
 		Neuron.ACTIONBUTTON.cooldownsOnUpdate(elapsed)
 
-		Neuron.PETBTN.controlOnUpdate(frame, elapsed)
+		Neuron.PETBTN.controlOnUpdate(elapsed)
 
 		Neuron.elapsed = 0
 	end
@@ -655,9 +656,8 @@ function Neuron:controlOnUpdate(frame, elapsed)
 	---UnThrottled OnUpdate calls
 	if(Neuron.PEW) then
 		Neuron.ACTIONBUTTON.controlOnUpdate(elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
-		Neuron.BAR.controlOnUpdate(frame, elapsed)
+		Neuron.BAR.controlOnUpdate(elapsed)
 	end
-
 
 	---this section regulates setting the "Update Group", which is a number 1-15 that objects are ~evenly assigned to.
 	---During each OnUpdate event, currentUpdateGroup increments by 1 up to 15, at which point it resets to 1, as long as the game is running.
