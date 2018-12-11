@@ -37,8 +37,6 @@ local defaultBarOptions = {
 	},
 }
 
-local barStack = {}
-
 
 -----------------------
 
@@ -67,9 +65,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronBar:OnEnable()
 
-	local stackWatch = CreateFrame("Frame", nil, UIParent)
-	stackWatch:SetScript("OnUpdate", function(self) self.bar = GetMouseFocus():GetName() if (not BARNameIndex[self.bar]) then wipe(barStack); self:Hide() end end)
-	stackWatch:Hide()
 
 end
 

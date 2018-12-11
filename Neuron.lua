@@ -166,6 +166,9 @@ Neuron.SpecialActions = {
 
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
+Neuron.numUpdateGroups = 15
+Neuron.currentUpdateGroup = 1
+
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
@@ -654,6 +657,21 @@ function Neuron:controlOnUpdate(frame, elapsed)
 		Neuron.ACTIONBUTTON.controlOnUpdate(elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 		Neuron.BAR.controlOnUpdate(frame, elapsed)
 	end
+
+
+	---this section regulates setting the "Update Group", which is a number 1-15 that objects are ~evenly assigned to.
+	---During each OnUpdate event, currentUpdateGroup increments by 1 up to 15, at which point it resets to 1, as long as the game is running.
+	---Each object (see ACTIONBUTTON.lua) is assigned randomly to an update group, and the object's OnUpdate call is only executed when currentUpdateGroup == the object's update group.
+	---This is important, because unlike a blanket throttle (which will drop all of the OnUpdate calls on a single frame), this should evenly spread the OnUpdate calls amongst all frames.
+	if (Neuron.currentUpdateGroup) < Neuron.numUpdateGroups then --numUpdateGroups for now is 15
+		Neuron.currentUpdateGroup = Neuron.currentUpdateGroup +1
+	else
+		Neuron.currentUpdateGroup = 1
+	end
+
+
+
+
 end
 
 -----------------------------------------------------------------

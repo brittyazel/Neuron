@@ -223,13 +223,6 @@ function ACTIONBUTTON.updateAuraInfo(unit)
 end
 
 
-
-
-
-
-
-
-
 --this function gets called via controlOnUpdate in the main Neuron.lua
 ---this function controlls the sparkley effects around abilities, if throttled then those effects are throttled down super slow. Be careful.
 function ACTIONBUTTON.controlOnUpdate(elapsed)
@@ -1268,10 +1261,11 @@ end
 ---Update: Seems to be important for range indication (i.e. button going red)
 function ACTIONBUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of resources
 
-	local DB = Neuron.db.profile
+	if not(self.updateGroup) then
+		self.updateGroup = math.random(Neuron.numUpdateGroups) --random number between 1 and numUpdateGroups (which is 15)
+	end
 
-	if (self.elapsed > DB.throttle) then --throttle down this code to ease up on the CPU a bit
-
+	if (self.updateGroup == Neuron.currentUpdateGroup) then
 		if (self.mac_flash) then
 
 			self.mac_flashing = true
@@ -1302,11 +1296,7 @@ function ACTIONBUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of reso
 			end
 		end
 
-		self.elapsed = 0
 	end
-
-	self.elapsed = self.elapsed + elapsed
-
 end
 
 

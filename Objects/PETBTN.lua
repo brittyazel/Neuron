@@ -220,9 +220,12 @@ end
 
 function PETBTN:OnUpdate(elapsed)
 
-	local DB = Neuron.db.profile
+	if not(self.updateGroup) then
+		self.updateGroup = math.random(Neuron.numUpdateGroups) --random number between 1 and numUpdateGroups (which is 15)
+	end
 
-	if (self.elapsed > DB.throttle) then --throttle down this code to ease up on the CPU a bit
+	if (self.updateGroup == Neuron.currentUpdateGroup) then
+
 		if (self.mac_flash) then
 
 			self.mac_flashing = true
@@ -255,11 +258,8 @@ function PETBTN:OnUpdate(elapsed)
 			end
 		end
 
-
-		self.elapsed = 0
 	end
 
-	self.elapsed = self.elapsed + elapsed
 
 end
 

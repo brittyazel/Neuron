@@ -48,8 +48,8 @@ TRASHCAN:Hide()
 
 
 
----Constructor: Create a new Neuron BAR object (this is the base object for all Neuron button types)
----@param name string @ Name given to the new button frame
+---Constructor: Create a new Neuron BAR object
+---@param name string @ Name given to the new bar frame
 ---@return BAR @ A newly created BUTTON object
 function BAR:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronBarTemplate")
