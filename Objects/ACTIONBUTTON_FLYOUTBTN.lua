@@ -3,19 +3,19 @@
 
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
-local itemTooltips, itemLinks, spellTooltips, companionTooltips = {}, {}, {}, {}
-local needsUpdate, scanData = {}, {}
+local scanData = {}
 
 
 local petIcons = {}
 
 --[[ Item Cache ]]
-
 local itemCache = {}
 local bagsToCache = {[0]=true,[1]=true,[2]=true,[3]=true,[4]=true,["Worn"]=true }
 local timerTimes = {} -- indexed by arbitrary name, the duration to run the timer
 local timersRunning = {} -- indexed numerically, timers that are running
 local cacheTimeout
+
+
 local flyoutsNeedFilled
 local firstLogin
 
@@ -23,13 +23,7 @@ local firstLogin
 local barsToUpdate = {}
 
 
-local tooltipStrings = {}
-
-
 local FOBARIndex, FOBTNIndex, ANCHORIndex = {}, {}, {}
-
-
-local tIndex = Neuron.tIndex
 
 --[[ Timer Management ]]
 local timerFrame

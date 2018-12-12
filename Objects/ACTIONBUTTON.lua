@@ -622,10 +622,12 @@ function ACTIONBUTTON:MACRO_UpdateData(...)
 
 			--find #ud_show option!
 			if (not ud_show and cmd:find("^#show")) then
-				ud_show = SecureCmdOptionParse(options); ud_showcmd = cmd
+				ud_show = SecureCmdOptionParse(options)
+				ud_showcmd = cmd
 				--sometimes SecureCmdOptionParse will return "" since that is not what we want, keep looking
 			elseif (ud_show and #ud_show < 1 and cmd:find("^#show")) then
-				ud_show = SecureCmdOptionParse(options); ud_showcmd = cmd
+				ud_show = SecureCmdOptionParse(options)
+				ud_showcmd = cmd
 			end
 
 			--find #cdwatch option!
@@ -863,26 +865,32 @@ end
 function ACTIONBUTTON:MACRO_UpdateIcon(...)
 	self.updateMacroIcon = nil
 
-	local spell, item, texture = self.macrospell, self.macroitem, self.data.macro_Icon
+	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
 
+	if (self.actionID) then
+		texture = self:ACTION_SetIcon(self.actionID)
+	elseif (show and #show>0) then
+		if(NeuronItemCache[show]) then
+			texture = self:MACRO_SetItemIcon(show)
+		else
+			texture = self:MACRO_SetSpellIcon(show)
+			self:MACRO_SetSpellState(show)
+		end
 
-	if(texture)then --saves an unnecessary lookup as it was set to self.data.macro_Icon when dragged to the bar initially
-		self.iconframeicon:SetTexture(texture)
+	elseif (spell and #spell>0) then
+		texture = self:MACRO_SetSpellIcon(spell)
+		self:MACRO_SetSpellState(spell)
+	elseif (item and #item>0) then
+		texture = self:MACRO_SetItemIcon(item)
+
+	elseif (self.data.macro_Icon) then
+		self.iconframeicon:SetTexture(self.data.macro_Icon)
 		self.iconframeicon:Show()
 	else
-		if (self.actionID) then
-			texture = self:ACTION_SetIcon(self.actionID)
-		elseif (spell and #spell>0) then
-			texture = self:MACRO_SetSpellIcon(spell)
-			self:MACRO_SetSpellState(spell)
-		elseif (item and #item>0) then
-			texture = self:MACRO_SetItemIcon(item)
-		else
-			self.macroname:SetText("")
-			self.iconframeicon:SetTexture("")
-			self.iconframeicon:Hide()
-			self.border:Hide()
-		end
+		self.macroname:SetText("")
+		self.iconframeicon:SetTexture("")
+		self.iconframeicon:Hide()
+		self.border:Hide()
 	end
 
 	--druid fix for thrash glow not showing for feral druids.
