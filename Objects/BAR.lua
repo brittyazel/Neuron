@@ -1295,7 +1295,7 @@ function BAR:OnDragStop(...)
 
 	for _,v in pairs(BARIndex) do
 		if (not point and self.data.snapTo and v.data.snapTo and self ~= v) then
-			point = self:Stick(self, v, DB.snapToTol, self.data.padH, self.data.padV)
+			point = self:Stick(v, DB.snapToTol, self.data.padH, self.data.padV)
 
 			if (point) then
 				self.data.snapToPoint = point
