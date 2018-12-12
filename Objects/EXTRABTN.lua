@@ -83,22 +83,15 @@ function EXTRABTN:ExtraButton_Update()
 
 	self:SetExtraButtonTex()
 
-	--This conditional is to show/hide the border of the button, but it ins't fully implemented yet
-	--Some people were hitting a bit be because this option didn't exist it seems
-
-	--[[if DB.extrabar[1].border then
-		button.style:Show()
-	else
-		button.style:Hide()
-	end]]
-
-	--button.style:Show()
+	self.style:Show()
 
 	local start, duration, enable = GetActionCooldown(self.actionID);
 
 	if (start) then
 		Neuron:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
+
+
 end
 
 
@@ -130,6 +123,7 @@ function EXTRABTN:SetType(save)
 	self:RegisterEvent("ZONE_CHANGED")
 	self:RegisterEvent("SPELLS_CHANGED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
 
 	self.actionID = 169
 
@@ -157,6 +151,9 @@ function EXTRABTN:SetType(save)
 						end
 					end
 					]])
+
+
+	self:SetSkinned()
 
 
 end
