@@ -244,13 +244,13 @@ function NeuronGUI:SubFrameHoneycombBackdrop_OnLoad(frame)
 	frame:SetBackdropColor(0,0,0,0)
 	frame:GetParent().backdrop = frame
 
-	frame.bg = frame:CreateTexture(nil, "BACKGROUND")
+	--[[frame.bg = frame:CreateTexture(nil, "BACKGROUND")
 	frame.bg:SetTexture("Interface\\AddOns\\Neuron\\Images\\honeycomb_small", true)
 	frame.bg:SetVertexColor(0.65,0.65,0.65,1)
 	frame.bg:SetPoint("TOPLEFT", 3, -3)
 	frame.bg:SetPoint("BOTTOMRIGHT", -3, 3)
 	frame.bg:SetHorizTile(true)
-	frame.bg:SetVertTile(true)
+	frame.bg:SetVertTile(true)]]
 end
 
 
@@ -1038,7 +1038,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 								if (self.bar) then
 
-									Neuron.NeuronBar:CreateNewBar()
+									Neuron.NeuronBar:CreateNewBar(self.bar)
 
 									NeuronBarEditorCreate:Click()
 								end
