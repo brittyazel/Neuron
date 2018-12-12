@@ -919,20 +919,25 @@ end
 
 function ACTIONBUTTON:MACRO_StartGlow()
 
-	if (self.spellGlowDef) then
-		ActionButton_ShowOverlayGlow(self)
-	elseif (self.spellGlowAlt) then
-		self.AutoCastStart(self.shine)
+	if self.spellGlow then
+		if (self.spellGlowDef) then
+			ActionButton_ShowOverlayGlow(self)
+		elseif (self.spellGlowAlt) then
+			self.AutoCastStart(self.shine)
+		end
 	end
 
 	self.glowing = true
 end
 
 function ACTIONBUTTON:MACRO_StopGlow()
-	if (self.spellGlowDef) then
-		ActionButton_HideOverlayGlow(self)
-	elseif (self.spellGlowAlt) then
-		self.AutoCastStop(self.shine)
+
+	if self.spellGlow then
+		if (self.spellGlowDef) then
+			ActionButton_HideOverlayGlow(self)
+		elseif (self.spellGlowAlt) then
+			self.AutoCastStop(self.shine)
+		end
 	end
 
 	self.glowing = nil
