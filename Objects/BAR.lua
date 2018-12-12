@@ -114,7 +114,7 @@ function BAR.controlOnUpdate(elapsed)
 					v:SetAlpha(1)
 				else
 
-					if (self.IsMouseOverSelfOrWatchFrame(k)) then
+					if (BAR.IsMouseOverSelfOrWatchFrame(k)) then
 						if (v:GetAlpha() < k.alpha) then
 							if (v:GetAlpha()+v.fadeSpeed <= 1) then
 								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
@@ -127,7 +127,7 @@ function BAR.controlOnUpdate(elapsed)
 
 					end
 
-					if (not self.IsMouseOverSelfOrWatchFrame(k)) then
+					if (not BAR.IsMouseOverSelfOrWatchFrame(k)) then
 						if (v:GetAlpha() > 0) then
 							if (v:GetAlpha()-v.fadeSpeed >= 0) then
 								v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
@@ -167,7 +167,7 @@ function BAR.controlOnUpdate(elapsed)
 					else
 						if (k.alphaUp == alphaUps[4]) then
 
-							if (self.IsMouseOverSelfOrWatchFrame(k)) then
+							if (BAR.IsMouseOverSelfOrWatchFrame(k)) then
 								if (v:GetAlpha() < 1) then
 									if (v:GetAlpha()+v.fadeSpeed <= 1) then
 										v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
@@ -218,7 +218,7 @@ function BAR.controlOnUpdate(elapsed)
 					else
 						if (k.alphaUp == alphaUps[6]) then
 
-							if (self.IsMouseOverSelfOrWatchFrame(k)) then
+							if (BAR.IsMouseOverSelfOrWatchFrame(k)) then
 								if (v:GetAlpha() < 1) then
 									if (v:GetAlpha()+v.fadeSpeed <= 1) then
 										v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
@@ -254,7 +254,7 @@ function BAR.controlOnUpdate(elapsed)
 
 				elseif (k.alphaUp == alphaUps[2]) then
 
-					if (self.IsMouseOverSelfOrWatchFrame(k)) then
+					if (BAR.IsMouseOverSelfOrWatchFrame(k)) then
 						if (v:GetAlpha() < 1) then
 							if (v:GetAlpha()+v.fadeSpeed <= 1) then
 								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
