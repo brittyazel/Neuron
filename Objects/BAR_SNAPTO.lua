@@ -117,11 +117,9 @@ end
 
 function BAR:StickToEdge()
 
-	local DB = Neuron.db.profile
-
 	local point, x, y= self:GetPosition()
 	local changed
-	local w, h, rTol = self:GetWidth()/2, self:GetHeight()/2, DB.snapToTol
+	local w, h, rTol = self:GetWidth()/2, self:GetHeight()/2, Neuron.snapToTol
 
 	local function calcX(opt)
 		if (opt == 1) then if (x <= w+rTol) then x = w; changed = true end

@@ -7,13 +7,11 @@
 
 function Neuron:SetTimer(frame, start, duration, enable, timer, color1, color2, cdAlpha)
 
-	local DB = Neuron.db.profile
-
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 		frame:SetAlpha(1)
 		CooldownFrame_Set(frame, start, duration, enable)
 
-		if (duration >= DB.timerLimit) then
+		if (duration >= Neuron.timerLimit) then
 			frame.duration = duration
 			frame.start = start
 			frame.active = true

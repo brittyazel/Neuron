@@ -41,11 +41,9 @@ end
 
 function ZONEABILITYBTN:OnUpdate(elapsed)
 
-	local DB = Neuron.db.profile
-
 	self.elapsed = self.elapsed + elapsed
 
-	if (self.elapsed > DB.throttle) then
+	if (self.elapsed > Neuron.throttle) then
 
 		self:STANCE_UpdateButton(self.actionID)
 

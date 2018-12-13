@@ -150,10 +150,6 @@ Neuron.STATEINDEX = {
 	target = "target",
 }
 
-local handler
-
-local level
-
 Neuron.BarEditMode = false
 Neuron.ButtonEditMode = false
 Neuron.BindingMode = false
@@ -168,6 +164,10 @@ Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
 Neuron.numUpdateGroups = 15
 Neuron.currentUpdateGroup = 1
+
+Neuron.throttle = 0.2
+Neuron.timerLimit = 4
+Neuron.snapToTol = 28
 
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
@@ -557,7 +557,6 @@ local slashFunctions = {
 	{L["AuraInd"], L["AuraInd_Description"], "AuraIndSet"},
 	{L["UpClick"], L["UpClick_Description"], "UpClicksSet"},
 	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
-	{L["TimerLimit"], L["TimerLimit_Description"], "SetTimerLimit"},
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
 	{L["BlizzUI"], L["BlizzUI_Description"], "ToggleBlizzUI"},
 }
@@ -645,7 +644,7 @@ function Neuron:controlOnUpdate(frame, elapsed)
 	Neuron.elapsed = Neuron.elapsed + elapsed
 
 	---Throttled OnUpdate calls
-	if (Neuron.elapsed > DB.throttle and Neuron.PEW) then
+	if (Neuron.elapsed > Neuron.throttle and Neuron.PEW) then
 
 		Neuron.ACTIONBUTTON.cooldownsOnUpdate(elapsed)
 
@@ -1411,16 +1410,4 @@ function Neuron:RegisterGUIOptions(class, chkOpt, stateOpt, adjOpt)
 		stateOpt = stateOpt,
 		adjOpt = adjOpt,
 	}
-end
-
-
-function Neuron:SetTimerLimit(msg)
-	local limit = tonumber(msg:match("%d+"))
-
-	if (limit and limit > 0) then
-		DB.timerLimit = limit
-		Neuron:Print(format(L["Timer_Limit_Set_Message"], DB.timerLimit))
-	else
-		Neuron:Print(L["Timer_Limit_Invalid_Message"])
-	end
 end

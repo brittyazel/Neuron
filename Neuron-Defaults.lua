@@ -233,10 +233,6 @@ local genericKeyData = {
 
 NeuronDefaults = {
     profile = {
-        throttle = 0.2,
-        timerLimit = 4,
-        snapToTol = 28,
-
         blizzbar = false,
 
 
