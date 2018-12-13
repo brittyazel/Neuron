@@ -306,7 +306,8 @@ function Neuron:OnEnable()
 
 	Neuron:UpdateStanceStrings()
 
-	--[[GameMenuFrame:HookScript("OnShow", function(self)
+	---this allows for the "Esc" key to disable the Edit Mode instead of bringing up the game menu, but only if an edit mode is activated.
+	GameMenuFrame:HookScript("OnShow", function(self)
 
 		if (Neuron.BarEditMode) then
 			HideUIPanel(self)
@@ -323,7 +324,7 @@ function Neuron:OnEnable()
 			Neuron:ToggleBindingMode(false)
 		end
 
-	end)]]
+	end)
 
 	Neuron:LoginMessage()
 
