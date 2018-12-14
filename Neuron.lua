@@ -301,13 +301,13 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
-	Neuron:SetScript("OnUpdate", function(self, elapsed) self:controlOnUpdate(elapsed) end)
+	Neuron:HookScript(Neuron, "OnUpdate", function(self, elapsed) self:controlOnUpdate(elapsed) end)
 
 
 	Neuron:UpdateStanceStrings()
 
 	---this allows for the "Esc" key to disable the Edit Mode instead of bringing up the game menu, but only if an edit mode is activated.
-	GameMenuFrame:SetScript("OnShow", function(self)
+	Neuron:HookScript(GameMenuFrame, "OnUpdate", function(self)
 
 		if (Neuron.BarEditMode) then
 			HideUIPanel(self)
@@ -1132,9 +1132,10 @@ function Neuron:HideBlizzard()
 	StatusTrackingBarManager:UnregisterAllEvents()
 	StatusTrackingBarManager:Hide()
 
-	if (not Neuron.hooks.actionButtonUpdateIsHooked) then
-		Neuron.hooks.actionButtonUpdateIsHooked = true
+	if (not Neuron:IsHooked('ActionButton_Update')) then
 		Neuron:RawHook('ActionButton_Update', function() end, true)
+	end
+	if (not Neuron:IsHooked('MultiActionBar_Update')) then
 		Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
 
