@@ -1080,99 +1080,60 @@ function Neuron:UpdateStanceStrings()
 end
 
 
----this is taken from Bartender4, thanks guys!
 function Neuron:HideBlizzard()
 	if (InCombatLockdown()) then
 		return
 	end
 
-	-- Hidden parent frame
-	local UIHider = CreateFrame("Frame")
-	UIHider:Hide()
 
-	if MultiBarBottomLeft then
-		MultiBarBottomLeft:Hide()
-		MultiBarBottomLeft:SetParent(UIHider)
+	---the idea for this code is inspired from Dominoes.
+	local hiddenFrame = CreateFrame('Frame', nil, UIParent, 'SecureFrameTemplate');
+	hiddenFrame:Hide()
+
+	local function disableFrame(frame, unregisterEvents)
+
+		if not frame then
+			Neuron:Print('Unknown Frame', frame:GetName())
+			return
+		end
+
+		frame:SetParent(hiddenFrame)
+		frame.ignoreFramePositionManager = true
+
+		if unregisterEvents then
+			frame:UnregisterAllEvents()
+		end
 	end
 
-	if MultiBarBottomRight then
-		MultiBarBottomRight:Hide()
-		MultiBarBottomRight:SetParent(UIHider)
+	local function disableFrameSlidingAnimation(frame)
+		local animation = (frame.slideOut:GetAnimations())
+
+		animation:SetOffset(0, 0)
 	end
 
-	if MultiBarLeft then
-		MultiBarLeft:Hide()
-		MultiBarLeft:SetParent(UIHider)
-	end
+	disableFrame(MainMenuBar)
 
-	if MultiBarRight then
-		MultiBarRight:Hide()
-		MultiBarRight:SetParent(UIHider)
-	end
+	-- disable override bar transition animations
+	disableFrameSlidingAnimation(MainMenuBar)
+	disableFrameSlidingAnimation(OverrideActionBar)
 
+	disableFrame(MultiBarBottomLeft)
+	disableFrame(MultiBarBottomRight)
+	disableFrame(MultiBarLeft)
+	disableFrame(MultiBarRight)
+	disableFrame(MainMenuBarArtFrame)
+	disableFrame(StanceBarFrame)
+	disableFrame(PossessBarFrame)
+	disableFrame(PetActionBarFrame)
+	disableFrame(MultiCastActionBarFrame)
+	disableFrame(MicroButtonAndBagsBar)
+	disableFrame(MainMenuBarPerformanceBar)
 
-	MainMenuBar:UnregisterAllEvents()
-	MainMenuBar:SetParent(UIHider)
-	MainMenuBar:Hide()
-	MainMenuBar:EnableMouse(false)
-	MainMenuBar:UnregisterEvent("DISPLAY_SIZE_CHANGED")
-	MainMenuBar:UnregisterEvent("UI_SCALE_CHANGED")
+	StatusTrackingBarManager:UnregisterAllEvents()
+	StatusTrackingBarManager:Hide()
 
-
-	MainMenuBarArtFrame:Hide()
-	MainMenuBarArtFrame:SetParent(UIHider)
-
-
-	if MicroButtonAndBagsBar then
-		MicroButtonAndBagsBar:Hide()
-		MicroButtonAndBagsBar:SetParent(UIHider)
-	end
-
-	if MainMenuExpBar then
-		MainMenuExpBar:UnregisterAllEvents()
-		MainMenuExpBar:Hide()
-		MainMenuExpBar:SetParent(UIHider)
-		MainMenuExpBar:SetDeferAnimationCallback(nil)
-	end
-
-	if MainMenuBarMaxLevelBar then
-		MainMenuBarMaxLevelBar:Hide()
-		MainMenuBarMaxLevelBar:SetParent(UIHider)
-	end
-
-	if ReputationWatchBar then
-		ReputationWatchBar:UnregisterAllEvents()
-		ReputationWatchBar:Hide()
-		ReputationWatchBar:SetParent(UIHider)
-	end
-
-	if ArtifactWatchBar then
-		ArtifactWatchBar:SetParent(UIHider)
-		ArtifactWatchBar.StatusBar:SetDeferAnimationCallback(nil)
-	end
-
-	if HonorWatchBar then
-		HonorWatchBar:SetParent(UIHider)
-		HonorWatchBar.StatusBar:SetDeferAnimationCallback(nil)
-	end
-
-	OverrideActionBar_OnLoad(OverrideActionBar)
-	OverrideActionBar:UnregisterAllEvents()
-	OverrideActionBar:Hide()
-	OverrideActionBar:SetParent(UIHider)
-
-	StanceBarFrame:UnregisterAllEvents()
-	StanceBarFrame:Hide()
-	StanceBarFrame:SetParent(UIHider)
-
-	PossessBarFrame:UnregisterAllEvents()
-	PossessBarFrame:Hide()
-	PossessBarFrame:SetParent(UIHider)
-
-	PetActionBarFrame:UnregisterAllEvents()
-	PetActionBarFrame:Hide()
-	PetActionBarFrame:SetParent(UIHider)
-
+	Neuron:RawHook('ActionButton_Update', function() end, true)
+	Neuron:RawHook('MultiActionBar_Update', function() end, true)
 
 end
 
