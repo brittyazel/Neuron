@@ -1138,6 +1138,9 @@ function Neuron:HideBlizzard()
 	if (not Neuron:IsHooked('MultiActionBar_Update')) then
 		Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
+	if (not Neuron:IsHooked('OverrideActionBar_Setup')) then
+		Neuron:RawHook('OverrideActionBar_Setup', function() end, true)
+	end
 
 end
 
