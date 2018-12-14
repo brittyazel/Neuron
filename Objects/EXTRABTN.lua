@@ -136,7 +136,7 @@ function EXTRABTN:SetType(save)
 	self:SetScript("OnEvent", function(self, event, ...) self:OnEvent(event, ...) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self) self:OnLeave() end)
-	self:HookScript("OnShow", function(self) self:ExtraButton_Update() end)
+	self:SetScript("OnShow", function(self) self:ExtraButton_Update() end)
 
 	self:WrapScript(self, "OnShow", [[
 					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do

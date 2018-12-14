@@ -301,13 +301,13 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
-	Neuron:HookScript(Neuron, "OnUpdate", "controlOnUpdate")
+	Neuron:SetScript("OnUpdate", function(self, elapsed) self:controlOnUpdate(elapsed) end)
 
 
 	Neuron:UpdateStanceStrings()
 
 	---this allows for the "Esc" key to disable the Edit Mode instead of bringing up the game menu, but only if an edit mode is activated.
-	GameMenuFrame:HookScript("OnShow", function(self)
+	GameMenuFrame:SetScript("OnShow", function(self)
 
 		if (Neuron.BarEditMode) then
 			HideUIPanel(self)
@@ -635,7 +635,7 @@ end
 ---TODO: we need to fix the throttling so that we don't bombard a single frame with ALL the processing, but instead spread out the processing on multiple frames
 
 ---this is the new controlOnUpdate function that will control all the other onUpdate functions.
-function Neuron:controlOnUpdate(frame, elapsed)
+function Neuron:controlOnUpdate(elapsed)
 
 	if not Neuron.elapsed then
 		Neuron.elapsed = 0
@@ -1132,8 +1132,11 @@ function Neuron:HideBlizzard()
 	StatusTrackingBarManager:UnregisterAllEvents()
 	StatusTrackingBarManager:Hide()
 
-	Neuron:RawHook('ActionButton_Update', function() end, true)
-	Neuron:RawHook('MultiActionBar_Update', function() end, true)
+	if (not Neuron.hooks.actionButtonUpdateIsHooked) then
+		Neuron.hooks.actionButtonUpdateIsHooked = true
+		Neuron:RawHook('ActionButton_Update', function() end, true)
+		Neuron:RawHook('MultiActionBar_Update', function() end, true)
+	end
 
 end
 

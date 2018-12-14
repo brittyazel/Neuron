@@ -1,48 +1,14 @@
 ﻿--Neuron , a World of Warcraft® user interface addon.
 
-Neuron.NeuronBinder = Neuron:NewModule("Binder", "AceEvent-3.0", "AceHook-3.0")
-local NeuronBinder = Neuron.NeuronBinder
+
+local NeuronBinder = {}
+Neuron.NeuronBinder = NeuronBinder
+
 
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-
 local BINDIndex = Neuron.BINDIndex
-
-
-
-
------------------------------------------------------------------------------
---------------------------INIT FUNCTIONS-------------------------------------
------------------------------------------------------------------------------
-
---- **OnInitialize**, which is called directly after the addon is fully loaded.
---- do init tasks here, like loading the Saved Variables
---- or setting up slash commands.
-function NeuronBinder:OnInitialize()
-
-
-end
-
---- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
---- Do more initialization here, that really enables the use of your addon.
---- Register Events, Hook functions, Create Frames, Get information from
---- the game that wasn't available in OnInitialize
-function NeuronBinder:OnEnable()
-
-end
-
-
---- **OnDisable**, which is only called when your addon is manually being disabled.
---- Unhook, Unregister Events, Hide frames that you created.
---- You would probably only use an OnDisable if you want to
---- build a "standby" mode, or be able to toggle modules on/off.
-function NeuronBinder:OnDisable()
-
-end
-
-
-
 
 
 --- Returns a list of the available spell icon filenames for use in macros

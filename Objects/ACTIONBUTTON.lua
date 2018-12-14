@@ -469,9 +469,8 @@ function ACTIONBUTTON:SetType(save, kill, init)
 		self:SetScript("OnShow", function(self, ...) self:MACRO_OnShow(...) end)
 		self:SetScript("OnHide", function(self, ...) self:MACRO_OnHide(...) end)
 		self:SetScript("OnAttributeChanged", function(self, name, value) self:MACRO_OnAttributeChanged(name, value) end)
-
-		self:HookScript("OnEnter", function(self, ...) self:MACRO_OnEnter(...) end)
-		self:HookScript("OnLeave", function(self, ...) self:MACRO_OnLeave(...) end)
+		self:SetScript("OnEnter", function(self, ...) self:MACRO_OnEnter(...) end)
+		self:SetScript("OnLeave", function(self, ...) self:MACRO_OnLeave(...) end)
 
 		self:WrapScript(self, "OnShow", [[
 						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do

@@ -526,11 +526,7 @@ function BAR:CreateDriver()
 
 	driver:SetAttribute("activestates", "")
 
-	driver:HookScript("OnAttributeChanged",
-
-			function(self,name,value)
-
-			end)
+	driver:HookScript("OnAttributeChanged", function() end)
 
 	driver:SetAllPoints(self)
 
@@ -743,11 +739,7 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("state-last", "homestate")
 
-	handler:HookScript("OnAttributeChanged",
-
-			function(self,name,value)
-
-			end)
+	handler:HookScript("OnAttributeChanged", function() end)
 
 
 	handler:SetAttribute("_childupdate", [[
