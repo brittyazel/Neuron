@@ -58,8 +58,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronMenuBar:OnEnable()
 
-    NeuronMenuBar:DisableDefault()
-
 end
 
 
@@ -113,22 +111,4 @@ function NeuronMenuBar:CreateBarsAndButtons()
             end
         end
     end
-end
-
-function NeuronMenuBar:DisableDefault()
-
-    local disableMenuBarFunctions = false
-
-    for i,v in ipairs(Neuron.NeuronMenuBar) do
-        if (v["bar"]) then --only disable if a specific button has an associated bar
-            disableMenuBarFunctions = true
-        end
-    end
-
-    if disableMenuBarFunctions then
-        ---This stops PetBattles from taking over the Micro Buttons
-        NeuronMenuBar:RawHook("MoveMicroButtons", function() end, true)
-        NeuronMenuBar:RawHook("UpdateMicroButtonsParent", function() end, true)
-    end
-
 end
