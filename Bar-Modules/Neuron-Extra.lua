@@ -59,8 +59,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronExtraBar:OnEnable()
 
-	NeuronExtraBar:DisableDefault()
-
 end
 
 
@@ -118,27 +116,6 @@ function NeuronExtraBar:CreateBarsAndButtons()
 				Neuron:CreateNewObject("extrabar", id)
 			end
 		end
-	end
-
-end
-
-
-function NeuronExtraBar:DisableDefault()
-
-	local disableExtraButton = false
-
-	for i,v in ipairs(Neuron.NeuronExtraBar) do
-
-		if (v["bar"]) then --only disable if a specific button has an associated bar
-			disableExtraButton = true
-		end
-	end
-
-
-	if disableExtraButton then
-		------Hiding the default blizzard
-		ExtraActionButton1:UnregisterAllEvents()
-		ExtraActionButton1:SetPoint("BOTTOM", 0, -250)
 	end
 
 end

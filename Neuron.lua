@@ -1081,11 +1081,6 @@ end
 
 
 function Neuron:HideBlizzard()
-	if (InCombatLockdown()) then
-		return
-	end
-
-
 	---the idea for this code is inspired from Dominos. Thanks Tuller!
 	local hiddenFrame = CreateFrame('Frame', nil, UIParent, 'SecureFrameTemplate');
 	hiddenFrame:Hide()
@@ -1098,7 +1093,6 @@ function Neuron:HideBlizzard()
 		end
 
 		frame:SetParent(hiddenFrame)
-		frame.ignoreFramePositionManager = true
 
 		if unregisterEvents then
 			frame:UnregisterAllEvents()
@@ -1106,6 +1100,12 @@ function Neuron:HideBlizzard()
 	end
 
 	local function disableFrameSlidingAnimation(frame)
+
+		if not frame then
+			Neuron:Print('Unknown Frame', frame:GetName())
+			return
+		end
+
 		local animation = (frame.slideOut:GetAnimations())
 
 		animation:SetOffset(0, 0)
@@ -1117,34 +1117,39 @@ function Neuron:HideBlizzard()
 	disableFrameSlidingAnimation(MainMenuBar)
 	disableFrameSlidingAnimation(OverrideActionBar)
 
-	disableFrame(MultiBarBottomLeft)
-	disableFrame(MultiBarBottomRight)
-	disableFrame(MultiBarLeft)
-	disableFrame(MultiBarRight)
-	disableFrame(MainMenuBarArtFrame)
-	disableFrame(StanceBarFrame)
-	disableFrame(PossessBarFrame)
-	disableFrame(PetActionBarFrame)
-	disableFrame(MultiCastActionBarFrame)
-	disableFrame(MicroButtonAndBagsBar)
+	disableFrame(MultiBarBottomLeft, true)
+	disableFrame(MultiBarBottomRight, true)
+	disableFrame(MultiBarLeft, true)
+	disableFrame(MultiBarRight, true)
+	disableFrame(MainMenuBarArtFrame, true)
+	disableFrame(StanceBarFrame, true)
+	disableFrame(PossessBarFrame, true)
+	disableFrame(PetActionBarFrame, true)
+	disableFrame(MultiCastActionBarFrame, true)
+	disableFrame(ExtraActionBarFrame, true)
+	disableFrame(ZoneAbilityFrame, true)
+	disableFrame(MainMenuBarVehicleLeaveButton, true)
+	disableFrame(MicroButtonAndBagsBar, true)
 	disableFrame(MainMenuBarPerformanceBar)
 
 	StatusTrackingBarManager:UnregisterAllEvents()
 	StatusTrackingBarManager:Hide()
 
-	if (not Neuron:IsHooked('ActionButton_Update')) then
-		Neuron:RawHook('ActionButton_Update', function() end, true)
-	end
-	if (not Neuron:IsHooked('MultiActionBar_Update')) then
-		Neuron:RawHook('MultiActionBar_Update', function() end, true)
-	end
-	if (not Neuron:IsHooked('OverrideActionBar_Setup')) then
-		Neuron:RawHook('OverrideActionBar_Setup', function() end, true)
+	ActionBarController:UnregisterAllEvents()
+	StatusTrackingBarManager:UnregisterAllEvents()
+
+	if (not Neuron:IsHooked('ActionButton_OnEvent')) then
+		Neuron:RawHook('ActionButton_OnEvent', function() end, true)
 	end
 
 end
 
 function Neuron:ToggleBlizzUI()
+
+	if (InCombatLockdown()) then
+		return
+	end
+
 	if (DB.blizzbar == true) then
 		DB.blizzbar = false
 		Neuron:HideBlizzard()

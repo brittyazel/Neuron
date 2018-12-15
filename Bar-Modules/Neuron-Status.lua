@@ -169,7 +169,7 @@ function NeuronStatusBar:DisableDefault()
     end
 
     if disableDefaultMirror then
-        UIParent:UnregisterEvent("MIRROR_TIMER_START")
+        --UIParent:UnregisterEvent("MIRROR_TIMER_START")
         MirrorTimer1:UnregisterAllEvents()
         MirrorTimer2:UnregisterAllEvents()
         MirrorTimer3:UnregisterAllEvents()

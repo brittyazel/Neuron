@@ -59,8 +59,6 @@ end
 --- the game that wasn't available in OnInitialize
 function NeuronExitBar:OnEnable()
 
-	NeuronExitBar:DisableDefault()
-
 end
 
 
@@ -111,26 +109,6 @@ function NeuronExitBar:CreateBarsAndButtons()
 				Neuron:CreateNewObject("exitbar", id)
 			end
 		end
-	end
-
-end
-
-function NeuronExitBar:DisableDefault()
-
-	local disableExitButton = false
-
-	for i,v in ipairs(Neuron.NeuronExitBar) do
-
-		if (v["bar"]) then --only disable if a specific button has an associated bar
-			disableExitButton = true
-		end
-	end
-
-
-	if disableExitButton then
-		------Hiding the default blizzard
-		MainMenuBarVehicleLeaveButton:UnregisterAllEvents()
-		MainMenuBarVehicleLeaveButton:SetPoint("BOTTOM", 0, -250)
 	end
 
 end

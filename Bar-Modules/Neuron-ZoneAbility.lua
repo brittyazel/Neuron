@@ -62,8 +62,6 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function NeuronZoneAbilityBar:OnEnable()
-	NeuronZoneAbilityBar:DisableDefault()
-
 
 end
 
@@ -115,27 +113,6 @@ function NeuronZoneAbilityBar:CreateBarsAndButtons()
 				Neuron:CreateNewObject("zoneabilitybar", id)
 			end
 		end
-	end
-
-end
-
-
-function NeuronZoneAbilityBar:DisableDefault()
-
-	local disableZoneAbility = false
-
-	for i,v in ipairs(Neuron.NeuronZoneAbilityBar) do
-
-		if (v["bar"]) then --only disable if a specific button has an associated bar
-			disableZoneAbility = true
-		end
-	end
-
-
-	if disableZoneAbility then
-		------Hiding the default blizzard ZoneAbilityFrame
-		ZoneAbilityFrame:UnregisterAllEvents()
-		ZoneAbilityFrame:Hide()
 	end
 
 end

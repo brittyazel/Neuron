@@ -268,6 +268,7 @@ function ZONEABILITYBTN:SetType(save)
 	self:RegisterEvent("SPELLS_CHANGED")
 	self:RegisterEvent("ZONE_CHANGED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
 
 
 	self.actionID = self.id
