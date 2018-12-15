@@ -228,7 +228,7 @@ function ACTIONBUTTON:filter_profession(data)
 		end
 	end
 
-	local professions
+	local professions = {}
 
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
 	local profSpells = {}
