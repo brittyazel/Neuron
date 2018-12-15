@@ -187,11 +187,6 @@ function ZONEABILITYBTN:OnEnter(...)
 end
 
 
-function ZONEABILITYBTN:OnLeave()
-	GameTooltip:Hide()
-end
-
-
 function ZONEABILITYBTN:LoadData(spec, state)
 
 	local DB = Neuron.db.profile
@@ -285,7 +280,7 @@ function ZONEABILITYBTN:SetType(save)
 	self:SetScript("OnShow", function(self) self:OnShow() end)
 	self:SetScript("OnHide", function(self) self:OnHide() end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-	self:SetScript("OnLeave", function(self) self:OnLeave() end)
+	self:SetScript("OnLeave", GameTooltip_Hide)
 	self:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
 	self:SetScript("OnAttributeChanged", nil)
 

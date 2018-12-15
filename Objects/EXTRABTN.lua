@@ -113,10 +113,6 @@ function EXTRABTN:OnEnter(...)
 end
 
 
-function EXTRABTN:OnLeave()
-	GameTooltip:Hide()
-end
-
 function EXTRABTN:SetType(save)
 
 	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
@@ -136,7 +132,7 @@ function EXTRABTN:SetType(save)
 
 	self:SetScript("OnEvent", function(self, event, ...) self:OnEvent(event, ...) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-	self:SetScript("OnLeave", function(self) self:OnLeave() end)
+	self:SetScript("OnLeave", GameTooltip_Hide)
 	self:SetScript("OnShow", function(self) self:ExtraButton_Update() end)
 
 	self:WrapScript(self, "OnShow", [[
@@ -166,12 +162,7 @@ function EXTRABTN:OnEvent(event, ...)
 	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
-		self:PLAYER_ENTERING_WORLD(event, ...)
+		Neuron.NeuronBinder:ApplyBindings(self)
 	end
 
-end
-
-function EXTRABTN:PLAYER_ENTERING_WORLD(event, ...)
-	if InCombatLockdown() then return end
-	Neuron.NeuronBinder:ApplyBindings(self)
 end
