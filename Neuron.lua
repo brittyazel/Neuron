@@ -1133,11 +1133,11 @@ function Neuron:HideBlizzard()
 	disableFrame(MainMenuBarPerformanceBar)
 
 	StatusTrackingBarManager:UnregisterAllEvents()
-	StatusTrackingBarManager:Hide()
 
 	ActionBarController:UnregisterAllEvents()
 	StatusTrackingBarManager:UnregisterAllEvents()
 
+	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
 	if (not Neuron:IsHooked('ActionButton_OnEvent')) then
 		Neuron:RawHook('ActionButton_OnEvent', function() end, true)
 	end
