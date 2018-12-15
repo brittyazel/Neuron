@@ -44,12 +44,10 @@ end
 function EXITBTN:SetObjectVisibility(show)
 
 	if CanExitVehicle() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-
-		self:SetAlpha(1)
+		self:Show()
 		self:SetExitButtonIcon()
-
 	elseif not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
-		self:SetAlpha(0)
+		self:Hide()
 	end
 
 end
@@ -114,13 +112,24 @@ function EXITBTN:OnEnter()
 		GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1);
 		GameTooltip:AddLine(TAXI_CANCEL_DESCRIPTION, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true);
 		GameTooltip:Show();
+	else
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:ClearLines()
+		GameTooltip:SetText(CANCEL);
+		GameTooltip:Show();
 	end
 end
 
 function EXITBTN:OnClick()
+	self:SetChecked(false);
+
 	if ( UnitOnTaxi("player") ) then
 		TaxiRequestEarlyLanding();
-	else
+		self:SetChecked(true);
+		self:Disable();
+	elseif(UnitControllingVehicle("player") and CanExitVehicle() ) then
 		VehicleExit();
+	else
+		CancelPetPossess()
 	end
 end
