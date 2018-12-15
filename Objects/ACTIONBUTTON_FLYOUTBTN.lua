@@ -954,6 +954,10 @@ function ACTIONBUTTON:Flyout_GetBar()
 	bar:RegisterEvent("PLAYER_ENTERING_WORLD")
 	bar:SetScript("OnEvent", function(self) self:SetObjectLoc() self:SetPerimeter() self:SetSize() end)
 
+	if not bar.data.objectList then
+		bar.data.objectList = {}
+	end
+
 	bar:Hide()
 
 	bar.handler = CreateFrame("Frame", "NeuronFlyoutHandler"..id, UIParent, "SecureHandlerStateTemplate, SecureHandlerShowHideTemplate")
