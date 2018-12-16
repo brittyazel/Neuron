@@ -2703,7 +2703,7 @@ function ACTIONBUTTON:SetFauxState(state)
 			if (not self:GetAttribute(msg.."-actionID")) then
 
 				self:SetAttribute("type", "macro")
-				self:SetAttribute("*self*", button:GetAttribute(msg.."-macro_Text"))
+				self:SetAttribute("*self*", self:GetAttribute(msg.."-macro_Text"))
 
 				if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("isshown") then
 					self:Show()
