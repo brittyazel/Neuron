@@ -165,14 +165,17 @@ function NeuronStatusBar:DisableDefault()
 
     if disableDefaultCast then
         CastingBarFrame:UnregisterAllEvents()
-        CastingBarFrame:Hide()
+	    CastingBarFrame:SetParent(Neuron.hiddenFrame)
     end
 
     if disableDefaultMirror then
-        --UIParent:UnregisterEvent("MIRROR_TIMER_START")
+        UIParent:UnregisterEvent("MIRROR_TIMER_START")
         MirrorTimer1:UnregisterAllEvents()
+	    MirrorTimer1:SetParent(Neuron.hiddenFrame)
         MirrorTimer2:UnregisterAllEvents()
+	    MirrorTimer2:SetParent(Neuron.hiddenFrame)
         MirrorTimer3:UnregisterAllEvents()
+	    MirrorTimer3:SetParent(Neuron.hiddenFrame)
     end
 
 end

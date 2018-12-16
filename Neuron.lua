@@ -1081,9 +1081,11 @@ end
 
 
 function Neuron:HideBlizzard()
-	---the idea for this code is inspired from Dominos. Thanks Tuller!
+
 	local hiddenFrame = CreateFrame('Frame', nil, UIParent, 'SecureFrameTemplate');
+	Neuron.hiddenFrame = hiddenFrame
 	hiddenFrame:Hide()
+	---the idea for this code is inspired from Dominos. Thanks Tuller!
 
 	local function disableFrame(frame, unregisterEvents)
 
