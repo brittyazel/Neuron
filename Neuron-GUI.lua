@@ -4230,11 +4230,11 @@ function NeuronGUI:StatusBarEditorUpdate(reset)
 					yoff = yoff-yoff1
 				end
 
-				if (Neuron.NeuronStatusBar[f.func]) then
+				if (sb[f.func]) then
 					if (f.format) then
-						f.edit:SetText(string.format(f.format, Neuron.NeuronStatusBar[f.func](Neuron.NeuronStatusBar, sb, nil, true, true)*f.mult)..f.endtext)
+						f.edit:SetText(string.format(f.format, sb[f.func](sb, nil, true, true)*f.mult)..f.endtext)
 					else
-						f.edit:SetText(Neuron.NeuronStatusBar[f.func](Neuron.NeuronStatusBar, sb, nil, true, true) or "")
+						f.edit:SetText(sb[f.func](sb, nil, true, true) or "")
 					end
 					f.edit:SetCursorPosition(0)
 				end
@@ -4317,7 +4317,7 @@ function NeuronGUI:SB_chkOptionOnClick(frame)
 	local sb = Neuron.CurrentObject
 
 	if (sb) then
-		Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, frame, frame:GetChecked())
+		sb[frame.func](sb, frame, frame:GetChecked())
 	end
 
 end
@@ -4387,7 +4387,7 @@ function NeuronGUI:SB_adjOptionOnTextChanged(edit, frame)
 
 		elseif (frame.method == 2) then
 
-			Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, edit.value, true)
+			sb[frame.func](sb, edit.value, true)
 
 			edit:HighlightText(0,0)
 		end
@@ -4407,7 +4407,7 @@ function NeuronGUI:SB_adjOptionOnEditFocusLost(edit, frame)
 
 		if (frame.method == 1) then
 
-			Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, edit:GetText(), true)
+			sb[frame.func](sb, edit:GetText(), true)
 
 		elseif (frame.method == 2) then
 
@@ -4424,7 +4424,7 @@ function NeuronGUI:SB_adjOptionAdd(frame, onupdate)
 
 	if (sb) then
 
-		local num = Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, nil, true, true)
+		local num = sb[frame.func](sb, nil, true, true)
 
 		if (num == L["Off"] or num == "---") then
 			num = 0
@@ -4436,7 +4436,7 @@ function NeuronGUI:SB_adjOptionAdd(frame, onupdate)
 
 			if (frame.max and num >= frame.max) then
 
-				Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, frame.max, true, nil, onupdate)
+				sb[frame.func](sb, frame.max, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -4446,7 +4446,7 @@ function NeuronGUI:SB_adjOptionAdd(frame, onupdate)
 					end
 				end
 			else
-				Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, num+frame.inc, true, nil, onupdate)
+				sb[frame.func](sb, num+frame.inc, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -4469,7 +4469,7 @@ function NeuronGUI:SB_adjOptionSub(frame, onupdate)
 
 	if (sb) then
 
-		local num = Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, nil, true, true)
+		local num = sb[frame.func](sb, nil, true, true)
 
 		if (num == L["Off"] or num == "---") then
 			num = 0
@@ -4481,7 +4481,7 @@ function NeuronGUI:SB_adjOptionSub(frame, onupdate)
 
 			if (frame.min and num <= frame.min) then
 
-				Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, frame.min, true, nil, onupdate)
+				sb[frame.func](sb, frame.min, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
@@ -4491,7 +4491,7 @@ function NeuronGUI:SB_adjOptionSub(frame, onupdate)
 					end
 				end
 			else
-				Neuron.NeuronStatusBar[frame.func](Neuron.NeuronStatusBar, sb, num-frame.inc, true, nil, onupdate)
+				sb[frame.func](sb, num-frame.inc, true, nil, onupdate)
 
 				if (onupdate) then
 					if (frame.format) then
