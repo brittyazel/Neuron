@@ -867,6 +867,8 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 
 	button:SetData(self.flyout.bar)
+
+	button:Flyout_UpdateButtons(true)
 	button:SetSkinned(true)
 	button:Show()
 
