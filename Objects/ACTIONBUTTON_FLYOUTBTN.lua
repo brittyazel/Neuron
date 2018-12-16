@@ -178,12 +178,12 @@ function ACTIONBUTTON:filter_mount(data)
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-		local any = compare(arg,("Any"))
-		local flying = compare(arg,"Flying")
-		local land = compare(arg,"Land")
-		local fflying = compare(arg,"FFlying") or compare(arg,"FavFlying")
-		local fland = compare(arg,"FLand") or compare(arg,"FavLand")
-		local favorite = compare(arg,"Favorite") or fflying or fland
+		local any = compare(string.lower(arg),"any")
+		local flying = compare(string.lower(arg),"flying")
+		local land = compare(string.lower(arg),"land")
+		local fflying = compare(string.lower(arg),"fflying") or compare(string.lower(arg),"favflying")
+		local fland = compare(string.lower(arg),"fland") or compare(string.lower(arg),"favland")
+		local favorite = compare(string.lower(arg),"favorite") or fflying or fland
 		arg = arg:lower()
 
 		for i,mountID in ipairs(C_MountJournal.GetMountIDs()) do
@@ -237,9 +237,9 @@ function ACTIONBUTTON:filter_profession(data)
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
 
 		RunForEach(function(entry) table.insert(professions,entry or false) end, GetProfessions())
-		local any = compare(arg,"Any")
-		local primaryOnly = compare(arg,"Primary")
-		local secondaryOnly = compare(arg,"Secondary")
+		local any = compare(string.lower(arg),"any")
+		local primaryOnly = compare(string.lower(arg),"primary")
+		local secondaryOnly = compare(string.lower(arg),"secondary")
 		arg = arg:lower()
 		for index,profession in pairs(professions) do
 			if profession then
@@ -294,8 +294,8 @@ function ACTIONBUTTON:filter_toy(data)
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-		local any = compare(arg,"Any")
-		local favorite = compare(arg,"Favorite")
+		local any = compare(string.lower(arg),"any")
+		local favorite = compare(string.lower(arg),"favorite")
 		arg = arg:lower()
 
 

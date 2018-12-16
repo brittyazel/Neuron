@@ -2582,7 +2582,7 @@ function NeuronGUI:MacroEditorUpdate()
 			button.DB[buttonSpec][state] = button:MACRO_build()
 
 			data = button.DB[buttonSpec][state]
-			button:UpdateFlyout(button)
+			button:UpdateFlyout()
 			button:BuildStateData()
 			button:SetType()
 		end
