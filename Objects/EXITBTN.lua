@@ -120,14 +120,8 @@ function EXITBTN:OnEnter()
 end
 
 function EXITBTN:OnClick()
-	self:SetChecked(false);
-
 	if ( UnitOnTaxi("player") ) then
 		TaxiRequestEarlyLanding()
-		-- Show that the request for landing has been received.
-		self:Disable();
-		self:SetHighlightTexture([[Interface\Buttons\CheckButtonHilight]], "ADD");
-		self:LockHighlight();
 	else
 		VehicleExit()
 	end
