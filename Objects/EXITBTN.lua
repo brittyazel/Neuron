@@ -106,7 +106,6 @@ end
 
 function EXITBTN:OnEnter()
 	if ( UnitOnTaxi("player") ) then
-
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:ClearLines()
 		GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1);
@@ -124,12 +123,12 @@ function EXITBTN:OnClick()
 	self:SetChecked(false);
 
 	if ( UnitOnTaxi("player") ) then
-		TaxiRequestEarlyLanding();
-		self:SetChecked(true);
+		TaxiRequestEarlyLanding()
+		-- Show that the request for landing has been received.
 		self:Disable();
-	elseif(UnitControllingVehicle("player") and CanExitVehicle() ) then
-		VehicleExit();
+		self:SetHighlightTexture([[Interface\Buttons\CheckButtonHilight]], "ADD");
+		self:LockHighlight();
 	else
-		CancelPetPossess()
+		VehicleExit()
 	end
 end

@@ -1113,7 +1113,7 @@ function Neuron:HideBlizzard()
 		animation:SetOffset(0, 0)
 	end
 
-	disableFrame(MainMenuBar)
+	disableFrame(MainMenuBar, true)
 
 	-- disable override bar transition animations
 	disableFrameSlidingAnimation(MainMenuBar)
