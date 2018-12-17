@@ -75,7 +75,7 @@ Neuron development is all done using the **[Intellij IDEA](https://www.jetbrains
 
 Development of Neuron requires an understanding of **[Lua syntax](https://www.lua.org/manual/5.3/manual.html)**, the **[WoW API](https://wow.gamepedia.com/World_of_Warcraft_API)**, and a working understanding of Git/GitHub. If you want to help with Neuron's development, I suggest: 
 1. Forking the project on [GitHub](https://github.com/brittyazel/Neuron) (some people use [GitHub Desktop](https://desktop.github.com/), but I personally use [GitKraken](https://www.gitkraken.com/))
-2. Setting up a your aforementioned development environment
+2. Setting up your aforementioned development environment
 3. Backing up your WTF folder
 4. [Symlinking](https://www.howtogeek.com/howto/16226/complete-guide-to-symbolic-links-symlinks-on-windows-or-linux/) your cloned Neuron git folder to your "World of Warcraft>\_retail_>Interface>Addons" folder
 5. Making your first change
