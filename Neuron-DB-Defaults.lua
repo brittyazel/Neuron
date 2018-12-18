@@ -1,3 +1,4 @@
+--Neuron, a World of Warcraft® user interface addon.
 
 ---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 

@@ -41,9 +41,6 @@ Neuron['cIndex'] = {}
 Neuron['tIndex'] = {}
 Neuron['ShowGrids'] = {}
 Neuron['HideGrids'] = {}
-Neuron['BARIndex'] = {}
-Neuron['BARNameIndex'] = {}
-Neuron['BTNIndex'] = {}
 Neuron['EDITIndex'] = {}
 Neuron['BINDIndex'] = {}
 Neuron['SKINIndex'] = {}
@@ -53,11 +50,13 @@ Neuron['RegisteredGUIData'] = {}
 Neuron['MacroDrag'] = {}
 Neuron['StartDrag'] = false
 
+Neuron['BARIndex'] = {}
+
+
+
 
 --working variable pointers
 local BARIndex = Neuron.BARIndex
-local BARNameIndex = Neuron.BARNameIndex --I'm not sure if we need both BarIndex and BARNameIndex. They're pretty much the same
-local BTNIndex = Neuron.BTNIndex
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 
@@ -250,30 +249,7 @@ function Neuron:OnInitialize()
 	--Initialize the Minimap Icon
 	Neuron:Minimap_IconInitialize()
 
-
-	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, Neuron.BTNIndex, Neuron.ACTIONBUTTON, 250)
-
-	Neuron:RegisterGUIOptions("bar", {
-		AUTOHIDE = true,
-		SHOWGRID = true,
-		SPELLGLOW = true,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		MULTISPEC = true,
-		HIDDEN = true,
-		LOCKBAR = true,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		MACROTEXT = true,
-		COUNTTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true,
-		AURATEXT = true,
-		AURAIND = true },
-			true, 115)
-
+	Neuron:Startup()
 
 end
 
@@ -330,10 +306,6 @@ function Neuron:OnEnable()
 	end)
 
 	Neuron:LoginMessage()
-
-	for _,bar in pairs(BARIndex) do
-		bar:Load()
-	end
 
 
 end
@@ -1168,7 +1140,7 @@ end
 
 
 function Neuron:ToggleButtonGrid(show)
-	for id,btn in pairs(Neuron.BTNIndex) do
+	for id,btn in pairs(Neuron.Buttons.Action) do
 		btn:SetObjectVisibility(show)
 	end
 end
@@ -1364,7 +1336,7 @@ function Neuron:PrintBarTypes()
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTable, objTemplate, objMax)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, buttonDB, objTable, objTemplate, objMax)
 
 	Neuron.ModuleIndex = Neuron.ModuleIndex + 1
 
@@ -1372,6 +1344,7 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTa
 		barType = barType,
 		barLabel = barLabel,
 		barDB = barDB,
+		buttonDB = buttonDB,
 		objTable = objTable, --this is all the buttons associated with a given bar
 		objPrefix = "Neuron"..objType:gsub("%s+", ""),
 		objType = objType,
@@ -1379,6 +1352,7 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTa
 		objMax = objMax,
 		createMsg = Neuron.ModuleIndex..objType,
 	}
+
 end
 
 

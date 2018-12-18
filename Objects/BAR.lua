@@ -9,8 +9,6 @@ Neuron.BAR = BAR
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local BARIndex = Neuron.BARIndex
-local BARNameIndex = Neuron.BARNameIndex
-local BTNIndex = Neuron.BTNIndex
 
 local MAS = Neuron.MANAGED_ACTION_STATES
 local MBS = Neuron.MANAGED_BAR_STATES
@@ -1488,6 +1486,7 @@ end
 
 function BAR:UpdateObjectVisibility(show)
 	local object
+
 	for i, objID in ipairs(self.data.objectList) do
 		object = _G[self.objPrefix..tostring(objID)]
 
@@ -1604,7 +1603,6 @@ function BAR:DeleteBar()
 	self:Hide()
 
 	BARIndex[self.index] = nil
-	BARNameIndex[self:GetName()] = nil
 
 	self.barDB[self:GetID()] = nil
 

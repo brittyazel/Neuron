@@ -12,12 +12,7 @@ local icon
 
 
 -------------------------------------------------------------------------
---------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
-
---- **OnInitialize**, which is called directly after the addon is fully loaded.
---- do init tasks here, like loading the Saved Variables
---- or setting up slash commands.
 function Neuron:Minimap_IconInitialize()
 
     DB = Neuron.db.profile

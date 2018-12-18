@@ -200,3 +200,126 @@ end
 
 
 
+function Neuron:CreateNewBar(class, id, firstRun)
+	if (class and Neuron.RegisteredBarData[class]) then
+		local index = 1
+
+		for _ in ipairs(Neuron.BARIndex) do
+			index = index + 1
+		end
+
+		local bar, newBar = Neuron:CreateBar(index, class, id)
+
+		if (firstRun) then
+			bar:SetDefaults(bar.Def)
+		end
+
+		if (newBar) then
+			bar:Load()
+			bar:ChangeBar()
+
+			---------------------------------
+			if (class == "ExtraBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.data.hidestates = ":extrabar0:"
+				bar.vischanged = true
+				bar:Update()
+			end
+			if (class == "PetBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.data.hidestates = ":pet0:"
+				bar.vischanged = true
+				bar:Update()
+			end
+			-----------------------------------
+		end
+
+		return bar
+	else
+		Neuron.PrintBarTypes()
+	end
+end
+
+function Neuron:CreateBar(index, class, id)
+	local data = Neuron.RegisteredBarData[class]
+	local newBar
+
+	if (data) then
+		if (not id) then
+			id = 1
+
+			for _ in ipairs(data.barDB) do
+				id = id + 1
+			end
+
+			newBar = true
+		end
+
+		---this is the create of our bar object frame
+		local bar = Neuron.BAR:new("Neuron"..data.barType..id)
+
+		for key,value in pairs(data) do
+			bar[key] = value
+		end
+
+		bar.index = index
+		bar.class = class
+		bar.stateschanged = true
+		bar.vischanged =true
+		bar.elapsed = 0
+		bar.click = nil
+		bar.dragged = false
+		bar.selected = false
+		bar.toggleframe = bar
+		bar.microAdjust = false
+		bar.vis = {}
+		bar.text:Hide()
+		bar.message:Hide()
+		bar.messagebg:Hide()
+
+		bar:SetID(id)
+		bar:SetWidth(375)
+		bar:SetHeight(40)
+		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		                 edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		                 tile = true, tileSize = 16, edgeSize = 12,
+		                 insets = {left = 4, right = 4, top = 4, bottom = 4}})
+		bar:SetBackdropColor(0,0,0,0.4)
+		bar:SetBackdropBorderColor(0,0,0,0)
+		bar:SetFrameLevel(2)
+		bar:RegisterForClicks("AnyDown", "AnyUp")
+		bar:RegisterForDrag("LeftButton")
+		bar:SetMovable(true)
+		bar:EnableKeyboard(false)
+		bar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
+
+		bar:SetScript("OnClick", function(self, ...) self:OnClick(...) end)
+		bar:SetScript("OnDragStart", function(self, ...) self:OnDragStart(...) end)
+		bar:SetScript("OnDragStop", function(self, ...) self:OnDragStop(...) end)
+		bar:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+		bar:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
+		bar:SetScript("OnEvent", function(self, event, ...) self:OnEvent(event, ...) end)
+		bar:SetScript("OnKeyDown", function(self, key, onupdate) self:OnKeyDown(key, onupdate) end)
+		bar:SetScript("OnKeyUp", function(self, key) self:OnKeyUp(key) end)
+		bar:SetScript("OnShow", function(self) self:OnShow() end)
+		bar:SetScript("OnHide", function(self) self:OnHide() end)
+		bar:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
+
+		--bar:RegisterEvent("ACTIONBAR_SHOWGRID")
+		--bar:RegisterEvent("ACTIONBAR_HIDEGRID")
+		--bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+
+
+		bar:CreateDriver()
+		bar:CreateHandler()
+		bar:CreateWatcher()
+
+		bar:LoadData()
+
+		if (not newBar) then
+			bar:Hide()
+		end
+
+		Neuron.BARIndex[index] = bar
+
+		return bar, newBar
+	end
+end
