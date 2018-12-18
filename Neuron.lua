@@ -247,6 +247,9 @@ function Neuron:OnInitialize()
 		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
 	}
 
+	--Initialize the Minimap Icon
+	Neuron:Minimap_IconInitialize()
+
 
 	Neuron:RegisterBarClass("bar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, Neuron.BTNIndex, Neuron.ACTIONBUTTON, 250)
 

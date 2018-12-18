@@ -16,7 +16,7 @@
 Libs\embeds.xml
 Localizations\Neuron_Localizations.xml
 
-Neuron-Defaults.lua
+Neuron-DB-Defaults.lua
 Neuron.lua
 Neuron-States.lua
 
@@ -42,7 +42,7 @@ Neuron-Bars.lua
 Neuron-KeyBinder.lua
 Neuron-MinimapIcon.lua
 
-Neuron.xml
+XML/Neuron.xml
 
 Bar-Modules/Neuron-Extra.lua
 Bar-Modules/Neuron-ZoneAbility.lua
@@ -50,8 +50,8 @@ Bar-Modules/Neuron-Bag.lua
 Bar-Modules/Neuron-Menu.lua
 Bar-Modules/Neuron-Pet.lua
 Bar-Modules/Neuron-Status.lua
-Bar-Modules/Neuron-Status.xml
+XML/Neuron-Status.xml
 Bar-Modules/Neuron-Exit.lua
 
 Neuron-GUI.lua
-Neuron-GUI.xml
+XML/Neuron-GUI.xml

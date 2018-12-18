@@ -3857,7 +3857,7 @@ NeuronGUI.interfaceOptions = {
 					name = L["Display Minimap Button"],
 					desc = L["Toggles the minimap button."],
 					type = "toggle",
-					set =  function() Neuron.NeuronMinimapIcon:ToggleIcon() end,
+					set =  function() Neuron:Minimap_ToggleIcon() end,
 					get = function() return not DB.NeuronIcon.hide end,
 					width = "full"
 				},
