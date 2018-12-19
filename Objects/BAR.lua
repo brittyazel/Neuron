@@ -1592,7 +1592,7 @@ function BAR:AddObjectsToBar(num)
 		local id = #self.buttons + 1
 
 		if (#self.buttons < self.objMax) then
-			object = Neuron:CreateNewObject(self.class, id)
+			object = Neuron:CreateNewObject(self.class, id, self)
 		end
 
 	end
