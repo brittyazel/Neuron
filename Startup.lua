@@ -17,7 +17,7 @@ function Neuron:Startup()
 
 	Neuron:CreateBarsAndButtons()
 
-	--Neuron:Overrides()
+	Neuron:Overrides()
 
 
 	for _,bar in pairs(Neuron.BARIndex) do
@@ -234,13 +234,15 @@ function Neuron:Overrides()
 	local disableDefaultCast = false
 	local disableDefaultMirror = false
 
-	for i,v in ipairs(Neuron.Buttons.Status) do
+	for _,v in ipairs(Neuron.BARIndex) do
 
-		if (v["bar"]) then --only disable if a specific button has an associated bar
-			if v.config.sbType == "cast" then
-				disableDefaultCast = true
-			elseif v.config.sbType == "mirror" then
-				disableDefaultMirror = true
+		if v.barType == "StatusBar" then
+			for _, button in ipairs(v.buttons) do
+				if button.config.sbType == "cast" then
+					disableDefaultCast = true
+				elseif button.config.sbType == "mirror" then
+					disableDefaultMirror = true
+				end
 			end
 		end
 	end

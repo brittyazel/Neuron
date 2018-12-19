@@ -194,12 +194,26 @@ function BUTTON:LoadAux()
 	--empty--
 end
 
-function BUTTON:SetDefaults(config, keys)
-	--empty--
-end
+function BUTTON:SetDefaults(defaults)
+	if defaults then
+		for k,v in pairs(defaults) do
 
-function BUTTON:GetDefaults()
-	--empty--
+			if defaults.config then
+				for k2, v2 in pairs(defaults.config) do
+					self.config[k2] = v2
+				end
+			end
+
+			if defaults.keys then
+				for k2, v2 in pairs(defaults.keys) do
+					self.keys[k2] = v2
+				end
+			end
+
+		end
+
+
+	end
 end
 
 function BUTTON:SetType(save, kill, init)

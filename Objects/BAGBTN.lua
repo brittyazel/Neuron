@@ -9,7 +9,7 @@ local SKIN = LibStub("Masque", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-local bagElements = {MainMenuBarBackpackButton, CharacterBag0Slot, CharacterBag1Slot, CharacterBag2Slot, CharacterBag3Slot}
+local bagElements = {CharacterBag3Slot, CharacterBag2Slot, CharacterBag1Slot, CharacterBag0Slot, MainMenuBarBackpackButton}
 
 
 
@@ -66,7 +66,7 @@ function BAGBTN:SetType(save)
 
 	if (bagElements[self.id]) then
 
-		if self.id == 1 then --this corrects for some large ass margins on the main backpack button
+		if self.id == 5 then --this corrects for some large ass margins on the main backpack button
 			self:SetWidth(bagElements[self.id]:GetWidth()-5)
 			self:SetHeight(bagElements[self.id]:GetHeight()-5)
 		else

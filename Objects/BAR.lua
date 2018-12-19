@@ -1066,7 +1066,7 @@ end
 
 function BAR:SetDefaults(defaults)
 	for k,v in pairs(defaults) do
-		if k ~= "numButtons" then --ignore this value because it's just used to tell how many buttons should be placed on a bar by default on the first load
+		if k ~= "buttons" then --ignore this value because it's just used to tell how many buttons should be placed on a bar by default on the first load
 			self.data[k] = v
 		end
 	end

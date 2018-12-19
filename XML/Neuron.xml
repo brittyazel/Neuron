@@ -309,21 +309,16 @@
 					<OnLoad>
 						self:SetFrameLevel(2)
 
-						local button = self:GetParent()
-						local icon
+						local icon = _G[self:GetName().."Icon"]
+						icon.filler = _G[self:GetName().."Filler"]
 
-						if button.iconframeicon then
-							icon = button.iconframeicon
-							icon.filler = button.iconframefiller
+						if (icon and icon.filler) then
 
-							if (icon and icon.filler) then
+							icon.oShow = icon.Show
+							icon.oHide = icon.Hide
 
-								icon.oShow = icon.Show
-								icon.oHide = icon.Hide
-
-								icon.Show = function(self) self.filler:Show() self:oShow() end
-								icon.Hide = function(self) self.filler:Hide() self:oHide() end
-							end
+							icon.Show = function(self) self.filler:Show() self:oShow() end
+							icon.Hide = function(self) self.filler:Hide() self:oHide() end
 						end
 
 					</OnLoad>

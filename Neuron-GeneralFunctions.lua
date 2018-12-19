@@ -155,11 +155,12 @@ end
 
 
 
-function Neuron:CreateNewObject(class, id, bar, firstRun)
+function Neuron:CreateNewObject(class, id, bar, defaults)
 	local data = Neuron.RegisteredBarData[class]
 
 	if (data) then
 
+		--calls new object constructor for the appropriate class type
 		local object = data.objTemplate:new(bar:GetName().."_"..data.objPrefix..id)
 
 
@@ -188,8 +189,8 @@ function Neuron:CreateNewObject(class, id, bar, firstRun)
 
 		object.elapsed = 0
 
-		if (firstRun) then
-			object:SetDefaults(object:GetDefaults())
+		if (defaults) then
+			object:SetDefaults(defaults)
 		end
 
 		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
@@ -220,8 +221,8 @@ function Neuron:CreateNewBar(class, id, defaults)
 		if (defaults) then
 			bar:SetDefaults(defaults)
 
-			for i=1,defaults.numButtons do
-				Neuron:CreateNewObject(class, i, bar, true)
+			for i=1,#defaults.buttons do
+				Neuron:CreateNewObject(class, i, bar, defaults.buttons[i])
 			end
 
 		else

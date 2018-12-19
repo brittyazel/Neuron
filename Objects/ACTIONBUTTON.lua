@@ -12,20 +12,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 ---------------------------------------------------------
 -------------------declare globals-----------------------
 ---------------------------------------------------------
-local keyDefaults = {
-	[1] = { hotKeys = ":1:", hotKeyText = ":1:" },
-	[2] = { hotKeys = ":2:", hotKeyText = ":2:" },
-	[3] = { hotKeys = ":3:", hotKeyText = ":3:" },
-	[4] = { hotKeys = ":4:", hotKeyText = ":4:" },
-	[5] = { hotKeys = ":5:", hotKeyText = ":5:" },
-	[6] = { hotKeys = ":6:", hotKeyText = ":6:" },
-	[7] = { hotKeys = ":7:", hotKeyText = ":7:" },
-	[8] = { hotKeys = ":8:", hotKeyText = ":8:" },
-	[9] = { hotKeys = ":9:", hotKeyText = ":9:" },
-	[10] = { hotKeys = ":0:", hotKeyText = ":0:" },
-	[11] = { hotKeys = ":-:", hotKeyText = ":-:" },
-	[12] = { hotKeys = ":=:", hotKeyText = ":=:" },
-}
 
 local cmdSlash = {
 	[SLASH_CAST1] = true,
@@ -398,27 +384,6 @@ function ACTIONBUTTON:LoadAux()
 	Neuron.NeuronBinder:CreateBindFrame(self)
 
 end
-
-
-function ACTIONBUTTON:SetDefaults(config, keys)
-	if (config) then
-		for k,v in pairs(config) do
-			self.config[k] = v
-		end
-	end
-
-	if (keys) then
-		for k,v in pairs(keys) do
-			self.keys[k] = v
-		end
-	end
-end
-
-
-function ACTIONBUTTON:GetDefaults()
-	return nil, keyDefaults[self.id]
-end
-
 
 
 
