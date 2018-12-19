@@ -22,25 +22,6 @@ function EXITBTN:new(name)
 end
 
 
-
-function EXITBTN:LoadData(spec, state)
-
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if not DB.exitbtn[id] then
-		DB.exitbtn[id] = {}
-	end
-
-	self.DB = DB.exitbtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-end
-
-
 function EXITBTN:SetObjectVisibility(show)
 
 	if CanExitVehicle() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat

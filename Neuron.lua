@@ -1336,7 +1336,7 @@ function Neuron:PrintBarTypes()
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, buttonDB, objTable, objTemplate, objMax)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
 
 	Neuron.ModuleIndex = Neuron.ModuleIndex + 1
 
@@ -1344,8 +1344,6 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, butto
 		barType = barType,
 		barLabel = barLabel,
 		barDB = barDB,
-		buttonDB = buttonDB,
-		objTable = objTable, --this is all the buttons associated with a given bar
 		objPrefix = "Neuron"..objType:gsub("%s+", ""),
 		objType = objType,
 		objTemplate = objTemplate,

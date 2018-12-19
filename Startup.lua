@@ -5,17 +5,6 @@ local DB
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-Neuron.Buttons = {}
-Neuron.Buttons.Action = {}
-Neuron.Buttons.ZoneAbility = {}
-Neuron.Buttons.Extra = {}
-Neuron.Buttons.Bag = {}
-Neuron.Buttons.Status = {}
-Neuron.Buttons.Exit = {}
-Neuron.Buttons.Menu = {}
-Neuron.Buttons.Pet = {}
-
-
 
 
 function Neuron:Startup()
@@ -28,7 +17,7 @@ function Neuron:Startup()
 
 	Neuron:CreateBarsAndButtons()
 
-	Neuron:Overrides()
+	--Neuron:Overrides()
 
 
 	for _,bar in pairs(Neuron.BARIndex) do
@@ -42,28 +31,28 @@ end
 function Neuron:RegisterBars()
 
 	--Neuron Action Bar
-	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.bars, DB.buttons, Neuron.Buttons.Action, Neuron.ACTIONBUTTON, 250)
+	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.ActionBar, Neuron.ACTIONBUTTON, 250)
 
 	--Neuron Zone Ability Bar
-	Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.zoneabilitybar, DB.zoneabilitybtn, Neuron.Buttons.ZoneAbility, Neuron.ZONEABILITYBTN, 1)
+	Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
 
 	--Neuron Extra Bar
-	Neuron:RegisterBarClass("ExtraBar", "ExtraBar", L["Extra Action Bar"], "Extra Action Button", DB.extrabar, DB.extrabtn, Neuron.Buttons.Extra, Neuron.EXTRABTN,1)
+	Neuron:RegisterBarClass("ExtraBar", "ExtraBar", L["Extra Action Bar"], "Extra Action Button", DB.ExtraBar, Neuron.EXTRABTN,1)
 
 	--Neuron Bag Bar
-	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.bagbar, DB.bagbtn, Neuron.Buttons.Bag, Neuron.BAGBTN,5)
+	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN,5)
 
 	--Neuron Status Bar
-	--Neuron:RegisterBarClass("StatusBar", "StatusBar", L["Status Bar"], "Status Bar", DB.statusbar, DB.statusbtn, Neuron.Buttons.Status, Neuron.STATUSBTN, 20)
+	Neuron:RegisterBarClass("StatusBar", "StatusBar", L["Status Bar"], "Status Bar", DB.StatusBar, Neuron.STATUSBTN, 20)
 
 	--Neuron Exit Bar
-	Neuron:RegisterBarClass("ExitBar", "ExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.exitbar, DB.exitbtn, Neuron.Buttons.Exit, Neuron.EXITBTN,1)
+	Neuron:RegisterBarClass("ExitBar", "ExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.ExitBar, Neuron.EXITBTN,1)
 
 	--Neuron Menu Bar
-	Neuron:RegisterBarClass("MenuBar", "MenuBar", L["Menu Bar"], "Menu Button", DB.menubar, DB.menubtn, Neuron.Buttons.Menu, Neuron.MENUBTN, 11)
+	Neuron:RegisterBarClass("MenuBar", "MenuBar", L["Menu Bar"], "Menu Button", DB.MenuBar, Neuron.MENUBTN, 11)
 
 	--Neuron Pet Bar
-	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.petbar, DB.petbtn, Neuron.Buttons.Pet, Neuron.PETBTN, 10)
+	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10)
 
 end
 
@@ -199,19 +188,8 @@ function Neuron:CreateBarsAndButtons()
 
 			for i, defaults in ipairs(barDefaults) do
 
-				local bar = Neuron:CreateNewBar(barClass, i, true) --this calls the bar constructor
-				test = bar
+				local bar = Neuron:CreateNewBar(barClass, i, defaults) --this calls the bar constructor
 
-				for	k,v in pairs(defaults) do
-					if k ~= "numButtons" then --we don't want to add numButtons to the new bar
-						bar.data[k] = v
-					end
-				end
-
-				for j = 1, defaults.numButtons do
-					local object = Neuron:CreateNewObject(barClass, j, true)
-					bar:AddObjectToList(object)
-				end
 			end
 
 		end
@@ -225,12 +203,6 @@ function Neuron:CreateBarsAndButtons()
 			for id,data in pairs(barClassData.barDB) do
 				if (data ~= nil) then
 					Neuron:CreateNewBar(barClass, id)
-				end
-			end
-
-			for id,data in pairs(barClassData.buttonDB) do
-				if (data ~= nil) then
-					Neuron:CreateNewObject(barClass, id)
 				end
 			end
 		end

@@ -356,18 +356,9 @@ end
 
 function ACTIONBUTTON:LoadData(spec, state)
 
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if (not DB.buttons[id]) then
-		DB.buttons[id] = {}
-	end
-
-	self.DB = DB.buttons[id]
-
 	self.config = self.DB.config
 	self.keys = self.DB.keys
+
 	self.statedata = self.DB[spec] --all of the states for a given spec
 	self.data = self.statedata[state] --loads a single state of a single spec into self.data
 
@@ -402,9 +393,9 @@ end
 function ACTIONBUTTON:LoadAux()
 
 	if Neuron.NeuronGUI then
-		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self, self.objTIndex)
+		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self)
 	end
-	Neuron.NeuronBinder:CreateBindFrame(self, self.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(self)
 
 end
 
@@ -1867,7 +1858,7 @@ function ACTIONBUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 	if (action1 == 0) then
 		return
 	else
-		local count = self.bar.objCount
+		local count = #self.bar.buttons
 		local columns = self.bar.data.columns or count
 		local rows = count/columns
 

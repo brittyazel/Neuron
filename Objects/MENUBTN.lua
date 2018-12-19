@@ -53,24 +53,6 @@ function MENUBTN:SetData( bar)
 end
 
 
-function MENUBTN:LoadData(spec, state)
-
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if not DB.menubtn[id] then
-		DB.menubtn[id] = {}
-	end
-
-	self.DB = DB.menubtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-
-end
-
 function MENUBTN:SetType(reload)
 
 	if not reload then --only run this code on the first SetType, not the reloads after pet battles and such

@@ -2,115 +2,6 @@
 
 ---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 
-
-local genericBarData = {
-    name = ":",
-
-    objectList = {},
-
-    hidestates = ":",
-
-    point = "BOTTOM",
-    x = 0,
-    y = 190,
-
-    scale = 1,
-    shape = 1,
-    columns = false,
-
-    alpha = 1,
-    alphaUp = 1,
-    alphaMax = 1,
-    fadeSpeed = 0.5,
-
-    barStrata = "MEDIUM",
-    objectStrata = "LOW",
-
-    padH = 0,
-    padV = 0,
-    arcStart = 0,
-    arcLength = 359,
-
-    snapTo = false,
-    snapToPad = 0,
-    snapToPoint = false,
-    snapToFrame = false,
-
-    autoHide = false,
-    showGrid = true,
-
-    bindColor = "1;1;1;1",
-    macroColor = "1;1;1;1",
-    countColor = "1;1;1;1",
-    cdcolor1 = "1;0.82;0;1",
-    cdcolor2 = "1;0.1;0.1;1",
-    auracolor1 = "0;0.82;0;1",
-    auracolor2 = "1;0.1;0.1;1",
-    buffcolor = "0;0.8;0;1",
-    debuffcolor = "0.8;0;0;1",
-    rangecolor = "0.7;0.15;0.15;1",
-    border = true,
-
-    upClicks = true,
-    downClicks = false,
-
-    conceal = false,
-
-    multiSpec = false,
-
-    spellGlow = true,
-    spellGlowDef = true,
-    spellGlowAlt = false,
-
-    barLock = false,
-    barLockAlt = false,
-    barLockCtrl = false,
-    barLockShift = false,
-
-    tooltips = true,
-    tooltipsEnhanced = true,
-    tooltipsCombat = false,
-
-    bindText = true,
-    macroText = true,
-    countText = true,
-    rangeInd = true,
-
-    cdText = false,
-    cdAlpha = false,
-    auraText = false,
-    auraInd = false,
-
-    homestate = true,
-    paged = false,
-    stance = false,
-    stealth = false,
-    reaction = false,
-    combat = false,
-    group = false,
-    pet = false,
-    fishing = false,
-    vehicle = false,
-    possess = false,
-    override = false,
-    extrabar = false,
-    alt = false,
-    ctrl = false,
-    shift = false,
-    target = false,
-
-    selfCast = false,
-    focusCast = false,
-    rightClickTarget = false,
-    mouseOverCast = false,
-
-    custom = false,
-    customRange = false,
-    customNames = false,
-
-    remap = false,
-}
-
 local genericButtonData = {
     btnType = "macro",
 
@@ -228,6 +119,124 @@ local genericKeyData = {
 }
 
 
+local genericBarData = {
+    name = ":",
+
+    objectList = {},
+
+    buttons = {
+        ['*'] = {
+            ['config'] = CopyTable(genericButtonData),
+            ['keys'] = CopyTable(genericKeyData),
+            ['data'] = {},
+        }
+    },
+
+    hidestates = ":",
+
+    point = "BOTTOM",
+    x = 0,
+    y = 190,
+
+    scale = 1,
+    shape = 1,
+    columns = false,
+
+    alpha = 1,
+    alphaUp = 1,
+    alphaMax = 1,
+    fadeSpeed = 0.5,
+
+    barStrata = "MEDIUM",
+    objectStrata = "LOW",
+
+    padH = 0,
+    padV = 0,
+    arcStart = 0,
+    arcLength = 359,
+
+    snapTo = false,
+    snapToPad = 0,
+    snapToPoint = false,
+    snapToFrame = false,
+
+    autoHide = false,
+    showGrid = true,
+
+    bindColor = "1;1;1;1",
+    macroColor = "1;1;1;1",
+    countColor = "1;1;1;1",
+    cdcolor1 = "1;0.82;0;1",
+    cdcolor2 = "1;0.1;0.1;1",
+    auracolor1 = "0;0.82;0;1",
+    auracolor2 = "1;0.1;0.1;1",
+    buffcolor = "0;0.8;0;1",
+    debuffcolor = "0.8;0;0;1",
+    rangecolor = "0.7;0.15;0.15;1",
+    border = true,
+
+    upClicks = true,
+    downClicks = false,
+
+    conceal = false,
+
+    multiSpec = false,
+
+    spellGlow = true,
+    spellGlowDef = true,
+    spellGlowAlt = false,
+
+    barLock = false,
+    barLockAlt = false,
+    barLockCtrl = false,
+    barLockShift = false,
+
+    tooltips = true,
+    tooltipsEnhanced = true,
+    tooltipsCombat = false,
+
+    bindText = true,
+    macroText = true,
+    countText = true,
+    rangeInd = true,
+
+    cdText = false,
+    cdAlpha = false,
+    auraText = false,
+    auraInd = false,
+
+    homestate = true,
+    paged = false,
+    stance = false,
+    stealth = false,
+    reaction = false,
+    combat = false,
+    group = false,
+    pet = false,
+    fishing = false,
+    vehicle = false,
+    possess = false,
+    override = false,
+    extrabar = false,
+    alt = false,
+    ctrl = false,
+    shift = false,
+    target = false,
+
+    selfCast = false,
+    focusCast = false,
+    rightClickTarget = false,
+    mouseOverCast = false,
+
+    custom = false,
+    customRange = false,
+    customNames = false,
+
+    remap = false,
+}
+
+
+
 ------------------------------------------------------------------------
 ----------------------MAIN TABLE----------------------------------------
 ------------------------------------------------------------------------
@@ -256,98 +265,58 @@ NeuronDefaults = {
 
         NeuronIcon = {hide = false,},
 
-        bars = {
+        ActionBar = {
             ['*'] = CopyTable(genericBarData)
         },
-        buttons = {
-            ['*'] = {
-                ['config'] = CopyTable(genericButtonData),
-                ['keys'] = CopyTable(genericKeyData),
-                [1] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
-                [2] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
-                [3] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
-                [4] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
-            }
-        },
 
-        extrabar = {
+        ExtraBar = {
             ['*'] = CopyTable(genericBarData)
         },
-        extrabtn = {
-            ['*'] = {
-                ['config'] = CopyTable(genericButtonData),
-                ['keys'] = CopyTable(genericKeyData),
-                ['data'] = {},
-            }
-        },
 
-        exitbar ={
+        ExitBar ={
             ['*'] = CopyTable(genericBarData)
         },
-        exitbtn = {
-            ['*'] = {
-                ['config'] = CopyTable(genericButtonData),
-                ['keys'] = CopyTable(genericKeyData),
-                ['data'] = {},
-            }
-        },
 
-        bagbar = {
+        BagBar = {
             ['*'] = CopyTable(genericBarData)
         },
-        bagbtn = {
-            ['*'] = {
-                ['config'] = CopyTable(genericButtonData),
-                ['keys'] = CopyTable(genericKeyData),
-                ['data'] = {},
-            }
-        },
 
-        zoneabilitybar = {
+        ZoneAbilityBar = {
             ['*'] = CopyTable(genericBarData)
         },
-        zoneabilitybtn = {
-            ['*'] = {
-                ['config'] = CopyTable(genericButtonData),
-                ['keys'] = CopyTable(genericKeyData),
-                ['data'] = {},
-            }
-        },
 
-        menubar = {
+        MenuBar = {
             ['*'] = CopyTable(genericBarData)
         },
-        menubtn = {
-            ['*'] = {
-                ['config'] = CopyTable(genericButtonData),
-                ['keys'] = CopyTable(genericKeyData),
-                ['data'] = {},
-            }
-        },
 
-        petbar = {
+        PetBar = {
             ['*'] = CopyTable(genericBarData)
         },
-        petbtn = {
-            ['*'] = {
-                ['config'] = CopyTable(genericButtonData),
-                ['keys'] = CopyTable(genericKeyData),
-                ['data'] = {},
-            }
-        },
 
-        statusbar = {
+        StatusBar = {
             ['*'] = CopyTable(genericBarData)
         },
-        statusbtn = {
-            ['*'] = {
-                ['config'] = CopyTable(genericStatusBtnData),
-                ['keys'] = CopyTable(genericKeyData),
-                ['data'] = {unit = 2, repID = 0, repAuto = 0,},
-            }
-        },
-
     }
 }
 
 ------------------------------------------------------------------------------
+
+
+NeuronDefaults.profile.ActionBar['*'].buttons = {
+    ['*'] = {
+        ['config'] = CopyTable(genericButtonData),
+        ['keys'] = CopyTable(genericKeyData),
+        [1] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+        [2] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+        [3] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+        [4] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+    }
+}
+
+NeuronDefaults.profile.StatusBar['*'].buttons ={
+    ['*'] = {
+        ['config'] = CopyTable(genericStatusBtnData),
+        ['keys'] = CopyTable(genericKeyData),
+        ['data'] = {unit = 2, repID = 0, repAuto = 0,},
+    }
+}

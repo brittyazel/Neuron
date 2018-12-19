@@ -187,23 +187,6 @@ function ZONEABILITYBTN:OnEnter(...)
 end
 
 
-function ZONEABILITYBTN:LoadData(spec, state)
-
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if not DB.zoneabilitybtn[id] then
-		DB.zoneabilitybtn[id] = {}
-	end
-
-	self.DB = DB.zoneabilitybtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-end
-
 function ZONEABILITYBTN:SetObjectVisibility(show)
 
 	if (GetZoneAbilitySpellInfo() or show) then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
@@ -215,7 +198,7 @@ end
 
 function ZONEABILITYBTN:LoadAux()
 	self.spellID = ZoneAbilitySpellID;
-	Neuron.NeuronBinder:CreateBindFrame(self, self.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(self)
 	self.style = self:CreateTexture(nil, "OVERLAY")
 	self.style:SetPoint("CENTER", -2, 1)
 	self.style:SetWidth(190)

@@ -42,54 +42,6 @@ function Neuron:SetTimer(frame, start, duration, enable, timer, color1, color2, 
 end
 
 
-function Neuron:CreateNewObject(class, id, firstRun)
-	local data = Neuron.RegisteredBarData[class]
-
-	if (data) then
-
-		--this is the same as 'id', I'm not sure why we need both
-		local index = #data.objTable + 1 --sets the current index to 1 greater than the current number of object in the table
-
-		local object = data.objTemplate:new(data.objPrefix..id)
-
-		object.elapsed = 0
-
-		--returns a table of the names of all the child objects for a given frame
-		local objects = Neuron:GetParentKeys(object)
-
-		--I think this is creating a pointer inside the object to where the child object resides in the global namespace
-		for k,v in pairs(objects) do
-			local name = (v):gsub(object:GetName(), "")
-			object[name:lower()] = _G[v]
-		end
-
-		object.class = class
-		object.id = id
-		object:SetID(0)
-		object.objTIndex = index
-		object.objType = data.objType:gsub("%s", ""):upper()
-		object:LoadData(GetActiveSpecGroup(), "homestate")
-
-		if (firstRun) then
-			object:SetDefaults(object:GetDefaults())
-		end
-
-		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
-		if object.DB.config then
-			object.DB.config.date = date("%m/%d/%y %H:%M:%S")
-		end
-
-		object:LoadAux()
-
-		data.objTable[index] = object
-
-		return object
-	end
-end
-
-
-
-
 --- This will itterate through a set of buttons. For any buttons that have the #autowrite flag in its macro, that
 -- macro will then be updated to via AutoWriteMacro to include selected target macro option, or via AutoUpdateMacro
 -- to update a current target macro's toggle mofifier.
@@ -200,18 +152,78 @@ end
 
 
 
-function Neuron:CreateNewBar(class, id, firstRun)
+function Neuron:CreateNewObject(class, id, bar, firstRun)
+	local data = Neuron.RegisteredBarData[class]
+
+	if (data) then
+
+		local object = data.objTemplate:new(data.objPrefix..id)
+
+		--returns a table of the names of all the child objects for a given frame
+		--[[local objects = Neuron:GetParentKeys(object)
+
+		--I think this is creating a pointer inside the object to where the child object resides in the global namespace
+		for k,v in pairs(objects) do
+			local name = (v):gsub(object:GetName(), "")
+			object[name:lower()] = _G[v]
+		end]]
+
+		bar.buttons[id] = object --add this object to our buttons table for this bar
+
+		if not bar.DB.buttons[id] then --if the database for a bar doesn't exist (because it's a new bar) make a new table
+			bar.DB.buttons[id] = {}
+		end
+		object.DB = bar.DB.buttons[id] --set our button database table as the DB for our object
+
+		object.bar = bar
+
+		object.class = class
+		object.id = id
+		--object:SetID(id)
+		object.objType = data.objType:gsub("%s", ""):upper()
+		object:LoadData(GetActiveSpecGroup(), "homestate")
+
+
+		--[[if (firstRun) then
+			object:SetDefaults(object:GetDefaults())
+		end]]
+
+		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
+		if object.DB.config then
+			object.DB.config.date = date("%m/%d/%y %H:%M:%S")
+		end
+
+		object:LoadAux()
+
+		return object
+	end
+end
+
+
+
+function Neuron:CreateNewBar(class, id, defaults)
+
 	if (class and Neuron.RegisteredBarData[class]) then
+
 		local index = 1
 
 		for _ in ipairs(Neuron.BARIndex) do
 			index = index + 1
 		end
 
-		local bar, newBar = Neuron:CreateBar(index, class, id)
+		local bar, newBar = Neuron:CreateBar(class, id, index)
 
-		if (firstRun) then
-			bar:SetDefaults(bar.Def)
+		if (defaults) then
+			bar:SetDefaults(defaults)
+
+			for i=1,defaults.numButtons do
+				Neuron:CreateNewObject(class, i, bar, true)
+			end
+
+		else
+			for i=1,#bar.DB.buttons do
+				Neuron:CreateNewObject(class, i, bar)
+			end
 		end
 
 		if (newBar) then
@@ -238,7 +250,7 @@ function Neuron:CreateNewBar(class, id, firstRun)
 	end
 end
 
-function Neuron:CreateBar(index, class, id)
+function Neuron:CreateBar(class, id, index)
 	local data = Neuron.RegisteredBarData[class]
 	local newBar
 
@@ -257,10 +269,20 @@ function Neuron:CreateBar(index, class, id)
 		local bar = Neuron.BAR:new("Neuron"..data.barType..id)
 
 		for key,value in pairs(data) do
-			bar[key] = value
+			if key ~= "barDB" then --we don't want to copy over the database for all bars, just for the 1 bar
+				bar[key] = value
+			end
 		end
 
+		if not data.barDB[id] then --if the database for a bar doesn't exist (because it's a new bar?
+			data.barDB[id] = {}
+		end
+		bar.DB = data.barDB[id]
+
+		bar.buttons = {}
+
 		bar.index = index
+		bar.id = id
 		bar.class = class
 		bar.stateschanged = true
 		bar.vischanged =true
@@ -275,7 +297,7 @@ function Neuron:CreateBar(index, class, id)
 		bar.message:Hide()
 		bar.messagebg:Hide()
 
-		bar:SetID(id)
+		bar:SetID(index)
 		bar:SetWidth(375)
 		bar:SetHeight(40)
 		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
@@ -302,10 +324,6 @@ function Neuron:CreateBar(index, class, id)
 		bar:SetScript("OnShow", function(self) self:OnShow() end)
 		bar:SetScript("OnHide", function(self) self:OnHide() end)
 		bar:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
-
-		--bar:RegisterEvent("ACTIONBAR_SHOWGRID")
-		--bar:RegisterEvent("ACTIONBAR_HIDEGRID")
-		--bar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 
 		bar:CreateDriver()

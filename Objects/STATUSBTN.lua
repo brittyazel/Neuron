@@ -1763,26 +1763,6 @@ end
 
 
 
-function STATUSBTN:LoadData(spec, state)
-
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if not DB.statusbtn[id] then
-		DB.statusbtn[id] = {}
-	end
-
-	self.DB = DB.statusbtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-end
-
-
-
-
 function STATUSBTN:SetObjectVisibility(show)
 
 	if (show) then
@@ -1804,7 +1784,7 @@ end
 
 function STATUSBTN:LoadAux()
 
-	Neuron.NeuronGUI:SB_CreateEditFrame(self, self.objTIndex)
+	Neuron.NeuronGUI:SB_CreateEditFrame(self)
 
 end
 

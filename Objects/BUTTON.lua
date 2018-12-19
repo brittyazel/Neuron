@@ -23,6 +23,8 @@ end
 function BUTTON:SetData(bar)
 	if (bar) then
 
+		test = self
+
 		self.bar = bar
 
 		self.barLock = bar.data.barLock
@@ -174,8 +176,12 @@ end
 
 
 --TODO: This should be consolodated as each child has a VERY similar function
-function BUTTON:LoadData(spec,state)
-	--empty--
+function BUTTON:LoadData(spec, state)
+
+	self.config = self.DB.config
+	self.keys = self.DB.keys
+	self.data = self.DB.data
+
 end
 
 function BUTTON:SetObjectVisibility(show)

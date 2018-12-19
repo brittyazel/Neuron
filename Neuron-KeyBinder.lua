@@ -380,7 +380,7 @@ function NeuronBinder:OnMouseWheel(binder, delta)
 	NeuronBinder:ProcessBinding(binder, key, binder.button)
 end
 
-function NeuronBinder:CreateBindFrame(button, index)
+function NeuronBinder:CreateBindFrame(button)
 	local binder = CreateFrame("Button", button:GetName().."BindFrame", button, "NeuronBindFrameTemplate")
 
 	setmetatable(binder, { __index = CreateFrame("Button") })
@@ -405,7 +405,7 @@ function NeuronBinder:CreateBindFrame(button, index)
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 	button:SetAttribute("hotkeys", button.keys.hotKeys)
 
-	BINDIndex[button.class..index] = binder
+	BINDIndex[button.class..button.bar.id.."_"..button.id] = binder
 
 	binder:Hide()
 end

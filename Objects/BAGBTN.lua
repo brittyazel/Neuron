@@ -61,23 +61,6 @@ function BAGBTN:SetData(bar)
 	self:SetFrameLevel(4)
 end
 
-function BAGBTN:LoadData(spec, state)
-
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if not DB.bagbtn[id] then
-		DB.bagbtn[id] = {}
-	end
-
-	self.DB = DB.bagbtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-end
-
 
 function BAGBTN:SetType(save)
 
