@@ -320,6 +320,7 @@
 							icon.Show = function(self) self.filler:Show() self:oShow() end
 							icon.Hide = function(self) self.filler:Hide() self:oHide() end
 						end
+
 					</OnLoad>
 				</Scripts>
 			</Frame>

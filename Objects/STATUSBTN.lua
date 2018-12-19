@@ -61,13 +61,6 @@ local sbStrings = {
 
 Neuron.sbStrings = sbStrings
 
-local configDefaults = {
-	[1] = { sbType = "cast", cIndex = 1, lIndex = 2, rIndex = 3, showIcon = true},
-	[2] = { sbType = "xp", cIndex = 2, lIndex = 6, rIndex = 4, mIndex = 3, width = 450},
-	[3] = { sbType = "rep", cIndex = 3, lIndex = 2, rIndex = 4, mIndex = 6, width = 450},
-	[4] = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
-}
-
 
 local BarUnits = {
 	[1] = "-none-",
@@ -1763,26 +1756,6 @@ end
 
 
 
-function STATUSBTN:LoadData(spec, state)
-
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if not DB.statusbtn[id] then
-		DB.statusbtn[id] = {}
-	end
-
-	self.DB = DB.statusbtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-end
-
-
-
-
 function STATUSBTN:SetObjectVisibility(show)
 
 	if (show) then
@@ -1804,27 +1777,7 @@ end
 
 function STATUSBTN:LoadAux()
 
-	Neuron.NeuronGUI:SB_CreateEditFrame(self, self.objTIndex)
-
-end
-
-
-function STATUSBTN:SetDefaults(config)
-
-	if (config) then
-		for k,v in pairs(config) do
-			self.config[k] = v
-		end
-	end
-
-end
-
-
-
-
-function STATUSBTN:GetDefaults()
-
-	return configDefaults[self.id]
+	Neuron.NeuronGUI:SB_CreateEditFrame(self)
 
 end
 

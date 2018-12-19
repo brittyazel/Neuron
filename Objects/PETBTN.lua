@@ -431,23 +431,6 @@ function PETBTN:OnLeave()
 end
 
 
-function PETBTN:LoadData(spec, state)
-
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if not DB.petbtn[id] then
-		DB.petbtn[id] = {}
-	end
-
-	self.DB = DB.petbtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-end
-
 function PETBTN:SetObjectVisibility(show)
 
 	if (show or self.showGrid) then
@@ -462,7 +445,7 @@ end
 
 function PETBTN:LoadAux()
 
-	Neuron.NeuronBinder:CreateBindFrame(self, self.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(self)
 
 end
 

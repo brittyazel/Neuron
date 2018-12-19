@@ -25,6 +25,10 @@ local barsToUpdate = {}
 
 local FOBARIndex, FOBTNIndex, ANCHORIndex = {}, {}, {}
 
+Neuron.FOBARIndex = FOBARIndex
+Neuron.FOBTNIndex = FOBTNIndex
+Neuron.ANCHORIndex = ANCHORIndex
+
 --[[ Timer Management ]]
 local timerFrame
 
@@ -804,7 +808,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 	end
 
 
-	local button = self:new("NeuronFlyoutButton"..id)
+	local button = self:new(self:GetName().."_".."NeuronFlyoutButton"..id)
 
 	button.elapsed = 0
 
@@ -936,10 +940,10 @@ function ACTIONBUTTON:Flyout_GetBar()
 		id = id + 1
 	end
 
-	local bar = Neuron.BAR:new("NeuronFlyoutBar"..id)
+	local bar = Neuron.BAR:new(self:GetName().."_".."NeuronFlyoutBar"..id)
 
 	bar.index = id
-	bar.class = "bar"
+	bar.class = "FlyoutBar"
 	bar.elapsed = 0
 	bar.data = { scale = 1 }
 	bar.objPrefix = "NeuronFlyoutButton"

@@ -12,20 +12,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 ---------------------------------------------------------
 -------------------declare globals-----------------------
 ---------------------------------------------------------
-local keyDefaults = {
-	[1] = { hotKeys = ":1:", hotKeyText = ":1:" },
-	[2] = { hotKeys = ":2:", hotKeyText = ":2:" },
-	[3] = { hotKeys = ":3:", hotKeyText = ":3:" },
-	[4] = { hotKeys = ":4:", hotKeyText = ":4:" },
-	[5] = { hotKeys = ":5:", hotKeyText = ":5:" },
-	[6] = { hotKeys = ":6:", hotKeyText = ":6:" },
-	[7] = { hotKeys = ":7:", hotKeyText = ":7:" },
-	[8] = { hotKeys = ":8:", hotKeyText = ":8:" },
-	[9] = { hotKeys = ":9:", hotKeyText = ":9:" },
-	[10] = { hotKeys = ":0:", hotKeyText = ":0:" },
-	[11] = { hotKeys = ":-:", hotKeyText = ":-:" },
-	[12] = { hotKeys = ":=:", hotKeyText = ":=:" },
-}
 
 local cmdSlash = {
 	[SLASH_CAST1] = true,
@@ -356,18 +342,9 @@ end
 
 function ACTIONBUTTON:LoadData(spec, state)
 
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if (not DB.buttons[id]) then
-		DB.buttons[id] = {}
-	end
-
-	self.DB = DB.buttons[id]
-
 	self.config = self.DB.config
 	self.keys = self.DB.keys
+
 	self.statedata = self.DB[spec] --all of the states for a given spec
 	self.data = self.statedata[state] --loads a single state of a single spec into self.data
 
@@ -402,32 +379,11 @@ end
 function ACTIONBUTTON:LoadAux()
 
 	if Neuron.NeuronGUI then
-		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self, self.objTIndex)
+		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self)
 	end
-	Neuron.NeuronBinder:CreateBindFrame(self, self.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(self)
 
 end
-
-
-function ACTIONBUTTON:SetDefaults(config, keys)
-	if (config) then
-		for k,v in pairs(config) do
-			self.config[k] = v
-		end
-	end
-
-	if (keys) then
-		for k,v in pairs(keys) do
-			self.keys[k] = v
-		end
-	end
-end
-
-
-function ACTIONBUTTON:GetDefaults()
-	return nil, keyDefaults[self.id]
-end
-
 
 
 
@@ -1867,7 +1823,7 @@ function ACTIONBUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 	if (action1 == 0) then
 		return
 	else
-		local count = self.bar.objCount
+		local count = #self.bar.buttons
 		local columns = self.bar.data.columns or count
 		local rows = count/columns
 

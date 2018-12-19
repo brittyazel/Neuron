@@ -174,8 +174,12 @@ end
 
 
 --TODO: This should be consolodated as each child has a VERY similar function
-function BUTTON:LoadData(spec,state)
-	--empty--
+function BUTTON:LoadData(spec, state)
+
+	self.config = self.DB.config
+	self.keys = self.DB.keys
+	self.data = self.DB.data
+
 end
 
 function BUTTON:SetObjectVisibility(show)
@@ -190,12 +194,26 @@ function BUTTON:LoadAux()
 	--empty--
 end
 
-function BUTTON:SetDefaults(config, keys)
-	--empty--
-end
+function BUTTON:SetDefaults(defaults)
+	if defaults then
+		for k,v in pairs(defaults) do
 
-function BUTTON:GetDefaults()
-	--empty--
+			if defaults.config then
+				for k2, v2 in pairs(defaults.config) do
+					self.config[k2] = v2
+				end
+			end
+
+			if defaults.keys then
+				for k2, v2 in pairs(defaults.keys) do
+					self.keys[k2] = v2
+				end
+			end
+
+		end
+
+
+	end
 end
 
 function BUTTON:SetType(save, kill, init)

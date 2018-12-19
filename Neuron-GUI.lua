@@ -492,7 +492,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 	if (bar and GUIData[bar.class]) then
 
 		if (NBE:IsVisible()) then
-			NBE.count.text:SetText(L["Number of Buttons"]..": |cffffffff"..bar.objCount.."|r")
+			NBE.count.text:SetText(L["Number of Buttons"]..": |cffffffff"..#bar.buttons.."|r")
 			NBE.barname:SetText(bar.data.name)
 		end
 
@@ -1038,7 +1038,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 								if (self.bar) then
 
-									Neuron.NeuronBar:CreateNewBar(self.bar)
+									Neuron:CreateNewBar(self.bar)
 
 									NeuronBarEditorCreate:Click()
 								end
@@ -4049,7 +4049,7 @@ end
 
 
 
-function NeuronGUI:ObjEditor_CreateEditFrame(button, index)
+function NeuronGUI:ObjEditor_CreateEditFrame(button)
 
 	local editor = CreateFrame("Button", button:GetName().."EditFrame", button, "NeuronEditFrameTemplate")
 
@@ -4071,7 +4071,7 @@ function NeuronGUI:ObjEditor_CreateEditFrame(button, index)
 
 	button.editor = editor
 
-	EDITIndex["BUTTON"..index] = editor
+	EDITIndex[button.class..button.bar.id.."_"..button.id] = editor
 
 	editor:Hide()
 
@@ -4569,7 +4569,7 @@ function NeuronGUI:SB_AdjustableOptions_OnLoad(frame)
 end
 
 
-function NeuronGUI:SB_CreateEditFrame(button, index)
+function NeuronGUI:SB_CreateEditFrame(button)
 
 	local editor = CreateFrame("Button", button:GetName().."EditFrame", button, "NeuronEditFrameTemplate")
 
@@ -4607,7 +4607,7 @@ function NeuronGUI:SB_CreateEditFrame(button, index)
 
 	button.editor = editor
 
-	EDITIndex["STATUS"..index] = editor
+	EDITIndex[button.class..button.bar.id.."_"..button.id] = editor
 
 	editor:Hide()
 

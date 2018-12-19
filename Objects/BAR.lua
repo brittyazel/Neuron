@@ -9,8 +9,6 @@ Neuron.BAR = BAR
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local BARIndex = Neuron.BARIndex
-local BARNameIndex = Neuron.BARNameIndex
-local BTNIndex = Neuron.BTNIndex
 
 local MAS = Neuron.MANAGED_ACTION_STATES
 local MBS = Neuron.MANAGED_BAR_STATES
@@ -910,18 +908,10 @@ end
 
 ---Fakes a state change for a given bar, calls up the counterpart function in NeuronButton
 function BAR:SetFauxState(state)
-	local object
-
-	self.objCount = 0
 	self.handler:SetAttribute("fauxstate", state)
 
-	for i, objID in ipairs(self.data.objectList) do
-
-		object = _G[self.objPrefix..tostring(objID)]
-
-		if (object) then
-			object:SetFauxState(state)
-		end
+	for i, object in ipairs(self.buttons) do
+		object:SetFauxState(state)
 	end
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
@@ -932,7 +922,7 @@ end
 
 ---loads all the object stored for a given bar
 function BAR:LoadObjects(init)
-	local object, spec
+	local spec
 
 	if (self.data.multiSpec) then
 		spec = GetSpecialization()
@@ -940,36 +930,44 @@ function BAR:LoadObjects(init)
 		spec = 1
 	end
 
-	self.objCount = 0
+	for i, object in ipairs(self.buttons) do
+		---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
+		object:SetData(self)
+		object:LoadData(spec, self.handler:GetAttribute("activestate"))
+		object:SetType()
+		object:SetAux()
 
+		object:SetObjectVisibility()
 
-	for i, objID in ipairs(self.data.objectList) do
-		object = _G[self.objPrefix..tostring(objID)]
-
-
-		if (object) then
-
-			---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
-			object:SetData(self)
-			object:LoadData(spec, self.handler:GetAttribute("activestate"))
-			object:SetType()
-			object:SetAux()
-
-			object:SetObjectVisibility()
-
-			self.objCount = self.objCount + 1
-			self.countChanged = true
-		end
 	end
 end
 
 
 function BAR:SetObjectLoc()
-	local width, height, num, count, origCol = 0, 0, 0, self.objCount, self.data.columns
-	local x, y, object, lastObj, placed
+	local width, height, num, origCol = 0, 0, 0, self.data.columns
+	local x, y, lastObj, placed
 	local shape, padH, padV, arcStart, arcLength = self.data.shape, self.data.padH, self.data.padV, self.data.arcStart, self.data.arcLength
 	local cAdjust, rAdjust = 0.5, 1
 	local columns, rows
+
+
+	---This is just for the flyout bar, it should be cleaned in the future
+	local count
+	if self.class ~= "FlyoutBar" then
+		count = #self.buttons
+	else
+		count = #self.data.objectList
+	end
+
+	local buttons = {}
+	if self.class ~= "FlyoutBar" then
+		buttons = self.buttons
+	else
+		for k,v in pairs (self.data.objectList) do
+			table.insert(buttons, Neuron.FOBTNIndex[v])
+		end
+	end
+	--------------------------------------------------------------------------
 
 	if (not origCol) then
 		origCol = count; rows = 1
@@ -977,10 +975,9 @@ function BAR:SetObjectLoc()
 		rows = (round(ceil(count/self.data.columns), 1)/2)+0.5
 	end
 
-	for i, objID in ipairs(self.data.objectList) do
-		object = _G[self.objPrefix..tostring(objID)]
+	for i, object in ipairs(buttons) do --once the flyout bars are fixed, this can be changed to ipairs(self.buttons)
 
-		if (object and num < count) then
+		if (num < count) then
 			object:ClearAllPoints()
 			object:SetParent(self.handler)
 			object:SetAttribute("lastPos", nil)
@@ -1052,22 +1049,35 @@ end
 
 
 function BAR:SetPerimeter()
-	local num, count = 0, self.objCount
-	local object
+	local num = 0
 
-	self.objCount = 0
+	---This is just for the flyout bar, it should be cleaned in the future
+	local count
+	if self.class ~= "FlyoutBar" then
+		count = #self.buttons
+	else
+		count = #self.data.objectList
+	end
+
+	local buttons = {}
+	if self.class ~= "FlyoutBar" then
+		buttons = self.buttons
+	else
+		for k,v in pairs (self.data.objectList) do
+			table.insert(buttons, Neuron.FOBTNIndex[v])
+		end
+	end
+	-----------------------------------------------
+
 	self.top = nil; self.bottom = nil; self.left = nil; self.right = nil
 
-	for i, objID in ipairs(self.data.objectList) do
-		object = _G[self.objPrefix..tostring(objID)]
+	for i, object in ipairs(buttons) do --once the flyout bars are fixed, this can be changed to ipairs(self.buttons)
 
-		if (object and num < count) then
+		if (num < count) then
 			local objTop, objBottom, objLeft, objRight = object:GetTop(), object:GetBottom(), object:GetLeft(), object:GetRight()
 			local scale = 1
 			--See if this fixes the ranom position error that happens
 			if not objTop then return end
-
-			self.objCount = self.objCount + 1
 
 			if (self.top) then
 				if (objTop*scale > self.top) then self.top = objTop*scale end
@@ -1092,12 +1102,11 @@ end
 
 
 function BAR:SetDefaults(defaults)
-	if (defaults) then
-		for k,v in pairs(defaults) do
+	for k,v in pairs(defaults) do
+		if k ~= "buttons" then --ignore this value because it's just used to tell how many buttons should be placed on a bar by default on the first load
 			self.data[k] = v
 		end
 	end
-
 end
 
 
@@ -1463,9 +1472,8 @@ end
 
 
 function BAR:LoadData()
-	local id = self:GetID()
 
-	self.data = self.barDB[id]
+	self.data = self.DB
 
 	if (not self.data.name or self.data.name == ":") then
 		self.data.name = self.barLabel.." "..self:GetID()
@@ -1474,10 +1482,7 @@ end
 
 
 function BAR:UpdateObjectData()
-	local object
-
-	for _, objID in pairs(self.data.objectList) do
-		object = _G[self.objPrefix..tostring(objID)]
+	for _, object in pairs(self.buttons) do
 
 		if (object) then
 			object:SetData(self)
@@ -1487,10 +1492,7 @@ end
 
 
 function BAR:UpdateObjectVisibility(show)
-	local object
-	for i, objID in ipairs(self.data.objectList) do
-		object = _G[self.objPrefix..tostring(objID)]
-
+	for _, object in pairs(self.buttons) do
 		if (object) then
 			object:SetObjectVisibility(show)
 		end
@@ -1579,7 +1581,7 @@ function BAR:DeleteBar()
 		end
 	end
 
-	self:RemoveObjectsFromBar(self.objCount)
+	self:RemoveObjectsFromBar(#self.buttons)
 
 	self:SetScript("OnClick", function() end)
 	self:SetScript("OnDragStart", function() end)
@@ -1604,27 +1606,12 @@ function BAR:DeleteBar()
 	self:Hide()
 
 	BARIndex[self.index] = nil
-	BARNameIndex[self:GetName()] = nil
 
 	self.barDB[self:GetID()] = nil
 
 	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateBarGUI()
 	end
-end
-
-
-function BAR:AddObjectToList(object)
-
-	if (not self.data.objectList or self.data.objectList == {}) then
-		self.data.objectList[1] = object.id
-	elseif (self.class == "bag") then
-		table.insert(self.data.objectList, 1, object.id) --for bag bars insert the object to the start of the list
-	else
-		self.data.objectList[#self.data.objectList +1] = object.id
-	end
-
-	object["bar"] = self
 end
 
 
@@ -1639,22 +1626,10 @@ function BAR:AddObjectsToBar(num)
 	for i=1,num do
 
 		local object
-		local id = 1
+		local id = #self.buttons + 1
 
-		for index in ipairs(self.objTable) do
-			if self.objTable[index]["bar"] then
-				id = index + 1
-			end
-		end
-
-		if (self.objCount < self.objMax) then
-
-			if self.objTable[id] and not self.objTable[id]["bar"] then --checks to see if the object exists in the object table, and if the object belongs to a bar
-				object = self.objTable[id]
-			else
-				object = Neuron:CreateNewObject(self.class, id)
-			end
-			self:AddObjectToList(object)
+		if (#self.buttons < self.objMax) then
+			object = Neuron:CreateNewObject(self.class, id, self)
 		end
 
 	end
@@ -1669,44 +1644,6 @@ function BAR:AddObjectsToBar(num)
 end
 
 
-function BAR:RemoveObject(object, objID)
-	object:ClearAllPoints()
-
-	object.config.scale = 1
-	object.config.XOffset = 0
-	object.config.YOffset = 0
-	object.config.target = "none"
-
-	object.config.mouseAnchor = false
-	object.config.clickAnchor = false
-	object.config.anchorDelay = false
-	object.config.anchoredBar = false
-
-	if (object.binder) then
-		Neuron.NeuronBinder:ClearBindings(object)
-	end
-
-	self:RemoveObjectFromList(object, objID)
-
-	object:SetParent(TRASHCAN)
-
-end
-
-
-function BAR:RemoveObjectFromList(object, objID)
-
-	local index = tFind(self.data.objectList, objID)
-
-	if index == 0 then --objectID not contained in the list. This shouldn't even trip, but just in case
-		return
-	end
-
-	table.remove(self.data.objectList, index)
-	object["bar"] = nil
-
-end
-
-
 function BAR:RemoveObjectsFromBar(num)
 
 	if (not num) then
@@ -1716,30 +1653,33 @@ function BAR:RemoveObjectsFromBar(num)
 
 	for i=1,num do
 
-		local objID
+		local id = #self.buttons --always the last button
 
-		if self.class ~= "bag" then
-			objID = self.data.objectList[#self.data.objectList]
-		else
-			objID = self.data.objectList[1] --for bag bars, remove from the front of the list
-		end
+		local object = self.buttons[id]
 
-		if (objID) then
-			local object = _G[self.objPrefix..tostring(objID)]
-			if (object) then
-				self:RemoveObject(object, objID)
+		if (object) then
 
-				self.objCount = self.objCount - 1
-				self.countChanged = true
+			object:ClearAllPoints()
+
+
+			table.remove(self.DB.buttons, id)
+			table.remove(self.buttons, id)
+
+
+			if (object.binder) then
+				Neuron.NeuronBinder:ClearBindings(object)
 			end
 
-			self:SetObjectLoc()
-			self:SetPerimeter()
-			self:SetSize()
-			self:Update()
-		end
-	end
+			object:SetParent(TRASHCAN)
 
+
+		end
+
+		self:SetObjectLoc()
+		self:SetPerimeter()
+		self:SetSize()
+		self:Update()
+	end
 
 end
 
@@ -2189,11 +2129,10 @@ function BAR:MultiSpecSet(msg, gui, checked, query)
 		end
 	end
 
-	for i, btnID in ipairs(self.data.objectList) do
-		local button = _G[self.objPrefix..tostring(btnID)]
+	for i, object in ipairs(self.buttons) do
 
-		if button then
-			button:UpdateButtonSpec(self)
+		if object then
+			object:UpdateButtonSpec(self)
 		end
 
 	end

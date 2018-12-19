@@ -22,25 +22,6 @@ function EXTRABTN:new(name)
 end
 
 
-
-function EXTRABTN:LoadData(spec, state)
-
-	local DB = Neuron.db.profile
-
-	local id = self.id
-
-	if not DB.extrabtn[id] then
-		DB.extrabtn[id] = {}
-	end
-
-	self.DB = DB.extrabtn[id]
-
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-	self.data = self.DB.data
-
-end
-
 function EXTRABTN:SetObjectVisibility(show)
 
 	if HasExtraActionBar() or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
@@ -66,7 +47,7 @@ end
 
 function EXTRABTN:LoadAux()
 
-	Neuron.NeuronBinder:CreateBindFrame(self, self.objTIndex)
+	Neuron.NeuronBinder:CreateBindFrame(self)
 
 	self.style = self:CreateTexture(nil, "OVERLAY")
 	self.style:SetPoint("CENTER", -2, 1)
