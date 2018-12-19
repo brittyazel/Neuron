@@ -1146,8 +1146,11 @@ end
 
 function Neuron:ToggleButtonGrid(show)
 	for _,bar in pairs(Neuron.BARIndex) do
-		for _, button in pairs(bar.buttons) do
-			button:SetObjectVisibility(show)
+
+		if bar.barType == "ActionBar" or bar.barType == "PetBar" then
+			for _, button in pairs(bar.buttons) do
+				button:SetObjectVisibility(show)
+			end
 		end
 	end
 end
