@@ -19,11 +19,6 @@ function Neuron:Startup()
 
 	Neuron:Overrides()
 
-
-	for _,bar in pairs(Neuron.BARIndex) do
-		bar:Load()
-	end
-
 end
 
 
@@ -185,13 +180,9 @@ function Neuron:CreateBarsAndButtons()
 	if (DB.firstRun) then
 
 		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
-
 			for i, defaults in ipairs(barDefaults) do
-
-				local bar = Neuron:CreateNewBar(barClass, i, defaults) --this calls the bar constructor
-
+				Neuron:CreateNewBar(barClass, i, defaults) --this calls the bar constructor
 			end
-
 		end
 
 		DB.firstRun = false
@@ -199,7 +190,6 @@ function Neuron:CreateBarsAndButtons()
 	else
 
 		for barClass, barClassData in pairs (Neuron.RegisteredBarData) do
-
 			for id,data in pairs(barClassData.barDB) do
 				if (data ~= nil) then
 					Neuron:CreateNewBar(barClass, id)

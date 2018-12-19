@@ -21,7 +21,7 @@ Neuron.PEW = false --flag that gets set when the player enters the world. It's u
 
 local latestVersionNum = "0.9.38" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
-local latestDBVersion = 1.2
+local latestDBVersion = 1.3
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local Update_Message = [[Thanks for updating Neuron!
@@ -202,6 +202,7 @@ function Neuron:OnInitialize()
 	if DB.DBVersion ~= latestDBVersion then --checks if the DB version is out of date, and if so it calls the DB Fixer
 		Neuron:DBFixer(DB, DB.DBVersion)
 		DB.DBVersion = latestDBVersion
+		Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
 	end
 	-----------------------------------------------------
 
@@ -307,6 +308,10 @@ function Neuron:OnEnable()
 
 	Neuron:LoginMessage()
 
+
+	for _,bar in pairs(Neuron.BARIndex) do
+		bar:Load()
+	end
 
 end
 

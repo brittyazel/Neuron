@@ -94,4 +94,67 @@ function Neuron:DBFixer(profile, oldDBVersion) --converted objectTable from a si
 
     end
 
+
+    ---Added on 12/19/2018. Remove at some point in the future
+    ---The purpose of this migrate is to get rid of the GDB/CDB divide
+    ---this code takes separate bar and button tables, and nests the buttons into their corresponding bars
+    if oldDBVersion < 1.3 then
+
+        local oldBarDBNames = {"bars", "zoneabilitybar", "extrabar", "bagbar", "statusbar", "exitbar", "menubar", "petbar"}
+
+        local oldBtnDBNames = {"buttons", "zoneabilitybtn", "extrabtn", "bagbtn", "statusbtn", "exitbtn", "menubtn", "petbtn"}
+
+        local NewBarDBNames = {"ActionBar", "ZoneAbilityBar", "ExtraBar", "BagBar", "StatusBar", "ExitBar", "MenuBar", "PetBar"}
+
+
+
+        --copy over all the bar data into the new bar tables
+        for i, barDBName in ipairs(oldBarDBNames) do
+
+            if profile[barDBName] then
+
+                for k,v in pairs(profile[barDBName]) do
+
+                    if not profile[NewBarDBNames[i]] then
+                        profile[NewBarDBNames[i]] = {}
+                    end
+
+                    profile[NewBarDBNames[i]][k] = v
+
+                end
+            end
+        end
+
+
+        --copy over all of the button data to their corresponding bars
+        for i, barDBName in ipairs(NewBarDBNames) do
+
+            if profile[oldBarDBNames[i]] then
+
+                for j, v2 in ipairs(profile[barDBName]) do
+
+                    for k, v3 in ipairs(v2.objectList) do
+
+                        if not profile[barDBName][j].buttons then
+                            profile[barDBName][j].buttons = {}
+                        end
+
+                        profile[barDBName][j].buttons[k] = CopyTable(profile[oldBtnDBNames[i]][v3])
+
+
+                    end
+
+                end
+
+            end
+
+        end
+
+
+        oldDBVersion = 1.3 --increment oldDBVersion up to the latest that this set of code fixes
+        Neuron:Print("Neuron database migrated to version " .. 1.3)
+
+
+    end
+
 end
