@@ -1344,7 +1344,7 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		barType = barType,
 		barLabel = barLabel,
 		barDB = barDB,
-		objPrefix = "Neuron"..objType:gsub("%s+", ""),
+		objPrefix = objType:gsub("%s+", ""),
 		objType = objType,
 		objTemplate = objTemplate,
 		objMax = objMax,

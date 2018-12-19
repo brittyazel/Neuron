@@ -23,8 +23,6 @@ end
 function BUTTON:SetData(bar)
 	if (bar) then
 
-		test = self
-
 		self.bar = bar
 
 		self.barLock = bar.data.barLock

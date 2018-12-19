@@ -122,8 +122,6 @@ local genericKeyData = {
 local genericBarData = {
     name = ":",
 
-    objectList = {},
-
     buttons = {
         ['*'] = {
             ['config'] = CopyTable(genericButtonData),

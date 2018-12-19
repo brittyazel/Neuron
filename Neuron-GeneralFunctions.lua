@@ -53,14 +53,17 @@ function Neuron:UpdateMacroCastTargets(global_update)
 	local button_list = {}
 
 	if global_update then
-		local button_count =(#DB.buttons)
-		for index = 1, button_count, 1 do
-			table.insert(button_list, _G["NeuronActionButton"..index])
+
+		for _,bar in ipairs(Neuron.BARIndex) do
+			for _, object in ipairs(bar.buttons) do
+				table.insert(button_list, object)
+			end
 		end
+
 	else
 		local bar = Neuron.CurrentBar
-		for i, objID in ipairs(bar.data.objectList) do
-			table.insert(button_list, _G["NeuronActionButton"..tostring(objID)])
+		for i, object in ipairs(bar.buttons) do
+			table.insert(button_list, object)
 		end
 	end
 
@@ -157,16 +160,16 @@ function Neuron:CreateNewObject(class, id, bar, firstRun)
 
 	if (data) then
 
-		local object = data.objTemplate:new(data.objPrefix..id)
+		local object = data.objTemplate:new(bar:GetName().."_"..data.objPrefix..id)
+
 
 		--returns a table of the names of all the child objects for a given frame
-		--[[local objects = Neuron:GetParentKeys(object)
-
-		--I think this is creating a pointer inside the object to where the child object resides in the global namespace
+		local objects = Neuron:GetParentKeys(object)
+		--populates the button with all the Icon,Shine,Cooldown frame references
 		for k,v in pairs(objects) do
 			local name = (v):gsub(object:GetName(), "")
 			object[name:lower()] = _G[v]
-		end]]
+		end
 
 		bar.buttons[id] = object --add this object to our buttons table for this bar
 
@@ -183,10 +186,11 @@ function Neuron:CreateNewObject(class, id, bar, firstRun)
 		object.objType = data.objType:gsub("%s", ""):upper()
 		object:LoadData(GetActiveSpecGroup(), "homestate")
 
+		object.elapsed = 0
 
-		--[[if (firstRun) then
+		if (firstRun) then
 			object:SetDefaults(object:GetDefaults())
-		end]]
+		end
 
 		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
 		if object.DB.config then
