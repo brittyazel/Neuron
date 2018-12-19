@@ -944,11 +944,30 @@ end
 
 
 function BAR:SetObjectLoc()
-	local width, height, num, count, origCol = 0, 0, 0, #self.buttons, self.data.columns
-	local x, y, object, lastObj, placed
+	local width, height, num, origCol = 0, 0, 0, self.data.columns
+	local x, y, lastObj, placed
 	local shape, padH, padV, arcStart, arcLength = self.data.shape, self.data.padH, self.data.padV, self.data.arcStart, self.data.arcLength
 	local cAdjust, rAdjust = 0.5, 1
 	local columns, rows
+
+
+	---This is just for the flyout bar, it should be cleaned in the future
+	local count
+	if self.class ~= "FlyoutBar" then
+		count = #self.buttons
+	else
+		count = #self.data.objectList
+	end
+
+	local buttons = {}
+	if self.class ~= "FlyoutBar" then
+		buttons = self.buttons
+	else
+		for k,v in pairs (self.data.objectList) do
+			table.insert(buttons, Neuron.FOBTNIndex[v])
+		end
+	end
+	--------------------------------------------------------------------------
 
 	if (not origCol) then
 		origCol = count; rows = 1
@@ -956,7 +975,7 @@ function BAR:SetObjectLoc()
 		rows = (round(ceil(count/self.data.columns), 1)/2)+0.5
 	end
 
-	for i, object in ipairs(self.buttons) do
+	for i, object in ipairs(buttons) do --once the flyout bars are fixed, this can be changed to ipairs(self.buttons)
 
 		if (num < count) then
 			object:ClearAllPoints()
@@ -1030,11 +1049,29 @@ end
 
 
 function BAR:SetPerimeter()
-	local num, count = 0, #self.buttons
+	local num = 0
+
+	---This is just for the flyout bar, it should be cleaned in the future
+	local count
+	if self.class ~= "FlyoutBar" then
+		count = #self.buttons
+	else
+		count = #self.data.objectList
+	end
+
+	local buttons = {}
+	if self.class ~= "FlyoutBar" then
+		buttons = self.buttons
+	else
+		for k,v in pairs (self.data.objectList) do
+			table.insert(buttons, Neuron.FOBTNIndex[v])
+		end
+	end
+	-----------------------------------------------
 
 	self.top = nil; self.bottom = nil; self.left = nil; self.right = nil
 
-	for i, object in ipairs(self.buttons) do
+	for i, object in ipairs(buttons) do --once the flyout bars are fixed, this can be changed to ipairs(self.buttons)
 
 		if (num < count) then
 			local objTop, objBottom, objLeft, objRight = object:GetTop(), object:GetBottom(), object:GetLeft(), object:GetRight()
