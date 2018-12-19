@@ -1605,9 +1605,8 @@ function BAR:DeleteBar()
 	self:SetPoint("CENTER")
 	self:Hide()
 
-	BARIndex[self.index] = nil
-
-	self.barDB[self:GetID()] = nil
+	table.remove(self.barDB, self:GetID()) --removes the bar from the database, along with all of its buttons
+	table.remove(BARIndex, self.index)
 
 	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateBarGUI()
@@ -1662,7 +1661,7 @@ function BAR:RemoveObjectsFromBar(num)
 			object:ClearAllPoints()
 
 
-			table.remove(self.DB.buttons, id)
+			table.remove(self.DB.buttons, id) --this is somewhat redundant if deleting a bar, but it doesn't hurt and is important for individual button deletions
 			table.remove(self.buttons, id)
 
 

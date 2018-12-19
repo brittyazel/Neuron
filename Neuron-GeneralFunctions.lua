@@ -2,7 +2,7 @@
 
 
 ------------------------------------------------------------
---------------------Button General Functions----------------
+---------------Button and Bar General Functions-------------
 ------------------------------------------------------------
 
 function Neuron:SetTimer(frame, start, duration, enable, timer, color1, color2, cdAlpha)
@@ -210,13 +210,7 @@ function Neuron:CreateNewBar(class, id, defaults)
 
 	if (class and Neuron.RegisteredBarData[class]) then
 
-		local index = 1
-
-		for _ in ipairs(Neuron.BARIndex) do
-			index = index + 1
-		end
-
-		local bar, newBar = Neuron:CreateBar(class, id, index)
+		local bar, newBar = Neuron:CreateBar(class, id)
 
 		if (defaults) then
 			bar:SetDefaults(defaults)
@@ -255,18 +249,15 @@ function Neuron:CreateNewBar(class, id, defaults)
 	end
 end
 
-function Neuron:CreateBar(class, id, index)
+function Neuron:CreateBar(class, id)
 	local data = Neuron.RegisteredBarData[class]
 	local newBar
 
+	local index = #Neuron.BARIndex + 1
+
 	if (data) then
 		if (not id) then
-			id = 1
-
-			for _ in ipairs(data.barDB) do
-				id = id + 1
-			end
-
+			id = #data.barDB + 1
 			newBar = true
 		end
 
@@ -274,9 +265,7 @@ function Neuron:CreateBar(class, id, index)
 		local bar = Neuron.BAR:new("Neuron"..data.barType..id)
 
 		for key,value in pairs(data) do
-			if key ~= "barDB" then --we don't want to copy over the database for all bars, just for the 1 bar
-				bar[key] = value
-			end
+			bar[key] = value
 		end
 
 		if not data.barDB[id] then --if the database for a bar doesn't exist (because it's a new bar?
@@ -302,7 +291,7 @@ function Neuron:CreateBar(class, id, index)
 		bar.message:Hide()
 		bar.messagebg:Hide()
 
-		bar:SetID(index)
+		bar:SetID(id)
 		bar:SetWidth(375)
 		bar:SetHeight(40)
 		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
