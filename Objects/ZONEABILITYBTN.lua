@@ -77,11 +77,8 @@ function ZONEABILITYBTN:ZoneAbilityFrame_Update()
 	self:SetNeuronButtonTex()
 
 
-	if DB.zoneabilitybar[1].border then
-		self.style:Show()
-	else
-		self.style:Hide()
-	end
+	self.style:Show()
+
 
 
 	local charges, maxCharges, chargeStart, chargeDuration = GetSpellCharges(spellID);
@@ -268,32 +265,4 @@ function ZONEABILITYBTN:SetType(save)
 	self:SetScript("OnAttributeChanged", nil)
 
 	self:SetObjectVisibility()
-end
-
-function ZONEABILITYBTN:HideZoneAbilityBorder(bar, msg, gui, checked, query)
-	if (query) then
-		return Neuron.CurrentBar.data.border
-	end
-
-	if (gui) then
-
-		if (checked) then
-			Neuron.CurrentBar.data.border = true
-		else
-			Neuron.CurrentBar.data.border = false
-		end
-
-	else
-
-		local toggle = Neuron.CurrentBar.data.border
-
-		if (toggle) then
-			Neuron.CurrentBar.data.border = false
-		else
-			Neuron.CurrentBar.data.border = true
-		end
-	end
-
-	bar:Update()
-	self:UpdateFrame()
 end

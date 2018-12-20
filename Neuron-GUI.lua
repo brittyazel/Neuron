@@ -46,7 +46,6 @@ local chkOptions = {
 	[15] = { "TOOLTIPS", L["Enable Tooltips"], 1, "ToolTipSet" },
 	[16] = { "TOOLTIPS", L["Enhanced"], 0.9, "ToolTipSet", "enhanced" },
 	[17] = { "TOOLTIPS", L["Hide in Combat"], 0.9, "ToolTipSet", "combat" },
-	[18] = { "ZONEABILITY", L["Show Bar Border"], 1, "HideZoneAbilityBorder"},
 }
 
 local adjOptions = {

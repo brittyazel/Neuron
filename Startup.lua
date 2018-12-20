@@ -88,8 +88,7 @@ function Neuron:RegisterGUI()
 		BINDTEXT = true,
 		RANGEIND = true,
 		CDTEXT = true,
-		CDALPHA = true,
-		ZONEABILITY = true},
+		CDALPHA = true },
 			false, 65)
 
 
@@ -252,5 +251,6 @@ function Neuron:Overrides()
 		MirrorTimer3:UnregisterAllEvents()
 		MirrorTimer3:SetParent(Neuron.hiddenFrame)
 	end
+
 
 end
