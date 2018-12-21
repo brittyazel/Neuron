@@ -58,6 +58,8 @@ function ZONEABILITYBTN:SetNeuronButtonTex()
 
 	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
 	self.style:SetTexture(texture)
+
+	self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 end
 
 
@@ -75,10 +77,6 @@ function ZONEABILITYBTN:ZoneAbilityFrame_Update()
 	self.CurrentSpell = name;
 	self.iconframeicon:SetTexture(tex);
 	self:SetNeuronButtonTex()
-
-
-	self.style:Show()
-
 
 
 	local charges, maxCharges, chargeStart, chargeDuration = GetSpellCharges(spellID);

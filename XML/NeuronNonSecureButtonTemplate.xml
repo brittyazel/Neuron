@@ -1,0 +1,167 @@
+<!--Neuron, a World of Warcraft® user interface addon.-->
+
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://github.com/Ellypse/wow-ui-source/blob/live/FrameXML/UI.xsd">
+
+	<CheckButton name="NeuronNonSecureButtonTemplate" virtual="true">
+		<Size x="43" y="43"/>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
+					<Size x="64" y="64"/>
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset x="0" y="1"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentGloss" file="Interface\Buttons\UI-PassiveHighlight" alphaMode="ADD">
+					<Size x="63" y="63"/>
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset x="0" y="1"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentHotKey" parentKey="hotkey" inherits="NumberFontNormal" justifyH="RIGHT">
+					<Size x="43" y="10"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="-3" y="-4"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset x="-2" y="2"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<Texture name="$parentAutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<TexCoords left="0.1875" right="0.8125" top="0.1875" bottom="0.8125"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentIconFrame">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="3" y="-3"/>
+					</Anchor>
+					<Anchor point="BOTTOMRIGHT">
+						<Offset x="-3" y="3"/>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture name="$parentIcon">
+							<TexCoords left="0.01" right="0.99" top="0.01" bottom="0.99"/>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture name="$parentFlash" hidden="true">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPLEFT"/>
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon" relativePoint="BOTTOMRIGHT"/>
+							</Anchors>
+							<Color r="1" g="0" b="0" a="0.5"/>
+						</Texture>
+					</Layer>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentBackGround">
+							<Size x="60" y="60"/>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset x="0" y="0"/>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentFiller">
+							<Size x="60" y="60"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPLEFT"/>
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon" relativePoint="BOTTOMRIGHT"/>
+							</Anchors>
+							<Color r="0" g="0" b="0" a="1"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT"/>
+							<Anchor point="BOTTOMRIGHT"/>
+						</Anchors>
+						<Layers>
+							<Layer level="OVERLAY">
+								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" hidden="true">
+									<Anchors>
+										<Anchor point="CENTER">
+											<Offset x="0.5" y="0"/>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								self:SetFrameLevel(3)
+								self.button = self:GetParent():GetParent()
+							</OnLoad>
+							<OnHide>
+								self.active = nil
+							</OnHide>
+						</Scripts>
+					</Cooldown>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self:SetFrameLevel(2)
+
+						local icon = _G[self:GetName().."Icon"]
+						icon.filler = _G[self:GetName().."Filler"]
+
+						if (icon and icon.filler) then
+
+							icon.oShow = icon.Show
+							icon.oHide = icon.Hide
+
+							icon.Show = function(self) self.filler:Show() self:oShow() end
+							icon.Hide = function(self) self.filler:Hide() self:oHide() end
+						end
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot">
+			<Anchors>
+				<Anchor point="TOPLEFT" x="-12" y="12"/>
+				<Anchor point="BOTTOMRIGHT" x="13" y="-13"/>
+			</Anchors>
+		</NormalTexture>
+		<PushedTexture name="$parentPushedTexture" inherits="NeuronCheckButtonTextureTemplate" file="Interface\Buttons\UI-Quickslot-Depress">
+			<Anchors>
+				<Anchor point="TOPLEFT" x="2" y="-2"/>
+				<Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+			</Anchors>
+		</PushedTexture>
+		<HighlightTexture name="$parentHighlightTexture" inherits="NeuronCheckButtonTextureTemplate" alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square">
+			<Anchors>
+				<Anchor point="TOPLEFT" x="3" y="-3"/>
+				<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+			</Anchors>
+		</HighlightTexture>
+		<CheckedTexture name="$parentCheckedTexture" inherits="NeuronCheckButtonTextureTemplate" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight">
+			<Anchors>
+				<Anchor point="TOPLEFT" x="3" y="-3"/>
+				<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+			</Anchors>
+		</CheckedTexture>
+	</CheckButton>
+
+</Ui>

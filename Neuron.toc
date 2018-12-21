@@ -21,7 +21,6 @@ Neuron-Defaults.lua
 Neuron.lua
 Neuron-States.lua
 
-
 Utilities/DB-Fixer.lua
 
 
@@ -42,11 +41,15 @@ Neuron-GeneralFunctions.lua
 Neuron-KeyBinder.lua
 Neuron-MinimapIcon.lua
 
-XML/Neuron.xml
-XML/Neuron-Status.xml
+XML/NeuronActionButtonTemplate.xml
+XML/NeuronAnchorButtonTemplate.xml
+XML/NeuronBarTemplate.xml
+XML/NeuronBindFrameTemplate.xml
+XML/NeuronCheckButtonTextureTemplate.xml
+XML/NeuronNonSecureButtonTemplate.xml
+XML/NeuronStatusBarTemplate.xml
 
 Startup.lua
-
 
 Neuron-GUI.lua
 XML/Neuron-GUI.xml
