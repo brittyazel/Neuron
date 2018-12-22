@@ -1,14 +1,10 @@
 --Neuron, a World of Warcraft® user interface addon.
--------------------------------------------------------------------------------
--- Localized Lua globals.
--------------------------------------------------------------------------------
-local addonName = ...
-
-local DB
 
 ---@class Neuron @define The main addon object for the Neuron Action Bar addon
 Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
 --this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
+
+local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -48,10 +44,6 @@ Neuron.MacroDrag = {}
 Neuron.StartDrag = false
 
 Neuron.BARIndex = {}
-
-
---working variable pointers
-local BARIndex = Neuron.BARIndex
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 
@@ -1026,7 +1018,7 @@ function Neuron:ToggleBarEditMode(show)
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBindingMode(false)
 
-		for index, bar in pairs(BARIndex) do
+		for index, bar in pairs(Neuron.BARIndex) do
 			bar:Show() --this shows the transparent overlay over a bar
 			bar:Update(true)
 			bar:UpdateObjectVisibility(true)
@@ -1036,7 +1028,7 @@ function Neuron:ToggleBarEditMode(show)
 
 		Neuron.BarEditMode = false
 
-		for index, bar in pairs(BARIndex) do
+		for index, bar in pairs(Neuron.BARIndex) do
 			bar:Hide()
 			bar:Update(nil, true)
 			bar:UpdateObjectVisibility()
@@ -1072,7 +1064,7 @@ function Neuron:ToggleButtonEditMode(show)
 			end
 		end
 
-		for _,bar in pairs(BARIndex) do
+		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility(true)
 		end
 
@@ -1086,7 +1078,7 @@ function Neuron:ToggleButtonEditMode(show)
 			editor:SetFrameStrata("LOW")
 		end
 
-		for _,bar in pairs(BARIndex) do
+		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility()
 
 			if (bar.handler:GetAttribute("assertstate")) then
@@ -1121,7 +1113,7 @@ function Neuron:ToggleBindingMode(show)
 			end
 		end
 
-		for _,bar in pairs(BARIndex) do
+		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility(true)
 		end
 
@@ -1137,7 +1129,7 @@ function Neuron:ToggleBindingMode(show)
 
 		end
 
-		for _,bar in pairs(BARIndex) do
+		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility()
 		end
 	end

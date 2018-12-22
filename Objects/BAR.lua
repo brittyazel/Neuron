@@ -5,10 +5,8 @@ local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is t
 Neuron.BAR = BAR
 
 
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BARIndex = Neuron.BARIndex
 
 local MAS = Neuron.MANAGED_ACTION_STATES
 local MBS = Neuron.MANAGED_BAR_STATES
@@ -1292,7 +1290,7 @@ function BAR:OnDragStop(...)
 	local point
 	self:StopMovingOrSizing()
 
-	for _,v in pairs(BARIndex) do
+	for _,v in pairs(Neuron.BARIndex) do
 		if (not point and self.data.snapTo and v.data.snapTo and self ~= v) then
 			point = self:Stick(v, Neuron.snapToTol, self.data.padH, self.data.padV)
 
@@ -1529,7 +1527,7 @@ function BAR:ChangeBar()
 			self.text:Show()
 		end
 
-		for k,v in pairs(BARIndex) do
+		for k,v in pairs(Neuron.BARIndex) do
 			if (v ~= self) then
 
 				if (v.data.conceal) then
@@ -1606,7 +1604,7 @@ function BAR:DeleteBar()
 	self:Hide()
 
 	table.remove(self.barDB, self:GetID()) --removes the bar from the database, along with all of its buttons
-	table.remove(BARIndex, self.index)
+	table.remove(Neuron.BARIndex, self.index)
 
 	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateBarGUI()

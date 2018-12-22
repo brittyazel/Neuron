@@ -1,7 +1,5 @@
 --Neuron, a World of Warcraft® user interface addon.
 
-local addonName = ...
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 --------------------------------------------
@@ -110,7 +108,7 @@ end
 function Neuron:printSlashHelp()
 
 	Neuron:Print("---------------------------------------------------")
-	Neuron:Print(L["How to use"]..":   ".."/"..addonName:lower().." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
+	Neuron:Print(L["How to use"]..":   ".."/neuron".." <"..L["Command"]:lower().."> <"..L["Option"]:lower()..">")
 	Neuron:Print(L["Command List"]..":")
 	Neuron:Print("---------------------------------------------------")
 
@@ -165,7 +163,7 @@ function Neuron:PrintBarTypes()
 
 
 	Neuron:Print("---------------------------------------------------")
-	Neuron:Print("     "..L["How to use"]..":   ".."/"..addonName:lower().." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
+	Neuron:Print("     "..L["How to use"]..":   ".."/neuron".." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
 	Neuron:Print("---------------------------------------------------")
 
 	for k,v in ipairs(data) do
