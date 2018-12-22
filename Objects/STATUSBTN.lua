@@ -427,8 +427,16 @@ function STATUSBTN:repstrings_Update(line)
 				RepWatch[i] = repData --set current reptable into growing RepWatch table
 
 				if (((line and type(line)~= "boolean") and line:find(name)) or self.data.autoWatch == i) then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
-					RepWatch[0] = repData
+					RepWatch[0] = repData --RepWatch is what holds all of our Repuation data for all of the factions, and the zeroth element is the Autowatch slot, which is always the latest updated data
 					self.data.autoWatch = i
+
+					---safety check in case repData comes back as nil, which happens sometimes for some strange reason
+					---this will at the very least keep it from being an ugly, grey, empty bar.
+					if not RepWatch[0] then
+						RepWatch[0] = CopyTable(RepWatch[2]) -- default to the lowest valid rep (RepWatch[1] is a header)
+						self.data.autoWatch = 2
+					end
+
 				end
 
 			end
