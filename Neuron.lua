@@ -364,7 +364,7 @@ end
 end]]
 
 
-function Neuron:UNIT_PET(eventName, ...)
+function Neuron:UNIT_PET(_, ...)
 	if ... == "player" then
 		if (Neuron.enteredWorld) then
 			Neuron:UpdatePetSpellCache()
@@ -372,7 +372,7 @@ function Neuron:UNIT_PET(eventName, ...)
 	end
 end
 
-function Neuron:UNIT_LEVEL(eventName, ...)
+function Neuron:UNIT_LEVEL(_, ...)
 	if ... == "player" then
 		Neuron.level = UnitLevel("player")
 	end
@@ -395,7 +395,7 @@ function Neuron:ACTIONBAR_SHOWGRID()
 	Neuron.startDrag = true
 end
 
-function Neuron:UNIT_AURA(eventname, ...)
+function Neuron:UNIT_AURA(_, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
@@ -403,7 +403,7 @@ function Neuron:UNIT_AURA(eventname, ...)
 	end
 end
 
-function Neuron:UNIT_SPELLCAST_SENT(eventname, ...)
+function Neuron:UNIT_SPELLCAST_SENT(_, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
@@ -411,7 +411,7 @@ function Neuron:UNIT_SPELLCAST_SENT(eventname, ...)
 	end
 end
 
-function Neuron:UNIT_SPELLCAST_START(eventname, ...)
+function Neuron:UNIT_SPELLCAST_START(_, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
@@ -419,7 +419,7 @@ function Neuron:UNIT_SPELLCAST_START(eventname, ...)
 	end
 end
 
-function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
+function Neuron:UNIT_SPELLCAST_SUCCEEDED(_, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
@@ -427,7 +427,7 @@ function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
 	end
 end
 
-function Neuron:UNIT_SPELLCAST_CHANNEL_START(eventname, ...)
+function Neuron:UNIT_SPELLCAST_CHANNEL_START(_, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
@@ -435,7 +435,7 @@ function Neuron:UNIT_SPELLCAST_CHANNEL_START(eventname, ...)
 	end
 end
 
-function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
+function Neuron:UNIT_SPELLCAST_SUCCEEDED(_, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
 			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
@@ -540,15 +540,15 @@ function Neuron:GetParentKeys(frame)
 	local children = {frame:GetChildren()}
 	local regions = {frame:GetRegions()}
 
-	for k,v in pairs(children) do
+	for _,v in pairs(children) do
 		table.insert(data, v:GetName())
 		childData = Neuron:GetParentKeys(v)
-		for key,value in pairs(childData) do
+		for _,value in pairs(childData) do
 			table.insert(data, value)
 		end
 	end
 
-	for k,v in pairs(regions) do
+	for _,v in pairs(regions) do
 		table.insert(data, v:GetName())
 	end
 
@@ -610,7 +610,7 @@ function Neuron:UpdateSpellCache()
 				end
 			end
 
-			local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
+			local altName, _, icon = GetSpellInfo(spellID)
 			if spellID ~= spellID_Alt then
 				altName = GetSpellInfo(spellID_Alt)
 			end
@@ -645,7 +645,7 @@ function Neuron:UpdateSpellCache()
 				local isPassive = IsPassiveSpell(offsetIndex, BOOKTYPE_PROFESSION)
 
 				if (spellName and spellType ~= "FUTURESPELL") then
-					local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
+					local altName, _, icon = GetSpellInfo(spellID)
 					local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
 					NeuronSpellCache[(spellName):lower()] = spellData
@@ -676,9 +676,7 @@ function Neuron:UpdateSpellCache()
 			if (isKnown and petIndex and petName and #petName > 0) then
 				local spellName = GetSpellInfo(spellID)
 
-				local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
-
-				for k,v in pairs(NeuronSpellCache) do
+				for _,v in pairs(NeuronSpellCache) do
 
 					if (v.spellName:find(petName.."$")) then
 						local spellData = Neuron:SetSpellInfo(v.index, v.booktype, v.spellName, nil, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
@@ -705,7 +703,7 @@ function Neuron:UpdatePetSpellCache()
 			local isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
 
 			if (spellName and spellType ~= "FUTURESPELL") then
-				local altName, _, icon, castTime, minRange, maxRange, spellID = GetSpellInfo(spellName)
+				local altName, _, icon, _, _, _, spellID = GetSpellInfo(spellName)
 				local spellID_Alt = spellID
 
 				local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
@@ -787,7 +785,7 @@ function Neuron:UpdateCollectionCache()
 
 	for i=1,numpet do
 
-		local petID, speciesID, owned, customName, level, favorite, isRevoked, speciesName, icon, petType, companionID, tooltip, description, isWild, canBattle, isTradeable, isUnique, obtainable = C_PetJournal.GetPetInfoByIndex(i)
+		local petID, speciesID, _, _, _, _, _, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i)
 
 		if (petID) then
 			local spell = speciesName
@@ -802,7 +800,7 @@ function Neuron:UpdateCollectionCache()
 
 	local mountIDs = C_MountJournal.GetMountIDs()
 	for i,id in pairs(mountIDs) do
-		local creatureName , spellID = C_MountJournal.GetMountInfoByID(id) --, creatureID, _, active, summonable, source, isFavorite, isFactionSpecific, faction, unknown, owned = C_MountJournal.GetMountInfoByID(i)
+		local creatureName , spellID = C_MountJournal.GetMountInfoByID(id)
 
 		if (spellID) then
 			local spell, _, icon = GetSpellInfo(spellID)
@@ -977,7 +975,7 @@ end
 
 
 
-function Neuron:ToggleMainMenu(show, hide)
+function Neuron:ToggleMainMenu()
 	---need to run the command twice for some reason. The first one only seems to open the Interface panel
 	InterfaceOptionsFrame_OpenToCategory("Neuron");
 	InterfaceOptionsFrame_OpenToCategory("Neuron");
@@ -992,7 +990,7 @@ function Neuron:ToggleBarEditMode(show)
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBindingMode(false)
 
-		for index, bar in pairs(Neuron.BARIndex) do
+		for _, bar in pairs(Neuron.BARIndex) do
 			bar:Show() --this shows the transparent overlay over a bar
 			bar:Update(true)
 			bar:UpdateObjectVisibility(true)
@@ -1002,7 +1000,7 @@ function Neuron:ToggleBarEditMode(show)
 
 		Neuron.barEditMode = false
 
-		for index, bar in pairs(Neuron.BARIndex) do
+		for _, bar in pairs(Neuron.BARIndex) do
 			bar:Hide()
 			bar:Update(nil, true)
 			bar:UpdateObjectVisibility()
@@ -1028,7 +1026,7 @@ function Neuron:ToggleButtonEditMode(show)
 		Neuron:ToggleBindingMode(false)
 
 
-		for index, editor in pairs(Neuron.EDITIndex) do
+		for _, editor in pairs(Neuron.EDITIndex) do
 			editor:Show()
 			editor.object.editmode = true
 
@@ -1046,7 +1044,7 @@ function Neuron:ToggleButtonEditMode(show)
 
 		Neuron.buttonEditMode = false
 
-		for index, editor in pairs(Neuron.EDITIndex) do
+		for _, editor in pairs(Neuron.EDITIndex) do
 			editor:Hide()
 			editor.object.editmode = false
 			editor:SetFrameStrata("LOW")
