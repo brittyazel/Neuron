@@ -8,19 +8,12 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
+local LATEST_VERSION_NUM = "0.9.38" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
-Neuron.PEW = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on loging with too many processes
-
--------------------------------------------------------------------------------
--- AddOn namespace.
--------------------------------------------------------------------------------
-
-local latestVersionNum = "0.9.38" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
-
-local latestDBVersion = 1.3
+local LATEST_DB_VERSION = 1.3
 
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
-local Update_Message = [[Thanks for updating Neuron!
+local UPDATE_MESSAGE = [[Thanks for updating Neuron!
 
 Welcome to path 8.1! Neuron has had a LOT of work done to it over the last few weeks, and you all should notice a significant performance increase, and much more stable frames.
 
@@ -31,19 +24,17 @@ I sincerely hope you are enjoying Neuron, and Happy Holidays!
 -Soyier]]
 
 
---prepare the Neuron table with some subtables that will be used down the road
-Neuron.ShowGrids = {}
-Neuron.HideGrids = {}
+--prepare the Neuron table with some sub-tables that will be used down the road
 Neuron.EDITIndex = {}
 Neuron.BINDIndex = {}
 Neuron.SKINIndex = {}
-Neuron.ModuleIndex = 0
-Neuron.RegisteredBarData = {}
-Neuron.RegisteredGUIData = {}
-Neuron.MacroDrag = {}
-Neuron.StartDrag = false
+Neuron.moduleIndex = 0
+Neuron.registeredBarData = {}
+Neuron.registeredGUIData = {}
+Neuron.macroDrag = {}
+Neuron.startDrag = false
 
-Neuron.BARIndex = {}
+Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 
@@ -53,29 +44,7 @@ NeuronCollectionCache = {} --Stores a cache of all Mounts and Battle Pets that h
 NeuronToyCache = {} --Stores a cache of all toys that have been seen by a Neuron button
 
 
---I think this is only used in Neuron-Flyouts
-Neuron.Points = {
-	R = "RIGHT",
-	L = "LEFT",
-	T = "TOP",
-	B = "BOTTOM",
-	TL = "TOPLEFT",
-	TR = "TOPRIGHT",
-	BL = "BOTTOMLEFT",
-	BR = "BOTTOMRIGHT",
-	C = "CENTER",
-	RIGHT = "RIGHT",
-	LEFT = "LEFT",
-	TOP = "TOP",
-	BOTTOM = "BOTTOM",
-	TOPLEFT = "TOPLEFT",
-	TOPRIGHT = "TOPRIGHT",
-	BOTTOMLEFT = "BOTTOMLEFT",
-	BOTTOMRIGHT = "BOTTOMRIGHT",
-	CENTER = "CENTER"
-}
-
-Neuron.Stratas = {"BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP"}
+Neuron.STRATAS = {"BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP"}
 
 
 Neuron.STATES = {
@@ -143,7 +112,7 @@ Neuron.BarEditMode = false
 Neuron.ButtonEditMode = false
 Neuron.BindingMode = false
 
-Neuron.SpecialActions = {
+Neuron.SPECIALACTIONS = {
 	vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit",
 	possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield",
 	taxi = "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up",
@@ -151,12 +120,14 @@ Neuron.SpecialActions = {
 
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
-Neuron.numUpdateGroups = 15
-Neuron.currentUpdateGroup = 1
+Neuron.NUM_UPDATE_GROUPS = 15 --number of groups that buttons will be evenly-ish divided into so that each frame can update a small subset. Make this bigger to improve FPS at the cost of slower updating buttons
+Neuron.CUR_UPDATE_GROUP = 1 --start update group counter at 1 and it will cycle through numUpdateGroups continuously as long as the game is running
 
-Neuron.throttle = 0.2
-Neuron.timerLimit = 4
-Neuron.snapToTol = 28
+Neuron.THROTTLE = 0.2
+Neuron.TIMERLIMIT = 4
+Neuron.SNAPTO_TOLLERANCE = 28
+
+Neuron.PEW = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on logging with too many processes
 
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
@@ -183,15 +154,15 @@ function Neuron:OnInitialize()
 		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
 		--eventually we can get rid of this check and just assume that having no DBVersion means that it is a fresh profile
 		if not DB.NeuronCDB then --"NeuronCDB" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
-			DB.DBVersion = latestDBVersion
+			DB.DBVersion = LATEST_DB_VERSION
 		else
 			DB.DBVersion = 1.0
 		end
 	end
 
-	if DB.DBVersion ~= latestDBVersion then --checks if the DB version is out of date, and if so it calls the DB Fixer
+	if DB.DBVersion ~= LATEST_DB_VERSION then --checks if the DB version is out of date, and if so it calls the DB Fixer
 		Neuron:DBFixer(DB, DB.DBVersion)
-		DB.DBVersion = latestDBVersion
+		DB.DBVersion = LATEST_DB_VERSION
 		Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
 	end
 	-----------------------------------------------------
@@ -418,7 +389,7 @@ function Neuron:PLAYER_TARGET_CHANGED()
 end
 
 function Neuron:ACTIONBAR_SHOWGRID()
-	Neuron.StartDrag = true
+	Neuron.startDrag = true
 end
 
 function Neuron:UNIT_AURA(eventname, ...)
@@ -495,7 +466,7 @@ function Neuron:controlOnUpdate(elapsed)
 	Neuron.elapsed = Neuron.elapsed + elapsed
 
 	---Throttled OnUpdate calls
-	if (Neuron.elapsed > Neuron.throttle and Neuron.PEW) then
+	if (Neuron.elapsed > Neuron.THROTTLE and Neuron.PEW) then
 
 		Neuron.ACTIONBUTTON.cooldownsOnUpdate(elapsed)
 
@@ -514,10 +485,10 @@ function Neuron:controlOnUpdate(elapsed)
 	---During each OnUpdate event, currentUpdateGroup increments by 1 up to 15, at which point it resets to 1, as long as the game is running.
 	---Each object (see ACTIONBUTTON.lua) is assigned randomly to an update group, and the object's OnUpdate call is only executed when currentUpdateGroup == the object's update group.
 	---This is important, because unlike a blanket throttle (which will drop all of the OnUpdate calls on a single frame), this should evenly spread the OnUpdate calls amongst all frames.
-	if (Neuron.currentUpdateGroup) < Neuron.numUpdateGroups then --numUpdateGroups for now is 15
-		Neuron.currentUpdateGroup = Neuron.currentUpdateGroup +1
+	if (Neuron.CUR_UPDATE_GROUP) < Neuron.NUM_UPDATE_GROUPS then --numUpdateGroups for now is 15
+		Neuron.CUR_UPDATE_GROUP = Neuron.CUR_UPDATE_GROUP +1
 	else
-		Neuron.currentUpdateGroup = 1
+		Neuron.CUR_UPDATE_GROUP = 1
 	end
 
 
@@ -531,14 +502,14 @@ end
 function Neuron:LoginMessage()
 
 	StaticPopupDialogs["Neuron_UPDATE_WARNING"] = {
-		text = Update_Message,
+		text = UPDATE_MESSAGE,
 		button1 = OKAY,
 		timeout = 0,
-		OnAccept = function() DB.updateWarning = latestVersionNum end
+		OnAccept = function() DB.updateWarning = LATEST_VERSION_NUM end
 	}
 
 	---displays a info window on login for either fresh installs or updates
-	if (not DB.updateWarning or DB.updateWarning ~= latestVersionNum ) then
+	if (not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM ) then
 		StaticPopup_Show("Neuron_UPDATE_WARNING")
 
 		Neuron:ChatMessage()
@@ -1139,9 +1110,9 @@ end
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
 function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
 
-	Neuron.ModuleIndex = Neuron.ModuleIndex + 1
+	Neuron.moduleIndex = Neuron.moduleIndex + 1
 
-	Neuron.RegisteredBarData[class] = {
+	Neuron.registeredBarData[class] = {
 		barType = barType,
 		barLabel = barLabel,
 		barDB = barDB,
@@ -1149,14 +1120,14 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		objType = objType,
 		objTemplate = objTemplate,
 		objMax = objMax,
-		createMsg = Neuron.ModuleIndex..objType,
+		createMsg = Neuron.moduleIndex..objType,
 	}
 
 end
 
 
 function Neuron:RegisterGUIOptions(class, chkOpt, stateOpt, adjOpt)
-	Neuron.RegisteredGUIData[class] = {
+	Neuron.registeredGUIData[class] = {
 		chkOpt = chkOpt,
 		stateOpt = stateOpt,
 		adjOpt = adjOpt,

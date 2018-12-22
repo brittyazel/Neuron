@@ -797,8 +797,8 @@ function ACTIONBUTTON:ACTION_SetIcon(action)
 
 	if (actionID) then
 		if (actionID == 0) then
-			if (self.specAction and Neuron.SpecialActions[self.specAction]) then
-				self.iconframeicon:SetTexture(Neuron.SpecialActions[self.specAction])
+			if (self.specAction and Neuron.SPECIALACTIONS[self.specAction]) then
+				self.iconframeicon:SetTexture(Neuron.SPECIALACTIONS[self.specAction])
 			else
 				self.iconframeicon:SetTexture(0,0,0)
 			end
@@ -1035,7 +1035,7 @@ function ACTIONBUTTON:MACRO_SetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration = GetSpellCharges(spell)
 	start, duration, enable = GetSpellCooldown(spell)
 
-	if (duration and duration >= Neuron.timerLimit and self.iconframeaurawatch.active) then
+	if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
 		self.auraQueue = self.iconframeaurawatch.queueinfo
 		self.iconframeaurawatch.duration = 0
 		self.iconframeaurawatch:Hide()
@@ -1058,7 +1058,7 @@ function ACTIONBUTTON:MACRO_SetItemCooldown(item)
 
 		local start, duration, enable = GetItemCooldown(id)
 
-		if (duration and duration >= Neuron.timerLimit and self.iconframeaurawatch.active) then
+		if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
 			self.auraQueue = self.iconframeaurawatch.queueinfo
 			self.iconframeaurawatch.duration = 0
 			self.iconframeaurawatch:Hide()
@@ -1217,10 +1217,10 @@ end
 function ACTIONBUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of resources
 
 	if not(self.updateGroup) then
-		self.updateGroup = math.random(Neuron.numUpdateGroups) --random number between 1 and numUpdateGroups (which is 15)
+		self.updateGroup = math.random(Neuron.NUM_UPDATE_GROUPS) --random number between 1 and numUpdateGroups (which is 15)
 	end
 
-	if (self.updateGroup == Neuron.currentUpdateGroup) then
+	if (self.updateGroup == Neuron.CUR_UPDATE_GROUP) then
 		if (self.mac_flash) then
 
 			self.mac_flashing = true
@@ -1548,7 +1548,7 @@ function ACTIONBUTTON:MACRO_PlaceSpell(action1, action2, spellID)
 		self:SetType(true)
 	end
 
-	Neuron.MacroDrag[1] = false
+	Neuron.macroDrag[1] = false
 
 	ClearCursor()
 	SetCursor(nil)
@@ -1582,7 +1582,7 @@ function ACTIONBUTTON:MACRO_PlacePetAbility(action1, action2)
 		Neuron:Print("Sorry, you cannot place that ability at this time.")
 	end
 
-	Neuron.MacroDrag[1] = false
+	Neuron.macroDrag[1] = false
 
 	ClearCursor()
 	SetCursor(nil)
@@ -1616,7 +1616,7 @@ function ACTIONBUTTON:MACRO_PlaceItem(action1, action2, hasAction)
 		self:SetType(true)
 	end
 
-	Neuron.MacroDrag[1] = false
+	Neuron.macroDrag[1] = false
 
 	ClearCursor()
 	SetCursor(nil)
@@ -1652,7 +1652,7 @@ function ACTIONBUTTON:MACRO_PlaceBlizzMacro(action1)
 			self:SetType(true)
 		end
 
-		Neuron.MacroDrag[1] = false
+		Neuron.macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1697,7 +1697,7 @@ function ACTIONBUTTON:MACRO_PlaceBlizzEquipSet(equipmentSetName)
 			self:SetType(true)
 		end
 
-		Neuron.MacroDrag[1] = false
+		Neuron.macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1744,7 +1744,7 @@ function ACTIONBUTTON:MACRO_PlaceMount(action1, action2, hasAction)
 			self:SetType(true)
 		end
 
-		Neuron.MacroDrag[1] = false
+		Neuron.macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1781,7 +1781,7 @@ function ACTIONBUTTON:MACRO_PlaceCompanion(action1, action2, hasAction)
 			self:SetType(true)
 		end
 
-		Neuron.MacroDrag[1] = false
+		Neuron.macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1812,7 +1812,7 @@ function ACTIONBUTTON:MACRO_PlaceBattlePet(action1, action2, hasAction)
 			self:SetType(true)
 		end
 
-		Neuron.MacroDrag[1] = false
+		Neuron.macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1872,7 +1872,7 @@ function ACTIONBUTTON:MACRO_PlaceFlyout(action1, action2, hasAction)
 			self:SetType(true)
 		end
 
-		Neuron.MacroDrag[1] = false
+		Neuron.macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1881,14 +1881,14 @@ end
 
 
 function ACTIONBUTTON:MACRO_PlaceMacro()
-	self.data.macro_Text = Neuron.MacroDrag[3]
-	self.data.macro_Icon = Neuron.MacroDrag[4]
-	self.data.macro_Name = Neuron.MacroDrag[5]
-	self.data.macro_Auto = Neuron.MacroDrag[6]
-	self.data.macro_Watch = Neuron.MacroDrag[7]
-	self.data.macro_Equip = Neuron.MacroDrag[8]
-	self.data.macro_Note = Neuron.MacroDrag[9]
-	self.data.macro_UseNote = Neuron.MacroDrag[10]
+	self.data.macro_Text = Neuron.macroDrag[3]
+	self.data.macro_Icon = Neuron.macroDrag[4]
+	self.data.macro_Name = Neuron.macroDrag[5]
+	self.data.macro_Auto = Neuron.macroDrag[6]
+	self.data.macro_Watch = Neuron.macroDrag[7]
+	self.data.macro_Equip = Neuron.macroDrag[8]
+	self.data.macro_Note = Neuron.macroDrag[9]
+	self.data.macro_UseNote = Neuron.macroDrag[10]
 
 	if (not self.cursor) then
 		self:SetType(true)
@@ -1896,7 +1896,7 @@ function ACTIONBUTTON:MACRO_PlaceMacro()
 
 	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
-	wipe(Neuron.MacroDrag);
+	wipe(Neuron.macroDrag);
 	ClearCursor();
 	SetCursor(nil);
 
@@ -1924,10 +1924,10 @@ function ACTIONBUTTON:MACRO_PickUpMacro()
 
 		if (macroCache[1]) then  ---triggers when picking up an existing button with a button in the cursor
 
-			wipe(Neuron.MacroDrag)
+			wipe(Neuron.macroDrag)
 
 			for k,v in pairs(macroCache) do
-				Neuron.MacroDrag[k] = v
+				Neuron.macroDrag[k] = v
 			end
 
 			wipe(macroCache)
@@ -1938,17 +1938,17 @@ function ACTIONBUTTON:MACRO_PickUpMacro()
 		elseif (self:MACRO_HasAction()) then
 			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 
-			Neuron.MacroDrag[1] = self:MACRO_GetDragAction()
-			Neuron.MacroDrag[2] = self
-			Neuron.MacroDrag[3] = self.data.macro_Text
-			Neuron.MacroDrag[4] = self.data.macro_Icon
-			Neuron.MacroDrag[5] = self.data.macro_Name
-			Neuron.MacroDrag[6] = self.data.macro_Auto
-			Neuron.MacroDrag[7] = self.data.macro_Watch
-			Neuron.MacroDrag[8] = self.data.macro_Equip
-			Neuron.MacroDrag[9] = self.data.macro_Note
-			Neuron.MacroDrag[10] = self.data.macro_UseNote
-			Neuron.MacroDrag.texture = texture
+			Neuron.macroDrag[1] = self:MACRO_GetDragAction()
+			Neuron.macroDrag[2] = self
+			Neuron.macroDrag[3] = self.data.macro_Text
+			Neuron.macroDrag[4] = self.data.macro_Icon
+			Neuron.macroDrag[5] = self.data.macro_Name
+			Neuron.macroDrag[6] = self.data.macro_Auto
+			Neuron.macroDrag[7] = self.data.macro_Watch
+			Neuron.macroDrag[8] = self.data.macro_Equip
+			Neuron.macroDrag[9] = self.data.macro_Note
+			Neuron.macroDrag[10] = self.data.macro_UseNote
+			Neuron.macroDrag.texture = texture
 
 			self.data.macro_Text = ""
 			self.data.macro_Icon = false
@@ -2003,7 +2003,7 @@ function ACTIONBUTTON:MACRO_OnReceiveDrag(preclick)
 	end
 
 
-	if (Neuron.MacroDrag[1]) then
+	if (Neuron.macroDrag[1]) then
 		self:MACRO_PlaceMacro()
 	elseif (cursorType == "spell") then
 		self:MACRO_PlaceSpell(action1, action2, spellID, self:MACRO_HasAction())
@@ -2032,14 +2032,14 @@ function ACTIONBUTTON:MACRO_OnReceiveDrag(preclick)
 	end
 
 
-	if (Neuron.StartDrag and macroCache[1]) then
+	if (Neuron.startDrag and macroCache[1]) then
 		self:MACRO_PickUpMacro()
 		Neuron:ToggleButtonGrid(true)
 	end
 
 	self:MACRO_UpdateAll(true)
 
-	Neuron.StartDrag = false
+	Neuron.startDrag = false
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateObjectGUI()
@@ -2050,7 +2050,7 @@ end
 function ACTIONBUTTON:MACRO_OnDragStart(mousebutton)
 
 	if (InCombatLockdown() or not self.bar or self.vehicle_edit or self.actionID) then
-		Neuron.StartDrag = false
+		Neuron.startDrag = false
 		return
 	end
 
@@ -2067,15 +2067,15 @@ function ACTIONBUTTON:MACRO_OnDragStart(mousebutton)
 	end
 
 	if (self.drag) then
-		Neuron.StartDrag = self:GetParent():GetAttribute("activestate")
+		Neuron.startDrag = self:GetParent():GetAttribute("activestate")
 
 		self.dragbutton = mousebutton
 		self:MACRO_PickUpMacro()
 
-		if (Neuron.MacroDrag[1]) then
+		if (Neuron.macroDrag[1]) then
 			--PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
-			if (Neuron.MacroDrag[2] ~= self) then
+			if (Neuron.macroDrag[2] ~= self) then
 				self.dragbutton = nil
 			end
 
@@ -2112,7 +2112,7 @@ function ACTIONBUTTON:MACRO_OnDragStart(mousebutton)
 
 
 	else
-		Neuron.StartDrag = false
+		Neuron.startDrag = false
 	end
 
 end
@@ -2125,9 +2125,9 @@ end
 
 ---This function will be used to check if we should release the cursor
 function ACTIONBUTTON:OnMouseDown()
-	if Neuron.MacroDrag[1] then
+	if Neuron.macroDrag[1] then
 		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
-		wipe(Neuron.MacroDrag)
+		wipe(Neuron.macroDrag)
 
 		for index, bar in pairs(Neuron.BARIndex) do
 			self.bar:UpdateObjectVisibility()
@@ -2144,10 +2144,10 @@ function ACTIONBUTTON:MACRO_PreClick(mousebutton)
 	if (not InCombatLockdown() and MouseIsOver(self)) then
 		local cursorType = GetCursorInfo()
 
-		if (cursorType or Neuron.MacroDrag[1]) then
+		if (cursorType or Neuron.macroDrag[1]) then
 			self.cursor = true
 
-			Neuron.StartDrag = self:GetParent():GetAttribute("activestate")
+			Neuron.startDrag = self:GetParent():GetAttribute("activestate")
 
 			self:SetType(true)
 
@@ -2312,7 +2312,7 @@ function ACTIONBUTTON:MACRO_OnEnter(...)
 			return
 		end
 
-		if(Neuron.MacroDrag[1]) then ---puts the icon back to the interact icon when moving abilities around and the mouse enteres the WorldFrame
+		if(Neuron.macroDrag[1]) then ---puts the icon back to the interact icon when moving abilities around and the mouse enteres the WorldFrame
 		SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 		end
 

@@ -8,8 +8,6 @@ Neuron.NeuronBinder = NeuronBinder
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BINDIndex = Neuron.BINDIndex
-
 
 --- Returns a list of the available spell icon filenames for use in macros
 -- @param N/A
@@ -192,7 +190,7 @@ function NeuronBinder:ProcessBinding(binder, key, button)
 	if (key == "ESCAPE") then
 		NeuronBinder:ClearBindings( button)
 	elseif (key) then
-		for _,binder in pairs(BINDIndex) do
+		for _,binder in pairs(Neuron.BINDIndex) do
 			if (button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
 				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then NeuronBinder:ClearBindings(binder.button, binding) NeuronBinder:ApplyBindings(binder.button) end end)
 			end
@@ -405,7 +403,7 @@ function NeuronBinder:CreateBindFrame(button)
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 	button:SetAttribute("hotkeys", button.keys.hotKeys)
 
-	BINDIndex[button.class..button.bar.id.."_"..button.id] = binder
+	Neuron.BINDIndex[button.class..button.bar.id.."_"..button.id] = binder
 
 	binder:Hide()
 end

@@ -13,9 +13,7 @@ local NeuronGUI = Neuron.NeuronGUI
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local NeuronAceGUI = LibStub("AceGUI-3.0")
 
-local GUIData = Neuron.RegisteredGUIData
-
-local EDITIndex = Neuron.EDITIndex
+local GUIData = Neuron.registeredGUIData
 
 local barOpt = { chk = {}, adj = {}, pri = {}, sec = {}, swatch = {}, vis = {} }
 
@@ -50,7 +48,7 @@ local adjOptions = {
 	[6] = { "HPAD",L["Horiz Padding"], 1, "PadHSet", 0.5 },
 	[7] = { "VPAD", L["Vert Padding"], 1, "PadVSet", 0.5 },
 	[8] = { "HVPAD", L["H+V Padding"], 1, "PadHVSet", 0.5 },
-	[9] = { "STRATA", L["Strata"], 2, "StrataSet", nil, nil, nil, Neuron.Stratas },
+	[9] = { "STRATA", L["Strata"], 2, "StrataSet", nil, nil, nil, Neuron.STRATAS },
 	[10] = { "ALPHA", L["Alpha"], 1, "AlphaSet", 0.01, 0, 1 },
 	[11] = { "ALPHAUP", L["AlphaUp"], 2, "AlphaUpSet", nil, nil, nil, Neuron.AlphaUps },
 	[12] = { "ALPHAUP", L["AlphaUp Speed"], 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
@@ -1190,7 +1188,7 @@ function NeuronGUI:BarEditor_CreateNewBar(button)
 
 		local data = {} --{ [L["Select Bar Type"]] = "none" }
 
-		for class,info in pairs(Neuron.RegisteredBarData) do
+		for class,info in pairs(Neuron.registeredBarData) do
 
 			data[info.barLabel] = class
 
@@ -4063,7 +4061,7 @@ function NeuronGUI:ObjEditor_CreateEditFrame(button)
 
 	button.editor = editor
 
-	EDITIndex[button.class..button.bar.id.."_"..button.id] = editor
+	Neuron.EDITIndex[button.class..button.bar.id.."_"..button.id] = editor
 
 	editor:Hide()
 
@@ -4599,7 +4597,7 @@ function NeuronGUI:SB_CreateEditFrame(button)
 
 	button.editor = editor
 
-	EDITIndex[button.class..button.bar.id.."_"..button.id] = editor
+	Neuron.EDITIndex[button.class..button.bar.id.."_"..button.id] = editor
 
 	editor:Hide()
 

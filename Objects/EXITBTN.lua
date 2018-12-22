@@ -38,9 +38,9 @@ function EXITBTN:SetExitButtonIcon()
 	local texture
 
 	if UnitOnTaxi("player") then
-		texture = Neuron.SpecialActions.taxi
+		texture = Neuron.SPECIALACTIONS.taxi
 	else
-		texture = Neuron.SpecialActions.vehicle
+		texture = Neuron.SPECIALACTIONS.vehicle
 	end
 
 	self.iconframeicon:SetTexture(texture)

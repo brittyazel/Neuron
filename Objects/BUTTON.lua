@@ -396,7 +396,7 @@ function BUTTON:ACTION_SetCooldown(action)
 
 			local start, duration, enable = GetActionCooldown(actionID)
 
-			if (duration and duration >= Neuron.timerLimit and self.iconframeaurawatch.active) then
+			if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
 				self.auraQueue = self.iconframeaurawatch.queueinfo
 				self.iconframeaurawatch.duration = 0
 				self.iconframeaurawatch:Hide()

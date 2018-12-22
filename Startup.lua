@@ -188,7 +188,7 @@ function Neuron:CreateBarsAndButtons()
 
 	else
 
-		for barClass, barClassData in pairs (Neuron.RegisteredBarData) do
+		for barClass, barClassData in pairs (Neuron.registeredBarData) do
 			for id,data in pairs(barClassData.barDB) do
 				if (data ~= nil) then
 					Neuron:CreateNewBar(barClass, id)

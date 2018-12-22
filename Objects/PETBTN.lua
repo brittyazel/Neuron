@@ -148,7 +148,7 @@ function PETBTN:PET_UpdateCooldown()
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
-		if (duration and duration >= Neuron.timerLimit and self.iconframeaurawatch.active) then
+		if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
 			self.auraQueue = self.iconframeaurawatch.queueinfo
 			self.iconframeaurawatch.duration = 0
 			self.iconframeaurawatch:Hide()
@@ -217,10 +217,10 @@ end
 function PETBTN:OnUpdate(elapsed)
 
 	if not(self.updateGroup) then
-		self.updateGroup = math.random(Neuron.numUpdateGroups) --random number between 1 and numUpdateGroups (which is 15)
+		self.updateGroup = math.random(Neuron.NUM_UPDATE_GROUPS) --random number between 1 and numUpdateGroups (which is 15)
 	end
 
-	if (self.updateGroup == Neuron.currentUpdateGroup) then
+	if (self.updateGroup == Neuron.CUR_UPDATE_GROUP) then
 
 		if (self.mac_flash) then
 

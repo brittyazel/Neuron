@@ -33,6 +33,28 @@ Neuron.ANCHORIndex = ANCHORIndex
 local timerFrame
 
 
+--I think this is only used in Neuron-Flyouts
+local POINTS = {
+	R = "RIGHT",
+	L = "LEFT",
+	T = "TOP",
+	B = "BOTTOM",
+	TL = "TOPLEFT",
+	TR = "TOPRIGHT",
+	BL = "BOTTOMLEFT",
+	BR = "BOTTOMRIGHT",
+	C = "CENTER",
+	RIGHT = "RIGHT",
+	LEFT = "LEFT",
+	TOP = "TOP",
+	BOTTOM = "BOTTOM",
+	TOPLEFT = "TOPLEFT",
+	TOPRIGHT = "TOPRIGHT",
+	BOTTOMLEFT = "BOTTOMLEFT",
+	BOTTOMRIGHT = "BOTTOMRIGHT",
+	CENTER = "CENTER"
+}
+
 ------------------------------------------------------------------------------
 
 
@@ -564,11 +586,11 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 	end
 
 	if (flyout.point) then
-		pointA = flyout.point:match("%a+"):upper() pointA = Neuron.Points[pointA] or "RIGHT"
+		pointA = flyout.point:match("%a+"):upper() pointA = POINTS[pointA] or "RIGHT"
 	end
 
 	if (flyout.relPoint) then
-		pointB = flyout.relPoint:upper() pointB = Neuron.Points[pointB] or "LEFT"
+		pointB = flyout.relPoint:upper() pointB = POINTS[pointB] or "LEFT"
 	end
 
 	if (flyout.colrad and tonumber(flyout.colrad)) then

@@ -146,7 +146,7 @@ end
 function Neuron:PrintBarTypes()
 	local data, index, high = {}, 1, 0
 
-	for k,v in pairs(Neuron.RegisteredBarData) do
+	for k,v in pairs(Neuron.registeredBarData) do
 
 		local barType;
 		index = tonumber(v.createMsg:match("%d+"))

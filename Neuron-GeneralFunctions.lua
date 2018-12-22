@@ -11,7 +11,7 @@ function Neuron:SetTimer(frame, start, duration, enable, timer, color1, color2, 
 		frame:SetAlpha(1)
 		CooldownFrame_Set(frame, start, duration, enable)
 
-		if (duration >= Neuron.timerLimit) then
+		if (duration >= Neuron.TIMERLIMIT) then
 			frame.duration = duration
 			frame.start = start
 			frame.active = true
@@ -156,7 +156,7 @@ end
 
 
 function Neuron:CreateNewObject(class, id, bar, defaults)
-	local data = Neuron.RegisteredBarData[class]
+	local data = Neuron.registeredBarData[class]
 
 	if (data) then
 
@@ -208,7 +208,7 @@ end
 
 function Neuron:CreateNewBar(class, id, defaults)
 
-	if (class and Neuron.RegisteredBarData[class]) then
+	if (class and Neuron.registeredBarData[class]) then
 
 		local bar, newBar = Neuron:CreateBar(class, id)
 
@@ -250,7 +250,7 @@ function Neuron:CreateNewBar(class, id, defaults)
 end
 
 function Neuron:CreateBar(class, id)
-	local data = Neuron.RegisteredBarData[class]
+	local data = Neuron.registeredBarData[class]
 	local newBar
 
 	local index = #Neuron.BARIndex + 1

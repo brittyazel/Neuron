@@ -1292,7 +1292,7 @@ function BAR:OnDragStop(...)
 
 	for _,v in pairs(Neuron.BARIndex) do
 		if (not point and self.data.snapTo and v.data.snapTo and self ~= v) then
-			point = self:Stick(v, Neuron.snapToTol, self.data.padH, self.data.padV)
+			point = self:Stick(v, Neuron.SNAPTO_TOLLERANCE, self.data.padH, self.data.padV)
 
 			if (point) then
 				self.data.snapToPoint = point
@@ -2514,9 +2514,9 @@ function BAR:StrataSet(command, gui, query)
 
 	local strata = tonumber(command)
 
-	if (strata and Neuron.Stratas[strata] and Neuron.Stratas[strata+1]) then
-		self.data.barStrata = Neuron.Stratas[strata+1]
-		self.data.objectStrata = Neuron.Stratas[strata]
+	if (strata and Neuron.STRATAS[strata] and Neuron.STRATAS[strata+1]) then
+		self.data.barStrata = Neuron.STRATAS[strata+1]
+		self.data.objectStrata = Neuron.STRATAS[strata]
 
 		self:SetPosition()
 		self:UpdateObjectData()
