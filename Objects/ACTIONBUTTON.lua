@@ -717,8 +717,8 @@ function ACTIONBUTTON:MACRO_SetSpellIcon(spell)
 				texture = NeuronSpellCache[spell].icon
 			end
 
-		elseif (NeuronCollectionIndex[spell]) then
-			texture = NeuronCollectionIndex[spell].icon
+		elseif (NeuronCollectionCache[spell]) then
+			texture = NeuronCollectionCache[spell].icon
 
 		elseif (spell) then
 			texture = GetSpellTexture(spell)
@@ -916,8 +916,8 @@ function ACTIONBUTTON:MACRO_SetSpellState(spell)
 		self.count:SetText(count)
 	end
 
-	if (NeuronCollectionIndex[spell:lower()]) then
-		spell = NeuronCollectionIndex[spell:lower()].spellID
+	if (NeuronCollectionCache[spell:lower()]) then
+		spell = NeuronCollectionCache[spell:lower()].spellID
 
 		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell)) then
 			self:SetChecked(1)
@@ -1132,8 +1132,8 @@ end
 
 function ACTIONBUTTON:MACRO_UpdateUsableItem(item)
 	local isUsable, notEnoughMana = IsUsableItem(item)-- or PlayerHasToy(NeuronItemCache[item])
-	--local isToy = NeuronToyIndex[item]
-	if NeuronToyIndex[item:lower()] then isUsable = true end
+	--local isToy = NeuronToyCache[item]
+	if NeuronToyCache[item:lower()] then isUsable = true end
 
 	if (notEnoughMana and self.manacolor) then
 		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
@@ -2207,12 +2207,12 @@ function ACTIONBUTTON:MACRO_SetSpellTooltip(spell)
 		end
 
 
-	elseif (NeuronCollectionIndex[spell]) then
+	elseif (NeuronCollectionCache[spell]) then
 
-		if (self.UberTooltips and NeuronCollectionIndex[spell].creatureType =="MOUNT") then
-			GameTooltip:SetHyperlink("spell:"..NeuronCollectionIndex[spell].spellID)
+		if (self.UberTooltips and NeuronCollectionCache[spell].creatureType =="MOUNT") then
+			GameTooltip:SetHyperlink("spell:"..NeuronCollectionCache[spell].spellID)
 		else
-			GameTooltip:SetText(NeuronCollectionIndex[spell].creatureName, 1, 1, 1)
+			GameTooltip:SetText(NeuronCollectionCache[spell].creatureName, 1, 1, 1)
 		end
 
 		self.UpdateTooltip = nil
@@ -2223,9 +2223,9 @@ end
 function ACTIONBUTTON:MACRO_SetItemTooltip(item)
 	local name, link = GetItemInfo(item)
 
-	if (NeuronToyIndex[item:lower()]) then
+	if (NeuronToyCache[item:lower()]) then
 		if (self.UberTooltips) then
-			local itemID = NeuronToyIndex[item:lower()]
+			local itemID = NeuronToyCache[item:lower()]
 			GameTooltip:ClearLines()
 			GameTooltip:SetToyByItemID(itemID)
 		else

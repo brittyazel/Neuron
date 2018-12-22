@@ -448,6 +448,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 
 				elseif (source == "item") then
+
 					button.macroshow = spell
 
 					if (IsEquippableItem(spell)) then
@@ -468,6 +469,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 					end
 
 					local itemname, _, _, _, _, _, _, _, _, itemicon = GetItemInfo(spell)
+
 
 					button.macroicon = itemicon
 					button.data.macro_Icon = itemicon

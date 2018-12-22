@@ -57,8 +57,8 @@ local BARIndex = Neuron.BARIndex
 
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 NeuronSpellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
-NeuronCollectionIndex = {} --Stores a cache of all Mounts and Battle Pets that have been seen by a Neuron button
-NeuronToyIndex = {} --Stores a cache of all toys that have been seen by a Neuron button
+NeuronCollectionCache = {} --Stores a cache of all Mounts and Battle Pets that have been seen by a Neuron button
+NeuronToyCache = {} --Stores a cache of all toys that have been seen by a Neuron button
 
 
 --I think this is only used in Neuron-Flyouts
@@ -207,8 +207,8 @@ function Neuron:OnInitialize()
 	---load saved variables into working variable containers
 	NeuronItemCache = DB.NeuronItemCache
 	NeuronSpellCache = DB.NeuronSpellCache
-	NeuronCollectionIndex = DB.NeuronCollectionIndex
-	Neuron.tIndex = DB.NeuronToyIndex
+	NeuronCollectionCache = DB.NeuronCollectionCache
+	Neuron.tIndex = DB.NeuronToyCache
 
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
 	Neuron.MAS = Neuron.MANAGED_ACTION_STATES
@@ -796,7 +796,7 @@ function Neuron:UpdateToyData()
 		local name = GetItemInfo(itemID) or "UNKNOWN"
 		local known = PlayerHasToy(itemID)
 		if known then
-			NeuronToyIndex[name:lower()] = itemID
+			NeuronToyCache[name:lower()] = itemID
 		end
 	end
 
@@ -816,7 +816,8 @@ function Neuron:UpdateCompanionData()
 	C_PetJournal.ClearSearchFilter()
 	C_PetJournal.SetAllPetSourcesChecked(true)
 	C_PetJournal.SetAllPetTypesChecked(true)
-	local numpet = select(1, C_PetJournal.GetNumPets())
+	local _, numpet = C_PetJournal.GetNumPets()
+
 
 	for i=1,numpet do
 
@@ -826,8 +827,8 @@ function Neuron:UpdateCompanionData()
 			local spell = speciesName
 			if (spell) then
 				local companionData = Neuron:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
-				NeuronCollectionIndex[spell:lower()] = companionData
-				NeuronCollectionIndex[spell:lower().."()"] = companionData
+				NeuronCollectionCache[spell:lower()] = companionData
+				NeuronCollectionCache[spell:lower().."()"] = companionData
 
 			end
 		end
@@ -841,8 +842,8 @@ function Neuron:UpdateCompanionData()
 			local spell, _, icon = GetSpellInfo(spellID)
 			if (spell) then
 				local companionData = Neuron:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
-				NeuronCollectionIndex[spell:lower()] = companionData
-				NeuronCollectionIndex[spell:lower().."()"] = companionData
+				NeuronCollectionCache[spell:lower()] = companionData
+				NeuronCollectionCache[spell:lower().."()"] = companionData
 			end
 		end
 	end
@@ -906,7 +907,7 @@ function Neuron:UpdateStanceStrings()
 			end
 		end
 
-		local states = states:gsub("; $", "")
+		states = states:gsub("; $", "")
 
 		Neuron.MAS.stance.states = states
 	end
