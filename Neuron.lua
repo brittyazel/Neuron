@@ -340,11 +340,11 @@ end
 function Neuron:PLAYER_ENTERING_WORLD()
 	DB.firstRun = false
 
-	Neuron:UpdateSpellIndex()
-	Neuron:UpdatePetSpellIndex()
+	Neuron:UpdateSpellCache()
+	Neuron:UpdatePetSpellCache()
 	Neuron:UpdateStanceStrings()
-	Neuron:UpdateCompanionData()
-	Neuron:UpdateToyData()
+	Neuron:UpdateCollectionCache()
+	Neuron:UpdateToyCache()
 
 	--Fix for Titan causing the Main Bar to not be hidden
 	if (IsAddOnLoaded("Titan")) then
@@ -352,7 +352,7 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	end
 
 	if (DB.blizzbar == false) then
-		Neuron:HideBlizzard()
+		Neuron:HideBlizzardUI()
 	end
 
 	Neuron.PEW = true
@@ -360,40 +360,40 @@ function Neuron:PLAYER_ENTERING_WORLD()
 end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()
-	Neuron:UpdateSpellIndex()
+	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
 end
 
 function Neuron:LEARNED_SPELL_IN_TAB()
-	Neuron:UpdateSpellIndex()
+	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
 end
 
 function Neuron:CHARACTER_POINTS_CHANGED()
-	Neuron:UpdateSpellIndex()
+	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
 end
 
 function Neuron:SPELLS_CHANGED()
-	Neuron:UpdateSpellIndex()
+	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
 end
 
 function Neuron:COMPANION_LEARNED()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
-		Neuron:UpdateCompanionData()
+		Neuron:UpdateCollectionCache()
 	end
 end
 
 function Neuron:COMPANION_UPDATE()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
-		Neuron:UpdateCompanionData()
+		Neuron:UpdateCollectionCache()
 	end
 end
 
 --[[function Neuron:PET_JOURNAL_LIST_UPDATE()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
-		Neuron:UpdateCompanionData()
+		Neuron:UpdateCollectionCache()
 	end
 end]]
 
@@ -401,7 +401,7 @@ end]]
 function Neuron:UNIT_PET(eventName, ...)
 	if ... == "player" then
 		if (Neuron.PEW) then
-			Neuron:UpdatePetSpellIndex()
+			Neuron:UpdatePetSpellCache()
 		end
 	end
 end
@@ -415,7 +415,7 @@ end
 --[[function Neuron:TOYS_UPDATED(...)
 
 	if not ToyBox or not ToyBox:IsShown() then
-		Neuron:UpdateToyData()
+		Neuron:UpdateToyCache()
 	end
 end]]
 
@@ -617,7 +617,7 @@ end
 
 --- Scans Character Spell Book and creates a table of all known spells.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
 ---	If a spell is not displaying its tooltip or cooldown, then the spell in the macro probably is not in the database
-function Neuron:UpdateSpellIndex()
+function Neuron:UpdateSpellCache()
 	local sIndexMax = 0
 	local numTabs = GetNumSpellTabs()
 
@@ -729,7 +729,7 @@ end
 
 
 --- Adds pet spells & abilities to the spell list index
-function Neuron:UpdatePetSpellIndex()
+function Neuron:UpdatePetSpellCache()
 
 	if (HasPetSpells()) then
 		for i=1,HasPetSpells() do
@@ -774,7 +774,7 @@ end
 -- cache is indexed by the toyName and equals the itemID
 -- the attribValue for toys will be the toyName, and unsecure stuff can pull
 -- the itemID from toyCache where needed
-function Neuron:UpdateToyData()
+function Neuron:UpdateToyCache()
 
 	-- note filter settings
 	local filterCollected = C_ToyBox.GetCollectedShown()
@@ -811,7 +811,7 @@ end
 
 --- Compiles a list of battle pets & mounts a player has.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
 ---	If a companion is not displaying its tooltip or cooldown, then the item in the macro probably is not in the database
-function Neuron:UpdateCompanionData()
+function Neuron:UpdateCollectionCache()
 
 	C_PetJournal.ClearSearchFilter()
 	C_PetJournal.SetAllPetSourcesChecked(true)
@@ -914,7 +914,7 @@ function Neuron:UpdateStanceStrings()
 end
 
 
-function Neuron:HideBlizzard()
+function Neuron:HideBlizzardUI()
 
 	local hiddenFrame = CreateFrame('Frame', nil, UIParent, 'SecureFrameTemplate');
 	Neuron.hiddenFrame = hiddenFrame
@@ -988,7 +988,7 @@ function Neuron:ToggleBlizzUI()
 
 	if (DB.blizzbar == true) then
 		DB.blizzbar = false
-		Neuron:HideBlizzard()
+		Neuron:HideBlizzardUI()
 		StaticPopup_Show("ReloadUI")
 	else
 		DB.blizzbar = true
