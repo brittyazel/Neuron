@@ -124,7 +124,7 @@ Neuron.SPECIALACTIONS = {
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
 Neuron.NUM_UPDATE_GROUPS = 15 --number of groups that buttons will be evenly-ish divided into so that each frame can update a small subset. Make this bigger to improve FPS at the cost of slower updating buttons
-Neuron.CUR_UPDATE_GROUP = 1 --start update group counter at 1 and it will cycle through numUpdateGroups continuously as long as the game is running
+Neuron.curUpdateGroup = 1 --start update group counter at 1 and it will cycle through numUpdateGroups continuously as long as the game is running
 
 Neuron.THROTTLE = 0.2
 Neuron.TIMERLIMIT = 4
@@ -488,10 +488,10 @@ function Neuron:controlOnUpdate(elapsed)
 	---During each OnUpdate event, currentUpdateGroup increments by 1 up to 15, at which point it resets to 1, as long as the game is running.
 	---Each object (see ACTIONBUTTON.lua) is assigned randomly to an update group, and the object's OnUpdate call is only executed when currentUpdateGroup == the object's update group.
 	---This is important, because unlike a blanket throttle (which will drop all of the OnUpdate calls on a single frame), this should evenly spread the OnUpdate calls amongst all frames.
-	if (Neuron.CUR_UPDATE_GROUP) < Neuron.NUM_UPDATE_GROUPS then --numUpdateGroups for now is 15
-		Neuron.CUR_UPDATE_GROUP = Neuron.CUR_UPDATE_GROUP +1
+	if (Neuron.curUpdateGroup) < Neuron.NUM_UPDATE_GROUPS then --numUpdateGroups for now is 15
+		Neuron.curUpdateGroup = Neuron.curUpdateGroup +1
 	else
-		Neuron.CUR_UPDATE_GROUP = 1
+		Neuron.curUpdateGroup = 1
 	end
 
 

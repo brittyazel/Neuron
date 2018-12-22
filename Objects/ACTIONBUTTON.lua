@@ -1220,7 +1220,7 @@ function ACTIONBUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of reso
 		self.updateGroup = math.random(Neuron.NUM_UPDATE_GROUPS) --random number between 1 and numUpdateGroups (which is 15)
 	end
 
-	if (self.updateGroup == Neuron.CUR_UPDATE_GROUP) then
+	if (self.updateGroup == Neuron.curUpdateGroup) then
 		if (self.mac_flash) then
 
 			self.mac_flashing = true
