@@ -15,13 +15,6 @@ local NeuronAceGUI = LibStub("AceGUI-3.0")
 
 local GUIData = Neuron.RegisteredGUIData
 
-local ICONS = Neuron.iIndex
-
-local sIndex = Neuron.sIndex  --Spell index
-local cIndex = Neuron.cIndex  --Battle pet & Mount index
-local iIndex = Neuron.iIndex  --Items Inde -- x
-local ItemCache = NeuronItemCache
-
 local EDITIndex = Neuron.EDITIndex
 
 local barOpt = { chk = {}, adj = {}, pri = {}, sec = {}, swatch = {}, vis = {} }
@@ -2508,17 +2501,17 @@ function NeuronGUI:specUpdateIcon(button,state)
 
 		if (data.macro_Text:match("/cast%s+(%C+)")) then
 			spell = (spell):lower()
-			if (sIndex[spell]) then
-				local spell_id = sIndex[spell].spellID
+			if (NeuronSpellCache[spell]) then
+				local spell_id = NeuronSpellCache[spell].spellID
 				texture = GetSpellTexture(spell_id)
-			elseif (cIndex[spell]) then
-				texture = cIndex[spell].icon
+			elseif (NeuronCollectionIndex[spell]) then
+				texture = NeuronCollectionIndex[spell].icon
 			elseif (spell) then
 				texture = GetSpellTexture(spell)
 			end
 
-		elseif ItemCache[spell] then
-			texture = GetItemIcon("item:"..ItemCache[spell]..":0:0:0:0:0:0:0")
+		elseif NeuronItemCache[spell] then
+			texture = GetItemIcon("item:"..NeuronItemCache[spell]..":0:0:0:0:0:0:0")
 		end
 
 	else

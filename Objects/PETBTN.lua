@@ -7,9 +7,6 @@ Neuron.PETBTN = PETBTN
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-
-local sIndex = Neuron.sIndex
-
 local alphaTimer, alphaDir = 0, 0
 
 
@@ -191,8 +188,8 @@ function PETBTN:PET_UpdateOnEvent(state)
 			self.actionSpell = spell
 		end
 
-		if (self.actionSpell and sIndex[self.actionSpell:lower()]) then
-			self.spellID = sIndex[self.actionSpell:lower()].spellID
+		if (self.actionSpell and NeuronSpellCache[self.actionSpell:lower()]) then
+			self.spellID = NeuronSpellCache[self.actionSpell:lower()].spellID
 		else
 			self.spellID = nil
 		end

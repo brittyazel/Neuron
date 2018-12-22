@@ -36,9 +36,6 @@ I sincerely hope you are enjoying Neuron, and Happy Holidays!
 
 
 --prepare the Neuron table with some subtables that will be used down the road
-Neuron.sIndex = {}
-Neuron.cIndex = {}
-Neuron.tIndex = {}
 Neuron.ShowGrids = {}
 Neuron.HideGrids = {}
 Neuron.EDITIndex = {}
@@ -59,6 +56,9 @@ local BARIndex = Neuron.BARIndex
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
+NeuronSpellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
+NeuronCollectionIndex = {} --Stores a cache of all Mounts and Battle Pets that have been seen by a Neuron button
+NeuronToyIndex = {} --Stores a cache of all toys that have been seen by a Neuron button
 
 
 --I think this is only used in Neuron-Flyouts
@@ -206,6 +206,9 @@ function Neuron:OnInitialize()
 
 	---load saved variables into working variable containers
 	NeuronItemCache = DB.NeuronItemCache
+	NeuronSpellCache = DB.NeuronSpellCache
+	NeuronCollectionIndex = DB.NeuronCollectionIndex
+	Neuron.tIndex = DB.NeuronToyIndex
 
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
 	Neuron.MAS = Neuron.MANAGED_ACTION_STATES
@@ -216,12 +219,6 @@ function Neuron:OnInitialize()
 	Neuron.level = UnitLevel("player")
 	Neuron.realm = GetRealmName()
 
-
-	---TODO:figure out what to do with this
-	--[[local frame = CreateFrame("GameTooltip", "NeuronTooltipScan", UIParent, "GameTooltipTemplate")
-	frame:SetOwner(UIParent, "ANCHOR_NONE")
-	frame:SetFrameStrata("TOOLTIP")
-	frame:Hide()]]
 
 
 	StaticPopupDialogs["ReloadUI"] = {
@@ -654,17 +651,13 @@ function Neuron:UpdateSpellIndex()
 
 			local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
-			Neuron.sIndex[(spellName):lower()] = spellData
-			Neuron.sIndex[(spellName):lower().."()"] = spellData
+			NeuronSpellCache[(spellName):lower()] = spellData
+			NeuronSpellCache[(spellName):lower().."()"] = spellData
 
 
 			if (altName and altName ~= spellName) then
-				Neuron.sIndex[(altName):lower()] = spellData
-				Neuron.sIndex[(altName):lower().."()"] = spellData
-			end
-
-			if (spellID) then
-				Neuron.sIndex[spellID] = spellData
+				NeuronSpellCache[(altName):lower()] = spellData
+				NeuronSpellCache[(altName):lower().."()"] = spellData
 			end
 
 		end
@@ -690,20 +683,15 @@ function Neuron:UpdateSpellIndex()
 					local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellID)
 					local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
-					Neuron.sIndex[(spellName):lower()] = spellData
-					Neuron.sIndex[(spellName):lower().."()"] = spellData
+					NeuronSpellCache[(spellName):lower()] = spellData
+					NeuronSpellCache[(spellName):lower().."()"] = spellData
 
 
 					if (altName and altName ~= spellName) then
-						Neuron.sIndex[(altName):lower()] = spellData
-						Neuron.sIndex[(altName):lower().."()"] = spellData
+						NeuronSpellCache[(altName):lower()] = spellData
+						NeuronSpellCache[(altName):lower().."()"] = spellData
 
 					end
-
-					if (spellID) then
-						Neuron.sIndex[spellID] = spellData
-					end
-
 
 				end
 			end
@@ -725,14 +713,13 @@ function Neuron:UpdateSpellIndex()
 
 				local altName, _, icon, castTime, minRange, maxRange = GetSpellInfo(spellName)
 
-				for k,v in pairs(Neuron.sIndex) do
+				for k,v in pairs(NeuronSpellCache) do
 
 					if (v.spellName:find(petName.."$")) then
 						local spellData = Neuron:SetSpellInfo(v.index, v.booktype, v.spellName, nil, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
 
-						Neuron.sIndex[(spellName):lower()] = spellData
-						Neuron.sIndex[(spellName):lower().."()"] = spellData
-						Neuron.sIndex[spellID] = spellData
+						NeuronSpellCache[(spellName):lower()] = spellData
+						NeuronSpellCache[(spellName):lower().."()"] = spellData
 					end
 				end
 			end
@@ -758,14 +745,8 @@ function Neuron:UpdatePetSpellIndex()
 
 				local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
 
-				Neuron.sIndex[(spellName):lower()] = spellData
-				Neuron.sIndex[(spellName):lower().."()"] = spellData
-
-
-				if (spellID) then
-					Neuron.sIndex[spellID] = spellData
-				end
-
+				NeuronSpellCache[(spellName):lower()] = spellData
+				NeuronSpellCache[(spellName):lower().."()"] = spellData
 
 			end
 		end
@@ -816,7 +797,7 @@ function Neuron:UpdateToyData()
 		local name = GetItemInfo(itemID) or "UNKNOWN"
 		local known = PlayerHasToy(itemID)
 		if known then
-			Neuron.tIndex[name:lower()] = itemID
+			NeuronToyIndex[name:lower()] = itemID
 		end
 	end
 
@@ -852,9 +833,8 @@ function Neuron:UpdateCompanionData()
 			local spell = speciesName
 			if (spell) then
 				local companionData = Neuron:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
-				Neuron.cIndex[spell:lower()] = companionData
-				Neuron.cIndex[spell:lower().."()"] = companionData
-				Neuron.cIndex[petID] = companionData
+				NeuronCollectionIndex[spell:lower()] = companionData
+				NeuronCollectionIndex[spell:lower().."()"] = companionData
 
 			end
 		end
@@ -868,10 +848,8 @@ function Neuron:UpdateCompanionData()
 			local spell, _, icon = GetSpellInfo(spellID)
 			if (spell) then
 				local companionData = Neuron:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
-				Neuron.cIndex[spell:lower()] = companionData
-				Neuron.cIndex[spell:lower().."()"] = companionData
-				Neuron.cIndex[spellID] = companionData
-
+				NeuronCollectionIndex[spell:lower()] = companionData
+				NeuronCollectionIndex[spell:lower().."()"] = companionData
 			end
 		end
 	end

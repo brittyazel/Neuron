@@ -637,8 +637,8 @@ function ACTIONBUTTON:MACRO_UpdateData(...)
 				ud_spell = ud_spell:gsub("!", "")
 				self.macrospell = ud_spell
 
-				if (Neuron.sIndex[ud_spell:lower()]) then
-					self.spellID = Neuron.sIndex[ud_spell:lower()].spellID
+				if (NeuronSpellCache[ud_spell:lower()]) then
+					self.spellID = NeuronSpellCache[ud_spell:lower()].spellID
 				else
 					self.spellID = nil
 				end
@@ -710,11 +710,11 @@ function ACTIONBUTTON:MACRO_SetSpellIcon(spell)
 	if (not self.data.macro_Watch and not self.data.macro_Equip) then
 
 		spell = (spell):lower()
-		if (Neuron.sIndex[spell]) then
-			texture = Neuron.sIndex[spell].icon
+		if (NeuronSpellCache[spell]) then
+			texture = NeuronSpellCache[spell].icon
 
-		elseif (Neuron.cIndex[spell]) then
-			texture = Neuron.cIndex[spell].icon
+		elseif (NeuronCollectionIndex[spell]) then
+			texture = NeuronCollectionIndex[spell].icon
 
 		elseif (spell) then
 			texture = GetSpellTexture(spell)
@@ -912,8 +912,8 @@ function ACTIONBUTTON:MACRO_SetSpellState(spell)
 		self.count:SetText(count)
 	end
 
-	if (Neuron.cIndex[spell:lower()]) then
-		spell = Neuron.cIndex[spell:lower()].spellID
+	if (NeuronCollectionIndex[spell:lower()]) then
+		spell = NeuronCollectionIndex[spell:lower()].spellID
 
 		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell)) then
 			self:SetChecked(1)
@@ -1097,8 +1097,8 @@ function ACTIONBUTTON:MACRO_UpdateUsableSpell(spell)
 	local isUsable, notEnoughMana, alt_Name
 	local spellName = spell:lower()
 
-	if (Neuron.sIndex[spellName]) and (Neuron.sIndex[spellName].spellID ~= Neuron.sIndex[spellName].spellID_Alt) and Neuron.sIndex[spellName].spellID_Alt then
-		alt_Name = Neuron.sIndex[spellName].altName
+	if (NeuronSpellCache[spellName]) and (NeuronSpellCache[spellName].spellID ~= NeuronSpellCache[spellName].spellID_Alt) and NeuronSpellCache[spellName].spellID_Alt then
+		alt_Name = NeuronSpellCache[spellName].altName
 		isUsable, notEnoughMana = IsUsableSpell(alt_Name)
 		spellName = alt_Name
 	else
@@ -1110,14 +1110,14 @@ function ACTIONBUTTON:MACRO_UpdateUsableSpell(spell)
 	elseif (isUsable) then
 		if (self.rangeInd and IsSpellInRange(spellName, self.unit) == 0) then
 			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif Neuron.sIndex[spellName] and (self.rangeInd and IsSpellInRange(Neuron.sIndex[spellName].index,"spell", self.unit) == 0) then
+		elseif NeuronSpellCache[spellName] and (self.rangeInd and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
 			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 		end
 
 	else
-		if (Neuron.sIndex[(spell):lower()]) then
+		if (NeuronSpellCache[(spell):lower()]) then
 			self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
@@ -1128,8 +1128,8 @@ end
 
 function ACTIONBUTTON:MACRO_UpdateUsableItem(item)
 	local isUsable, notEnoughMana = IsUsableItem(item)-- or PlayerHasToy(NeuronItemCache[item])
-	--local isToy = Neuron.tIndex[item]
-	if Neuron.tIndex[item:lower()] then isUsable = true end
+	--local isToy = NeuronToyIndex[item]
+	if NeuronToyIndex[item:lower()] then isUsable = true end
 
 	if (notEnoughMana and self.manacolor) then
 		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
@@ -1514,9 +1514,9 @@ function ACTIONBUTTON:MACRO_PlaceSpell(action1, action2, spellID)
 
 	local spellInfoName, icon
 
-	if (Neuron.sIndex[spell]) then
-		spellInfoName = Neuron.sIndex[spell].spellInfoName
-		icon = Neuron.sIndex[spell].icon
+	if (NeuronSpellCache[spell]) then
+		spellInfoName = NeuronSpellCache[spell].spellInfoName
+		icon = NeuronSpellCache[spell].icon
 	else
 		spellInfoName , _, icon = GetSpellInfo(spellID)
 	end
@@ -2180,9 +2180,9 @@ end
 
 function ACTIONBUTTON:MACRO_SetSpellTooltip(spell)
 
-	if (Neuron.sIndex[spell]) then
+	if (NeuronSpellCache[spell]) then
 
-		local spell_id = Neuron.sIndex[spell].spellID
+		local spell_id = NeuronSpellCache[spell].spellID
 
 
 		local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
@@ -2195,17 +2195,17 @@ function ACTIONBUTTON:MACRO_SetSpellTooltip(spell)
 		if (self.UberTooltips) then
 			GameTooltip:SetSpellByID(spell_id)
 		else
-			spell = Neuron.sIndex[spell].spellName
+			spell = NeuronSpellCache[spell].spellName
 			GameTooltip:SetText(spell, 1, 1, 1)
 		end
 
 
-	elseif (Neuron.cIndex[spell]) then
+	elseif (NeuronCollectionIndex[spell]) then
 
-		if (self.UberTooltips and Neuron.cIndex[spell].creatureType =="MOUNT") then
-			GameTooltip:SetHyperlink("spell:"..Neuron.cIndex[spell].spellID)
+		if (self.UberTooltips and NeuronCollectionIndex[spell].creatureType =="MOUNT") then
+			GameTooltip:SetHyperlink("spell:"..NeuronCollectionIndex[spell].spellID)
 		else
-			GameTooltip:SetText(Neuron.cIndex[spell].creatureName, 1, 1, 1)
+			GameTooltip:SetText(NeuronCollectionIndex[spell].creatureName, 1, 1, 1)
 		end
 
 		self.UpdateTooltip = nil
@@ -2216,9 +2216,9 @@ end
 function ACTIONBUTTON:MACRO_SetItemTooltip(item)
 	local name, link = GetItemInfo(item)
 
-	if (Neuron.tIndex[item:lower()]) then
+	if (NeuronToyIndex[item:lower()]) then
 		if (self.UberTooltips) then
-			local itemID = Neuron.tIndex[item:lower()]
+			local itemID = NeuronToyIndex[item:lower()]
 			GameTooltip:ClearLines()
 			GameTooltip:SetToyByItemID(itemID)
 		else

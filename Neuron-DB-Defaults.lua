@@ -251,15 +251,10 @@ NeuronDefaults = {
 
         AutoWatch = 1,
 
-        extrabarFirstRun = true,
-        exitbarFirstRun = true,
-        zoneabilitybarFirstRun = true,
-        bagbarFirstRun = true,
-        menubarFirstRun = true,
-        petbarFirstRun = true,
-        statusbarFirstRun = true,
-
         NeuronItemCache = {},
+        NeuronSpellCache = {},
+        NeuronCollectionIndex = {},
+        NeuronToyIndex = {},
 
         NeuronIcon = {hide = false,},
 
