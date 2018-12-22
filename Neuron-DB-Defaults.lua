@@ -243,13 +243,9 @@ NeuronDefaults = {
     profile = {
         blizzbar = false,
 
-
         mouseOverMod= "NONE",
 
-        perCharBinds = false,
         firstRun = true,
-
-        AutoWatch = 1,
 
         NeuronItemCache = {},
         NeuronSpellCache = {},
@@ -310,6 +306,6 @@ NeuronDefaults.profile.StatusBar['*'].buttons ={
     ['*'] = {
         ['config'] = CopyTable(genericStatusBtnData),
         ['keys'] = CopyTable(genericKeyData),
-        ['data'] = {unit = 2, repID = 0, repAuto = 0,},
+        ['data'] = {unit = 2, repID = 0, autoWatch = 2,},
     }
 }

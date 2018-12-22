@@ -388,8 +388,6 @@ end
 
 function STATUSBTN:repstrings_Update(line)
 
-	local DB = Neuron.db.profile
-
 	if (GetNumFactions() > 0) then
 		wipe(RepWatch)
 
@@ -428,11 +426,13 @@ function STATUSBTN:repstrings_Update(line)
 				local repData = self:SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
 				RepWatch[i] = repData --set current reptable into growing RepWatch table
 
-				if (((line and type(line)~= "boolean") and line:find(name)) or DB.AutoWatch == i) then --this line automatically assings the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
+				if (((line and type(line)~= "boolean") and line:find(name)) or self.data.autoWatch == i) then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
 					RepWatch[0] = repData
-					DB.AutoWatch = i
+					self.data.autoWatch = i
 				end
+
 			end
+
 		end
 	end
 end
