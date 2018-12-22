@@ -711,14 +711,14 @@ function ACTIONBUTTON:MACRO_SetSpellIcon(spell)
 
 		spell = (spell):lower()
 		if (Neuron.sIndex[spell]) then
-			local spell_id = Neuron.sIndex[spell].spellID
-			texture = GetSpellTexture(spell_id)
+			texture = Neuron.sIndex[spell].icon
 
 		elseif (Neuron.cIndex[spell]) then
 			texture = Neuron.cIndex[spell].icon
 
 		elseif (spell) then
 			texture = GetSpellTexture(spell)
+
 		end
 
 		if (texture) then
@@ -1025,19 +1025,7 @@ end
 
 function ACTIONBUTTON:MACRO_SetSpellCooldown(spell)
 
-	local DB = Neuron.db.profile
-
 	spell = (spell):lower()
-	local spell_id = spell
-
-	if (Neuron.sIndex[spell]) then
-		spell_id = Neuron.sIndex[spell].spellID
-		local ZoneAbilityID = ZoneAbilityFrame.SpellButton.currentSpellID
-		local GarrisonAbilityID = 161691
-
-		--Needs work
-		if (spell_id == GarrisonAbilityID and ZoneAbilityID) then spell_id = ZoneAbilityID end
-	end
 
 	local start, duration, enable = GetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration = GetSpellCharges(spell)
@@ -1110,14 +1098,11 @@ function ACTIONBUTTON:MACRO_UpdateUsableSpell(spell)
 	local spellName = spell:lower()
 
 	if (Neuron.sIndex[spellName]) and (Neuron.sIndex[spellName].spellID ~= Neuron.sIndex[spellName].spellID_Alt) and Neuron.sIndex[spellName].spellID_Alt then
-		alt_Name = GetSpellInfo(Neuron.sIndex[spellName].spellID_Alt):lower()
+		alt_Name = Neuron.sIndex[spellName].altName
 		isUsable, notEnoughMana = IsUsableSpell(alt_Name)
 		spellName = alt_Name
 	else
 		isUsable, notEnoughMana = IsUsableSpell(spellName)
-	end
-
-	if (spellName == GetSpellInfo(161691):lower()) then
 	end
 
 	if (notEnoughMana) then
@@ -1522,10 +1507,19 @@ function ACTIONBUTTON:MACRO_PlaceSpell(action1, action2, spellID)
 			return
 		end
 	else
-		spell,_= GetSpellBookItemName(action1, action2)
+		spell,_= GetSpellBookItemName(action1, action2):lower()
 		_,spellID = GetSpellBookItemInfo(action1, action2)
 	end
-	local spellInfoName , _, icon, castTime, minRange, maxRange= GetSpellInfo(spellID)
+
+
+	local spellInfoName, icon
+
+	if (Neuron.sIndex[spell]) then
+		spellInfoName = Neuron.sIndex[spell].spellInfoName
+		icon = Neuron.sIndex[spell].icon
+	else
+		spellInfoName , _, icon = GetSpellInfo(spellID)
+	end
 
 	if AlternateSpellNameList[spellID] or not spell then
 		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
@@ -2190,24 +2184,21 @@ function ACTIONBUTTON:MACRO_SetSpellTooltip(spell)
 
 		local spell_id = Neuron.sIndex[spell].spellID
 
-		if(spell_id) then --double check that the spell_id is valid (for switching specs, other specs abilities won't be valid even though a bar might be bound to one)
 
-			local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
+		local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
 
-			if spell_id == 161691 and zoneability_id then
-				spell_id = zoneability_id
-			end
-
-
-			if (self.UberTooltips) then
-				GameTooltip:SetSpellByID(spell_id)
-			else
-				spell = GetSpellInfo(spell_id)
-				GameTooltip:SetText(spell, 1, 1, 1)
-			end
-
-			self.UpdateTooltip = macroButton_SetTooltip
+		if spell_id == 161691 and zoneability_id then
+			spell_id = zoneability_id
 		end
+
+
+		if (self.UberTooltips) then
+			GameTooltip:SetSpellByID(spell_id)
+		else
+			spell = Neuron.sIndex[spell].spellName
+			GameTooltip:SetText(spell, 1, 1, 1)
+		end
+
 
 	elseif (Neuron.cIndex[spell]) then
 

@@ -39,6 +39,7 @@ Objects/BAR_SNAPTO.lua
 
 Neuron-GeneralFunctions.lua
 Neuron-KeyBinder.lua
+Neuron-Console.lua
 Neuron-MinimapIcon.lua
 
 XML/NeuronActionButtonTemplate.xml
