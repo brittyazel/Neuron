@@ -711,7 +711,11 @@ function ACTIONBUTTON:MACRO_SetSpellIcon(spell)
 
 		spell = (spell):lower()
 		if (NeuronSpellCache[spell]) then
-			texture = NeuronSpellCache[spell].icon
+			texture = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
+
+			if not texture then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
+				texture = NeuronSpellCache[spell].icon
+			end
 
 		elseif (NeuronCollectionIndex[spell]) then
 			texture = NeuronCollectionIndex[spell].icon
@@ -1516,7 +1520,10 @@ function ACTIONBUTTON:MACRO_PlaceSpell(action1, action2, spellID)
 
 	if (NeuronSpellCache[spell]) then
 		spellInfoName = NeuronSpellCache[spell].spellInfoName
-		icon = NeuronSpellCache[spell].icon
+		icon = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
+		if not icon then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
+			icon = NeuronSpellCache[spell].icon
+		end
 	else
 		spellInfoName , _, icon = GetSpellInfo(spellID)
 	end

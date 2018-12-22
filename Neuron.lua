@@ -266,7 +266,6 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("UNIT_LEVEL")
 	Neuron:RegisterEvent("UNIT_PET")
 	--Neuron:RegisterEvent("TOYS_UPDATED")
-	--Neuron:RegisterEvent("TOYS_UPDATED")
 	--Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 
 	Neuron:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -392,11 +391,11 @@ function Neuron:COMPANION_UPDATE()
 	end
 end
 
-function Neuron:PET_JOURNAL_LIST_UPDATE()
+--[[function Neuron:PET_JOURNAL_LIST_UPDATE()
 	if not CollectionsJournal or not CollectionsJournal:IsShown() then
 		Neuron:UpdateCompanionData()
 	end
-end
+end]]
 
 
 function Neuron:UNIT_PET(eventName, ...)
@@ -413,11 +412,12 @@ function Neuron:UNIT_LEVEL(eventName, ...)
 	end
 end
 
-function Neuron:TOYS_UPDATED()
+--[[function Neuron:TOYS_UPDATED(...)
+
 	if not ToyBox or not ToyBox:IsShown() then
 		Neuron:UpdateToyData()
 	end
-end
+end]]
 
 function Neuron:PLAYER_TARGET_CHANGED()
 	for k in pairs(Neuron.unitAuras) do
@@ -432,48 +432,48 @@ end
 function Neuron:UNIT_AURA(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 		end
-		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
 function Neuron:UNIT_SPELLCAST_SENT(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 		end
-		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
 function Neuron:UNIT_SPELLCAST_START(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 		end
-		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
 function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 		end
-		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
 function Neuron:UNIT_SPELLCAST_CHANNEL_START(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 		end
-		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
 function Neuron:UNIT_SPELLCAST_SUCCEEDED(eventname, ...)
 	if (Neuron.unitAuras[select(1,...)]) then
 		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 		end
-		Neuron.ACTIONBUTTON.updateAuraInfo(select(1,...))
 	end
 end
 
@@ -676,7 +676,6 @@ function Neuron:UpdateSpellIndex()
 				local spellType, spellID = GetSpellBookItemInfo(offsetIndex, BOOKTYPE_PROFESSION)
 				local spellID_Alt = spellID
 				local spellLvl = GetSpellAvailableLevel(offsetIndex, BOOKTYPE_PROFESSION)
-				--local icon = GetSpellBookItemTexture(offsetIndex, BOOKTYPE_PROFESSION)
 				local isPassive = IsPassiveSpell(offsetIndex, BOOKTYPE_PROFESSION)
 
 				if (spellName and spellType ~= "FUTURESPELL") then
@@ -813,14 +812,8 @@ end
 --- Compiles a list of battle pets & mounts a player has.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
 ---	If a companion is not displaying its tooltip or cooldown, then the item in the macro probably is not in the database
 function Neuron:UpdateCompanionData()
-	--.C_PetJournal.ClearAllPetSourcesFilter()
-	--.C_PetJournal.ClearAllPetTypesFilter()
 
 	C_PetJournal.ClearSearchFilter()
-
-	--.C_PetJournal.AddAllPetSourcesFilter()
-	--.C_PetJournal.AddAllPetTypesFilter()
-
 	C_PetJournal.SetAllPetSourcesChecked(true)
 	C_PetJournal.SetAllPetTypesChecked(true)
 	local numpet = select(1, C_PetJournal.GetNumPets())
