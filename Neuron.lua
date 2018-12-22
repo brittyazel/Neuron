@@ -174,7 +174,7 @@ function Neuron:OnInitialize()
 	NeuronItemCache = DB.NeuronItemCache
 	NeuronSpellCache = DB.NeuronSpellCache
 	NeuronCollectionCache = DB.NeuronCollectionCache
-	Neuron.tIndex = DB.NeuronToyCache
+	NeuronToyCache = DB.NeuronToyCache
 
 	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
 	Neuron.MAS = Neuron.MANAGED_ACTION_STATES
