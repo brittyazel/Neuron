@@ -363,7 +363,7 @@ function ACTIONBUTTON:SetObjectVisibility(show)
 
 	if (show or self.showGrid) then
 		self:Show()
-	elseif not self:MACRO_HasAction() and (not Neuron.ButtonEditMode or not Neuron.BarEditMode or not Neuron.BindingMode) then
+	elseif not self:MACRO_HasAction() and (not Neuron.buttonEditMode or not Neuron.barEditMode or not Neuron.bindingMode) then
 		self:Hide()
 	end
 end
@@ -1440,14 +1440,14 @@ end
 
 
 function ACTIONBUTTON:MACRO_UPDATE_MACROS(...)
-	if (Neuron.PEW and not InCombatLockdown() and self.data.macro_Watch) then
+	if (Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_Watch) then
 		self:MACRO_PlaceBlizzMacro(self.data.macro_Watch)
 	end
 end
 
 
 function ACTIONBUTTON:MACRO_EQUIPMENT_SETS_CHANGED(...)
-	if (Neuron.PEW and not InCombatLockdown() and self.data.macro_Equip) then
+	if (Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_Equip) then
 		self:MACRO_PlaceBlizzEquipSet(self.data.macro_Equip)
 	end
 end

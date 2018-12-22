@@ -96,7 +96,7 @@ end
 
 local function timerFrame_OnUpdate(frame, elapsed)
 
-	if Neuron.PEW then
+	if Neuron.enteredWorld then
 		local tick
 		local times = timerTimes
 		local timers = timersRunning
@@ -396,7 +396,7 @@ end
 
 function ACTIONBUTTON:updateFlyoutBars(elapsed)
 
-	if (not InCombatLockdown() and Neuron.PEW) then  --Workarout for protected taint if UI reload in combat
+	if (not InCombatLockdown() and Neuron.enteredWorld) then  --Workarout for protected taint if UI reload in combat
 		local bar = table.remove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if (bar) then
@@ -926,7 +926,7 @@ function ACTIONBUTTON:Flyout_OnEvent(event, ...)
 		local bag = ...
 		if bag>=0 and bag<=4 then
 			bagsToCache[bag] = true
-			if Neuron.PEW then
+			if Neuron.enteredWorld then
 				ACTIONBUTTON.StartTimer(0.05, ACTIONBUTTON.CacheBags)
 			end
 		end

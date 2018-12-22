@@ -24,20 +24,23 @@ I sincerely hope you are enjoying Neuron, and Happy Holidays!
 -Soyier]]
 
 
+Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
+
 --prepare the Neuron table with some sub-tables that will be used down the road
 Neuron.EDITIndex = {}
 Neuron.BINDIndex = {}
 Neuron.SKINIndex = {}
-Neuron.moduleIndex = 0
+
+Neuron.numLoadedModules = 0
+
 Neuron.registeredBarData = {}
 Neuron.registeredGUIData = {}
+
 Neuron.macroDrag = {}
 Neuron.startDrag = false
 
-Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
-
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 NeuronSpellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
 NeuronCollectionCache = {} --Stores a cache of all Mounts and Battle Pets that have been seen by a Neuron button
@@ -108,9 +111,9 @@ Neuron.STATEINDEX = {
 	target = "target",
 }
 
-Neuron.BarEditMode = false
-Neuron.ButtonEditMode = false
-Neuron.BindingMode = false
+Neuron.barEditMode = false
+Neuron.buttonEditMode = false
+Neuron.bindingMode = false
 
 Neuron.SPECIALACTIONS = {
 	vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit",
@@ -127,7 +130,7 @@ Neuron.THROTTLE = 0.2
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLLERANCE = 28
 
-Neuron.PEW = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on logging with too many processes
+Neuron.enteredWorld = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on logging with too many processes
 
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
@@ -247,17 +250,17 @@ function Neuron:OnEnable()
 	---this allows for the "Esc" key to disable the Edit Mode instead of bringing up the game menu, but only if an edit mode is activated.
 	Neuron:HookScript(GameMenuFrame, "OnUpdate", function(self)
 
-		if (Neuron.BarEditMode) then
+		if (Neuron.barEditMode) then
 			HideUIPanel(self)
 			Neuron:ToggleBarEditMode(false)
 		end
 
-		if (Neuron.ButtonEditMode) then
+		if (Neuron.buttonEditMode) then
 			HideUIPanel(self)
 			Neuron:ToggleButtonEditMode(false)
 		end
 
-		if (Neuron.BindingMode) then
+		if (Neuron.bindingMode) then
 			HideUIPanel(self)
 			Neuron:ToggleBindingMode(false)
 		end
@@ -285,15 +288,15 @@ end
 
 function Neuron:PLAYER_REGEN_DISABLED()
 
-	if (Neuron.ButtonEditMode) then
+	if (Neuron.buttonEditMode) then
 		Neuron:ToggleButtonEditMode(false)
 	end
 
-	if (Neuron.BindingMode) then
+	if (Neuron.bindingMode) then
 		Neuron:ToggleBindingMode(false)
 	end
 
-	if (Neuron.BarEditMode) then
+	if (Neuron.barEditMode) then
 		Neuron:ToggleBarEditMode(false)
 	end
 
@@ -318,7 +321,7 @@ function Neuron:PLAYER_ENTERING_WORLD()
 		Neuron:HideBlizzardUI()
 	end
 
-	Neuron.PEW = true
+	Neuron.enteredWorld = true
 
 end
 
@@ -363,7 +366,7 @@ end]]
 
 function Neuron:UNIT_PET(eventName, ...)
 	if ... == "player" then
-		if (Neuron.PEW) then
+		if (Neuron.enteredWorld) then
 			Neuron:UpdatePetSpellCache()
 		end
 	end
@@ -466,7 +469,7 @@ function Neuron:controlOnUpdate(elapsed)
 	Neuron.elapsed = Neuron.elapsed + elapsed
 
 	---Throttled OnUpdate calls
-	if (Neuron.elapsed > Neuron.THROTTLE and Neuron.PEW) then
+	if (Neuron.elapsed > Neuron.THROTTLE and Neuron.enteredWorld) then
 
 		Neuron.ACTIONBUTTON.cooldownsOnUpdate(elapsed)
 
@@ -476,7 +479,7 @@ function Neuron:controlOnUpdate(elapsed)
 	end
 
 	---UnThrottled OnUpdate calls
-	if(Neuron.PEW) then
+	if(Neuron.enteredWorld) then
 		Neuron.ACTIONBUTTON.controlOnUpdate(elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 		Neuron.BAR.controlOnUpdate(elapsed)
 	end
@@ -982,9 +985,9 @@ end
 
 function Neuron:ToggleBarEditMode(show)
 
-	if show and Neuron.BarEditMode == false then
+	if show and Neuron.barEditMode == false then
 
-		Neuron.BarEditMode = true
+		Neuron.barEditMode = true
 
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBindingMode(false)
@@ -997,7 +1000,7 @@ function Neuron:ToggleBarEditMode(show)
 
 	else
 
-		Neuron.BarEditMode = false
+		Neuron.barEditMode = false
 
 		for index, bar in pairs(Neuron.BARIndex) do
 			bar:Hide()
@@ -1017,9 +1020,9 @@ end
 
 function Neuron:ToggleButtonEditMode(show)
 
-	if show and Neuron.ButtonEditMode == false then
+	if show and Neuron.buttonEditMode == false then
 
-		Neuron.ButtonEditMode = true
+		Neuron.buttonEditMode = true
 
 		Neuron:ToggleBarEditMode(false)
 		Neuron:ToggleBindingMode(false)
@@ -1041,7 +1044,7 @@ function Neuron:ToggleButtonEditMode(show)
 
 	else
 
-		Neuron.ButtonEditMode = false
+		Neuron.buttonEditMode = false
 
 		for index, editor in pairs(Neuron.EDITIndex) do
 			editor:Hide()
@@ -1065,9 +1068,9 @@ end
 
 function Neuron:ToggleBindingMode(show)
 
-	if show and Neuron.BindingMode == false then
+	if show and Neuron.bindingMode == false then
 
-		Neuron.BindingMode = true
+		Neuron.bindingMode = true
 
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBarEditMode(false)
@@ -1090,7 +1093,7 @@ function Neuron:ToggleBindingMode(show)
 
 	else
 
-		Neuron.BindingMode = false
+		Neuron.bindingMode = false
 
 		for _, binder in pairs(Neuron.BINDIndex) do
 			binder:Hide()
@@ -1110,7 +1113,7 @@ end
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
 function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
 
-	Neuron.moduleIndex = Neuron.moduleIndex + 1
+	Neuron.numLoadedModules = Neuron.numLoadedModules + 1
 
 	Neuron.registeredBarData[class] = {
 		barType = barType,
@@ -1120,7 +1123,7 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		objType = objType,
 		objTemplate = objTemplate,
 		objMax = objMax,
-		createMsg = Neuron.moduleIndex..objType,
+		createMsg = Neuron.numLoadedModules..objType,
 	}
 
 end

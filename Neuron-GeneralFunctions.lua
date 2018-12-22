@@ -109,7 +109,7 @@ function Neuron:ChangeObject(object)
 
 	local newObj, newEditor = false, false
 
-	if (Neuron.PEW) then
+	if (Neuron.enteredWorld) then
 
 		if (object and object ~= Neuron.CurrentObject) then
 

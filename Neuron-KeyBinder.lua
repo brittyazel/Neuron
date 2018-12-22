@@ -284,7 +284,7 @@ end
 
 --- OnUpdate Event handler
 function NeuronBinder:OnUpdate(binder)
-	if(Neuron.PEW) then
+	if(Neuron.enteredWorld) then
 		if (binder:IsMouseOver()) then
 			binder:EnableKeyboard(true)
 		else

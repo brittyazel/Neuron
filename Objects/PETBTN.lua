@@ -432,7 +432,7 @@ function PETBTN:SetObjectVisibility(show)
 
 	if (show or self.showGrid) then
 		self:SetAlpha(1)
-	elseif not self.HasPetAction(self.actionID) and (not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode) then
+	elseif not self.HasPetAction(self.actionID) and (not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode) then
 		self:SetAlpha(0)
 	end
 

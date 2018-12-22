@@ -71,13 +71,13 @@ function Neuron:slashHandler(input)
 
 
 	--somewhat of a hack to insert a "true" as an arg if trying to toggle the edit modes
-	if command == "config" and Neuron.BarEditMode == false then
+	if command == "config" and Neuron.barEditMode == false then
 		args[1] = true
 	end
-	if command == "edit" and Neuron.ButtonEditMode == false then
+	if command == "edit" and Neuron.buttonEditMode == false then
 		args[1] = true
 	end
-	if command == "bind" and Neuron.BindingMode == false then
+	if command == "bind" and Neuron.bindingMode == false then
 		args[1] = true
 	end
 

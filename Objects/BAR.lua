@@ -104,7 +104,7 @@ function BAR.controlOnUpdate(elapsed)
 	for k,v in pairs(autoHideIndex) do
 		if (v~=nil) then
 
-			if not Neuron.ButtonEditMode and not Neuron.BarEditMode and not Neuron.BindingMode then
+			if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
 
 				if (k:IsShown()) then
 					v:SetAlpha(1)
@@ -1155,7 +1155,7 @@ end
 ---TODO:I need to figure out what to do with this
 
 --[[function NeuronBar:ACTIVE_TALENT_GROUP_CHANGED(bar, ...)
-	if (Neuron.PEW) then
+	if (Neuron.enteredWorld) then
 		bar.stateschanged = true
 		bar.vischanged = true
 		bar:Update()
@@ -1424,7 +1424,7 @@ end
 
 ---TODO: This is probably a source of inefficiency
 function BAR:OnUpdate(elapsed)
-	if (Neuron.PEW) then
+	if (Neuron.enteredWorld) then
 
 		if (self.elapsed) then
 			self.elapsed = self.elapsed + elapsed
@@ -1502,7 +1502,7 @@ end
 function BAR:ChangeBar()
 	local newBar = false
 
-	if (Neuron.PEW) then
+	if (Neuron.enteredWorld) then
 
 		if (self and Neuron.CurrentBar ~= self) then
 			Neuron.CurrentBar = self
