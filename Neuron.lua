@@ -558,9 +558,9 @@ end
 
 
 --- Creates a table containing provided data
--- @param index, bookType, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon
+-- @param index, bookType, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, icon
 -- @return curSpell:  Table containing provided data
-function Neuron:SetSpellInfo(index, bookType, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+function Neuron:SetSpellInfo(index, bookType, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, icon)
 	local curSpell = {}
 
 	curSpell.index = index
@@ -571,7 +571,6 @@ function Neuron:SetSpellInfo(index, bookType, spellName, altName, spellID, spell
 	curSpell.spellID_Alt = spellID_Alt
 	curSpell.spellType = spellType
 	curSpell.spellLvl = spellLvl
-	curSpell.isPassive = isPassive
 	curSpell.icon = icon
 
 	return curSpell
@@ -598,7 +597,6 @@ function Neuron:UpdateSpellCache()
 		local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
 		local spellID_Alt = spellID
 		local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_SPELL)
-		local isPassive = IsPassiveSpell(i, BOOKTYPE_SPELL)
 
 		if (spellName and spellType ~= "FUTURESPELL") then
 			local link = GetSpellLink(spellName)
@@ -615,7 +613,7 @@ function Neuron:UpdateSpellCache()
 				altName = GetSpellInfo(spellID_Alt)
 			end
 
-			local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+			local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, icon)
 
 			NeuronSpellCache[(spellName):lower()] = spellData
 			NeuronSpellCache[(spellName):lower().."()"] = spellData
@@ -642,11 +640,10 @@ function Neuron:UpdateSpellCache()
 				local spellType, spellID = GetSpellBookItemInfo(offsetIndex, BOOKTYPE_PROFESSION)
 				local spellID_Alt = spellID
 				local spellLvl = GetSpellAvailableLevel(offsetIndex, BOOKTYPE_PROFESSION)
-				local isPassive = IsPassiveSpell(offsetIndex, BOOKTYPE_PROFESSION)
 
 				if (spellName and spellType ~= "FUTURESPELL") then
 					local altName, _, icon = GetSpellInfo(spellID)
-					local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+					local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, icon)
 
 					NeuronSpellCache[(spellName):lower()] = spellData
 					NeuronSpellCache[(spellName):lower().."()"] = spellData
@@ -679,7 +676,7 @@ function Neuron:UpdateSpellCache()
 				for _,v in pairs(NeuronSpellCache) do
 
 					if (v.spellName:find(petName.."$")) then
-						local spellData = Neuron:SetSpellInfo(v.index, v.booktype, v.spellName, nil, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.isPassive, v.icon)
+						local spellData = Neuron:SetSpellInfo(v.index, v.booktype, v.spellName, nil, spellID, v.spellID_Alt, v.spellType, v.spellLvl, v.icon)
 
 						NeuronSpellCache[(spellName):lower()] = spellData
 						NeuronSpellCache[(spellName):lower().."()"] = spellData
@@ -700,13 +697,12 @@ function Neuron:UpdatePetSpellCache()
 			local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_PET)
 			local spellType, _ = GetSpellBookItemInfo(i, BOOKTYPE_PET)
 			local spellLvl = GetSpellAvailableLevel(i, BOOKTYPE_PET)
-			local isPassive = IsPassiveSpell(i, BOOKTYPE_PET)
 
 			if (spellName and spellType ~= "FUTURESPELL") then
 				local altName, _, icon, _, _, _, spellID = GetSpellInfo(spellName)
 				local spellID_Alt = spellID
 
-				local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, isPassive, icon)
+				local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, spellID, spellID_Alt, spellType, spellLvl, icon)
 
 				NeuronSpellCache[(spellName):lower()] = spellData
 				NeuronSpellCache[(spellName):lower().."()"] = spellData
