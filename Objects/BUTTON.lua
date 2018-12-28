@@ -20,6 +20,45 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
+function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha)
+
+	local cdFrame = self.iconframecooldown
+
+	if ( start and start > 0 and duration > 0 and enable > 0) then
+		cdFrame:SetAlpha(1)
+		CooldownFrame_Set(cdFrame, start, duration, enable)
+
+		if (duration >= Neuron.TIMERLIMIT) then
+			cdFrame.duration = duration
+			cdFrame.start = start
+			cdFrame.active = true
+
+			if (timer) then
+				cdFrame.timer:Show()
+				if (not cdFrame.expiry) then
+					cdFrame.timer:SetTextColor(color1[1], color1[2], color1[3])
+				end
+				cdFrame.expirecolor = color2
+			end
+
+			Neuron.cooldowns[cdFrame] = true
+
+			if (cdAlpha) then
+				Neuron.cdAlphas[cdFrame] = true
+			end
+
+		elseif (Neuron.cooldowns[cdFrame]) then
+			cdFrame.duration = 1
+		end
+
+	else
+		cdFrame.duration = 0
+		cdFrame.start = 0
+		CooldownFrame_Set(cdFrame, 0, 0, 0)
+	end
+end
+
+
 function BUTTON:SetData(bar)
 	if (bar) then
 
@@ -310,7 +349,7 @@ function BUTTON:MACRO_UpdateCooldown(update)
 	elseif (item and #item>0) then
 		self:MACRO_SetItemCooldown(item)
 	else
-		Neuron:SetTimer(self.iconframecooldown, 0, 0, 0, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetTimer(0, 0, 0, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end
 
@@ -361,10 +400,10 @@ function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
 				self.iconframeaurawatch:Hide()
 
 			elseif (self.auraText) then
-				Neuron:SetTimer(self.iconframecooldown, 0, 0, 0)
-				Neuron:SetTimer(self.iconframeaurawatch, uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color)
+				self:SetTimer(0, 0, 0)
+				self:SetTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color)
 			else
-				Neuron:SetTimer(self.iconframeaurawatch, 0, 0, 0)
+				self:SetTimer(0, 0, 0)
 			end
 
 			self.auraWatchUnit = unit
@@ -402,7 +441,7 @@ function BUTTON:ACTION_SetCooldown(action)
 				self.iconframeaurawatch:Hide()
 			end
 
-			Neuron:SetTimer(self.iconframecooldown, start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 		end
 	end
 end
