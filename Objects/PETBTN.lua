@@ -101,16 +101,16 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 	if (isActive) then
 
 		if (IsPetAttackAction(self.actionID)) then
-			self.mac_flash = true
+			self:PET_UpdateRange(true)
 			self:GetCheckedTexture():SetAlpha(0.5)
 		else
-			self.mac_flash = false
+			self:PET_UpdateRange()
 			self:GetCheckedTexture():SetAlpha(1.0)
 		end
 
 		self:SetChecked(1)
 	else
-		self.mac_flash = false
+		self:PET_UpdateRange()
 		self:GetCheckedTexture():SetAlpha(1.0)
 		self:SetChecked(nil)
 	end
@@ -135,6 +135,31 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 		end
 
 		self.autocastenabled = false
+	end
+
+	self:UpdateButton(self.actionID)
+end
+
+
+function PETBTN:PET_UpdateRange(flash)
+	if (flash) then
+
+		self.mac_flashing = true
+
+		if (alphaDir == 1) then
+			if ((1-(alphaTimer)) >= 0) then
+				self.iconframeflash:Show()
+			end
+		elseif (alphaDir == 0) then
+			if ((alphaTimer) <= 1) then
+				self.iconframeflash:Hide()
+			end
+		end
+
+	elseif (self.mac_flashing) then
+
+		self.iconframeflash:Hide()
+		self.mac_flashing = false
 	end
 end
 
@@ -199,6 +224,14 @@ function PETBTN:PET_UpdateOnEvent(state)
 		self:PET_UpdateCooldown()
 	end
 
+	if (self.updateRightClick and not InCombatLockdown()) then
+
+		if (spell) then
+			self:SetAttribute("*macrotext2", "/petautocasttoggle "..spell)
+			self.updateRightClick = nil
+		end
+	end
+
 	self:PET_UpdateState(isActive, allowed, enabled)
 
 end
@@ -212,51 +245,6 @@ function PETBTN:UpdateButton(actionID)
 	else
 		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
 	end
-end
-
-function PETBTN:OnUpdate(elapsed)
-
-	if not(self.updateGroup) then
-		self.updateGroup = math.random(Neuron.NUM_UPDATE_GROUPS) --random number between 1 and numUpdateGroups (which is 15)
-	end
-
-	if (self.updateGroup == Neuron.curUpdateGroup) then
-
-		if (self.mac_flash) then
-
-			self.mac_flashing = true
-
-			if (alphaDir == 1) then
-				if ((1-(alphaTimer)) >= 0) then
-					self.iconframeflash:Show()
-				end
-			elseif (alphaDir == 0) then
-				if ((alphaTimer) <= 1) then
-					self.iconframeflash:Hide()
-				end
-			end
-
-		elseif (self.mac_flashing) then
-
-			self.iconframeflash:Hide()
-			self.mac_flashing = false
-		end
-
-		self:UpdateButton(self.actionID)
-
-
-		if (self.updateRightClick and not InCombatLockdown()) then
-			local spell = GetPetActionInfo(self.actionID)
-
-			if (spell) then
-				self:SetAttribute("*macrotext2", "/petautocasttoggle "..spell)
-				self.updateRightClick = nil
-			end
-		end
-
-	end
-
-
 end
 
 
@@ -479,7 +467,6 @@ function PETBTN:SetType(save)
 	self:SetScript("OnReceiveDrag", function(self) self:OnReceiveDrag() end)
 	self:SetScript("OnEnter", function(self,...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self) self:OnLeave() end)
-	self:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
 
 	self:SetScript("OnAttributeChanged", nil)
 
