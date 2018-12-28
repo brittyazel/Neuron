@@ -395,7 +395,6 @@ function ACTIONBUTTON:SetType(save, kill, init)
 	if (kill) then
 
 		self:SetScript("OnEvent", function() end)
-		self:SetScript("OnUpdate", function() end)
 		self:SetScript("OnAttributeChanged", function() end)
 
 	else
@@ -421,7 +420,6 @@ function ACTIONBUTTON:SetType(save, kill, init)
 		self:SetScript("OnReceiveDrag", function(self, preclick) self:MACRO_OnReceiveDrag(preclick) end)
 		self:SetScript("OnDragStart", function(self, mousebutton) self:MACRO_OnDragStart(mousebutton) end)
 		self:SetScript("OnDragStop", function(self) self:MACRO_OnDragStop() end)
-		self:SetScript("OnUpdate", function(self, elapsed) self:MACRO_OnUpdate(elapsed) end)--this function uses A LOT of CPU resources
 		self:SetScript("OnShow", function(self, ...) self:MACRO_OnShow(...) end)
 		self:SetScript("OnHide", function(self, ...) self:MACRO_OnHide(...) end)
 		self:SetScript("OnAttributeChanged", function(self, name, value) self:MACRO_OnAttributeChanged(name, value) end)
@@ -933,12 +931,48 @@ function ACTIONBUTTON:MACRO_SetSpellState(spell)
 	end
 
 	if ((IsAttackSpell(spell) and IsCurrentSpell(spell)) or IsAutoRepeatSpell(spell)) then
-		self.mac_flash = true
+		self:MACRO_UpdateRange(true)
 	else
-		self.mac_flash = false
+		self:MACRO_UpdateRange()
 	end
 
 	self.macroname:SetText(self.data.macro_Name)
+
+	self:UpdateButton()
+
+
+	if (self.auraQueue and not self.iconframecooldown.active) then
+		local unit, auraSpell = (":"):split(self.auraQueue)
+		if (unit and auraSpell) then
+			self.auraQueue = nil;
+			self:MACRO_UpdateAuraWatch(unit, auraSpell)
+		end
+	end
+
+end
+
+
+function ACTIONBUTTON:MACRO_UpdateRange(flash)
+
+	if (flash) then
+
+		self.mac_flashing = true
+
+		if (alphaDir == 1) then
+			if ((1 - (alphaTimer)) >= 0) then
+				self.iconframeflash:Show()
+			end
+		elseif (alphaDir == 0) then
+			if ((alphaTimer) <= 1) then
+				self.iconframeflash:Hide()
+			end
+		end
+
+	elseif (self.mac_flashing) then
+		self.iconframeflash:Hide()
+		self.mac_flashing = false
+	end
+
 end
 
 
@@ -974,13 +1008,13 @@ function ACTIONBUTTON:ACTION_UpdateState(action)
 		end
 
 		if ((IsAttackAction(actionID) and IsCurrentAction(actionID)) or IsAutoRepeatAction(actionID)) then
-			self.mac_flash = true
+			self:MACRO_UpdateRange(true)
 		else
-			self.mac_flash = false
+			self:MACRO_UpdateRange()
 		end
 	else
 		self:SetChecked(nil)
-		self.mac_flash = false
+		self:MACRO_UpdateRange()
 	end
 end
 
@@ -1086,7 +1120,7 @@ end
 
 function ACTIONBUTTON:MACRO_UpdateAll(updateTexture)
 	self:MACRO_UpdateData()
-	self:MACRO_UpdateButton()
+	self:UpdateButton()
 	self:MACRO_UpdateIcon()
 	self:MACRO_UpdateState()
 	self:MACRO_UpdateTimers()
@@ -1179,7 +1213,7 @@ function ACTIONBUTTON:ACTION_UpdateUsable(action)
 end
 
 
-function ACTIONBUTTON:MACRO_UpdateButton(...)
+function ACTIONBUTTON:UpdateButton(...)
 
 	if (self.editmode) then
 
@@ -1207,50 +1241,6 @@ function ACTIONBUTTON:MACRO_UpdateButton(...)
 
 	else
 		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-	end
-end
-
-
----TODO:
----We need to figure out what this function did.
----Update: Seems to be important for range indication (i.e. button going red)
-function ACTIONBUTTON:MACRO_OnUpdate(elapsed) --this function uses A TON of resources
-
-	if not(self.updateGroup) then
-		self.updateGroup = math.random(Neuron.NUM_UPDATE_GROUPS) --random number between 1 and numUpdateGroups (which is 15)
-	end
-
-	if (self.updateGroup == Neuron.curUpdateGroup) then
-		if (self.mac_flash) then
-
-			self.mac_flashing = true
-
-			if (alphaDir == 1) then
-				if ((1 - (alphaTimer)) >= 0) then
-					self.iconframeflash:Show()
-				end
-			elseif (alphaDir == 0) then
-				if ((alphaTimer) <= 1) then
-					self.iconframeflash:Hide()
-				end
-			end
-
-		elseif (self.mac_flashing) then
-			self.iconframeflash:Hide()
-			self.mac_flashing = false
-		end
-
-		self:MACRO_UpdateButton()
-
-
-		if (self.auraQueue and not self.iconframecooldown.active) then
-			local unit, spell = (":"):split(self.auraQueue)
-			if (unit and spell) then
-				self.auraQueue = nil;
-				self:MACRO_UpdateAuraWatch(unit, spell)
-			end
-		end
-
 	end
 end
 
@@ -1289,12 +1279,11 @@ ACTIONBUTTON.MACRO_COMPANION_UPDATE = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
 ACTIONBUTTON.MACRO_TRADE_SKILL_SHOW = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
 ACTIONBUTTON.MACRO_TRADE_SKILL_CLOSE = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
 ACTIONBUTTON.MACRO_ARCHAEOLOGY_CLOSED = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
-
-
-function ACTIONBUTTON:MACRO_ACTIONBAR_UPDATE_USABLE(...)
-	-- TODO
-end
-
+ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_USABLE = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
+ACTIONBUTTON.MACRO_UPDATE_UI_WIDGET = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
+ACTIONBUTTON.MACRO_PLAYER_STARTED_MOVING = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
+ACTIONBUTTON.MACRO_PLAYER_STOPPED_MOVING = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
+ACTIONBUTTON.MACRO_CURRENT_SPELL_CAST_CHANGED = ACTIONBUTTON.MACRO_ACTIONBAR_UPDATE_STATE
 
 
 function ACTIONBUTTON:MACRO_BAG_UPDATE_COOLDOWN(...)
@@ -1355,6 +1344,9 @@ function ACTIONBUTTON:MACRO_SPELL_ACTIVATION_OVERLAY_GLOW_SHOW(...)
 end
 
 
+
+
+
 function ACTIONBUTTON:MACRO_SPELL_ACTIVATION_OVERLAY_GLOW_HIDE(...)
 	local spellID = select(2, ...)
 
@@ -1396,11 +1388,6 @@ function ACTIONBUTTON:MACRO_PLAYER_ENTERING_WORLD(...)
 	self:MACRO_UpdateAll(true)
 	Neuron.NeuronBinder:ApplyBindings(self)
 end
-
----super broken with 8.0
---[[function ACTIONBUTTON:MACRO_PET_JOURNAL_LIST_UPDATE(...)
-	self:MACRO_UpdateAll(true)
-end]]
 
 
 function ACTIONBUTTON:MACRO_MODIFIER_STATE_CHANGED(...)
@@ -2401,7 +2388,10 @@ function ACTIONBUTTON:MACRO_OnShow(...)
 	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 
-	--self:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+	self:RegisterEvent("UPDATE_UI_WIDGET")
+	self:RegisterEvent("PLAYER_STARTED_MOVING")
+	self:RegisterEvent("PLAYER_STOPPED_MOVING")
+	self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
 
 end
 
@@ -2457,7 +2447,11 @@ function ACTIONBUTTON:MACRO_OnHide(...)
 	self:UnregisterEvent("UPDATE_POSSESS_BAR")
 	self:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
 	self:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
-	--self:UnregisterEvent("PET_JOURNAL_LIST_UPDATE")
+
+	self:UnregisterEvent("UPDATE_UI_WIDGET")
+	self:UnregisterEvent("PLAYER_STARTED_MOVING")
+	self:UnregisterEvent("PLAYER_STOPPED_MOVING")
+	self:UnregisterEvent("CURRENT_SPELL_CAST_CHANGED")
 
 end
 

@@ -879,8 +879,8 @@ function ACTIONBUTTON:Flyout_GetButton()
 	button:SetScript("OnEvent", function(self, event, ...) self:Flyout_OnEvent(event, ...) end)
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
-	button:SetScript("OnShow", function(self) self:MACRO_UpdateButton(); self:MACRO_UpdateIcon(); self:MACRO_UpdateState() end)
-	button:SetScript("OnHide", function(self) self:MACRO_UpdateButton(); self:MACRO_UpdateIcon(); self:MACRO_UpdateState() end)
+	button:SetScript("OnShow", function(self) self:UpdateButton(); self:MACRO_UpdateIcon(); self:MACRO_UpdateState() end)
+	button:SetScript("OnHide", function(self) self:UpdateButton(); self:MACRO_UpdateIcon(); self:MACRO_UpdateState() end)
 
 	button:WrapScript(button, "OnClick", [[
 			local button = self:GetParent():GetParent()

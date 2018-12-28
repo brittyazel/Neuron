@@ -1497,7 +1497,13 @@ function BAR:UpdateObjectVisibility(show)
 	end
 end
 
-
+function BAR:UpdateObjects()
+	for _, object in pairs(self.buttons) do
+		if (object) then
+			object:UpdateButton()
+		end
+	end
+end
 
 function BAR:ChangeBar()
 	local newBar = false

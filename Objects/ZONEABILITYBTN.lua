@@ -26,7 +26,7 @@ end
 
 
 
-function ZONEABILITYBTN:STANCE_UpdateButton(actionID)
+function ZONEABILITYBTN:UpdateButton()
 	if (self.editmode) then
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif (self.spellName) then
@@ -45,7 +45,7 @@ function ZONEABILITYBTN:OnUpdate(elapsed)
 
 	if (self.elapsed > Neuron.THROTTLE) then
 
-		self:STANCE_UpdateButton(self.actionID)
+		self:UpdateButton()
 
 		self.elapsed = 0
 	end

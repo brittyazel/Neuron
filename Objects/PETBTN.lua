@@ -203,11 +203,11 @@ function PETBTN:PET_UpdateOnEvent(state)
 
 end
 
-function PETBTN:PET_UpdateButton(actionID)
+function PETBTN:UpdateButton(actionID)
 
 	if (self.editmode) then
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
-	elseif (GetPetActionSlotUsable(actionID)) then
+	elseif (actionID and GetPetActionSlotUsable(actionID)) then
 		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 	else
 		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
@@ -242,7 +242,7 @@ function PETBTN:OnUpdate(elapsed)
 			self.mac_flashing = false
 		end
 
-		self:PET_UpdateButton(self.actionID)
+		self:UpdateButton(self.actionID)
 
 
 		if (self.updateRightClick and not InCombatLockdown()) then

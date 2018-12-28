@@ -829,7 +829,7 @@ function Neuron:UpdateStanceStrings()
 
 			for i=1,GetNumShapeshiftForms() do
 				icon, active, castable, spellID = GetShapeshiftFormInfo(i)
-				Neuron.STATES["stance"..i], _, _, _, _, _, _ = GetSpellInfo(spellID)
+				Neuron.STATES["stance"..i], _, _, _, _, _, _ = GetSpellInfo(spellID) --Get the string name of the shapeshift form (now that shapeshifts are considered spells)
 				states = states.."[stance:"..i.."] stance"..i.."; "
 
 			end
@@ -975,6 +975,7 @@ function Neuron:ToggleBarEditMode(show)
 			bar:Show() --this shows the transparent overlay over a bar
 			bar:Update(true)
 			bar:UpdateObjectVisibility(true)
+			bar:UpdateObjects()
 		end
 
 	else
@@ -985,9 +986,8 @@ function Neuron:ToggleBarEditMode(show)
 			bar:Hide()
 			bar:Update(nil, true)
 			bar:UpdateObjectVisibility()
+			bar:UpdateObjects()
 		end
-
-		--bar:ChangeBar(nil)
 
 		if (NeuronBarEditor)then
 			NeuronBarEditor:Hide()
@@ -1019,6 +1019,7 @@ function Neuron:ToggleButtonEditMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility(true)
+			bar:UpdateObjects()
 		end
 
 	else
@@ -1033,6 +1034,7 @@ function Neuron:ToggleButtonEditMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility()
+			bar:UpdateObjects()
 
 			if (bar.handler:GetAttribute("assertstate")) then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
@@ -1068,6 +1070,7 @@ function Neuron:ToggleBindingMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility(true)
+			bar:UpdateObjects()
 		end
 
 	else
@@ -1084,6 +1087,7 @@ function Neuron:ToggleBindingMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility()
+			bar:UpdateObjects()
 		end
 	end
 end

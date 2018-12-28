@@ -407,3 +407,7 @@ function BUTTON:ACTION_SetCooldown(action)
 	end
 end
 
+
+function BUTTON:UpdateButton()
+	--empty--
+end
