@@ -829,23 +829,8 @@ function Neuron:UpdateStanceStrings()
 
 			for i=1,GetNumShapeshiftForms() do
 				icon, active, castable, spellID = GetShapeshiftFormInfo(i)
-
-				local druidFormTable = {
-					{"Bear Form", 5487},
-					{"Cat Form", 768},
-					{"Travel Form", 783},
-					{"Moonkin Form", 24858},
-					{"Treant Form", 114282},
-					{"Stag Form", 210053},
-				}
-
-				--compare the current i's Shapeshift Form spellID to the ones in the druidFormTable, and choose the appropriate string
-				for j=1,#druidFormTable do
-					if spellID == druidFormTable[j][2] then
-						Neuron.STATES["stance"..i] = druidFormTable[j][1]
-						states = states.."[stance:"..i.."] stance"..i.."; "
-					end
-				end
+				Neuron.STATES["stance"..i], _, _, _, _, _, _ = GetSpellInfo(spellID)
+				states = states.."[stance:"..i.."] stance"..i.."; "
 
 			end
 		end

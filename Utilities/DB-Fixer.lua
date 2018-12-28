@@ -140,7 +140,6 @@ function Neuron:DBFixer(profile, oldDBVersion) --converted objectTable from a si
                         end
 
                         if profile[oldBtnDBNames[i]][v3] then
-                            --profile[barDBName][j].buttons[k] = CopyTable(profile[oldBtnDBNames[i]][v3])
 	                        table.insert(profile[barDBName][j].buttons, CopyTable(profile[oldBtnDBNames[i]][v3]))
                         end
 
