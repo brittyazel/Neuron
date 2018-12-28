@@ -470,14 +470,12 @@ function Neuron:controlOnUpdate(elapsed)
 
 		Neuron.ACTIONBUTTON.cooldownsOnUpdate(elapsed)
 
-		Neuron.PETBTN.controlOnUpdate(elapsed)
-
 		Neuron.elapsed = 0
 	end
 
 	---UnThrottled OnUpdate calls
 	if(Neuron.enteredWorld) then
-		Neuron.BAR.controlOnUpdate(elapsed)
+		Neuron.BAR.controlOnUpdate(elapsed) --this handles auto showing/hiding the bars on mouseover
 	end
 
 

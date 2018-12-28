@@ -7,8 +7,6 @@ Neuron.PETBTN = PETBTN
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local alphaTimer, alphaDir = 0, 0
-
 
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -23,22 +21,6 @@ end
 
 -----utilities
 
---this function gets called from the controlOnUpdate in the Neuron.lua file
-function PETBTN.controlOnUpdate(elapsed)
-
-	alphaTimer = alphaTimer + elapsed * 2.5
-
-	if (alphaDir == 1) then
-		if (1-alphaTimer <= 0) then
-			alphaDir = 0; alphaTimer = 0
-		end
-	else
-		if (alphaTimer >= 1) then
-			alphaDir = 1; alphaTimer = 0
-		end
-	end
-
-end
 
 function PETBTN.HasPetAction(id, icon)
 
@@ -123,12 +105,12 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 
 	if (enabled) then
 		self.shine:Show()
-		AutoCastShine_AutoCastStart(self.shine);
+		AutoCastShine_AutoCastStart(self.shine)
 		self.autocastable:Hide()
 
 	else
 		self.shine:Hide()
-		AutoCastShine_AutoCastStop(self.shine);
+		AutoCastShine_AutoCastStop(self.shine)
 
 		if (allowed) then
 			self.autocastable:Show()
@@ -142,21 +124,10 @@ end
 
 function PETBTN:PET_UpdateRange(flash)
 	if (flash) then
-
 		self.mac_flashing = true
-
-		if (alphaDir == 1) then
-			if ((1-(alphaTimer)) >= 0) then
-				self.iconframeflash:Show()
-			end
-		elseif (alphaDir == 0) then
-			if ((alphaTimer) <= 1) then
-				self.iconframeflash:Hide()
-			end
-		end
+		self.iconframeflash:Show()
 
 	elseif (self.mac_flashing) then
-
 		self.iconframeflash:Hide()
 		self.mac_flashing = false
 	end

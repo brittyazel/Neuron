@@ -57,10 +57,6 @@ local AlternateSpellNameList = {
 	[83245] = true, --CallPet5
 }
 
-local alphaTimer, alphaDir = 0, 0
-
---local autoCast = { speeds = { 2, 4, 6, 8 }, timers = { 0, 0, 0, 0 }, circle = { 0, 22, 44, 66 }, shines = {}, r = 0.95, g = 0.95, b = 0.32 }
-
 local cooldowns, cdAlphas = {}, {}
 
 Neuron.cooldowns = cooldowns
@@ -78,7 +74,7 @@ end
 
 
 --this function gets called via controlOnUpdate in the main Neuron.lua
-function ACTIONBUTTON.cooldownsOnUpdate(elapsed)
+function ACTIONBUTTON.cooldownsOnUpdate()
 
 
 	local coolDown, formatted, size
@@ -805,18 +801,8 @@ end
 function ACTIONBUTTON:MACRO_UpdateRange(flash)
 
 	if (flash) then
-
 		self.mac_flashing = true
-
-		if (alphaDir == 1) then
-			if ((1 - (alphaTimer)) >= 0) then
-				self.iconframeflash:Show()
-			end
-		elseif (alphaDir == 0) then
-			if ((alphaTimer) <= 1) then
-				self.iconframeflash:Hide()
-			end
-		end
+		self.iconframeflash:Show()
 
 	elseif (self.mac_flashing) then
 		self.iconframeflash:Hide()
