@@ -1,7 +1,7 @@
 --Neuron, a World of Warcraft® user interface addon.
 
 ---@class Neuron @define The main addon object for the Neuron Action Bar addon
-Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
+Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
 --this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
 
 local DB
@@ -122,6 +122,9 @@ Neuron.SPECIALACTIONS = {
 }
 
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
+
+Neuron.cooldowns = {}
+Neuron.cdAlphas = {}
 
 Neuron.THROTTLE = 0.2
 Neuron.TIMERLIMIT = 4
@@ -468,7 +471,7 @@ function Neuron:controlOnUpdate(elapsed)
 	---Throttled OnUpdate calls
 	if (Neuron.elapsed > Neuron.THROTTLE and Neuron.enteredWorld) then
 
-		Neuron.ACTIONBUTTON.cooldownsOnUpdate(elapsed)
+		Neuron.BUTTON.Cooldowns_OnUpdate()
 
 		Neuron.elapsed = 0
 	end
@@ -907,6 +910,10 @@ function Neuron:HideBlizzardUI()
 
 	if (not Neuron:IsHooked('ActionButton_Update')) then
 		Neuron:RawHook('ActionButton_Update', function() end, true)
+	end
+
+	if (not Neuron:IsHooked('MultiActionBar_Update')) then
+		Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
 end
 

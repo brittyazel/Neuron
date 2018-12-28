@@ -20,18 +20,22 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
-function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha)
+function BUTTON:SetTimer(start, duration, enable, charges, maxCharges, timer, color1, color2, cdAlpha)
 
 	local cdFrame = self.iconframecooldown
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 		cdFrame:SetAlpha(1)
-		CooldownFrame_Set(cdFrame, start, duration, enable)
+
+		if (charges and maxCharges and maxCharges ~= 1 and charges < maxCharges) then
+			CooldownFrame_Set(cdFrame, start, duration, enable)
+		else
+			CooldownFrame_Set(cdFrame, start, duration, enable)
+		end
 
 		if (duration >= Neuron.TIMERLIMIT) then
 			cdFrame.duration = duration
 			cdFrame.start = start
-			cdFrame.active = true
 
 			if (timer) then
 				cdFrame.timer:Show()
@@ -56,6 +60,82 @@ function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha
 		cdFrame.start = 0
 		CooldownFrame_Set(cdFrame, 0, 0, 0)
 	end
+end
+
+
+--this function runs in real time and is controlled from the OnUpdate function in Neuron.lua
+function BUTTON.Cooldowns_OnUpdate()
+
+	local coolDown, formatted, size
+
+	for cd in next, Neuron.cooldowns do
+
+		coolDown = floor(cd.duration-(GetTime()-cd.start))
+		formatted, size = coolDown, cd.button:GetWidth()*0.45
+
+		if (coolDown < 1) then
+			if (coolDown < 0) then
+				Neuron.cooldowns[cd] = nil
+
+				cd.timer:Hide()
+				cd.timer:SetText("")
+				cd.timerCD = nil
+				cd.expirecolor = nil
+				cd.cdsize = nil
+				cd.expiry = nil
+
+			elseif (coolDown >= 0) then
+				if (cd.alphafade) then
+					cd:SetAlpha(cd.duration-(GetTime()-cd.start))
+				end
+			end
+
+		elseif (cd.timer:IsShown() and coolDown ~= cd.timerCD) then
+			if (coolDown >= 86400) then
+				formatted = math.ceil(coolDown/86400)
+				formatted = formatted.."d"
+				size = cd.button:GetWidth()*0.3
+			elseif (coolDown >= 3600) then
+				formatted = math.ceil(coolDown/3600)
+				formatted = formatted.."h"
+				size = cd.button:GetWidth()*0.3
+			elseif (coolDown >= 60) then
+				formatted = math.ceil(coolDown/60)
+				formatted = formatted.."m"
+				size = cd.button:GetWidth()*0.3
+			elseif (coolDown < 6) then
+				size = cd.button:GetWidth()*0.6
+				if (cd.expirecolor) then
+					cd.timer:SetTextColor(cd.expirecolor[1], cd.expirecolor[2], cd.expirecolor[3]); cd.expirecolor = nil
+					cd.expiry = true
+				end
+			end
+
+			if (not cd.cdsize or cd.cdsize ~= size) then
+				cd.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
+				cd.cdsize = size
+			end
+
+			cd.timerCD = coolDown
+			cd.timer:Show()
+			cd.timer:SetText(formatted)
+		end
+	end
+
+	for cd in next, Neuron.cdAlphas do
+		coolDown = ceil(cd.duration-(GetTime()-cd.start))
+
+		if (coolDown < 1) then
+			Neuron.cdAlphas[cd] = nil
+			cd.button:SetAlpha(1)
+			cd.alphaOn = nil
+
+		elseif (not cd.alphaOn) then
+			cd.button:SetAlpha(cd.button.cdAlpha)
+			cd.alphaOn = true
+		end
+	end
+
 end
 
 
@@ -349,7 +429,7 @@ function BUTTON:MACRO_UpdateCooldown(update)
 	elseif (item and #item>0) then
 		self:MACRO_SetItemCooldown(item)
 	else
-		self:SetTimer(0, 0, 0, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetTimer(0, 0, 0)
 	end
 end
 
@@ -401,7 +481,7 @@ function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
 
 			elseif (self.auraText) then
 				self:SetTimer(0, 0, 0)
-				self:SetTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color)
+				self:SetTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, _, _, self.auraText, uaw_color)
 			else
 				self:SetTimer(0, 0, 0)
 			end
@@ -441,7 +521,7 @@ function BUTTON:ACTION_SetCooldown(action)
 				self.iconframeaurawatch:Hide()
 			end
 
-			self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 		end
 	end
 end

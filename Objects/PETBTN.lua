@@ -48,9 +48,6 @@ end
 
 -----
 
-
-
-
 function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 
 	self.isToken = isToken
@@ -149,7 +146,7 @@ function PETBTN:PET_UpdateCooldown()
 			self.iconframeaurawatch:Hide()
 		end
 
-		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end
 

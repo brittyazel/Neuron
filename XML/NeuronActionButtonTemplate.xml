@@ -171,9 +171,6 @@
 								self:SetFrameLevel(3)
 								self.button = self:GetParent():GetParent()
 							</OnLoad>
-							<OnHide>
-								self.active = nil
-							</OnHide>
 						</Scripts>
 					</Cooldown>
 					<Cooldown name="$parentAuraWatch" inherits="CooldownFrameTemplate" reverse="true">
@@ -198,9 +195,6 @@
 								self.button = self:GetParent():GetParent()
 								self.alphafade = true
 							</OnLoad>
-							<OnHide>
-								self.active = nil
-							</OnHide>
 						</Scripts>
 					</Cooldown>
 				</Frames>

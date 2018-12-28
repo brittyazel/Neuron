@@ -57,11 +57,6 @@ local AlternateSpellNameList = {
 	[83245] = true, --CallPet5
 }
 
-local cooldowns, cdAlphas = {}, {}
-
-Neuron.cooldowns = cooldowns
-Neuron.cdAlphas = cdAlphas
-
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
@@ -73,79 +68,6 @@ function ACTIONBUTTON:new(name)
 end
 
 
---this function gets called via controlOnUpdate in the main Neuron.lua
-function ACTIONBUTTON.cooldownsOnUpdate()
-
-
-	local coolDown, formatted, size
-
-	for cd in next,cooldowns do
-
-		coolDown = floor(cd.duration-(GetTime()-cd.start))
-		formatted, size = coolDown, cd.button:GetWidth()*0.45
-
-		if (coolDown < 1) then
-			if (coolDown < 0) then
-				cooldowns[cd] = nil
-
-				cd.timer:Hide()
-				cd.timer:SetText("")
-				cd.timerCD = nil
-				cd.expirecolor = nil
-				cd.cdsize = nil
-				cd.active = nil
-				cd.expiry = nil
-
-			elseif (coolDown >= 0) then
-				cd.timer:SetAlpha(cd.duration-(GetTime()-cd.start))
-
-				if (cd.alphafade) then
-					cd:SetAlpha(cd.duration-(GetTime()-cd.start))
-				end
-			end
-
-		elseif (cd.timer:IsShown() and coolDown ~= cd.timerCD) then
-			if (coolDown >= 86400) then
-				formatted = math.ceil(coolDown/86400)
-				formatted = formatted.."d"; size = cd.button:GetWidth()*0.3
-			elseif (coolDown >= 3600) then
-				formatted = math.ceil(coolDown/3600)
-				formatted = formatted.."h"; size = cd.button:GetWidth()*0.3
-			elseif (coolDown >= 60) then
-				formatted = math.ceil(coolDown/60)
-				formatted = formatted.."m"; size = cd.button:GetWidth()*0.3
-			elseif (coolDown < 6) then
-				size = cd.button:GetWidth()*0.6
-				if (cd.expirecolor) then
-					cd.timer:SetTextColor(cd.expirecolor[1], cd.expirecolor[2], cd.expirecolor[3]); cd.expirecolor = nil
-					cd.expiry = true
-				end
-			end
-
-			if (not cd.cdsize or cd.cdsize ~= size) then
-				cd.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE"); cd.cdsize = size
-			end
-
-			cd.timerCD = coolDown
-			cd.timer:SetAlpha(1)
-			cd.timer:SetText(formatted)
-		end
-	end
-
-	for cd in next,cdAlphas do
-		coolDown = ceil(cd.duration-(GetTime()-cd.start))
-
-		if (coolDown < 1) then
-			cdAlphas[cd] = nil
-			cd.button:SetAlpha(1)
-			cd.alphaOn = nil
-
-		elseif (not cd.alphaOn) then
-			cd.button:SetAlpha(cd.button.cdAlpha)
-			cd.alphaOn = true
-		end
-	end
-end
 
 function ACTIONBUTTON.updateAuraInfo(unit)
 
@@ -903,7 +825,6 @@ function ACTIONBUTTON:MACRO_SetSpellCooldown(spell)
 
 	local start, duration, enable = GetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration = GetSpellCharges(spell)
-	start, duration, enable = GetSpellCooldown(spell)
 
 	if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
 		self.auraQueue = self.iconframeaurawatch.queueinfo
@@ -912,10 +833,11 @@ function ACTIONBUTTON:MACRO_SetSpellCooldown(spell)
 	end
 
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
-		StartChargeCooldown(self, chStart, chDuration);
+		self:SetTimer(chStart, chDuration, enable, charges, maxCharges, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+	else
+		self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 
-	self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 end
 
 
@@ -934,7 +856,7 @@ function ACTIONBUTTON:MACRO_SetItemCooldown(item)
 			self.iconframeaurawatch:Hide()
 		end
 
-		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end
 

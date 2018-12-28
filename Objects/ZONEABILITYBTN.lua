@@ -96,7 +96,7 @@ function ZONEABILITYBTN:ZoneAbilityFrame_Update()
 	end
 
 	if (start) then
-		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 
 	self.spellName = self.CurrentSpell;

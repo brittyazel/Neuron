@@ -113,9 +113,6 @@
 								self:SetFrameLevel(3)
 								self.button = self:GetParent():GetParent()
 							</OnLoad>
-							<OnHide>
-								self.active = nil
-							</OnHide>
 						</Scripts>
 					</Cooldown>
 				</Frames>
