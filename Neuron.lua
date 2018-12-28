@@ -477,7 +477,6 @@ function Neuron:controlOnUpdate(elapsed)
 
 	---UnThrottled OnUpdate calls
 	if(Neuron.enteredWorld) then
-		Neuron.ACTIONBUTTON.controlOnUpdate(elapsed) --this one needs to not be throttled otherwise spell button glows won't operate at 60fps
 		Neuron.BAR.controlOnUpdate(elapsed)
 	end
 

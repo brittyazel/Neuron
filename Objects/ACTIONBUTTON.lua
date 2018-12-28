@@ -59,7 +59,7 @@ local AlternateSpellNameList = {
 
 local alphaTimer, alphaDir = 0, 0
 
-local autoCast = { speeds = { 2, 4, 6, 8 }, timers = { 0, 0, 0, 0 }, circle = { 0, 22, 44, 66 }, shines = {}, r = 0.95, g = 0.95, b = 0.32 }
+--local autoCast = { speeds = { 2, 4, 6, 8 }, timers = { 0, 0, 0, 0 }, circle = { 0, 22, 44, 66 }, shines = {}, r = 0.95, g = 0.95, b = 0.32 }
 
 local cooldowns, cdAlphas = {}, {}
 
@@ -74,29 +74,6 @@ function ACTIONBUTTON:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
 	setmetatable(object, {__index = ACTIONBUTTON})
 	return object
-end
-
-
-function ACTIONBUTTON.AutoCastStart(shine, r, g, b)
-	autoCast.shines[shine] = shine
-
-	if (not r) then
-		r, g, b = autoCast.r, autoCast.g, autoCast.b
-	end
-
-	for _,sparkle in pairs(shine.sparkles) do
-		sparkle:Show()
-		sparkle:SetVertexColor(r, g, b)
-	end
-end
-
-
-function ACTIONBUTTON.AutoCastStop(shine)
-	autoCast.shines[shine] = nil
-
-	for _,sparkle in pairs(shine.sparkles) do
-		sparkle:Hide()
-	end
 end
 
 
@@ -209,135 +186,6 @@ function ACTIONBUTTON.updateAuraInfo(unit)
 end
 
 
---this function gets called via controlOnUpdate in the main Neuron.lua
----this function controlls the sparkley effects around abilities, if throttled then those effects are throttled down super slow. Be careful.
-function ACTIONBUTTON.controlOnUpdate(elapsed)
-	local cou_distance, cou_radius, cou_timer, cou_speed, cou_degree, cou_x, cou_y, cou_position
-
-	for i in next,autoCast.timers do
-		autoCast.timers[i] = autoCast.timers[i] + elapsed
-
-		if ( autoCast.timers[i] > autoCast.speeds[i]*4 ) then
-			autoCast.timers[i] = 0
-		end
-	end
-
-	for i in next,autoCast.circle do
-		autoCast.circle[i] = autoCast.circle[i] - i
-
-		if ( autoCast.circle[i] < 0 ) then
-			autoCast.circle[i] = 359
-		end
-	end
-
-	for shine in next, autoCast.shines do
-		cou_distance, cou_radius = shine:GetWidth(), shine:GetWidth()/2.7
-		for i=1,4 do
-			cou_timer, cou_speed, cou_degree = autoCast.timers[i], autoCast.speeds[i], autoCast.circle[i]
-
-			if ( cou_timer <= cou_speed ) then
-				if (shine.shape == "circle") then
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
-					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-90))
-					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-180))
-					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree-270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree-270))
-					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-				else
-					cou_position = cou_timer/cou_speed*cou_distance
-
-					shine.sparkles[0+i]:SetPoint("CENTER", shine, "TOPLEFT", cou_position, 0)
-					shine.sparkles[4+i]:SetPoint("CENTER", shine, "BOTTOMRIGHT", -cou_position, 0)
-					shine.sparkles[8+i]:SetPoint("CENTER", shine, "TOPRIGHT", 0, -cou_position)
-					shine.sparkles[12+i]:SetPoint("CENTER", shine, "BOTTOMLEFT", 0, cou_position)
-				end
-
-			elseif (cou_timer <= cou_speed*2) then
-				if (shine.shape == "circle") then
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
-					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
-					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
-					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
-					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-				else
-					cou_position = (cou_timer-cou_speed)/cou_speed*cou_distance
-
-					shine.sparkles[0+i]:SetPoint("CENTER", shine, "TOPRIGHT", 0, -cou_position)
-					shine.sparkles[4+i]:SetPoint("CENTER", shine, "BOTTOMLEFT", 0, cou_position)
-					shine.sparkles[8+i]:SetPoint("CENTER", shine, "BOTTOMRIGHT", -cou_position, 0)
-					shine.sparkles[12+i]:SetPoint("CENTER", shine, "TOPLEFT", cou_position, 0)
-				end
-
-			elseif (cou_timer <= cou_speed*3) then
-				if (shine.shape == "circle") then
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
-					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
-					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
-					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
-					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-				else
-					cou_position = (cou_timer-cou_speed*2)/cou_speed*cou_distance
-
-					shine.sparkles[0+i]:SetPoint("CENTER", shine, "BOTTOMRIGHT", -cou_position, 0)
-					shine.sparkles[4+i]:SetPoint("CENTER", shine, "TOPLEFT", cou_position, 0)
-					shine.sparkles[8+i]:SetPoint("CENTER", shine, "BOTTOMLEFT", 0, cou_position)
-					shine.sparkles[12+i]:SetPoint("CENTER", shine, "TOPRIGHT", 0, -cou_position)
-				end
-			else
-				if (shine.shape == "circle") then
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree))
-					shine.sparkles[0+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+90)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+90))
-					shine.sparkles[4+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+180)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+180))
-					shine.sparkles[8+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-
-					cou_x = ((cou_radius)*(4/math.pi))*(cos(cou_degree+270)); cou_y = ((cou_radius)*(4/math.pi))*(sin(cou_degree+270))
-					shine.sparkles[12+i]:SetPoint("CENTER", shine, "CENTER", cou_x, cou_y)
-				else
-					cou_position = (cou_timer-cou_speed*3)/cou_speed*cou_distance
-
-					shine.sparkles[0+i]:SetPoint("CENTER", shine, "BOTTOMLEFT", 0, cou_position)
-					shine.sparkles[4+i]:SetPoint("CENTER", shine, "TOPRIGHT", 0, -cou_position)
-					shine.sparkles[8+i]:SetPoint("CENTER", shine, "TOPLEFT", cou_position, 0)
-					shine.sparkles[12+i]:SetPoint("CENTER", shine, "BOTTOMRIGHT", -cou_position, 0)
-				end
-			end
-		end
-	end
-
-	alphaTimer = alphaTimer + elapsed * 2.5
-
-	if (alphaDir == 1) then
-		if (1-alphaTimer <= 0) then
-			alphaDir = 0; alphaTimer = 0
-		end
-
-	else
-		if (alphaTimer >= 1) then
-			alphaDir = 1; alphaTimer = 0
-		end
-	end
-end
 
 
 function ACTIONBUTTON:LoadData(spec, state)
@@ -880,7 +728,8 @@ function ACTIONBUTTON:MACRO_StartGlow()
 		if (self.spellGlowDef) then
 			ActionButton_ShowOverlayGlow(self)
 		elseif (self.spellGlowAlt) then
-			self.AutoCastStart(self.shine)
+			self.shine:Show()
+			AutoCastShine_AutoCastStart(self.shine);
 		end
 	end
 
@@ -893,7 +742,8 @@ function ACTIONBUTTON:MACRO_StopGlow()
 		if (self.spellGlowDef) then
 			ActionButton_HideOverlayGlow(self)
 		elseif (self.spellGlowAlt) then
-			self.AutoCastStop(self.shine)
+			self.shine:Hide()
+			AutoCastShine_AutoCastStop(self.shine);
 		end
 	end
 
