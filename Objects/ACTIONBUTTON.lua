@@ -362,9 +362,9 @@ function ACTIONBUTTON:SetObjectVisibility(show)
 	end
 
 	if (show or self.showGrid) then
-		self:Show()
+		self:SetAlpha(1)
 	elseif not self:MACRO_HasAction() and (not Neuron.buttonEditMode or not Neuron.barEditMode or not Neuron.bindingMode) then
-		self:Hide()
+		self:SetAlpha(0)
 	end
 end
 

@@ -908,6 +908,9 @@ function Neuron:HideBlizzardUI()
 		Neuron:RawHook('ActionButton_OnEvent', function() end, true)
 	end
 
+	if (not Neuron:IsHooked('ActionButton_Update')) then
+		Neuron:RawHook('ActionButton_Update', function() end, true)
+	end
 end
 
 function Neuron:ToggleBlizzUI()
