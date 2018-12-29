@@ -1170,13 +1170,6 @@ end]]
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 ------------------------OnEvent Functions-----------------------------
----this function brokers the on event call to the correct bar
-function BAR:OnEvent(event, ...)
-	if (self[event]) then
-		self[event](self, self, ...)
-	end
-end
-
 
 function BAR:OnClick(...)
 	local click, down, newBar = select(1, ...), select(2, ...)
@@ -1592,16 +1585,12 @@ function BAR:DeleteBar()
 	self:SetScript("OnDragStop", function() end)
 	self:SetScript("OnEnter", function() end)
 	self:SetScript("OnLeave", function() end)
-	self:SetScript("OnEvent", function() end)
 	self:SetScript("OnKeyDown", function() end)
 	self:SetScript("OnKeyUp", function() end)
 	self:SetScript("OnShow", function() end)
 	self:SetScript("OnHide", function() end)
 	self:SetScript("OnUpdate", function() end)
 
-	--self:UnregisterEvent("ACTIONBAR_SHOWGRID")
-	--self:UnregisterEvent("ACTIONBAR_HIDEGRID")
-	--self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 	self:SetWidth(36)
 	self:SetHeight(36)

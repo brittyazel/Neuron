@@ -7,8 +7,8 @@ Neuron.BUTTON = BUTTON
 local SKIN = LibStub("Masque", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
---LibStub("AceBucket-3.0"):Embed(BUTTON)
---LibStub("AceEvent-3.0"):Embed(BUTTON)
+LibStub("AceBucket-3.0"):Embed(BUTTON)
+LibStub("AceEvent-3.0"):Embed(BUTTON)
 
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -271,7 +271,6 @@ function BUTTON:SetData(bar)
 
 	self:RegisterForClicks(down, up)
 	self:RegisterForDrag("LeftButton", "RightButton")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	if (not self.equipcolor) then
 		self.equipcolor = { 0.1, 1, 0.1, 1 }
@@ -292,7 +291,7 @@ function BUTTON:SetData(bar)
 
 	self:GetSkinned()
 
-	self:MACRO_UpdateTimers()
+	self:UpdateTimers()
 end
 
 
@@ -407,38 +406,36 @@ end
 
 
 
-function BUTTON:MACRO_UpdateTimers(...)
-	self:MACRO_UpdateCooldown()
+function BUTTON:UpdateTimers(...)
+	self:UpdateCooldown()
 
 	for k in pairs(Neuron.unitAuras) do
-		self:MACRO_UpdateAuraWatch(k, self.macrospell)
+		self:UpdateAuraWatch(k, self.macrospell)
 	end
 end
 
 
-function BUTTON:MACRO_UpdateCooldown(update)
+function BUTTON:UpdateCooldown(update)
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
-	if (self.actionID) then
-		self:ACTION_SetCooldown(self.actionID)
-	elseif (show and #show>0) then
+	if (show and #show>0) then
 		if (NeuronItemCache[show]) then
-			self:MACRO_SetItemCooldown(show)
+			self:SetItemCooldown(show)
 		else
-			self:MACRO_SetSpellCooldown(show)
+			self:SetSpellCooldown(show)
 		end
 
 	elseif (spell and #spell>0) then
-		self:MACRO_SetSpellCooldown(spell)
+		self:SetSpellCooldown(spell)
 	elseif (item and #item>0) then
-		self:MACRO_SetItemCooldown(item)
+		self:SetItemCooldown(item)
 	else
 		self:SetTimer(0, 0, 0)
 	end
 end
 
 
-function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
+function BUTTON:UpdateAuraWatch(unit, spell)
 
 	local uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count, uaw_color
 
@@ -502,28 +499,6 @@ function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
 			self.auraWatchUnit = nil
 			self.auraTimer = nil
 			self.auraQueue = nil
-		end
-	end
-end
-
-
-function BUTTON:ACTION_SetCooldown(action)
-
-	local actionID = tonumber(action)
-
-	if (actionID) then
-
-		if (HasAction(actionID)) then
-
-			local start, duration, enable = GetActionCooldown(actionID)
-
-			if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
-				self.auraQueue = self.iconframeaurawatch.queueinfo
-				self.iconframeaurawatch.duration = 0
-				self.iconframeaurawatch:Hide()
-			end
-
-			self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 		end
 	end
 end

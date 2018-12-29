@@ -56,8 +56,7 @@ end
 function MENUBTN:SetType(reload)
 
 	if not reload then --only run this code on the first SetType, not the reloads after pet battles and such
-		self:RegisterEvent("PET_BATTLE_CLOSE")
-		self:SetScript("OnEvent", function(self, event, ...) self:OnEvent(event, ...) end)
+		self:RegisterEvent("PET_BATTLE_CLOSE", "OnEvent")
 
 		if not Neuron:IsHooked("MoveMicroButtons") then --we need to intercept MoveMicroButtons for during pet battles
 			Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)

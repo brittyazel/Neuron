@@ -227,6 +227,8 @@ end
 
 function STATUSBTN:XPBar_OnEvent(event, ...)
 
+	self = self:GetParent()
+
 	if (not self.DB.curXPType) then
 		self.DB.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
 	end
@@ -451,6 +453,8 @@ end
 
 function STATUSBTN:repbar_OnEvent(event,...)
 
+	self = self:GetParent()
+
 	self:repstrings_Update(...)
 
 	if (RepWatch[self.sb.repID]) then
@@ -610,6 +614,8 @@ end
 
 function STATUSBTN: MirrorBar_OnEvent(event, ...)
 
+	self = self:GetParent()
+
 
 	if event == "MIRROR_TIMER_START" then
 		self:mirrorbar_Start(...)
@@ -733,6 +739,8 @@ end
 
 
 function STATUSBTN:CastBar_OnEvent(event, ...)
+
+	self = self:GetParent()
 
 	local unit = ...
 
@@ -1066,6 +1074,8 @@ end
 
 
 function STATUSBTN:CastBarTimer_OnEvent(event, ...)
+
+	self = self:GetParent():GetParent()
 
 	local unit = ...
 
@@ -1801,7 +1811,6 @@ function STATUSBTN:StatusBar_Reset()
 	self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
 
 	self.sb:UnregisterAllEvents()
-	self.sb:SetScript("OnEvent", function() end)
 	self.sb:SetScript("OnUpdate", function() end)
 	self.sb:SetScript("OnShow", function() end)
 	self.sb:SetScript("OnHide", function() end)
@@ -1811,7 +1820,6 @@ function STATUSBTN:StatusBar_Reset()
 	self.sb.showIcon = nil
 
 	self.sb.cbtimer:UnregisterAllEvents()
-	self.sb.cbtimer:SetScript("OnEvent", nil)
 
 	for index, sb in ipairs(MirrorBars) do
 		if (sb == self.sb) then
@@ -1834,124 +1842,124 @@ function STATUSBTN:SetType(save)
 
 	self:StatusBar_Reset()
 
-	if (kill) then
-
-		self:SetScript("OnEvent", function() end)
-		self:SetScript("OnUpdate", function() end)
-	else
-
-		if (self.config.sbType == "cast") then
-
-			self.sb:RegisterEvent("UNIT_SPELLCAST_START")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_STOP")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_FAILED")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_DELAYED")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE")
-			self.sb:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE")
-
-			self.sb.unit = BarUnits[self.data.unit]
-			self.sb.showIcon = self.config.showIcon
-
-			self.sb.casting = false
-			self.sb.channeling = false
-			self.sb.holdTime = 0
-
-			self.sb:SetScript("OnEvent", function(self, event, ...) self:GetParent():CastBar_OnEvent(event, ...) end)
-			self.sb:SetScript("OnUpdate", function(self, elapsed) self:GetParent():CastBar_OnUpdate(elapsed) end)
-
-			if (not self.sb.cbtimer.castInfo) then
-				self.sb.cbtimer.castInfo = {}
-			else
-				wipe(self.sb.cbtimer.castInfo)
-			end
-
-			self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_START")
-			self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-			self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_STOP")
-			self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-			self.sb.cbtimer:SetScript("OnEvent", function(self, event, ...) self:GetParent():GetParent():CastBarTimer_OnEvent(event, ...) end)
-
-			self.sb:Hide()
-
-		elseif (self.config.sbType == "xp") then
-
-			self:SetAttribute("hasaction", true)
-
-			self:RegisterForClicks("RightButtonUp")
-			self:SetScript("OnClick", function(self, mousebutton, down) self:OnClick(mousebutton, down) end)
-			self:SetScript("OnEnter", function(self) self:OnEnter() end)
-			self:SetScript("OnLeave", function(self) self:OnLeave() end)
-			self:SetHitRectInsets(0, 0, 0, 0)
-
-			self.sb:RegisterEvent("PLAYER_XP_UPDATE")
-			self.sb:RegisterEvent("HONOR_XP_UPDATE")
-			self.sb:RegisterEvent("UPDATE_EXHAUSTION")
-			self.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
-			self.sb:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED")
-			self.sb:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-
-			self.sb:SetScript("OnEvent", function(self, event, ...) self:GetParent():XPBar_OnEvent(event, ...) end)
-
-			self.sb:Show()
-
-		elseif (self.config.sbType == "rep") then
-
-			self.sb.repID = self.data.repID
-
-			self:SetAttribute("hasaction", true)
-
-			self:RegisterForClicks("RightButtonUp")
-			self:SetScript("OnClick", function(self, mousebutton, down) self:OnClick(mousebutton, down) end)
-			self:SetScript("OnEnter", function(self) self:OnEnter() end)
-			self:SetScript("OnLeave", function(self) self:OnLeave() end)
-			self:SetHitRectInsets(0, 0, 0, 0)
-
-			self.sb:RegisterEvent("UPDATE_FACTION")
-			self.sb:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
-			self.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-			self.sb:SetScript("OnEvent", function(self, event, ...) self:GetParent():repbar_OnEvent(event, ...) end)
-
-			self.sb:Show()
-
-		elseif (self.config.sbType == "mirror") then
-
-			self.sb:RegisterEvent("MIRROR_TIMER_START")
-			self.sb:RegisterEvent("MIRROR_TIMER_STOP")
-			self.sb:RegisterEvent("PLAYER_ENTERING_WORLD")
+	LibStub("AceEvent-3.0"):Embed(self.sb)
 
 
-			self.sb:SetScript("OnEvent", function(self, event, ...) self:GetParent():MirrorBar_OnEvent(event, ...) end)
+	if (self.config.sbType == "cast") then
 
-			self.sb:SetScript("OnUpdate", function(self, elapsed) self:GetParent():MirrorBar_OnUpdate(elapsed) end)
+		self.sb.CastBar_OnEvent = self.CastBar_OnEvent --pointer so AceEvent can find function
 
-			table.insert(MirrorBars, self)
+		self.sb:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_STOP", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_FAILED", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_DELAYED", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
+		self.sb:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
 
-			self.sb:Hide()
+		self.sb.unit = BarUnits[self.data.unit]
+		self.sb.showIcon = self.config.showIcon
 
+		self.sb.casting = false
+		self.sb.channeling = false
+		self.sb.holdTime = 0
+
+		self.sb:SetScript("OnUpdate", function(self, elapsed) self:GetParent():CastBar_OnUpdate(elapsed) end)
+
+		if (not self.sb.cbtimer.castInfo) then
+			self.sb.cbtimer.castInfo = {}
+		else
+			wipe(self.sb.cbtimer.castInfo)
 		end
 
+		LibStub("AceEvent-3.0"):Embed(self.sb.cbtimer)
 
-		local typeString
+		self.sb.cbtimer.CastBarTimer_OnEvent = self.CastBarTimer_OnEvent --pointer so AceEvent can find function
 
-		if (self.config.sbType == "xp") then
-			typeString = L["XP Bar"]
-		elseif (self.config.sbType == "rep") then
-			typeString = L["Rep Bar"]
-		elseif (self.config.sbType == "cast") then
-			typeString = L["Cast Bar"]
-		elseif (self.config.sbType == "mirror") then
-			typeString = L["Mirror Bar"]
-		end
+		self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_START", "CastBarTimer_OnEvent")
+		self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "CastBarTimer_OnEvent")
+		self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_STOP", "CastBarTimer_OnEvent")
+		self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBarTimer_OnEvent")
 
-		self.fbframe.feedback.text:SetText(typeString)
+		self.sb:Hide()
+
+	elseif (self.config.sbType == "xp") then
+
+		self.sb.XPBar_OnEvent = self.XPBar_OnEvent
+
+		self:SetAttribute("hasaction", true)
+
+		self:RegisterForClicks("RightButtonUp")
+		self:SetScript("OnClick", function(self, mousebutton, down) self:OnClick(mousebutton, down) end)
+		self:SetScript("OnEnter", function(self) self:OnEnter() end)
+		self:SetScript("OnLeave", function(self) self:OnLeave() end)
+		self:SetHitRectInsets(0, 0, 0, 0)
+
+		self.sb:RegisterEvent("PLAYER_XP_UPDATE", "XPBar_OnEvent")
+		self.sb:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
+		self.sb:RegisterEvent("UPDATE_EXHAUSTION", "XPBar_OnEvent")
+		self.sb:RegisterEvent("PLAYER_ENTERING_WORLD", "XPBar_OnEvent")
+		self.sb:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
+		self.sb:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "XPBar_OnEvent")
+
+		self.sb:Show()
+
+	elseif (self.config.sbType == "rep") then
+
+		self.sb.repbar_OnEvent = self.repbar_OnEvent
+
+		self.sb.repID = self.data.repID
+
+		self:SetAttribute("hasaction", true)
+
+		self:RegisterForClicks("RightButtonUp")
+		self:SetScript("OnClick", function(self, mousebutton, down) self:OnClick(mousebutton, down) end)
+		self:SetScript("OnEnter", function(self) self:OnEnter() end)
+		self:SetScript("OnLeave", function(self) self:OnLeave() end)
+		self:SetHitRectInsets(0, 0, 0, 0)
+
+		self.sb:RegisterEvent("UPDATE_FACTION", "repbar_OnEvent")
+		self.sb:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE", "repbar_OnEvent")
+		self.sb:RegisterEvent("PLAYER_ENTERING_WORLD", "repbar_OnEvent")
+
+		self.sb:Show()
+
+	elseif (self.config.sbType == "mirror") then
+
+		self.sb.MirrorBar_OnEvent = self.MirrorBar_OnEvent
+
+		self.sb:RegisterEvent("MIRROR_TIMER_START", "MirrorBar_OnEvent")
+		self.sb:RegisterEvent("MIRROR_TIMER_STOP", "MirrorBar_OnEvent")
+		self.sb:RegisterEvent("PLAYER_ENTERING_WORLD", "MirrorBar_OnEvent")
+
+		self.sb:SetScript("OnUpdate", function(self, elapsed) self:GetParent():MirrorBar_OnUpdate(elapsed) end)
+
+		table.insert(MirrorBars, self)
+
+		self.sb:Hide()
 
 	end
+
+
+	local typeString
+
+	if (self.config.sbType == "xp") then
+		typeString = L["XP Bar"]
+	elseif (self.config.sbType == "rep") then
+		typeString = L["Rep Bar"]
+	elseif (self.config.sbType == "cast") then
+		typeString = L["Cast Bar"]
+	elseif (self.config.sbType == "mirror") then
+		typeString = L["Mirror Bar"]
+	end
+
+	self.fbframe.feedback.text:SetText(typeString)
+
+
 
 	self:SetData(self.bar)
 

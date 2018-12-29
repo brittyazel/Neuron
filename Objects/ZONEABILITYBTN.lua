@@ -238,10 +238,10 @@ end
 function ZONEABILITYBTN:SetType(save)
 
 	self:RegisterUnitEvent("UNIT_AURA", "player")
-	self:RegisterEvent("SPELLS_CHANGED")
-	self:RegisterEvent("ZONE_CHANGED")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 
 
 	self.actionID = self.id
@@ -252,7 +252,6 @@ function ZONEABILITYBTN:SetType(save)
 	self:SetAttribute("useparent-unit", false)
 	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
-	self:SetScript("OnEvent", function(self, event, ...) self:OnEvent(event, ...) end)
 	self:SetScript("OnDragStart", function(self) self:OnDragStart() end)
 	self:SetScript("OnLoad", function(self) self:OnLoad() end)
 	self:SetScript("OnShow", function(self) self:OnShow() end)

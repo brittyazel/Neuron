@@ -2569,7 +2569,7 @@ function NeuronGUI:MacroEditorUpdate()
 		local data = button.DB[buttonSpec][state]
 
 		if not data then
-			button.DB[buttonSpec][state] = button:MACRO_build()
+			button.DB[buttonSpec][state] = button:build()
 
 			data = button.DB[buttonSpec][state]
 			button:UpdateFlyout()
@@ -2596,8 +2596,8 @@ function NeuronGUI:MacroEditorUpdate()
 
 		else
 			--Neuron:Print("nothinghere")
-			--button.DB[buttonSpec][state] = button:MACRO_build()
-			--button:MACRO_build(button.DB[buttonSpec][state])
+			--button.DB[buttonSpec][state] = button:build()
+			--button:build(button.DB[buttonSpec][state])
 			--Neuron:Print(button.DB[buttonSpec][state])
 			--end
 		end
@@ -2670,8 +2670,8 @@ function NeuronGUI:macroText_OnTextChanged(frame)
 					button.DB[buttonSpec][state].macro_Watch = false
 				else
 					--Neuron:Print("nothinghere")
-					--button.DB[buttonSpec][state] = button:MACRO_build()
-					--button:MACRO_build(button.DB[buttonSpec][state])
+					--button.DB[buttonSpec][state] = button:build()
+					--button:build(button.DB[buttonSpec][state])
 					--Neuron:Print(button.DB[buttonSpec][state])
 				end
 			end
@@ -2706,7 +2706,7 @@ function NeuronGUI:macroButton_Changed(frame, button, down)
 		else
 			data.macro_Icon = frame.texture
 		end
-		object:MACRO_UpdateIcon()
+		object:UpdateIcon()
 
 		NeuronGUI:UpdateObjectGUI()
 	end
@@ -2785,7 +2785,7 @@ function NeuronGUI:macroOnEditFocusLost(frame)
 	local button = Neuron.CurrentObject
 
 	if (button) then
-		button:MACRO_UpdateAll(true)
+		button:UpdateAll(true)
 	end
 
 	if (frame.text and strlen(frame:GetText()) <= 0) then
@@ -2971,7 +2971,7 @@ function NeuronGUI:customDoneOnClick(frame)
 
 			button.data.macro_Icon = text
 
-			button:MACRO_UpdateIcon()
+			button:UpdateIcon()
 
 			NeuronGUI:UpdateObjectGUI()
 		end
