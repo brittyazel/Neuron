@@ -242,7 +242,7 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
-	Neuron:ScheduleRepeatingTimer("Cooldowns_OnUpdate", .5)
+	Neuron:ScheduleRepeatingTimer("Cooldowns_OnUpdate", .25)
 	Neuron:ScheduleRepeatingTimer("BAR_OnUpdate", .075)
 
 
