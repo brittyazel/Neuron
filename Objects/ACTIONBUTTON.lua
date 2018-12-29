@@ -1197,7 +1197,6 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 
 	self.data.macro_Icon = icon  --also set later in SetSpellIcon
 	self.data.macro_Name = spellInfoName
-	print(self.data.macro_Name)
 	self.data.macro_Watch = false
 	self.data.macro_Equip = false
 	self.data.macro_Note = ""
