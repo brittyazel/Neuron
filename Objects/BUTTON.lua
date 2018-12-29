@@ -37,15 +37,16 @@ function BUTTON:SetTimer(start, duration, enable, charges, maxCharges, timer, co
 			cdFrame.duration = duration
 			cdFrame.start = start
 
+			cdFrame.timer:Show()
+
 			if (timer) then
-				cdFrame.timer:Show()
+
 				if (not cdFrame.expiry) then
 					cdFrame.timer:SetTextColor(color1[1], color1[2], color1[3])
 				end
 				cdFrame.expirecolor = color2
+				Neuron.cooldowns[cdFrame] = true
 			end
-
-			Neuron.cooldowns[cdFrame] = true
 
 			if (cdAlpha) then
 				Neuron.cdAlphas[cdFrame] = true
@@ -504,8 +505,6 @@ end
 
 
 function BUTTON:ACTION_SetCooldown(action)
-
-	local DB = Neuron.db.profile
 
 	local actionID = tonumber(action)
 
