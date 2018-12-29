@@ -151,54 +151,105 @@ function ACTIONBUTTON:LoadAux()
 
 end
 
+function ACTIONBUTTON:SetUpEvents()
+	self:RegisterEvent("ITEM_LOCK_CHANGED")
+	self:RegisterEvent("ACTIONBAR_SHOWGRID")
+	self:RegisterEvent("ACTIONBAR_HIDEGRID")
+
+	self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+	self:RegisterEvent("UPDATE_MACROS")
+	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+	self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+
+	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
+	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
+	self:RegisterEvent("ACTIONBAR_UPDATE_STATE")
+	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
+
+	self:RegisterEvent("SPELL_UPDATE_CHARGES")
+	self:RegisterEvent("SPELL_UPDATE_USABLE")
+
+	self:RegisterEvent("RUNE_POWER_UPDATE")
+
+	self:RegisterEvent("TRADE_SKILL_SHOW")
+	self:RegisterEvent("TRADE_SKILL_CLOSE")
+	self:RegisterEvent("ARCHAEOLOGY_CLOSED")
+
+	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+
+	self:RegisterEvent("MODIFIER_STATE_CHANGED")
+
+	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+	self:RegisterEvent("UNIT_SPELLCAST_FAILED")
+	self:RegisterEvent("UNIT_PET")
+	self:RegisterEvent("UNIT_AURA")
+	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+	self:RegisterEvent("UNIT_ENTERING_VEHICLE")
+	self:RegisterEvent("UNIT_EXITED_VEHICLE")
+
+	self:RegisterEvent("PLAYER_TARGET_CHANGED")
+	self:RegisterEvent("PLAYER_FOCUS_CHANGED")
+	self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	self:RegisterEvent("PLAYER_REGEN_DISABLED")
+	self:RegisterEvent("PLAYER_ENTER_COMBAT")
+	self:RegisterEvent("PLAYER_LEAVE_COMBAT")
+	self:RegisterEvent("PLAYER_CONTROL_LOST")
+	self:RegisterEvent("PLAYER_CONTROL_GAINED")
+	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+
+	self:RegisterEvent("UNIT_INVENTORY_CHANGED")
+	self:RegisterEvent("BAG_UPDATE_COOLDOWN")
+	self:RegisterEvent("BAG_UPDATE")
+	self:RegisterEvent("COMPANION_UPDATE")
+	self:RegisterEvent("PET_STABLE_UPDATE")
+	self:RegisterEvent("PET_STABLE_SHOW")
+
+	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+
+	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+	self:RegisterEvent("UPDATE_POSSESS_BAR")
+	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+
+	self:RegisterEvent("UPDATE_UI_WIDGET")
+	self:RegisterEvent("PLAYER_STARTED_MOVING")
+	self:RegisterEvent("PLAYER_STOPPED_MOVING")
+	self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
+end
 
 
 function ACTIONBUTTON:SetType(save, kill, init)
-	local state = self:GetParent():GetAttribute("activestate")
+	--local state = self:GetParent():GetAttribute("activestate")
 
 	self:Reset()
 
-	if (kill) then
+	SecureHandler_OnLoad(self)
 
-		self:SetScript("OnEvent", function() end)
-		self:SetScript("OnAttributeChanged", function() end)
+	self:SetUpEvents()
 
-	else
-		SecureHandler_OnLoad(self)
+	self:MACRO_UpdateParse()
 
-		self:RegisterEvent("ITEM_LOCK_CHANGED")
-		self:RegisterEvent("ACTIONBAR_SHOWGRID")
-		self:RegisterEvent("ACTIONBAR_HIDEGRID")
+	self:SetAttribute("type", "macro")
+	self:SetAttribute("*macrotext*", self.macroparse)
 
-		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-		self:RegisterEvent("UPDATE_MACROS")
-		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+	self:SetScript("OnEvent", function(self, event, ...) self:MACRO_OnEvent(event, ...) end)
+	self:SetScript("PreClick", function(self, mousebutton) self:MACRO_PreClick(mousebutton) end)
+	self:SetScript("PostClick", function(self, mousebutton) self:MACRO_PostClick(mousebutton) end)
+	self:SetScript("OnReceiveDrag", function(self, preclick) self:MACRO_OnReceiveDrag(preclick) end)
+	self:SetScript("OnDragStart", function(self, mousebutton) self:MACRO_OnDragStart(mousebutton) end)
+	self:SetScript("OnDragStop", function(self) self:MACRO_OnDragStop() end)
+	self:SetScript("OnAttributeChanged", function(self, name, value) self:MACRO_OnAttributeChanged(name, value) end)
+	self:SetScript("OnEnter", function(self, ...) self:MACRO_OnEnter(...) end)
+	self:SetScript("OnLeave", function(self, ...) self:MACRO_OnLeave(...) end)
 
-		self:MACRO_UpdateParse()
-
-		self:SetAttribute("type", "macro")
-		self:SetAttribute("*macrotext*", self.macroparse)
-
-		self:SetScript("OnEvent", function(self, event, ...) self:MACRO_OnEvent(event, ...) end)
-		self:SetScript("PreClick", function(self, mousebutton) self:MACRO_PreClick(mousebutton) end)
-		self:SetScript("PostClick", function(self, mousebutton) self:MACRO_PostClick(mousebutton) end)
-		self:SetScript("OnReceiveDrag", function(self, preclick) self:MACRO_OnReceiveDrag(preclick) end)
-		self:SetScript("OnDragStart", function(self, mousebutton) self:MACRO_OnDragStart(mousebutton) end)
-		self:SetScript("OnDragStop", function(self) self:MACRO_OnDragStop() end)
-		self:SetScript("OnShow", function(self, ...) self:MACRO_OnShow(...) end)
-		self:SetScript("OnHide", function(self, ...) self:MACRO_OnHide(...) end)
-		self:SetScript("OnAttributeChanged", function(self, name, value) self:MACRO_OnAttributeChanged(name, value) end)
-		self:SetScript("OnEnter", function(self, ...) self:MACRO_OnEnter(...) end)
-		self:SetScript("OnLeave", function(self, ...) self:MACRO_OnLeave(...) end)
-
-		self:WrapScript(self, "OnShow", [[
+	self:WrapScript(self, "OnShow", [[
 						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
 							self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
 						end
 						]])
 
-		self:WrapScript(self, "OnHide", [[
+	self:WrapScript(self, "OnHide", [[
 						if (not self:GetParent():GetAttribute("concealed")) then
 							for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
 								self:ClearBinding(key)
@@ -206,14 +257,14 @@ function ACTIONBUTTON:SetType(save, kill, init)
 						end
 						]])
 
-		--new action ID's for vehicle 133-138
-		--new action ID's for possess 133-138
-		--new action ID's for override 157-162
+	--new action ID's for vehicle 133-138
+	--new action ID's for possess 133-138
+	--new action ID's for override 157-162
 
-		self:SetAttribute("overrideID_Offset", 156)
-		self:SetAttribute("vehicleID_Offset", 132)
+	self:SetAttribute("overrideID_Offset", 156)
+	self:SetAttribute("vehicleID_Offset", 132)
 
-		self:SetAttribute("_childupdate", [=[
+	self:SetAttribute("_childupdate", [=[
 
 				if (message) then
 
@@ -286,13 +337,10 @@ function ACTIONBUTTON:SetType(save, kill, init)
 
 			]=])
 
-		if (not init) then
-			self:MACRO_UpdateAll(true)
-		end
 
-		self:MACRO_OnShow()
+	self:MACRO_UpdateAll(true)
 
-	end
+
 
 end
 
@@ -556,43 +604,12 @@ function ACTIONBUTTON:MACRO_SetItemIcon(item)
 end
 
 
-function ACTIONBUTTON:ACTION_SetIcon(action)
-	local actionID = tonumber(action)
-
-	if (actionID) then
-		if (actionID == 0) then
-			if (self.specAction and Neuron.SPECIALACTIONS[self.specAction]) then
-				self.iconframeicon:SetTexture(Neuron.SPECIALACTIONS[self.specAction])
-			else
-				self.iconframeicon:SetTexture(0,0,0)
-			end
-
-		else
-			self.macroname:SetText(GetActionText(actionID))
-			if (HasAction(actionID)) then
-				self.iconframeicon:SetTexture(GetActionTexture(actionID))
-			else
-				self.iconframeicon:SetTexture(0,0,0)
-			end
-		end
-
-		self.iconframeicon:Show()
-	else
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-	end
-
-	return self.iconframeicon:GetTexture()
-end
-
-
 function ACTIONBUTTON:MACRO_UpdateIcon(...)
 	self.updateMacroIcon = nil
 
 	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
 
-	if (self.actionID) then
-		texture = self:ACTION_SetIcon(self.actionID)
-	elseif (show and #show>0) then
+	if (show and #show>0) then
 		if(NeuronItemCache[show]) then
 			texture = self:MACRO_SetItemIcon(show)
 		else
@@ -751,42 +768,13 @@ function ACTIONBUTTON:MACRO_SetItemState(item)
 end
 
 
-function ACTIONBUTTON:ACTION_UpdateState(action)
-	local actionID = tonumber(action)
-
-	self.count:SetText("")
-
-	if (actionID) then
-		self.macroname:SetText("")
-
-		if (IsCurrentAction(actionID) or IsAutoRepeatAction(actionID)) then
-			self:SetChecked(1)
-		else
-			self:SetChecked(nil)
-		end
-
-		if ((IsAttackAction(actionID) and IsCurrentAction(actionID)) or IsAutoRepeatAction(actionID)) then
-			self:MACRO_UpdateRange(true)
-		else
-			self:MACRO_UpdateRange()
-		end
-	else
-		self:SetChecked(nil)
-		self:MACRO_UpdateRange()
-	end
-end
-
-
 
 function ACTIONBUTTON:MACRO_UpdateState(...)
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
 
-	if (self.actionID) then
-		self:ACTION_UpdateState(self.actionID)
-
-	elseif (show and #show>0) then
+	if (show and #show>0) then
 
 		if (NeuronItemCache[show]) then
 			self:MACRO_SetItemState(show)
@@ -942,44 +930,12 @@ function ACTIONBUTTON:MACRO_UpdateUsableItem(item)
 end
 
 
-function ACTIONBUTTON:ACTION_UpdateUsable(action)
-	local actionID = tonumber(action)
-
-	if (actionID) then
-		if (actionID == 0) then
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-		else
-			local isUsable, notEnoughMana = IsUsableAction(actionID)
-
-			if (isUsable) then
-				if (IsActionInRange(action, self.unit) == 0) then
-					self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-				else
-					self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-				end
-
-			elseif (notEnoughMana and self.manacolor) then
-				self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
-			else
-				self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
-			end
-		end
-
-	else
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-	end
-end
-
 
 function ACTIONBUTTON:UpdateButton(...)
 
 	if (self.editmode) then
 
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
-
-	elseif (self.actionID) then
-
-		self:ACTION_UpdateUsable(self.actionID)
 
 	elseif (self.macroshow and #self.macroshow>0) then
 
@@ -1994,29 +1950,12 @@ function ACTIONBUTTON:MACRO_SetItemTooltip(item)
 end
 
 
-function ACTIONBUTTON:ACTION_SetTooltip(action)
-	local actionID = tonumber(action)
-
-	if (actionID) then
-
-		self.UpdateTooltip = nil
-
-		if (HasAction(actionID)) then
-			GameTooltip:SetAction(actionID)
-		end
-	end
-end
-
-
 function ACTIONBUTTON:MACRO_SetTooltip(edit)
 	self.UpdateTooltip = nil
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
-	if (self.actionID) then
-		self:ACTION_SetTooltip(self.actionID)
-
-	elseif (show and #show>0) then
+	if (show and #show>0) then
 		if(NeuronItemCache[show]) then
 			self:MACRO_SetItemTooltip(show)
 		else
@@ -2091,127 +2030,6 @@ function ACTIONBUTTON:MACRO_OnLeave(...)
 	if (self.flyout and self.flyout.arrow) then
 		self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX, self.flyout.arrowY)
 	end
-end
-
-
-function ACTIONBUTTON:MACRO_OnShow(...)
-
-	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
-	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
-	self:RegisterEvent("ACTIONBAR_UPDATE_STATE")
-	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
-
-	self:RegisterEvent("SPELL_UPDATE_CHARGES")
-	self:RegisterEvent("SPELL_UPDATE_USABLE")
-
-	self:RegisterEvent("RUNE_POWER_UPDATE")
-
-	self:RegisterEvent("TRADE_SKILL_SHOW")
-	self:RegisterEvent("TRADE_SKILL_CLOSE")
-	self:RegisterEvent("ARCHAEOLOGY_CLOSED")
-
-	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
-
-	self:RegisterEvent("MODIFIER_STATE_CHANGED")
-
-	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	self:RegisterEvent("UNIT_SPELLCAST_FAILED")
-	self:RegisterEvent("UNIT_PET")
-	self:RegisterEvent("UNIT_AURA")
-	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	self:RegisterEvent("UNIT_ENTERING_VEHICLE")
-	self:RegisterEvent("UNIT_EXITED_VEHICLE")
-
-	self:RegisterEvent("PLAYER_TARGET_CHANGED")
-	self:RegisterEvent("PLAYER_FOCUS_CHANGED")
-	self:RegisterEvent("PLAYER_REGEN_ENABLED")
-	self:RegisterEvent("PLAYER_REGEN_DISABLED")
-	self:RegisterEvent("PLAYER_ENTER_COMBAT")
-	self:RegisterEvent("PLAYER_LEAVE_COMBAT")
-	self:RegisterEvent("PLAYER_CONTROL_LOST")
-	self:RegisterEvent("PLAYER_CONTROL_GAINED")
-	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-
-	self:RegisterEvent("UNIT_INVENTORY_CHANGED")
-	self:RegisterEvent("BAG_UPDATE_COOLDOWN")
-	self:RegisterEvent("BAG_UPDATE")
-	self:RegisterEvent("COMPANION_UPDATE")
-	self:RegisterEvent("PET_STABLE_UPDATE")
-	self:RegisterEvent("PET_STABLE_SHOW")
-
-	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
-
-	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	self:RegisterEvent("UPDATE_POSSESS_BAR")
-	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-
-	self:RegisterEvent("UPDATE_UI_WIDGET")
-	self:RegisterEvent("PLAYER_STARTED_MOVING")
-	self:RegisterEvent("PLAYER_STOPPED_MOVING")
-	self:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
-
-end
-
-
-function ACTIONBUTTON:MACRO_OnHide(...)
-	self:UnregisterEvent("ACTIONBAR_SLOT_CHANGED")
-	self:UnregisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
-	self:UnregisterEvent("ACTIONBAR_UPDATE_STATE")
-	self:UnregisterEvent("ACTIONBAR_UPDATE_USABLE")
-
-	self:UnregisterEvent("SPELL_UPDATE_CHARGES")
-	self:UnregisterEvent("SPELL_UPDATE_USABLE")
-
-	self:UnregisterEvent("RUNE_POWER_UPDATE")
-
-	self:UnregisterEvent("TRADE_SKILL_SHOW")
-	self:UnregisterEvent("TRADE_SKILL_CLOSE")
-	self:UnregisterEvent("ARCHAEOLOGY_CLOSED")
-
-	self:UnregisterEvent("UPDATE_MOUSEOVER_UNIT")
-
-	self:UnregisterEvent("MODIFIER_STATE_CHANGED")
-
-	self:UnregisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	self:UnregisterEvent("UNIT_SPELLCAST_FAILED")
-	self:UnregisterEvent("UNIT_PET")
-	self:UnregisterEvent("UNIT_AURA")
-	self:UnregisterEvent("UNIT_ENTERED_VEHICLE")
-	self:UnregisterEvent("UNIT_ENTERING_VEHICLE")
-	self:UnregisterEvent("UNIT_EXITED_VEHICLE")
-
-	self:UnregisterEvent("PLAYER_TARGET_CHANGED")
-	self:UnregisterEvent("PLAYER_FOCUS_CHANGED")
-	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-	self:UnregisterEvent("PLAYER_REGEN_DISABLED")
-	self:UnregisterEvent("PLAYER_ENTER_COMBAT")
-	self:UnregisterEvent("PLAYER_LEAVE_COMBAT")
-	self:UnregisterEvent("PLAYER_CONTROL_LOST")
-	self:UnregisterEvent("PLAYER_CONTROL_GAINED")
-	self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
-
-	self:UnregisterEvent("UNIT_INVENTORY_CHANGED")
-	self:UnregisterEvent("BAG_UPDATE_COOLDOWN")
-	self:UnregisterEvent("BAG_UPDATE")
-	self:UnregisterEvent("COMPANION_UPDATE")
-	self:UnregisterEvent("PET_STABLE_UPDATE")
-	self:UnregisterEvent("PET_STABLE_SHOW")
-
-	self:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-	self:UnregisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
-
-	self:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	self:UnregisterEvent("UPDATE_POSSESS_BAR")
-	self:UnregisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	self:UnregisterEvent("UPDATE_BONUS_ACTIONBAR")
-
-	self:UnregisterEvent("UPDATE_UI_WIDGET")
-	self:UnregisterEvent("PLAYER_STARTED_MOVING")
-	self:UnregisterEvent("PLAYER_STOPPED_MOVING")
-	self:UnregisterEvent("CURRENT_SPELL_CAST_CHANGED")
-
 end
 
 
