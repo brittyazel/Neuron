@@ -96,11 +96,11 @@ end
 
 function EXTRABTN:SetType(save)
 
-	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR")
-	self:RegisterEvent("ZONE_CHANGED")
-	self:RegisterEvent("SPELLS_CHANGED")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
+	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self.actionID = 169
@@ -111,7 +111,6 @@ function EXTRABTN:SetType(save)
 	self:SetAttribute("useparent-unit", false)
 	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
-	self:SetScript("OnEvent", function(self, event, ...) self:OnEvent(event, ...) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 	self:SetScript("OnShow", function(self) self:ExtraButton_Update() end)

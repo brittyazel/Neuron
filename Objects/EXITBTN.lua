@@ -48,15 +48,14 @@ end
 
 function EXITBTN:SetType(save)
 
-	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	self:RegisterEvent("UPDATE_POSSESS_BAR");
-	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR");
-	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	self:RegisterEvent("UNIT_EXITED_VEHICLE")
-	self:RegisterEvent("VEHICLE_UPDATE")
+	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
+	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
+	self:RegisterEvent("UPDATE_POSSESS_BAR", "OnEvent");
+	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "OnEvent");
+	self:RegisterEvent("UNIT_ENTERED_VEHICLE", "OnEvent")
+	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
+	self:RegisterEvent("VEHICLE_UPDATE", "OnEvent")
 
-	self:SetScript("OnEvent", function(self, event, ...) self:OnEvent(event, ...) end)
 	self:SetScript("OnClick", function(self) self:OnClick() end)
 	self:SetScript("OnEnter", function(self) self:OnEnter() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)

@@ -152,6 +152,9 @@ function ACTIONBUTTON:LoadAux()
 end
 
 function ACTIONBUTTON:SetUpEvents()
+
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
 	self:RegisterEvent("ITEM_LOCK_CHANGED")
 	self:RegisterEvent("ACTIONBAR_SHOWGRID")
 	self:RegisterEvent("ACTIONBAR_HIDEGRID")
@@ -189,20 +192,11 @@ function ACTIONBUTTON:SetUpEvents()
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	self:RegisterEvent("PLAYER_FOCUS_CHANGED")
-	self:RegisterEvent("PLAYER_REGEN_ENABLED")
-	self:RegisterEvent("PLAYER_REGEN_DISABLED")
-	self:RegisterEvent("PLAYER_ENTER_COMBAT")
-	self:RegisterEvent("PLAYER_LEAVE_COMBAT")
-	self:RegisterEvent("PLAYER_CONTROL_LOST")
-	self:RegisterEvent("PLAYER_CONTROL_GAINED")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
-	self:RegisterEvent("UNIT_INVENTORY_CHANGED")
 	self:RegisterEvent("BAG_UPDATE_COOLDOWN")
 	self:RegisterEvent("BAG_UPDATE")
 	self:RegisterEvent("COMPANION_UPDATE")
-	self:RegisterEvent("PET_STABLE_UPDATE")
-	self:RegisterEvent("PET_STABLE_SHOW")
 
 	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
 	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
@@ -233,7 +227,6 @@ function ACTIONBUTTON:SetType(save, kill, init)
 	self:SetAttribute("type", "macro")
 	self:SetAttribute("*macrotext*", self.macroparse)
 
-	self:SetScript("OnEvent", function(self, event, ...) self:OnEvent(event, ...) end)
 	self:SetScript("PreClick", function(self, mousebutton) self:PreClick(mousebutton) end)
 	self:SetScript("PostClick", function(self, mousebutton) self:PostClick(mousebutton) end)
 	self:SetScript("OnReceiveDrag", function(self, preclick) self:OnReceiveDrag(preclick) end)
@@ -1190,16 +1183,6 @@ end
 
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
-
----This strips out the "" in front of the event name function, and brokers the event to the right object
-function ACTIONBUTTON:OnEvent(eventName, ...)
-
-	if (self[eventName]) then
-		self[eventName](self, ...)
-	end
-end
-
-
 
 
 function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)

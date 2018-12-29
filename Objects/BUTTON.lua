@@ -7,8 +7,8 @@ Neuron.BUTTON = BUTTON
 local SKIN = LibStub("Masque", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
---LibStub("AceBucket-3.0"):Embed(BUTTON)
---LibStub("AceEvent-3.0"):Embed(BUTTON)
+LibStub("AceBucket-3.0"):Embed(BUTTON)
+LibStub("AceEvent-3.0"):Embed(BUTTON)
 
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -271,7 +271,6 @@ function BUTTON:SetData(bar)
 
 	self:RegisterForClicks(down, up)
 	self:RegisterForDrag("LeftButton", "RightButton")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	if (not self.equipcolor) then
 		self.equipcolor = { 0.1, 1, 0.1, 1 }
