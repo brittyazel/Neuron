@@ -3,8 +3,6 @@
 
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
-local scanData = {}
-
 
 local petIcons = {}
 
@@ -121,28 +119,35 @@ end
 --- Filter handler for items
 -- item:id will get all items of that itemID
 -- item:name will get all items that contain "name" in its name
-function ACTIONBUTTON:filter_item(data)
+function ACTIONBUTTON:filter_item()
+
+	local data = {}
+
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
 	for ckey in gmatch(keys, "[^,]+") do
 
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-		local itemID = tonumber(arg)
+
 		arg = arg:lower()
 
-		if itemID and GetItemCount(itemID)>0 then
-			data[itemID] = "item"
-			return
-		end
+		local name= GetItemInfo(arg)
 
+		if name then
+			data[name] = "item"
+		end
 	end
+
+	return data
 end
 
 
 --- Filter Handler for Spells
 -- spell:id will get all spells of that spellID
 -- spell:name will get all spells that contain "name" in its name or its flyout parent
-function ACTIONBUTTON:filter_spell(data)
+function ACTIONBUTTON:filter_spell()
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+
+	local data = {}
 
 	for ckey in gmatch(keys, "[^,]+") do
 
@@ -158,14 +163,18 @@ function ACTIONBUTTON:filter_spell(data)
 		end
 
 	end
+
+	return data
 end
 
 
 ---Filter handler for item type
 -- type:quest will get all quest items in bags, or those on person with Quest in a type field
 -- type:name will get all items that have "name" in its type, subtype or slot name
-function ACTIONBUTTON:filter_type(data)
+function ACTIONBUTTON:filter_type()
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+
+	local data = {}
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -193,14 +202,18 @@ function ACTIONBUTTON:filter_type(data)
 			end
 		end
 	end
+
+	return data
 end
 
 
 --- Filter handler for mounts
 -- mount:any, mount:flying, mount:land, mount:favorite, mount:fflying, mount:fland
 -- mount:arg filters mounts that include arg in the name or arg="flying" or arg="land" or arg=="any"
-function ACTIONBUTTON:filter_mount(data)
+function ACTIONBUTTON:filter_mount()
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+
+	local data = {}
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -239,13 +252,17 @@ function ACTIONBUTTON:filter_mount(data)
 
 	end
 
+	return data
+
 end
 
 
 
 --- Filter handler for professions
 -- profession:arg filters professions that include arg in the name or arg="primary" or arg="secondary" or arg="all"
-function ACTIONBUTTON:filter_profession(data)
+function ACTIONBUTTON:filter_profession()
+
+	local data = {}
 
 	-- runs func for each ...
 	local function RunForEach(func,...)
@@ -286,12 +303,17 @@ function ACTIONBUTTON:filter_profession(data)
 		end
 
 	end
+
+	return data
 end
 
 
 --- Filter handler for companion pets
 -- pet:arg filters companion pets that include arg in the name or arg="any" or arg="favorite(s)"
-function ACTIONBUTTON:filter_pet(data)
+function ACTIONBUTTON:filter_pet()
+
+	local data = {}
+
 	local keys = self.flyout.keys
 	for ckey in gmatch(keys, "[^,]+") do
 
@@ -310,13 +332,17 @@ function ACTIONBUTTON:filter_pet(data)
 		end
 
 	end
+
+	return data
 end
 
 
 ---Filter handler for toy items
 -- toy:arg filters items from the toybox; arg="favorite" "any" or partial name
-function ACTIONBUTTON:filter_toy(data)
+function ACTIONBUTTON:filter_toy()
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+
+	local data = {}
 
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
@@ -324,14 +350,17 @@ function ACTIONBUTTON:filter_toy(data)
 		local favorite = compare(string.lower(arg),"favorite")
 		arg = arg:lower()
 
-
-		local name, _, _, _, _, _, _, _, _, icon = GetItemInfo(arg)
+		local name= GetItemInfo(arg)
 
 		if name then
 			data[name] = "item"
 		end
 
 	end
+
+	test = data
+
+	return data
 
 end
 
@@ -368,27 +397,27 @@ end
 function ACTIONBUTTON:GetDataList(options)
 	local tooltip
 
-	wipe(scanData)
+	local scanData = {}
 
 	for types in gmatch(self.flyout.types, "%a+[%+]*") do
 		tooltip = types:match("%+")
 
 		if (types:find("^b")) then  --Blizzard Flyout
-			return self:GetBlizzData()
+			scanData = self:GetBlizzData()
 		elseif (types:find("^s")) then  --Spell
-			self:filter_spell(scanData)
+			scanData = self:filter_spell()
 		elseif (types:find("^i")) then  --Item
-			self:filter_item(scanData)
+			scanData = self:filter_item()
 		elseif (types:find("^c")) then  --Companion
-			self:filter_pet(scanData)
+			scanData = self:filter_pet()
 		elseif (types:find("^f")) then  --toy
-			self:filter_toy(scanData)
+			scanData = self:filter_toy()
 		elseif (types:find("^m")) then  --Mount
-			self:filter_mount(scanData)
+			scanData = self:filter_mount()
 		elseif (types:find("^p")) then  --Profession
-			self:filter_profession(scanData)
+			scanData = self:filter_profession()
 		elseif (types:find("^t")) then  --Item Type
-			self:filter_type(scanData)
+			scanData = self:filter_type()
 		end
 	end
 	return scanData
@@ -429,12 +458,10 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 		if (data) then
 			for spell, source in keySort(data) do
+
 				button = self:Flyout_GetButton()
 
-				local _, _, icon = GetSpellInfo(spell) --make sure the right icon is applied
-				if (icon) then
-					button.data.macro_Icon = icon
-				end
+				button.source = source
 
 
 				if (source == "spell" or source =="blizz") then
@@ -453,12 +480,9 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 				elseif (source == "companion") then
 
 					button.macroshow = spell
-					button.macroicon = petIcons[spell]
 					button:SetAttribute("prefix", "/summonpet ")
 					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
-					button.data.macro_Icon = petIcons[spell]
 					button.data.macro_Name = spell
-					button:SetAttribute("macro_Icon", petIcons[spell])
 					button:SetAttribute("macro_Name", spell)
 					prefix = "/summonpet "
 
@@ -470,8 +494,6 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 
 				elseif (source == "item") then
-
-					button.macroshow = spell
 
 					if (IsEquippableItem(spell)) then
 						if (self.flyout.keys:find("#%d+")) then
@@ -490,17 +512,13 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 						button:SetAttribute("prefix", "/use ")
 					end
 
-					local itemname, _, _, _, _, _, _, _, _, itemicon = GetItemInfo(spell)
+					local itemname = GetItemInfo(spell)
 
-
-					button.macroicon = itemicon
-					button.data.macro_Icon = itemicon
+					button.macroshow = spell
 					button.data.macro_Name = itemname
 
-					button:SetAttribute("macro_Icon", itemicon)
-					button:SetAttribute("macro_Name", itemname)
 
-					button:SetAttribute("prefix", prefix)
+					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
 
 					if (slot) then
 						button:SetAttribute("showtooltip", "#showtooltip "..slot.."\n")
@@ -509,7 +527,6 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 					end
 
 				elseif (source:find("equipset")) then
-					_, icon = (";"):split(source)
 					button.macroshow = spell
 					button.data.macro_Equip = spell
 					button:SetAttribute("prefix", "/equipset ")
@@ -517,11 +534,6 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 					prefix = "/equipset "
 
-					if (icon) then
-						button.data.macro_Icon = icon
-					else
-						button.data.macro_Icon = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
-					end
 				else
 					--should never get here
 					button.macroshow = ""
@@ -544,12 +556,13 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 				end
 
 				if (not macroSet and not self.data.macro_Text:find("nobtn:2")) then
-					self.data.macro_Text = button:GetAttribute("flyoutMacro"); macroSet = true
+					self.data.macro_Text = button:GetAttribute("flyoutMacro")
+					macroSet = true
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
 				button:UpdateParse()
-				button:Reset()
+				button:MACRO_Reset()
 				button:UpdateAll(true)
 
 				list[#list+1] = button.id--table.insert(list, button.id)
@@ -806,7 +819,7 @@ function ACTIONBUTTON:Flyout_PostClick()
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
 	button:UpdateParse()
-	button:Reset()
+	button:MACRO_Reset()
 	button:UpdateAll(true)
 
 	self:UpdateState()
@@ -862,16 +875,16 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 	button:RegisterEvent("PLAYER_ENTERING_WORLD")
 	button:RegisterEvent("BAG_UPDATE")
-	--[[
-		button:RegisterEvent("COMPANION_LEARNED")
+
+		--[[button:RegisterEvent("COMPANION_LEARNED")
 		button:RegisterEvent("COMPANION_UPDATE")
 		button:RegisterEvent("LEARNED_SPELL_IN_TAB")
 		button:RegisterEvent("CHARACTER_POINTS_CHANGED")
 		button:RegisterEvent("PET_STABLE_UPDATE")
 		button:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 		button:RegisterEvent("SPELLS_CHANGED")
-		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	]]
+		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")]]
+
 
 	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
 	button:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)

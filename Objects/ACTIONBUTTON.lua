@@ -556,7 +556,7 @@ end
 
 
 function ACTIONBUTTON:SetItemIcon(item)
-	local _,texture, link, itemID
+	local name,texture, link, itemID
 
 	if (IsEquippedItem(item)) then --makes the border green when item is equipped and dragged to a button
 		self.border:SetVertexColor(0, 1.0, 0, 0.2)
@@ -577,7 +577,7 @@ function ACTIONBUTTON:SetItemIcon(item)
 		if (NeuronItemCache[item]) then
 			texture = GetItemIcon("item:"..NeuronItemCache[item]..":0:0:0:0:0:0:0")
 		else
-			_,_,_,_,_,_,_,_,_,texture = GetItemInfo(item)
+			name,_,_,_,_,_,_,_,_,texture = GetItemInfo(item)
 		end
 
 		if (texture) then
@@ -598,6 +598,7 @@ function ACTIONBUTTON:UpdateIcon(...)
 
 	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
 
+
 	if (show and #show>0) then
 		if(NeuronItemCache[show]) then
 			texture = self:SetItemIcon(show)
@@ -605,13 +606,11 @@ function ACTIONBUTTON:UpdateIcon(...)
 			texture = self:SetSpellIcon(show)
 			self:SetSpellState(show)
 		end
-
 	elseif (spell and #spell>0) then
 		texture = self:SetSpellIcon(spell)
 		self:SetSpellState(spell)
 	elseif (item and #item>0) then
 		texture = self:SetItemIcon(item)
-
 	elseif (self.data.macro_Icon) then
 		self.iconframeicon:SetTexture(self.data.macro_Icon)
 		self.iconframeicon:Show()
@@ -1079,7 +1078,10 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 
 	self:MACRO_Reset()
 	self:UpdateAll(true)
-	Neuron.NeuronBinder:ApplyBindings(self)
+
+	if not self.class == "flyout" then
+		Neuron.NeuronBinder:ApplyBindings(self)
+	end
 end
 
 
@@ -1786,9 +1788,8 @@ function ACTIONBUTTON:OnMouseDown()
 		wipe(Neuron.macroDrag)
 
 		for index, bar in pairs(Neuron.BARIndex) do
-			self.bar:UpdateObjectVisibility()
+			bar:UpdateObjectVisibility()
 		end
-
 	end
 end
 
