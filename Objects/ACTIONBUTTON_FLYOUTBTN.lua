@@ -873,19 +873,6 @@ function ACTIONBUTTON:Flyout_GetButton()
 	button:SetAttribute("type1", "macro")
 	button:SetAttribute("*macrotext1", "")
 
-	button:RegisterEvent("PLAYER_ENTERING_WORLD")
-	button:RegisterEvent("BAG_UPDATE")
-
-		--[[button:RegisterEvent("COMPANION_LEARNED")
-		button:RegisterEvent("COMPANION_UPDATE")
-		button:RegisterEvent("LEARNED_SPELL_IN_TAB")
-		button:RegisterEvent("CHARACTER_POINTS_CHANGED")
-		button:RegisterEvent("PET_STABLE_UPDATE")
-		button:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-		button:RegisterEvent("SPELLS_CHANGED")
-		button:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")]]
-
-
 	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
 	button:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	button:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)

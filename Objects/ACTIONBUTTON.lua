@@ -216,7 +216,9 @@ function ACTIONBUTTON:SetType(save, kill, init)
 
 	SecureHandler_OnLoad(self)
 
-	self:SetUpEvents()
+	if self.class ~= "flyout" then
+		self:SetUpEvents()
+	end
 
 	self:UpdateParse()
 
@@ -1079,9 +1081,8 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 	self:MACRO_Reset()
 	self:UpdateAll(true)
 
-	if self.class ~= "flyout" then
-		Neuron.NeuronBinder:ApplyBindings(self)
-	end
+	Neuron.NeuronBinder:ApplyBindings(self)
+
 end
 
 
