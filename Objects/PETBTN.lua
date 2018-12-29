@@ -140,12 +140,6 @@ function PETBTN:PET_UpdateCooldown()
 
 		local start, duration, enable = GetPetActionCooldown(actionID)
 
-		if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
-			self.auraQueue = self.iconframeaurawatch.queueinfo
-			self.iconframeaurawatch.duration = 0
-			self.iconframeaurawatch:Hide()
-		end
-
 		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end

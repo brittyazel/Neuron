@@ -171,7 +171,6 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("SPELL_UPDATE_CHARGES")
 	self:RegisterEvent("SPELL_UPDATE_USABLE")
 
-	--self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 
 	self:RegisterEvent("MODIFIER_STATE_CHANGED")
 
@@ -716,7 +715,7 @@ function ACTIONBUTTON:SetSpellState(spell)
 	self:UpdateButton()
 
 
-	if (self.auraQueue and not self.iconframecooldown.active) then
+	if (self.auraQueue and not self.iconframecooldown.timer:IsShown()) then
 		local unit, auraSpell = (":"):split(self.auraQueue)
 		if (unit and auraSpell) then
 			self.auraQueue = nil;
@@ -804,12 +803,6 @@ function ACTIONBUTTON:SetSpellCooldown(spell)
 	local start, duration, enable = GetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration = GetSpellCharges(spell)
 
-	if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
-		self.auraQueue = self.iconframeaurawatch.queueinfo
-		self.iconframeaurawatch.duration = 0
-		self.iconframeaurawatch:Hide()
-	end
-
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
 		self:SetTimer(chStart, chDuration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	else
@@ -827,12 +820,6 @@ function ACTIONBUTTON:SetItemCooldown(item)
 	if (id) then
 
 		local start, duration, enable = GetItemCooldown(id)
-
-		if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
-			self.auraQueue = self.iconframeaurawatch.queueinfo
-			self.iconframeaurawatch.duration = 0
-			self.iconframeaurawatch:Hide()
-		end
 
 		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
@@ -1004,12 +991,14 @@ function ACTIONBUTTON:UNIT_AURA(...)
 
 		if (unit == "player") then
 			self:UpdateData(...)
+			self:UpdateTimers()
 		end
 	end
 end
 
 
 ACTIONBUTTON.UPDATE_MOUSEOVER_UNIT = ACTIONBUTTON.UNIT_AURA
+
 
 
 function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(...)
@@ -1757,11 +1746,9 @@ function ACTIONBUTTON:OnDragStart(mousebutton)
 
 		self.iconframecooldown.duration = 0
 		self.iconframecooldown.timer:SetText("")
-		self.iconframecooldown:Hide()
 
 		self.iconframeaurawatch.duration = 0
 		self.iconframeaurawatch.timer:SetText("")
-		self.iconframeaurawatch:Hide()
 
 		self.macroname:SetText("")
 		self.count:SetText("")

@@ -27,11 +27,10 @@ function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha
 
 	local cdFrame = self.iconframecooldown
 
+
 	if ( start and start > 0 and duration > 0 and enable > 0) then
-		cdFrame:SetAlpha(1)
 
 		CooldownFrame_Set(cdFrame, start, duration, enable)
-
 
 		cdFrame.timer:Show()
 
@@ -474,24 +473,17 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 
 			end
 
-			if (self.iconframecooldown.timer:IsShown()) then
-				self.auraQueue = unit..":"..spell
-				self.iconframeaurawatch.uaw_duration = 0
-				self.iconframeaurawatch:Hide()
-
-			elseif (self.auraText) then
-				self:SetTimer(0, 0, 0)
-				self:SetTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color)
+			--[[if (self.auraText) then
+				self:SetTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color, _, _,true)
 			else
 				self:SetTimer(0, 0, 0)
-			end
+			end]]
 
 			self.auraWatchUnit = unit
 
 		elseif (self.auraWatchUnit == unit) then
 
 			self.iconframeaurawatch.uaw_duration = 0
-			self.iconframeaurawatch:Hide()
 			self.iconframeaurawatch.timer:SetText("")
 			self.border:Hide()
 			self.auraBorder = nil
