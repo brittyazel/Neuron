@@ -124,7 +124,14 @@ function Neuron:CreateNewObject(class, id, bar, defaults)
 	if (data) then
 
 		--calls new object constructor for the appropriate class type
-		local object = data.objTemplate:new(bar:GetName().."_"..data.objPrefix..id)
+
+		local object
+
+		if _G[bar:GetName().."_"..data.objPrefix..id] then
+			object = _G[bar:GetName().."_"..data.objPrefix..id] --if we removed some objects from a bar, those frames still exists, this allows us to recapture and repurpose those discarded frames
+		else
+			object = data.objTemplate:new(bar:GetName().."_"..data.objPrefix..id)
+		end
 
 
 		--returns a table of the names of all the child objects for a given frame
@@ -151,6 +158,7 @@ function Neuron:CreateNewObject(class, id, bar, defaults)
 		object:LoadData(GetActiveSpecGroup(), "homestate")
 
 		object.elapsed = 0
+
 
 		if (defaults) then
 			object:SetDefaults(defaults)

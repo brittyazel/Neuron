@@ -125,11 +125,12 @@
 
 						if (icon and icon.filler) then
 
-							icon.oShow = icon.Show
-							icon.oHide = icon.Hide
-
-							icon.Show = function(self) self.filler:Show() self:oShow() end
-							icon.Hide = function(self) self.filler:Hide() self:oHide() end
+							if not Neuron:IsHooked(icon, "Show") then
+								Neuron:Hook(icon, "Show", function(self) self.filler:Show() end, true)
+							end
+							if not Neuron:IsHooked(icon, "Hide") then
+								Neuron:Hook(icon, "Hide", function(self) self.filler:Hide() end, true)
+							end
 						end
 					</OnLoad>
 				</Scripts>
