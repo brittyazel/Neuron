@@ -1079,7 +1079,7 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 	self:MACRO_Reset()
 	self:UpdateAll(true)
 
-	if not self.class == "flyout" then
+	if self.class ~= "flyout" then
 		Neuron.NeuronBinder:ApplyBindings(self)
 	end
 end
