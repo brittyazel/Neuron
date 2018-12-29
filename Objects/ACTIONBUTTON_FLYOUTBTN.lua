@@ -548,9 +548,9 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
-				button:MACRO_UpdateParse()
-				button:MACRO_Reset()
-				button:MACRO_UpdateAll(true)
+				button:UpdateParse()
+				button:Reset()
+				button:UpdateAll(true)
 
 				list[#list+1] = button.id--table.insert(list, button.id)
 
@@ -805,11 +805,11 @@ function ACTIONBUTTON:Flyout_PostClick()
 	button.data.macro_Icon = self:GetAttribute("macro_Icon") or false
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
-	button:MACRO_UpdateParse()
-	button:MACRO_Reset()
-	button:MACRO_UpdateAll(true)
+	button:UpdateParse()
+	button:Reset()
+	button:UpdateAll(true)
 
-	self:MACRO_UpdateState()
+	self:UpdateState()
 end
 
 function ACTIONBUTTON:Flyout_GetButton()
@@ -874,13 +874,13 @@ function ACTIONBUTTON:Flyout_GetButton()
 	]]
 
 	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
-	button:SetScript("OnEnter", function(self, ...) self:MACRO_OnEnter(...) end)
-	button:SetScript("OnLeave", function(self, ...) self:MACRO_OnLeave(...) end)
+	button:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	button:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 	button:SetScript("OnEvent", function(self, event, ...) self:Flyout_OnEvent(event, ...) end)
 	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
-	button:SetScript("OnShow", function(self) self:UpdateButton(); self:MACRO_UpdateIcon(); self:MACRO_UpdateState() end)
-	button:SetScript("OnHide", function(self) self:UpdateButton(); self:MACRO_UpdateIcon(); self:MACRO_UpdateState() end)
+	button:SetScript("OnShow", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
+	button:SetScript("OnHide", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
 
 	button:WrapScript(button, "OnClick", [[
 			local button = self:GetParent():GetParent()

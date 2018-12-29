@@ -292,7 +292,7 @@ function BUTTON:SetData(bar)
 
 	self:GetSkinned()
 
-	self:MACRO_UpdateTimers()
+	self:UpdateTimers()
 end
 
 
@@ -407,36 +407,36 @@ end
 
 
 
-function BUTTON:MACRO_UpdateTimers(...)
-	self:MACRO_UpdateCooldown()
+function BUTTON:UpdateTimers(...)
+	self:UpdateCooldown()
 
 	for k in pairs(Neuron.unitAuras) do
-		self:MACRO_UpdateAuraWatch(k, self.macrospell)
+		self:UpdateAuraWatch(k, self.macrospell)
 	end
 end
 
 
-function BUTTON:MACRO_UpdateCooldown(update)
+function BUTTON:UpdateCooldown(update)
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
 	if (show and #show>0) then
 		if (NeuronItemCache[show]) then
-			self:MACRO_SetItemCooldown(show)
+			self:SetItemCooldown(show)
 		else
-			self:MACRO_SetSpellCooldown(show)
+			self:SetSpellCooldown(show)
 		end
 
 	elseif (spell and #spell>0) then
-		self:MACRO_SetSpellCooldown(spell)
+		self:SetSpellCooldown(spell)
 	elseif (item and #item>0) then
-		self:MACRO_SetItemCooldown(item)
+		self:SetItemCooldown(item)
 	else
 		self:SetTimer(0, 0, 0)
 	end
 end
 
 
-function BUTTON:MACRO_UpdateAuraWatch(unit, spell)
+function BUTTON:UpdateAuraWatch(unit, spell)
 
 	local uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count, uaw_color
 
