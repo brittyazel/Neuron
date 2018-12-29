@@ -885,6 +885,10 @@ function Neuron:HideBlizzardUI()
 	if (not Neuron:IsHooked('MultiActionBar_Update')) then
 		Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
+
+	if (not Neuron:IsHooked('OverrideActionBar_UpdateSkin')) then
+		Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
+	end
 end
 
 function Neuron:ToggleBlizzUI()
