@@ -155,7 +155,6 @@ function ACTIONBUTTON:SetUpEvents()
 
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-	self:RegisterEvent("ITEM_LOCK_CHANGED")
 	self:RegisterEvent("ACTIONBAR_SHOWGRID")
 	self:RegisterEvent("ACTIONBAR_HIDEGRID")
 
@@ -172,7 +171,7 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("SPELL_UPDATE_CHARGES")
 	self:RegisterEvent("SPELL_UPDATE_USABLE")
 
-	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	--self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 
 	self:RegisterEvent("MODIFIER_STATE_CHANGED")
 
@@ -812,9 +811,9 @@ function ACTIONBUTTON:SetSpellCooldown(spell)
 	end
 
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
-		self:SetTimer(chStart, chDuration, enable, charges, maxCharges, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetTimer(chStart, chDuration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	else
-		self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 
 end
@@ -835,7 +834,7 @@ function ACTIONBUTTON:SetItemCooldown(item)
 			self.iconframeaurawatch:Hide()
 		end
 
-		self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end
 
@@ -1107,10 +1106,6 @@ function ACTIONBUTTON:ACTIONBAR_SLOT_CHANGED(...)
 	if (self.data.macro_Watch or self.data.macro_Equip) then
 		self:UpdateIcon()
 	end
-end
-
-
-function ACTIONBUTTON:ITEM_LOCK_CHANGED(...)
 end
 
 

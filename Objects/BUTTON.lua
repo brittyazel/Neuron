@@ -23,30 +23,24 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
-function BUTTON:SetTimer(start, duration, enable, charges, maxCharges, timer, color1, color2, cdAlpha)
+function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha)
 
 	local cdFrame = self.iconframecooldown
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 		cdFrame:SetAlpha(1)
 
-		if (charges and maxCharges and maxCharges ~= 1 and charges < maxCharges) then
-			CooldownFrame_Set(cdFrame, start, duration, enable)
-		else
-			CooldownFrame_Set(cdFrame, start, duration, enable)
-		end
+		CooldownFrame_Set(cdFrame, start, duration, enable)
+
+
+		cdFrame.timer:Show()
 
 		if (duration >= Neuron.TIMERLIMIT) then
 			cdFrame.duration = duration
 			cdFrame.start = start
 
-			cdFrame.timer:Show()
-
 			if (timer) then
-
-				if (not cdFrame.expiry) then
-					cdFrame.timer:SetTextColor(color1[1], color1[2], color1[3])
-				end
+				cdFrame.normalcolor = color1
 				cdFrame.expirecolor = color2
 				Neuron.cooldowns[cdFrame] = true
 			end
@@ -62,7 +56,7 @@ function BUTTON:SetTimer(start, duration, enable, charges, maxCharges, timer, co
 	else
 		cdFrame.duration = 0
 		cdFrame.start = 0
-		CooldownFrame_Set(cdFrame, 0, 0, 0)
+		cdFrame.timer:Hide()
 	end
 end
 
@@ -75,7 +69,6 @@ function Neuron.Cooldowns_OnUpdate()
 	for cd in next, Neuron.cooldowns do
 
 		coolDown = floor(cd.duration-(GetTime()-cd.start))
-		formatted, size = coolDown, cd.button:GetWidth()*0.45
 
 		if (coolDown < 1) then
 			if (coolDown < 0) then
@@ -86,7 +79,6 @@ function Neuron.Cooldowns_OnUpdate()
 				cd.timerCD = nil
 				cd.expirecolor = nil
 				cd.cdsize = nil
-				cd.expiry = nil
 
 			elseif (coolDown >= 0) then
 				if (cd.alphafade) then
@@ -99,19 +91,26 @@ function Neuron.Cooldowns_OnUpdate()
 				formatted = math.ceil(coolDown/86400)
 				formatted = formatted.."d"
 				size = cd.button:GetWidth()*0.3
+				cd.timer:SetTextColor(cd.normalcolor[1], cd.normalcolor[2], cd.normalcolor[3])
 			elseif (coolDown >= 3600) then
 				formatted = math.ceil(coolDown/3600)
 				formatted = formatted.."h"
 				size = cd.button:GetWidth()*0.3
+				cd.timer:SetTextColor(cd.normalcolor[1], cd.normalcolor[2], cd.normalcolor[3])
 			elseif (coolDown >= 60) then
 				formatted = math.ceil(coolDown/60)
 				formatted = formatted.."m"
 				size = cd.button:GetWidth()*0.3
+				cd.timer:SetTextColor(cd.normalcolor[1], cd.normalcolor[2], cd.normalcolor[3])
+			elseif (coolDown >=6) then
+				formatted = coolDown
+				size = cd.button:GetWidth()*0.45
+				cd.timer:SetTextColor(cd.normalcolor[1], cd.normalcolor[2], cd.normalcolor[3])
 			elseif (coolDown < 6) then
+				formatted = coolDown
 				size = cd.button:GetWidth()*0.6
 				if (cd.expirecolor) then
 					cd.timer:SetTextColor(cd.expirecolor[1], cd.expirecolor[2], cd.expirecolor[3]); cd.expirecolor = nil
-					cd.expiry = true
 				end
 			end
 
@@ -482,7 +481,7 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 
 			elseif (self.auraText) then
 				self:SetTimer(0, 0, 0)
-				self:SetTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, _, _, self.auraText, uaw_color)
+				self:SetTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color)
 			else
 				self:SetTimer(0, 0, 0)
 			end
