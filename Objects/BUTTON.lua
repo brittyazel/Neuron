@@ -7,6 +7,9 @@ Neuron.BUTTON = BUTTON
 local SKIN = LibStub("Masque", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
+--LibStub("AceBucket-3.0"):Embed(BUTTON)
+--LibStub("AceEvent-3.0"):Embed(BUTTON)
+
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
@@ -65,7 +68,7 @@ end
 
 
 --this function runs in real time and is controlled from the OnUpdate function in Neuron.lua
-function BUTTON.Cooldowns_OnUpdate()
+function Neuron.Cooldowns_OnUpdate()
 
 	local coolDown, formatted, size
 

@@ -242,7 +242,8 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
-	Neuron:HookScript(Neuron, "OnUpdate", function(self, elapsed) self:controlOnUpdate(elapsed) end)
+	Neuron:ScheduleRepeatingTimer("Cooldowns_OnUpdate", .5)
+	Neuron:ScheduleRepeatingTimer("BAR_OnUpdate", .1)
 
 
 	Neuron:UpdateStanceStrings()
@@ -452,37 +453,6 @@ function Neuron:RefreshConfig()
 	StaticPopup_Show("ReloadUI")
 end
 
-
-------------------------------------------------------------
---------------------Intermediate Functions------------------
-------------------------------------------------------------
-
----TODO: we need to fix the throttling so that we don't bombard a single frame with ALL the processing, but instead spread out the processing on multiple frames
-
----this is the new controlOnUpdate function that will control all the other onUpdate functions.
-function Neuron:controlOnUpdate(elapsed)
-
-	if not Neuron.elapsed then
-		Neuron.elapsed = 0
-	end
-
-	Neuron.elapsed = Neuron.elapsed + elapsed
-
-	---Throttled OnUpdate calls
-	if (Neuron.elapsed > Neuron.THROTTLE and Neuron.enteredWorld) then
-
-		Neuron.BUTTON.Cooldowns_OnUpdate()
-
-		Neuron.elapsed = 0
-	end
-
-	---UnThrottled OnUpdate calls
-	if(Neuron.enteredWorld) then
-		Neuron.BAR.controlOnUpdate(elapsed) --this handles auto showing/hiding the bars on mouseover
-	end
-
-
-end
 
 -----------------------------------------------------------------
 

@@ -100,7 +100,7 @@ end
 
 
 --this function gets called via controlOnUpdate in the main Neuron.lua
-function BAR.controlOnUpdate(elapsed)
+function Neuron.BAR_OnUpdate()
 	for k,v in pairs(autoHideIndex) do
 		if (v~=nil) then
 

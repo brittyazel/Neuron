@@ -1075,7 +1075,7 @@ function ACTIONBUTTON:MACRO_UNIT_SPELLCAST_INTERRUPTED(...)
 
 	local unit = select(1, ...)
 
-	if ((unit == "player" or unit == "pet") and spell and self.macrospell) then
+	if ((unit == "player" or unit == "pet") and self.macrospell) then
 
 		self:MACRO_UpdateTimers(...)
 	end
@@ -2095,6 +2095,7 @@ end
 
 
 function ACTIONBUTTON:MACRO_OnShow(...)
+
 	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
 	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
 	self:RegisterEvent("ACTIONBAR_UPDATE_STATE")
