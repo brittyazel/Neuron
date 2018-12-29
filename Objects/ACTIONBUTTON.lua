@@ -1177,7 +1177,7 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	local spellInfoName, icon
 
 	if (NeuronSpellCache[spell]) then
-		spellInfoName = NeuronSpellCache[spell].spellInfoName
+		spellInfoName = NeuronSpellCache[spell].spellName
 		icon = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
 		if not icon then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
 			icon = NeuronSpellCache[spell].icon
@@ -1197,6 +1197,7 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 
 	self.data.macro_Icon = icon  --also set later in SetSpellIcon
 	self.data.macro_Name = spellInfoName
+	print(self.data.macro_Name)
 	self.data.macro_Watch = false
 	self.data.macro_Equip = false
 	self.data.macro_Note = ""
