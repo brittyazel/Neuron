@@ -324,7 +324,7 @@ function BAR:AddVisibilityDriver(handler, state, conditions)
 
 	if (MBS[state]) then
 
-		RegisterStateDriver(handler, state, conditions)
+		RegisterAttributeDriver(handler, "state-"..state, conditions);
 
 		if (handler:GetAttribute("activestates"):find(state)) then
 			handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", handler:GetAttribute("state-"..state)..";"))
@@ -418,7 +418,7 @@ function BAR:AddStates(handler, state, conditions)
 	if (state) then
 
 		if (MAS[state]) then
-			RegisterStateDriver(handler, state, conditions)
+			RegisterAttributeDriver(handler, "state-"..state, conditions);
 		end
 
 		if (MAS[state].homestate) then
@@ -792,7 +792,8 @@ function BAR:CreateWatcher()
             end
     ]])
 
-	RegisterStateDriver(watcher, "petbattle", "[petbattle] hide; [nopetbattle] show")
+	RegisterAttributeDriver(watcher, "state-petbattle", "[petbattle] hide; [nopetbattle] show");
+
 
 end
 

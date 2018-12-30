@@ -132,8 +132,6 @@ end
 
 function PETBTN:PET_UpdateCooldown()
 
-	local DB = Neuron.db.profile
-
 	local actionID = self.actionID
 
 	if self.HasPetAction(actionID) then
@@ -279,6 +277,11 @@ end
 
 
 function PETBTN:OnDragStart()
+
+	if InCombatLockdown() then
+		return
+	end
+
 	if (not self.barLock) then
 		self.drag = true
 	elseif (self.barLockAlt and IsAltKeyDown()) then
