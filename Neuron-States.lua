@@ -221,8 +221,7 @@ Neuron.MANAGED_BAR_STATES = {
 
 	pet = {
 		homestate = "pet0",
-		--states = "[vehicleui] pet0; [possessbar] pet0; [overridebar] pet0; [nopet] pet0; [pet] pet1",
-		states = "[nopet] pet0; [@pet,exists,nodead] pet1",
+		states = "[vehicleui] pet0; [possessbar] pet0; [overridebar] pet0; [nopet] pet0; [pet] pet1",
 		rangeStart = 2,
 		rangeStop = 3,
 		order = 3,

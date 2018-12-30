@@ -416,7 +416,9 @@ end
 function BUTTON:UpdateCooldown(update)
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
-	if (show and #show>0) then
+	if (self.actionID) then
+		self:ACTION_SetCooldown(self.actionID)
+	elseif (show and #show>0) then
 		if (NeuronItemCache[show]) then
 			self:SetItemCooldown(show)
 		else
@@ -429,6 +431,27 @@ function BUTTON:UpdateCooldown(update)
 		self:SetItemCooldown(item)
 	else
 		self:SetTimer(0, 0, 0)
+	end
+end
+
+function BUTTON:ACTION_SetCooldown(action)
+
+	local actionID = tonumber(action)
+
+	if (actionID) then
+
+		if (HasAction(actionID)) then
+
+			local start, duration, enable = GetActionCooldown(actionID)
+
+			if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
+				self.auraQueue = self.iconframeaurawatch.queueinfo
+				self.iconframeaurawatch.duration = 0
+				self.iconframeaurawatch:Hide()
+			end
+
+			self:SetTimer(start, duration, enable, _, _, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		end
 	end
 end
 

@@ -600,8 +600,9 @@ function ACTIONBUTTON:UpdateIcon(...)
 
 	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
 
-
-	if (show and #show>0) then
+	if (self.actionID) then
+		texture = self:ACTION_SetIcon(self.actionID)
+	elseif (show and #show>0) then
 		if(NeuronItemCache[show]) then
 			texture = self:SetItemIcon(show)
 		else
@@ -764,7 +765,10 @@ function ACTIONBUTTON:UpdateState(...)
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
 
-	if (show and #show>0) then
+	if (self.actionID) then
+		self:ACTION_UpdateState(self.actionID)
+
+	elseif (show and #show>0) then
 
 		if (NeuronItemCache[show]) then
 			self:SetItemState(show)
@@ -914,6 +918,10 @@ function ACTIONBUTTON:UpdateButton(...)
 	if (self.editmode) then
 
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+
+	elseif (self.actionID) then
+
+		self:ACTION_UpdateUsable(self.actionID)
 
 	elseif (self.macroshow and #self.macroshow>0) then
 
@@ -1912,7 +1920,10 @@ function ACTIONBUTTON:SetTooltip(edit)
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
-	if (show and #show>0) then
+	if (self.actionID) then
+		self:ACTION_SetTooltip(self.actionID)
+
+	elseif (show and #show>0) then
 		if(NeuronItemCache[show]) then
 			self:SetItemTooltip(show)
 		else
@@ -2321,6 +2332,109 @@ function ACTIONBUTTON:SKINCallback(group,...)
 			if (btn.bar and btn.bar.data.name == group) then
 				btn:GetSkinned()
 			end
+		end
+	end
+end
+
+
+
+----ACTION functions
+--this is used in things like the possess/vehicle/override bars
+
+function ACTIONBUTTON:ACTION_SetIcon(action)
+	local actionID = tonumber(action)
+
+	if (actionID) then
+		if (actionID == 0) then
+			if (self.specAction and Neuron.SPECIALACTIONS[self.specAction]) then
+				self.iconframeicon:SetTexture(Neuron.SPECIALACTIONS[self.specAction])
+			else
+				self.iconframeicon:SetTexture(0,0,0)
+			end
+
+		else
+			self.macroname:SetText(GetActionText(actionID))
+			if (HasAction(actionID)) then
+				self.iconframeicon:SetTexture(GetActionTexture(actionID))
+			else
+				self.iconframeicon:SetTexture(0,0,0)
+			end
+		end
+
+		self.iconframeicon:Show()
+	else
+		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+	end
+
+	return self.iconframeicon:GetTexture()
+end
+
+
+
+function ACTIONBUTTON:ACTION_UpdateState(action)
+	local actionID = tonumber(action)
+
+	self.count:SetText("")
+
+	if (actionID) then
+		self.macroname:SetText("")
+
+		if (IsCurrentAction(actionID) or IsAutoRepeatAction(actionID)) then
+			self:SetChecked(1)
+		else
+			self:SetChecked(nil)
+		end
+
+		if ((IsAttackAction(actionID) and IsCurrentAction(actionID)) or IsAutoRepeatAction(actionID)) then
+			self:UpdateRange(true)
+		else
+			self:UpdateRange()
+		end
+	else
+		self:SetChecked(nil)
+		self:UpdateRange()
+	end
+end
+
+
+function ACTIONBUTTON:ACTION_UpdateUsable(action)
+	local actionID = tonumber(action)
+
+	if (actionID) then
+		if (actionID == 0) then
+			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		else
+			local isUsable, notEnoughMana = IsUsableAction(actionID)
+
+			if (isUsable) then
+				if (IsActionInRange(action, self.unit) == 0) then
+					self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+				else
+					self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+				end
+
+			elseif (notEnoughMana and self.manacolor) then
+				self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+			else
+				self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+			end
+		end
+
+	else
+		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+	end
+end
+
+
+function ACTIONBUTTON:ACTION_SetTooltip(action)
+	local actionID = tonumber(action)
+
+	if (actionID) then
+
+		self.UpdateTooltip = nil
+
+		if (HasAction(actionID)) then
+			GameTooltip:SetAction(actionID)
 		end
 	end
 end
