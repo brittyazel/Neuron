@@ -82,7 +82,7 @@ function BUTTON:CooldownCounterUpdate()
 	local normalcolor = self.iconframecooldown.normalcolor
 	local expirecolor = self.iconframecooldown.expirecolor
 
-	coolDown = ceil(self:TimeLeft(self.iconframecooldown.spellTimer))
+	coolDown = self:TimeLeft(self.iconframecooldown.spellTimer)
 
 	if self.iconframecooldown.cooldownTimer then --check if flag is set, otherwise skip
 
@@ -90,7 +90,6 @@ function BUTTON:CooldownCounterUpdate()
 			if (coolDown <= 0) then
 				self.iconframecooldown.timer:Hide()
 				self.iconframecooldown.timer:SetText("")
-				self.iconframecooldown.timerCD = nil
 				self.iconframecooldown.expirecolor = nil
 				self.iconframecooldown.cdsize = nil
 
@@ -100,28 +99,28 @@ function BUTTON:CooldownCounterUpdate()
 				end
 			end
 
-		elseif (self.iconframecooldown.timer:IsShown() and coolDown ~= self.iconframecooldown.timerCD) then
+		elseif (self.iconframecooldown.timer:IsShown()) then
 			if (coolDown >= 86400) then
-				formatted = math.ceil(coolDown/86400)
+				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 			elseif (coolDown >= 3600) then
-				formatted = math.ceil(coolDown/3600)
+				formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 			elseif (coolDown >= 60) then
-				formatted = math.ceil(coolDown/60)
+				formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 			elseif (coolDown >=6) then
-				formatted = coolDown
+				formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.45
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 			elseif (coolDown < 6) then
-				formatted = coolDown
+				formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.6
 				if (expirecolor) then
 					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
@@ -134,7 +133,6 @@ function BUTTON:CooldownCounterUpdate()
 				self.iconframecooldown.cdsize = size
 			end
 
-			self.iconframecooldown.timerCD = coolDown
 			self.iconframecooldown.timer:Show()
 			self.iconframecooldown.timer:SetText(formatted)
 
