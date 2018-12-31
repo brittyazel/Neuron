@@ -28,23 +28,25 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
-		CooldownFrame_Set(self.iconframecooldown, start, duration, enable)
+		CooldownFrame_Set(self.iconframecooldown, start, duration, enable) --set clock style cooldown animation
 
-		self.iconframecooldown.timer:Show()
+		self.iconframecooldown.timer:Show() --show the element that holds the cooldown animation
 
-		if (duration >= Neuron.TIMERLIMIT) then
+		if (duration >= Neuron.TIMERLIMIT) then --if spells have a cooldown less than 4sec then don't show a full cooldown
 
-			if (cooldownTimer or cooldownAlpha) then
+			if (cooldownTimer or cooldownAlpha) then --only set a timer if we explicitely want to (this saves CPU for a lot of people)
 
+				--set a local variable to the boolean state of either Timer or the Alpha
 				self.iconframecooldown.cooldownTimer = cooldownTimer
 				self.iconframecooldown.cooldownAlpha = cooldownAlpha
 
+				--Get the remaining time left so when we re-call the timer when switching back to a state it has the correct time left instead of the full time
 				local timeleft = duration-(GetTime()-start)
+				--set timer that is both our cooldown counter, but also the cancles the repeating updating timer at the end
 				self.iconframecooldown.spellTimer = self:ScheduleTimer(function() self:CancelAllTimers() end, timeleft)
 
-				--start a timer that will
+				--schedule a repeating timer that is physically keeping track of the countdown and switching the alpha and count text
 				self.iconframecooldown.countdownTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.20)
-
 				self.iconframecooldown.normalcolor = color1
 				self.iconframecooldown.expirecolor = color2
 			else
@@ -53,6 +55,8 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 			end
 
 		else
+			--cleanup so on state changes the cooldowns don't persist
+			self:CancelAllTimers()
 			CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
 			self.iconframecooldown.timer:Hide()
 			self.iconframecooldown.button:SetAlpha(1)
@@ -60,6 +64,8 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 			self.iconframecooldown.cooldownAlpha = false
 		end
 	else
+		--cleanup so on state changes the cooldowns don't persist
+		self:CancelAllTimers()
 		CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
 		self.iconframecooldown.timer:Hide()
 		self.iconframecooldown.button:SetAlpha(1)
