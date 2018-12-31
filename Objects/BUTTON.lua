@@ -9,6 +9,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 LibStub("AceBucket-3.0"):Embed(BUTTON)
 LibStub("AceEvent-3.0"):Embed(BUTTON)
+LibStub("AceTimer-3.0"):Embed(BUTTON)
 
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -25,106 +26,102 @@ end
 
 function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha)
 
-	local cdFrame = self.iconframecooldown
-
-
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
-		CooldownFrame_Set(cdFrame, start, duration, enable)
+		CooldownFrame_Set(self.iconframecooldown, start, duration, enable)
 
-		cdFrame.timer:Show()
+		self.iconframecooldown.timer:Show()
 
 		if (duration >= Neuron.TIMERLIMIT) then
-			cdFrame.duration = duration
-			cdFrame.start = start
 
 			if (timer) then
-				cdFrame.normalcolor = color1
-				cdFrame.expirecolor = color2
-				Neuron.cooldowns[cdFrame] = true
+				--start a timer with the duration of our cooldown
+				if self:TimeLeft(self.iconframecooldown.cdTimer) == 0 then
+					self.iconframecooldown.cdTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.countdownTimer)end, duration)
+				end
+
+				--start a timer that will
+				self.iconframecooldown.countdownTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.25)
+
+				self.iconframecooldown.normalcolor = color1
+				self.iconframecooldown.expirecolor = color2
+
+				--[[if (cdAlpha) then
+					Neuron.cdAlphas[self.iconframecooldown] = true
+				end]]
+
 			end
 
-			if (cdAlpha) then
-				Neuron.cdAlphas[cdFrame] = true
-			end
-
-		elseif (Neuron.cooldowns[cdFrame]) then
-			cdFrame.duration = 1
+		else
+			CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
+			self.iconframecooldown.timer:Hide()
 		end
-
-	else
-		cdFrame.duration = 0
-		cdFrame.start = 0
-		cdFrame.timer:Hide()
 	end
 end
 
 
 --this function runs in real time and is controlled from the OnUpdate function in Neuron.lua
-function Neuron.Cooldowns_OnUpdate()
+function BUTTON:CooldownCounterUpdate()
 
 	local coolDown, formatted, size
 
-	for cd in next, Neuron.cooldowns do
+	coolDown = floor(self:TimeLeft(self.iconframecooldown.cdTimer))
 
-		coolDown = floor(cd.duration-(GetTime()-cd.start))
+	if (coolDown < 1) then
+		if (coolDown <= 0) then
+			self.iconframecooldown.timer:Hide()
+			self.iconframecooldown.timer:SetText("")
+			self.iconframecooldown.timerCD = nil
+			self.iconframecooldown.expirecolor = nil
+			self.iconframecooldown.cdsize = nil
 
-		if (coolDown < 1) then
-			if (coolDown < 0) then
-				Neuron.cooldowns[cd] = nil
-
-				cd.timer:Hide()
-				cd.timer:SetText("")
-				cd.timerCD = nil
-				cd.expirecolor = nil
-				cd.cdsize = nil
-
-			elseif (coolDown >= 0) then
-				if (cd.alphafade) then
-					cd:SetAlpha(cd.duration-(GetTime()-cd.start))
-				end
+		elseif (coolDown > 0) then
+			if (self.iconframecooldown.alphafade) then
+				self.iconframecooldown:SetAlpha(coolDown)
 			end
-
-		elseif (cd.timer:IsShown() and coolDown ~= cd.timerCD) then
-			if (coolDown >= 86400) then
-				formatted = math.ceil(coolDown/86400)
-				formatted = formatted.."d"
-				size = cd.button:GetWidth()*0.3
-				cd.timer:SetTextColor(cd.normalcolor[1], cd.normalcolor[2], cd.normalcolor[3])
-			elseif (coolDown >= 3600) then
-				formatted = math.ceil(coolDown/3600)
-				formatted = formatted.."h"
-				size = cd.button:GetWidth()*0.3
-				cd.timer:SetTextColor(cd.normalcolor[1], cd.normalcolor[2], cd.normalcolor[3])
-			elseif (coolDown >= 60) then
-				formatted = math.ceil(coolDown/60)
-				formatted = formatted.."m"
-				size = cd.button:GetWidth()*0.3
-				cd.timer:SetTextColor(cd.normalcolor[1], cd.normalcolor[2], cd.normalcolor[3])
-			elseif (coolDown >=6) then
-				formatted = coolDown
-				size = cd.button:GetWidth()*0.45
-				cd.timer:SetTextColor(cd.normalcolor[1], cd.normalcolor[2], cd.normalcolor[3])
-			elseif (coolDown < 6) then
-				formatted = coolDown
-				size = cd.button:GetWidth()*0.6
-				if (cd.expirecolor) then
-					cd.timer:SetTextColor(cd.expirecolor[1], cd.expirecolor[2], cd.expirecolor[3]); cd.expirecolor = nil
-				end
-			end
-
-			if (not cd.cdsize or cd.cdsize ~= size) then
-				cd.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
-				cd.cdsize = size
-			end
-
-			cd.timerCD = coolDown
-			cd.timer:Show()
-			cd.timer:SetText(formatted)
 		end
+
+	elseif (self.iconframecooldown.timer:IsShown() and coolDown ~= self.iconframecooldown.timerCD) then
+		if (coolDown >= 86400) then
+			formatted = math.ceil(coolDown/86400)
+			formatted = formatted.."d"
+			size = self.iconframecooldown.button:GetWidth()*0.3
+			self.iconframecooldown.timer:SetTextColor(self.iconframecooldown.normalcolor[1], self.iconframecooldown.normalcolor[2], self.iconframecooldown.normalcolor[3])
+		elseif (coolDown >= 3600) then
+			formatted = math.ceil(coolDown/3600)
+			formatted = formatted.."h"
+			size = self.iconframecooldown.button:GetWidth()*0.3
+			self.iconframecooldown.timer:SetTextColor(self.iconframecooldown.normalcolor[1], self.iconframecooldown.normalcolor[2], self.iconframecooldown.normalcolor[3])
+		elseif (coolDown >= 60) then
+			formatted = math.ceil(coolDown/60)
+			formatted = formatted.."m"
+			size = self.iconframecooldown.button:GetWidth()*0.3
+			self.iconframecooldown.timer:SetTextColor(self.iconframecooldown.normalcolor[1], self.iconframecooldown.normalcolor[2], self.iconframecooldown.normalcolor[3])
+		elseif (coolDown >=6) then
+			formatted = coolDown
+			size = self.iconframecooldown.button:GetWidth()*0.45
+			self.iconframecooldown.timer:SetTextColor(self.iconframecooldown.normalcolor[1], self.iconframecooldown.normalcolor[2], self.iconframecooldown.normalcolor[3])
+		elseif (coolDown < 6) then
+			formatted = coolDown
+			size = self.iconframecooldown.button:GetWidth()*0.6
+			if (self.iconframecooldown.expirecolor) then
+				self.iconframecooldown.timer:SetTextColor(self.iconframecooldown.expirecolor[1], self.iconframecooldown.expirecolor[2], self.iconframecooldown.expirecolor[3])
+				self.iconframecooldown.expirecolor = nil
+			end
+		end
+
+		if (not self.iconframecooldown.cdsize or self.iconframecooldown.cdsize ~= size) then
+			self.iconframecooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
+			self.iconframecooldown.cdsize = size
+		end
+
+		self.iconframecooldown.timerCD = coolDown
+		self.iconframecooldown.timer:Show()
+		self.iconframecooldown.timer:SetText(formatted)
+
 	end
 
-	for cd in next, Neuron.cdAlphas do
+	--[[for cd in next, Neuron.cdAlphas do
 		coolDown = ceil(cd.duration-(GetTime()-cd.start))
 
 		if (coolDown < 1) then
@@ -136,7 +133,7 @@ function Neuron.Cooldowns_OnUpdate()
 			cd.button:SetAlpha(cd.button.cdAlpha)
 			cd.alphaOn = true
 		end
-	end
+	end]]
 
 end
 

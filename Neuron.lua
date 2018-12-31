@@ -123,9 +123,6 @@ Neuron.SPECIALACTIONS = {
 
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
-Neuron.cooldowns = {}
-Neuron.cdAlphas = {}
-
 Neuron.THROTTLE = 0.2
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLLERANCE = 28
@@ -241,7 +238,7 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
 
-	Neuron:ScheduleRepeatingTimer("Cooldowns_OnUpdate", .25)
+	--Neuron:ScheduleRepeatingTimer("Cooldowns_OnUpdate", .25)
 	Neuron:ScheduleRepeatingTimer("BAR_OnUpdate", .075)
 
 
