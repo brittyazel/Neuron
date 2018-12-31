@@ -15,7 +15,7 @@ local LATEST_DB_VERSION = 1.3
 --I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
 local UPDATE_MESSAGE = [[Thanks for updating Neuron!
 
-Welcome to path 8.1! Neuron has had a LOT of work done to it over the last few weeks, and you all should notice a significant performance increase, and much more stable frames.
+Welcome to patch 8.1! Neuron has had a LOT of work done to it over the last few weeks, and you all should notice a significant performance increase, and much more stable frames.
 
 Also, if you didn't know, Neuron is a labor of love for me, and it is just I doing the work. Appreciation in the form of donations are always welcome, though there is absolutely no expectation to do so.
 
@@ -147,42 +147,9 @@ function Neuron:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	----DATABASE VERSION CHECKING AND MIGRATING----------
+	---Check if the current database needs to be migrated, and attempt the migration
+	Neuron:DatabaseMigration()
 
-	if not DB.DBVersion then
-		--we need to know if a profile doesn't have a DBVersion because it is brand new, or because it pre-dates DB versioning
-		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
-		--eventually we can get rid of this check and just assume that having no DBVersion means that it is a fresh profile
-		if not DB.NeuronCDB then --"NeuronCDB" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
-			DB.DBVersion = LATEST_DB_VERSION
-		else
-			DB.DBVersion = 1.0
-		end
-	end
-
-	if DB.DBVersion ~= LATEST_DB_VERSION then --checks if the DB version is out of date, and if so it calls the DB Fixer
-		local success = pcall(Neuron.DBFixer, Neuron, DB, DB.DBVersion)
-
-		if not success then
-
-			StaticPopupDialogs["Profile_Migration_Failed"] = {
-				text = "We are sorry, but your Neuron profile migration has failed. By clicking accept you agree to reset your current profile to the its default values.",
-				button1 = ACCEPT,
-				button2 = CANCEL,
-				timeout = 0,
-				whileDead = true,
-				OnAccept = function() Neuron.db:ResetProfile() end,
-				OnCancel = function() DisableAddOn("Neuron"); ReloadUI() end,
-			}
-
-			StaticPopup_Show("Profile_Migration_Failed")
-
-		else
-			DB.DBVersion = LATEST_DB_VERSION
-			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
-		end
-	end
-	-----------------------------------------------------
 
 	---load saved variables into working variable containers
 	NeuronItemCache = DB.NeuronItemCache
@@ -460,6 +427,48 @@ end
 -------------------------------------------------------------------------
 --------------------Profiles---------------------------------------------
 -------------------------------------------------------------------------
+
+
+function Neuron:DatabaseMigration()
+	----DATABASE VERSION CHECKING AND MIGRATING----------
+
+	if not DB.DBVersion then
+		--we need to know if a profile doesn't have a DBVersion because it is brand new, or because it pre-dates DB versioning
+		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
+		--eventually we can get rid of this check and just assume that having no DBVersion means that it is a fresh profile
+		if not DB.NeuronCDB then --"NeuronCDB" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
+			DB.DBVersion = LATEST_DB_VERSION
+		else
+			DB.DBVersion = 1.0
+		end
+	end
+
+	if DB.DBVersion ~= LATEST_DB_VERSION then --checks if the DB version is out of date, and if so it calls the DB Fixer
+		local success = pcall(Neuron.DBFixer, Neuron, DB, DB.DBVersion)
+
+		if not success then
+
+			StaticPopupDialogs["Profile_Migration_Failed"] = {
+				text = "We are sorry, but your Neuron profile migration has failed. By clicking accept you agree to reset your current profile to the its default values.",
+				button1 = ACCEPT,
+				button2 = CANCEL,
+				timeout = 0,
+				whileDead = true,
+				OnAccept = function() Neuron.db:ResetProfile() end,
+				OnCancel = function() DisableAddOn("Neuron"); ReloadUI() end,
+			}
+
+			StaticPopup_Show("Profile_Migration_Failed")
+
+		else
+			DB.DBVersion = LATEST_DB_VERSION
+			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
+		end
+	end
+	-----------------------------------------------------
+end
+
+
 
 function Neuron:RefreshConfig()
 	DB = Neuron.db.profile

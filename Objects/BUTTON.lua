@@ -57,6 +57,7 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 		else
 			--Cancel Timers as they're unnecessary
 			self:CancelAllTimers()
+			self.iconframecooldown.timer:SetText("")
 			self.iconframecooldown.cooldownTimer = false
 			self.iconframecooldown.cooldownAlpha = false
 		end
@@ -64,6 +65,7 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 		--cleanup so on state changes the cooldowns don't persist
 		self:CancelAllTimers()
 		CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
+		self.iconframecooldown.timer:SetText("")
 		self.iconframecooldown.timer:Hide()
 		self.iconframecooldown.button:SetAlpha(1)
 		self.iconframecooldown.cooldownTimer = false
@@ -80,7 +82,7 @@ function BUTTON:CooldownCounterUpdate()
 	local normalcolor = self.iconframecooldown.normalcolor
 	local expirecolor = self.iconframecooldown.expirecolor
 
-	coolDown = floor(self:TimeLeft(self.iconframecooldown.spellTimer))
+	coolDown = ceil(self:TimeLeft(self.iconframecooldown.spellTimer))
 
 	if self.iconframecooldown.cooldownTimer then --check if flag is set, otherwise skip
 
