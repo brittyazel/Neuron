@@ -161,9 +161,26 @@ function Neuron:OnInitialize()
 	end
 
 	if DB.DBVersion ~= LATEST_DB_VERSION then --checks if the DB version is out of date, and if so it calls the DB Fixer
-		Neuron:DBFixer(DB, DB.DBVersion)
-		DB.DBVersion = LATEST_DB_VERSION
-		Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
+		local success = pcall(Neuron.DBFixer, Neuron, DB, DB.DBVersion)
+
+		if not success then
+
+			StaticPopupDialogs["Profile_Migration_Failed"] = {
+				text = "We are sorry, but your Neuron profile migration has failed. By clicking accept you agree to reset your current profile to the its default values.",
+				button1 = ACCEPT,
+				button2 = CANCEL,
+				timeout = 0,
+				whileDead = true,
+				OnAccept = function() Neuron.db:ResetProfile() end,
+				OnCancel = function() DisableAddOn("Neuron"); ReloadUI() end,
+			}
+
+			StaticPopup_Show("Profile_Migration_Failed")
+
+		else
+			DB.DBVersion = LATEST_DB_VERSION
+			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
+		end
 	end
 	-----------------------------------------------------
 
@@ -459,6 +476,7 @@ function Neuron:LoginMessage()
 		text = UPDATE_MESSAGE,
 		button1 = OKAY,
 		timeout = 0,
+		whileDead = true,
 		OnAccept = function() DB.updateWarning = LATEST_VERSION_NUM end
 	}
 
