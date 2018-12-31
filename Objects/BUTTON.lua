@@ -82,7 +82,7 @@ function BUTTON:CooldownCounterUpdate()
 
 	coolDown = floor(self:TimeLeft(self.iconframecooldown.spellTimer))
 
-	if self.iconframecooldown.cooldownTimer then
+	if self.iconframecooldown.cooldownTimer then --check if flag is set, otherwise skip
 
 		if (coolDown < 1) then
 			if (coolDown <= 0) then
@@ -140,7 +140,7 @@ function BUTTON:CooldownCounterUpdate()
 
 	end
 
-	if self.iconframecooldown.cooldownAlpha then
+	if self.iconframecooldown.cooldownAlpha then --check if flag is set, otherwise skip
 
 		if (coolDown < 1) then
 			self.iconframecooldown.button:SetAlpha(1)

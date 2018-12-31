@@ -984,6 +984,7 @@ function Neuron:ToggleButtonEditMode(show)
 			bar:UpdateObjects()
 		end
 
+
 	else
 
 		Neuron.buttonEditMode = false
@@ -1004,6 +1005,10 @@ function Neuron:ToggleButtonEditMode(show)
 		end
 
 		Neuron:ChangeObject()
+
+		if (NeuronObjectEditor)then
+			NeuronObjectEditor:Hide()
+		end
 
 	end
 end
