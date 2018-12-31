@@ -3501,15 +3501,21 @@ end
 --not an optimal solution, but it works for now
 function NeuronGUI:hookHandler(handler)
 
-	handler:HookScript("OnAttributeChanged", function(self,name,value)
 
-		if(Neuron.CurrentObject) then
-			if (NeuronObjectEditor:IsVisible() and self == Neuron.CurrentObject.bar.handler and name == "activestate" and not NeuronButtonEditor.macroedit.edit.hasfocus) then
-				NeuronButtonEditor.macro.elapsed = 0
+
+	if not NeuronGUI:IsHooked("OnAttributeChanged") then
+
+		NeuronGUI:SecureHookScript(handler, "OnAttributeChanged", function(self,name,value)
+
+			if(Neuron.CurrentObject) then
+				if (NeuronObjectEditor:IsVisible() and self == Neuron.CurrentObject.bar.handler and name == "activestate" and not NeuronButtonEditor.macroedit.edit.hasfocus) then
+					NeuronButtonEditor.macro.elapsed = 0
+				end
 			end
-		end
 
-	end)
+		end)
+
+	end
 end
 
 function NeuronGUI:runUpdater(frame, elapsed)

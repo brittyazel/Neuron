@@ -211,10 +211,18 @@ function Neuron:Overrides()
 		CharacterBag3Slot.IconBorder:Hide()
 
 		---overwrite the Show function with a null function because it keeps coming back and won't stay hidden
-		Neuron:RawHook(CharacterBag0Slot.IconBorder, "Show", function() end, true)
-		Neuron:RawHook(CharacterBag1Slot.IconBorder, "Show", function() end, true)
-		Neuron:RawHook(CharacterBag2Slot.IconBorder, "Show", function() end, true)
-		Neuron:RawHook(CharacterBag3Slot.IconBorder, "Show", function() end, true)
+		if not Neuron:IsHooked(CharacterBag0Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag0Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag1Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag1Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag2Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag2Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag3Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag3Slot.IconBorder, "Show", function() end, true)
+		end
 	end
 
 
