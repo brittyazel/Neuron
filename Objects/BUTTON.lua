@@ -56,6 +56,8 @@ function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha
 		cdFrame.duration = 0
 		cdFrame.start = 0
 		cdFrame.timer:Hide()
+
+		CooldownFrame_Set(cdFrame, 0,0, 0)
 	end
 end
 
