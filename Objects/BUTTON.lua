@@ -35,10 +35,9 @@ function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha
 		if (duration >= Neuron.TIMERLIMIT) then
 
 			if (timer) then
-				--start a timer with the duration of our cooldown
-				if self:TimeLeft(self.iconframecooldown.cdTimer) == 0 then
-					self.iconframecooldown.cdTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.countdownTimer)end, duration)
-				end
+
+				self.iconframecooldown.duration = duration
+				self.iconframecooldown.start = start
 
 				--start a timer that will
 				self.iconframecooldown.countdownTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.25)
@@ -54,6 +53,8 @@ function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha
 
 		else
 			CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
+			self.iconframecooldown.duration = 0
+			self.iconframecooldown.start = 0
 			self.iconframecooldown.timer:Hide()
 		end
 	end
@@ -65,7 +66,7 @@ function BUTTON:CooldownCounterUpdate()
 
 	local coolDown, formatted, size
 
-	coolDown = floor(self:TimeLeft(self.iconframecooldown.cdTimer))
+	coolDown = floor(self.iconframecooldown.duration-(GetTime()-self.iconframecooldown.start))
 
 	if (coolDown < 1) then
 		if (coolDown <= 0) then
