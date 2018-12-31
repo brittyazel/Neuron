@@ -24,7 +24,7 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
-function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha)
+function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2, cooldownAlpha)
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
@@ -34,30 +34,37 @@ function BUTTON:SetTimer(start, duration, enable, timer, color1, color2, cdAlpha
 
 		if (duration >= Neuron.TIMERLIMIT) then
 
-			if (timer) then
+			if (cooldownTimer or cooldownAlpha) then
+
+				self.iconframecooldown.cooldownTimer = cooldownTimer
+				self.iconframecooldown.cooldownAlpha = cooldownAlpha
 
 				local timeleft = duration-(GetTime()-start)
 				self.iconframecooldown.spellTimer = self:ScheduleTimer(function() self:CancelAllTimers() end, timeleft)
 
 				--start a timer that will
-				self.iconframecooldown.countdownTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.50)
+				self.iconframecooldown.countdownTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.20)
 
 				self.iconframecooldown.normalcolor = color1
 				self.iconframecooldown.expirecolor = color2
-
-				--[[if (cdAlpha) then
-					Neuron.cdAlphas[self.iconframecooldown] = true
-				end]]
-
+			else
+				self.iconframecooldown.cooldownTimer = false
+				self.iconframecooldown.cooldownAlpha = false
 			end
 
 		else
 			CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
 			self.iconframecooldown.timer:Hide()
+			self.iconframecooldown.button:SetAlpha(1)
+			self.iconframecooldown.cooldownTimer = false
+			self.iconframecooldown.cooldownAlpha = false
 		end
 	else
 		CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
 		self.iconframecooldown.timer:Hide()
+		self.iconframecooldown.button:SetAlpha(1)
+		self.iconframecooldown.cooldownTimer = false
+		self.iconframecooldown.cooldownAlpha = false
 	end
 end
 
@@ -72,73 +79,72 @@ function BUTTON:CooldownCounterUpdate()
 
 	coolDown = floor(self:TimeLeft(self.iconframecooldown.spellTimer))
 
-	if (coolDown < 1) then
-		if (coolDown <= 0) then
-			self.iconframecooldown.timer:Hide()
-			self.iconframecooldown.timer:SetText("")
-			self.iconframecooldown.timerCD = nil
-			self.iconframecooldown.expirecolor = nil
-			self.iconframecooldown.cdsize = nil
+	if self.iconframecooldown.cooldownTimer then
 
-		elseif (coolDown > 0) then
-			if (self.iconframecooldown.alphafade) then
-				self.iconframecooldown:SetAlpha(coolDown)
+		if (coolDown < 1) then
+			if (coolDown <= 0) then
+				self.iconframecooldown.timer:Hide()
+				self.iconframecooldown.timer:SetText("")
+				self.iconframecooldown.timerCD = nil
+				self.iconframecooldown.expirecolor = nil
+				self.iconframecooldown.cdsize = nil
+
+			elseif (coolDown > 0) then
+				if (self.iconframecooldown.alphafade) then
+					self.iconframecooldown:SetAlpha(coolDown)
+				end
 			end
-		end
 
-	elseif (self.iconframecooldown.timer:IsShown() and coolDown ~= self.iconframecooldown.timerCD) then
-		if (coolDown >= 86400) then
-			formatted = math.ceil(coolDown/86400)
-			formatted = formatted.."d"
-			size = self.iconframecooldown.button:GetWidth()*0.3
-			self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
-		elseif (coolDown >= 3600) then
-			formatted = math.ceil(coolDown/3600)
-			formatted = formatted.."h"
-			size = self.iconframecooldown.button:GetWidth()*0.3
-			self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
-		elseif (coolDown >= 60) then
-			formatted = math.ceil(coolDown/60)
-			formatted = formatted.."m"
-			size = self.iconframecooldown.button:GetWidth()*0.3
-			self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
-		elseif (coolDown >=6) then
-			formatted = coolDown
-			size = self.iconframecooldown.button:GetWidth()*0.45
-			self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
-		elseif (coolDown < 6) then
-			formatted = coolDown
-			size = self.iconframecooldown.button:GetWidth()*0.6
-			if (expirecolor) then
-				self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
-				expirecolor = nil
+		elseif (self.iconframecooldown.timer:IsShown() and coolDown ~= self.iconframecooldown.timerCD) then
+			if (coolDown >= 86400) then
+				formatted = math.ceil(coolDown/86400)
+				formatted = formatted.."d"
+				size = self.iconframecooldown.button:GetWidth()*0.3
+				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+			elseif (coolDown >= 3600) then
+				formatted = math.ceil(coolDown/3600)
+				formatted = formatted.."h"
+				size = self.iconframecooldown.button:GetWidth()*0.3
+				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+			elseif (coolDown >= 60) then
+				formatted = math.ceil(coolDown/60)
+				formatted = formatted.."m"
+				size = self.iconframecooldown.button:GetWidth()*0.3
+				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+			elseif (coolDown >=6) then
+				formatted = coolDown
+				size = self.iconframecooldown.button:GetWidth()*0.45
+				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+			elseif (coolDown < 6) then
+				formatted = coolDown
+				size = self.iconframecooldown.button:GetWidth()*0.6
+				if (expirecolor) then
+					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
+					expirecolor = nil
+				end
 			end
-		end
 
-		if (not self.iconframecooldown.cdsize or self.iconframecooldown.cdsize ~= size) then
-			self.iconframecooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
-			self.iconframecooldown.cdsize = size
-		end
+			if (not self.iconframecooldown.cdsize or self.iconframecooldown.cdsize ~= size) then
+				self.iconframecooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
+				self.iconframecooldown.cdsize = size
+			end
 
-		self.iconframecooldown.timerCD = coolDown
-		self.iconframecooldown.timer:Show()
-		self.iconframecooldown.timer:SetText(formatted)
+			self.iconframecooldown.timerCD = coolDown
+			self.iconframecooldown.timer:Show()
+			self.iconframecooldown.timer:SetText(formatted)
+
+		end
 
 	end
 
-	--[[for cd in next, Neuron.cdAlphas do
-		coolDown = ceil(cd.duration-(GetTime()-cd.start))
+	if self.iconframecooldown.cooldownAlpha then
 
 		if (coolDown < 1) then
-			Neuron.cdAlphas[cd] = nil
-			cd.button:SetAlpha(1)
-			cd.alphaOn = nil
-
-		elseif (not cd.alphaOn) then
-			cd.button:SetAlpha(cd.button.cdAlpha)
-			cd.alphaOn = true
+			self.iconframecooldown.button:SetAlpha(1)
+		else
+			self.iconframecooldown.button:SetAlpha(self.iconframecooldown.button.cdAlpha)
 		end
-	end]]
+	end
 
 end
 
