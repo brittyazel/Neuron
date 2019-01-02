@@ -8,21 +8,9 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local LATEST_VERSION_NUM = "0.9.38" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local LATEST_VERSION_NUM = "1.0.3" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local LATEST_DB_VERSION = 1.3
-
---I don't think it's worth localizing these two strings. It's too much effort for messages that are going to change often. Sorry to everyone who doesn't speak English
-local UPDATE_MESSAGE = [[Thanks for updating Neuron!
-
-Welcome to patch 8.1! Neuron has had a LOT of work done to it over the last few weeks, and you all should notice a significant performance increase, and much more stable frames.
-
-Also, if you didn't know, Neuron is a labor of love for me, and it is just I doing the work. Appreciation in the form of donations are always welcome, though there is absolutely no expectation to do so.
-
-I sincerely hope you are enjoying Neuron, and Happy Holidays!
-
--Soyier]]
-
 
 Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
 
@@ -484,30 +472,34 @@ end
 
 function Neuron:LoginMessage()
 
-	StaticPopupDialogs["Neuron_UPDATE_WARNING"] = {
-		text = UPDATE_MESSAGE,
-		button1 = OKAY,
-		timeout = 0,
-		whileDead = true,
-		OnAccept = function() DB.updateWarning = LATEST_VERSION_NUM end
-	}
-
 	---displays a info window on login for either fresh installs or updates
 	if (not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM ) then
-		StaticPopup_Show("Neuron_UPDATE_WARNING")
 
-		Neuron:ChatMessage()
+		print(" ")
+		print("         ~~~~~~~~~~NEURON~~~~~~~~~")
+		print("    Happy New Year, and welcome to 2019!")
+		print("    Neuron is in for an exciting year, thank you so much for your support.")
+		print("    Please enjoy the substantial performance improvements made this past week, and please continue reporting any bugs you may find.")
+		print("       -Soyier")
+
+		if UnitFactionGroup('player') == "Horde" then
+			print(" ")
+			print("    Use the following link to join the Neuron (Horde) in-game community")
+			print("    https://bit.ly/2Lu72NZ")
+		end
+
+		if not IsAddOnLoaded("Masque") then
+			print(" ")
+			print("    You do not currently have Masque installed or enabled.")
+			print("    Please consider using Masque for enhancing the visual appearance of Neuron's action buttons.")
+		end
+
+		print(" ")
+
 	end
 
-end
 
-function Neuron:ChatMessage()
-	---TODO: Remove this eventually
-
-	if UnitFactionGroup('player') == "Horde" then
-		Neuron.Print("Click the following link to join the Neuron in-game community")
-		Neuron.Print("https://bit.ly/2Lu72NZ")
-	end
+	DB.updateWarning = LATEST_VERSION_NUM
 end
 
 
