@@ -442,8 +442,6 @@ function BUTTON:UpdateCooldown(update)
 		self:SetSpellCooldown(spell)
 	elseif (item and #item>0) then
 		self:SetItemCooldown(item)
-	else
-		self:SetTimer(0, 0, 0)
 	end
 end
 

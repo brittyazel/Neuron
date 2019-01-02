@@ -165,6 +165,7 @@ function ACTIONBUTTON:SetUpEvents()
 
 	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
 	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
+
 	self:RegisterEvent("ACTIONBAR_UPDATE_STATE")
 	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
 
@@ -1088,6 +1089,8 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 
 	self:MACRO_Reset()
 	self:UpdateAll(true)
+
+	self:SetObjectVisibility()
 
 	Neuron.NeuronBinder:ApplyBindings(self)
 
