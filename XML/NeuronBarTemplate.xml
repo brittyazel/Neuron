@@ -35,19 +35,6 @@
 		</Layers>
 		<Frames>
 			<CheckButton name="$parentKeyBind" parentKey="keybind" inherits="SecureActionButtonTemplate">
-				<Scripts>
-					<OnLoad>
-						self:RegisterForClicks("AnyUp, AnyDown")
-						self:RegisterEvent("ADDON_LOADED")
-						self.config = {	clickAnchor = true, mouseoverAnchor = true }
-					</OnLoad>
-					<OnEvent>
-
-					</OnEvent>
-					<PostClick>
-						--DEFAULT_CHAT_FRAME:AddMessage(self:GetName())
-					</PostClick>
-				</Scripts>
 			</CheckButton>
 		</Frames>
 	</Button>

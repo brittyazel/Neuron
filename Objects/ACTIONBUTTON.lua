@@ -205,6 +205,7 @@ function ACTIONBUTTON:SetUpEvents()
 
 
 
+
 	--when changing states or going in or out of range, this bucket is meant to catch all of these events
 	--[[self:RegisterBucketEvent({"ACTIONBAR_UPDATE_STATE", "SPELL_UPDATE_COOLDOWN", "UPDATE_SHAPESHIFT_COOLDOWN",
 	                          "BAG_UPDATE_COOLDOWN", "UPDATE_SHAPESHIFT_FORM", "CURRENT_SPELL_CAST_CHANGED",
@@ -336,9 +337,12 @@ function ACTIONBUTTON:SetType(save, kill, init)
 			]=])
 
 
+	--this is our rangecheck timer for each button. Every 0.5 seconds it queries if the button is usable
+	--this doubles our CPU usage, but it really helps usability quite a bit
+	--this is a direct replacement to the old "onUpdate" code that did this job
+	self.rangeTimer = self:ScheduleRepeatingTimer("UpdateButton", 0.5)
+
 	self:UpdateAll(true)
-
-
 
 end
 
@@ -960,8 +964,9 @@ ACTIONBUTTON.COMPANION_UPDATE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 ACTIONBUTTON.ACTIONBAR_UPDATE_USABLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 
 
+--this is mostly for range checking to get super accurate info when starting or stopping if an ability is in range
 function ACTIONBUTTON:PLAYER_STARTED_MOVING()
-
+	self:UpdateButton()
 end
 ACTIONBUTTON.PLAYER_STOPPED_MOVING = ACTIONBUTTON.PLAYER_STARTED_MOVING
 
