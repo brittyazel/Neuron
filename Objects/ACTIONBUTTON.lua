@@ -199,6 +199,12 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
 
+
+	self:RegisterEvent("PLAYER_STARTED_MOVING")
+	self:RegisterEvent("PLAYER_STOPPED_MOVING")
+
+
+
 	--when changing states or going in or out of range, this bucket is meant to catch all of these events
 	--[[self:RegisterBucketEvent({"ACTIONBAR_UPDATE_STATE", "SPELL_UPDATE_COOLDOWN", "UPDATE_SHAPESHIFT_COOLDOWN",
 	                          "BAG_UPDATE_COOLDOWN", "UPDATE_SHAPESHIFT_FORM", "CURRENT_SPELL_CAST_CHANGED",
@@ -707,12 +713,6 @@ function ACTIONBUTTON:SetSpellState(spell)
 		end
 	end
 
-	if ((IsAttackSpell(spell) and IsCurrentSpell(spell)) or IsAutoRepeatSpell(spell)) then
-		self:UpdateRange(true)
-	else
-		self:UpdateRange()
-	end
-
 	self.macroname:SetText(self.data.macro_Name)
 
 	self:UpdateButton()
@@ -724,20 +724,6 @@ function ACTIONBUTTON:SetSpellState(spell)
 			self.auraQueue = nil;
 			self:UpdateAuraWatch(unit, auraSpell)
 		end
-	end
-
-end
-
-
-function ACTIONBUTTON:UpdateRange(flash)
-
-	if (flash) then
-		self.mac_flashing = true
-		self.iconframeflash:Show()
-
-	elseif (self.mac_flashing) then
-		self.iconframeflash:Hide()
-		self.mac_flashing = false
 	end
 
 end
@@ -961,8 +947,6 @@ end
 ---------------------Event Functions------------------------------------------
 ------------------------------------------------------------------------------
 
---I'm not sure why all these are here, they don't seem to be used
-
 function ACTIONBUTTON:ACTIONBAR_UPDATE_COOLDOWN(...)
 	self:UpdateTimers(...)
 end
@@ -972,14 +956,14 @@ function ACTIONBUTTON:ACTIONBAR_UPDATE_STATE(...)
 	self:UpdateState(...)
 end
 
---pointers
 ACTIONBUTTON.COMPANION_UPDATE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 ACTIONBUTTON.ACTIONBAR_UPDATE_USABLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 
-ACTIONBUTTON.UPDATE_UI_WIDGET = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.PLAYER_STARTED_MOVING = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.PLAYER_STOPPED_MOVING = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.CURRENT_SPELL_CAST_CHANGED = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
+
+function ACTIONBUTTON:PLAYER_STARTED_MOVING()
+
+end
+ACTIONBUTTON.PLAYER_STOPPED_MOVING = ACTIONBUTTON.PLAYER_STARTED_MOVING
 
 
 function ACTIONBUTTON:BAG_UPDATE_COOLDOWN(...)
@@ -2387,15 +2371,8 @@ function ACTIONBUTTON:ACTION_UpdateState(action)
 		else
 			self:SetChecked(nil)
 		end
-
-		if ((IsAttackAction(actionID) and IsCurrentAction(actionID)) or IsAutoRepeatAction(actionID)) then
-			self:UpdateRange(true)
-		else
-			self:UpdateRange()
-		end
 	else
 		self:SetChecked(nil)
-		self:UpdateRange()
 	end
 end
 

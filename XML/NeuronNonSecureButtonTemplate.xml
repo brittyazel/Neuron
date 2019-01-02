@@ -72,24 +72,6 @@
 							<Color r="1" g="0" b="0" a="0.5"/>
 						</Texture>
 					</Layer>
-					<Layer level="BACKGROUND">
-						<Texture name="$parentBackGround">
-							<Size x="60" y="60"/>
-							<Anchors>
-								<Anchor point="CENTER">
-									<Offset x="0" y="0"/>
-								</Anchor>
-							</Anchors>
-						</Texture>
-						<Texture name="$parentFiller">
-							<Size x="60" y="60"/>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPLEFT"/>
-								<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon" relativePoint="BOTTOMRIGHT"/>
-							</Anchors>
-							<Color r="0" g="0" b="0" a="1"/>
-						</Texture>
-					</Layer>
 				</Layers>
 				<Frames>
 					<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate">
@@ -119,19 +101,6 @@
 				<Scripts>
 					<OnLoad>
 						self:SetFrameLevel(2)
-
-						local icon = _G[self:GetName().."Icon"]
-						icon.filler = _G[self:GetName().."Filler"]
-
-						if (icon and icon.filler) then
-
-							if not Neuron:IsHooked(icon, "Show") then
-								Neuron:Hook(icon, "Show", function(self) self.filler:Show() end, true)
-							end
-							if not Neuron:IsHooked(icon, "Hide") then
-								Neuron:Hook(icon, "Hide", function(self) self.filler:Hide() end, true)
-							end
-						end
 					</OnLoad>
 				</Scripts>
 			</Frame>

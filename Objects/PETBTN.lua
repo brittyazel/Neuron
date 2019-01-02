@@ -80,16 +80,13 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 	if (isActive) then
 
 		if (IsPetAttackAction(self.actionID)) then
-			self:PET_UpdateRange(true)
 			self:GetCheckedTexture():SetAlpha(0.5)
 		else
-			self:PET_UpdateRange()
 			self:GetCheckedTexture():SetAlpha(1.0)
 		end
 
 		self:SetChecked(1)
 	else
-		self:PET_UpdateRange()
 		self:GetCheckedTexture():SetAlpha(1.0)
 		self:SetChecked(nil)
 	end
@@ -118,17 +115,6 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 	self:UpdateButton(self.actionID)
 end
 
-
-function PETBTN:PET_UpdateRange(flash)
-	if (flash) then
-		self.mac_flashing = true
-		self.iconframeflash:Show()
-
-	elseif (self.mac_flashing) then
-		self.iconframeflash:Hide()
-		self.mac_flashing = false
-	end
-end
 
 function PETBTN:PET_UpdateCooldown()
 

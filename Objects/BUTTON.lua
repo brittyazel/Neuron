@@ -403,8 +403,6 @@ function BUTTON:GetSkinned()
 			self.shape = "square"
 		end
 
-		self.shine.shape = self.shape
-
 		return true
 	else
 		self.hasAction = "Interface\\Buttons\\UI-Quickslot2"

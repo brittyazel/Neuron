@@ -51,8 +51,6 @@ local genericButtonData = {
     alpha = 1,
     XOffset = 0,
     YOffset = 0,
-    HHitBox = 0,
-    VHitBox = 0,
 }
 
 
