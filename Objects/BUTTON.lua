@@ -24,7 +24,7 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
-function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2, cooldownAlpha)
+function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2, cooldownAlpha, charges)
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
@@ -40,10 +40,12 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 				self.iconframecooldown.cooldownTimer = cooldownTimer
 				self.iconframecooldown.cooldownAlpha = cooldownAlpha
 
+				self.iconframecooldown.charges = charges --used to know if we should set alpha on the button (if cdAlpha is enabled) immediately, or if we need to wait for charges to run out
+
 				--Get the remaining time left so when we re-call the timer when switching back to a state it has the correct time left instead of the full time
 				local timeleft = duration-(GetTime()-start)
 				--set timer that is both our cooldown counter, but also the cancles the repeating updating timer at the end
-				self.iconframecooldown.spellTimer = self:ScheduleTimer(function() self:CancelAllTimers() end, timeleft)
+				self.iconframecooldown.spellTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.countdownTimer) end, timeleft)
 
 				--schedule a repeating timer that is physically keeping track of the countdown and switching the alpha and count text
 				self.iconframecooldown.countdownTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.20)
@@ -56,14 +58,14 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 
 		else
 			--Cancel Timers as they're unnecessary
-			self:CancelAllTimers()
+			self:CancelTimer(self.iconframecooldown.countdownTimer)
 			self.iconframecooldown.timer:SetText("")
 			self.iconframecooldown.cooldownTimer = false
 			self.iconframecooldown.cooldownAlpha = false
 		end
 	else
 		--cleanup so on state changes the cooldowns don't persist
-		self:CancelAllTimers()
+		self:CancelTimer(self.iconframecooldown.countdownTimer)
 		CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
 		self.iconframecooldown.timer:SetText("")
 		self.iconframecooldown.timer:Hide()
@@ -140,12 +142,12 @@ function BUTTON:CooldownCounterUpdate()
 
 	end
 
-	if self.iconframecooldown.cooldownAlpha then --check if flag is set, otherwise skip
+	if self.iconframecooldown.cooldownAlpha and (not self.iconframecooldown.charges or self.iconframecooldown.charges == 0) then --check if flag is set and if charges are nil or zero, otherwise skip
 
-		if (coolDown < 1) then
-			self.iconframecooldown.button:SetAlpha(1)
-		else
+		if (coolDown > 0) then
 			self.iconframecooldown.button:SetAlpha(self.iconframecooldown.button.cdAlpha)
+		else
+			self.iconframecooldown.button:SetAlpha(1)
 		end
 	end
 
@@ -454,12 +456,6 @@ function BUTTON:ACTION_SetCooldown(action)
 		if (HasAction(actionID)) then
 
 			local start, duration, enable = GetActionCooldown(actionID)
-
-			if (duration and duration >= Neuron.TIMERLIMIT and self.iconframeaurawatch.active) then
-				self.auraQueue = self.iconframeaurawatch.queueinfo
-				self.iconframeaurawatch.duration = 0
-				self.iconframeaurawatch:Hide()
-			end
 
 			self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 		end

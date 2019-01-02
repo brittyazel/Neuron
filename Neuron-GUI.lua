@@ -3501,8 +3501,6 @@ end
 --not an optimal solution, but it works for now
 function NeuronGUI:hookHandler(handler)
 
-
-
 	if not NeuronGUI:IsHooked("OnAttributeChanged") then
 
 		NeuronGUI:SecureHookScript(handler, "OnAttributeChanged", function(self,name,value)
