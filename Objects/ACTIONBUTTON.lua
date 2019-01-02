@@ -141,15 +141,15 @@ end
 
 function ACTIONBUTTON:SetObjectVisibility(show)
 
-	if not InCombatLockdown() then
-		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
-		self:SetAttribute("isshown", show)
-	end
+	if InCombatLockdown() then return end
+
+	self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
+	self:SetAttribute("isshown", show)
 
 	if (show or self.showGrid) then
-		self:SetAlpha(1)
+		self:Show()
 	elseif not self:HasAction() and (not Neuron.buttonEditMode or not Neuron.barEditMode or not Neuron.bindingMode) then
-		self:SetAlpha(0)
+		self:Hide()
 	end
 end
 
@@ -244,7 +244,7 @@ function ACTIONBUTTON:SetType(save, kill, init)
 	SecureHandler_OnLoad(self)
 
 	if self.class ~= "flyout" then
-		self:SetUpEvents()
+		self:SetUpEvents() 
 	end
 
 	self:UpdateParse()
@@ -260,6 +260,9 @@ function ACTIONBUTTON:SetType(save, kill, init)
 	self:SetScript("OnAttributeChanged", function(self, name, value) self:OnAttributeChanged(name, value) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
+
+	--self:SetScript("OnShow", function(self) if self.class ~= "flyout" then self:SetUpEvents() end end)
+	--self:SetScript("OnHide", function(self) self:UnregisterAllEvents(); end)
 
 	self:WrapScript(self, "OnShow", [[
 						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
@@ -359,7 +362,10 @@ function ACTIONBUTTON:SetType(save, kill, init)
 	--this is our rangecheck timer for each button. Every 0.5 seconds it queries if the button is usable
 	--this doubles our CPU usage, but it really helps usability quite a bit
 	--this is a direct replacement to the old "onUpdate" code that did this job
-	self.rangeTimer = self:ScheduleRepeatingTimer("UpdateButton", 0.5)
+
+	if self:TimeLeft(self.rangeTimer) == 0 then
+		self.rangeTimer = self:ScheduleRepeatingTimer("UpdateButton", 0.5)
+	end
 
 	self:UpdateAll(true)
 

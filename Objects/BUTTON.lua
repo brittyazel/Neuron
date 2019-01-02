@@ -61,10 +61,21 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 
 				self.iconframecooldown.charges = charges --used to know if we should set alpha on the button (if cdAlpha is enabled) immediately, or if we need to wait for charges to run out
 
+				--clear old timer before starting a new one
+				if self:TimeLeft(self.iconframecooldown.spellTimer) ~= 0 then
+					self:CancelTimer(self.iconframecooldown.spellTimer)
+				end
+
 				--Get the remaining time left so when we re-call the timer when switching back to a state it has the correct time left instead of the full time
 				local timeleft = duration-(GetTime()-start)
 				--set timer that is both our cooldown counter, but also the cancles the repeating updating timer at the end
 				self.iconframecooldown.spellTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.countdownTimer) end, timeleft)
+
+
+				--clear old timer before starting a new one
+				if self:TimeLeft(self.iconframecooldown.countdownTimer) ~= 0 then
+					self:CancelTimer(self.iconframecooldown.countdownTimer)
+				end
 
 				--schedule a repeating timer that is physically keeping track of the countdown and switching the alpha and count text
 				self.iconframecooldown.countdownTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.20)
