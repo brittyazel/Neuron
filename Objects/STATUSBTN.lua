@@ -227,8 +227,6 @@ end
 
 function STATUSBTN:XPBar_OnEvent(event, ...)
 
-	self = self:GetParent()
-
 	if (not self.DB.curXPType) then
 		self.DB.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
 	end
@@ -453,8 +451,6 @@ end
 
 function STATUSBTN:repbar_OnEvent(event,...)
 
-	self = self:GetParent()
-
 	self:repstrings_Update(...)
 
 	if (RepWatch[self.sb.repID]) then
@@ -614,9 +610,6 @@ end
 
 function STATUSBTN: MirrorBar_OnEvent(event, ...)
 
-	self = self:GetParent()
-
-
 	if event == "MIRROR_TIMER_START" then
 		self:mirrorbar_Start(...)
 	elseif event == "MIRROR_TIMER_STOP" then
@@ -740,8 +733,6 @@ end
 
 function STATUSBTN:CastBar_OnEvent(event, ...)
 
-	self = self:GetParent()
-
 	local unit = ...
 
 	if (unit ~= self.sb.unit) then
@@ -801,6 +792,14 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 		self.sb.fadeOut = nil
 
 		self.sb:Show()
+
+		--update castbar text
+		if (not self.sb.cbtimer.castInfo[unit]) then
+			self.sb.cbtimer.castInfo[unit] = {}
+		end
+
+		self.sb.cbtimer.castInfo[unit][1] = text
+		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
 
 	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then
 
@@ -932,6 +931,14 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		self.sb:Show()
 
+		--update text on castbar
+		if (not self.sb.cbtimer.castInfo[unit]) then
+			self.sb.cbtimer.castInfo[unit] = {}
+		end
+
+		self.sb.cbtimer.castInfo[unit][1] = text
+		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
+
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
 
 		if (self.sb:IsShown()) then
@@ -965,6 +972,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 	self.sb.lText:SetText(self.sb.lFunc(self.sb))
 	self.sb.rText:SetText(self.sb.rFunc(self.sb))
 	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+
 end
 
 
@@ -1068,38 +1076,6 @@ function STATUSBTN:CastBar_OnUpdate(elapsed)
 	self.sb.rText:SetText(self.sb.rFunc(self.sb))
 	self.sb.mText:SetText(self.sb.mFunc(self.sb))
 end
-
-
-
-
-
-function STATUSBTN:CastBarTimer_OnEvent(event, ...)
-
-	self = self:GetParent():GetParent()
-
-	local unit = ...
-
-	if (unit) then
-
-		if (event == "UNIT_SPELLCAST_START") then
-
-			local _, text = UnitCastingInfo(unit)
-
-			if (not self.sb.cbtimer.castInfo[unit]) then self.sb.cbtimer.castInfo[unit] = {} end
-			self.sb.cbtimer.castInfo[unit][1] = text
-			self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
-
-		elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
-
-			local _, text = UnitChannelInfo(unit)
-
-			if (not self.sb.cbtimer.castInfo[unit]) then self.sb.cbtimer.castInfo[unit] = {} end
-			self.sb.cbtimer.castInfo[unit][1] = text
-			self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
-		end
-	end
-end
-
 
 
 
@@ -1842,24 +1818,19 @@ function STATUSBTN:SetType(save)
 
 	self:StatusBar_Reset()
 
-	LibStub("AceEvent-3.0"):Embed(self.sb)
-
-
 	if (self.config.sbType == "cast") then
 
-		self.sb.CastBar_OnEvent = self.CastBar_OnEvent --pointer so AceEvent can find function
-
-		self.sb:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_STOP", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_FAILED", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_DELAYED", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
-		self.sb:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_STOP", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_FAILED", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
 
 		self.sb.unit = BarUnits[self.data.unit]
 		self.sb.showIcon = self.config.showIcon
@@ -1868,7 +1839,7 @@ function STATUSBTN:SetType(save)
 		self.sb.channeling = false
 		self.sb.holdTime = 0
 
-		self.sb:SetScript("OnUpdate", function(self, elapsed) self:GetParent():CastBar_OnUpdate(elapsed) end)
+		self:SetScript("OnUpdate", function(self, elapsed) self:CastBar_OnUpdate(elapsed) end)
 
 		if (not self.sb.cbtimer.castInfo) then
 			self.sb.cbtimer.castInfo = {}
@@ -1876,20 +1847,9 @@ function STATUSBTN:SetType(save)
 			wipe(self.sb.cbtimer.castInfo)
 		end
 
-		LibStub("AceEvent-3.0"):Embed(self.sb.cbtimer)
-
-		self.sb.cbtimer.CastBarTimer_OnEvent = self.CastBarTimer_OnEvent --pointer so AceEvent can find function
-
-		self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_START", "CastBarTimer_OnEvent")
-		self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "CastBarTimer_OnEvent")
-		self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_STOP", "CastBarTimer_OnEvent")
-		self.sb.cbtimer:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBarTimer_OnEvent")
-
 		self.sb:Hide()
 
 	elseif (self.config.sbType == "xp") then
-
-		self.sb.XPBar_OnEvent = self.XPBar_OnEvent
 
 		self:SetAttribute("hasaction", true)
 
@@ -1899,18 +1859,16 @@ function STATUSBTN:SetType(save)
 		self:SetScript("OnLeave", function(self) self:OnLeave() end)
 		self:SetHitRectInsets(0, 0, 0, 0)
 
-		self.sb:RegisterEvent("PLAYER_XP_UPDATE", "XPBar_OnEvent")
-		self.sb:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
-		self.sb:RegisterEvent("UPDATE_EXHAUSTION", "XPBar_OnEvent")
-		self.sb:RegisterEvent("PLAYER_ENTERING_WORLD", "XPBar_OnEvent")
-		self.sb:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
-		self.sb:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "XPBar_OnEvent")
+		self:RegisterEvent("PLAYER_XP_UPDATE", "XPBar_OnEvent")
+		self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
+		self:RegisterEvent("UPDATE_EXHAUSTION", "XPBar_OnEvent")
+		self:RegisterEvent("PLAYER_ENTERING_WORLD", "XPBar_OnEvent")
+		self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
+		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "XPBar_OnEvent")
 
 		self.sb:Show()
 
 	elseif (self.config.sbType == "rep") then
-
-		self.sb.repbar_OnEvent = self.repbar_OnEvent
 
 		self.sb.repID = self.data.repID
 
@@ -1922,21 +1880,19 @@ function STATUSBTN:SetType(save)
 		self:SetScript("OnLeave", function(self) self:OnLeave() end)
 		self:SetHitRectInsets(0, 0, 0, 0)
 
-		self.sb:RegisterEvent("UPDATE_FACTION", "repbar_OnEvent")
-		self.sb:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE", "repbar_OnEvent")
-		self.sb:RegisterEvent("PLAYER_ENTERING_WORLD", "repbar_OnEvent")
+		self:RegisterEvent("UPDATE_FACTION", "repbar_OnEvent")
+		self:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE", "repbar_OnEvent")
+		self:RegisterEvent("PLAYER_ENTERING_WORLD", "repbar_OnEvent")
 
 		self.sb:Show()
 
 	elseif (self.config.sbType == "mirror") then
 
-		self.sb.MirrorBar_OnEvent = self.MirrorBar_OnEvent
+		self:RegisterEvent("MIRROR_TIMER_START", "MirrorBar_OnEvent")
+		self:RegisterEvent("MIRROR_TIMER_STOP", "MirrorBar_OnEvent")
+		self:RegisterEvent("PLAYER_ENTERING_WORLD", "MirrorBar_OnEvent")
 
-		self.sb:RegisterEvent("MIRROR_TIMER_START", "MirrorBar_OnEvent")
-		self.sb:RegisterEvent("MIRROR_TIMER_STOP", "MirrorBar_OnEvent")
-		self.sb:RegisterEvent("PLAYER_ENTERING_WORLD", "MirrorBar_OnEvent")
-
-		self.sb:SetScript("OnUpdate", function(self, elapsed) self:GetParent():MirrorBar_OnUpdate(elapsed) end)
+		self:SetScript("OnUpdate", function(self, elapsed) self:MirrorBar_OnUpdate(elapsed) end)
 
 		table.insert(MirrorBars, self)
 
