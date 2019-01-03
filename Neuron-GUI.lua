@@ -4084,7 +4084,7 @@ function NeuronGUI:ObjEditor_CreateEditFrame(button)
 
 	button.editor = editor
 
-	Neuron.EDITIndex[button.class..button.bar.id.."_"..button.id] = editor
+	Neuron.EDITIndex[button.class..button.bar.DB.id.."_"..button.id] = editor
 
 	editor:Hide()
 
@@ -4620,7 +4620,7 @@ function NeuronGUI:SB_CreateEditFrame(button)
 
 	button.editor = editor
 
-	Neuron.EDITIndex[button.class..button.bar.id.."_"..button.id] = editor
+	Neuron.EDITIndex[button.class..button.bar.DB.id.."_"..button.id] = editor
 
 	editor:Hide()
 

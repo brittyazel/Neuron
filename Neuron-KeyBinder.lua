@@ -422,7 +422,7 @@ function NeuronBinder:CreateBindFrame(button)
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 	button:SetAttribute("hotkeys", button.keys.hotKeys)
 
-	Neuron.BINDIndex[button.class..button.bar.id.."_"..button.id] = binder
+	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = binder
 
 	binder:Hide()
 end

@@ -528,11 +528,11 @@ function BAR:CreateDriver()
 	end
 	]]
 
-	local driver = CreateFrame("Frame", "NeuronBarDriver"..self:GetID(), UIParent, "SecureHandlerStateTemplate")
+	local driver = CreateFrame("Frame", "NeuronBarDriver"..self.DB.id, UIParent, "SecureHandlerStateTemplate")
 
 	setmetatable(driver, { __index = handlerMT })
 
-	driver:SetID(self:GetID())
+	driver:SetID(self.DB.id)
 	--Dynamicly builds driver attributes based on stated in Neuron.STATEINDEX using localized attribute text from a above
 	for _, modifier in pairs(Neuron.STATEINDEX) do
 		local action = DRIVER_BASE_ACTION:gsub("<MODIFIER>", modifier)
@@ -605,11 +605,11 @@ function BAR:CreateHandler()
 	end
 	]]
 
-	local handler = CreateFrame("Frame", "NeuronBarHandler"..self:GetID(), self.driver, "SecureHandlerStateTemplate")
+	local handler = CreateFrame("Frame", "NeuronBarHandler"..self.DB.id, self.driver, "SecureHandlerStateTemplate")
 
 	setmetatable(handler, { __index = handlerMT })
 
-	handler:SetID(self:GetID())
+	handler:SetID(self.DB.id)
 
 	--Dynamicly builds handler actions based on states in Neuron.STATEINDEX using Global text
 	for _, modifier in pairs(Neuron.STATEINDEX) do
@@ -790,11 +790,11 @@ end
 
 
 function BAR:CreateWatcher()
-	local watcher = CreateFrame("Frame", "NeuronBarWatcher"..self:GetID(), self.handler, "SecureHandlerStateTemplate")
+	local watcher = CreateFrame("Frame", "NeuronBarWatcher"..self.DB.id, self.handler, "SecureHandlerStateTemplate")
 
 	setmetatable(watcher, { __index = handlerMT })
 
-	watcher:SetID(self:GetID())
+	watcher:SetID(self.DB.id)
 
 	watcher:SetAttribute("_onattributechanged", [[ ]])
 
@@ -1487,7 +1487,7 @@ function BAR:LoadData()
 	self.data = self.DB
 
 	if (not self.data.name or self.data.name == ":") then
-		self.data.name = self.barLabel.." "..self:GetID()
+		self.data.name = self.barLabel.." "..self.DB.id
 	end
 end
 
@@ -1618,12 +1618,30 @@ function BAR:DeleteBar()
 	self:SetPoint("CENTER")
 	self:Hide()
 
-	table.remove(self.barDB, self:GetID()) --removes the bar from the database, along with all of its buttons
+	table.remove(self.barDB, self.DB.id) --removes the bar from the database, along with all of its buttons
+
+	for k,v in pairs(self.barDB) do
+
+		local oldID = v.id
+
+		v.id = k --update the bar id to match the new index value
+
+		if v.name == self.barLabel.." "..oldID then --if the name is name according to the oldID, update the name to the new ID
+			v.name = self.barLabel.." "..v.id
+		end
+	end
+
+
 	table.remove(Neuron.BARIndex, self.index)
 
 	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateBarGUI()
 	end
+
+	for i,v in pairs(Neuron.BARIndex) do
+		v:Update()
+	end
+
 end
 
 

@@ -216,6 +216,9 @@ function Neuron:CreateNewBar(class, id, defaults)
 		end
 
 		if (newBar) then
+
+			Neuron:CreateNewObject(class, 1, bar)
+
 			bar:Load()
 			bar:ChangeBar()
 
@@ -252,7 +255,12 @@ function Neuron:CreateBar(class, id)
 		end
 
 		---this is the create of our bar object frame
-		local bar = Neuron.BAR:new("Neuron"..data.barType..id)
+		local bar
+		if _G["Neuron"..data.barType..id] then
+			bar = Neuron.BAR:new("Neuron"..data.barType..random(1,100000000)) --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
+		else
+			bar = Neuron.BAR:new("Neuron"..data.barType..id)
+		end
 
 		for key,value in pairs(data) do
 			bar[key] = value
@@ -266,7 +274,7 @@ function Neuron:CreateBar(class, id)
 		bar.buttons = {}
 
 		bar.index = index
-		bar.id = id
+		bar.DB.id = id
 		bar.class = class
 		bar.stateschanged = true
 		bar.vischanged =true
@@ -281,7 +289,6 @@ function Neuron:CreateBar(class, id)
 		bar.message:Hide()
 		bar.messagebg:Hide()
 
-		bar:SetID(id)
 		bar:SetWidth(375)
 		bar:SetHeight(40)
 		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
