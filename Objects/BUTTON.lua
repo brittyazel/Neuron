@@ -43,11 +43,125 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
+
+function BUTTON:CreateNewObject(class, id, bar, defaults)
+	local data = Neuron.registeredBarData[class]
+
+	if (data) then
+
+		--calls new object constructor for the appropriate class type
+
+		local object
+
+		if _G[bar:GetName().."_"..data.objPrefix..id] then
+			object = _G[bar:GetName().."_"..data.objPrefix..id] --if we removed some objects from a bar, those frames still exists, this allows us to recapture and repurpose those discarded frames
+		else
+			object = data.objTemplate:new(bar:GetName().."_"..data.objPrefix..id)
+		end
+
+
+		--returns a table of the names of all the child objects for a given frame
+		local objects = Neuron:GetParentKeys(object)
+		--populates the button with all the Icon,Shine,Cooldown frame references
+		for k,v in pairs(objects) do
+			local name = (v):gsub(object:GetName(), "")
+			object[name:lower()] = _G[v]
+		end
+
+		bar.buttons[id] = object --add this object to our buttons table for this bar
+
+		if not bar.DB.buttons[id] then --if the database for a bar doesn't exist (because it's a new bar) make a new table
+			bar.DB.buttons[id] = {}
+		end
+		object.DB = bar.DB.buttons[id] --set our button database table as the DB for our object
+
+		object.bar = bar
+
+		object.class = class
+		object.id = id
+		--object:SetID(id)
+		object.objType = data.objType:gsub("%s", ""):upper()
+		object:LoadData(GetActiveSpecGroup(), "homestate")
+
+		object.elapsed = 0
+
+
+		if (defaults) then
+			object:SetDefaults(defaults)
+		end
+
+		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
+		if object.DB.config then
+			object.DB.config.date = date("%m/%d/%y %H:%M:%S")
+		end
+
+		object:LoadAux()
+
+		return object
+	end
+end
+
+
+
+
+function BUTTON:ChangeObject(object)
+
+	if not Neuron.CurrentObject then
+		Neuron.CurrentObject = object
+	end
+
+	local newObj, newEditor = false, false
+
+	if (Neuron.enteredWorld) then
+
+		if (object and object ~= Neuron.CurrentObject) then
+
+			if (Neuron.CurrentObject and Neuron.CurrentObject.editor.editType ~= object.editor.editType) then
+				newEditor = true
+			end
+
+			if (Neuron.CurrentObject and Neuron.CurrentObject.bar ~= object.bar) then
+
+				local bar = Neuron.CurrentObject.bar
+
+				if (bar.handler:GetAttribute("assertstate")) then
+					bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
+				end
+
+				object.bar.handler:SetAttribute("fauxstate", bar.handler:GetAttribute("activestate"))
+
+			end
+
+			Neuron.CurrentObject = object
+
+			object.editor.select:Show()
+
+			object.selected = true
+			object.action = nil
+
+			newObj = true
+		end
+
+		if (not object) then
+			Neuron.CurrentObject = nil
+		end
+
+		for k,v in pairs(Neuron.EDITIndex) do
+			if (not object or v ~= object.editor) then
+				v.select:Hide()
+			end
+		end
+	end
+
+	return newObj, newEditor
+end
+
+
 function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2, cooldownAlpha, charges)
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
-		CooldownFrame_Set(self.iconframecooldown, start, duration, enable) --set clock style cooldown animation
+		CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true) --set clock style cooldown animation
 
 		self.iconframecooldown.timer:Show() --show the element that holds the cooldown animation
 

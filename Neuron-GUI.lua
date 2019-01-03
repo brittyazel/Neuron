@@ -1047,7 +1047,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 								if (self.bar) then
 
-									Neuron:CreateNewBar(self.bar)
+									Neuron.BAR:CreateNewBar(self.bar)
 
 									NeuronBarEditorCreate:Click()
 								end
@@ -3636,7 +3636,7 @@ NeuronGUI.target_options = {
 			set = function(info, value)
 				SetModifiedClick("SELFCAST", value)
 				SaveBindings(GetCurrentBindingSet() or 1)
-				Neuron:UpdateMacroCastTargets(true)
+				Neuron.ACTIONBUTTON:UpdateMacroCastTargets(true)
 			end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
@@ -3662,7 +3662,7 @@ NeuronGUI.target_options = {
 			set = function(info, value)
 				SetModifiedClick("FOCUSCAST", value)
 				SaveBindings(GetCurrentBindingSet() or 1)
-				Neuron:UpdateMacroCastTargets(true)
+				Neuron.ACTIONBUTTON:UpdateMacroCastTargets(true)
 			end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
@@ -3700,7 +3700,7 @@ NeuronGUI.target_options = {
 			get = function() return DB.mouseOverMod end, --getFunc,
 			set = function(info, value)
 				DB.mouseOverMod = value
-				Neuron:UpdateMacroCastTargets(true)
+				Neuron.ACTIONBUTTON:UpdateMacroCastTargets(true)
 			end,
 			values = { NONE = _G.NONE, ALT = _G.ALT_KEY_TEXT, SHIFT = _G.SHIFT_KEY_TEXT, CTRL = _G.CTRL_KEY_TEXT },
 		},
@@ -4025,7 +4025,7 @@ end
 
 function NeuronGUI:ObjEditor_OnClick(editor, button)
 
-	local newObj, newEditor = Neuron:ChangeObject(editor.object)
+	local newObj, newEditor = Neuron.BUTTON:ChangeObject(editor.object)
 
 	if (button == "RightButton") then
 

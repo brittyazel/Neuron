@@ -821,7 +821,7 @@ function ACTIONBUTTON:SetSpellCooldown(spell)
 
 	spell = (spell):lower()
 
-	local start, duration, enable = GetSpellCooldown(spell)
+	local start, duration, enable, modrate = GetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration = GetSpellCharges(spell)
 
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
@@ -2445,6 +2445,63 @@ function ACTIONBUTTON:ACTION_SetTooltip(action)
 
 		if (HasAction(actionID)) then
 			GameTooltip:SetAction(actionID)
+		end
+	end
+end
+
+
+--- This will itterate through a set of buttons. For any buttons that have the #autowrite flag in its macro, that
+-- macro will then be updated to via AutoWriteMacro to include selected target macro option, or via AutoUpdateMacro
+-- to update a current target macro's toggle mofifier.
+-- @param global(boolean): if true will go though all buttons, else it will just update the button set for the current bar
+function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
+
+	local button_list = {}
+
+	if global_update then
+
+		for _,bar in ipairs(Neuron.BARIndex) do
+			for _, object in ipairs(bar.buttons) do
+				table.insert(button_list, object)
+			end
+		end
+
+	else
+		local bar = Neuron.CurrentBar
+		for i, object in ipairs(bar.buttons) do
+			table.insert(button_list, object)
+		end
+	end
+
+	for index, button in pairs(button_list) do
+		local cur_button = button.DB
+		local macro_update = false
+
+		for i = 1,2 do
+			for state, info in pairs(cur_button[i]) do
+				if info.macro_Text and info.macro_Text:find("#autowrite\n/cast") then
+					local spell = ""
+
+					spell = info.macro_Text:gsub("%[.*%]", "")
+					spell = spell:match("#autowrite\n/cast%s*(.+)%((.*)%)")
+
+					if spell then
+						if global_update then
+							info.macro_Text = button:AutoUpdateMacro(button, info.macro_Text)
+						else
+							info.macro_Text = button:AutoWriteMacro(button, spell)
+						end
+
+					end
+					macro_update = true
+				end
+			end
+		end
+
+		if macro_update then
+			button:UpdateFlyout()
+			button:BuildStateData(button)
+			button:SetType()
 		end
 	end
 end

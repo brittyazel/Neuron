@@ -1645,6 +1645,147 @@ function BAR:DeleteBar()
 end
 
 
+function BAR:CreateNewBar(class, id, defaults)
+
+	if (class and Neuron.registeredBarData[class]) then
+
+		local bar, newBar = Neuron.BAR:CreateBar(class, id)
+
+		if (defaults) then
+			bar:SetDefaults(defaults)
+
+			for i=1,#defaults.buttons do
+				Neuron.BUTTON:CreateNewObject(class, i, bar, defaults.buttons[i])
+			end
+
+		else
+			for i=1,#bar.DB.buttons do
+				Neuron.BUTTON:CreateNewObject(class, i, bar)
+			end
+		end
+
+		if (newBar) then
+
+			Neuron.BUTTON:CreateNewObject(class, 1, bar) --add at least 1 button to a new bar
+
+			bar:Load()
+			bar:ChangeBar()
+
+			---------------------------------
+			if (class == "ExtraBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.data.hidestates = ":extrabar0:"
+				bar.vischanged = true
+				bar:Update()
+			end
+			if (class == "PetBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.data.hidestates = ":pet0:"
+				bar.vischanged = true
+				bar:Update()
+			end
+			-----------------------------------
+		end
+
+		return bar
+	else
+		Neuron.PrintBarTypes()
+	end
+end
+
+Neuron.CreateNewBar = BAR.CreateNewBar
+
+
+
+function BAR:CreateBar(class, id)
+	local data = Neuron.registeredBarData[class]
+	local newBar
+
+	local index = #Neuron.BARIndex + 1
+
+	if (data) then
+		if (not id) then
+			id = #data.barDB + 1
+			newBar = true
+		end
+
+		---this is the create of our bar object frame
+		local bar
+		if _G["Neuron"..data.barType..id] then
+			bar = Neuron.BAR:new("Neuron"..data.barType..random(1000,10000000)) --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
+		else
+			bar = Neuron.BAR:new("Neuron"..data.barType..id)
+		end
+
+		for key,value in pairs(data) do
+			bar[key] = value
+		end
+
+		if not data.barDB[id] then --if the database for a bar doesn't exist (because it's a new bar?
+			data.barDB[id] = {}
+		end
+		bar.DB = data.barDB[id]
+
+		bar.buttons = {}
+
+		bar.index = index
+		bar.DB.id = id
+		bar.class = class
+		bar.stateschanged = true
+		bar.vischanged =true
+		bar.elapsed = 0
+		bar.click = nil
+		bar.dragged = false
+		bar.selected = false
+		bar.toggleframe = bar
+		bar.microAdjust = false
+		bar.vis = {}
+		bar.text:Hide()
+		bar.message:Hide()
+		bar.messagebg:Hide()
+
+		bar:SetWidth(375)
+		bar:SetHeight(40)
+		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		                 edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		                 tile = true, tileSize = 16, edgeSize = 12,
+		                 insets = {left = 4, right = 4, top = 4, bottom = 4}})
+		bar:SetBackdropColor(0,0,0,0.4)
+		bar:SetBackdropBorderColor(0,0,0,0)
+		bar:SetFrameLevel(2)
+		bar:RegisterForClicks("AnyDown", "AnyUp")
+		bar:RegisterForDrag("LeftButton")
+		bar:SetMovable(true)
+		bar:EnableKeyboard(false)
+		bar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
+
+		bar:SetScript("OnClick", function(self, ...) self:OnClick(...) end)
+		bar:SetScript("OnDragStart", function(self, ...) self:OnDragStart(...) end)
+		bar:SetScript("OnDragStop", function(self, ...) self:OnDragStop(...) end)
+		bar:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+		bar:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
+		bar:SetScript("OnKeyDown", function(self, key, onupdate) self:OnKeyDown(key, onupdate) end)
+		bar:SetScript("OnKeyUp", function(self, key) self:OnKeyUp(key) end)
+		bar:SetScript("OnShow", function(self) self:OnShow() end)
+		bar:SetScript("OnHide", function(self) self:OnHide() end)
+		bar:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
+
+
+		bar:CreateDriver()
+		bar:CreateHandler()
+		bar:CreateWatcher()
+
+		bar:LoadData()
+
+		if (not newBar) then
+			bar:Hide()
+		end
+
+		Neuron.BARIndex[index] = bar
+
+		return bar, newBar
+	end
+end
+
+
 function BAR:AddObjectsToBar(num)
 
 	num = tonumber(num)
@@ -1659,7 +1800,7 @@ function BAR:AddObjectsToBar(num)
 		local id = #self.buttons + 1
 
 		if (#self.buttons < self.objMax) then
-			object = Neuron:CreateNewObject(self.class, id, self)
+			object = Neuron.BUTTON:CreateNewObject(self.class, id, self)
 		end
 
 	end
@@ -2931,7 +3072,7 @@ function BAR:SetCastingTarget(value, gui, checked, query)
 			end
 		end
 
-		Neuron:UpdateMacroCastTargets()
+		Neuron.ACTIONBUTTON:UpdateMacroCastTargets()
 		self:Update()
 	end
 end

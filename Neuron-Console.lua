@@ -85,7 +85,7 @@ function Neuron:slashHandler(input)
 	local command = commandAndArgs[1]:lower()
 	local args = {}
 	for i = 2,#commandAndArgs do
-		args[i-1] = commandAndArgs[i]:lower()
+		args[i-1] = commandAndArgs[i]
 	end
 
 
@@ -99,7 +99,6 @@ function Neuron:slashHandler(input)
 	if command == "bind" and Neuron.bindingMode == false then
 		args[1] = true
 	end
-
 
 
 	for i = 1,#slashFunctions do

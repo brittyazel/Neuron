@@ -199,7 +199,7 @@ function Neuron:CreateBarsAndButtons()
 
 		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
 			for i, defaults in ipairs(barDefaults) do
-				Neuron:CreateNewBar(barClass, i, defaults) --this calls the bar constructor
+				Neuron.BAR:CreateNewBar(barClass, i, defaults) --this calls the bar constructor
 			end
 		end
 
@@ -210,7 +210,7 @@ function Neuron:CreateBarsAndButtons()
 		for barClass, barClassData in pairs (Neuron.registeredBarData) do
 			for id,data in pairs(barClassData.barDB) do
 				if (data ~= nil) then
-					Neuron:CreateNewBar(barClass, id)
+					Neuron.BAR:CreateNewBar(barClass, id)
 				end
 			end
 		end

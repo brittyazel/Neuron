@@ -37,7 +37,6 @@ Objects/ZONEABILITYBTN.lua
 Objects/ACTIONBUTTON_FLYOUTBTN.lua
 Objects/BAR_SNAPTO.lua
 
-Neuron-GeneralFunctions.lua
 Neuron-KeyBinder.lua
 Neuron-Console.lua
 Neuron-MinimapIcon.lua

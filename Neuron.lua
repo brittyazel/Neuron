@@ -1046,7 +1046,7 @@ function Neuron:ToggleButtonEditMode(show)
 			end
 		end
 
-		Neuron:ChangeObject()
+		Neuron.BUTTON:ChangeObject()
 
 		if (NeuronObjectEditor)then
 			NeuronObjectEditor:Hide()
