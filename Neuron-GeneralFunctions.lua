@@ -257,7 +257,7 @@ function Neuron:CreateBar(class, id)
 		---this is the create of our bar object frame
 		local bar
 		if _G["Neuron"..data.barType..id] then
-			bar = Neuron.BAR:new("Neuron"..data.barType..random(1,100000000)) --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
+			bar = Neuron.BAR:new("Neuron"..data.barType..random(1000,10000000)) --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
 		else
 			bar = Neuron.BAR:new("Neuron"..data.barType..id)
 		end
