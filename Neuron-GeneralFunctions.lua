@@ -217,7 +217,7 @@ function Neuron:CreateNewBar(class, id, defaults)
 
 		if (newBar) then
 
-			Neuron:CreateNewObject(class, 1, bar)
+			Neuron:CreateNewObject(class, 1, bar) --add at least 1 button to a new bar
 
 			bar:Load()
 			bar:ChangeBar()

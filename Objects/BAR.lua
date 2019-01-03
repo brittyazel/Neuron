@@ -1622,11 +1622,11 @@ function BAR:DeleteBar()
 
 	for k,v in pairs(self.barDB) do
 
-		local oldID = v.id
+		local oldID = v.id --keep track of the oldID
 
-		v.id = k --update the bar id to match the new index value
+		v.id = k --update the bar id to match the new index value, this is VERY important
 
-		if v.name == self.barLabel.." "..oldID then --if the name is name according to the oldID, update the name to the new ID
+		if v.name == self.barLabel.." "..oldID then --if the name is name according to the oldID, update the name to the new ID (i.e. if they never changed the name, we don't want to overwrite custom names)
 			v.name = self.barLabel.." "..v.id
 		end
 	end
@@ -1638,7 +1638,7 @@ function BAR:DeleteBar()
 		Neuron.NeuronGUI:UpdateBarGUI()
 	end
 
-	for i,v in pairs(Neuron.BARIndex) do
+	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
 		v:Update()
 	end
 

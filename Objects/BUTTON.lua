@@ -174,7 +174,7 @@ function BUTTON:CooldownCounterUpdate()
 
 	if self.iconframecooldown.cooldownAlpha and (not self.iconframecooldown.charges or self.iconframecooldown.charges == 0) then --check if flag is set and if charges are nil or zero, otherwise skip
 
-		if (coolDown > 0) then
+		if (coolDown > .5) then
 			self.iconframecooldown.button:SetAlpha(self.iconframecooldown.button.cdAlpha)
 		else
 			self.iconframecooldown.button:SetAlpha(1)
