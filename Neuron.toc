@@ -37,6 +37,7 @@ Objects/ZONEABILITYBTN.lua
 Objects/ACTIONBUTTON_FLYOUTBTN.lua
 Objects/BAR_SNAPTO.lua
 
+Neuron-DisableBlizzardUI.lua
 Neuron-KeyBinder.lua
 Neuron-Console.lua
 Neuron-MinimapIcon.lua
@@ -49,7 +50,7 @@ XML/NeuronCheckButtonTextureTemplate.xml
 XML/NeuronNonSecureButtonTemplate.xml
 XML/NeuronStatusBarTemplate.xml
 
-Startup.lua
+Neuron-Startup.lua
 
 Neuron-GUI.lua
 XML/Neuron-GUI.xml
