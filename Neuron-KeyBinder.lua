@@ -1,4 +1,4 @@
-﻿--Neuron, a World of Warcraft® user interface addon.
+--Neuron, a World of Warcraft® user interface addon.
 
 --This file is part of Neuron.
 --
@@ -19,6 +19,13 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
+local DEFAULT_VIRTUAL_KEY = "LeftButton"
+local NEURON_VIRTUAL_KEY = "Hotkey"
+
+local VIRTUAL_KEY_LIST = {
+	DEFAULT_VIRTUAL_KEY,
+	NEURON_VIRTUAL_KEY
+}
 
 local NeuronBinder = {}
 Neuron.NeuronBinder = NeuronBinder
@@ -78,7 +85,7 @@ function NeuronBinder:GetBindkeyList(button)
 end
 
 
---- Returns the text value of a keybind 
+--- Returns the text value of a keybind
 -- @param key: The key to look up
 -- @return keytext: The text value for the key
 function NeuronBinder:GetKeyText(key)
@@ -130,10 +137,16 @@ function NeuronBinder:ClearBindings(button, key)
 		local keytext = NeuronBinder:GetKeyText(key)
 		button.keys.hotKeyText = button.keys.hotKeyText:gsub(keytext..":", "")
 	else
-		local bindkey = "CLICK "..button:GetName()..":LeftButton"
+		local bindCmdPrefix = "CLICK " .. button:GetName()
 
-		while (GetBindingKey(bindkey)) do
-			SetBinding(GetBindingKey(bindkey), nil)
+		---clear bindings for all virtual keys (LeftButton, Hotkey, ...)
+		---using the bindCmdPrefix and concatenating it with each virtual key
+		for _, virtualKey in ipairs(VIRTUAL_KEY_LIST) do
+			local bindCmd = bindCmdPrefix .. ":" .. virtualKey
+
+			while (GetBindingKey(bindCmd)) do
+				SetBinding(GetBindingKey(bindCmd), nil)
+			end
 		end
 
 		ClearOverrideBindings(button)
@@ -180,8 +193,19 @@ function NeuronBinder:ApplyBindings(button)
 	end
 	------------------------------
 
+	local virtualKey
+
+	---checks if the button is a Neuron action or a special Blizzard action (such as a zone ability)
+	---this is necessary because Blizzard buttons usually won't work and can give very weird results
+	---if clicked with a virtual key other than the default "LeftButton"
+	if (button:GetName():find("NeuronActionBar%d+")) then
+		virtualKey = NEURON_VIRTUAL_KEY
+	else
+		virtualKey = DEFAULT_VIRTUAL_KEY
+	end
+
 	if (button:IsVisible() or button:GetParent():GetAttribute("concealed")) then
-		gsub(button.keys.hotKeys, "[^:]+", function(key) SetOverrideBindingClick(button, button.keys.hotKeyPri, key, button:GetName()) end)
+		gsub(button.keys.hotKeys, "[^:]+", function(key) SetOverrideBindingClick(button, button.keys.hotKeyPri, key, button:GetName(), virtualKey) end)
 	end
 
 	button:SetAttribute("hotkeys", button.keys.hotKeys)
@@ -197,6 +221,7 @@ function NeuronBinder:ApplyBindings(button)
 	if (GetCurrentBindingSet() > 0 and GetCurrentBindingSet() < 3) then SaveBindings(GetCurrentBindingSet()) end
 end
 
+
 --- Processes the change to a key bind  (i think)
 -- @param button: The button to set keybinding for
 -- @param key: The key to be used
@@ -207,7 +232,7 @@ function NeuronBinder:ProcessBinding(binder, key, button)
 	end
 
 	if (key == "ESCAPE") then
-		NeuronBinder:ClearBindings( button)
+		NeuronBinder:ClearBindings(button)
 	elseif (key) then
 		for _,binder in pairs(Neuron.BINDIndex) do
 			if (button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
