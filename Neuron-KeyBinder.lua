@@ -182,23 +182,12 @@ end
 function NeuronBinder:ApplyBindings(button)
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 
-	---TODO: Fix this better
-	------weird fix during the database migration with these values not getting assigned
-	if not button.keys.hotKeys then
-		button.keys.hotKeys = ":"
-	end
-
-	if not button.keys.hotKeyText then
-		button.keys.hotKeyText = ":"
-	end
-	------------------------------
-
 	local virtualKey
 
 	---checks if the button is a Neuron action or a special Blizzard action (such as a zone ability)
 	---this is necessary because Blizzard buttons usually won't work and can give very weird results
 	---if clicked with a virtual key other than the default "LeftButton"
-	if (button:GetName():find("NeuronActionBar%d+")) then
+	if (button.class == "ActionBar") then
 		virtualKey = NEURON_VIRTUAL_KEY
 	else
 		virtualKey = DEFAULT_VIRTUAL_KEY
