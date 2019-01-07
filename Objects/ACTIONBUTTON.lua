@@ -825,9 +825,9 @@ function ACTIONBUTTON:SetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration = GetSpellCharges(spell)
 
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
-		self:SetTimer(chStart, chDuration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges)
+		self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges)
 	else
-		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 
 end
@@ -842,7 +842,7 @@ function ACTIONBUTTON:SetItemCooldown(item)
 
 		local start, duration, enable = GetItemCooldown(id)
 
-		self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 end
 

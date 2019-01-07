@@ -157,7 +157,7 @@ function BUTTON:ChangeObject(object)
 end
 
 
-function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2, cooldownAlpha, charges)
+function BUTTON:SetCooldownTimer(start, duration, enable, cooldownTimer, color1, color2, cooldownAlpha, charges)
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
@@ -183,7 +183,7 @@ function BUTTON:SetTimer(start, duration, enable, cooldownTimer, color1, color2,
 				--Get the remaining time left so when we re-call the timer when switching back to a state it has the correct time left instead of the full time
 				local timeleft = duration-(GetTime()-start)
 				--set timer that is both our cooldown counter, but also the cancles the repeating updating timer at the end
-				self.iconframecooldown.spellTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.countdownTimer) end, timeleft)
+				self.iconframecooldown.spellTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.countdownTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over
 
 
 				--clear old timer before starting a new one
@@ -228,7 +228,7 @@ function BUTTON:CooldownCounterUpdate()
 	local normalcolor = self.iconframecooldown.normalcolor
 	local expirecolor = self.iconframecooldown.expirecolor
 
-	coolDown = self:TimeLeft(self.iconframecooldown.spellTimer)
+	coolDown = self:TimeLeft(self.iconframecooldown.spellTimer) - 1 --subtract 1 from the timer because we added 1 in SetCooldownTimer to keep the timer runing for 1 extra second after the spell
 
 	if self.iconframecooldown.cooldownTimer then --check if flag is set, otherwise skip
 
@@ -288,7 +288,7 @@ function BUTTON:CooldownCounterUpdate()
 
 	if self.iconframecooldown.cooldownAlpha and (not self.iconframecooldown.charges or self.iconframecooldown.charges == 0) then --check if flag is set and if charges are nil or zero, otherwise skip
 
-		if (coolDown > .5) then
+		if (coolDown > 0) then
 			self.iconframecooldown.button:SetAlpha(self.iconframecooldown.button.cdAlpha)
 		else
 			self.iconframecooldown.button:SetAlpha(1)
@@ -585,7 +585,7 @@ function BUTTON:UpdateCooldown(update)
 	elseif (item and #item>0) then
 		self:SetItemCooldown(item)
 	else
-		self:SetTimer(0, 0, 0)
+		self:SetCooldownTimer(0, 0, 0)
 	end
 end
 
@@ -599,7 +599,7 @@ function BUTTON:ACTION_SetCooldown(action)
 
 			local start, duration, enable = GetActionCooldown(actionID)
 
-			self:SetTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			self:SetCooldownTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 		end
 	end
 end
@@ -646,9 +646,9 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 			end
 
 			--[[if (self.auraText) then
-				self:SetTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color, _, _,true)
+				self:SetCooldownTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color, _, _,true)
 			else
-				self:SetTimer(0, 0, 0)
+				self:SetCooldownTimer(0, 0, 0)
 			end]]
 
 			self.auraWatchUnit = unit
