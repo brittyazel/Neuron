@@ -85,10 +85,10 @@ function EXTRABTN:ExtraButton_Update()
 
 	self.style:Show()
 
-	local start, duration, enable = GetActionCooldown(self.actionID);
+	local start, duration, enable, modrate = GetActionCooldown(self.actionID);
 
 	if (start) then
-		self:SetCooldownTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 
 

@@ -157,11 +157,17 @@ function BUTTON:ChangeObject(object)
 end
 
 
-function BUTTON:SetCooldownTimer(start, duration, enable, cooldownTimer, color1, color2, cooldownAlpha, charges)
+function BUTTON:SetCooldownTimer(start, duration, enable, cooldownTimer, modrate, color1, color2, cooldownAlpha, charges)
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
-		CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true) --set clock style cooldown animation
+		if charges and charges > 0 then
+			self.iconframecooldown:SetDrawSwipe(false); --disable the swipe animation when there are charges left, only keeping the sweeping highlight animation
+		else
+			self.iconframecooldown:SetDrawSwipe(true);
+		end
+
+		CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation
 
 		self.iconframecooldown.timer:Show() --show the element that holds the cooldown animation
 
@@ -173,7 +179,8 @@ function BUTTON:SetCooldownTimer(start, duration, enable, cooldownTimer, color1,
 				self.iconframecooldown.cooldownTimer = cooldownTimer
 				self.iconframecooldown.cooldownAlpha = cooldownAlpha
 
-				self.iconframecooldown.charges = charges --used to know if we should set alpha on the button (if cdAlpha is enabled) immediately, or if we need to wait for charges to run out
+
+				self.iconframecooldown.charges = charges or 0 --used to know if we should set alpha on the button (if cdAlpha is enabled) immediately, or if we need to wait for charges to run out
 
 				--clear old timer before starting a new one
 				if self:TimeLeft(self.iconframecooldown.spellTimer) ~= 0 then
@@ -210,7 +217,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, cooldownTimer, color1,
 	else
 		--cleanup so on state changes the cooldowns don't persist
 		self:CancelTimer(self.iconframecooldown.countdownTimer)
-		CooldownFrame_Set(self.iconframecooldown, 0, 0, 0)
+		CooldownFrame_Set(self.iconframecooldown, 0, 0,0)
 		self.iconframecooldown.timer:SetText("")
 		self.iconframecooldown.timer:Hide()
 		self.iconframecooldown.button:SetAlpha(1)
@@ -286,13 +293,16 @@ function BUTTON:CooldownCounterUpdate()
 
 	end
 
-	if self.iconframecooldown.cooldownAlpha and (not self.iconframecooldown.charges or self.iconframecooldown.charges == 0) then --check if flag is set and if charges are nil or zero, otherwise skip
+
+	if self.iconframecooldown.cooldownAlpha and self.iconframecooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
 		if (coolDown > 0) then
 			self.iconframecooldown.button:SetAlpha(self.iconframecooldown.button.cdAlpha)
 		else
 			self.iconframecooldown.button:SetAlpha(1)
 		end
+	else
+		self.iconframecooldown.button:SetAlpha(1)
 	end
 
 end
@@ -560,6 +570,7 @@ end
 
 
 function BUTTON:UpdateTimers(...)
+
 	self:UpdateCooldown()
 
 	for k in pairs(Neuron.unitAuras) do
@@ -597,9 +608,9 @@ function BUTTON:ACTION_SetCooldown(action)
 
 		if (HasAction(actionID)) then
 
-			local start, duration, enable = GetActionCooldown(actionID)
+			local start, duration, enable, modrate = GetActionCooldown(actionID)
 
-			self:SetCooldownTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 		end
 	end
 end
@@ -646,7 +657,7 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 			end
 
 			--[[if (self.auraText) then
-				self:SetCooldownTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, uaw_color, _, _,true)
+				self:SetCooldownTimer(uaw_timeLeft-uaw_duration, uaw_duration, 1, self.auraText, _, uaw_color, _, _,true)
 			else
 				self:SetCooldownTimer(0, 0, 0)
 			end]]

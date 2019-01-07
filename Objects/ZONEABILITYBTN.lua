@@ -84,8 +84,6 @@ end
 
 function ZONEABILITYBTN:ZoneAbilityFrame_Update()
 
-	local DB = Neuron.db.profile
-
 	if (not self.baseName) then
 		return;
 	end
@@ -98,24 +96,11 @@ function ZONEABILITYBTN:ZoneAbilityFrame_Update()
 	self:SetNeuronButtonTex()
 
 
-	local charges, maxCharges, chargeStart, chargeDuration = GetSpellCharges(spellID);
+	local start, duration, enable, modrate = GetSpellCooldown(name);
 
-	local usesCharges = false;
-	if (maxCharges and maxCharges > 1) then
-		self.count:SetText(charges);
-		usesCharges = true;
-	else
-		self.count:SetText("");
-	end
-
-	local start, duration, enable = GetSpellCooldown(name);
-
-	if (usesCharges and charges < maxCharges) then
-		StartChargeCooldown(self, chargeStart, chargeDuration, enable);
-	end
 
 	if (start) then
-		self:SetCooldownTimer(start, duration, enable, self.cdText, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 	end
 
 	self.spellName = self.CurrentSpell;
