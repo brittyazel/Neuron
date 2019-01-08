@@ -168,21 +168,9 @@ function Neuron:OnInitialize()
 	Neuron.MAS = Neuron.MANAGED_ACTION_STATES
 	Neuron.MBS = Neuron.MANAGED_BAR_STATES
 
-	Neuron.player = UnitName("player")
+
 	Neuron.class = select(2, UnitClass("player"))
-	Neuron.level = UnitLevel("player")
-	Neuron.realm = GetRealmName()
 
-
-
-	StaticPopupDialogs["ReloadUI"] = {
-		text = "ReloadUI",
-		button1 = "Yes",
-		OnAccept = function()
-			ReloadUI()
-		end,
-		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-	}
 
 	StaticPopupDialogs["ReloadUI"] = {
 		text = "ReloadUI",
@@ -217,7 +205,6 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("LEARNED_SPELL_IN_TAB")
 	Neuron:RegisterEvent("COMPANION_LEARNED")
 	Neuron:RegisterEvent("COMPANION_UPDATE")
-	Neuron:RegisterEvent("UNIT_LEVEL")
 	Neuron:RegisterEvent("UNIT_PET")
 	--Neuron:RegisterEvent("TOYS_UPDATED")
 	--Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
@@ -228,8 +215,6 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("UNIT_SPELLCAST_START")
 	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-
-	Neuron:ScheduleRepeatingTimer("BAR_OnUpdate", .075)
 
 
 	Neuron:UpdateStanceStrings()
@@ -362,11 +347,7 @@ function Neuron:UNIT_PET(_, ...)
 	end
 end
 
-function Neuron:UNIT_LEVEL(_, ...)
-	if ... == "player" then
-		Neuron.level = UnitLevel("player")
-	end
-end
+
 
 --[[function Neuron:TOYS_UPDATED(...)
 

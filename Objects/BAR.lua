@@ -23,16 +23,15 @@
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.BAR = BAR
 
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+
+LibStub("AceTimer-3.0"):Embed(BAR)
 
 
 local MAS = Neuron.MANAGED_ACTION_STATES
 local MBS = Neuron.MANAGED_BAR_STATES
 
 local alphaDir, alphaTimer = 0, 0
-
-local autoHideIndex, alphaupIndex = {}, {}
 
 Neuron.AlphaUps = {
 	L["Off"],
@@ -118,182 +117,182 @@ function BAR.IsMouseOverSelfOrWatchFrame(frame)
 end
 
 
---this function gets called via controlOnUpdate in the main Neuron.lua
-function Neuron.BAR_OnUpdate()
-	for k,v in pairs(autoHideIndex) do
-		if (v~=nil) then
+---this function is set via a repeating scheduled timer in SetAutoHide()
+function BAR:AutoHideUpdate()
 
-			if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
+	if (self.data.autoHide and self.handler~=nil) then
 
-				if (k:IsShown()) then
-					v:SetAlpha(1)
-				else
+		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
 
-					if (BAR.IsMouseOverSelfOrWatchFrame(k)) then
-						if (v:GetAlpha() < k.alpha) then
-							if (v:GetAlpha()+v.fadeSpeed <= 1) then
-								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
-							else
-								v:SetAlpha(1)
-							end
-						else
-							k.seen = 1;
-						end
-
-					end
-
-					if (not BAR.IsMouseOverSelfOrWatchFrame(k)) then
-						if (v:GetAlpha() > 0) then
-							if (v:GetAlpha()-v.fadeSpeed >= 0) then
-								v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
-							else
-								v:SetAlpha(0)
-							end
-						else
-							k.seen = 0;
-						end
-					end
-				end
-			end
-		end
-	end
-
-	for k,v in pairs(alphaupIndex) do
-		if (v~=nil) then
-
-			if (k:IsShown()) then
-				v:SetAlpha(1)
+			if (self:IsShown()) then
+				self.handler:SetAlpha(1)
 			else
 
-				if (k.alphaUp == alphaUps[3] or k.alphaUp == alphaUps[4]) then
-
-					if (InCombatLockdown()) then
-
-						if (v:GetAlpha() < 1) then
-							if (v:GetAlpha()+v.fadeSpeed <= 1) then
-								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
-							else
-								v:SetAlpha(1)
-							end
+				if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
+					if (self.handler:GetAlpha() < self.data.alpha) then
+						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
 						else
-							k.seen = 1;
+							self.handler:SetAlpha(1)
 						end
-
 					else
-						if (k.alphaUp == alphaUps[4]) then
-
-							if (BAR.IsMouseOverSelfOrWatchFrame(k)) then
-								if (v:GetAlpha() < 1) then
-									if (v:GetAlpha()+v.fadeSpeed <= 1) then
-										v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
-									else
-										v:SetAlpha(1)
-									end
-								else
-									k.seen = 1;
-								end
-							else
-								if (v:GetAlpha() > k.alpha) then
-									if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
-										v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
-									else
-										v:SetAlpha(k.alpha)
-									end
-								else
-									k.seen = 0;
-								end
-							end
-						else
-							if (v:GetAlpha() > k.alpha) then
-								if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
-									v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
-								else
-									v:SetAlpha(k.alpha)
-								end
-							else
-								k.seen = 0;
-							end
-						end
+						self.seen = 1;
 					end
 
-				elseif (k.alphaUp == alphaUps[5] or k.alphaUp == alphaUps[6]) then
+				end
 
-					if (not InCombatLockdown()) then
-
-						if (v:GetAlpha() < 1) then
-							if (v:GetAlpha()+v.fadeSpeed <= 1) then
-								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
-							else
-								v:SetAlpha(1)
-							end
+				if (not BAR.IsMouseOverSelfOrWatchFrame(self)) then
+					if (self.handler:GetAlpha() > 0) then
+						if (self.handler:GetAlpha()-self.data.fadeSpeed >= 0) then
+							self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 						else
-							k.seen = 1;
-						end
-
-					else
-						if (k.alphaUp == alphaUps[6]) then
-
-							if (BAR.IsMouseOverSelfOrWatchFrame(k)) then
-								if (v:GetAlpha() < 1) then
-									if (v:GetAlpha()+v.fadeSpeed <= 1) then
-										v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
-									else
-										v:SetAlpha(1)
-									end
-								else
-									k.seen = 1;
-								end
-							else
-								if (v:GetAlpha() > k.alpha) then
-									if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
-										v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
-									else
-										v:SetAlpha(k.alpha)
-									end
-								else
-									k.seen = 0;
-								end
-							end
-						else
-							if (v:GetAlpha() > k.alpha) then
-								if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
-									v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
-								else
-									v:SetAlpha(k.alpha)
-								end
-							else
-								k.seen = 0;
-							end
-						end
-					end
-
-				elseif (k.alphaUp == alphaUps[2]) then
-
-					if (BAR.IsMouseOverSelfOrWatchFrame(k)) then
-						if (v:GetAlpha() < 1) then
-							if (v:GetAlpha()+v.fadeSpeed <= 1) then
-								v:SetAlpha(v:GetAlpha()+v.fadeSpeed)
-							else
-								v:SetAlpha(1)
-							end
-						else
-							k.seen = 1;
+							self.handler:SetAlpha(0)
 						end
 					else
-						if (v:GetAlpha() > k.alpha) then
-							if (v:GetAlpha()-v.fadeSpeed >= k.alpha) then
-								v:SetAlpha(v:GetAlpha()-v.fadeSpeed)
-							else
-								v:SetAlpha(k.alpha)
-							end
-						else
-							k.seen = 0;
-						end
+						self.seen = 0;
 					end
 				end
 			end
 		end
 	end
+
+
+
+	if (self.data.alphaUp and self.handler~=nil) then
+
+		if (self:IsShown()) then
+			self.handler:SetAlpha(1)
+		else
+
+			if (self.data.alphaUp == alphaUps[3] or self.data.alphaUp == alphaUps[4]) then
+
+				if (InCombatLockdown()) then
+
+					if (self.handler:GetAlpha() < 1) then
+						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+						else
+							self.handler:SetAlpha(1)
+						end
+					else
+						self.seen = 1;
+					end
+
+				else
+					if (self.data.alphaUp == alphaUps[4]) then
+
+						if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
+							if (self.handler:GetAlpha() < 1) then
+								if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+									self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+								else
+									self.handler:SetAlpha(1)
+								end
+							else
+								self.seen = 1;
+							end
+						else
+							if (self.handler:GetAlpha() > self:GetAlpha()) then
+								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self:GetAlpha()) then
+									self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+								else
+									self.handler:SetAlpha(self:GetAlpha())
+								end
+							else
+								self.seen = 0;
+							end
+						end
+					else
+						if (self.handler:GetAlpha() > self:GetAlpha()) then
+							if (self.handler:GetAlpha()-self.data.fadeSpeed >= self:GetAlpha()) then
+								self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+							else
+								self.handler:SetAlpha(self:GetAlpha())
+							end
+						else
+							self.seen = 0;
+						end
+					end
+				end
+
+			elseif (self.data.alphaUp == alphaUps[5] or self.data.alphaUp == alphaUps[6]) then
+
+				if (not InCombatLockdown()) then
+
+					if (self.handler:GetAlpha() < 1) then
+						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+						else
+							self.handler:SetAlpha(1)
+						end
+					else
+						self.seen = 1;
+					end
+
+				else
+					if (self.data.alphaUp == alphaUps[6]) then
+
+						if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
+							if (self.handler:GetAlpha() < 1) then
+								if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+									self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+								else
+									self.handler:SetAlpha(1)
+								end
+							else
+								self.seen = 1;
+							end
+						else
+							if (self.handler:GetAlpha() > self:GetAlpha()) then
+								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self:GetAlpha()) then
+									self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+								else
+									self.handler:SetAlpha(self:GetAlpha())
+								end
+							else
+								self.seen = 0;
+							end
+						end
+					else
+						if (self.handler:GetAlpha() > k.alpha) then
+							if (self.handler:GetAlpha()-self.data.fadeSpeed >= k.alpha) then
+								self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+							else
+								self.handler:SetAlpha(k.alpha)
+							end
+						else
+							self.seen = 0;
+						end
+					end
+				end
+
+			elseif (self.data.alphaUp == alphaUps[2]) then
+
+				if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
+					if (self.handler:GetAlpha() < 1) then
+						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+						else
+							self.handler:SetAlpha(1)
+						end
+					else
+						self.seen = 1;
+					end
+				else
+					if (self.handler:GetAlpha() > self:GetAlpha()) then
+						if (self.handler:GetAlpha()-self.data.fadeSpeed >= self:GetAlpha()) then
+							self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+						else
+							self.handler:SetAlpha(self:GetAlpha())
+						end
+					else
+						self.seen = 0;
+					end
+				end
+			end
+		end
+	end
+
 end
 
 
@@ -321,20 +320,13 @@ function BAR:SetHidden(handler, show, hide)
 	end
 end
 
-function BAR:SetAutoHide(handler)
-
+function BAR:SetAutoHide()
 	if (self.data.autoHide) then
-		autoHideIndex[self] = handler
-		handler.fadeSpeed = (self.data.fadeSpeed*self.data.fadeSpeed)
+		if self:TimeLeft(self.autoHideTimer) == 0 then --safety check to make sure we don't re-set an already active timer
+			self.autoHideTimer = self:ScheduleRepeatingTimer("AutoHideUpdate", .05)
+		end
 	else
-		autoHideIndex[self] = nil
-	end
-
-	if (self.data.alphaUp == L["Off"]) then
-		alphaupIndex[self] = nil
-	else
-		alphaupIndex[self] = handler
-		handler.fadeSpeed = (self.data.fadeSpeed*self.data.fadeSpeed)
+		self:CancelTimer(self.autoHideTimer)
 	end
 end
 
@@ -826,8 +818,6 @@ function BAR:Update(show, hide)
 	local handler, driver = self.handler, self.driver
 
 	self.elapsed = 0;
-	self.alpha = self.data.alpha;
-	self.alphaUp = self.data.alphaUp
 
 	if (self.stateschanged) then
 
@@ -1435,48 +1425,6 @@ function BAR:Pulse(elapsed)
 	self.pulse = true
 end
 
----TODO: This is probably a source of inefficiency
-function BAR:OnUpdate(elapsed)
-	if (Neuron.enteredWorld) then
-
-		if (self.elapsed) then
-			self.elapsed = self.elapsed + elapsed
-
-			if (self.elapsed > 10) then
-				self.elapsed = 0.75
-			end
-
-			if (self.microAdjust and not self.action) then
-				self:Pulse(elapsed)
-
-				if (self.keydown and self.elapsed >= 0.5) then
-					self.microAdjust = self.microAdjust + 1
-					self:OnKeyDown(self.keydown, self.microAdjust)
-				end
-
-			elseif (self.pulse) then
-				self:SetAlpha(1)
-				self.pulse = nil
-			end
-
-			if (self.hover) then
-				self.elapsed = 0
-			end
-		end
-
-		if (GetMouseFocus() == self) then
-			if (not self.wheel) then
-				self:EnableMouseWheel(true)
-				self.wheel = true
-			end
-		elseif (self.wheel) then
-			self:EnableMouseWheel(false)
-			self.wheel = nil
-		end
-
-	end
-end
-
 
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
@@ -1609,8 +1557,6 @@ function BAR:DeleteBar()
 	self:SetScript("OnKeyUp", function() end)
 	self:SetScript("OnShow", function() end)
 	self:SetScript("OnHide", function() end)
-	self:SetScript("OnUpdate", function() end)
-
 
 	self:SetWidth(36)
 	self:SetHeight(36)
@@ -1766,7 +1712,6 @@ function BAR:CreateBar(class, id)
 		bar:SetScript("OnKeyUp", function(self, key) self:OnKeyUp(key) end)
 		bar:SetScript("OnShow", function(self) self:OnShow() end)
 		bar:SetScript("OnHide", function(self) self:OnHide() end)
-		bar:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
 
 
 		bar:CreateDriver()
