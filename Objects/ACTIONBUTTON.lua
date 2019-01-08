@@ -2341,19 +2341,6 @@ function ACTIONBUTTON:GetPosition(oFrame)
 end
 
 
---callback(arg and arg, Group, SkinID, Gloss, Backdrop, Colors, Fonts)
-
-function ACTIONBUTTON:SKINCallback(group,...)
-	if (group) then
-		for btn in pairs(Neuron.SKINIndex) do
-			if (btn.bar and btn.bar.data.name == group) then
-				btn:GetSkinned()
-			end
-		end
-	end
-end
-
-
 
 ----ACTION functions
 --this is used in things like the possess/vehicle/override bars

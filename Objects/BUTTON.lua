@@ -253,32 +253,38 @@ function BUTTON:CooldownCounterUpdate()
 			end
 
 		elseif (self.iconframecooldown.timer:IsShown()) then
-			if (coolDown >= 86400) then
+
+			if (coolDown >= 86400) then ---append a "d" if the timer is longer than 1 day
 				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
-			elseif (coolDown >= 3600) then
+
+			elseif (coolDown >= 3600) then ---append a "h" if the timer is longer than 1 hour
 				formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
-			elseif (coolDown >= 60) then
+
+			elseif (coolDown >= 60) then ---append a "m" if the timer is longer than 1 min
 				formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
-			elseif (coolDown >=6) then
+
+			elseif (coolDown >=6) then ---this is the 'normal' countdown text state
 				formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.45
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
-			elseif (coolDown < 6) then
+
+			elseif (coolDown < 6) then ---this is the countdown text state but with the text larger and set to the expire color (usually red)
 				formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.6
 				if (expirecolor) then
 					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
 					expirecolor = nil
 				end
+
 			end
 
 			if (not self.iconframecooldown.cdsize or self.iconframecooldown.cdsize ~= size) then
@@ -302,7 +308,7 @@ function BUTTON:CooldownCounterUpdate()
 			self.iconframecooldown.button:SetAlpha(1)
 		end
 	else
-		self.iconframecooldown.button:SetAlpha(1)
+		self.iconframecooldown.button:SetAlpha(1) --restore alpha to 1 in case it somehow was stuck at a lower value
 	end
 
 end
@@ -522,7 +528,13 @@ function BUTTON:SetSkinned(flyout)
 				Count = self.count,
 				Name = self.name,
 				Border = self.border,
-				AutoCast = false,
+				AutoCast = self.shine,
+				AutoCastable = self.autocastable,
+				Checked = self.checkedtexture,
+				Pushed = self:GetPushedTexture(),
+				Disabled = self:GetDisabledTexture(),
+				Highlight = self.highlighttexture,
+
 			}
 
 			if (flyout) then
@@ -533,7 +545,6 @@ function BUTTON:SetSkinned(flyout)
 
 			self.skinned = true
 
-			Neuron.SKINIndex[self] = true
 		end
 	end
 end

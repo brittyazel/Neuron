@@ -37,7 +37,6 @@ Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
 --prepare the Neuron table with some sub-tables that will be used down the road
 Neuron.EDITIndex = {}
 Neuron.BINDIndex = {}
-Neuron.SKINIndex = {}
 
 Neuron.numLoadedModules = 0
 

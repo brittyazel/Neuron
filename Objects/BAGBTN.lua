@@ -60,8 +60,6 @@ function BAGBTN:SetSkinned()
 			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
 
 			self.skinned = true
-
-			Neuron.SKINIndex[self] = true
 		end
 	end
 end
