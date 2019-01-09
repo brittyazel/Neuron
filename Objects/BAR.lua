@@ -192,22 +192,22 @@ function BAR:AutoHideUpdate()
 								self.seen = 1;
 							end
 						else
-							if (self.handler:GetAlpha() > self:GetAlpha()) then
-								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self:GetAlpha()) then
+							if (self.handler:GetAlpha() > self.data.alpha) then
+								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
 									self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 								else
-									self.handler:SetAlpha(self:GetAlpha())
+									self.handler:SetAlpha(self.data.alpha)
 								end
 							else
 								self.seen = 0;
 							end
 						end
 					else
-						if (self.handler:GetAlpha() > self:GetAlpha()) then
-							if (self.handler:GetAlpha()-self.data.fadeSpeed >= self:GetAlpha()) then
+						if (self.handler:GetAlpha() > self.data.alpha) then
+							if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
 								self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 							else
-								self.handler:SetAlpha(self:GetAlpha())
+								self.handler:SetAlpha(self.data.alpha)
 							end
 						else
 							self.seen = 0;
@@ -243,11 +243,11 @@ function BAR:AutoHideUpdate()
 								self.seen = 1;
 							end
 						else
-							if (self.handler:GetAlpha() > self:GetAlpha()) then
-								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self:GetAlpha()) then
+							if (self.handler:GetAlpha() > self.data.alpha) then
+								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
 									self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 								else
-									self.handler:SetAlpha(self:GetAlpha())
+									self.handler:SetAlpha(self.data.alpha)
 								end
 							else
 								self.seen = 0;
@@ -279,11 +279,11 @@ function BAR:AutoHideUpdate()
 						self.seen = 1;
 					end
 				else
-					if (self.handler:GetAlpha() > self:GetAlpha()) then
-						if (self.handler:GetAlpha()-self.data.fadeSpeed >= self:GetAlpha()) then
+					if (self.handler:GetAlpha() > self.data.alpha) then
+						if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
 							self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 						else
-							self.handler:SetAlpha(self:GetAlpha())
+							self.handler:SetAlpha(self.data.alpha)
 						end
 					else
 						self.seen = 0;
