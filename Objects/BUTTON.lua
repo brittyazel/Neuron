@@ -157,7 +157,7 @@ function BUTTON:ChangeObject(object)
 end
 
 
-function BUTTON:SetCooldownTimer(start, duration, enable, cooldownTimer, modrate, color1, color2, cooldownAlpha, charges)
+function BUTTON:SetCooldownTimer(start, duration, enable, cooldownTimer, modrate, color1, color2, cooldownAlpha, charges, spell)
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
@@ -189,6 +189,11 @@ function BUTTON:SetCooldownTimer(start, duration, enable, cooldownTimer, modrate
 
 				--Get the remaining time left so when we re-call the timer when switching back to a state it has the correct time left instead of the full time
 				local timeleft = duration-(GetTime()-start)
+
+				if timeleft > 86400 then --safety check in case some timeleft value comes back rediculously long. This happened once after a weird game glitch, it came back as like 42000000. We should cap it at a day max
+					timeleft = 86400
+				end
+
 				--set timer that is both our cooldown counter, but also the cancles the repeating updating timer at the end
 				self.iconframecooldown.spellTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.countdownTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over
 
