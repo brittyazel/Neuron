@@ -189,8 +189,6 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
 
 	self:RegisterEvent("SPELL_UPDATE_CHARGES")
-	self:RegisterEvent("SPELL_UPDATE_USABLE")
-
 
 	self:RegisterEvent("MODIFIER_STATE_CHANGED")
 
@@ -208,7 +206,6 @@ function ACTIONBUTTON:SetUpEvents()
 
 	self:RegisterEvent("BAG_UPDATE_COOLDOWN")
 	self:RegisterEvent("BAG_UPDATE")
-	self:RegisterEvent("COMPANION_UPDATE")
 
 	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
 	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
@@ -228,11 +225,11 @@ function ACTIONBUTTON:SetUpEvents()
 	--when changing states or going in or out of range, this bucket is meant to catch all of these events
 	--[[self:RegisterBucketEvent({"ACTIONBAR_UPDATE_STATE", "SPELL_UPDATE_COOLDOWN", "UPDATE_SHAPESHIFT_COOLDOWN",
 	                          "BAG_UPDATE_COOLDOWN", "UPDATE_SHAPESHIFT_FORM", "CURRENT_SPELL_CAST_CHANGED",
-	                          "ACTIONBAR_UPDATE_COOLDOWN", "SPELL_UPDATE_USABLE", "UNIT_AURA", "UPDATE_UI_WIDGET",
-	                          "PLAYER_STARTED_MOVING", "PLAYER_STOPPED_MOVING", "COMPANION_UPDATE", "BAG_UPDATE"}, 0.1, "UpdateState")]]
+	                          "ACTIONBAR_UPDATE_COOLDOWN", "UNIT_AURA", "UPDATE_UI_WIDGET",
+	                          "PLAYER_STARTED_MOVING", "PLAYER_STOPPED_MOVING", "BAG_UPDATE"}, 0.1, "UpdateState")]]
 
 	--this is meant to catch all the events when switching targets
-	--self:RegisterBucketEvent({"SPELL_UPDATE_USABLE", "PLAYER_TARGET_CHANGED", "UNIT_TARGET", "UPDATE_MOUSEOVER_UNIT"}, 0.1, "UpdateAll")
+	--self:RegisterBucketEvent({"PLAYER_TARGET_CHANGED", "UNIT_TARGET", "UPDATE_MOUSEOVER_UNIT"}, 0.1, "UpdateAll")
 end
 
 
@@ -985,7 +982,6 @@ function ACTIONBUTTON:ACTIONBAR_UPDATE_STATE(...)
 	self:UpdateState(...)
 end
 
-ACTIONBUTTON.COMPANION_UPDATE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 ACTIONBUTTON.ACTIONBAR_UPDATE_USABLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 
 
@@ -1115,8 +1111,6 @@ function ACTIONBUTTON:MODIFIER_STATE_CHANGED(...)
 	self:UpdateAll(true)
 end
 
-
-ACTIONBUTTON.SPELL_UPDATE_USABLE = ACTIONBUTTON.MODIFIER_STATE_CHANGED
 
 
 function ACTIONBUTTON:ACTIONBAR_SLOT_CHANGED(...)

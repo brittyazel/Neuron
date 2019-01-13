@@ -204,10 +204,9 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	Neuron:RegisterEvent("LEARNED_SPELL_IN_TAB")
 	Neuron:RegisterEvent("COMPANION_LEARNED")
-	Neuron:RegisterEvent("COMPANION_UPDATE")
 	Neuron:RegisterEvent("UNIT_PET")
-	--Neuron:RegisterEvent("TOYS_UPDATED")
-	--Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+	Neuron:RegisterEvent("TOYS_UPDATED")
+	Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 
 	Neuron:RegisterEvent("ACTIONBAR_SHOWGRID")
 	Neuron:RegisterEvent("UNIT_AURA")
@@ -321,23 +320,16 @@ function Neuron:SPELLS_CHANGED()
 end
 
 function Neuron:COMPANION_LEARNED()
-	if not CollectionsJournal or not CollectionsJournal:IsShown() then
-		Neuron:UpdateCollectionCache()
-	end
+	Neuron:UpdateCollectionCache()
 end
 
-function Neuron:COMPANION_UPDATE()
-	if not CollectionsJournal or not CollectionsJournal:IsShown() then
-		Neuron:UpdateCollectionCache()
-	end
+function Neuron:PET_JOURNAL_LIST_UPDATE()
+	Neuron:UpdateCollectionCache()
 end
 
---[[function Neuron:PET_JOURNAL_LIST_UPDATE()
-	if not CollectionsJournal or not CollectionsJournal:IsShown() then
-		Neuron:UpdateCollectionCache()
-	end
-end]]
-
+function Neuron:TOYS_UPDATED(...)
+	Neuron:UpdateToyCache()
+end
 
 function Neuron:UNIT_PET(_, ...)
 	if ... == "player" then
@@ -346,16 +338,6 @@ function Neuron:UNIT_PET(_, ...)
 		end
 	end
 end
-
-
-
---[[function Neuron:TOYS_UPDATED(...)
-
-	if not ToyBox or not ToyBox:IsShown() then
-		Neuron:UpdateToyCache()
-	end
-end]]
-
 
 function Neuron:ACTIONBAR_SHOWGRID()
 	Neuron.startDrag = true
@@ -709,22 +691,8 @@ end
 -- the itemID from toyCache where needed
 function Neuron:UpdateToyCache()
 
-	-- note filter settings
-	local filterCollected = C_ToyBox.GetCollectedShown()
-	local filterUncollected = C_ToyBox.GetUncollectedShown()
-	local sources = {}
-	for i=1,10 do
-		sources[i] = C_ToyBox.IsSourceTypeFilterChecked(i)
-	end
-	-- set filters to all toys
-	C_ToyBox.SetCollectedShown(true)
-	C_ToyBox.SetUncollectedShown(true) -- we don't need to uncollected toys
-	--C_ToyBox.ClearAllSourceTypesFiltered()
-	C_ToyBox.SetAllSourceTypeFilters(true)
-	C_ToyBox.SetFilterString("")
-
 	-- fill cache with itemIDs = name
-	for i=1,C_ToyBox.GetNumFilteredToys() do
+	for i=1,C_ToyBox.GetNumToys() do
 		local itemID = C_ToyBox.GetToyFromIndex(i)
 		local name = GetItemInfo(itemID) or "UNKNOWN"
 		local known = PlayerHasToy(itemID)
@@ -733,12 +701,6 @@ function Neuron:UpdateToyCache()
 		end
 	end
 
-	-- restore filters
-	C_ToyBox.SetCollectedShown(filterCollected)
-	C_ToyBox.SetUncollectedShown(filterUncollected)
-	for i=1,10 do
-		C_ToyBox.SetSourceTypeFilter(i, not sources[i])
-	end
 end
 
 
@@ -746,32 +708,27 @@ end
 ---	If a companion is not displaying its tooltip or cooldown, then the item in the macro probably is not in the database
 function Neuron:UpdateCollectionCache()
 
-	C_PetJournal.ClearSearchFilter()
-	C_PetJournal.SetAllPetSourcesChecked(true)
-	C_PetJournal.SetAllPetTypesChecked(true)
 	local _, numpet = C_PetJournal.GetNumPets()
-
 
 	for i=1,numpet do
 
-		local petID, speciesID, _, _, _, _, _, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i)
+		local petID, speciesID, owned, _, _, _, _, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i)
 
-		if (petID) then
+		if (petID and owned) then
 			local spell = speciesName
 			if (spell) then
 				local companionData = Neuron:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
 				NeuronCollectionCache[spell:lower()] = companionData
 				NeuronCollectionCache[spell:lower().."()"] = companionData
-
 			end
 		end
 	end
 
 	local mountIDs = C_MountJournal.GetMountIDs()
 	for i,id in pairs(mountIDs) do
-		local creatureName , spellID = C_MountJournal.GetMountInfoByID(id)
+		local creatureName , spellID, _, _, _, _, _, _, _, _, collected = C_MountJournal.GetMountInfoByID(id)
 
-		if (spellID) then
+		if (spellID and collected) then
 			local spell, _, icon = GetSpellInfo(spellID)
 			if (spell) then
 				local companionData = Neuron:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
