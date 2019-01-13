@@ -400,11 +400,11 @@ end
 
 function ACTIONBUTTON:UpdateData(...)
 
-	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__
+	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_item, ud_target
 
 
 	if (self.macroparse) then
-		ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_cd, ud_cdcmd, ud_aura, ud_auracmd, ud_item, ud_target, ud__ = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
+		ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_item, ud_target = nil, nil, nil, nil, nil, nil, nil, nil
 
 		for cmd, options in gmatch(self.macroparse, "(%c%p%a+)(%C+)") do
 			--after gmatch, remove unneeded characters
@@ -421,20 +421,6 @@ function ACTIONBUTTON:UpdateData(...)
 				ud_showcmd = cmd
 			end
 
-			--find #cdwatch option!
-			if (not ud_cd and cmd:find("^#cdwatch")) then
-				ud_cd = SecureCmdOptionParse(options); ud_cdcmd = cmd
-			elseif (ud_cd and #ud_cd < 1 and cmd:find("^#cdwatch")) then
-				ud_cd = SecureCmdOptionParse(options); ud_cdcmd = cmd
-			end
-
-			--find #aurawatch option!
-			if (not ud_aura and cmd:find("^#aurawatch")) then
-				ud_aura = SecureCmdOptionParse(options); ud_auracmd = cmd
-			elseif (ud_aura and #ud_aura < 1 and cmd:find("^#aurawatch")) then
-				ud_aura = SecureCmdOptionParse(options); ud_auracmd = cmd
-			end
-
 			--find the ud_spell!
 			if (not ud_spell and cmdSlash[cmd]) then
 				ud_spell, ud_target = SecureCmdOptionParse(options); ud_spellcmd = cmd
@@ -445,7 +431,7 @@ function ACTIONBUTTON:UpdateData(...)
 
 		if (ud_spell and ud_spellcmd:find("/castsequence")) then
 
-			ud__, ud_item, ud_spell = QueryCastSequence(ud_spell)
+			_, ud_item, ud_spell = QueryCastSequence(ud_spell)
 
 		elseif (ud_spell) then
 
@@ -503,28 +489,6 @@ function ACTIONBUTTON:UpdateData(...)
 		else
 			self.macroshow = nil
 			self.macroicon = nil
-		end
-
-		if (ud_cd) then
-			if (ud_cd ~= self.macrocd) then
-				if(tonumber(ud_aura) and GetInventoryItemLink("player", ud_cd)) then
-					ud_aura = GetInventoryItemLink("player", ud_cd)
-				end
-				self.macrocd = ud_aura
-			end
-		else
-			self.macrocd = nil
-		end
-
-		if (ud_aura) then
-			if (ud_aura ~= self.macroaura) then
-				if(tonumber(ud_aura) and GetInventoryItemLink("player", ud_aura)) then
-					ud_aura = GetInventoryItemLink("player", ud_aura)
-				end
-				self.macroaura = ud_aura
-			end
-		else
-			self.macroaura = nil
 		end
 
 		if (ud_item) then
