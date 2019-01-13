@@ -820,11 +820,6 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 	self.manacolor = { 0.5, 0.5, 1.0 }
 	self.rangecolor = { 0.7, 0.15, 0.15, 1 }
 
-	self:SetFrameLevel(4)
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-	self.iconframeaurawatch:SetFrameLevel(3)
-
 	self:GetSkinned()
 end
 

@@ -743,15 +743,6 @@ function ACTIONBUTTON:SetSpellState(spell)
 
 	self:UpdateButton()
 
-
-	if (self.auraQueue and not self.iconframecooldown.timer:IsShown()) then
-		local unit, auraSpell = (":"):split(self.auraQueue)
-		if (unit and auraSpell) then
-			self.auraQueue = nil;
-			self:UpdateAuraWatch(unit, auraSpell)
-		end
-	end
-
 end
 
 
@@ -1470,7 +1461,6 @@ end
 
 function ACTIONBUTTON:PlaceBattlePet(action1, action2, hasAction)
 	local petName, petIcon
-	local _ --variable used to discard unwanted return values
 
 	if (action1 == 0) then
 		return
@@ -1479,7 +1469,6 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2, hasAction)
 
 		self.data.macro_Text = "#autowrite\n/summonpet "..petName
 		self.data.macro_Auto = petName..";"
-		--self.data.macro_Text = self:AutoWriteMacro(petName)
 		self.data.macro_Icon = petIcon
 		self.data.macro_Name = petName
 		self.data.macro_Watch = false
@@ -1766,11 +1755,7 @@ function ACTIONBUTTON:OnDragStart(mousebutton)
 
 		self:UpdateAll()
 
-		self.iconframecooldown.duration = 0
 		self.iconframecooldown.timer:SetText("")
-
-		self.iconframeaurawatch.duration = 0
-		self.iconframeaurawatch.timer:SetText("")
 
 		self.macroname:SetText("")
 		self.count:SetText("")
@@ -1781,8 +1766,6 @@ function ACTIONBUTTON:OnDragStart(mousebutton)
 		self.macroitem = nil
 		self.macroshow = nil
 		self.macroicon = nil
-
-		self.auraQueue = nil
 
 		self.border:Hide()
 

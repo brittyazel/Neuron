@@ -88,10 +88,6 @@ function EXITBTN:SetType(save)
 
 	self:SetExitButtonIcon()
 
-	self:SetFrameLevel(4)
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-
 	self:SetObjectVisibility()
 end
 
