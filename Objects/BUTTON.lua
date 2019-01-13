@@ -222,7 +222,6 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 		CooldownFrame_Set(self.iconframecooldown, 0, 0,0)
 		self.iconframecooldown.timer:SetText("")
-		self.iconframecooldown.timer:Hide()
 		self.iconframecooldown.button:SetAlpha(1)
 		self.iconframecooldown.showCountdownTimer = false
 		self.iconframecooldown.showCountdownAlpha = false
@@ -242,11 +241,8 @@ function BUTTON:CooldownCounterUpdate()
 
 	if self.iconframecooldown.showCountdownTimer then --check if flag is set, otherwise skip
 
-		self.iconframecooldown.timer:Show() --show the element that holds the cooldown text
-
 		if (coolDown < 1) then
 			if (coolDown <= 0) then
-				self.iconframecooldown.timer:Hide()
 				self.iconframecooldown.timer:SetText("")
 				self.iconframecooldown.expirecolor = nil
 				self.iconframecooldown.cdsize = nil
@@ -639,9 +635,10 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 			uaw_duration = tonumber(uaw_duration)
 			uaw_timeLeft = tonumber(uaw_timeLeft)
 
-			if (self.auraText or self.auraInd) then
+			--if (self.auraText or self.auraInd) then
+			if (self.auraInd) then
 
-				self.iconframecooldown.showAuraCountdown = self.auraText
+				--self.iconframecooldown.showAuraCountdown = self.auraText
 				self.iconframecooldown.showAuraBorder = self.auraInd
 
 				self.iconframecooldown.auraType = uaw_auraType
@@ -666,7 +663,7 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 				self.iconframecooldown.auraUpdateTimer = self:ScheduleRepeatingTimer("AuraCounterUpdate", 0.20)
 
 			else
-				self.iconframecooldown.showAuraCountdown = false
+				--self.iconframecooldown.showAuraCountdown = false
 				self.iconframecooldown.showAuraBorder = false
 			end
 
@@ -675,11 +672,10 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 		elseif (self.auraWatchUnit == unit) then
 
 			self:CancelTimer(self.iconframecooldown.auraUpdateTimer)
-			self.iconframecooldown.timer:SetText("")
-			self.iconframecooldown.timer:Hide()
+			--self.iconframecooldown.timer:SetText("")
 			self.border:Hide()
 
-			self.iconframecooldown.showAuraCountdown = false
+			--self.iconframecooldown.showAuraCountdown = false
 			self.iconframecooldown.showAuraBorder = false
 
 			self.auraWatchUnit = nil
@@ -694,15 +690,10 @@ function BUTTON:AuraCounterUpdate()
 
 	coolDown = self:TimeLeft(self.iconframecooldown.auraTimer) - 1
 
-	if self.iconframecooldown.showAuraCountdown and not self.iconframecooldown.showCountdownTimer then
-
-		self.iconframecooldown.timer:Show()
+	--[[if self.iconframecooldown.showAuraCountdown and not self.iconframecooldown.showCountdownTimer then
 
 		if (coolDown < 1) then
-
-			self.iconframecooldown.timer:Hide()
 			self.iconframecooldown.timer:SetText("")
-
 		else
 
 			formatted = string.format( "%.0f",coolDown)
@@ -718,10 +709,10 @@ function BUTTON:AuraCounterUpdate()
 			self.iconframecooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
 
 			self.iconframecooldown.timer:SetText(formatted)
+
 		end
 
-	end
-
+	end]]
 
 
 	if self.iconframecooldown.showAuraBorder then

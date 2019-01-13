@@ -142,7 +142,7 @@
 						</Anchors>
 						<Layers>
 							<Layer level="OVERLAY" textureSubLevel="3">
-								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal" hidden="true">
+								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal">
 									<Anchors>
 										<Anchor point="CENTER">
 											<Offset x="0.5" y="0"/>
