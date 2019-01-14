@@ -207,14 +207,7 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("UNIT_PET")
 	Neuron:RegisterEvent("TOYS_UPDATED")
 	Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
-
 	Neuron:RegisterEvent("ACTIONBAR_SHOWGRID")
-	Neuron:RegisterEvent("UNIT_AURA")
-	Neuron:RegisterEvent("UNIT_SPELLCAST_SENT")
-	Neuron:RegisterEvent("UNIT_SPELLCAST_START")
-	Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
-
 
 	Neuron:UpdateStanceStrings()
 
@@ -331,68 +324,15 @@ function Neuron:TOYS_UPDATED(...)
 	Neuron:UpdateToyCache()
 end
 
-function Neuron:UNIT_PET(_, ...)
-	if ... == "player" then
-		if (Neuron.enteredWorld) then
-			Neuron:UpdatePetSpellCache()
-		end
-	end
-end
-
 function Neuron:ACTIONBAR_SHOWGRID()
 	Neuron.startDrag = true
 end
 
-function Neuron:UNIT_AURA(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
 
-function Neuron:UNIT_SPELLCAST_SENT(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
-function Neuron:UNIT_SPELLCAST_START(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
-function Neuron:UNIT_SPELLCAST_SUCCEEDED(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
-function Neuron:UNIT_SPELLCAST_CHANNEL_START(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
-function Neuron:UNIT_SPELLCAST_SUCCEEDED(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
+function Neuron:UNIT_PET(_, ...)
+	if ... == "player" then
+		if (Neuron.enteredWorld) then
+			Neuron:UpdatePetSpellCache()
 		end
 	end
 end

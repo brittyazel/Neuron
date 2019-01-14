@@ -195,7 +195,6 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 	self:RegisterEvent("UNIT_SPELLCAST_FAILED")
 	self:RegisterEvent("UNIT_PET")
-	self:RegisterEvent("UNIT_AURA")
 	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
 	self:RegisterEvent("UNIT_ENTERING_VEHICLE")
 	self:RegisterEvent("UNIT_EXITED_VEHICLE")
@@ -956,24 +955,6 @@ end
 
 
 ACTIONBUTTON.BAG_UPDATE = ACTIONBUTTON.BAG_UPDATE_COOLDOWN
-
-
-function ACTIONBUTTON:UNIT_AURA(...)
-	local unit = select(1, ...)
-
-	if (Neuron.unitAuras[unit]) then
-		self:UpdateAuraWatch(self, unit, self.macrospell)
-
-		if (unit == "player") then
-			self:UpdateData(...)
-			self:UpdateTimers()
-		end
-	end
-end
-
-
-ACTIONBUTTON.UPDATE_MOUSEOVER_UNIT = ACTIONBUTTON.UNIT_AURA
-
 
 
 function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(...)

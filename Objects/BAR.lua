@@ -851,7 +851,65 @@ function BAR:Update(show, hide)
 	if (not hide and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateBarGUI()
 	end
+
+	if self.data.auraInd == true then
+		Neuron:RegisterEvent("UNIT_AURA")
+		Neuron:RegisterEvent("UNIT_SPELLCAST_SENT")
+		Neuron:RegisterEvent("UNIT_SPELLCAST_START")
+		Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+		Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+	end
+
 end
+
+-------------------------------------------------------
+--ToDo: this is temp, this should not go here forever.
+function Neuron:UNIT_AURA(_, ...)
+	local unit = select(1,...)
+	if (Neuron.unitAuras[unit]) then
+		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
+		end
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_SENT(_, ...)
+	local unit = select(1,...)
+	if (Neuron.unitAuras[unit]) then
+		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
+		end
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_START(_, ...)
+	local unit = select(1,...)
+	if (Neuron.unitAuras[unit]) then
+		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
+		end
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_SUCCEEDED(_, ...)
+	local unit = select(1,...)
+	if (Neuron.unitAuras[unit]) then
+		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
+		end
+	end
+end
+
+function Neuron:UNIT_SPELLCAST_CHANNEL_START(_, ...)
+	local unit = select(1,...)
+	if (Neuron.unitAuras[unit]) then
+		if (... == "player") then
+			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
+		end
+	end
+end
+-------------------------------------------------------
+
 
 
 function BAR:GetPosition(oFrame)

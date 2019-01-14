@@ -64,7 +64,7 @@ local slashFunctions = {
 	{L["CountText"], L["CountText_Description"], "CountTextSet"},
 	{L["CDText"], L["CDText_Description"], "CDTextSet"},
 	{L["CDAlpha"], L["CDAlpha_Description"], "CDAlphaSet"},
-	{L["AuraText"], L["AuraText_Description"], "AuraTextSet"},
+	--{L["AuraText"], L["AuraText_Description"], "AuraTextSet"},
 	{L["AuraInd"], L["AuraInd_Description"], "AuraIndSet"},
 	{L["UpClick"], L["UpClick_Description"], "UpClicksSet"},
 	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
