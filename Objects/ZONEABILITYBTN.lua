@@ -46,15 +46,17 @@ end
 
 
 function ZONEABILITYBTN:UpdateButton()
-	if (self.editmode) then
-		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
-	elseif (self.spellName) then
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-	else
-		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
 
+	local hasAction = self:HasAction()
+	if (not self:GetSkinned()) then
+		if (hasAction) then
+			self:SetNormalTexture(self.hasAction or "")
+			self:GetNormalTexture():SetVertexColor(1,1,1,1)
+		else
+			self:SetNormalTexture(self.noAction or "")
+			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
+		end
 	end
-	self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 
 end
 

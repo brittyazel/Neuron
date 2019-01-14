@@ -373,25 +373,6 @@ end
 --------------General Button Methods------------------------
 ------------------------------------------------------------
 
-
-function ACTIONBUTTON:HasAction()
-	local hasAction = self.data.macro_Text
-
-	if (self.actionID) then
-		if (self.actionID == 0) then
-			return true
-		else
-			return HasAction(self.actionID)
-		end
-
-	elseif (hasAction and #hasAction>0) then
-		return true
-	else
-		return false
-	end
-end
-
-
 function ACTIONBUTTON:GetDragAction()
 	return "macro"
 end

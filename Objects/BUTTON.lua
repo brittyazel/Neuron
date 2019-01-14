@@ -577,6 +577,22 @@ function BUTTON:GetSkinned()
 	end
 end
 
+function BUTTON:HasAction()
+	local hasAction = self.data.macro_Text
+
+	if (self.actionID) then
+		if (self.actionID == 0) then
+			return true
+		else
+			return HasAction(self.actionID)
+		end
+
+	elseif (hasAction and #hasAction>0) then
+		return true
+	else
+		return false
+	end
+end
 
 
 

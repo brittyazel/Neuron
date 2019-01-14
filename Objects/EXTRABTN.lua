@@ -92,6 +92,18 @@ function EXTRABTN:ExtraButton_Update()
 	end
 
 
+	local hasAction = self:HasAction()
+	if (not self:GetSkinned()) then
+		if (hasAction) then
+			self:SetNormalTexture(self.hasAction or "")
+			self:GetNormalTexture():SetVertexColor(1,1,1,1)
+		else
+			self:SetNormalTexture(self.noAction or "")
+			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
+		end
+	end
+
+
 end
 
 
