@@ -177,21 +177,6 @@ function ZONEABILITYBTN:LoadAux()
 end
 
 
-
-function ZONEABILITYBTN:UpdateFrame()
-
-	local DB = Neuron.db.profile
-
-	if DB.zoneabilitybar[1].border then
-
-		NeuronZoneActionButton1.style:Show()
-	else
-		NeuronZoneActionButton1.style:Hide()
-	end
-
-end
-
-
 function ZONEABILITYBTN:SetType(save)
 
 	self:RegisterUnitEvent("UNIT_AURA", "player")
