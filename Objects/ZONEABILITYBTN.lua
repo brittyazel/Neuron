@@ -23,9 +23,8 @@
 local ZONEABILITYBTN = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
 Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 
-local ZoneAbilitySpellID
 
-
+----------------------------------------------------------
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
@@ -37,12 +36,77 @@ function ZONEABILITYBTN:new(name)
 end
 
 
+----------------------------------------------------------
 
-function ZONEABILITYBTN:UpdateButton()
+function ZONEABILITYBTN:SetType()
 
-	local hasAction = self:HasAction()
+	self:RegisterUnitEvent("UNIT_AURA", "player")
+	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
+
+	self:SetAttribute("type", "macro")
+	self:ZoneAbilityFrame_Update()
+
+
+	self:SetAttribute("useparent-unit", false)
+	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+
+	self:SetScript("OnDragStart", function(self) PickupSpell(self.spellID) end)
+	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	self:SetScript("OnLeave", GameTooltip_Hide)
+
+	
+	self:SetObjectVisibility()
+	self:SetButtonTex()
+end
+
+
+function ZONEABILITYBTN:LoadAux()
+
+	Neuron.NeuronBinder:CreateBindFrame(self)
+	self.style = self:CreateTexture(nil, "OVERLAY")
+	self.style:SetPoint("CENTER", -2, 1)
+	self.style:SetWidth(190)
+	self.style:SetHeight(95)
+end
+
+
+function ZONEABILITYBTN:OnEvent(event, ...)
+
+	self:ZoneAbilityFrame_Update();
+	self:SetObjectVisibility()
+
+	if event == "PLAYER_ENTERING_WORLD" then
+		Neuron.NeuronBinder:ApplyBindings(self)
+	end
+end
+
+
+function ZONEABILITYBTN:ZoneAbilityFrame_Update()
+
+	--update the ZoneAbility spell ID
+	self.spellID = GetZoneAbilitySpellInfo();
+	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+
+	if self.spellID then
+		self:SetButtonTex()
+
+		local start, duration, enable, modrate = GetSpellCooldown(self.spellName);
+
+		if (start) then
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		end
+
+		if (self.spellName and not InCombatLockdown()) then
+			self:SetAttribute("*macrotext*", "/cast " .. self.spellName .. "();")
+		end
+	end
+
+
 	if (not self:GetSkinned()) then
-		if (hasAction) then
+		if (self:HasAction()) then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -51,133 +115,6 @@ function ZONEABILITYBTN:UpdateButton()
 		end
 	end
 
-end
-
-function ZONEABILITYBTN:OnUpdate(elapsed)
-
-	self.elapsed = self.elapsed + elapsed
-
-	if (self.elapsed > Neuron.THROTTLE) then
-
-		self:UpdateButton()
-
-		self.elapsed = 0
-	end
-
-end
-
-function ZONEABILITYBTN:SetNeuronButtonTex()
-
-	local _, _, _, _, _, _, spellID = GetSpellInfo(self.baseName);
-
-	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
-	self.style:SetTexture(texture)
-
-	self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
-end
-
-
-function ZONEABILITYBTN:ZoneAbilityFrame_Update()
-
-	if (not self.baseName) then
-		return;
-	end
-
-	local name, _, tex, _, _, _, spellID = GetSpellInfo(self.baseName);
-
-	self.CurrentTexture = tex;
-	self.CurrentSpell = name;
-	self.iconframeicon:SetTexture(tex);
-	self:SetNeuronButtonTex()
-
-
-	local start, duration, enable, modrate = GetSpellCooldown(name);
-
-
-	if (start) then
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
-	end
-
-	self.spellName = self.CurrentSpell;
-	self.spellID = spellID;
-
-	if (self.spellName and not InCombatLockdown()) then
-		self:SetAttribute("*macrotext1", "/cast " .. self.spellName .. "();")
-	end
-end
-
-
-
-function ZONEABILITYBTN:PLAYER_ENTERING_WORLD( event, ...)
-	if InCombatLockdown() then return end
-	Neuron.NeuronBinder:ApplyBindings(self)
-end
-
-
-
----TODO: This should get roped into AceEvent
-function ZONEABILITYBTN:OnEvent(event, ...)
-
-	local spellID, spellType = GetZoneAbilitySpellInfo();
-
-	self.baseName = GetSpellInfo(spellID);
-	ZoneAbilitySpellID = spellID
-
-	if event == "PLAYER_ENTERING_WORLD" then
-		self:PLAYER_ENTERING_WORLD(event, ...)
-	end
-
-
-	if (spellID) then
-
-		if ( not GetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY) and garrisonType == LE_GARRISON_TYPE_6_0 ) then
-			SetCVarBitfield( "closedInfoFrames", LE_FRAME_TUTORIAL_GARRISON_ZONE_ABILITY, true );
-		end
-
-		self:ZoneAbilityFrame_Update();
-
-		if (not InCombatLockdown()) then
-			self:Show();
-		end
-	end
-
-	self.spellID = spellID;
-	self:SetObjectVisibility()
-end
-
-
-function ZONEABILITYBTN:SetTooltip()
-	if (GetSpellInfo(ZoneAbilitySpellID)) then
-		if (self.UberTooltips) then
-			GameTooltip:SetSpellByID(self.spellID)
-		else
-			GameTooltip:SetText(self.tooltipName)
-		end
-	end
-
-end
-
-
-function ZONEABILITYBTN:OnEnter(...)
-
-	if (self.bar) then
-		if (self.tooltipsCombat and InCombatLockdown()) then
-			return
-		end
-		if (self.tooltips) then
-			if (self.tooltipsEnhanced) then
-				self.UberTooltips = true
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			else
-				self.UberTooltips = false
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			end
-
-			self:SetTooltip()
-
-			GameTooltip:Show()
-		end
-	end
 end
 
 
@@ -190,62 +127,34 @@ function ZONEABILITYBTN:SetObjectVisibility(show)
 	end
 end
 
-function ZONEABILITYBTN:LoadAux()
-	self.spellID = ZoneAbilitySpellID;
-	Neuron.NeuronBinder:CreateBindFrame(self)
-	self.style = self:CreateTexture(nil, "OVERLAY")
-	self.style:SetPoint("CENTER", -2, 1)
-	self.style:SetWidth(190)
-	self.style:SetHeight(95)
-	self.hotkey:SetPoint("TOPLEFT", -4, -6)
-	self.style:SetTexture("Interface\\ExtraButton\\GarrZoneAbility-Armory")
+
+function ZONEABILITYBTN:SetButtonTex()
+
+	self.iconframeicon:SetTexture(self.spellIcon);
+
+	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[self.spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
+	self.style:SetTexture(texture)
+	self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 end
 
+function ZONEABILITYBTN:OnEnter(...)
 
+	if (self.bar) then
+		if (self.tooltipsCombat and InCombatLockdown()) then
+			return
+		end
 
-function ZONEABILITYBTN:OnLoad()
-	-- empty
-end
+		if (self.tooltips) then
 
-function ZONEABILITYBTN:OnShow()
-	self:ZoneAbilityFrame_Update();
-end
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-function ZONEABILITYBTN:OnHide()
+			if (self.tooltipsEnhanced and self.spellID) then
+				GameTooltip:SetSpellByID(self.spellID)
+			elseif (self.spellName) then
+				GameTooltip:SetText(self.spellName)
+			end
 
-end
-
-
-function ZONEABILITYBTN:OnDragStart()
-	PickupSpell(ZoneAbilitySpellID)
-end
-
-
-function ZONEABILITYBTN:SetType(save)
-
-	self:RegisterUnitEvent("UNIT_AURA", "player")
-	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
-	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
-
-
-	self.actionID = self.id
-
-	self:SetAttribute("type1", "macro")
-	self:SetAttribute("*action1", self.actionID)
-
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
-
-	self:SetScript("OnDragStart", function(self) self:OnDragStart() end)
-	self:SetScript("OnLoad", function(self) self:OnLoad() end)
-	self:SetScript("OnShow", function(self) self:OnShow() end)
-	self:SetScript("OnHide", function(self) self:OnHide() end)
-	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-	self:SetScript("OnLeave", GameTooltip_Hide)
-	self:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
-	self:SetScript("OnAttributeChanged", nil)
-
-	self:SetObjectVisibility()
+			GameTooltip:Show()
+		end
+	end
 end

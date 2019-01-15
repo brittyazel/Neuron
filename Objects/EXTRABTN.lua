@@ -24,6 +24,8 @@ local EXTRABTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.EXTRABTN = EXTRABTN
 
 
+----------------------------------------------------------
+
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
 ---@return EXTRABTN @ A newly created EXTRABTN object
@@ -33,6 +35,86 @@ function EXTRABTN:new(name)
 	return object
 end
 
+
+----------------------------------------------------------
+
+function EXTRABTN:SetType()
+
+	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR", "OnEvent")
+	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
+	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
+	self:RegisterUnitEvent("UNIT_AURA", "player")
+
+	self:ExtraButton_Update()
+
+	self:SetAttribute("type", "action")
+	self:SetAttribute("*action*", self.actionID)
+
+	self:SetAttribute("useparent-unit", false)
+	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+
+	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	self:SetScript("OnLeave", GameTooltip_Hide)
+
+	self:SetObjectVisibility()
+	self:SetButtonTex()
+end
+
+
+function EXTRABTN:LoadAux()
+
+	Neuron.NeuronBinder:CreateBindFrame(self)
+	self.style = self:CreateTexture(nil, "OVERLAY")
+	self.style:SetPoint("CENTER", -2, 1)
+	self.style:SetWidth(190)
+	self.style:SetHeight(95)
+end
+
+function EXTRABTN:OnEvent(event, ...)
+
+	self:ExtraButton_Update()
+	self:SetObjectVisibility()
+
+	if event == "PLAYER_ENTERING_WORLD" then
+		Neuron.NeuronBinder:ApplyBindings(self)
+	end
+
+end
+
+function EXTRABTN:ExtraButton_Update()
+
+	if HasExtraActionBar() then
+		local extraPage = GetExtraBarIndex()
+		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
+		_, self.spellID = GetActionInfo(self.actionID)
+	end
+
+	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+
+	if self.spellID then
+		self:SetButtonTex()
+
+		local start, duration, enable, modrate = GetSpellCooldown(self.spellName);
+
+		if (start) then
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		end
+	end
+
+
+	if (not self:GetSkinned()) then
+		if (self:HasAction()) then
+			self:SetNormalTexture(self.hasAction or "")
+			self:GetNormalTexture():SetVertexColor(1,1,1,1)
+		else
+			self:SetNormalTexture(self.noAction or "")
+			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
+		end
+	end
+
+end
 
 
 function EXTRABTN:SetObjectVisibility(show)
@@ -49,9 +131,7 @@ end
 
 function EXTRABTN:SetButtonTex()
 
-	if self.actionID then
-		self.iconframeicon:SetTexture(GetActionTexture(self.actionID))
-	end
+	self.iconframeicon:SetTexture(self.spellIcon)
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
 	self.style:SetTexture(texture)
@@ -59,92 +139,25 @@ function EXTRABTN:SetButtonTex()
 end
 
 
-function EXTRABTN:LoadAux()
-
-	Neuron.NeuronBinder:CreateBindFrame(self)
-
-	self.style = self:CreateTexture(nil, "OVERLAY")
-	self.style:SetPoint("CENTER", -2, 1)
-	self.style:SetWidth(190)
-	self.style:SetHeight(95)
-
-	self:SetButtonTex()
-end
-
-
-function EXTRABTN:ExtraButton_Update()
-
-	self:SetButtonTex()
-
-	local start, duration, enable, modrate = GetActionCooldown(self.actionID);
-
-	if (start) then
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
-	end
-
-
-	if (not self:GetSkinned()) then
-		if (self:HasAction() or force) then
-			self:SetNormalTexture(self.hasAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,1)
-		else
-			self:SetNormalTexture(self.noAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
-		end
-	end
-
-
-end
-
-
 function EXTRABTN:OnEnter(...)
 
 	if (self.bar) then
-
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-
-		if (GetActionInfo(self.actionID)) then
-			GameTooltip:SetAction(self.actionID)
+		if (self.tooltipsCombat and InCombatLockdown()) then
+			return
 		end
 
-		GameTooltip:Show()
+		if (self.tooltips) then
+
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+
+			if (self.tooltipsEnhanced and self.spellID) then
+				GameTooltip:SetSpellByID(self.spellID)
+			elseif (self.spellName) then
+				GameTooltip:SetText(self.spellName)
+			end
+
+			GameTooltip:Show()
+		end
 
 	end
-end
-
-
-function EXTRABTN:SetType(save)
-
-	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR", "OnEvent")
-	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
-	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
-	self:RegisterUnitEvent("UNIT_AURA", "player")
-
-	self.actionID = 169
-
-	self:SetAttribute("type", "action")
-	self:SetAttribute("*action1", self.actionID)
-
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
-
-	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-	self:SetScript("OnLeave", GameTooltip_Hide)
-
-	self:SetSkinned()
-
-end
-
-
-function EXTRABTN:OnEvent(event, ...)
-
-	self:ExtraButton_Update()
-	self:SetObjectVisibility()
-
-	if event == "PLAYER_ENTERING_WORLD" then
-		Neuron.NeuronBinder:ApplyBindings(self)
-	end
-
 end

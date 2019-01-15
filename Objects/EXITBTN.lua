@@ -24,6 +24,8 @@ local EXITBTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.EXITBTN = EXITBTN
 
 
+----------------------------------------------------------
+
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
 ---@return EXITBTN @ A newly created EXITBTN object
@@ -31,6 +33,30 @@ function EXITBTN:new(name)
 	local object = CreateFrame("CheckButton", name, UIParent, "NeuronActionButtonTemplate")
 	setmetatable(object, {__index = EXITBTN})
 	return object
+end
+
+
+----------------------------------------------------------
+
+function EXITBTN:SetType(save)
+
+	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
+	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
+	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "OnEvent");
+	self:RegisterEvent("UNIT_ENTERED_VEHICLE", "OnEvent")
+	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
+	self:RegisterEvent("VEHICLE_UPDATE", "OnEvent")
+
+	self:SetScript("OnClick", function(self) self:OnClick() end)
+	self:SetScript("OnEnter", function(self) self:OnEnter() end)
+	self:SetScript("OnLeave", GameTooltip_Hide)
+
+end
+
+
+function EXITBTN:OnEvent(event, ...)
+	self:SetButtonTex()
+	self:SetObjectVisibility()
 end
 
 
@@ -49,7 +75,7 @@ function EXITBTN:SetButtonTex()
 	self.iconframeicon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
 
 	if (not self:GetSkinned()) then
-		if (self:HasAction() or force) then
+		if (self:HasAction()) then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -59,28 +85,13 @@ function EXITBTN:SetButtonTex()
 	end
 end
 
-function EXITBTN:SetType(save)
 
-	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
-	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
-	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "OnEvent");
-	self:RegisterEvent("UNIT_ENTERED_VEHICLE", "OnEvent")
-	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
-	self:RegisterEvent("VEHICLE_UPDATE", "OnEvent")
-
-	self:SetScript("OnClick", function(self) self:OnClick() end)
-	self:SetScript("OnEnter", function(self) self:OnEnter() end)
-	self:SetScript("OnLeave", GameTooltip_Hide)
-
-	self:SetSkinned()
-end
-
-
-function EXITBTN:OnEvent(event, ...)
-
-	self:SetButtonTex()
-	self:SetObjectVisibility()
-
+function EXITBTN:OnClick()
+	if UnitOnTaxi("player")then
+		TaxiRequestEarlyLanding()
+	else
+		VehicleExit()
+	end
 end
 
 
@@ -96,13 +107,5 @@ function EXITBTN:OnEnter()
 		GameTooltip:ClearLines()
 		GameTooltip:SetText(CANCEL);
 		GameTooltip:Show();
-	end
-end
-
-function EXITBTN:OnClick()
-	if UnitOnTaxi("player")then
-		TaxiRequestEarlyLanding()
-	else
-		VehicleExit()
 	end
 end
