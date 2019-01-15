@@ -122,12 +122,6 @@ Neuron.barEditMode = false
 Neuron.buttonEditMode = false
 Neuron.bindingMode = false
 
-Neuron.SPECIALACTIONS = {
-	vehicle = "Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit",
-	possess = "Interface\\Icons\\Spell_Shadow_SacrificialShield",
-	taxi = "Interface\\Vehicles\\UI-Vehicles-Button-Exit-Up",
-}
-
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
 Neuron.THROTTLE = 0.2

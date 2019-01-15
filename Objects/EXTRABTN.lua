@@ -24,13 +24,6 @@ local EXTRABTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.EXTRABTN = EXTRABTN
 
 
-
-
-local SKIN = LibStub("Masque", true)
-local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
-
-
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
 ---@return EXTRABTN @ A newly created EXTRABTN object
@@ -39,6 +32,7 @@ function EXTRABTN:new(name)
 	setmetatable(object, {__index = EXTRABTN})
 	return object
 end
+
 
 
 function EXTRABTN:SetObjectVisibility(show)
@@ -53,7 +47,7 @@ function EXTRABTN:SetObjectVisibility(show)
 end
 
 
-function EXTRABTN:SetExtraButtonTex()
+function EXTRABTN:SetButtonTex()
 
 	if self.actionID then
 		self.iconframeicon:SetTexture(GetActionTexture(self.actionID))
@@ -73,15 +67,13 @@ function EXTRABTN:LoadAux()
 	self.style:SetWidth(190)
 	self.style:SetHeight(95)
 
-	self:SetExtraButtonTex()
-
-	self.hotkey:SetPoint("TOPLEFT", -4, -6)
+	self:SetButtonTex()
 end
 
 
 function EXTRABTN:ExtraButton_Update()
 
-	self:SetExtraButtonTex()
+	self:SetButtonTex()
 
 	self.style:Show()
 
@@ -92,9 +84,8 @@ function EXTRABTN:ExtraButton_Update()
 	end
 
 
-	local hasAction = self:HasAction()
 	if (not self:GetSkinned()) then
-		if (hasAction) then
+		if (self:HasAction() or force) then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -114,9 +105,7 @@ function EXTRABTN:OnEnter(...)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
 		if (GetActionInfo(self.actionID)) then
-
 			GameTooltip:SetAction(self.actionID)
-
 		end
 
 		GameTooltip:Show()
@@ -145,20 +134,6 @@ function EXTRABTN:SetType(save)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 	self:SetScript("OnShow", function(self) self:ExtraButton_Update() end)
-
-	self:WrapScript(self, "OnShow", [[
-					for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
-						self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
-					end
-					]])
-
-	self:WrapScript(self, "OnHide", [[
-					if (not self:GetParent():GetAttribute("concealed")) then
-						for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
-							self:ClearBinding(key)
-						end
-					end
-					]])
 
 
 	self:SetSkinned()

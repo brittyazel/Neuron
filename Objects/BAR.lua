@@ -1046,7 +1046,6 @@ function BAR:SetObjectLoc()
 		if (num < count) then
 			object:ClearAllPoints()
 			object:SetParent(self.handler)
-			object:SetAttribute("lastPos", nil)
 			width = object:GetWidth(); height = object:GetHeight()
 
 			if (count > origCol and mod(count, origCol)~=0 and rAdjust == 1) then
@@ -1100,16 +1099,11 @@ function BAR:SetObjectLoc()
 				end
 			end
 
-			lastObj = object
 			num = num + 1
 			object:SetAttribute("barPos", num)
 			object:SetData(self)
 			object:SetData(self)
 		end
-	end
-
-	if (lastObj) then
-		lastObj:SetAttribute("lastPos", true)
 	end
 end
 

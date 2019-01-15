@@ -1,4 +1,4 @@
---Neuron, a World of Warcraft® user interface addon.
+﻿--Neuron, a World of Warcraft® user interface addon.
 
 --This file is part of Neuron.
 --
@@ -295,7 +295,7 @@ function ACTIONBUTTON:SetType(save, kill, init)
 
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-
+							
 						end
 
 						self:SetAttribute("SpecialAction", "vehicle")
@@ -303,8 +303,8 @@ function ACTIONBUTTON:SetType(save, kill, init)
 						self:Show()
 
 					elseif (msg:find("possess")) then
-						if (not self:GetAttribute(msg.."-actionID")) then
 
+						if (not self:GetAttribute(msg.."-actionID")) then
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 
@@ -782,10 +782,9 @@ end
 
 
 function ACTIONBUTTON:UpdateTexture(force)
-	local hasAction = self:HasAction()
 
 	if (not self:GetSkinned()) then
-		if (hasAction or force) then
+		if (self:HasAction() or force) then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -2093,7 +2092,6 @@ function ACTIONBUTTON:SetFauxState(state)
 
 				self:SetAttribute("type", "action")
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-
 			end
 
 			self:SetAttribute("SpecialAction", "possess")
@@ -2255,20 +2253,12 @@ function ACTIONBUTTON:ACTION_SetIcon(action)
 	local actionID = tonumber(action)
 
 	if (actionID) then
-		if (actionID == 0) then
-			if (self.specAction and Neuron.SPECIALACTIONS[self.specAction]) then
-				self.iconframeicon:SetTexture(Neuron.SPECIALACTIONS[self.specAction])
-			else
-				self.iconframeicon:SetTexture(0,0,0)
-			end
 
+		self.macroname:SetText(GetActionText(actionID))
+		if (HasAction(actionID)) then
+			self.iconframeicon:SetTexture(GetActionTexture(actionID))
 		else
-			self.macroname:SetText(GetActionText(actionID))
-			if (HasAction(actionID)) then
-				self.iconframeicon:SetTexture(GetActionTexture(actionID))
-			else
-				self.iconframeicon:SetTexture(0,0,0)
-			end
+			self.iconframeicon:SetTexture(0,0,0)
 		end
 
 		self.iconframeicon:Show()
