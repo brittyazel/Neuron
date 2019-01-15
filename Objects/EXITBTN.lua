@@ -70,11 +70,9 @@ function EXITBTN:SetType(save)
 
 	self:SetScript("OnClick", function(self) self:OnClick() end)
 	self:SetScript("OnEnter", function(self) self:OnEnter() end)
-	self:SetScript("OnShow", function(self) self:SetButtonTex() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
-	self:SetButtonTex()
-	self:SetObjectVisibility()
+	self:SetSkinned()
 end
 
 

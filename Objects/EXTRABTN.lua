@@ -55,6 +55,7 @@ function EXTRABTN:SetButtonTex()
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
 	self.style:SetTexture(texture)
+	self.style:Show()
 end
 
 
@@ -74,8 +75,6 @@ end
 function EXTRABTN:ExtraButton_Update()
 
 	self:SetButtonTex()
-
-	self.style:Show()
 
 	local start, duration, enable, modrate = GetActionCooldown(self.actionID);
 
@@ -133,11 +132,8 @@ function EXTRABTN:SetType(save)
 
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
-	self:SetScript("OnShow", function(self) self:ExtraButton_Update() end)
-
 
 	self:SetSkinned()
-
 
 end
 
