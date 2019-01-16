@@ -438,4 +438,6 @@ function PETBTN:SetType(save)
 
 	self:SetScript("OnAttributeChanged", nil)
 
+	self:SetSkinned()
+
 end

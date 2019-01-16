@@ -154,13 +154,6 @@ function ACTIONBUTTON:SetObjectVisibility(show)
 end
 
 
-
-function ACTIONBUTTON:SetAux()
-	self:SetSkinned()
-	self:UpdateFlyout(true)
-end
-
-
 function ACTIONBUTTON:LoadAux()
 
 	if Neuron.NeuronGUI then
@@ -366,6 +359,10 @@ function ACTIONBUTTON:SetType(save, kill, init)
 	end
 
 	self:UpdateAll(true)
+
+	self:UpdateFlyout(true)
+
+	self:SetSkinned()
 
 end
 

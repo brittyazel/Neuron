@@ -480,10 +480,6 @@ function BUTTON:SetObjectVisibility(show)
 	--empty--
 end
 
-function BUTTON:SetAux()
-	self:SetSkinned()
-end
-
 function BUTTON:LoadAux()
 	--empty--
 end

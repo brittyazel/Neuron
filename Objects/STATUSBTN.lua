@@ -137,11 +137,6 @@ function STATUSBTN:new(name)
 	return object
 end
 
-
-
-function STATUSBTN:SetSkinned()
-end
-
 ----------------------------------
 --------XP Bar--------------------
 ----------------------------------
@@ -1823,10 +1818,6 @@ function STATUSBTN:StatusBar_Reset()
 	end
 end
 
-
-function STATUSBTN:SetAux()
-	--empty--
-end
 
 
 function STATUSBTN:SetType(save)

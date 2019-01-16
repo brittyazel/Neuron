@@ -51,6 +51,8 @@ function EXITBTN:SetType(save)
 	self:SetScript("OnEnter", function(self) self:OnEnter() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
+	self:SetSkinned()
+
 end
 
 

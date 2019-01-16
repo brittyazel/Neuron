@@ -60,6 +60,8 @@ function EXTRABTN:SetType()
 
 	self:SetObjectVisibility()
 	self:SetButtonTex()
+
+	self:SetSkinned()
 end
 
 

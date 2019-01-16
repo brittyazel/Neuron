@@ -1001,7 +1001,6 @@ function BAR:LoadObjects(init)
 		object:SetData(self)
 		object:LoadData(spec, self.handler:GetAttribute("activestate"))
 		object:SetType()
-		object:SetAux()
 
 		object:SetObjectVisibility()
 

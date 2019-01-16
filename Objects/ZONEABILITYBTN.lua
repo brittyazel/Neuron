@@ -60,6 +60,8 @@ function ZONEABILITYBTN:SetType()
 	
 	self:SetObjectVisibility()
 	self:SetButtonTex()
+
+	self:SetSkinned()
 end
 
 

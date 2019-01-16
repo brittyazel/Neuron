@@ -23,7 +23,20 @@
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
-local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+
+---------------------------------------------------------
+
+---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
+---@param name string @ Name given to the new button frame
+---@return MENUBTN @ A newly created MENUBTN object
+function MENUBTN:new(name)
+	local object = CreateFrame("CheckButton", name, UIParent, "NeuronAnchorButtonTemplate")
+	setmetatable(object, {__index = MENUBTN})
+	return object
+end
+
+
+---------------------------------------------------------
 
 local menuElements = {
 	CharacterMicroButton,
@@ -36,50 +49,17 @@ local menuElements = {
 	CollectionsMicroButton,
 	EJMicroButton,
 	StoreMicroButton,
-	MainMenuMicroButton
-}
+	MainMenuMicroButton}
 
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param name string @ Name given to the new button frame
----@return MENUBTN @ A newly created MENUBTN object
-function MENUBTN:new(name)
-	local object = CreateFrame("CheckButton", name, UIParent, "NeuronAnchorButtonTemplate")
-	setmetatable(object, {__index = MENUBTN})
-	return object
-end
+function MENUBTN:SetType()
 
-
-function MENUBTN:SetSkinned()
-	--empty--
-end
-
-function MENUBTN:SetAux()
-	--empty--
-end
-
-function MENUBTN:SetData( bar)
-	if (bar) then
-
-		self.bar = bar
-
-		self:SetFrameStrata(bar.data.objectStrata)
-		self:SetScale(bar.data.scale)
-
+	if not self:IsEventRegistered("PET_BATTLE_CLOSE") then --only run this code on the first SetType, not the reloads after pet battles and such
+		self:RegisterEvent("PET_BATTLE_CLOSE")
 	end
 
-	self:SetFrameLevel(4)
-end
-
-
-function MENUBTN:SetType(reload)
-
-	if not reload then --only run this code on the first SetType, not the reloads after pet battles and such
-		self:RegisterEvent("PET_BATTLE_CLOSE", "OnEvent")
-
-		if not Neuron:IsHooked("MoveMicroButtons") then --we need to intercept MoveMicroButtons for during pet battles
-			Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)
-		end
+	if not Neuron:IsHooked("MoveMicroButtons") then --we need to intercept MoveMicroButtons for during pet battles
+		Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)
 	end
 
 	if (menuElements[self.id]) then
@@ -91,13 +71,6 @@ function MENUBTN:SetType(reload)
 
 		self.element = menuElements[self.id]
 
-		local objects = Neuron:GetParentKeys(self.element)
-
-		for k,v in pairs(objects) do
-			local name = v:gsub(self.element:GetName(), "")
-			self[name:lower()] = _G[v]
-		end
-
 		self.element:ClearAllPoints()
 		self.element:SetParent(self)
 		self.element:Show()
@@ -107,9 +80,21 @@ function MENUBTN:SetType(reload)
 
 end
 
-function MENUBTN:OnEvent(event, ...)
+
+function MENUBTN:SetData(bar)
+	if (bar) then
+		self.bar = bar
+		self:SetFrameStrata(bar.data.objectStrata)
+		self:SetScale(bar.data.scale)
+	end
+
+	self:SetFrameLevel(4)
+end
+
+
+function MENUBTN:PET_BATTLE_CLOSE()
 	---we have to reload SetType to put the buttons back at the end of the pet battle
-	self:SetType(true)
+	self:SetType()
 end
 
 
@@ -121,15 +106,12 @@ function MENUBTN.ModifiedMoveMicroButtons(anchor, anchorTo, relAnchor, x, y, isS
 	menuElements[1]:SetPoint(anchor, anchorTo, relAnchor, x-5, y+4);
 
 	for i=2,11 do
-
 		menuElements[i]:ClearAllPoints();
 		menuElements[i]:SetPoint("BOTTOMLEFT", menuElements[i-1], "BOTTOMRIGHT", -2,0)
-
 		if isStacked and i == 6 then
 			menuElements[6]:ClearAllPoints();
 			menuElements[6]:SetPoint("TOPLEFT", menuElements[1], "BOTTOMLEFT", 0,2)
 		end
-
 	end
 
 	MainMenuMicroButton_RepositionAlerts();
