@@ -47,7 +47,6 @@ XML/NeuronAnchorButtonTemplate.xml
 XML/NeuronBarTemplate.xml
 XML/NeuronBindFrameTemplate.xml
 XML/NeuronCheckButtonTextureTemplate.xml
-XML/NeuronNonSecureButtonTemplate.xml
 XML/NeuronStatusBarTemplate.xml
 
 Neuron-Startup.lua
