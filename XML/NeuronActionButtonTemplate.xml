@@ -153,6 +153,7 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
+								self:SetFrameLevel(3)
 								self.button = self:GetParent():GetParent()
 							</OnLoad>
 						</Scripts>
@@ -175,12 +176,18 @@
 						</Layers>
 						<Scripts>
 							<OnLoad>
+								self:SetFrameLevel(3)
 								self.button = self:GetParent():GetParent()
 								self:SetDrawSwipe(false);
 							</OnLoad>
 						</Scripts>
 					</Cooldown>
 				</Frames>
+				<Scripts>
+					<OnLoad>
+						self:SetFrameLevel(2)
+					</OnLoad>
+				</Scripts>
 			</Frame>
 			<Frame name="$parentShine" inherits="AutoCastShineTemplate">
 				<Size x="32" y="32"/>

@@ -247,7 +247,8 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 end
 
 
---this function runs in real time and is controlled from the OnUpdate function in Neuron.lua
+---this function is called by a repeating timer set in SetCooldownTimer every 0.2sec, which is automatically is set to terminate 1sec after the cooldown timer ends
+---this function's job is to overlay the countdown text on a button and set the button's cooldown alpha
 function BUTTON:CooldownCounterUpdate()
 
 	local coolDown, formatted, size
