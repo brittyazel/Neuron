@@ -158,17 +158,25 @@ function BUTTON:ChangeObject(object)
 end
 
 
-function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges)
+function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
 
 	if ( start and start > 0 and duration > 0 and enable > 0) then
 
-		if charges and charges > 0 then
-			self.iconframecooldown:SetDrawSwipe(false); --disable the swipe animation when there are charges left, only keeping the sweeping highlight animation
-		else
-			self.iconframecooldown:SetDrawSwipe(true);
+		if duration > 2 then --sets non GCD cooldowns
+			if charges and charges > 0 and maxCharges > 1 then
+				CooldownFrame_Set(self.iconframechargecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation. Show Draw Edge.
+			else
+				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation for ability cooldown. Show Draw Edge.
+			end
+		else --sets GCD cooldowns
+			CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
 		end
 
-		CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation
+		----- Clear the charge cooldown frame if it is still going from a different ability in a different state (i.e. frenzied regen in the same spot as Swiftmend)
+		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
+			CooldownFrame_Clear(self.iconframechargecooldown)
+		end
+		-----
 
 		if (duration >= Neuron.TIMERLIMIT) then --if spells have a cooldown less than 4sec then don't show a full cooldown
 
@@ -221,11 +229,17 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 	else
 		--cleanup so on state changes the cooldowns don't persist
 		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
-		CooldownFrame_Set(self.iconframecooldown, 0, 0,0)
 		self.iconframecooldown.timer:SetText("")
 		self.iconframecooldown.button:SetAlpha(1)
 		self.iconframecooldown.showCountdownTimer = false
 		self.iconframecooldown.showCountdownAlpha = false
+
+		---clear previous sweeping cooldown animations
+		CooldownFrame_Clear(self.iconframecooldown) --clear the cooldown frame
+		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
+			CooldownFrame_Clear(self.iconframechargecooldown)
+		end
+
 	end
 end
 
@@ -257,30 +271,30 @@ function BUTTON:CooldownCounterUpdate()
 		else
 
 			if (coolDown >= 86400) then ---append a "d" if the timer is longer than 1 day
-				formatted = string.format( "%.0f", coolDown/86400)
+			formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >= 3600) then ---append a "h" if the timer is longer than 1 hour
-				formatted = string.format( "%.0f",coolDown/3600)
+			formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >= 60) then ---append a "m" if the timer is longer than 1 min
-				formatted = string.format( "%.0f",coolDown/60)
+			formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >=6) then ---this is the 'normal' countdown text state
-				formatted = string.format( "%.0f",coolDown)
+			formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.45
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown < 6) then ---this is the countdown text state but with the text larger and set to the expire color (usually red)
-				formatted = string.format( "%.0f",coolDown)
+			formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.6
 				if (expirecolor) then
 					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
@@ -603,7 +617,7 @@ function BUTTON:UpdateTimers(...)
 end
 
 
-function BUTTON:UpdateCooldown(update)
+function BUTTON:UpdateCooldown()
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
 	if (self.actionID) then

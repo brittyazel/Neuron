@@ -756,10 +756,10 @@ function ACTIONBUTTON:SetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(spell)
 
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
-		self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges)
-	else
-		self:SetCooldownTimer(start, duration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
 	end
+
+	self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
 
 end
 

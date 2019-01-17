@@ -98,6 +98,14 @@ function Neuron:HideBlizzardUI()
 	if (not Neuron:IsHooked('OverrideActionBar_UpdateSkin')) then
 		Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
 	end
+
+	if (not Neuron:IsHooked('ActionButton_HideGrid')) then
+		Neuron:RawHook('ActionButton_HideGrid', function() end, true)
+	end
+
+	if (not Neuron:IsHooked('ActionButton_ShowGrid')) then
+		Neuron:RawHook('ActionButton_ShowGrid', function() end, true)
+	end
 end
 
 
