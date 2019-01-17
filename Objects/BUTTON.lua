@@ -178,6 +178,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 		end
 		-----
 
+		---this is only for abilities that have CD's >4 sec. Any less than that and we don't want to track the CD with text or alpha, just with the standard animation
 		if (duration >= Neuron.TIMERLIMIT) then --if spells have a cooldown less than 4sec then don't show a full cooldown
 
 			if (showCountdownTimer or showCountdownAlpha) then --only set a timer if we explicitely want to (this saves CPU for a lot of people)
@@ -197,12 +198,13 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 				--Get the remaining time left so when we re-call the timer when switching back to a state it has the correct time left instead of the full time
 				local timeleft = duration-(GetTime()-start)
 
-				if timeleft > 86400 then --safety check in case some timeleft value comes back rediculously long. This happened once after a weird game glitch, it came back as like 42000000. We should cap it at a day max
+				--safety check in case some timeleft value comes back ridiculously long. This happened once after a weird game glitch, it came back as like 42000000. We should cap it at 1 day max (even that's overkill)
+				if timeleft > 86400 then
 					timeleft = 86400
 				end
 
-				--set timer that is both our cooldown counter, but also the cancles the repeating updating timer at the end
-				self.iconframecooldown.cooldownTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over
+				--set timer that is both our cooldown counter, but also the cancels the repeating updating timer at the end
+				self.iconframecooldown.cooldownTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over (to fully finish the animations/alpha transition)
 
 
 				--clear old timer before starting a new one
