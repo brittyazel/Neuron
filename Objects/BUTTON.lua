@@ -223,6 +223,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 			--Cancel Timers as they're unnecessary
 			self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 			self.iconframecooldown.timer:SetText("")
+			self.iconframecooldown.button:SetAlpha(1)
 			self.iconframecooldown.showCountdownTimer = false
 			self.iconframecooldown.showCountdownAlpha = false
 		end
