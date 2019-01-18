@@ -49,8 +49,8 @@ function EXTRABTN:SetType()
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type", "action")
-	--action content gets set in ExtraButton_Update
-	self:ExtraButton_Update()
+	--action content gets set in UpdateButton
+	self:UpdateButton()
 
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
@@ -73,7 +73,7 @@ end
 
 function EXTRABTN:OnEvent(event, ...)
 
-	self:ExtraButton_Update()
+	self:UpdateButton()
 	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
@@ -82,14 +82,15 @@ function EXTRABTN:OnEvent(event, ...)
 
 end
 
-function EXTRABTN:ExtraButton_Update()
+function EXTRABTN:UpdateButton()
 
+	---default to 169 as is the most of then the case as of 8.1
+	self.actionID = 169
+
+	---get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
 		local extraPage = GetExtraBarIndex()
 		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
-	else
-		--default to 169 as is the most of then the case as of 8.1
-		self.actionID = 169
 	end
 
 	_, self.spellID = GetActionInfo(self.actionID)
@@ -105,19 +106,11 @@ function EXTRABTN:ExtraButton_Update()
 		self:SetSpellCooldown(self.spellID)
 
 		---extra button charges (some quests have ability charges)
-		local charges, maxCharges = GetSpellCharges(self.spellID)
-
-		if (maxCharges and maxCharges > 1) then
-			self.count:SetText(charges)
-		else
-			self.count:SetText("")
-		end
-
-
-
+		self:UpdateSpellCount(self.spellID)
 	end
 
 
+	---make sure our button gets the correct Normal texture if we're not using a Masque skin
 	if (not self:GetSkinned()) then
 		if (self:HasAction()) then
 			self:SetNormalTexture(self.hasAction or "")

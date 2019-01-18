@@ -653,16 +653,6 @@ end
 
 
 function ACTIONBUTTON:SetSpellState(spell)
-	local charges, maxCharges, chargeStart, chargeDuration = GetSpellCharges(spell)
-	local count = GetSpellCount(spell)
-
-	if (maxCharges and maxCharges > 1) then
-		self.count:SetText(charges)
-	elseif count and count > 0 then
-		self.count:SetText(count)
-	else
-		self.count:SetText("")
-	end
 
 	if (NeuronCollectionCache[spell:lower()]) then
 		spell = NeuronCollectionCache[spell:lower()].spellID
@@ -682,6 +672,8 @@ function ACTIONBUTTON:SetSpellState(spell)
 
 	self.macroname:SetText(self.data.macro_Name)
 
+	self:UpdateSpellCount(spell)
+
 	self:UpdateButton()
 
 end
@@ -689,11 +681,7 @@ end
 
 function ACTIONBUTTON:SetItemState(item)
 
-	if (GetItemCount(item,nil,true) and  GetItemCount(item,nil,true) > 1) then
-		self.count:SetText(GetItemCount(item,nil,true))
-	else
-		self.count:SetText("")
-	end
+	self:UpdateItemCount(item)
 
 	if(IsCurrentItem(item)) then
 		self:SetChecked(1)
@@ -1054,17 +1042,9 @@ ACTIONBUTTON.UPDATE_BONUS_ACTIONBAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
 function ACTIONBUTTON:SPELL_UPDATE_CHARGES(...)
 
 	local spell = self.macrospell
-	local charges, maxCharges, chargeStart, chargeDuration = GetSpellCharges(spell)
 
-	local count = GetSpellCount(spell)
+	self:UpdateSpellCount(spell)
 
-	if (maxCharges and maxCharges > 1) then
-		self.count:SetText(charges)
-	elseif count and count > 0 then
-		self.count:SetText(count)
-	else
-		self.count:SetText("")
-	end
 end
 
 

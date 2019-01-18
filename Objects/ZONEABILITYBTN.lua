@@ -45,10 +45,11 @@ function ZONEABILITYBTN:SetType()
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 
 	self:SetAttribute("type", "macro")
-	--macro content gets set in ZoneAbilityFrame_Update
-	self:ZoneAbilityFrame_Update()
+	--macro content gets set in UpdateButton
+	self:UpdateButton()
 
 	self:SetScript("OnDragStart", function(self) PickupSpell(self.spellID) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
@@ -73,7 +74,7 @@ end
 
 function ZONEABILITYBTN:OnEvent(event, ...)
 
-	self:ZoneAbilityFrame_Update();
+	self:UpdateButton();
 	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
@@ -82,9 +83,9 @@ function ZONEABILITYBTN:OnEvent(event, ...)
 end
 
 
-function ZONEABILITYBTN:ZoneAbilityFrame_Update()
+function ZONEABILITYBTN:UpdateButton()
 
-	--update the ZoneAbility spell ID
+	---update the ZoneAbility spell ID
 	self.spellID = GetZoneAbilitySpellInfo();
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
@@ -98,16 +99,10 @@ function ZONEABILITYBTN:ZoneAbilityFrame_Update()
 		self:SetSpellCooldown(self.spellID)
 
 		---zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
-		local charges, maxCharges = GetSpellCharges(self.spellID)
-
-		if (maxCharges and maxCharges > 1) then
-			self.count:SetText(charges)
-		else
-			self.count:SetText("")
-		end
+		self:UpdateSpellCount(self.spellID)
 	end
 
-
+	---make sure our button gets the correct Normal texture if we're not using a Masque skin
 	if (not self:GetSkinned()) then
 		if (self:HasAction()) then
 			self:SetNormalTexture(self.hasAction or "")
