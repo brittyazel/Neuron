@@ -91,14 +91,19 @@ function ZONEABILITYBTN:ZoneAbilityFrame_Update()
 	if self.spellID then
 		self:SetButtonTex()
 
-		local start, duration, enable, modrate = GetSpellCooldown(self.spellName);
-
-		if (start) then
-			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
-		end
-
 		if (self.spellName and not InCombatLockdown()) then
 			self:SetAttribute("macrotext", "/cast " .. self.spellName .. "();")
+		end
+
+		self:SetSpellCooldown(self.spellID)
+
+		---zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
+		local charges, maxCharges = GetSpellCharges(self.spellID)
+
+		if (maxCharges and maxCharges > 1) then
+			self.count:SetText(charges)
+		else
+			self.count:SetText("")
 		end
 	end
 

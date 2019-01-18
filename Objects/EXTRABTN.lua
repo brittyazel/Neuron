@@ -45,6 +45,7 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type", "action")
@@ -97,15 +98,23 @@ function EXTRABTN:ExtraButton_Update()
 	if self.spellID then
 		self:SetButtonTex()
 
-		local start, duration, enable, modrate = GetSpellCooldown(self.spellName);
-
-		if (start) then
-			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
-		end
-
 		if not InCombatLockdown() then
 			self:SetAttribute("action", self.actionID)
 		end
+
+		self:SetSpellCooldown(self.spellID)
+
+		---extra button charges (some quests have ability charges)
+		local charges, maxCharges = GetSpellCharges(self.spellID)
+
+		if (maxCharges and maxCharges > 1) then
+			self.count:SetText(charges)
+		else
+			self.count:SetText("")
+		end
+
+
+
 	end
 
 
