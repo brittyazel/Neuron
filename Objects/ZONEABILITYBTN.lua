@@ -47,14 +47,12 @@ function ZONEABILITYBTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 
 	self:SetAttribute("type", "macro")
+	--macro content gets set in ZoneAbilityFrame_Update
 	self:ZoneAbilityFrame_Update()
 
 	self:SetScript("OnDragStart", function(self) PickupSpell(self.spellID) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
-
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
 	self:SetObjectVisibility()
 	self:SetButtonTex()

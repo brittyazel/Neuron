@@ -342,7 +342,6 @@ function ACTIONBUTTON:SetType(save, kill, init)
 						self:SetAttribute("SpecialAction", nil)
 					end
 
-					self:SetAttribute("useparent-unit", nil)
 					self:SetAttribute("activestate", msg)
 
 				end
@@ -2039,7 +2038,6 @@ end
 
 function ACTIONBUTTON:Reset()
 	self:SetAttribute("unit", nil)
-	self:SetAttribute("useparent-unit", nil)
 	self:SetAttribute("type", nil)
 	self:SetAttribute("type1", nil)
 	self:SetAttribute("type2", nil)
@@ -2130,7 +2128,6 @@ function ACTIONBUTTON:SetFauxState(state)
 			self:SetAttribute("SpecialAction", nil)
 		end
 
-		self:SetAttribute("useparent-unit", nil)
 		self:SetAttribute("activestate", msg)
 
 	end

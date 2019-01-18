@@ -426,9 +426,6 @@ function PETBTN:SetType(save)
 	self:SetAttribute("type2", "macro")
 	self:SetAttribute("*action1", self.actionID)
 
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
-
 	self:SetScript("PostClick", function(self) self:PostClick() end)
 	self:SetScript("OnDragStart", function(self) self:OnDragStart() end)
 	self:SetScript("OnDragStop", function(self) self:OnDragStop() end)
