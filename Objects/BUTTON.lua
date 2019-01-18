@@ -638,6 +638,9 @@ function BUTTON:UpdateCooldown()
 		self:SetSpellCooldown(spell)
 	elseif (item and #item>0) then
 		self:SetItemCooldown(item)
+	else
+		---this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
+		self:SetCooldownTimer()
 	end
 end
 
