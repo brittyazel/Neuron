@@ -92,12 +92,7 @@ function EXTRABTN:ExtraButton_Update()
 	end
 
 	_, self.spellID = GetActionInfo(self.actionID)
-
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
-
-	if not InCombatLockdown() then
-		self:SetAttribute("action", self.actionID)
-	end
 
 	if self.spellID then
 		self:SetButtonTex()
@@ -106,6 +101,10 @@ function EXTRABTN:ExtraButton_Update()
 
 		if (start) then
 			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		end
+
+		if not InCombatLockdown() then
+			self:SetAttribute("action", self.actionID)
 		end
 	end
 
