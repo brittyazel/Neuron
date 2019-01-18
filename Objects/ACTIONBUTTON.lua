@@ -654,15 +654,14 @@ end
 
 function ACTIONBUTTON:SetSpellState(spell)
 	local charges, maxCharges, chargeStart, chargeDuration = GetSpellCharges(spell)
+	local count = GetSpellCount(spell)
+
 	if (maxCharges and maxCharges > 1) then
 		self.count:SetText(charges)
+	elseif count and count > 0 then
+		self.count:SetText(count)
 	else
 		self.count:SetText("")
-	end
-
-	local count = GetSpellCount(spell)
-	if (count and count > 0) then
-		self.count:SetText(count)
 	end
 
 	if (NeuronCollectionCache[spell:lower()]) then
@@ -1028,6 +1027,7 @@ end
 ACTIONBUTTON.MODIFIER_STATE_CHANGED = ACTIONBUTTON.SPELLS_CHANGED
 
 
+
 function ACTIONBUTTON:ACTIONBAR_SLOT_CHANGED(...)
 	if (self.data.macro_Watch or self.data.macro_Equip) then
 		self:UpdateIcon()
@@ -1085,8 +1085,12 @@ function ACTIONBUTTON:SPELL_UPDATE_CHARGES(...)
 	local spell = self.macrospell
 	local charges, maxCharges, chargeStart, chargeDuration = GetSpellCharges(spell)
 
+	local count = GetSpellCount(spell)
+
 	if (maxCharges and maxCharges > 1) then
 		self.count:SetText(charges)
+	elseif count and count > 0 then
+		self.count:SetText(count)
 	else
 		self.count:SetText("")
 	end

@@ -95,7 +95,9 @@ function EXTRABTN:ExtraButton_Update()
 
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
-	self:SetAttribute("action", self.actionID)
+	if not InCombatLockdown() then
+		self:SetAttribute("action", self.actionID)
+	end
 
 	if self.spellID then
 		self:SetButtonTex()
