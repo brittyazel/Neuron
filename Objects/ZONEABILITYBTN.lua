@@ -49,15 +49,13 @@ function ZONEABILITYBTN:SetType()
 	self:SetAttribute("type", "macro")
 	self:ZoneAbilityFrame_Update()
 
-
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
-
 	self:SetScript("OnDragStart", function(self) PickupSpell(self.spellID) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
-	
+	self:SetAttribute("useparent-unit", false)
+	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+
 	self:SetObjectVisibility()
 	self:SetButtonTex()
 
@@ -102,7 +100,7 @@ function ZONEABILITYBTN:ZoneAbilityFrame_Update()
 		end
 
 		if (self.spellName and not InCombatLockdown()) then
-			self:SetAttribute("*macrotext*", "/cast " .. self.spellName .. "();")
+			self:SetAttribute("macrotext", "/cast " .. self.spellName .. "();")
 		end
 	end
 

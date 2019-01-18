@@ -50,7 +50,7 @@ function EXTRABTN:SetType()
 	self:ExtraButton_Update()
 
 	self:SetAttribute("type", "action")
-	self:SetAttribute("*action*", self.actionID)
+	self:SetAttribute("action", self.actionID)
 
 	self:SetAttribute("useparent-unit", false)
 	self:SetAttribute("unit", ATTRIBUTE_NOOP)
