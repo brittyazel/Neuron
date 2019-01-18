@@ -47,12 +47,9 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
-	self.actionID = 169
-
-	self:ExtraButton_Update()
-
 	self:SetAttribute("type", "action")
-	self:SetAttribute("action", self.actionID)
+	--action content gets set in ExtraButton_Update
+	self:ExtraButton_Update()
 
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
@@ -86,10 +83,19 @@ end
 
 function EXTRABTN:ExtraButton_Update()
 
+	if HasExtraActionBar() then
+		local extraPage = GetExtraBarIndex()
+		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
+	else
+		--default to 169 as is the most of then the case as of 8.1
+		self.actionID = 169
+	end
+
 	_, self.spellID = GetActionInfo(self.actionID)
 
-
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+
+	self:SetAttribute("action", self.actionID)
 
 	if self.spellID then
 		self:SetButtonTex()
