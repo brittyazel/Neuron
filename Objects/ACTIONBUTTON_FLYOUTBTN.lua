@@ -582,7 +582,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 				button.data.macro_Text = button:GetAttribute("macro_Text")
 				button:UpdateParse()
 				button:MACRO_Reset()
-				button:UpdateAll(true)
+				button:UpdateAll()
 
 				list[#list+1] = button.id--table.insert(list, button.id)
 
@@ -834,7 +834,7 @@ function ACTIONBUTTON:Flyout_PostClick()
 
 	button:UpdateParse()
 	button:MACRO_Reset()
-	button:UpdateAll(true)
+	button:UpdateAll()
 
 	self:UpdateState()
 end

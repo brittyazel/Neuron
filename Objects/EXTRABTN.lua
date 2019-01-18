@@ -109,17 +109,8 @@ function EXTRABTN:UpdateButton()
 		self:UpdateSpellCount(self.spellID)
 	end
 
-
 	---make sure our button gets the correct Normal texture if we're not using a Masque skin
-	if (not self:GetSkinned()) then
-		if (self:HasAction()) then
-			self:SetNormalTexture(self.hasAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,1)
-		else
-			self:SetNormalTexture(self.noAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
-		end
-	end
+	self:UpdateNormalTexture()
 
 end
 

@@ -2804,7 +2804,7 @@ function NeuronGUI:macroOnEditFocusLost(frame)
 	local button = Neuron.CurrentObject
 
 	if (button) then
-		button:UpdateAll(true)
+		button:UpdateAll()
 	end
 
 	if (frame.text and strlen(frame:GetText()) <= 0) then
@@ -4116,7 +4116,7 @@ local sbadjOptions = {
 
 	[1] = { "WIDTH", L["Width"], 1, "UpdateWidth", 0.5, 1, nil, nil, "%0.1f", 1, "" },
 	[2] = { "HEIGHT", L["Height"], 1, "UpdateHeight", 0.5, 1, nil, nil, "%0.1f", 1, "" },
-	[3] = { "BARFILL", L["Bar Fill"], 2, "UpdateTexture", nil, nil, nil, BarTexturesData },
+	[3] = { "BARFILL", L["Bar Fill"], 2, "UpdateNormalTexture", nil, nil, nil, BarTexturesData },
 	[4] = { "BORDER", L["Border"], 2, "UpdateBorder", nil, nil, nil, BarBordersData },
 	[5] = { "ORIENT", L["Orientation"], 2, "UpdateOrientation", nil, nil, nil, Neuron.BarOrientations },
 	[6] = { "UNIT_WATCH", L["Unit"], 2, "UpdateUnit", nil, nil, nil, Neuron.BarUnits  },

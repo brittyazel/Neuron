@@ -357,7 +357,7 @@ function ACTIONBUTTON:SetType(save, kill, init)
 		self.rangeTimer = self:ScheduleRepeatingTimer("UpdateButton", 0.5)
 	end
 
-	self:UpdateAll(true)
+	self:UpdateAll()
 
 	self:UpdateFlyout(true)
 
@@ -681,14 +681,15 @@ end
 
 function ACTIONBUTTON:SetItemState(item)
 
-	self:UpdateItemCount(item)
-
 	if(IsCurrentItem(item)) then
 		self:SetChecked(1)
 	else
 		self:SetChecked(nil)
 	end
+
 	self.macroname:SetText(self.data.macro_Name)
+
+	self:UpdateItemCount(item)
 end
 
 
@@ -696,7 +697,6 @@ end
 function ACTIONBUTTON:UpdateState(...)
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
-
 
 	if (self.actionID) then
 		self:ACTION_UpdateState(self.actionID)
@@ -734,31 +734,13 @@ end
 
 -----------------------
 
-
-function ACTIONBUTTON:UpdateTexture(force)
-
-	if (not self:GetSkinned()) then
-		if (self:HasAction() or force) then
-			self:SetNormalTexture(self.hasAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,1)
-		else
-			self:SetNormalTexture(self.noAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
-		end
-	end
-end
-
-
-function ACTIONBUTTON:UpdateAll(updateTexture)
+function ACTIONBUTTON:UpdateAll()
 	self:UpdateData()
 	self:UpdateButton()
 	self:UpdateIcon()
 	self:UpdateState()
 	self:UpdateTimers()
-
-	if (updateTexture) then
-		self:UpdateTexture()
-	end
+	self:UpdateNormalTexture()
 end
 
 
@@ -959,7 +941,7 @@ function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
 	self:LoadData(spec, self:GetParent():GetAttribute("activestate") or "homestate")
 	self:UpdateFlyout()
 	self:SetType()
-	self:UpdateAll(true)
+	self:UpdateAll()
 	self:SetObjectVisibility()
 
 end
@@ -970,7 +952,7 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 	WorldFrame:SetScript("OnMouseDown", function() self:OnMouseDown() end)
 
 	self:MACRO_Reset()
-	self:UpdateAll(true)
+	self:UpdateAll()
 
 	self:SetObjectVisibility()
 
@@ -980,7 +962,7 @@ end
 
 
 function ACTIONBUTTON:SPELLS_CHANGED(...)
-	self:UpdateAll(true)
+	self:UpdateAll()
 end
 
 ACTIONBUTTON.MODIFIER_STATE_CHANGED = ACTIONBUTTON.SPELLS_CHANGED
@@ -1028,7 +1010,7 @@ end
 function ACTIONBUTTON:UPDATE_VEHICLE_ACTIONBAR(...)
 
 	if (self.actionID) then
-		self:UpdateAll(true)
+		self:UpdateAll()
 	end
 end
 
@@ -1585,7 +1567,7 @@ function ACTIONBUTTON:OnReceiveDrag(preclick)
 		Neuron:ToggleButtonGrid(true)
 	end
 
-	self:UpdateAll(true)
+	self:UpdateAll()
 
 	Neuron.startDrag = false
 
@@ -1930,11 +1912,11 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 			end
 
 			self.specAction = self:GetAttribute("SpecialAction") --?
-			self:UpdateAll(true)
+			self:UpdateAll()
 		end
 
 		if (name == "update") then
-			self:UpdateAll(true)
+			self:UpdateAll()
 		end
 	end
 
