@@ -567,7 +567,7 @@ end
 
 
 function ACTIONBUTTON:UpdateGlow()
-	if (self.spellGlow and self.spellID ) then
+	if (self.spellGlow and self.spellID) then
 
 		--druid fix for thrash glow not showing for feral druids.
 		--Thrash Guardian: 77758
@@ -582,12 +582,12 @@ function ACTIONBUTTON:UpdateGlow()
 			self:StartGlow()
 		elseif (self.macrospell and self.macrospell:lower() == "swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
 			self:StartGlow()
-		elseif IsSpellOverlayed(self.spellID) then
+		elseif IsSpellOverlayed(self.spellID) then --this is the default "true" condition
 			self:StartGlow()
-		else
+		else --this is the default "false" condition
 			self:StopGlow()
 		end
-	else
+	else --this stops the glow on buttons that have no spellID's, i.e. when switching states and a procced ability is overlapping an empty button
 		self:StopGlow()
 	end
 end
