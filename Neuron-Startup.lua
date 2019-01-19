@@ -105,9 +105,7 @@ function Neuron:RegisterGUI()
 		LOCKBAR = false,
 		TOOLTIPS = true,
 		BINDTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true },
+		COUNTTEXT = true,},
 			false, 65)
 
 
@@ -122,9 +120,7 @@ function Neuron:RegisterGUI()
 		LOCKBAR = false,
 		TOOLTIPS = true,
 		BINDTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true },
+		COUNTTEXT = true,},
 			false, 65)
 
 
@@ -156,11 +152,7 @@ function Neuron:RegisterGUI()
 		UPCLICKS = true,
 		DOWNCLICKS = true,
 		HIDDEN = true,
-		LOCKBAR = false,
-		BINDTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true },
+		LOCKBAR = false, },
 			false, 65)
 
 	--Neuron Menu Bar

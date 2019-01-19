@@ -242,8 +242,10 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
 			CooldownFrame_Clear(self.iconframechargecooldown)
 		end
-
 	end
+
+	--this is important for items like the ExtraActionButton who use Alpha to show and hide itself (to avoid in-combat restrictions). Without it the button would stay visible
+	self:SetObjectVisibility()
 end
 
 
@@ -427,7 +429,6 @@ function BUTTON:SetData(bar)
 		self:SetScale(bar.data.scale)
 	end
 
-	--self:SetFrameLevel(4)
 	self.iconframe:SetFrameLevel(2)
 	self.iconframecooldown:SetFrameLevel(3)
 	self.iconframechargecooldown:SetFrameLevel(3)
