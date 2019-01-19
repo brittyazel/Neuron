@@ -24,10 +24,6 @@ local ACTIONBUTTON = setmetatable({}, {__index = Neuron.BUTTON}) --this is the m
 Neuron.ACTIONBUTTON = ACTIONBUTTON
 
 
-local SKIN = LibStub("Masque", true)
-
-local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
 ---------------------------------------------------------
 -------------------declare globals-----------------------
 ---------------------------------------------------------
@@ -76,6 +72,7 @@ local AlternateSpellNameList = {
 	[83245] = true, --CallPet5
 }
 
+local spellGlowList = {}
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
@@ -569,6 +566,32 @@ function ACTIONBUTTON:SetItemIcon(item)
 end
 
 
+function ACTIONBUTTON:UpdateGlow()
+	if (self.spellGlow and self.spellID ) then
+
+		--druid fix for thrash glow not showing for feral druids.
+		--Thrash Guardian: 77758
+		--Thrash Feral: 106832
+		--But the joint thrash is 106830 (this is the one that results true when the ability is procced)
+
+		--Swipe(Bear): 213771
+		--Swipe(Cat): 106785
+		--Swipe(NoForm): 213764
+
+		if (self.macrospell and self.macrospell:lower() == "thrash()" and IsSpellOverlayed(106830)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+			self:StartGlow()
+		elseif (self.macrospell and self.macrospell:lower() == "swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+			self:StartGlow()
+		elseif IsSpellOverlayed(self.spellID) then
+			self:StartGlow()
+		else
+			self:StopGlow()
+		end
+	else
+		self:StopGlow()
+	end
+end
+
 
 function ACTIONBUTTON:StartGlow()
 
@@ -580,8 +603,6 @@ function ACTIONBUTTON:StartGlow()
 			AutoCastShine_AutoCastStart(self.shine);
 		end
 	end
-
-	self.glowing = true
 end
 
 function ACTIONBUTTON:StopGlow()
@@ -594,8 +615,6 @@ function ACTIONBUTTON:StopGlow()
 			AutoCastShine_AutoCastStop(self.shine);
 		end
 	end
-
-	self.glowing = nil
 end
 
 
@@ -761,49 +780,19 @@ ACTIONBUTTON.UNIT_ENTERING_VEHICLE = ACTIONBUTTON.UNIT_SPELLCAST_INTERRUPTED
 ACTIONBUTTON.UNIT_EXITED_VEHICLE = ACTIONBUTTON.UNIT_SPELLCAST_INTERRUPTED
 
 
-function ACTIONBUTTON:SPELL_ACTIVATION_OVERLAY_GLOW_SHOW(...)
-	local spellID = select(2, ...)
-
-	if (self.spellGlow and self.spellID and spellID == self.spellID) then
-
-		self:UpdateTimers()
-
-		--druid fix for thrash glow not showing for feral druids.
-		--Thrash Guardian: 77758
-		--Thrash Feral: 106832
-		--But the joint thrash is 106830 (this is the one that results true when the ability is procced)
-
-		--Swipe(Bear): 213771
-		--Swipe(Cat): 106785
-		--Swipe(NoForm): 213764
-
-		if (self.spellID and IsSpellOverlayed(self.spellID)) then
-			self:StartGlow()
-		elseif (self.macrospell and self.macrospell == "thrash()" and IsSpellOverlayed(106830)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
-			self:StartGlow()
-		elseif (self.macrospell and self.macrospell == "swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
-			self:StartGlow()
-		end
-
-	end
+function ACTIONBUTTON:SPELL_ACTIVATION_OVERLAY_GLOW_SHOW()
+	self:UpdateGlow()
 end
+
+ACTIONBUTTON.SPELL_ACTIVATION_OVERLAY_GLOW_HIDE = ACTIONBUTTON.SPELL_ACTIVATION_OVERLAY_GLOW_SHOW
+
 
 function ACTIONBUTTON:PLAYER_TARGET_CHANGED(...)
 	self:UpdateTimers()
 end
 
-
 ACTIONBUTTON.PLAYER_FOCUS_CHANGED = ACTIONBUTTON.PLAYER_TARGET_CHANGED
 
-
-
-function ACTIONBUTTON:SPELL_ACTIVATION_OVERLAY_GLOW_HIDE(...)
-	local spellID = select(2, ...)
-
-	if ((self.overlay or self.spellGlow) and self.spellID and spellID == self.spellID) then
-		self:StopGlow()
-	end
-end
 
 
 function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
@@ -845,6 +834,7 @@ end
 
 function ACTIONBUTTON:SPELLS_CHANGED(...)
 	self:UpdateAll()
+	self:UpdateGlow()
 end
 
 ACTIONBUTTON.MODIFIER_STATE_CHANGED = ACTIONBUTTON.SPELLS_CHANGED
