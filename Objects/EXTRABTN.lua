@@ -56,7 +56,7 @@ function EXTRABTN:SetType()
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetObjectVisibility()
-	self:SetButtonTex()
+	self:UpdateIcon()
 
 	self:SetSkinned()
 end
@@ -82,6 +82,7 @@ function EXTRABTN:OnEvent(event, ...)
 
 end
 
+---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateButton()
 
 	---default to 169 as is the most of then the case as of 8.1
@@ -97,7 +98,7 @@ function EXTRABTN:UpdateButton()
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
 	if self.spellID then
-		self:SetButtonTex()
+		self:UpdateIcon()
 
 		if not InCombatLockdown() then
 			self:SetAttribute("action", self.actionID)
@@ -124,6 +125,12 @@ function EXTRABTN:SetObjectVisibility(show)
 		self:SetAlpha(0)
 	end
 
+end
+
+
+---overwrite function in parent class BUTTON
+function EXTRABTN:UpdateIcon()
+	self:SetButtonTex()
 end
 
 

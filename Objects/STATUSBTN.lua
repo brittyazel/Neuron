@@ -1820,7 +1820,7 @@ end
 
 
 
-function STATUSBTN:SetType(save)
+function STATUSBTN:SetType()
 
 	if (InCombatLockdown()) then
 		return

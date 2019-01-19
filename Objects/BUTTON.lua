@@ -488,20 +488,21 @@ end
 
 --TODO: This should be consolodated as each child has a VERY similar function
 function BUTTON:LoadData(spec, state)
-
 	self.config = self.DB.config
 	self.keys = self.DB.keys
 	self.data = self.DB.data
-
 end
+
 
 function BUTTON:SetObjectVisibility(show)
 	--empty--
 end
 
+
 function BUTTON:LoadAux()
 	--empty--
 end
+
 
 function BUTTON:SetDefaults(defaults)
 	if defaults then
@@ -525,7 +526,7 @@ function BUTTON:SetDefaults(defaults)
 	end
 end
 
-function BUTTON:SetType(save, kill, init)
+function BUTTON:SetType()
 	--empty--
 end
 
@@ -593,17 +594,6 @@ function BUTTON:GetSkinned()
 	end
 end
 
-function BUTTON:UpdateNormalTexture()
-	if (not self:GetSkinned()) then
-		if (self:HasAction()) then
-			self:SetNormalTexture(self.hasAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,1)
-		else
-			self:SetNormalTexture(self.noAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
-		end
-	end
-end
 
 function BUTTON:HasAction()
 	local hasAction = self.data.macro_Text
@@ -648,16 +638,6 @@ function BUTTON:UpdateItemCount(item)
 		self.count:SetText(count)
 	else
 		self.count:SetText("")
-	end
-end
-
-
-function BUTTON:UpdateTimers(...)
-
-	self:UpdateCooldown()
-
-	for k in pairs(Neuron.unitAuras) do
-		self:UpdateAuraWatch(k, self.macrospell)
 	end
 end
 
@@ -845,6 +825,144 @@ function BUTTON:AuraCounterUpdate()
 end
 
 
-function BUTTON:UpdateButton()
-	--empty--
+-----------------------------------------------------
+--------------General Update Functions---------------
+-----------------------------------------------------
+
+function BUTTON:UpdateAll()
+	self:UpdateData()
+	self:UpdateButton()
+	self:UpdateIcon()
+	self:UpdateState()
+	self:UpdateTimers()
+	self:UpdateNormalTexture()
 end
+
+
+function BUTTON:UpdateData()
+	-- empty --
+end
+
+
+function BUTTON:UpdateButton(...)
+
+	if (self.editmode) then
+
+		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+
+	elseif (self.actionID) then
+
+		self:ACTION_UpdateUsable(self.actionID)
+
+	elseif (self.macroshow and #self.macroshow>0) then
+
+		if(NeuronItemCache[self.macroshow]) then
+			self:UpdateUsableItem(self.macroshow)
+		else
+			self:UpdateUsableSpell(self.macroshow)
+		end
+
+	elseif (self.macrospell and #self.macrospell>0) then
+
+		self:UpdateUsableSpell(self.macrospell)
+
+	elseif (self.macroitem and #self.macroitem>0) then
+
+		self:UpdateUsableItem(self.macroitem)
+
+	else
+		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+	end
+end
+
+function BUTTON:UpdateIcon()
+	self.updateMacroIcon = nil
+
+	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
+
+	if (self.actionID) then
+		texture = self:ACTION_SetIcon(self.actionID)
+	elseif (show and #show>0) then
+		if(NeuronItemCache[show]) then
+			texture = self:SetItemIcon(show)
+		else
+			texture = self:SetSpellIcon(show)
+			self:SetSpellState(show)
+		end
+	elseif (spell and #spell>0) then
+		texture = self:SetSpellIcon(spell)
+		self:SetSpellState(spell)
+	elseif (item and #item>0) then
+		texture = self:SetItemIcon(item)
+	elseif (self.data.macro_Icon) then
+		self.iconframeicon:SetTexture(self.data.macro_Icon)
+		self.iconframeicon:Show()
+	else
+		self.macroname:SetText("")
+		self.iconframeicon:SetTexture("")
+		self.iconframeicon:Hide()
+		self.border:Hide()
+	end
+end
+
+function BUTTON:UpdateState()
+
+	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
+
+	if (self.actionID) then
+		self:ACTION_UpdateState(self.actionID)
+
+	elseif (show and #show>0) then
+
+		if (NeuronItemCache[show]) then
+			self:SetItemState(show)
+		else
+			self:SetSpellState(show)
+		end
+
+	elseif (spell and #spell>0) then
+
+		self:SetSpellState(spell)
+
+	elseif (item and #item>0) then
+
+		self:SetItemState(item)
+
+	elseif (self:GetAttribute("macroShow")) then
+
+		show = self:GetAttribute("macroShow")
+
+		if (NeuronItemCache[show]) then
+			self:SetItemState(show)
+		else
+			self:SetSpellState(show)
+		end
+	else
+		self:SetChecked(nil)
+		self.count:SetText("")
+	end
+end
+
+function BUTTON:UpdateTimers()
+
+	self:UpdateCooldown()
+
+	for k in pairs(Neuron.unitAuras) do
+		self:UpdateAuraWatch(k, self.macrospell)
+	end
+end
+
+function BUTTON:UpdateNormalTexture()
+	if (not self:GetSkinned()) then
+		if (self:HasAction()) then
+			self:SetNormalTexture(self.hasAction or "")
+			self:GetNormalTexture():SetVertexColor(1,1,1,1)
+		else
+			self:SetNormalTexture(self.noAction or "")
+			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
+		end
+	end
+end
+
+----------------------------------------------------------
+----------------------------------------------------------

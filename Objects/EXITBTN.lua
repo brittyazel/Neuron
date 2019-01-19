@@ -38,7 +38,7 @@ end
 
 ----------------------------------------------------------
 
-function EXITBTN:SetType(save)
+function EXITBTN:SetType()
 
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")

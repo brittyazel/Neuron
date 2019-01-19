@@ -56,7 +56,7 @@ function ZONEABILITYBTN:SetType()
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetObjectVisibility()
-	self:SetButtonTex()
+	self:UpdateIcon()
 
 	self:SetSkinned()
 end
@@ -82,7 +82,7 @@ function ZONEABILITYBTN:OnEvent(event, ...)
 	end
 end
 
-
+---overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateButton()
 
 	---update the ZoneAbility spell ID
@@ -90,7 +90,7 @@ function ZONEABILITYBTN:UpdateButton()
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
 	if self.spellID then
-		self:SetButtonTex()
+		self:UpdateIcon()
 
 		if (self.spellName and not InCombatLockdown()) then
 			self:SetAttribute("macrotext", "/cast " .. self.spellName .. "();")
@@ -117,6 +117,11 @@ function ZONEABILITYBTN:SetObjectVisibility(show)
 	end
 end
 
+
+---overwrite function in parent class BUTTON
+function ZONEABILITYBTN:UpdateIcon()
+	self:SetButtonTex()
+end
 
 function ZONEABILITYBTN:SetButtonTex()
 

@@ -227,8 +227,7 @@ function ACTIONBUTTON:SetUpEvents()
 end
 
 
-function ACTIONBUTTON:SetType(save, kill, init)
-	--local state = self:GetParent():GetAttribute("activestate")
+function ACTIONBUTTON:SetType()
 
 	self:Reset()
 
@@ -570,58 +569,6 @@ function ACTIONBUTTON:SetItemIcon(item)
 end
 
 
-function ACTIONBUTTON:UpdateIcon(...)
-	self.updateMacroIcon = nil
-
-	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
-
-	if (self.actionID) then
-		texture = self:ACTION_SetIcon(self.actionID)
-	elseif (show and #show>0) then
-		if(NeuronItemCache[show]) then
-			texture = self:SetItemIcon(show)
-		else
-			texture = self:SetSpellIcon(show)
-			self:SetSpellState(show)
-		end
-	elseif (spell and #spell>0) then
-		texture = self:SetSpellIcon(spell)
-		self:SetSpellState(spell)
-	elseif (item and #item>0) then
-		texture = self:SetItemIcon(item)
-	elseif (self.data.macro_Icon) then
-		self.iconframeicon:SetTexture(self.data.macro_Icon)
-		self.iconframeicon:Show()
-	else
-		self.macroname:SetText("")
-		self.iconframeicon:SetTexture("")
-		self.iconframeicon:Hide()
-		self.border:Hide()
-	end
-
-	--druid fix for thrash glow not showing for feral druids.
-	--Thrash Guardian: 77758
-	--Thrash Feral: 106832
-	--But the joint thrash is 106830 (this is the one that results true when the ability is procced)
-
-	--Swipe(Bear): 213771
-	--Swipe(Cat): 106785
-	--Swipe(NoForm): 213764
-
-	if (self.spellID and IsSpellOverlayed(self.spellID)) then
-		self:StartGlow()
-	elseif (spell == "Thrash()" and IsSpellOverlayed(106830)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
-		self:StartGlow()
-	elseif (spell == "Swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
-		self:StartGlow()
-	elseif (self.glowing) then
-		self:StopGlow()
-	end
-
-	return texture
-end
-
-
 
 function ACTIONBUTTON:StartGlow()
 
@@ -693,55 +640,7 @@ function ACTIONBUTTON:SetItemState(item)
 end
 
 
-
-function ACTIONBUTTON:UpdateState(...)
-
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
-
-	if (self.actionID) then
-		self:ACTION_UpdateState(self.actionID)
-
-	elseif (show and #show>0) then
-
-		if (NeuronItemCache[show]) then
-			self:SetItemState(show)
-		else
-			self:SetSpellState(show)
-		end
-
-	elseif (spell and #spell>0) then
-
-		self:SetSpellState(spell)
-
-	elseif (item and #item>0) then
-
-		self:SetItemState(item)
-
-	elseif (self:GetAttribute("macroShow")) then
-
-		show = self:GetAttribute("macroShow")
-
-		if (NeuronItemCache[show]) then
-			self:SetItemState(show)
-		else
-			self:SetSpellState(show)
-		end
-	else
-		self:SetChecked(nil)
-		self.count:SetText("")
-	end
-end
-
 -----------------------
-
-function ACTIONBUTTON:UpdateAll()
-	self:UpdateData()
-	self:UpdateButton()
-	self:UpdateIcon()
-	self:UpdateState()
-	self:UpdateTimers()
-	self:UpdateNormalTexture()
-end
 
 
 function ACTIONBUTTON:UpdateUsableSpell(spell)
@@ -798,38 +697,6 @@ end
 
 
 
-function ACTIONBUTTON:UpdateButton(...)
-
-	if (self.editmode) then
-
-		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
-
-	elseif (self.actionID) then
-
-		self:ACTION_UpdateUsable(self.actionID)
-
-	elseif (self.macroshow and #self.macroshow>0) then
-
-		if(NeuronItemCache[self.macroshow]) then
-			self:UpdateUsableItem(self.macroshow)
-		else
-			self:UpdateUsableSpell(self.macroshow)
-		end
-
-	elseif (self.macrospell and #self.macrospell>0) then
-
-		self:UpdateUsableSpell(self.macrospell)
-
-	elseif (self.macroitem and #self.macroitem>0) then
-
-		self:UpdateUsableItem(self.macroitem)
-
-	else
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-	end
-end
-
-
 function ACTIONBUTTON:ShowGrid()
 	self:SetObjectVisibility(true)
 end
@@ -845,13 +712,13 @@ end
 ---------------------Event Functions------------------------------------------
 ------------------------------------------------------------------------------
 
-function ACTIONBUTTON:ACTIONBAR_UPDATE_COOLDOWN(...)
-	self:UpdateTimers(...)
+function ACTIONBUTTON:ACTIONBAR_UPDATE_COOLDOWN()
+	self:UpdateTimers()
 end
 
 
-function ACTIONBUTTON:ACTIONBAR_UPDATE_STATE(...)
-	self:UpdateState(...)
+function ACTIONBUTTON:ACTIONBAR_UPDATE_STATE()
+	self:UpdateState()
 end
 
 ACTIONBUTTON.ACTIONBAR_UPDATE_USABLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
@@ -864,10 +731,10 @@ end
 ACTIONBUTTON.PLAYER_STOPPED_MOVING = ACTIONBUTTON.PLAYER_STARTED_MOVING
 
 
-function ACTIONBUTTON:BAG_UPDATE_COOLDOWN(...)
+function ACTIONBUTTON:BAG_UPDATE_COOLDOWN()
 
 	if (self.macroitem) then
-		self:UpdateState(...)
+		self:UpdateState()
 	end
 end
 
@@ -881,7 +748,7 @@ function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(...)
 
 	if ((unit == "player" or unit == "pet") and self.macrospell) then
 
-		self:UpdateTimers(...)
+		self:UpdateTimers()
 	end
 
 end
@@ -899,9 +766,25 @@ function ACTIONBUTTON:SPELL_ACTIVATION_OVERLAY_GLOW_SHOW(...)
 
 	if (self.spellGlow and self.spellID and spellID == self.spellID) then
 
-		self:UpdateTimers(...)
+		self:UpdateTimers()
 
-		self:StartGlow()
+		--druid fix for thrash glow not showing for feral druids.
+		--Thrash Guardian: 77758
+		--Thrash Feral: 106832
+		--But the joint thrash is 106830 (this is the one that results true when the ability is procced)
+
+		--Swipe(Bear): 213771
+		--Swipe(Cat): 106785
+		--Swipe(NoForm): 213764
+
+		if (self.spellID and IsSpellOverlayed(self.spellID)) then
+			self:StartGlow()
+		elseif (self.macrospell and self.macrospell == "thrash()" and IsSpellOverlayed(106830)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+			self:StartGlow()
+		elseif (self.macrospell and self.macrospell == "swipe()" and IsSpellOverlayed(106785)) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+			self:StartGlow()
+		end
+
 	end
 end
 
@@ -918,7 +801,6 @@ function ACTIONBUTTON:SPELL_ACTIVATION_OVERLAY_GLOW_HIDE(...)
 	local spellID = select(2, ...)
 
 	if ((self.overlay or self.spellGlow) and self.spellID and spellID == self.spellID) then
-
 		self:StopGlow()
 	end
 end
@@ -1077,7 +959,7 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	self.data.macro_UseNote = false
 
 	if (not self.cursor) then
-		self:SetType(true)
+		self:SetType()
 	end
 
 	Neuron.macroDrag[1] = false
@@ -1108,7 +990,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		self.data.macro_UseNote = false
 
 		if (not self.cursor) then
-			self:SetType(true)
+			self:SetType()
 		end
 	else
 		Neuron:Print("Sorry, you cannot place that ability at this time.")
@@ -1145,7 +1027,7 @@ function ACTIONBUTTON:PlaceItem(action1, action2, hasAction)
 	self.data.macro_UseNote = false
 
 	if (not self.cursor) then
-		self:SetType(true)
+		self:SetType()
 	end
 
 	Neuron.macroDrag[1] = false
@@ -1181,7 +1063,7 @@ function ACTIONBUTTON:PlaceBlizzMacro(action1)
 		self.data.macro_UseNote = false
 
 		if (not self.cursor) then
-			self:SetType(true)
+			self:SetType()
 		end
 
 		Neuron.macroDrag[1] = false
@@ -1226,7 +1108,7 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 		self.data.macro_UseNote = false
 
 		if (not self.cursor) then
-			self:SetType(true)
+			self:SetType()
 		end
 
 		Neuron.macroDrag[1] = false
@@ -1273,7 +1155,7 @@ function ACTIONBUTTON:PlaceMount(action1, action2, hasAction)
 		self.data.macro_UseNote = false
 
 		if (not self.cursor) then
-			self:SetType(true)
+			self:SetType()
 		end
 
 		Neuron.macroDrag[1] = false
@@ -1310,7 +1192,7 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2, hasAction)
 		self.data.macro_UseNote = false
 
 		if (not self.cursor) then
-			self:SetType(true)
+			self:SetType()
 		end
 
 		Neuron.macroDrag[1] = false
@@ -1339,7 +1221,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2, hasAction)
 
 
 		if (not self.cursor) then
-			self:SetType(true)
+			self:SetType()
 		end
 
 		Neuron.macroDrag[1] = false
@@ -1399,7 +1281,7 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2, hasAction)
 		self:UpdateFlyout(true)
 
 		if (not self.cursor) then
-			self:SetType(true)
+			self:SetType()
 		end
 
 		Neuron.macroDrag[1] = false
@@ -1421,7 +1303,7 @@ function ACTIONBUTTON:PlaceMacro()
 	self.data.macro_UseNote = Neuron.macroDrag[10]
 
 	if (not self.cursor) then
-		self:SetType(true)
+		self:SetType()
 	end
 
 	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
@@ -1497,7 +1379,7 @@ function ACTIONBUTTON:PickUpMacro()
 
 			self:UpdateFlyout()
 
-			self:SetType(true)
+			self:SetType()
 
 		end
 
@@ -1670,7 +1552,7 @@ function ACTIONBUTTON:PreClick(mousebutton)
 
 			Neuron.startDrag = self:GetParent():GetAttribute("activestate")
 
-			self:SetType(true)
+			self:SetType()
 
 			Neuron:ToggleButtonGrid(true)
 
@@ -1692,7 +1574,7 @@ function ACTIONBUTTON:PostClick(mousebutton)
 	if (not InCombatLockdown() and MouseIsOver(self)) then
 
 		if (self.cursor) then
-			self:SetType(true)
+			self:SetType()
 
 			self.cursor = nil
 

@@ -404,7 +404,7 @@ function PETBTN:LoadAux()
 end
 
 
-function PETBTN:SetType(save)
+function PETBTN:SetType()
 
 	self:RegisterEvent("PET_BAR_UPDATE")
 	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
