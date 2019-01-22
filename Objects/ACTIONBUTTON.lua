@@ -908,6 +908,8 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 		-- I am unsure under what conditions (if any) we wouldn't have a spell ID
 		if not spellID or spellID == 0 then
 			return
+		else
+			spell = GetSpellInfo(spellID)
 		end
 	else
 		spell,_= GetSpellBookItemName(action1, action2):lower()
@@ -984,7 +986,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 end
 
 
-function ACTIONBUTTON:PlaceItem(action1, action2, hasAction)
+function ACTIONBUTTON:PlaceItem(action1, action2)
 	local item, link = GetItemInfo(action2)
 
 	if link and not NeuronItemCache[item] then --add the item to the itemcache if it isn't otherwise in it
@@ -1106,7 +1108,7 @@ end
 
 
 
-function ACTIONBUTTON:PlaceMount(action1, action2, hasAction)
+function ACTIONBUTTON:PlaceMount(action1, action2)
 
 
 	local mountName, mountSpellID, mountIcon = C_MountJournal.GetMountInfoByID(action1)
@@ -1146,7 +1148,7 @@ function ACTIONBUTTON:PlaceMount(action1, action2, hasAction)
 end
 
 
-function ACTIONBUTTON:PlaceCompanion(action1, action2, hasAction)
+function ACTIONBUTTON:PlaceCompanion(action1, action2)
 
 	if (action1 == 0) then
 		return
@@ -1182,7 +1184,7 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2, hasAction)
 	end
 end
 
-function ACTIONBUTTON:PlaceBattlePet(action1, action2, hasAction)
+function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 	local petName, petIcon
 
 	if (action1 == 0) then
@@ -1212,7 +1214,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2, hasAction)
 end
 
 
-function ACTIONBUTTON:PlaceFlyout(action1, action2, hasAction)
+function ACTIONBUTTON:PlaceFlyout(action1, action2)
 	if (action1 == 0) then
 		return
 	else
@@ -1398,10 +1400,10 @@ function ACTIONBUTTON:OnReceiveDrag(preclick)
 	if (Neuron.macroDrag[1]) then
 		self:PlaceMacro()
 	elseif (cursorType == "spell") then
-		self:PlaceSpell(action1, action2, spellID, self:HasAction())
+		self:PlaceSpell(action1, action2, spellID)
 
 	elseif (cursorType == "item") then
-		self:PlaceItem(action1, action2, self:HasAction())
+		self:PlaceItem(action1, action2)
 
 	elseif (cursorType == "macro") then
 		self:PlaceBlizzMacro(action1)
@@ -1410,15 +1412,15 @@ function ACTIONBUTTON:OnReceiveDrag(preclick)
 		self:PlaceBlizzEquipSet(action1)
 
 	elseif (cursorType == "mount") then
-		self:PlaceMount(action1, action2, self:HasAction())
+		self:PlaceMount(action1, action2)
 
 	elseif (cursorType == "flyout") then
-		self:PlaceFlyout(action1, action2, self:HasAction())
+		self:PlaceFlyout(action1, action2)
 
 	elseif (cursorType == "battlepet") then
-		self:PlaceBattlePet(action1, action2, self:HasAction())
+		self:PlaceBattlePet(action1, action2)
 	elseif(cursorType == "companion") then
-		self:PlaceCompanion(action1, action2, self:HasAction())
+		self:PlaceCompanion(action1, action2)
 	elseif (cursorType == "petaction") then
 		self:PlacePetAbility(action1, action2)
 	end
@@ -2202,9 +2204,9 @@ function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
 
 					if spell then
 						if global_update then
-							info.macro_Text = button:AutoUpdateMacro(button, info.macro_Text)
+							info.macro_Text = button:AutoUpdateMacro(info.macro_Text)
 						else
-							info.macro_Text = button:AutoWriteMacro(button, spell)
+							info.macro_Text = button:AutoWriteMacro(spell)
 						end
 
 					end
