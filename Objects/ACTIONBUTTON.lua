@@ -397,9 +397,11 @@ function ACTIONBUTTON:UpdateData(...)
 
 			--find the ud_spell!
 			if (not ud_spell and cmdSlash[cmd]) then
-				ud_spell, ud_target = SecureCmdOptionParse(options); ud_spellcmd = cmd
+				ud_spell, ud_target = SecureCmdOptionParse(options)
+				ud_spellcmd = cmd
 			elseif (ud_spell and #ud_spell < 1) then
-				ud_spell, ud_target = SecureCmdOptionParse(options); ud_spellcmd = cmd
+				ud_spell, ud_target = SecureCmdOptionParse(options)
+				ud_spellcmd = cmd
 			end
 		end
 
@@ -1475,7 +1477,6 @@ function ACTIONBUTTON:OnDragStart(mousebutton)
 		self:PickUpMacro()
 
 		if (Neuron.macroDrag[1]) then
-			--PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
 			if (Neuron.macroDrag[2] ~= self) then
 				self.dragbutton = nil
@@ -1485,8 +1486,6 @@ function ACTIONBUTTON:OnDragStart(mousebutton)
 		else
 			self.dragbutton = nil
 		end
-
-		self:UpdateAll()
 
 		self.iconframecooldown.timer:SetText("")
 
@@ -1514,6 +1513,7 @@ end
 
 function ACTIONBUTTON:OnDragStop()
 	self.drag = nil
+	self:UpdateAll()
 end
 
 
