@@ -231,7 +231,7 @@ function ACTIONBUTTON:SetType()
 	SecureHandler_OnLoad(self)
 
 	if self.class ~= "flyout" then
-		self:SetUpEvents() 
+		self:SetUpEvents()
 	end
 
 	self:UpdateParse()
@@ -381,9 +381,18 @@ function ACTIONBUTTON:UpdateData(...)
 		ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_item, ud_target = nil, nil, nil, nil, nil, nil, nil, nil
 
 		for cmd, options in gmatch(self.macroparse, "(%c%p%a+)(%C+)") do
+
+			--cmd is "/cast" or "/use" etc
+			--options is everything else, like "Chi Torpedo()"
+
 			--after gmatch, remove unneeded characters
-			if (cmd) then cmd = cmd:gsub("^%c+", "") end
-			if (options) then options = options:gsub("^%s+", "") end
+			if (cmd) then
+				cmd = cmd:gsub("^%c+", "")
+			end
+
+			if (options) then
+				options = options:gsub("^%s+", "")
+			end
 
 			--find #ud_show option!
 			if (not ud_show and cmd:find("^#show")) then
@@ -430,6 +439,7 @@ function ACTIONBUTTON:UpdateData(...)
 
 		if (ud_spell) then
 			self.macroitem = nil
+
 			if (ud_spell ~= self.macrospell) then
 
 				ud_spell = ud_spell:gsub("!", "")
@@ -441,6 +451,7 @@ function ACTIONBUTTON:UpdateData(...)
 					self.spellID = nil
 				end
 			end
+
 		else
 			self.macrospell = nil
 			self.spellID = nil
@@ -665,13 +676,13 @@ end
 
 
 function ACTIONBUTTON:UpdateUsableSpell(spell)
-	local isUsable, notEnoughMana, alt_Name
+	local isUsable, notEnoughMana, altName
 	local spellName = spell:lower()
 
-	if (NeuronSpellCache[spellName]) and (NeuronSpellCache[spellName].spellID ~= NeuronSpellCache[spellName].altSpellID) and NeuronSpellCache[spellName].altSpellID then
-		alt_Name = NeuronSpellCache[spellName].altName
-		isUsable, notEnoughMana = IsUsableSpell(alt_Name)
-		spellName = alt_Name
+	if (NeuronSpellCache[spellName]) and NeuronSpellCache[spellName].altSpellID then
+		altName = NeuronSpellCache[spellName].altName
+		isUsable, notEnoughMana = IsUsableSpell(altName)
+		spellName = altName
 	else
 		isUsable, notEnoughMana = IsUsableSpell(spellName)
 	end
@@ -1951,6 +1962,30 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 
 	local DB = Neuron.db.profile
 
+	local spellName
+	local spellID
+
+	local altName
+	local altSpellID
+
+	---if there is an alt name associated with a given ability, and the alt name is known (i.e. the base spell) use the alt name instead
+	if NeuronSpellCache[spell:lower()] then
+		spellName = NeuronSpellCache[spell:lower()].spellName
+		spellID = NeuronSpellCache[spell:lower()].spellID
+
+		altName = NeuronSpellCache[spell:lower()].altName
+		altSpellID = NeuronSpellCache[spell:lower()].altSpellID
+
+		print(spellName, altName)
+		print(spellID, altSpellID)
+
+
+		if altSpellID and IsSpellKnown(altSpellID) then
+			spell = altName
+		end
+	end
+
+	
 	local modifier, modKey = " ", nil
 	local bar = Neuron.CurrentBar or self.bar
 
