@@ -62,18 +62,6 @@ local cmdSlash = {
 
 local macroCache = {}
 
-
---Spells that need their primary spell name overwritten
-local AlternateSpellNameList = {
-	[883]   = true, --CallPet1
-	[83242] = true, --CallPet2
-	[83243] = true, --CallPet3
-	[83244] = true, --CallPet4
-	[83245] = true, --CallPet5
-}
-
-local spellGlowList = {}
-
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
 ---@return ACTIONBUTTON @ A newly created ACTIONBUTTON object
@@ -497,6 +485,7 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 	if (not self.data.macro_Watch and not self.data.macro_Equip) then
 
 		spell = (spell):lower()
+
 		if (NeuronSpellCache[spell]) then
 			texture = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
 
@@ -509,7 +498,6 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 
 		elseif (spell) then
 			texture = GetSpellTexture(spell)
-
 		end
 
 		if (texture) then
@@ -682,7 +670,6 @@ function ACTIONBUTTON:UpdateUsableSpell(spell)
 	if (NeuronSpellCache[spellName]) and NeuronSpellCache[spellName].altSpellID then
 		altName = NeuronSpellCache[spellName].altName
 		isUsable, notEnoughMana = IsUsableSpell(altName)
-		spellName = altName
 	else
 		isUsable, notEnoughMana = IsUsableSpell(spellName)
 	end
@@ -692,7 +679,7 @@ function ACTIONBUTTON:UpdateUsableSpell(spell)
 	elseif (isUsable) then
 		if (self.rangeInd and IsSpellInRange(spellName, self.unit) == 0) then
 			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif NeuronSpellCache[spellName] and (self.rangeInd and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
+		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and (self.rangeInd and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
 			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
@@ -709,8 +696,8 @@ end
 
 
 function ACTIONBUTTON:UpdateUsableItem(item)
-	local isUsable, notEnoughMana = IsUsableItem(item)-- or PlayerHasToy(NeuronItemCache[item])
-	--local isToy = NeuronToyCache[item]
+	local isUsable, notEnoughMana = IsUsableItem(item)
+
 	if NeuronToyCache[item:lower()] then isUsable = true end
 
 	if (notEnoughMana and self.manacolor) then
@@ -945,14 +932,9 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 		spellInfoName , _, icon = GetSpellInfo(spellID)
 	end
 
-	if AlternateSpellNameList[spellID] or not spell then
-		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
-		self.data.macro_Auto = spellInfoName..";"
-	else
-		self.data.macro_Text = self:AutoWriteMacro(spell)
 
-		self.data.macro_Auto = spell
-	end
+	self.data.macro_Text = self:AutoWriteMacro(spell)
+	self.data.macro_Auto = spell
 
 	self.data.macro_Icon = icon  --also set later in SetSpellIcon
 	self.data.macro_Name = spellInfoName
@@ -978,7 +960,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 	local spellIndex = action2
 
 	if spellIndex then --if the ability doesn't have a spellIndex, i.e (passive, follow, defensive, etc, print a warning)
-		local spellInfoName , _, icon, castTime, minRange, maxRange= GetSpellInfo(spellID)
+		local spellInfoName , _, icon = GetSpellInfo(spellID)
 
 		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
 
@@ -1968,7 +1950,9 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 	local altName
 	local altSpellID
 
+
 	---if there is an alt name associated with a given ability, and the alt name is known (i.e. the base spell) use the alt name instead
+	---This is important because a macro written with the base name "/cast Roll()" will work for talented abilities, but "/cast Chi Torpedo" won't work for base abilities
 	if NeuronSpellCache[spell:lower()] then
 		spellName = NeuronSpellCache[spell:lower()].spellName
 		spellID = NeuronSpellCache[spell:lower()].spellID
@@ -1981,8 +1965,25 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 		else
 			spell = spellName
 		end
+	else
+		_,_,_,_,_,_,spellID = GetSpellInfo(spell)
 	end
 
+
+	---Spells that need their primary spell name overwritten
+	---This is mostly the case for hunter spells, but there could be others
+	local AlternateSpellNameList = {
+		[883]   = "Call Pet 1",
+		[83242] = "Call Pet 2",
+		[83243] = "Call Pet 3",
+		[83244] = "Call Pet 4",
+		[83245] = "Call Pet 5",
+	}
+
+	---actually overwrite the spell name
+	if spellID and AlternateSpellNameList[spellID] then
+		spell = AlternateSpellNameList[spellID]
+	end
 
 	local modifier, modKey = " ", nil
 	local bar = Neuron.CurrentBar or self.bar

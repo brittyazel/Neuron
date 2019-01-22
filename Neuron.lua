@@ -198,7 +198,6 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	Neuron:RegisterEvent("LEARNED_SPELL_IN_TAB")
 	Neuron:RegisterEvent("COMPANION_LEARNED")
-	Neuron:RegisterEvent("UNIT_PET")
 	Neuron:RegisterEvent("TOYS_UPDATED")
 	Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 	Neuron:RegisterEvent("ACTIONBAR_SHOWGRID")
@@ -268,7 +267,6 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	DB.firstRun = false
 
 	Neuron:UpdateSpellCache()
-	Neuron:UpdatePetSpellCache()
 	Neuron:UpdateStanceStrings()
 	Neuron:UpdateCollectionCache()
 	Neuron:UpdateToyCache()
@@ -283,6 +281,13 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	end
 
 	Neuron.enteredWorld = true
+
+
+	--some people report bars being hidden upon logging in. This should address that
+	for _,bar in pairs(Neuron.BARIndex) do
+		bar:UpdateObjectVisibility()
+		bar:UpdateObjects()
+	end
 
 end
 
@@ -320,15 +325,6 @@ end
 
 function Neuron:ACTIONBAR_SHOWGRID()
 	Neuron.startDrag = true
-end
-
-
-function Neuron:UNIT_PET(_, ...)
-	if ... == "player" then
-		if (Neuron.enteredWorld) then
-			Neuron:UpdatePetSpellCache()
-		end
-	end
 end
 
 -------------------------------------------------------------------------
@@ -544,56 +540,7 @@ function Neuron:UpdateSpellCache()
 		end
 	end
 
-
-	---This code collects the data for the Hunter's "Call Pet" Flyout. It is a mystery why it works, but it does
-
-	if(Neuron.class == 'HUNTER') then
-		local _, _, numSlots, _ = GetFlyoutInfo(9)
-
-		for i=1, numSlots do
-			local spellID, isKnown = GetFlyoutSlotInfo(9, i)
-			local petIndex, petName = GetCallPetSpellInfo(spellID)
-
-			if (isKnown and petIndex and petName and #petName > 0) then
-				local spellName = GetSpellInfo(spellID)
-
-				for _,v in pairs(NeuronSpellCache) do
-
-					if (v.spellName:find(petName.."$")) then
-						local spellData = Neuron:SetSpellInfo(v.index, v.booktype, v.spellType, v.spellName, spellID, v.icon,nil,  nil, nil)
-
-						NeuronSpellCache[(spellName):lower()] = spellData
-						NeuronSpellCache[(spellName):lower().."()"] = spellData
-					end
-				end
-			end
-		end
-	end
-
 end
-
-
---- Adds pet spells & abilities to the spell list index
-function Neuron:UpdatePetSpellCache()
-
-	if (HasPetSpells()) then
-		for i=1,HasPetSpells() do
-			local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_PET)
-			local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
-			local icon = GetSpellTexture(spellID)
-
-			if (spellName and spellType ~= "FUTURESPELL") then
-
-				local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_PET, spellName, spellType, spellID, icon, nil, nil, nil)
-
-				NeuronSpellCache[(spellName):lower()] = spellData
-				NeuronSpellCache[(spellName):lower().."()"] = spellData
-
-			end
-		end
-	end
-end
-
 
 --- Creates a table containing provided companion & mount data
 -- @param index, creatureType, index, creatureID, creatureName, spellID, icon
