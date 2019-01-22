@@ -447,19 +447,24 @@ end
 
 
 --- Creates a table containing provided data
--- @param index, bookType, spellName, altName, spellID, spellID_Alt, spellType, icon
+-- @param index, bookType, spellName, altName, spellID, altSpellID, spellType, icon
 -- @return curSpell:  Table containing provided data
-function Neuron:SetSpellInfo(index, bookType, spellName, altName, spellID, spellID_Alt, spellType, icon)
+function Neuron:SetSpellInfo(index, bookType, spellType, spellName, spellID, icon, altName, altSpellID, altIcon)
 	local curSpell = {}
 
 	curSpell.index = index
 	curSpell.booktype = bookType
-	curSpell.spellName = spellName
-	curSpell.altName = altName
-	curSpell.spellID = spellID
-	curSpell.spellID_Alt = spellID_Alt
+
 	curSpell.spellType = spellType
+	curSpell.spellName = spellName
+	curSpell.spellID = spellID
 	curSpell.icon = icon
+
+	curSpell.altName = altName
+	curSpell.altSpellID = altSpellID
+	curSpell.altIcon = altIcon
+
+	print(spellName, altName)
 
 	return curSpell
 end
@@ -481,34 +486,36 @@ function Neuron:UpdateSpellCache()
 	end
 
 	for i = 1,sIndexMax do
-		local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_SPELL)
+		local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_SPELL) --this returns the baseSpell name, even if it is augmented by talents. I.e. Roll and Chi Torpedo
 		local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
-		local spellID_Alt = spellID
+		local icon = GetSpellTexture(spellID)
+
+		local altName
+		local altSpellID
+		local altIcon
 
 		if (spellName and spellType ~= "FUTURESPELL") then
-			local link = GetSpellLink(spellName)
-			if (link) then
-				_, spellID = link:match("(spell:)(%d+)")
-				local tempID = tonumber(spellID)
-				if (tempID) then
-					spellID = tempID
-				end
+
+			altName, _, altIcon, _, _, _, altSpellID = GetSpellInfo(spellName)
+
+			if spellID == altSpellID then
+				altSpellID = nil
+				altName = nil
+				altIcon = nil
 			end
 
-			local altName, _, icon = GetSpellInfo(spellID)
-			if spellID ~= spellID_Alt then
-				altName = GetSpellInfo(spellID_Alt)
-			end
-
-			local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellName, altName, spellID, spellID_Alt, spellType, icon)
+			local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellType, spellName, spellID, icon, altName, altSpellID, altIcon)
 
 			NeuronSpellCache[(spellName):lower()] = spellData
 			NeuronSpellCache[(spellName):lower().."()"] = spellData
 
 
+			--reverse main and alt so we can put both in the table accurately
+			local altSpellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellType, altName, altSpellID, altIcon, spellName, spellID, icon)
+
 			if (altName and altName ~= spellName) then
-				NeuronSpellCache[(altName):lower()] = spellData
-				NeuronSpellCache[(altName):lower().."()"] = spellData
+				NeuronSpellCache[(altName):lower()] = altSpellData
+				NeuronSpellCache[(altName):lower().."()"] = altSpellData
 			end
 
 		end
@@ -525,21 +532,14 @@ function Neuron:UpdateSpellCache()
 				local offsetIndex = j + spelloffset
 				local spellName, _ = GetSpellBookItemName(offsetIndex, BOOKTYPE_PROFESSION)
 				local spellType, spellID = GetSpellBookItemInfo(offsetIndex, BOOKTYPE_PROFESSION)
-				local spellID_Alt = spellID
+				local icon
 
 				if (spellName and spellType ~= "FUTURESPELL") then
-					local altName, _, icon = GetSpellInfo(spellID)
-					local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellName, altName, spellID, spellID_Alt, spellType, icon)
+					icon = GetSpellTexture(spellID)
+					local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellType, spellName, spellID, icon,nil,  nil, nil)
 
 					NeuronSpellCache[(spellName):lower()] = spellData
 					NeuronSpellCache[(spellName):lower().."()"] = spellData
-
-
-					if (altName and altName ~= spellName) then
-						NeuronSpellCache[(altName):lower()] = spellData
-						NeuronSpellCache[(altName):lower().."()"] = spellData
-
-					end
 
 				end
 			end
@@ -562,7 +562,7 @@ function Neuron:UpdateSpellCache()
 				for _,v in pairs(NeuronSpellCache) do
 
 					if (v.spellName:find(petName.."$")) then
-						local spellData = Neuron:SetSpellInfo(v.index, v.booktype, v.spellName, nil, spellID, v.spellID_Alt, v.spellType, v.icon)
+						local spellData = Neuron:SetSpellInfo(v.index, v.booktype, v.spellType, v.spellName, spellID, v.icon,nil,  nil, nil)
 
 						NeuronSpellCache[(spellName):lower()] = spellData
 						NeuronSpellCache[(spellName):lower().."()"] = spellData
@@ -581,13 +581,12 @@ function Neuron:UpdatePetSpellCache()
 	if (HasPetSpells()) then
 		for i=1,HasPetSpells() do
 			local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_PET)
-			local spellType, _ = GetSpellBookItemInfo(i, BOOKTYPE_PET)
+			local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_PET)
+			local icon = GetSpellTexture(spellID)
 
 			if (spellName and spellType ~= "FUTURESPELL") then
-				local altName, _, icon, _, _, _, spellID = GetSpellInfo(spellName)
-				local spellID_Alt = spellID
 
-				local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_PET, spellName, altName, spellID, spellID_Alt, spellType, icon)
+				local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_PET, spellName, spellType, spellID, icon, nil, nil, nil)
 
 				NeuronSpellCache[(spellName):lower()] = spellData
 				NeuronSpellCache[(spellName):lower().."()"] = spellData

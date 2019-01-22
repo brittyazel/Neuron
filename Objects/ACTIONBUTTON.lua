@@ -668,7 +668,7 @@ function ACTIONBUTTON:UpdateUsableSpell(spell)
 	local isUsable, notEnoughMana, alt_Name
 	local spellName = spell:lower()
 
-	if (NeuronSpellCache[spellName]) and (NeuronSpellCache[spellName].spellID ~= NeuronSpellCache[spellName].spellID_Alt) and NeuronSpellCache[spellName].spellID_Alt then
+	if (NeuronSpellCache[spellName]) and (NeuronSpellCache[spellName].spellID ~= NeuronSpellCache[spellName].altSpellID) and NeuronSpellCache[spellName].altSpellID then
 		alt_Name = NeuronSpellCache[spellName].altName
 		isUsable, notEnoughMana = IsUsableSpell(alt_Name)
 		spellName = alt_Name
