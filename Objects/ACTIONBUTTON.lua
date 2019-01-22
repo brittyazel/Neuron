@@ -1978,6 +1978,8 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 
 		if altSpellID and IsSpellKnown(altSpellID) then
 			spell = altName
+		else
+			spell = spellName
 		end
 	end
 
