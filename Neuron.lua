@@ -464,8 +464,6 @@ function Neuron:SetSpellInfo(index, bookType, spellType, spellName, spellID, ico
 	curSpell.altSpellID = altSpellID
 	curSpell.altIcon = altIcon
 
-	print(spellName, altName)
-
 	return curSpell
 end
 
