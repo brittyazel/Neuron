@@ -1976,16 +1976,12 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 		altName = NeuronSpellCache[spell:lower()].altName
 		altSpellID = NeuronSpellCache[spell:lower()].altSpellID
 
-		print(spellName, altName)
-		print(spellID, altSpellID)
-
-
 		if altSpellID and IsSpellKnown(altSpellID) then
 			spell = altName
 		end
 	end
 
-	
+
 	local modifier, modKey = " ", nil
 	local bar = Neuron.CurrentBar or self.bar
 
