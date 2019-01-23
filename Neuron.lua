@@ -282,13 +282,6 @@ function Neuron:PLAYER_ENTERING_WORLD()
 
 	Neuron.enteredWorld = true
 
-
-	--some people report bars being hidden upon logging in. This should address that
-	for _,bar in pairs(Neuron.BARIndex) do
-		bar:UpdateObjectVisibility()
-		bar:UpdateObjects()
-	end
-
 end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()
