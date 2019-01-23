@@ -198,6 +198,15 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("PLAYER_STARTED_MOVING")
 	self:RegisterEvent("PLAYER_STOPPED_MOVING")
 
+	--Makes it so the mount icon gets checked on and off appropriately
+	self:RegisterEvent("COMPANION_UPDATE")
+
+
+	--Makes the action button get checked on and off when opening the trade skill UI widget
+	self:RegisterEvent("TRADE_SKILL_SHOW")
+	self:RegisterEvent("TRADE_SKILL_CLOSE")
+
+
 
 
 
@@ -621,21 +630,12 @@ end
 
 function ACTIONBUTTON:SetSpellState(spell)
 
-	if (NeuronCollectionCache[spell:lower()]) then
-		spell = NeuronCollectionCache[spell:lower()].spellID
-
-		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell)) then
-			self:SetChecked(1)
-		else
-			self:SetChecked(nil)
-		end
+	if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell)) then
+		self:SetChecked(1)
 	else
-		if (IsCurrentSpell(spell) or IsAutoRepeatSpell(spell)) then
-			self:SetChecked(1)
-		else
-			self:SetChecked(nil)
-		end
+		self:SetChecked(nil)
 	end
+
 
 	self.macroname:SetText(self.data.macro_Name)
 
@@ -736,6 +736,10 @@ function ACTIONBUTTON:ACTIONBAR_UPDATE_STATE()
 end
 
 ACTIONBUTTON.ACTIONBAR_UPDATE_USABLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
+ACTIONBUTTON.COMPANION_UPDATE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
+
+ACTIONBUTTON.TRADE_SKILL_SHOW = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
+ACTIONBUTTON.TRADE_SKILL_CLOSE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 
 
 --this is mostly for range checking to get super accurate info when starting or stopping if an ability is in range
