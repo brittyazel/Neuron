@@ -672,9 +672,9 @@ function ACTIONBUTTON:UpdateUsableSpell(spell)
 	if (notEnoughMana) then
 		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif (isUsable) then
-		if (self.rangeInd and IsSpellInRange(spellName, self.unit)) then
+		if (self.rangeInd and IsSpellInRange(spellName, self.unit) == 0) then
 			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and (self.rangeInd and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit)) then
+		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and (self.rangeInd and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
 			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
@@ -698,7 +698,7 @@ function ACTIONBUTTON:UpdateUsableItem(item)
 	if (notEnoughMana and self.manacolor) then
 		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif (isUsable) then
-		if (self.rangeInd and IsItemInRange(spell, self.unit)) then
+		if (self.rangeInd and IsItemInRange(spell, self.unit) == 0) then
 			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
@@ -2138,7 +2138,7 @@ function ACTIONBUTTON:ACTION_UpdateUsable(action)
 			local isUsable, notEnoughMana = IsUsableAction(actionID)
 
 			if (isUsable) then
-				if (IsActionInRange(action, self.unit)) then
+				if (IsActionInRange(action, self.unit) == 0) then
 					self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 				else
 					self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
