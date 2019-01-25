@@ -47,7 +47,9 @@ function ZONEABILITYBTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 
-	self:SetAttribute("type", "macro")
+	self:SetAttribute("type1", "macro")
+	self:SetAttribute("useparent-unit", false)
+	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 	--macro content gets set in UpdateButton
 	self:UpdateButton()
 
@@ -93,7 +95,7 @@ function ZONEABILITYBTN:UpdateButton()
 		self:UpdateIcon()
 
 		if (self.spellName and not InCombatLockdown()) then
-			self:SetAttribute("macrotext", "/cast " .. self.spellName .. "();")
+			self:SetAttribute("macrotext1", "/cast " .. self.spellName .. "();")
 		end
 
 		self:SetSpellCooldown(self.spellID)

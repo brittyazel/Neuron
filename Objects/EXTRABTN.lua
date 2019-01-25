@@ -48,7 +48,9 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
-	self:SetAttribute("type", "action")
+	self:SetAttribute("type1", "action")
+	self:SetAttribute("useparent-unit", false)
+	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 	--action content gets set in UpdateButton
 	self:UpdateButton()
 
@@ -101,7 +103,7 @@ function EXTRABTN:UpdateButton()
 		self:UpdateIcon()
 
 		if not InCombatLockdown() then
-			self:SetAttribute("action", self.actionID)
+			self:SetAttribute("action1", self.actionID)
 		end
 
 		self:SetSpellCooldown(self.spellID)
