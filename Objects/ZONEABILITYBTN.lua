@@ -48,8 +48,8 @@ function ZONEABILITYBTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 
 	self:SetAttribute("type1", "macro")
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+	--self:SetAttribute("useparent-unit", false)
+	--self:SetAttribute("unit", ATTRIBUTE_NOOP)
 	--macro content gets set in UpdateButton
 	self:UpdateButton()
 
@@ -98,10 +98,10 @@ function ZONEABILITYBTN:UpdateButton()
 			self:SetAttribute("macrotext1", "/cast " .. self.spellName .. "();")
 		end
 
-		self:SetSpellCooldown(self.spellID)
+		self:SetSpellCooldown(self.spellName)
 
 		---zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
-		self:UpdateSpellCount(self.spellID)
+		self:UpdateSpellCount(self.spellName)
 	end
 
 	---make sure our button gets the correct Normal texture if we're not using a Masque skin

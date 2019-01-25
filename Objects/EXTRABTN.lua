@@ -49,8 +49,8 @@ function EXTRABTN:SetType()
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type1", "action")
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+	--self:SetAttribute("useparent-unit", false)
+	--self:SetAttribute("unit", ATTRIBUTE_NOOP)
 	--action content gets set in UpdateButton
 	self:UpdateButton()
 
@@ -99,17 +99,17 @@ function EXTRABTN:UpdateButton()
 	_, self.spellID = GetActionInfo(self.actionID)
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
-	if self.spellID then
+	if self.spellName then
 		self:UpdateIcon()
 
 		if not InCombatLockdown() then
 			self:SetAttribute("action1", self.actionID)
 		end
 
-		self:SetSpellCooldown(self.spellID)
+		self:SetSpellCooldown(self.spellName)
 
 		---extra button charges (some quests have ability charges)
-		self:UpdateSpellCount(self.spellID)
+		self:UpdateSpellCount(self.spellName)
 	end
 
 	---make sure our button gets the correct Normal texture if we're not using a Masque skin
