@@ -97,17 +97,17 @@ function EXTRABTN:UpdateButton()
 	_, self.spellID = GetActionInfo(self.actionID)
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
-	if self.spellName then
+	if self.spellID then
 		self:UpdateIcon()
 
 		if not InCombatLockdown() then
 			self:SetAttribute("action1", self.actionID)
 		end
 
-		self:SetSpellCooldown(self.spellName)
+		self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
 
 		---extra button charges (some quests have ability charges)
-		self:UpdateSpellCount(self.spellName)
+		self:UpdateSpellCount(self.spellID)
 	end
 
 	---make sure our button gets the correct Normal texture if we're not using a Masque skin
