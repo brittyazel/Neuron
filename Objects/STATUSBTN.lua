@@ -118,8 +118,8 @@ local BarBorders = {
 Neuron.BarBorders = BarBorders
 
 local BarOrientations = {
-	[1] = L["Horizontal"],
-	[2] = L["Vertical"],
+	[1] = "Horizontal",
+	[2] = "Vertical",
 }
 Neuron.BarOrientations = BarOrientations
 
@@ -1335,7 +1335,7 @@ end
 
 
 
-function STATUSBTN:UpdateTexture(command, gui, query, skipupdate)
+function STATUSBTN:UpdateBarFill(command, gui, query, skipupdate)
 
 	if (query) then
 		return BarTextures[self.config.texture][3]
@@ -1385,52 +1385,59 @@ end
 
 
 
-function STATUSBTN:UpdateOrientation(command, gui, query, skipupdate)
+function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 
 	if (query) then
 		return BarOrientations[self.config.orientation]
 	end
 
-	local index = tonumber(command)
+	orientationIndex = tonumber(orientationIndex)
 
-	if (index) then
+	if (orientationIndex) then
 
-		self.config.orientation = index
-		self.sb.orientation = self.config.orientation
+		--only update if we're changing, not staying the same
+		if self.config.orientation ~= orientationIndex then
 
-		self.sb:SetOrientation(BarOrientations[self.config.orientation]:upper())
-		self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
+			self.config.orientation = orientationIndex
+			self.sb.orientation = self.config.orientation
 
-		if (self.config.orientation == 2) then
-			self.sb.cText:SetAlpha(0)
-			self.sb.lText:SetAlpha(0)
-			self.sb.rText:SetAlpha(0)
-			self.sb.mText:SetAlpha(0)
-		else
-			self.sb.cText:SetAlpha(1)
-			self.sb.lText:SetAlpha(1)
-			self.sb.rText:SetAlpha(1)
-			self.sb.mText:SetAlpha(1)
-		end
+			self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
+			self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
-		local width, height = self.config.width,  self.config.height
+			if (self.config.orientation == 2) then
+				self.sb.cText:SetAlpha(0)
+				self.sb.lText:SetAlpha(0)
+				self.sb.rText:SetAlpha(0)
+				self.sb.mText:SetAlpha(0)
+			else
+				self.sb.cText:SetAlpha(1)
+				self.sb.lText:SetAlpha(1)
+				self.sb.rText:SetAlpha(1)
+				self.sb.mText:SetAlpha(1)
+			end
 
-		self.config.width = height
-		self.config.height = width
 
-		self:SetWidth(self.config.width)
+			local newWidth = self.config.height
+			local newHeight = self.config.width
 
-		self:SetHeight(self.config.height)
+			self.config.height = newHeight
+			self.config.width = newWidth
 
-		self.bar:SetObjectLoc()
+			self:SetWidth(self.config.width)
 
-		self.bar:SetPerimeter()
+			self:SetHeight(self.config.height)
 
-		self.bar:SetSize()
+			self.bar:SetObjectLoc()
 
-		if (not skipupdate) then
-			Neuron.NeuronGUI:Status_UpdateEditor()
-			self.bar:Update()
+			self.bar:SetPerimeter()
+
+			self.bar:SetSize()
+
+			if (not skipupdate) then
+				Neuron.NeuronGUI:Status_UpdateEditor()
+				self.bar:Update()
+			end
+
 		end
 	end
 end
@@ -1727,8 +1734,8 @@ function STATUSBTN:SetData(bar)
 	self.sb.failColor = { (";"):split(self.config.failColor) }
 
 	self.sb.orientation = self.config.orientation
-	self.sb:SetOrientation(BarOrientations[self.config.orientation]:upper())
-	self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:upper())
+	self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
+	self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
 	if (self.config.orientation == 2) then
 		self.sb.cText:SetAlpha(0)
