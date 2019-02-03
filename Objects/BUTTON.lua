@@ -429,11 +429,6 @@ function BUTTON:SetData(bar)
 		self:SetScale(bar.data.scale)
 	end
 
-	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(2)
-	self.iconframechargecooldown:SetFrameLevel(2)
-
-
 	if (self.bindText) then
 		self.hotkey:Show()
 		if (self.bindColor) then

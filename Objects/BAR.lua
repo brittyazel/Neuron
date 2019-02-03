@@ -1528,8 +1528,6 @@ function BAR:ChangeBar()
 			self.selected = true
 			self.action = nil
 
-			self:SetFrameLevel(3)
-
 			if (self.data.hidden) then
 				self:SetBackdropColor(1,0,0,0.6)
 			else
@@ -1554,7 +1552,6 @@ function BAR:ChangeBar()
 					v:SetBackdropColor(0,0,0,0.4)
 				end
 
-				v:SetFrameLevel(2)
 				v.selected = false
 				v.microAdjust = false
 				v:EnableKeyboard(false)
@@ -1747,7 +1744,6 @@ function BAR:CreateBar(class, id)
 		                 insets = {left = 4, right = 4, top = 4, bottom = 4}})
 		bar:SetBackdropColor(0,0,0,0.4)
 		bar:SetBackdropBorderColor(0,0,0,0)
-		bar:SetFrameLevel(2)
 		bar:RegisterForClicks("AnyDown", "AnyUp")
 		bar:RegisterForDrag("LeftButton")
 		bar:SetMovable(true)
