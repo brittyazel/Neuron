@@ -185,7 +185,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						self:SetFrameLevel(2)
+						self:SetFrameLevel(1)
 					</OnLoad>
 				</Scripts>
 			</Frame>
