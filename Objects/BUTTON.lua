@@ -430,8 +430,8 @@ function BUTTON:SetData(bar)
 	end
 
 	self.iconframe:SetFrameLevel(2)
-	self.iconframecooldown:SetFrameLevel(3)
-	self.iconframechargecooldown:SetFrameLevel(3)
+	self.iconframecooldown:SetFrameLevel(2)
+	self.iconframechargecooldown:SetFrameLevel(2)
 
 
 	if (self.bindText) then
