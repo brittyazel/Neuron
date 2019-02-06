@@ -1570,9 +1570,9 @@ end
 
 function ACTIONBUTTON:SetSpellTooltip(spell)
 
-	if (NeuronSpellCache[spell]) then
+	if (NeuronSpellCache[spell:lower()]) then
 
-		local spell_id = NeuronSpellCache[spell].spellID
+		local spell_id = NeuronSpellCache[spell:lower()].spellID
 
 
 		local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
@@ -1644,23 +1644,14 @@ function ACTIONBUTTON:SetTooltip(edit)
 		if(NeuronItemCache[show]) then
 			self:SetItemTooltip(show)
 		else
-			self:SetSpellTooltip(show:lower())
+			self:SetSpellTooltip(show)
 		end
 
 	elseif (spell and #spell>0) then
-		self:SetSpellTooltip(spell:lower())
+		self:SetSpellTooltip(spell)
 
 	elseif (item and #item>0) then
 		self:SetItemTooltip(item)
-
-	elseif (self:GetAttribute("macroShow")) then
-		show = self:GetAttribute("macroShow")
-
-		if(NeuronItemCache[show]) then
-			self:SetItemTooltip(show)
-		else
-			self:SetSpellTooltip(show:lower())
-		end
 
 	elseif (self.data.macro_Text and #self.data.macro_Text > 0) then
 		local equipset = self.data.macro_Text:match("/equipset%s+(%C+)")
@@ -2307,15 +2298,6 @@ function ACTIONBUTTON:UpdateState()
 
 		self:SetItemState(item)
 
-	elseif (self:GetAttribute("macroShow")) then
-
-		show = self:GetAttribute("macroShow")
-
-		if (NeuronItemCache[show]) then
-			self:SetItemState(show)
-		else
-			self:SetSpellState(show)
-		end
 	else
 		self:SetChecked(nil)
 		self.count:SetText("")
