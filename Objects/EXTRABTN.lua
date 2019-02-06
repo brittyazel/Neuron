@@ -49,6 +49,9 @@ function EXTRABTN:SetType()
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type1", "action")
+	self:SetAttribute("useparent-unit", false)
+	self:SetAttribute("unit", ATTRIBUTE_NOOP)
+
 	--action content gets set in UpdateButton
 	self:UpdateButton()
 
