@@ -244,7 +244,7 @@ function Neuron:OnDisable()
 
 end
 
---- **OnMouseDown**, which is called on any ACTIONBUTTON:NnMouseDown and WorldFrame:OnMouseDown
+--- **OnMouseDown**, which is called on any ACTIONBUTTON:OnMouseDown and WorldFrame:OnMouseDown
 function Neuron:OnMouseDown()
 	if Neuron.macroDrag[1] then
 		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
