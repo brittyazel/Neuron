@@ -1507,10 +1507,15 @@ end
 
 ---This function will be used to check if we should release the cursor
 function ACTIONBUTTON:OnMouseDown()
-	Neuron.OnMouseDown()
+	if Neuron.macroDrag[1] then
+		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+		wipe(Neuron.macroDrag)
+
+		for _, bar in pairs(Neuron.BARIndex) do
+			bar:UpdateObjectVisibility()
+		end
+	end
 end
-
-
 
 function ACTIONBUTTON:PreClick(mousebutton)
 	self.cursor = nil
