@@ -244,6 +244,18 @@ function Neuron:OnDisable()
 
 end
 
+--- **OnMouseDown**, which is called on any ACTIONBUTTON:OnMouseDown and WorldFrame:OnMouseDown
+function Neuron:OnMouseDown()
+	if Neuron.macroDrag[1] then
+		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
+		wipe(Neuron.macroDrag)
+
+		for index, bar in pairs(Neuron.BARIndex) do
+			bar:UpdateObjectVisibility()
+		end
+	end
+end
+
 -------------------------------------------------
 
 function Neuron:PLAYER_REGEN_DISABLED()
@@ -280,6 +292,7 @@ function Neuron:PLAYER_ENTERING_WORLD()
 		Neuron:HideBlizzardUI()
 	end
 
+	Neuron:HookScript(WorldFrame, "OnMouseDown", function() Neuron:OnMouseDown() end)
 	Neuron.enteredWorld = true
 
 end

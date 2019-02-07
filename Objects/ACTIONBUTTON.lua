@@ -815,8 +815,6 @@ end
 
 function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 
-	WorldFrame:SetScript("OnMouseDown", function() self:OnMouseDown() end)
-
 	self:MACRO_Reset()
 	self:UpdateAll()
 
@@ -1509,14 +1507,7 @@ end
 
 ---This function will be used to check if we should release the cursor
 function ACTIONBUTTON:OnMouseDown()
-	if Neuron.macroDrag[1] then
-		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
-		wipe(Neuron.macroDrag)
-
-		for index, bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectVisibility()
-		end
-	end
+	Neuron.OnMouseDown()
 end
 
 
