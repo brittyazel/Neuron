@@ -62,6 +62,8 @@ local cmdSlash = {
 
 local macroCache = {}
 
+local macroDrag = {}
+
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
 ---@return ACTIONBUTTON @ A newly created ACTIONBUTTON object
@@ -942,7 +944,7 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 		self:SetType()
 	end
 
-	Neuron.macroDrag[1] = false
+	macroDrag[1] = false
 
 	ClearCursor()
 	SetCursor(nil)
@@ -976,7 +978,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		Neuron:Print("Sorry, you cannot place that ability at this time.")
 	end
 
-	Neuron.macroDrag[1] = false
+	macroDrag[1] = false
 
 	ClearCursor()
 	SetCursor(nil)
@@ -1010,7 +1012,7 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 		self:SetType()
 	end
 
-	Neuron.macroDrag[1] = false
+	macroDrag[1] = false
 
 	ClearCursor()
 	SetCursor(nil)
@@ -1046,7 +1048,7 @@ function ACTIONBUTTON:PlaceBlizzMacro(action1)
 			self:SetType()
 		end
 
-		Neuron.macroDrag[1] = false
+		macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1091,7 +1093,7 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 			self:SetType()
 		end
 
-		Neuron.macroDrag[1] = false
+		macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1138,7 +1140,7 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 			self:SetType()
 		end
 
-		Neuron.macroDrag[1] = false
+		macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1175,7 +1177,7 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 			self:SetType()
 		end
 
-		Neuron.macroDrag[1] = false
+		macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1204,7 +1206,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 			self:SetType()
 		end
 
-		Neuron.macroDrag[1] = false
+		macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1264,7 +1266,7 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 			self:SetType()
 		end
 
-		Neuron.macroDrag[1] = false
+		macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
@@ -1273,14 +1275,14 @@ end
 
 
 function ACTIONBUTTON:PlaceMacro()
-	self.data.macro_Text = Neuron.macroDrag[3]
-	self.data.macro_Icon = Neuron.macroDrag[4]
-	self.data.macro_Name = Neuron.macroDrag[5]
-	self.data.macro_Auto = Neuron.macroDrag[6]
-	self.data.macro_Watch = Neuron.macroDrag[7]
-	self.data.macro_Equip = Neuron.macroDrag[8]
-	self.data.macro_Note = Neuron.macroDrag[9]
-	self.data.macro_UseNote = Neuron.macroDrag[10]
+	self.data.macro_Text = macroDrag[3]
+	self.data.macro_Icon = macroDrag[4]
+	self.data.macro_Name = macroDrag[5]
+	self.data.macro_Auto = macroDrag[6]
+	self.data.macro_Watch = macroDrag[7]
+	self.data.macro_Equip = macroDrag[8]
+	self.data.macro_Note = macroDrag[9]
+	self.data.macro_UseNote = macroDrag[10]
 
 	if (not self.cursor) then
 		self:SetType()
@@ -1288,7 +1290,7 @@ function ACTIONBUTTON:PlaceMacro()
 
 	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 
-	wipe(Neuron.macroDrag);
+	wipe(macroDrag);
 	ClearCursor();
 	SetCursor(nil);
 
@@ -1316,10 +1318,10 @@ function ACTIONBUTTON:PickUpMacro()
 
 		if (macroCache[1]) then  ---triggers when picking up an existing button with a button in the cursor
 
-			wipe(Neuron.macroDrag)
+			wipe(macroDrag)
 
 			for k,v in pairs(macroCache) do
-				Neuron.macroDrag[k] = v
+				macroDrag[k] = v
 			end
 
 			wipe(macroCache)
@@ -1330,17 +1332,17 @@ function ACTIONBUTTON:PickUpMacro()
 		elseif (self:HasAction()) then
 			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 
-			Neuron.macroDrag[1] = self:GetDragAction()
-			Neuron.macroDrag[2] = self
-			Neuron.macroDrag[3] = self.data.macro_Text
-			Neuron.macroDrag[4] = self.data.macro_Icon
-			Neuron.macroDrag[5] = self.data.macro_Name
-			Neuron.macroDrag[6] = self.data.macro_Auto
-			Neuron.macroDrag[7] = self.data.macro_Watch
-			Neuron.macroDrag[8] = self.data.macro_Equip
-			Neuron.macroDrag[9] = self.data.macro_Note
-			Neuron.macroDrag[10] = self.data.macro_UseNote
-			Neuron.macroDrag.texture = texture
+			macroDrag[1] = self:GetDragAction()
+			macroDrag[2] = self
+			macroDrag[3] = self.data.macro_Text
+			macroDrag[4] = self.data.macro_Icon
+			macroDrag[5] = self.data.macro_Name
+			macroDrag[6] = self.data.macro_Auto
+			macroDrag[7] = self.data.macro_Watch
+			macroDrag[8] = self.data.macro_Equip
+			macroDrag[9] = self.data.macro_Note
+			macroDrag[10] = self.data.macro_UseNote
+			macroDrag.texture = texture
 
 			self.data.macro_Text = ""
 			self.data.macro_Icon = false
@@ -1395,7 +1397,7 @@ function ACTIONBUTTON:OnReceiveDrag(preclick)
 	end
 
 
-	if (Neuron.macroDrag[1]) then
+	if (macroDrag[1]) then
 		self:PlaceMacro()
 	elseif (cursorType == "spell") then
 		self:PlaceSpell(action1, action2, spellID)
@@ -1464,9 +1466,9 @@ function ACTIONBUTTON:OnDragStart(mousebutton)
 		self.dragbutton = mousebutton
 		self:PickUpMacro()
 
-		if (Neuron.macroDrag[1]) then
+		if (macroDrag[1]) then
 
-			if (Neuron.macroDrag[2] ~= self) then
+			if (macroDrag[2] ~= self) then
 				self.dragbutton = nil
 			end
 
@@ -1507,9 +1509,9 @@ end
 
 ---This function will be used to check if we should release the cursor
 function ACTIONBUTTON:OnMouseDown()
-	if Neuron.macroDrag[1] then
+	if macroDrag[1] then
 		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
-		wipe(Neuron.macroDrag)
+		wipe(macroDrag)
 
 		for _, bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectVisibility()
@@ -1523,7 +1525,7 @@ function ACTIONBUTTON:PreClick(mousebutton)
 	if (not InCombatLockdown() and MouseIsOver(self)) then
 		local cursorType = GetCursorInfo()
 
-		if (cursorType or Neuron.macroDrag[1]) then
+		if (cursorType or macroDrag[1]) then
 			self.cursor = true
 
 			Neuron.startDrag = self:GetParent():GetAttribute("activestate")
@@ -1668,7 +1670,7 @@ function ACTIONBUTTON:OnEnter(...)
 			return
 		end
 
-		if(Neuron.macroDrag[1]) then ---puts the icon back to the interact icon when moving abilities around and the mouse enteres the WorldFrame
+		if(macroDrag[1]) then ---puts the icon back to the interact icon when moving abilities around and the mouse enteres the WorldFrame
 		SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 		end
 

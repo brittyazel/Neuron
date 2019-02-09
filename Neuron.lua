@@ -43,7 +43,6 @@ Neuron.numLoadedModules = 0
 Neuron.registeredBarData = {}
 Neuron.registeredGUIData = {}
 
-Neuron.macroDrag = {}
 Neuron.startDrag = false
 
 
