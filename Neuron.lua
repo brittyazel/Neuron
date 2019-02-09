@@ -43,8 +43,6 @@ Neuron.numLoadedModules = 0
 Neuron.registeredBarData = {}
 Neuron.registeredGUIData = {}
 
-Neuron.startDrag = false
-
 
 ---these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
@@ -199,7 +197,6 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("COMPANION_LEARNED")
 	Neuron:RegisterEvent("TOYS_UPDATED")
 	Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
-	Neuron:RegisterEvent("ACTIONBAR_SHOWGRID")
 
 	Neuron:UpdateStanceStrings()
 
@@ -319,10 +316,6 @@ end
 
 function Neuron:TOYS_UPDATED(...)
 	Neuron:UpdateToyCache()
-end
-
-function Neuron:ACTIONBAR_SHOWGRID()
-	Neuron.startDrag = true
 end
 
 -------------------------------------------------------------------------

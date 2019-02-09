@@ -64,6 +64,8 @@ local macroCache = {}
 
 local macroDrag = {}
 
+local startDrag = false
+
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @ Name given to the new button frame
 ---@return ACTIONBUTTON @ A newly created ACTIONBUTTON object
@@ -208,18 +210,6 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("TRADE_SKILL_SHOW")
 	self:RegisterEvent("TRADE_SKILL_CLOSE")
 
-
-
-
-
-	--when changing states or going in or out of range, this bucket is meant to catch all of these events
-	--[[self:RegisterBucketEvent({"ACTIONBAR_UPDATE_STATE", "SPELL_UPDATE_COOLDOWN", "UPDATE_SHAPESHIFT_COOLDOWN",
-	                          "BAG_UPDATE_COOLDOWN", "UPDATE_SHAPESHIFT_FORM", "CURRENT_SPELL_CAST_CHANGED",
-	                          "ACTIONBAR_UPDATE_COOLDOWN", "UNIT_AURA", "UPDATE_UI_WIDGET",
-	                          "PLAYER_STARTED_MOVING", "PLAYER_STOPPED_MOVING", "BAG_UPDATE"}, 0.1, "UpdateState")]]
-
-	--this is meant to catch all the events when switching targets
-	--self:RegisterBucketEvent({"PLAYER_TARGET_CHANGED", "UNIT_TARGET", "UPDATE_MOUSEOVER_UNIT"}, 0.1, "UpdateAll")
 end
 
 
@@ -845,6 +835,8 @@ end
 
 function ACTIONBUTTON:ACTIONBAR_SHOWGRID(...)
 	self:ShowGrid()
+
+	startDrag = true
 end
 
 
@@ -1369,7 +1361,7 @@ function ACTIONBUTTON:PickUpMacro()
 end
 
 ---This is the function that fires when a button is receiving a dragged item
-function ACTIONBUTTON:OnReceiveDrag(preclick)
+function ACTIONBUTTON:OnReceiveDrag()
 	if (InCombatLockdown()) then
 		return
 	end
@@ -1426,14 +1418,14 @@ function ACTIONBUTTON:OnReceiveDrag(preclick)
 	end
 
 
-	if (Neuron.startDrag and macroCache[1]) then
+	if (startDrag and macroCache[1]) then
 		self:PickUpMacro()
 		Neuron:ToggleButtonGrid(true)
 	end
 
 	self:UpdateAll()
 
-	Neuron.startDrag = false
+	startDrag = false
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateObjectGUI()
@@ -1444,7 +1436,7 @@ end
 function ACTIONBUTTON:OnDragStart(mousebutton)
 
 	if (InCombatLockdown() or not self.bar or self.vehicle_edit or self.actionID) then
-		Neuron.startDrag = false
+		startDrag = false
 		return
 	end
 
@@ -1461,7 +1453,7 @@ function ACTIONBUTTON:OnDragStart(mousebutton)
 	end
 
 	if (self.drag) then
-		Neuron.startDrag = self:GetParent():GetAttribute("activestate")
+		startDrag = self:GetParent():GetAttribute("activestate")
 
 		self.dragbutton = mousebutton
 		self:PickUpMacro()
@@ -1495,7 +1487,7 @@ function ACTIONBUTTON:OnDragStart(mousebutton)
 
 
 	else
-		Neuron.startDrag = false
+		startDrag = false
 	end
 
 end
@@ -1528,7 +1520,7 @@ function ACTIONBUTTON:PreClick(mousebutton)
 		if (cursorType or macroDrag[1]) then
 			self.cursor = true
 
-			Neuron.startDrag = self:GetParent():GetAttribute("activestate")
+			startDrag = self:GetParent():GetAttribute("activestate")
 
 			self:SetType()
 
@@ -1544,7 +1536,6 @@ function ACTIONBUTTON:PreClick(mousebutton)
 		end
 	end
 
-	Neuron.ClickedButton = self
 end
 
 
