@@ -106,6 +106,10 @@ function Neuron:HideBlizzardUI()
 	if (not Neuron:IsHooked('ActionButton_ShowGrid')) then
 		Neuron:RawHook('ActionButton_ShowGrid', function() end, true)
 	end
+
+	if (not Neuron:IsHooked('PetActionBar_Update')) then
+		Neuron:RawHook('PetActionBar_Update', function() end, true)
+	end
 end
 
 
