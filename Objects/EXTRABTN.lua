@@ -49,8 +49,6 @@ function EXTRABTN:SetType()
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type1", "action")
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
 	--action content gets set in UpdateButton
 	self:UpdateButton()
@@ -97,15 +95,15 @@ function EXTRABTN:UpdateButton()
 		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
 	end
 
+	if not InCombatLockdown() then
+		self:SetAttribute("action1", self.actionID)
+	end
+
 	_, self.spellID = GetActionInfo(self.actionID)
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
 	if self.spellID then
 		self:UpdateIcon()
-
-		if not InCombatLockdown() then
-			self:SetAttribute("action1", self.actionID)
-		end
 
 		self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
 

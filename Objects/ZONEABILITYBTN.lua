@@ -48,8 +48,6 @@ function ZONEABILITYBTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 
 	self:SetAttribute("type1", "macro")
-	self:SetAttribute("useparent-unit", false)
-	self:SetAttribute("unit", ATTRIBUTE_NOOP)
 
 	--macro content gets set in UpdateButton
 	self:UpdateButton()
