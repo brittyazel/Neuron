@@ -135,9 +135,10 @@ function ACTIONBUTTON:SetObjectVisibility(show)
 	self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
 	self:SetAttribute("isshown", show)
 
-	if (show or self.showGrid) then
+
+	if self:HasAction() or show or self.showGrid or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self:Show()
-	elseif not self:HasAction() and (not Neuron.buttonEditMode or not Neuron.barEditMode or not Neuron.bindingMode) then
+	else
 		self:Hide()
 	end
 end
@@ -1559,23 +1560,14 @@ end
 
 function ACTIONBUTTON:SetSpellTooltip(spell)
 
-	if (NeuronSpellCache[spell:lower()]) then
+	if (NeuronSpellCache[spell]) then
 
-		local spell_id = NeuronSpellCache[spell:lower()].spellID
-
-
-		local zoneability_id = ZoneAbilityFrame.SpellButton.currentSpellID
-
-		if spell_id == 161691 and zoneability_id then
-			spell_id = zoneability_id
-		end
-
+		local spell_id = NeuronSpellCache[spell].spellID
 
 		if (self.UberTooltips) then
 			GameTooltip:SetSpellByID(spell_id)
 		else
-			spell = NeuronSpellCache[spell].spellName
-			GameTooltip:SetText(spell, 1, 1, 1)
+			GameTooltip:SetText(NeuronSpellCache[spell:lower()].spellName, 1, 1, 1)
 		end
 
 
@@ -1595,9 +1587,9 @@ end
 function ACTIONBUTTON:SetItemTooltip(item)
 	local name, link = GetItemInfo(item)
 
-	if (NeuronToyCache[item:lower()]) then
+	if (NeuronToyCache[item]) then
 		if (self.UberTooltips) then
-			local itemID = NeuronToyCache[item:lower()]
+			local itemID = NeuronToyCache[item]
 			GameTooltip:ClearLines()
 			GameTooltip:SetToyByItemID(itemID)
 		else
@@ -1621,7 +1613,7 @@ function ACTIONBUTTON:SetItemTooltip(item)
 end
 
 
-function ACTIONBUTTON:SetTooltip(edit)
+function ACTIONBUTTON:SetTooltip()
 	self.UpdateTooltip = nil
 
 	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
@@ -1631,18 +1623,18 @@ function ACTIONBUTTON:SetTooltip(edit)
 
 	elseif (show and #show>0) then
 		if(NeuronItemCache[show]) then
-			self:SetItemTooltip(show)
+			self:SetItemTooltip(show:lower())
 		else
-			self:SetSpellTooltip(show)
+			self:SetSpellTooltip(show:lower())
 		end
 
 	elseif (spell and #spell>0) then
-		self:SetSpellTooltip(spell)
+		self:SetSpellTooltip(spell:lower())
 
 	elseif (item and #item>0) then
-		self:SetItemTooltip(item)
+		self:SetItemTooltip(item:lower())
 
-	elseif (self.data.macro_Text and #self.data.macro_Text > 0) then
+	elseif (self.data.macro_Text and #self.data.macro_Text > 0) then ---condition in case the item is an equipment set. Should probably make this cleaner
 		local equipset = self.data.macro_Text:match("/equipset%s+(%C+)")
 
 		if (equipset) then
