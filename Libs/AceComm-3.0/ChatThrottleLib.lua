@@ -20,7 +20,7 @@
 --
 -- Can run as a standalone addon also, but, really, just embed it! :-)
 --
--- COPYING: ChatThrottleLib is released into the Public Domain
+-- LICENSE: ChatThrottleLib is released into the Public Domain
 --
 
 local CTL_VERSION = 24
