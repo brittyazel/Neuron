@@ -47,7 +47,7 @@ local BrawlerGuildFactions = {
 	[1374] = true, --Horde
 }
 
-local CastWatch, RepWatch, MirrorWatch, MirrorBars, Session = {}, {}, {}, {}, {}
+local CastWatch, RepWatch, MirrorWatch, MirrorBars = {}, {}, {}, {}
 
 local sbStrings = {
 	cast = {
