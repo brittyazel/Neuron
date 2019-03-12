@@ -84,7 +84,7 @@ function BAGBTN:SetSkinned()
 				Count = self.element.Count,
 				Pushed = self.element:GetPushedTexture(),
 				Disabled = self.element:GetDisabledTexture(),
-				Checked = self.element:GetCheckedTexture(),
+				--Checked = self.element:GetCheckedTexture(),
 				Highlight = self.element:GetHighlightTexture()
 			}
 
