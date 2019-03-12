@@ -84,9 +84,11 @@ function BAGBTN:SetSkinned()
 				Count = self.element.Count,
 				Pushed = self.element:GetPushedTexture(),
 				Disabled = self.element:GetDisabledTexture(),
-				--Checked = self.element:GetCheckedTexture(),
-				Highlight = self.element:GetHighlightTexture()
+				Checked = self.element.SlotHighlightTexture, --blizzard in 8.1.5 took away GetCheckedTexture from the bag buttons for ~some~ reason. This is now the explicit location the element we want
+				Highlight = self.element:GetHighlightTexture(),
 			}
+
+			test = self
 
 			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
 
