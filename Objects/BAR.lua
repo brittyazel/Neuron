@@ -1517,6 +1517,14 @@ function BAR:UpdateObjects()
 	end
 end
 
+function BAR:UpdateIcons()
+	for _, object in pairs(self.buttons) do
+		if (object) then
+			object:UpdateIcon()
+		end
+	end
+end
+
 function BAR:ChangeBar()
 	local newBar = false
 
@@ -3022,6 +3030,28 @@ function BAR:AuraIndSet(msg, gui, checked, query)
 
 	self:UpdateObjectData()
 	self:Update()
+end
+
+function BAR:SetBorderStyle(msg, gui, checked, query)
+	if (query) then
+		return self.data.showBorderStyle
+	end
+
+	if (gui) then
+		if (checked) then
+			self.data.showBorderStyle = true
+		else
+			self.data.showBorderStyle = false
+		end
+	else
+		if (self.data.showBorderStyle) then
+			self.data.showBorderStyle = false
+		else
+			self.data.showBorderStyle = true
+		end
+	end
+
+	self:UpdateIcons()
 end
 
 

@@ -353,7 +353,7 @@ L["Unlock on ALT"] = true
 L["Enable Tooltips"] = true
 L["Enhanced"] = true
 L["Hide in Combat"] = true
-L["Show Bar Border"] = true
+L["Show Border Style"] = true
 
 L["Preset Action States"] = true
 L["Custom Action States"] = true

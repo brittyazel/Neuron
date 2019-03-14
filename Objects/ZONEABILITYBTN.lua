@@ -130,7 +130,12 @@ function ZONEABILITYBTN:SetButtonTex()
 
 	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[self.spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
 	self.style:SetTexture(texture)
-	self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+
+	if self.bar.data.showBorderStyle then
+		self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+	else
+		self.style:Hide()
+	end
 end
 
 function ZONEABILITYBTN:OnEnter(...)

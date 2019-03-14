@@ -139,7 +139,12 @@ function EXTRABTN:SetButtonTex()
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
 	self.style:SetTexture(texture)
-	self.style:Show()
+
+	if self.bar.data.showBorderStyle then
+		self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+	else
+		self.style:Hide()
+	end
 end
 
 

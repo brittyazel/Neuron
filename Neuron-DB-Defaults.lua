@@ -220,6 +220,8 @@ local genericBarData = {
     auraText = false,
     auraInd = false,
 
+    showBorderStyle = true,
+
     homestate = true,
     paged = false,
     stance = false,

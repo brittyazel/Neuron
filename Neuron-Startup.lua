@@ -105,7 +105,8 @@ function Neuron:RegisterGUI()
 		LOCKBAR = false,
 		TOOLTIPS = true,
 		BINDTEXT = true,
-		COUNTTEXT = true,},
+		COUNTTEXT = true,
+		BORDERSTYLE = true,},
 			false, 65)
 
 
@@ -120,7 +121,8 @@ function Neuron:RegisterGUI()
 		LOCKBAR = false,
 		TOOLTIPS = true,
 		BINDTEXT = true,
-		COUNTTEXT = true,},
+		COUNTTEXT = true,
+		BORDERSTYLE = true,},
 			false, 65)
 
 
