@@ -232,10 +232,10 @@ function KEYBINDER:ProcessBinding(key, button)
 
 	if (key == "ESCAPE") then
 		self:ClearBindings(button)
-	elseif (key) then
-		for i = 1, #Neuron.BINDIndex do
-			if (button ~= self.button and self.button.keys and not self.button.keys.hotKeyLock) then
-				self.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then self:ClearBindings(self.button, binding) self:ApplyBindings(self.button) end end)
+	elseif (key) then --checks to see if another keybind already has that key, and if so clears it from the other button
+		for _,binder in pairs(Neuron.BINDIndex) do
+			if (button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
+				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then binder:ClearBindings(binder.button, binding) binder:ApplyBindings(binder.button) end end)
 			end
 		end
 
@@ -281,9 +281,6 @@ end
 
 --- OnEnter Event handler
 function KEYBINDER:OnEnter()
-
-	local button = self.button
-
 	local name
 
 	---TODO:we should definitely added name strings for pets/companions as well. This was just to get it going
@@ -308,7 +305,7 @@ function KEYBINDER:OnEnter()
 	GameTooltip:ClearLines()
 	GameTooltip:SetText("Neuron", 1.0, 1.0, 1.0)
 	GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffffff" .. name  .. "|r")
-	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffffff" .. self:GetBindkeyList(button) .. "|r")
+	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffffff" .. self:GetBindkeyList(self.button) .. "|r")
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(L["Keybind_Tooltip_3"])
 	GameTooltip:AddLine(L["Keybind_Tooltip_4"])
