@@ -63,16 +63,291 @@ TRASHCAN:Hide()
 
 
 ---Constructor: Create a new Neuron BAR object
----@param name string @ Name given to the new bar frame
+---@param class string @The class type of the new bar
+---@param barID number @The ID of the new bar object
 ---@return BAR @ A newly created BUTTON object
-function BAR:new(name)
-	local object = CreateFrame("CheckButton", name, UIParent, "NeuronBarTemplate")
-	setmetatable(object, {__index = BAR})
-	return object
+function BAR:new(class, barID)
+
+	local data = Neuron.registeredBarData[class]
+
+	local newBar
+	local barIsNew
+
+	local index = #Neuron.BARIndex + 1
+
+	if (not barID) then
+		barID = #data.barDB + 1
+		barIsNew = true
+	end
+
+	---this is the create of our bar object frame
+	if _G["Neuron"..data.barType..barID] then
+		newBar = CreateFrame("CheckButton", "Neuron"..data.barType..random(1000,10000000), UIParent, "NeuronBarTemplate") --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
+	else
+		newBar = CreateFrame("CheckButton", "Neuron"..data.barType..barID, UIParent, "NeuronBarTemplate")
+	end
+
+	setmetatable(newBar, {__index = BAR})
+
+	for key,value in pairs(data) do
+		newBar[key] = value
+	end
+
+	if not data.barDB[barID] then --if the database for a bar doesn't exist (because it's a new bar?
+		data.barDB[barID] = {}
+	end
+	newBar.DB = data.barDB[barID]
+
+	newBar.buttons = {}
+
+	newBar.index = index
+	newBar.DB.id = barID
+	newBar.class = class
+	newBar.stateschanged = true
+	newBar.vischanged =true
+	newBar.elapsed = 0
+	newBar.click = nil
+	newBar.dragged = false
+	newBar.selected = false
+	newBar.toggleframe = newBar
+	newBar.microAdjust = false
+	newBar.vis = {}
+	newBar.text:Hide()
+	newBar.message:Hide()
+	newBar.messagebg:Hide()
+
+	newBar:SetWidth(375)
+	newBar:SetHeight(40)
+	newBar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+	                 edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+	                 tile = true, tileSize = 16, edgeSize = 12,
+	                 insets = {left = 4, right = 4, top = 4, bottom = 4}})
+	newBar:SetBackdropColor(0,0,0,0.4)
+	newBar:SetBackdropBorderColor(0,0,0,0)
+	newBar:RegisterForClicks("AnyDown", "AnyUp")
+	newBar:RegisterForDrag("LeftButton")
+	newBar:SetMovable(true)
+	newBar:EnableKeyboard(false)
+	newBar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
+
+	newBar:SetScript("OnClick", function(self, ...) self:OnClick(...) end)
+	newBar:SetScript("OnDragStart", function(self, ...) self:OnDragStart(...) end)
+	newBar:SetScript("OnDragStop", function(self, ...) self:OnDragStop(...) end)
+	newBar:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	newBar:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
+	newBar:SetScript("OnKeyDown", function(self, key, onupdate) self:OnKeyDown(key, onupdate) end)
+	newBar:SetScript("OnKeyUp", function(self, key) self:OnKeyUp(key) end)
+	newBar:SetScript("OnShow", function(self) self:OnShow() end)
+	newBar:SetScript("OnHide", function(self) self:OnHide() end)
+
+
+	newBar:CreateDriver()
+	newBar:CreateHandler()
+	newBar:CreateWatcher()
+
+	newBar:LoadData()
+
+	if (not barIsNew) then
+		newBar:Hide()
+	end
+
+	Neuron.BARIndex[index] = newBar
+
+	return newBar, barIsNew
+end
+
+
+-----------------------------------
+-----Bar Add/Remove Functions------
+-----------------------------------
+function BAR:CreateNewBar(class, barID, defaults)
+
+	if (class and Neuron.registeredBarData[class]) then
+
+		local bar, barIsNew = BAR:new(class, barID)
+
+		local buttonBaseObject = Neuron.registeredBarData[class].objTemplate
+
+		if (defaults) then
+			bar:SetDefaults(defaults)
+
+			for buttonID=1,#defaults.buttons do
+				buttonBaseObject:new(bar, buttonID, defaults.buttons[buttonID])
+			end
+
+		else
+			for buttonID=1,#bar.DB.buttons do
+				buttonBaseObject:new(bar, buttonID)
+			end
+		end
+
+		if (barIsNew) then
+
+			buttonBaseObject:new(bar, 1) --add at least 1 button to a new bar
+
+			bar:Load()
+			bar:ChangeBar()
+
+			---------------------------------
+			if (class == "ExtraBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.data.hidestates = ":extrabar0:"
+				bar.vischanged = true
+				bar:Update()
+			end
+			if (class == "PetBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
+				bar.data.hidestates = ":pet0:"
+				bar.vischanged = true
+				bar:Update()
+			end
+			-----------------------------------
+		end
+
+		return bar
+	else
+		Neuron.PrintBarTypes()
+	end
+end
+
+Neuron.CreateNewBar = BAR.CreateNewBar --this is so the slash function works correctly
+
+
+function BAR:DeleteBar()
+	local handler = self.handler
+
+	handler:SetAttribute("state-current", "homestate")
+	handler:SetAttribute("state-last", "homestate")
+	handler:SetAttribute("showstates", "homestate")
+	self:ClearStates(handler, "homestate")
+
+	for state, values in pairs(MAS) do
+		if (self.data[state] and self[state] and self[state].registered) then
+			if (state == "custom" and self.data.customRange) then
+				local start = tonumber(string.match(self.data.customRange, "^%d+"))
+				local stop = tonumber(string.match(self.data.customRange, "%d+$"))
+
+				if (start and stop) then
+					self:ClearStates(handler, state)--, start, stop)
+				end
+			else
+				self:ClearStates(handler, state)--, values.rangeStart, values.rangeStop)
+			end
+		end
+	end
+
+	self:RemoveObjectsFromBar(#self.buttons)
+
+	self:SetScript("OnClick", function() end)
+	self:SetScript("OnDragStart", function() end)
+	self:SetScript("OnDragStop", function() end)
+	self:SetScript("OnEnter", function() end)
+	self:SetScript("OnLeave", function() end)
+	self:SetScript("OnKeyDown", function() end)
+	self:SetScript("OnKeyUp", function() end)
+	self:SetScript("OnShow", function() end)
+	self:SetScript("OnHide", function() end)
+
+	self:SetWidth(36)
+	self:SetHeight(36)
+	self:ClearAllPoints()
+	self:SetPoint("CENTER")
+	self:Hide()
+
+	table.remove(self.barDB, self.DB.id) --removes the bar from the database, along with all of its buttons
+
+	for k,v in pairs(self.barDB) do
+
+		local oldID = v.id --keep track of the oldID
+
+		v.id = k --update the bar id to match the new index value, this is VERY important
+
+		if v.name == self.barLabel.." "..oldID then --if the name is name according to the oldID, update the name to the new ID (i.e. if they never changed the name, we don't want to overwrite custom names)
+			v.name = self.barLabel.." "..v.id
+		end
+	end
+
+
+	table.remove(Neuron.BARIndex, self.index)
+
+	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
+		Neuron.NeuronGUI:UpdateBarGUI()
+	end
+
+	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
+		v:Update()
+	end
+
 end
 
 
 
+function BAR:AddObjectsToBar(num) --called from NeuronGUI
+
+	num = tonumber(num)
+
+	if (not num) then
+		num = 1
+	end
+
+	for i=1,num do
+
+		local buttonID = #self.buttons + 1
+
+		if (#self.buttons < self.objMax) then
+			local buttonBaseObject = Neuron.registeredBarData[self.class].objTemplate
+			buttonBaseObject:new(self, buttonID)
+		end
+
+	end
+
+	self:LoadObjects()
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
+	self:UpdateObjectVisibility()
+
+end
+
+
+function BAR:RemoveObjectsFromBar(num) --called from NeuronGUI
+
+	if (not num) then
+		num = 1
+	end
+
+
+	for i=1,num do
+
+		local id = #self.buttons --always the last button
+
+		local object = self.buttons[id]
+
+		if (object) then
+
+			object:ClearAllPoints()
+
+
+			table.remove(self.DB.buttons, id) --this is somewhat redundant if deleting a bar, but it doesn't hurt and is important for individual button deletions
+			table.remove(self.buttons, id)
+
+
+			if (object.binder) then
+				Neuron.KEYBINDER:ClearBindings(object)
+			end
+
+			object:SetParent(TRASHCAN)
+
+
+		end
+
+		self:SetObjectLoc()
+		self:SetPerimeter()
+		self:SetSize()
+		self:Update()
+	end
+
+end
+-----------------------------------
 
 
 ------------------------------------------------------------
@@ -1577,283 +1852,6 @@ function BAR:ChangeBar()
 	end
 
 	return newBar
-end
-
-function BAR:DeleteBar()
-	local handler = self.handler
-
-	handler:SetAttribute("state-current", "homestate")
-	handler:SetAttribute("state-last", "homestate")
-	handler:SetAttribute("showstates", "homestate")
-	self:ClearStates(handler, "homestate")
-
-	for state, values in pairs(MAS) do
-		if (self.data[state] and self[state] and self[state].registered) then
-			if (state == "custom" and self.data.customRange) then
-				local start = tonumber(string.match(self.data.customRange, "^%d+"))
-				local stop = tonumber(string.match(self.data.customRange, "%d+$"))
-
-				if (start and stop) then
-					self:ClearStates(handler, state)--, start, stop)
-				end
-			else
-				self:ClearStates(handler, state)--, values.rangeStart, values.rangeStop)
-			end
-		end
-	end
-
-	self:RemoveObjectsFromBar(#self.buttons)
-
-	self:SetScript("OnClick", function() end)
-	self:SetScript("OnDragStart", function() end)
-	self:SetScript("OnDragStop", function() end)
-	self:SetScript("OnEnter", function() end)
-	self:SetScript("OnLeave", function() end)
-	self:SetScript("OnKeyDown", function() end)
-	self:SetScript("OnKeyUp", function() end)
-	self:SetScript("OnShow", function() end)
-	self:SetScript("OnHide", function() end)
-
-	self:SetWidth(36)
-	self:SetHeight(36)
-	self:ClearAllPoints()
-	self:SetPoint("CENTER")
-	self:Hide()
-
-	table.remove(self.barDB, self.DB.id) --removes the bar from the database, along with all of its buttons
-
-	for k,v in pairs(self.barDB) do
-
-		local oldID = v.id --keep track of the oldID
-
-		v.id = k --update the bar id to match the new index value, this is VERY important
-
-		if v.name == self.barLabel.." "..oldID then --if the name is name according to the oldID, update the name to the new ID (i.e. if they never changed the name, we don't want to overwrite custom names)
-			v.name = self.barLabel.." "..v.id
-		end
-	end
-
-
-	table.remove(Neuron.BARIndex, self.index)
-
-	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
-		Neuron.NeuronGUI:UpdateBarGUI()
-	end
-
-	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
-		v:Update()
-	end
-
-end
-
-
-function BAR:CreateNewBar(class, barID, defaults)
-
-	if (class and Neuron.registeredBarData[class]) then
-
-		local bar, newBar = Neuron.BAR:CreateBar(class, barID)
-
-		local buttonBaseObject = Neuron.registeredBarData[class].objTemplate
-
-		if (defaults) then
-			bar:SetDefaults(defaults)
-
-			for buttonID=1,#defaults.buttons do
-				buttonBaseObject:new(bar, buttonID, defaults.buttons[buttonID])
-			end
-
-		else
-			for buttonID=1,#bar.DB.buttons do
-				buttonBaseObject:new(bar, buttonID)
-			end
-		end
-
-		if (newBar) then
-
-			buttonBaseObject:new(bar, 1) --add at least 1 button to a new bar
-
-			bar:Load()
-			bar:ChangeBar()
-
-			---------------------------------
-			if (class == "ExtraBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
-				bar.data.hidestates = ":extrabar0:"
-				bar.vischanged = true
-				bar:Update()
-			end
-			if (class == "PetBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
-				bar.data.hidestates = ":pet0:"
-				bar.vischanged = true
-				bar:Update()
-			end
-			-----------------------------------
-		end
-
-		return bar
-	else
-		Neuron.PrintBarTypes()
-	end
-end
-
-Neuron.CreateNewBar = BAR.CreateNewBar
-
-
-
-function BAR:CreateBar(class, id)
-	local data = Neuron.registeredBarData[class]
-	local newBar
-
-	local index = #Neuron.BARIndex + 1
-
-	if (data) then
-		if (not id) then
-			id = #data.barDB + 1
-			newBar = true
-		end
-
-		---this is the create of our bar object frame
-		local bar
-		if _G["Neuron"..data.barType..id] then
-			bar = Neuron.BAR:new("Neuron"..data.barType..random(1000,10000000)) --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
-		else
-			bar = Neuron.BAR:new("Neuron"..data.barType..id)
-		end
-
-		for key,value in pairs(data) do
-			bar[key] = value
-		end
-
-		if not data.barDB[id] then --if the database for a bar doesn't exist (because it's a new bar?
-			data.barDB[id] = {}
-		end
-		bar.DB = data.barDB[id]
-
-		bar.buttons = {}
-
-		bar.index = index
-		bar.DB.id = id
-		bar.class = class
-		bar.stateschanged = true
-		bar.vischanged =true
-		bar.elapsed = 0
-		bar.click = nil
-		bar.dragged = false
-		bar.selected = false
-		bar.toggleframe = bar
-		bar.microAdjust = false
-		bar.vis = {}
-		bar.text:Hide()
-		bar.message:Hide()
-		bar.messagebg:Hide()
-
-		bar:SetWidth(375)
-		bar:SetHeight(40)
-		bar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-		                 edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-		                 tile = true, tileSize = 16, edgeSize = 12,
-		                 insets = {left = 4, right = 4, top = 4, bottom = 4}})
-		bar:SetBackdropColor(0,0,0,0.4)
-		bar:SetBackdropBorderColor(0,0,0,0)
-		bar:RegisterForClicks("AnyDown", "AnyUp")
-		bar:RegisterForDrag("LeftButton")
-		bar:SetMovable(true)
-		bar:EnableKeyboard(false)
-		bar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
-
-		bar:SetScript("OnClick", function(self, ...) self:OnClick(...) end)
-		bar:SetScript("OnDragStart", function(self, ...) self:OnDragStart(...) end)
-		bar:SetScript("OnDragStop", function(self, ...) self:OnDragStop(...) end)
-		bar:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-		bar:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
-		bar:SetScript("OnKeyDown", function(self, key, onupdate) self:OnKeyDown(key, onupdate) end)
-		bar:SetScript("OnKeyUp", function(self, key) self:OnKeyUp(key) end)
-		bar:SetScript("OnShow", function(self) self:OnShow() end)
-		bar:SetScript("OnHide", function(self) self:OnHide() end)
-
-
-		bar:CreateDriver()
-		bar:CreateHandler()
-		bar:CreateWatcher()
-
-		bar:LoadData()
-
-		if (not newBar) then
-			bar:Hide()
-		end
-
-		Neuron.BARIndex[index] = bar
-
-		return bar, newBar
-	end
-end
-
-
-function BAR:AddObjectsToBar(num)
-
-	num = tonumber(num)
-
-	if (not num) then
-		num = 1
-	end
-
-	for i=1,num do
-
-		local buttonID = #self.buttons + 1
-
-		if (#self.buttons < self.objMax) then
-			local buttonBaseObject = Neuron.registeredBarData[self.class].objTemplate
-			buttonBaseObject:new(self, buttonID)
-		end
-
-	end
-
-	self:LoadObjects()
-	self:SetObjectLoc()
-	self:SetPerimeter()
-	self:SetSize()
-	self:Update()
-	self:UpdateObjectVisibility()
-
-end
-
-
-function BAR:RemoveObjectsFromBar(num)
-
-	if (not num) then
-		num = 1
-	end
-
-
-	for i=1,num do
-
-		local id = #self.buttons --always the last button
-
-		local object = self.buttons[id]
-
-		if (object) then
-
-			object:ClearAllPoints()
-
-
-			table.remove(self.DB.buttons, id) --this is somewhat redundant if deleting a bar, but it doesn't hurt and is important for individual button deletions
-			table.remove(self.buttons, id)
-
-
-			if (object.binder) then
-				Neuron.KEYBINDER:ClearBindings(object)
-			end
-
-			object:SetParent(TRASHCAN)
-
-
-		end
-
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-		self:Update()
-	end
-
 end
 
 

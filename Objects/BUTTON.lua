@@ -47,7 +47,7 @@ function BUTTON:new(bar, buttonID,baseObj, barClass, objType, template)
 	if _G[newButtonName] then --try to reuse a current frame if it exists instead of making a new one
 		newButton = _G[newButtonName]
 	else
-		newButton = CreateFrame("CheckButton", newButtonName, UIParent, template)
+		newButton = CreateFrame("CheckButton", newButtonName, UIParent, template) --create the new button frame using the desired parameters
 		setmetatable(newButton, {__index = baseObj})
 	end
 
