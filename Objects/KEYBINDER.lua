@@ -19,6 +19,14 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
+---@class KEYBINDER @define class KEYBINDER is our keybinding object
+local KEYBINDER = setmetatable({}, { __index = CreateFrame("Button") })
+Neuron.KEYBINDER = KEYBINDER
+
+
+local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+
+
 local DEFAULT_VIRTUAL_KEY = "LeftButton"
 local NEURON_VIRTUAL_KEY = "Hotkey"
 
@@ -27,14 +35,8 @@ local VIRTUAL_KEY_LIST = {
 	NEURON_VIRTUAL_KEY
 }
 
-local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-
----@class KEYBINDER @define class KEYBINDER is our keybinding object
-local KEYBINDER = setmetatable({}, { __index = CreateFrame("Button") })
-Neuron.KEYBINDER = KEYBINDER
-
-
+----------------------------------------------------------
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param name string @Name given to the new button frame
@@ -45,6 +47,8 @@ function KEYBINDER:new(name, button)
 	setmetatable(object, {__index = KEYBINDER})
 	return object
 end
+
+----------------------------------------------------------
 
 
 --- Returns a list of the available spell icon filenames for use in macros
