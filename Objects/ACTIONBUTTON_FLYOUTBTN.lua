@@ -858,8 +858,8 @@ function ACTIONBUTTON:Flyout_GetButton()
 		id = id + 1
 	end
 
-
-	local button = self:new(self:GetName().."_".."NeuronFlyoutButton"..id)
+	local button = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate") --create the new button frame using the desired parameters
+	setmetatable(button, {__index = ACTIONBUTTON})
 
 	button.elapsed = 0
 
@@ -978,7 +978,8 @@ function ACTIONBUTTON:Flyout_GetBar()
 		id = id + 1
 	end
 
-	local bar = Neuron.BAR:new(self:GetName().."_".."NeuronFlyoutBar"..id)
+	local bar = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutBar"..id, UIParent, "NeuronBarTemplate")
+	setmetatable(bar, {__index = Neuron.BAR})
 
 	bar.index = id
 	bar.class = "FlyoutBar"
