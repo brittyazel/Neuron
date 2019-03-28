@@ -65,7 +65,7 @@ end
 
 function EXTRABTN:LoadAux()
 
-	Neuron.NeuronBinder:CreateBindFrame(self)
+	Neuron.KEYBINDER:CreateBindFrame(self)
 	self.style = self:CreateTexture(nil, "OVERLAY")
 	self.style:SetPoint("CENTER", -2, 1)
 	self.style:SetWidth(190)
@@ -78,7 +78,7 @@ function EXTRABTN:OnEvent(event, ...)
 	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
-		Neuron.NeuronBinder:ApplyBindings(self)
+		Neuron.KEYBINDER:ApplyBindings(self)
 	end
 
 end

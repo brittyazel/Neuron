@@ -254,7 +254,7 @@ end
 
 function PETBTN:PLAYER_ENTERING_WORLD(event, ...)
 	if InCombatLockdown() then return end
-	Neuron.NeuronBinder:ApplyBindings(self)
+	Neuron.KEYBINDER:ApplyBindings(self)
 	self.updateRightClick = true
 	self:SetObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
 
@@ -399,7 +399,7 @@ end
 
 function PETBTN:LoadAux()
 
-	Neuron.NeuronBinder:CreateBindFrame(self)
+	Neuron.KEYBINDER:CreateBindFrame(self)
 
 end
 

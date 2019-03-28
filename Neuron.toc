@@ -36,9 +36,9 @@ Objects/STATUSBTN.lua
 Objects/ZONEABILITYBTN.lua
 Objects/ACTIONBUTTON_FLYOUTBTN.lua
 Objects/BAR_SNAPTO.lua
+Objects/KEYBINDER.lua
 
 Neuron-DisableBlizzardUI.lua
-Neuron-KeyBinder.lua
 Neuron-Console.lua
 Neuron-MinimapIcon.lua
 

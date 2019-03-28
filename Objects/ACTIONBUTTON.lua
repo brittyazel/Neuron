@@ -149,7 +149,7 @@ function ACTIONBUTTON:LoadAux()
 	if Neuron.NeuronGUI then
 		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self)
 	end
-	Neuron.NeuronBinder:CreateBindFrame(self)
+	Neuron.KEYBINDER:CreateBindFrame(self)
 
 end
 
@@ -813,7 +813,7 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 
 	self:SetObjectVisibility()
 
-	Neuron.NeuronBinder:ApplyBindings(self)
+	Neuron.KEYBINDER:ApplyBindings(self)
 
 end
 

@@ -1838,7 +1838,7 @@ function BAR:RemoveObjectsFromBar(num)
 
 
 			if (object.binder) then
-				Neuron.NeuronBinder:ClearBindings(object)
+				Neuron.KEYBINDER:ClearBindings(object)
 			end
 
 			object:SetParent(TRASHCAN)
