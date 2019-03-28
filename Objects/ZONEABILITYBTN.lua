@@ -65,7 +65,7 @@ end
 
 function ZONEABILITYBTN:LoadAux()
 
-	Neuron.KEYBINDER:CreateBindFrame(self)
+	self.binder = Neuron.KEYBINDER:new(self)
 	self.style = self:CreateTexture(nil, "OVERLAY")
 	self.style:SetPoint("CENTER", -2, 1)
 	self.style:SetWidth(190)

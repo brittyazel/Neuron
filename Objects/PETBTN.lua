@@ -399,7 +399,7 @@ end
 
 function PETBTN:LoadAux()
 
-	Neuron.KEYBINDER:CreateBindFrame(self)
+	self.binder = Neuron.KEYBINDER:new(self)
 
 end
 

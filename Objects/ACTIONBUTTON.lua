@@ -149,7 +149,7 @@ function ACTIONBUTTON:LoadAux()
 	if Neuron.NeuronGUI then
 		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self)
 	end
-	Neuron.KEYBINDER:CreateBindFrame(self)
+	self.binder = Neuron.KEYBINDER:new(self)
 
 end
 

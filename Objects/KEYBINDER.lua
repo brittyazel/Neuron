@@ -39,13 +39,36 @@ local VIRTUAL_KEY_LIST = {
 ----------------------------------------------------------
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param name string @Name given to the new button frame
 ---@param button BUTTON @Parent BUTTON object for this given binder frame
 ---@return KEYBINDER @ A newly created KEYBINDER object
-function KEYBINDER:new(name, button)
-	local object = CreateFrame("Button", name, button, "NeuronBindFrameTemplate")
-	setmetatable(object, {__index = KEYBINDER})
-	return object
+function KEYBINDER:new(button)
+	self = CreateFrame("Button", button:GetName().."BindFrame", button, "NeuronBindFrameTemplate")
+	setmetatable(self, {__index = KEYBINDER})
+
+	self:EnableMouseWheel(true)
+	self:RegisterForClicks("AnyDown")
+	self:SetAllPoints(button)
+	self:SetScript("OnShow", function(self) self:OnShow() end)
+	self:SetScript("OnHide", function(self) self:OnHide() end)
+	self:SetScript("OnEnter", function(self) self:OnEnter() end)
+	self:SetScript("OnLeave", function(self) self:OnLeave() end)
+	self:SetScript("OnClick", function(self, mouseButton) self:OnClick(mouseButton) end)
+	self:SetScript("OnKeyDown", function(self, key) self:OnKeyDown(key) end)
+	self:SetScript("OnMouseWheel", function(self, delta) self:OnMouseWheel(delta) end)
+	self:SetScript("OnUpdate", function(self) self:OnUpdate() end)
+
+	self.type:SetText(L["Bind"])
+	self.button = button
+	self.bindType = "button"
+
+	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = self
+
+	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
+	button:SetAttribute("hotkeys", button.keys.hotKeys)
+
+	self:Hide()
+
+	return self
 end
 
 ----------------------------------------------------------
@@ -420,33 +443,4 @@ function KEYBINDER:OnMouseWheel(delta)
 	end
 
 	self:ProcessBinding(key, self.button)
-end
-
-function KEYBINDER:CreateBindFrame(button)
-
-	self = KEYBINDER:new(button:GetName().."BindFrame", button)
-
-	self:EnableMouseWheel(true)
-	self:RegisterForClicks("AnyDown")
-	self:SetAllPoints(button)
-	self:SetScript("OnShow", function(self) self:OnShow() end)
-	self:SetScript("OnHide", function(self) self:OnHide() end)
-	self:SetScript("OnEnter", function(self) self:OnEnter() end)
-	self:SetScript("OnLeave", function(self) self:OnLeave() end)
-	self:SetScript("OnClick", function(self, mouseButton) self:OnClick(mouseButton) end)
-	self:SetScript("OnKeyDown", function(self, key) self:OnKeyDown(key) end)
-	self:SetScript("OnMouseWheel", function(self, delta) self:OnMouseWheel(delta) end)
-	self:SetScript("OnUpdate", function(self) self:OnUpdate() end)
-
-	self.type:SetText(L["Bind"])
-	self.button = button
-	self.bindType = "button"
-
-	button.binder = self
-	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
-	button:SetAttribute("hotkeys", button.keys.hotKeys)
-
-	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = self
-
-	self:Hide()
 end
