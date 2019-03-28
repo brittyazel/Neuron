@@ -62,6 +62,8 @@ TRASHCAN:Hide()
 
 
 
+----------------------------------------------------
+
 ---Constructor: Create a new Neuron BAR object
 ---@param class string @The class type of the new bar
 ---@param barID number @The ID of the new bar object
@@ -83,11 +85,11 @@ function BAR:new(class, barID)
 	---this is the create of our bar object frame
 	if _G["Neuron"..data.barType..barID] then
 		newBar = CreateFrame("CheckButton", "Neuron"..data.barType..random(1000,10000000), UIParent, "NeuronBarTemplate") --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
+		setmetatable(newBar, {__index = BAR})
 	else
 		newBar = CreateFrame("CheckButton", "Neuron"..data.barType..barID, UIParent, "NeuronBarTemplate")
+		setmetatable(newBar, {__index = BAR})
 	end
-
-	setmetatable(newBar, {__index = BAR})
 
 	for key,value in pairs(data) do
 		newBar[key] = value
@@ -156,6 +158,7 @@ function BAR:new(class, barID)
 	return newBar, barIsNew
 end
 
+---------------------------------------------------
 
 -----------------------------------
 -----Bar Add/Remove Functions------
@@ -170,6 +173,8 @@ function BAR:CreateNewBar(class, barID, defaults)
 
 		if (defaults) then
 			bar:SetDefaults(defaults)
+
+			test = defaults
 
 			for buttonID=1,#defaults.buttons do
 				buttonBaseObject:new(bar, buttonID, defaults.buttons[buttonID])
