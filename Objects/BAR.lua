@@ -1647,28 +1647,30 @@ function BAR:DeleteBar()
 end
 
 
-function BAR:CreateNewBar(class, id, defaults)
+function BAR:CreateNewBar(class, barID, defaults)
 
 	if (class and Neuron.registeredBarData[class]) then
 
-		local bar, newBar = Neuron.BAR:CreateBar(class, id)
+		local bar, newBar = Neuron.BAR:CreateBar(class, barID)
+
+		local buttonBaseObject = Neuron.registeredBarData[class].objTemplate
 
 		if (defaults) then
 			bar:SetDefaults(defaults)
 
-			for i=1,#defaults.buttons do
-				Neuron.BUTTON:CreateNewObject(class, i, bar, defaults.buttons[i])
+			for buttonID=1,#defaults.buttons do
+				buttonBaseObject:new(bar, buttonID, defaults.buttons[buttonID])
 			end
 
 		else
-			for i=1,#bar.DB.buttons do
-				Neuron.BUTTON:CreateNewObject(class, i, bar)
+			for buttonID=1,#bar.DB.buttons do
+				buttonBaseObject:new(bar, buttonID)
 			end
 		end
 
 		if (newBar) then
 
-			Neuron.BUTTON:CreateNewObject(class, 1, bar) --add at least 1 button to a new bar
+			buttonBaseObject:new(bar, 1) --add at least 1 button to a new bar
 
 			bar:Load()
 			bar:ChangeBar()
@@ -1796,11 +1798,11 @@ function BAR:AddObjectsToBar(num)
 
 	for i=1,num do
 
-		local object
-		local id = #self.buttons + 1
+		local buttonID = #self.buttons + 1
 
 		if (#self.buttons < self.objMax) then
-			object = Neuron.BUTTON:CreateNewObject(self.class, id, self)
+			local buttonBaseObject = Neuron.registeredBarData[self.class].objTemplate
+			buttonBaseObject:new(self, buttonID)
 		end
 
 	end

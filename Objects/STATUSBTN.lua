@@ -129,12 +129,22 @@ Neuron.BarOrientations = BarOrientations
 
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param name string @ Name given to the new button frame
+---@param bar BAR @Bar Object this button will be a child of
+---@param buttonID number @Button ID that this button will be assigned
+---@param defaults table @Default options table to be loaded onto the given button
 ---@return STATUSBTN @ A newly created STATUSBTN object
-function STATUSBTN:new(name)
-	local object = CreateFrame("Button", name, UIParent, "NeuronStatusBarTemplate")
-	setmetatable(object, {__index = STATUSBTN})
-	return object
+function STATUSBTN:new(bar, buttonID, defaults)
+
+	---call the parent object constructor with the provided information specific to this button type
+	local newButton = Neuron.BUTTON:new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
+
+	if (defaults) then
+		newButton:SetDefaults(defaults)
+	end
+	newButton:LoadData(GetActiveSpecGroup(), "homestate")
+	newButton:LoadAux()
+
+	return newButton
 end
 
 ----------------------------------

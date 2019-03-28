@@ -33,76 +33,60 @@ LibStub("AceHook-3.0"):Embed(BUTTON)
 
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param name string @ Name given to the new button frame
+---@param bar BAR @Bar Object this button will be a child of
+---@param buttonID number @Button ID that this button will be assigned
+---@param baseObj BUTTON @Base object class for this specific button
+---@param barClass string @Class type for the bar the button will be on
+---@param objType string @Type of object this button will be
+---@param template string @The template name that this frame will derive from
 ---@return BUTTON @ A newly created BUTTON object
-function BUTTON:new(name)
-	--must be overwritten in extended classes!
+function BUTTON:new(bar, buttonID,baseObj, barClass, objType, template)
+	local newButton
+	local newButtonName = bar:GetName().."_"..objType..buttonID
+
+	if _G[newButtonName] then --try to reuse a current frame if it exists instead of making a new one
+		newButton = _G[newButtonName]
+	else
+		newButton = CreateFrame("CheckButton", newButtonName, UIParent, template)
+		setmetatable(newButton, {__index = baseObj})
+	end
+
+	----------------------
+	--returns a table of the names of all the child objects for a given frame
+	local objects = Neuron:GetParentKeys(newButton)
+	--populates the button with all the Icon,Shine,Cooldown frame references
+	for k,v in pairs(objects) do
+		local name = (v):gsub(newButton:GetName(), "")
+		newButton[name:lower()] = _G[v]
+	end
+	-----------------------
+
+	--crosslink the bar and button for easy refrencing
+	bar.buttons[buttonID] = newButton
+	newButton.bar = bar
+
+	newButton.class = barClass
+	newButton.id = buttonID
+	newButton.objType = objType:upper()
+
+
+	if not bar.DB.buttons[buttonID] then --if the database for a bar doesn't exist (because it's a new bar) make a new table
+		bar.DB.buttons[buttonID] = {}
+	end
+	newButton.DB = bar.DB.buttons[buttonID] --set our button database table as the DB for our object
+
+	--this is a hack to add some unique information to an object so it doesn't get wiped from the database
+	if newButton.DB.config then
+		newButton.DB.config.date = date("%m/%d/%y %H:%M:%S")
+	end
+
+	return newButton
 end
 
 -------------------------------------------------
 -----Base Methods that all buttons have----------
 ---These will often be overwritten per bar type--
 ------------------------------------------------
-
-
-function BUTTON:CreateNewObject(class, id, bar, defaults)
-	local data = Neuron.registeredBarData[class]
-
-	if (data) then
-
-		--calls new object constructor for the appropriate class type
-
-		local object
-
-		if _G[bar:GetName().."_"..data.objPrefix..id] then
-			object = _G[bar:GetName().."_"..data.objPrefix..id] --if we removed some objects from a bar, those frames still exists, this allows us to recapture and repurpose those discarded frames
-		else
-			object = data.objTemplate:new(bar:GetName().."_"..data.objPrefix..id)
-		end
-
-
-		--returns a table of the names of all the child objects for a given frame
-		local objects = Neuron:GetParentKeys(object)
-		--populates the button with all the Icon,Shine,Cooldown frame references
-		for k,v in pairs(objects) do
-			local name = (v):gsub(object:GetName(), "")
-			object[name:lower()] = _G[v]
-		end
-
-		bar.buttons[id] = object --add this object to our buttons table for this bar
-
-		if not bar.DB.buttons[id] then --if the database for a bar doesn't exist (because it's a new bar) make a new table
-			bar.DB.buttons[id] = {}
-		end
-		object.DB = bar.DB.buttons[id] --set our button database table as the DB for our object
-
-		object.bar = bar
-
-		object.class = class
-		object.id = id
-		--object:SetID(id)
-		object.objType = data.objType:gsub("%s", ""):upper()
-		object:LoadData(GetActiveSpecGroup(), "homestate")
-
-		object.elapsed = 0
-
-
-		if (defaults) then
-			object:SetDefaults(defaults)
-		end
-
-		--this is a hack to add some unique information to an object so it doesn't get wiped from the database
-		if object.DB.config then
-			object.DB.config.date = date("%m/%d/%y %H:%M:%S")
-		end
-
-		object:LoadAux()
-
-		return object
-	end
-end
-
-
 
 
 function BUTTON:ChangeObject(object)

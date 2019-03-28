@@ -74,7 +74,7 @@ end
 ----------------------------------------------------------
 
 
---- Returns a list of the available spell icon filenames for use in macros
+--- Returns a string representation of the modifier that is currently being pressed down, if any
 --- @return string @Field of the key modifiers currently being pressed
 function KEYBINDER:GetModifier()
 	local modifier
