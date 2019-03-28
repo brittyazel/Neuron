@@ -42,33 +42,33 @@ local VIRTUAL_KEY_LIST = {
 ---@param button BUTTON @Parent BUTTON object for this given binder frame
 ---@return KEYBINDER @ A newly created KEYBINDER object
 function KEYBINDER:new(button)
-	self = CreateFrame("Button", button:GetName().."BindFrame", button, "NeuronBindFrameTemplate")
-	setmetatable(self, {__index = KEYBINDER})
+	local newKeyBinder = CreateFrame("Button", button:GetName().."BindFrame", button, "NeuronBindFrameTemplate")
+	setmetatable(newKeyBinder, {__index = KEYBINDER})
 
-	self:EnableMouseWheel(true)
-	self:RegisterForClicks("AnyDown")
-	self:SetAllPoints(button)
-	self:SetScript("OnShow", function(self) self:OnShow() end)
-	self:SetScript("OnHide", function(self) self:OnHide() end)
-	self:SetScript("OnEnter", function(self) self:OnEnter() end)
-	self:SetScript("OnLeave", function(self) self:OnLeave() end)
-	self:SetScript("OnClick", function(self, mouseButton) self:OnClick(mouseButton) end)
-	self:SetScript("OnKeyDown", function(self, key) self:OnKeyDown(key) end)
-	self:SetScript("OnMouseWheel", function(self, delta) self:OnMouseWheel(delta) end)
-	self:SetScript("OnUpdate", function(self) self:OnUpdate() end)
+	newKeyBinder:EnableMouseWheel(true)
+	newKeyBinder:RegisterForClicks("AnyDown")
+	newKeyBinder:SetAllPoints(button)
+	newKeyBinder:SetScript("OnShow", function(self) self:OnShow() end)
+	newKeyBinder:SetScript("OnHide", function(self) self:OnHide() end)
+	newKeyBinder:SetScript("OnEnter", function(self) self:OnEnter() end)
+	newKeyBinder:SetScript("OnLeave", function(self) self:OnLeave() end)
+	newKeyBinder:SetScript("OnClick", function(self, mouseButton) self:OnClick(mouseButton) end)
+	newKeyBinder:SetScript("OnKeyDown", function(self, key) self:OnKeyDown(key) end)
+	newKeyBinder:SetScript("OnMouseWheel", function(self, delta) self:OnMouseWheel(delta) end)
+	newKeyBinder:SetScript("OnUpdate", function(self) self:OnUpdate() end)
 
-	self.type:SetText(L["Bind"])
-	self.button = button
-	self.bindType = "button"
+	newKeyBinder.type:SetText(L["Bind"])
+	newKeyBinder.button = button
+	newKeyBinder.bindType = "button"
 
-	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = self
+	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = newKeyBinder
 
 	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
 	button:SetAttribute("hotkeys", button.keys.hotKeys)
 
-	self:Hide()
+	newKeyBinder:Hide()
 
-	return self
+	return newKeyBinder
 end
 
 ----------------------------------------------------------
