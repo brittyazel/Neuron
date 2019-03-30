@@ -27,17 +27,14 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local LATEST_VERSION_NUM = "1.0.3" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local LATEST_VERSION_NUM = 1.04 --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local LATEST_DB_VERSION = 1.3
 
-Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
-
 --prepare the Neuron table with some sub-tables that will be used down the road
+Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
 Neuron.EDITIndex = {}
 Neuron.BINDIndex = {}
-
-Neuron.numLoadedModules = 0
 
 Neuron.registeredBarData = {}
 Neuron.registeredGUIData = {}
@@ -374,9 +371,9 @@ function Neuron:LoginMessage()
 
 		print(" ")
 		print("         ~~~~~~~~~~NEURON~~~~~~~~~")
-		print("    Happy New Year, and welcome to 2019!")
+		print("    Happy Spring!")
 		print("    Neuron is in for an exciting year, thank you so much for your support.")
-		print("    Please enjoy the substantial performance improvements made this past week, and please continue reporting any bugs you may find.")
+		print("    Please reach out if you are interested in contributing to Neuron's development, we always need more help coding and translating, and, as always, donations are welcome! :-)")
 		print("       -Soyier")
 
 		if UnitFactionGroup('player') == "Horde" then
@@ -807,8 +804,6 @@ end
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
 function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
 
-	Neuron.numLoadedModules = Neuron.numLoadedModules + 1
-
 	Neuron.registeredBarData[class] = {
 		barType = barType,
 		barLabel = barLabel,
@@ -817,7 +812,6 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		objType = objType,
 		objTemplate = objTemplate,
 		objMax = objMax,
-		createMsg = Neuron.numLoadedModules..objType,
 	}
 
 end
