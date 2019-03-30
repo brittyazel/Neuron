@@ -984,7 +984,6 @@ function ACTIONBUTTON:Flyout_GetBar()
 	bar.class = "FlyoutBar"
 	bar.elapsed = 0
 	bar.data = { scale = 1 }
-	bar.objPrefix = "NeuronFlyoutButton"
 
 	bar.text:Hide()
 	bar.message:Hide()

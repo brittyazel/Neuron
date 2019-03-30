@@ -805,11 +805,11 @@ end
 function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
 
 	Neuron.registeredBarData[class] = {
+		class = class;
 		barType = barType,
 		barLabel = barLabel,
-		barDB = barDB,
-		objPrefix = objType:gsub("%s+", ""),
 		objType = objType,
+		barDB = barDB,
 		objTemplate = objTemplate,
 		objMax = objMax,
 	}
