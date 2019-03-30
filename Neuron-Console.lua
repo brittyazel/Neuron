@@ -73,10 +73,10 @@ local slashFunctions = {
 }
 
 
----New Slash functionality
+--New Slash functionality
 function Neuron:slashHandler(input)
 
-	if (strlen(input)==0 or input:lower() == "help") then
+	if (string.len(input)==0 or input:lower() == "help") then
 		Neuron:printSlashHelp()
 		return
 	end

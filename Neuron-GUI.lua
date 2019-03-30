@@ -2748,7 +2748,7 @@ function NeuronGUI:macroNameEdit_OnTextChanged(frame)
 		return
 	end
 
-	if (strlen(frame:GetText()) > 0) then
+	if (string.len(frame:GetText()) > 0) then
 		frame.text:Hide()
 	end
 
@@ -2764,7 +2764,7 @@ function NeuronGUI:macroNameEdit_OnTextChanged(frame)
 
 		button.bar:UpdateObjectData()
 
-	elseif (strlen(frame:GetText()) <= 0) then
+	elseif (string.len(frame:GetText()) <= 0) then
 		frame.text:Show()
 	end
 
@@ -2776,7 +2776,7 @@ end
 function NeuronGUI:macroNoteEdit_OnTextChanged(frame)
 
 
-	if (strlen(frame:GetText()) > 0) then
+	if (string.len(frame:GetText()) > 0) then
 		frame.text:Hide()
 		frame.cb:Show()
 	else
@@ -2808,7 +2808,7 @@ function NeuronGUI:macroOnEditFocusLost(frame)
 		button:UpdateAll()
 	end
 
-	if (frame.text and strlen(frame:GetText()) <= 0) then
+	if (frame.text and string.len(frame:GetText()) <= 0) then
 		frame.text:Show()
 	end
 end
@@ -2876,7 +2876,7 @@ function NeuronGUI:updateIconList()
 	local search
 	if (NeuronButtonEditor.search) then
 		search = NeuronButtonEditor.search:GetText()
-		if (strlen(search) < 1) then
+		if (string.len(search) < 1) then
 			search = nil
 		end
 	end
@@ -3223,7 +3223,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOP", -18, 32)
 	f:SetScript("OnTextChanged", function(self) NeuronGUI:macroNameEdit_OnTextChanged(self) end)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
-	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end NeuronGUI:macroOnEditFocusLost(self) end)
+	f:SetScript("OnEditFocusLost", function(self) if (string.len(self:GetText()) < 1) then self.text:Show() end NeuronGUI:macroOnEditFocusLost(self) end)
 	f:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
 	f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
 	frame.nameedit = f
@@ -3253,7 +3253,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetPoint("BOTTOMRIGHT", frame.macroeditBG, "TOPRIGHT",-16, 32)
 	f:SetScript("OnTextChanged", function(self) NeuronGUI:macroNoteEdit_OnTextChanged(self) end)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.hasfocus = true end)
-	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() end NeuronGUI:macroOnEditFocusLost(self) end)
+	f:SetScript("OnEditFocusLost", function(self) if (string.len(self:GetText()) < 1) then self.text:Show() end NeuronGUI:macroOnEditFocusLost(self) end)
 	f:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
 	f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
 	frame.noteedit = f
@@ -3337,8 +3337,8 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnTabPressed", function(self) NeuronGUI:updateIconList(); NeuronGUI:MacroIconListUpdate(); self:ClearFocus(); self.hasfocus = nil; end)
 	f:SetScript("OnEscapePressed", function(self) self:SetText(""); NeuronGUI:updateIconList(); NeuronGUI:MacroIconListUpdate(); self:ClearFocus(); self.hasfocus = nil; end)
 	f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.cancel:Show() self.hasfocus = true end)
-	f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() self.cancel:Hide() end self.hasfocus = nil end)
-	f:SetScript("OnTextChanged", function(self) if (strlen(self:GetText()) < 1 and not self.hasfocus) then self.text:Show() self.cancel:Hide() end end)
+	f:SetScript("OnEditFocusLost", function(self) if (string.len(self:GetText()) < 1) then self.text:Show() self.cancel:Hide() end self.hasfocus = nil end)
+	f:SetScript("OnTextChanged", function(self) if (string.len(self:GetText()) < 1 and not self.hasfocus) then self.text:Show() self.cancel:Hide() end end)
 	frame.search = f
 
 	frame.search:Hide() --hide search frame because it is broken and returns nonesense
@@ -3409,7 +3409,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
 	f:SetScript("OnTabPressed", function(self) self:ClearFocus() end)
 	--f:SetScript("OnEditFocusGained", function(self) self.text:Hide() self.cancel:Show() self.hasfocus = true end)
-	--f:SetScript("OnEditFocusLost", function(self) if (strlen(self:GetText()) < 1) then self.text:Show() self.cancel:Hide() end self.hasfocus = nil end)
+	--f:SetScript("OnEditFocusLost", function(self) if (string.len(self:GetText()) < 1) then self.text:Show() self.cancel:Hide() end self.hasfocus = nil end)
 	f:SetScript("OnTextChanged", function(self) self:SetText(self:GetText():upper()) end)
 	f.frame = frame
 	frame.custompath = f

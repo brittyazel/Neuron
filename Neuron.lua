@@ -801,7 +801,7 @@ function Neuron:ToggleBindingMode(show)
 end
 
 
----This function is called each and every time a Bar-Module loads. It adds the module to the list of currently avaible bars. If we add new bars in the future, this is the place to start
+---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
 function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
 
 	Neuron.registeredBarData[class] = {
@@ -819,6 +819,7 @@ end
 
 function Neuron:RegisterGUIOptions(class, chkOpt, stateOpt, adjOpt)
 	Neuron.registeredGUIData[class] = {
+		class = class;
 		chkOpt = chkOpt,
 		stateOpt = stateOpt,
 		adjOpt = adjOpt,
