@@ -197,6 +197,7 @@ function Neuron:CreateBarsAndButtons()
 
 				--create the default button objects for a given bar with the default values
 				newBar:SetDefaults(defaults)
+
 				for buttonID=1,#defaults.buttons do
 					newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID]) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
 				end
@@ -213,11 +214,11 @@ function Neuron:CreateBarsAndButtons()
 		for barClass, barClassData in pairs (Neuron.registeredBarData) do
 			for id,data in pairs(barClassData.barDB) do
 				if (data ~= nil) then
-					local newBar = Neuron.BAR.new(barClass, id)
+					local newBar = Neuron.BAR.new(barClass, id) --this calls the bar constructor
 
 					--create all the saved button objects for a given bar
 					for buttonID=1,#newBar.DB.buttons do
-						newBar.objTemplate.new(newBar, buttonID) --(newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostically)
+						newBar.objTemplate.new(newBar, buttonID) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
 					end
 
 					newBar:Load() --load the bar

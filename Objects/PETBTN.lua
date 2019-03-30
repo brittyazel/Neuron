@@ -26,6 +26,9 @@ Neuron.PETBTN = PETBTN
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
+LibStub("AceEvent-3.0"):Embed(PETBTN)
+LibStub("AceTimer-3.0"):Embed(PETBTN)
+
 
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -224,7 +227,7 @@ function PETBTN:UpdateButton(actionID)
 end
 
 
-function PETBTN:PET_BAR_UPDATE(event, ...)
+function PETBTN:PET_BAR_UPDATE(...)
 	self:PET_UpdateOnEvent()
 end
 
@@ -240,27 +243,9 @@ function PETBTN:UNIT_PET(event, ...)
 end
 
 
-function PETBTN:UNIT_FLAGS(event, ...)
-	if (select(1,...) ==  "pet") then
-		self:PET_UpdateOnEvent()
-	end
-end
-
-
-PETBTN.UNIT_AURA = PETBTN.UNIT_FLAGS
-
 
 function PETBTN:PET_BAR_UPDATE_COOLDOWN(event, ...)
 	self:PET_UpdateCooldown()
-end
-
-
-function PETBTN:PET_BAR_SHOWGRID(event, ...)
-	---This part is so that the grid get's set properly on login
-end
-
-
-function PETBTN:PET_BAR_HIDEGRID(event, ...)
 end
 
 
@@ -271,27 +256,20 @@ function PETBTN:PLAYER_ENTERING_WORLD(event, ...)
 	self:SetObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
 
 	---This part is so that the grid get's set properly on login
-	C_Timer.After(2, function() self.bar:UpdateObjectVisibility() end)
+	self:ScheduleTimer(function() self.bar:UpdateObjectVisibility() end, 2)
 
 end
 
 PETBTN.PET_SPECIALIZATION_CHANGED = PETBTN.PLAYER_ENTERING_WORLD
-
 PETBTN.PET_DISMISS_START = PETBTN.PLAYER_ENTERING_WORLD
 
-function PETBTN:PET_OnEvent(event, ...)
 
-	if (self[event]) then
-		self[event](self, event, ...)
-	end
-end
 
 
 function PETBTN:PostClick()
 	self:PET_UpdateOnEvent(true)
 
 end
-
 
 function PETBTN:OnDragStart()
 
@@ -412,8 +390,6 @@ function PETBTN:SetType()
 
 	self:RegisterEvent("PET_BAR_UPDATE")
 	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
-	self:RegisterEvent("PET_BAR_SHOWGRID")
-	self:RegisterEvent("PET_BAR_HIDEGRID")
 	self:RegisterEvent("PET_SPECIALIZATION_CHANGED")
 	self:RegisterEvent("PET_DISMISS_START")
 	self:RegisterEvent("PLAYER_CONTROL_LOST")
@@ -421,8 +397,6 @@ function PETBTN:SetType()
 	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("UNIT_PET")
-	self:RegisterEvent("UNIT_FLAGS")
-	self:RegisterEvent("UNIT_AURA")
 
 	self.actionID = self.id
 

@@ -26,6 +26,7 @@ Neuron.BAR = BAR
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 LibStub("AceTimer-3.0"):Embed(BAR)
+LibStub("AceEvent-3.0"):Embed(BAR)
 
 
 local MAS = Neuron.MANAGED_ACTION_STATES
@@ -328,17 +329,6 @@ end
 local function round(num, idp)
 	local mult = 10^(idp or 0)
 	return math.floor(num * mult + 0.5) / mult
-end
-
-local function tFind(table, value)
-	local index = 1;
-	while table[index] do
-		if ( value == table[index] ) then
-			return index;
-		end
-		index = index + 1;
-	end
-	return 0;
 end
 
 -------------------------------------------------------------------------------
@@ -1090,7 +1080,7 @@ function BAR:Update(show, hide)
 	end
 
 	self:SetHidden(handler, show, hide)
-	self:SetAutoHide(handler)
+	self:SetAutoHide()
 	self.text:SetText(self.data.name)
 	handler:SetAlpha(self.data.alpha)
 
@@ -1099,18 +1089,16 @@ function BAR:Update(show, hide)
 	end
 
 	if self.data.auraInd == true then
-		Neuron:RegisterEvent("UNIT_AURA")
-		Neuron:RegisterEvent("UNIT_SPELLCAST_SENT")
-		Neuron:RegisterEvent("UNIT_SPELLCAST_START")
-		Neuron:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-		Neuron:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+	else
+		self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	end
 
 end
 
 -------------------------------------------------------
---ToDo: this is temp, this should not go here forever.
-function Neuron:UNIT_AURA(_, ...)
+
+function BAR:UNIT_SPELLCAST_SUCCEEDED(_, ...)
 	local unit = select(1,...)
 	if (Neuron.unitAuras[unit]) then
 		if (... == "player") then
@@ -1119,41 +1107,6 @@ function Neuron:UNIT_AURA(_, ...)
 	end
 end
 
-function Neuron:UNIT_SPELLCAST_SENT(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
-function Neuron:UNIT_SPELLCAST_START(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
-function Neuron:UNIT_SPELLCAST_SUCCEEDED(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
-function Neuron:UNIT_SPELLCAST_CHANNEL_START(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
 -------------------------------------------------------
 
 

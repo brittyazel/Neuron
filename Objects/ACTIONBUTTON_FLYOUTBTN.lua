@@ -21,6 +21,7 @@
 
 
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
+local BAR = Neuron.BAR
 
 
 local petIcons = {}
@@ -890,8 +891,6 @@ function ACTIONBUTTON:Flyout_GetButton()
 	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
 	button:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	button:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
-	button:SetScript("OnEvent", function(self, event, ...) self:Flyout_OnEvent(event, ...) end)
-	--button:SetScript("OnUpdate", self:GetScript("OnUpdate"))
 
 	button:SetScript("OnShow", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
 	button:SetScript("OnHide", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
@@ -921,35 +920,6 @@ function ACTIONBUTTON:Flyout_GetButton()
 	return button
 end
 
-function ACTIONBUTTON:Flyout_OnEvent(event, ...)
-
-	if event == "PLAYER_ENTERING_WORLD" then
-
-		ACTIONBUTTON.CacheBags()
-
-		--[[local strings = { NeuronTooltipScan:GetRegions() }
-
-		for k,v in pairs(strings) do
-			if (v:GetObjectType() == "FontString") then
-				tinsert(tooltipStrings, v)
-			end
-		end]]
-
-	elseif event == "BAG_UPDATE" then
-
-		local bag = ...
-		if bag>=0 and bag<=4 then
-			bagsToCache[bag] = true
-			if Neuron.enteredWorld then
-				ACTIONBUTTON.StartTimer(0.05, ACTIONBUTTON.CacheBags)
-			end
-		end
-
-	end
-
-end
-
-
 
 function ACTIONBUTTON:Flyout_ReleaseBar(bar)
 	self.flyout.bar = nil
@@ -962,6 +932,12 @@ function ACTIONBUTTON:Flyout_ReleaseBar(bar)
 	bar:SetPoint("CENTER")
 
 	self.bar.watchframes[bar.handler] = nil
+end
+
+function BAR:Flyout_OnEvent()
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
 end
 
 
@@ -994,8 +970,7 @@ function ACTIONBUTTON:Flyout_GetBar()
 	bar:SetHeight(43)
 	bar:SetFrameLevel(2)
 
-	bar:RegisterEvent("PLAYER_ENTERING_WORLD")
-	bar:SetScript("OnEvent", function(self) self:SetObjectLoc() self:SetPerimeter() self:SetSize() end)
+	bar:RegisterEvent("PLAYER_ENTERING_WORLD", "Flyout_OnEvent")
 
 	if not bar.data.objectList then
 		bar.data.objectList = {}
@@ -1119,22 +1094,13 @@ end
 
 
 
-function ACTIONBUTTON.StartTimer(duration,func)
-	timerTimes[func] = duration
-	if not tContains(timersRunning,func) then
-		table.insert(timersRunning,func)
-	end
-	timerFrame:Show()
-end
-
-
-function ACTIONBUTTON.addToCache(itemID)
+--[[function ACTIONBUTTON.addToCache(itemID)
 	if itemID then
 		local name = GetItemInfo(itemID)
 		if name then
 			itemCache[format("item:%d",itemID)] = name:lower()
 		else
-			ACTIONBUTTON.StartTimer(0.05, ACTIONBUTTON.CacheBags)
+			self:ScheduleTimer("CacheBags", 0.05)
 			return true
 		end
 	end
@@ -1175,4 +1141,4 @@ function ACTIONBUTTON.CacheBags()
 	else
 		cacheTimeout = (cacheTimeout or 0)+1
 	end
-end
+end]]

@@ -110,7 +110,7 @@ function Neuron:slashHandler(input)
 			if (Neuron[func]) then
 				Neuron[func](Neuron, args[1])
 			elseif (bar and bar[func]) then
-				---because we're calling a variable func name, we can't use the ":" notation, so we have to explicitely state the parent object as the first param
+				--because we're calling a variable func name, we can't use the ":" notation, so we have to explicitly state the parent object as the first param
 				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
 			else
 				Neuron:Print(L["No bar selected or command invalid"])
