@@ -194,7 +194,6 @@ function Neuron:CreateBarsAndButtons()
 		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
 			for i, defaults in ipairs(barDefaults) do
 				local newBar = Neuron.BAR.new(barClass, i) ---this calls the bar constructor
-				Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar ---add handle for our new bar into a bar index table
 				newBar:CreateStoredObjects(defaults) ---create all the objects for a given bar
 				newBar:Load() ---load the bar
 			end
@@ -209,7 +208,6 @@ function Neuron:CreateBarsAndButtons()
 			for id,data in pairs(barClassData.barDB) do
 				if (data ~= nil) then
 					local newBar = Neuron.BAR.new(barClass, id)
-					Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar ---add handle for our new bar into a bar index table
 					newBar:CreateStoredObjects() ---create all the objects for a given bar
 					newBar:Load() ---load the bar
 				end

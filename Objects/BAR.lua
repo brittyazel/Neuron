@@ -157,13 +157,14 @@ function BAR.new(class, barID)
 
 	---TODO: This should be spun into its own function
 	if (barIsNew) then
-		Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar ---add handle for our new bar into a bar index table
 		newBar.objTemplate.new(newBar, 1) ---add at least 1 button to a new bar
 		newBar:ChangeBar()
 		newBar:Load() ---load the bar
 	else
 		newBar:Hide() ---if the bar isn't new, hide the transparent blue overlay that we show in the edit mode
 	end
+
+	Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar ---add handle for our new bar into a bar index table
 
 	return newBar
 end
