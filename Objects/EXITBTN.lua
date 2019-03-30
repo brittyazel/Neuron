@@ -42,8 +42,6 @@ function EXITBTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:LoadAux()
-
 	return newButton
 end
 

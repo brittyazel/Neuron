@@ -144,7 +144,9 @@ function STATUSBTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:LoadAux()
+	if Neuron.NeuronGUI then
+		Neuron.NeuronGUI:SB_CreateEditFrame(newButton)
+	end
 
 	return newButton
 end
@@ -1798,16 +1800,6 @@ function STATUSBTN:SetObjectVisibility(show)
 	end
 
 end
-
-
-
-
-function STATUSBTN:LoadAux()
-
-	Neuron.NeuronGUI:SB_CreateEditFrame(self)
-
-end
-
 
 
 

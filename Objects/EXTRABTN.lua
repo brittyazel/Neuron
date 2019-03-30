@@ -42,7 +42,12 @@ function EXTRABTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:LoadAux()
+	newButton.binder = Neuron.KEYBINDER.new(newButton)
+
+	newButton.style = newButton:CreateTexture(nil, "OVERLAY")
+	newButton.style:SetPoint("CENTER", -2, 1)
+	newButton.style:SetWidth(190)
+	newButton.style:SetHeight(95)
 
 	return newButton
 end
@@ -74,15 +79,6 @@ function EXTRABTN:SetType()
 	self:SetSkinned()
 end
 
-
-function EXTRABTN:LoadAux()
-
-	self.binder = Neuron.KEYBINDER.new(self)
-	self.style = self:CreateTexture(nil, "OVERLAY")
-	self.style:SetPoint("CENTER", -2, 1)
-	self.style:SetWidth(190)
-	self.style:SetHeight(95)
-end
 
 function EXTRABTN:OnEvent(event, ...)
 

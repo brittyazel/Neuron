@@ -24,6 +24,20 @@ local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
 
+
+local menuElements = {
+	CharacterMicroButton,
+	SpellbookMicroButton,
+	TalentMicroButton,
+	AchievementMicroButton,
+	QuestLogMicroButton,
+	GuildMicroButton,
+	LFDMicroButton,
+	CollectionsMicroButton,
+	EJMicroButton,
+	StoreMicroButton,
+	MainMenuMicroButton}
+
 ---------------------------------------------------------
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -42,27 +56,11 @@ function MENUBTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:LoadAux()
-
 	return newButton
 end
 
 
 ---------------------------------------------------------
-
-local menuElements = {
-	CharacterMicroButton,
-	SpellbookMicroButton,
-	TalentMicroButton,
-	AchievementMicroButton,
-	QuestLogMicroButton,
-	GuildMicroButton,
-	LFDMicroButton,
-	CollectionsMicroButton,
-	EJMicroButton,
-	StoreMicroButton,
-	MainMenuMicroButton}
-
 
 function MENUBTN:SetType()
 

@@ -82,7 +82,11 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:LoadAux()
+	if Neuron.NeuronGUI then
+		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(newButton)
+	end
+
+	newButton.binder = Neuron.KEYBINDER.new(newButton)
 
 	return newButton
 end
@@ -155,15 +159,6 @@ function ACTIONBUTTON:SetObjectVisibility(show)
 	end
 end
 
-
-function ACTIONBUTTON:LoadAux()
-
-	if Neuron.NeuronGUI then
-		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self)
-	end
-	self.binder = Neuron.KEYBINDER.new(self)
-
-end
 
 function ACTIONBUTTON:SetUpEvents()
 

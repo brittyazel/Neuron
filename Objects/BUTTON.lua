@@ -479,10 +479,6 @@ function BUTTON:SetObjectVisibility(show)
 end
 
 
-function BUTTON:LoadAux()
-	--empty--
-end
-
 
 function BUTTON:SetDefaults(defaults)
 	if defaults then

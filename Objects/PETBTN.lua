@@ -44,7 +44,7 @@ function PETBTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:LoadAux()
+	newButton.binder = Neuron.KEYBINDER.new(newButton)
 
 	return newButton
 end
@@ -404,14 +404,6 @@ function PETBTN:SetObjectVisibility(show)
 	else
 		self:SetAlpha(0)
 	end
-
-end
-
-
-
-function PETBTN:LoadAux()
-
-	self.binder = Neuron.KEYBINDER.new(self)
 
 end
 
