@@ -177,19 +177,6 @@ end
 
 Neuron.CreateNewBar = BAR.new --this is so the slash function works correctly
 
-function BAR:CreateStoredObjects(defaults)
-	if (defaults) then
-		self:SetDefaults(defaults)
-		for buttonID=1,#defaults.buttons do
-			self.objTemplate.new(self, buttonID, defaults.buttons[buttonID])
-		end
-	else
-		for buttonID=1,#self.DB.buttons do
-			self.objTemplate.new(self, buttonID)
-		end
-	end
-end
-
 
 function BAR:DeleteBar()
 	local handler = self.handler

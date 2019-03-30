@@ -192,9 +192,15 @@ function Neuron:CreateBarsAndButtons()
 	if (DB.firstRun) then
 
 		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
-			for i, defaults in ipairs(barDefaults) do
+			for i, defaults in ipairs(barDefaults) do ---create the bar objects
 				local newBar = Neuron.BAR.new(barClass, i) ---this calls the bar constructor
-				newBar:CreateStoredObjects(defaults) ---create all the objects for a given bar
+
+				------create the default button objects for a given bar with the default values
+				newBar:SetDefaults(defaults)
+				for buttonID=1,#defaults.buttons do
+					newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID])
+				end
+
 				newBar:Load() ---load the bar
 			end
 
@@ -208,7 +214,12 @@ function Neuron:CreateBarsAndButtons()
 			for id,data in pairs(barClassData.barDB) do
 				if (data ~= nil) then
 					local newBar = Neuron.BAR.new(barClass, id)
-					newBar:CreateStoredObjects() ---create all the objects for a given bar
+
+					------create all the saved button objects for a given bar
+					for buttonID=1,#newBar.DB.buttons do
+						newBar.objTemplate.new(newBar, buttonID)
+					end
+
 					newBar:Load() ---load the bar
 				end
 			end
