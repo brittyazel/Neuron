@@ -33,7 +33,7 @@ Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 ---@return ZONEABILITYBTN @ A newly created ZONEABILITYBTN object
 function ZONEABILITYBTN.new(bar, buttonID, defaults)
 
-	---call the parent object constructor with the provided information specific to this button type
+	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")

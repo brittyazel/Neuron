@@ -65,7 +65,7 @@ local sbStrings = {
 	},
 	rep = {
 		[1] = { L["None"], function(sb) return "" end },
-		[2] = { L["Faction"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end }, ---TODO:should probably do the same as above here, just in case people have more than 1 rep bar
+		[2] = { L["Faction"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
 		[3] = { L["Current/Next"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
 		[4] = { L["Percent"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
 		[5] = { L["Bubbles"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
@@ -124,10 +124,6 @@ local BarOrientations = {
 Neuron.BarOrientations = BarOrientations
 
 
-
-
-
-
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param bar BAR @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
@@ -135,7 +131,7 @@ Neuron.BarOrientations = BarOrientations
 ---@return STATUSBTN @ A newly created STATUSBTN object
 function STATUSBTN.new(bar, buttonID, defaults)
 
-	---call the parent object constructor with the provided information specific to this button type
+	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")

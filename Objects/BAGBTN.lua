@@ -33,7 +33,7 @@ Neuron.BAGBTN = BAGBTN
 ---@return BAGBTN @ A newly created BAGBTN object
 function BAGBTN.new(bar, buttonID, defaults)
 
-	---call the parent object constructor with the provided information specific to this button type
+	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, BAGBTN, "BagBar", "BagButton", "NeuronAnchorButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")

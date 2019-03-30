@@ -35,7 +35,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 ---@return PETBTN @ A newly created PETBTN object
 function PETBTN.new(bar, buttonID, defaults)
 
-	---call the parent object constructor with the provided information specific to this button type
+	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, PETBTN, "PetBar", "PetButton", "NeuronActionButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")

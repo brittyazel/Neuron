@@ -192,16 +192,16 @@ function Neuron:CreateBarsAndButtons()
 	if (DB.firstRun) then
 
 		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
-			for i, defaults in ipairs(barDefaults) do ---create the bar objects
-				local newBar = Neuron.BAR.new(barClass, i) ---this calls the bar constructor
+			for i, defaults in ipairs(barDefaults) do --create the bar objects
+				local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor
 
-				------create the default button objects for a given bar with the default values
+				--create the default button objects for a given bar with the default values
 				newBar:SetDefaults(defaults)
 				for buttonID=1,#defaults.buttons do
-					newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID])
+					newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID]) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
 				end
 
-				newBar:Load() ---load the bar
+				newBar:Load() --load the bar
 			end
 
 		end
@@ -215,12 +215,12 @@ function Neuron:CreateBarsAndButtons()
 				if (data ~= nil) then
 					local newBar = Neuron.BAR.new(barClass, id)
 
-					------create all the saved button objects for a given bar
+					--create all the saved button objects for a given bar
 					for buttonID=1,#newBar.DB.buttons do
-						newBar.objTemplate.new(newBar, buttonID)
+						newBar.objTemplate.new(newBar, buttonID) --(newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostically)
 					end
 
-					newBar:Load() ---load the bar
+					newBar:Load() --load the bar
 				end
 			end
 		end
@@ -233,13 +233,13 @@ function Neuron:Overrides()
 
 	--bag bar overrides
 	if DB.blizzbar == false then
-		---hide the weird color border around bag bars
+		--hide the weird color border around bag bars
 		CharacterBag0Slot.IconBorder:Hide()
 		CharacterBag1Slot.IconBorder:Hide()
 		CharacterBag2Slot.IconBorder:Hide()
 		CharacterBag3Slot.IconBorder:Hide()
 
-		---overwrite the Show function with a null function because it keeps coming back and won't stay hidden
+		--overwrite the Show function with a null function because it keeps coming back and won't stay hidden
 		if not Neuron:IsHooked(CharacterBag0Slot.IconBorder, "Show") then
 			Neuron:RawHook(CharacterBag0Slot.IconBorder, "Show", function() end, true)
 		end

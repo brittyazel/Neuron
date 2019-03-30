@@ -22,7 +22,6 @@
 
 ---@class Neuron @define The main addon object for the Neuron Action Bar addon
 Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
---this is the working pointer that all functions act upon, instead of acting directly on Neuron (it was how it was coded before me. Seems unnecessary)
 
 local DB
 
@@ -44,7 +43,7 @@ Neuron.registeredBarData = {}
 Neuron.registeredGUIData = {}
 
 
----these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
+--these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 NeuronSpellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
 NeuronCollectionCache = {} --Stores a cache of all Mounts and Battle Pets that have been seen by a Neuron button
@@ -145,17 +144,17 @@ function Neuron:OnInitialize()
 
 	DB = Neuron.db.profile
 
-	---Check if the current database needs to be migrated, and attempt the migration
+	--Check if the current database needs to be migrated, and attempt the migration
 	Neuron:DatabaseMigration()
 
 
-	---load saved variables into working variable containers
+	--load saved variables into working variable containers
 	NeuronItemCache = DB.NeuronItemCache
 	NeuronSpellCache = DB.NeuronSpellCache
 	NeuronCollectionCache = DB.NeuronCollectionCache
 	NeuronToyCache = DB.NeuronToyCache
 
-	---these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
+	--these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
 	Neuron.MAS = Neuron.MANAGED_ACTION_STATES
 	Neuron.MBS = Neuron.MANAGED_BAR_STATES
 
@@ -197,7 +196,7 @@ function Neuron:OnEnable()
 
 	Neuron:UpdateStanceStrings()
 
-	---this allows for the "Esc" key to disable the Edit Mode instead of bringing up the game menu, but only if an edit mode is activated.
+	--this allows for the "Esc" key to disable the Edit Mode instead of bringing up the game menu, but only if an edit mode is activated.
 
 	if not Neuron:IsHooked(GameMenuFrame, "OnUpdate") then
 		Neuron:HookScript(GameMenuFrame, "OnUpdate", function(self)
@@ -221,14 +220,14 @@ function Neuron:OnEnable()
 	end
 
 
-	---this is to allow for the correct releasing of the button when dragging icons off of the bar
+	--this is to allow for the correct releasing of the button when dragging icons off of the bar
 	if not Neuron:IsHooked(WorldFrame, "OnMouseDown") then
 		Neuron:HookScript(WorldFrame, "OnMouseDown", function() Neuron.ACTIONBUTTON:OnMouseDown() end)
 	end
 
 	Neuron:LoginMessage()
 
-	---Load bars and buttons
+	--Load bars and buttons
 	Neuron:Startup()
 
 end

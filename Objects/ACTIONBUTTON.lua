@@ -73,7 +73,7 @@ local startDrag = false
 ---@return ACTIONBUTTON @ A newly created ACTIONBUTTON object
 function ACTIONBUTTON.new(bar, buttonID, defaults)
 
-	---call the parent object constructor with the provided information specific to this button type
+	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ACTIONBUTTON, "ActionBar", "ActionButton", "NeuronActionButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")

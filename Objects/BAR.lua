@@ -70,22 +70,11 @@ TRASHCAN:Hide()
 ---@return BAR @ A newly created BUTTON object
 function BAR.new(class, barID)
 
-	if not (class and Neuron.registeredBarData[class]) then ---if the class isn't registered, go ahead and bail out.
-		Neuron.PrintBarTypes()
-		return
-	end
-
 	local data = Neuron.registeredBarData[class]
 
 	local newBar
-	local barIsNew
 
-	if (not barID) then --if no barID is given, assume this bar is a new bar
-		barID = #data.barDB + 1
-		barIsNew = true
-	end
-
-	---this is the creation of our bar object frame
+	--this is the creation of our bar object frame
 	if _G["Neuron"..data.barType..barID] then --check to see if our bar already exists on the global namespace
 		newBar = CreateFrame("CheckButton", "Neuron"..data.barType..random(1000,10000000), UIParent, "NeuronBarTemplate") --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
 		setmetatable(newBar, {__index = BAR})
@@ -155,16 +144,9 @@ function BAR.new(class, barID)
 
 	newBar:LoadData()
 
-	---TODO: This should be spun into its own function
-	if (barIsNew) then
-		newBar.objTemplate.new(newBar, 1) ---add at least 1 button to a new bar
-		newBar:ChangeBar()
-		newBar:Load() ---load the bar
-	else
-		newBar:Hide() ---if the bar isn't new, hide the transparent blue overlay that we show in the edit mode
-	end
+	newBar:Hide() --hide the transparent blue overlay that we show in the edit mode
 
-	Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar ---add handle for our new bar into a bar index table
+	Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar --add handle for our new bar into a bar index table
 
 	return newBar
 end
@@ -175,7 +157,29 @@ end
 -----Bar Add/Remove Functions------
 -----------------------------------
 
-Neuron.CreateNewBar = BAR.new --this is so the slash function works correctly
+
+---This function is used for creating brand new bars, and it is really just a wrapper for the BAR constructor with a couple of assumptions and checks
+function BAR:CreateNewBar(class)
+
+	if not (class and Neuron.registeredBarData[class]) then --if the class isn't registered, go ahead and bail out.
+		Neuron.PrintBarTypes()
+		return
+	end
+
+	local barID = #Neuron.registeredBarData[class].barDB + 1 --increment 1 higher than the current number of bars in this class of bar's database
+
+	local newBar = BAR.new(class, barID) --create new bar
+	Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar --add handle for our new bar into a bar index table
+
+	newBar.objTemplate.new(newBar, 1) --add at least 1 button to a new bar
+	newBar:ChangeBar()
+	newBar:Load() --load the bar
+
+	newBar:Show() --Show the transparent blue overlay that we show in the edit mode
+end
+
+
+Neuron.CreateNewBar = BAR.CreateNewBar --this is so the slash function works correctly
 
 
 function BAR:DeleteBar()
