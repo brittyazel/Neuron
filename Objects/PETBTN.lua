@@ -33,10 +33,10 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return PETBTN @ A newly created PETBTN object
-function PETBTN:new(bar, buttonID, defaults)
+function PETBTN.new(bar, buttonID, defaults)
 
 	---call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON:new(bar, buttonID, PETBTN, "PetBar", "PetButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, PETBTN, "PetBar", "PetButton", "NeuronActionButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")
 
@@ -411,7 +411,7 @@ end
 
 function PETBTN:LoadAux()
 
-	self.binder = Neuron.KEYBINDER:new(self)
+	self.binder = Neuron.KEYBINDER.new(self)
 
 end
 

@@ -133,10 +133,10 @@ Neuron.BarOrientations = BarOrientations
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return STATUSBTN @ A newly created STATUSBTN object
-function STATUSBTN:new(bar, buttonID, defaults)
+function STATUSBTN.new(bar, buttonID, defaults)
 
 	---call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON:new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")
 

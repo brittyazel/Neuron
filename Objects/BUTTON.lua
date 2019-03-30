@@ -40,7 +40,7 @@ LibStub("AceHook-3.0"):Embed(BUTTON)
 ---@param objType string @Type of object this button will be
 ---@param template string @The template name that this frame will derive from
 ---@return BUTTON @ A newly created BUTTON object
-function BUTTON:new(bar, buttonID,baseObj, barClass, objType, template)
+function BUTTON.new(bar, buttonID,baseObj, barClass, objType, template)
 	local newButton
 	local newButtonName = bar:GetName().."_"..objType..buttonID
 

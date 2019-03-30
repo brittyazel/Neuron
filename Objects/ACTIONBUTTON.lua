@@ -71,10 +71,10 @@ local startDrag = false
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return ACTIONBUTTON @ A newly created ACTIONBUTTON object
-function ACTIONBUTTON:new(bar, buttonID, defaults)
+function ACTIONBUTTON.new(bar, buttonID, defaults)
 
 	---call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON:new(bar, buttonID, ACTIONBUTTON, "ActionBar", "ActionButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, ACTIONBUTTON, "ActionBar", "ActionButton", "NeuronActionButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")
 
@@ -161,7 +161,7 @@ function ACTIONBUTTON:LoadAux()
 	if Neuron.NeuronGUI then
 		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(self)
 	end
-	self.binder = Neuron.KEYBINDER:new(self)
+	self.binder = Neuron.KEYBINDER.new(self)
 
 end
 

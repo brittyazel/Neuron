@@ -31,10 +31,10 @@ Neuron.MENUBTN = MENUBTN
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return MENUBTN @ A newly created MENUBTN object
-function MENUBTN:new(bar, buttonID, defaults)
+function MENUBTN.new(bar, buttonID, defaults)
 
 	---call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON:new(bar, buttonID, MENUBTN, "MenuBar", "MenuButton", "NeuronAnchorButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, MENUBTN, "MenuBar", "MenuButton", "NeuronAnchorButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")
 

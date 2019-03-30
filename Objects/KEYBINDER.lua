@@ -41,7 +41,7 @@ local VIRTUAL_KEY_LIST = {
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param button BUTTON @Parent BUTTON object for this given binder frame
 ---@return KEYBINDER @ A newly created KEYBINDER object
-function KEYBINDER:new(button)
+function KEYBINDER.new(button)
 	local newKeyBinder = CreateFrame("Button", button:GetName().."BindFrame", button, "NeuronBindFrameTemplate")
 	setmetatable(newKeyBinder, {__index = KEYBINDER})
 

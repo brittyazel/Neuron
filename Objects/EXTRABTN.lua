@@ -31,10 +31,10 @@ Neuron.EXTRABTN = EXTRABTN
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return EXTRABTN @ A newly created EXTRABTN object
-function EXTRABTN:new(bar, buttonID, defaults)
+function EXTRABTN.new(bar, buttonID, defaults)
 
 	---call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON:new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")
 
@@ -77,7 +77,7 @@ end
 
 function EXTRABTN:LoadAux()
 
-	self.binder = Neuron.KEYBINDER:new(self)
+	self.binder = Neuron.KEYBINDER.new(self)
 	self.style = self:CreateTexture(nil, "OVERLAY")
 	self.style:SetPoint("CENTER", -2, 1)
 	self.style:SetWidth(190)

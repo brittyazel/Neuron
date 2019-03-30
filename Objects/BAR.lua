@@ -19,7 +19,7 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
----@class BAR
+---@class BAR @This is our bar object that serves as the container for all of our button objects
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.BAR = BAR
 
@@ -68,7 +68,7 @@ TRASHCAN:Hide()
 ---@param class string @The class type of the new bar
 ---@param barID number @The ID of the new bar object
 ---@return BAR @ A newly created BUTTON object
-function BAR:new(class, barID)
+function BAR.new(class, barID)
 
 	local data = Neuron.registeredBarData[class]
 
@@ -167,7 +167,7 @@ function BAR:CreateNewBar(class, barID, defaults)
 
 	if (class and Neuron.registeredBarData[class]) then
 
-		local bar, barIsNew = BAR:new(class, barID)
+		local bar, barIsNew = BAR.new(class, barID)
 
 		local buttonBaseObject = Neuron.registeredBarData[class].objTemplate
 
@@ -177,18 +177,18 @@ function BAR:CreateNewBar(class, barID, defaults)
 			test = defaults
 
 			for buttonID=1,#defaults.buttons do
-				buttonBaseObject:new(bar, buttonID, defaults.buttons[buttonID])
+				buttonBaseObject.new(bar, buttonID, defaults.buttons[buttonID])
 			end
 
 		else
 			for buttonID=1,#bar.DB.buttons do
-				buttonBaseObject:new(bar, buttonID)
+				buttonBaseObject.new(bar, buttonID)
 			end
 		end
 
 		if (barIsNew) then
 
-			buttonBaseObject:new(bar, 1) --add at least 1 button to a new bar
+			buttonBaseObject.new(bar, 1) --add at least 1 button to a new bar
 
 			bar:Load()
 			bar:ChangeBar()
@@ -299,7 +299,7 @@ function BAR:AddObjectsToBar(num) --called from NeuronGUI
 
 		if (#self.buttons < self.objMax) then
 			local buttonBaseObject = Neuron.registeredBarData[self.class].objTemplate
-			buttonBaseObject:new(self, buttonID)
+			buttonBaseObject.new(self, buttonID)
 		end
 
 	end

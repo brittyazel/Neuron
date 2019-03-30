@@ -31,10 +31,10 @@ Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return ZONEABILITYBTN @ A newly created ZONEABILITYBTN object
-function ZONEABILITYBTN:new(bar, buttonID, defaults)
+function ZONEABILITYBTN.new(bar, buttonID, defaults)
 
 	---call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON:new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")
 
@@ -77,7 +77,7 @@ end
 
 function ZONEABILITYBTN:LoadAux()
 
-	self.binder = Neuron.KEYBINDER:new(self)
+	self.binder = Neuron.KEYBINDER.new(self)
 	self.style = self:CreateTexture(nil, "OVERLAY")
 	self.style:SetPoint("CENTER", -2, 1)
 	self.style:SetWidth(190)

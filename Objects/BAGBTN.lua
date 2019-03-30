@@ -31,10 +31,10 @@ Neuron.BAGBTN = BAGBTN
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return BAGBTN @ A newly created BAGBTN object
-function BAGBTN:new(bar, buttonID, defaults)
+function BAGBTN.new(bar, buttonID, defaults)
 
 	---call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON:new(bar, buttonID, BAGBTN, "BagBar", "BagButton", "NeuronAnchorButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, BAGBTN, "BagBar", "BagButton", "NeuronAnchorButtonTemplate")
 
 	newButton:LoadData(GetActiveSpecGroup(), "homestate")
 
