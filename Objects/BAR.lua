@@ -19,7 +19,7 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
----@class BAR @This is our bar object that serves as the container for all of our button objects
+---@class BAR : CheckButton @This is our bar object that serves as the container for all of our button objects
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.BAR = BAR
 
@@ -70,20 +70,23 @@ TRASHCAN:Hide()
 ---@return BAR @ A newly created BUTTON object
 function BAR.new(class, barID)
 
+	if not (class and Neuron.registeredBarData[class]) then ---if the class isn't registered, go ahead and bail out.
+		Neuron.PrintBarTypes()
+		return
+	end
+
 	local data = Neuron.registeredBarData[class]
 
 	local newBar
 	local barIsNew
 
-	local index = #Neuron.BARIndex + 1
-
-	if (not barID) then
+	if (not barID) then --if no barID is given, assume this bar is a new bar
 		barID = #data.barDB + 1
 		barIsNew = true
 	end
 
-	---this is the create of our bar object frame
-	if _G["Neuron"..data.barType..barID] then
+	---this is the creation of our bar object frame
+	if _G["Neuron"..data.barType..barID] then --check to see if our bar already exists on the global namespace
 		newBar = CreateFrame("CheckButton", "Neuron"..data.barType..random(1000,10000000), UIParent, "NeuronBarTemplate") --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
 		setmetatable(newBar, {__index = BAR})
 	else
@@ -91,18 +94,21 @@ function BAR.new(class, barID)
 		setmetatable(newBar, {__index = BAR})
 	end
 
+	--load saved data
 	for key,value in pairs(data) do
 		newBar[key] = value
 	end
 
-	if not data.barDB[barID] then --if the database for a bar doesn't exist (because it's a new bar?
+	--safety check
+	if not data.barDB[barID] then --if the database for a bar doesn't exist (because it's a new bar?)
 		data.barDB[barID] = {}
 	end
+
 	newBar.DB = data.barDB[barID]
 
+	--create empty buttons table that will hold onto all of our button object handles
 	newBar.buttons = {}
 
-	newBar.index = index
 	newBar.DB.id = barID
 	newBar.class = class
 	newBar.stateschanged = true
@@ -149,13 +155,17 @@ function BAR.new(class, barID)
 
 	newBar:LoadData()
 
-	if (not barIsNew) then
-		newBar:Hide()
+	---TODO: This should be spun into its own function
+	if (barIsNew) then
+		Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar ---add handle for our new bar into a bar index table
+		newBar.objTemplate.new(newBar, 1) ---add at least 1 button to a new bar
+		newBar:ChangeBar()
+		newBar:Load() ---load the bar
+	else
+		newBar:Hide() ---if the bar isn't new, hide the transparent blue overlay that we show in the edit mode
 	end
 
-	Neuron.BARIndex[index] = newBar
-
-	return newBar, barIsNew
+	return newBar
 end
 
 ---------------------------------------------------
@@ -163,57 +173,21 @@ end
 -----------------------------------
 -----Bar Add/Remove Functions------
 -----------------------------------
-function BAR:CreateNewBar(class, barID, defaults)
 
-	if (class and Neuron.registeredBarData[class]) then
+Neuron.CreateNewBar = BAR.new --this is so the slash function works correctly
 
-		local bar, barIsNew = BAR.new(class, barID)
-
-		local buttonBaseObject = Neuron.registeredBarData[class].objTemplate
-
-		if (defaults) then
-			bar:SetDefaults(defaults)
-
-			test = defaults
-
-			for buttonID=1,#defaults.buttons do
-				buttonBaseObject.new(bar, buttonID, defaults.buttons[buttonID])
-			end
-
-		else
-			for buttonID=1,#bar.DB.buttons do
-				buttonBaseObject.new(bar, buttonID)
-			end
+function BAR:CreateStoredObjects(defaults)
+	if (defaults) then
+		self:SetDefaults(defaults)
+		for buttonID=1,#defaults.buttons do
+			self.objTemplate.new(self, buttonID, defaults.buttons[buttonID])
 		end
-
-		if (barIsNew) then
-
-			buttonBaseObject.new(bar, 1) --add at least 1 button to a new bar
-
-			bar:Load()
-			bar:ChangeBar()
-
-			---------------------------------
-			if (class == "ExtraBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
-				bar.data.hidestates = ":extrabar0:"
-				bar.vischanged = true
-				bar:Update()
-			end
-			if (class == "PetBar") then --this is a hack to get around an issue where the extrabar wasn't autohiding due to bar visibility states. There most likely a way better way to do this in the future. FIX THIS!
-				bar.data.hidestates = ":pet0:"
-				bar.vischanged = true
-				bar:Update()
-			end
-			-----------------------------------
-		end
-
-		return bar
 	else
-		Neuron.PrintBarTypes()
+		for buttonID=1,#self.DB.buttons do
+			self.objTemplate.new(self, buttonID)
+		end
 	end
 end
-
-Neuron.CreateNewBar = BAR.CreateNewBar --this is so the slash function works correctly
 
 
 function BAR:DeleteBar()
@@ -1267,7 +1241,7 @@ end
 
 
 ---loads all the object stored for a given bar
-function BAR:LoadObjects(init)
+function BAR:LoadObjects()
 	local spec
 
 	if (self.data.multiSpec) then
@@ -3062,7 +3036,7 @@ end
 
 function BAR:Load()
 	self:SetPosition()
-	self:LoadObjects(true)
+	self:LoadObjects()
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()

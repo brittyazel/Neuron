@@ -1048,7 +1048,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 								if (self.bar) then
 
-									Neuron.BAR:CreateNewBar(self.bar)
+									Neuron.BAR.new(self.bar)
 
 									NeuronBarEditorCreate:Click()
 								end

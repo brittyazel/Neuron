@@ -19,7 +19,7 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
----@class KEYBINDER @define class KEYBINDER is our keybinding object
+---@class KEYBINDER : Button @define class KEYBINDER is our keybinding object
 local KEYBINDER = setmetatable({}, { __index = CreateFrame("Button") })
 Neuron.KEYBINDER = KEYBINDER
 

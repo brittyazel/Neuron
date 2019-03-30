@@ -981,7 +981,6 @@ function ACTIONBUTTON:Flyout_GetBar()
 	local bar = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutBar"..id, UIParent, "NeuronBarTemplate")
 	setmetatable(bar, {__index = Neuron.BAR})
 
-	bar.index = id
 	bar.class = "FlyoutBar"
 	bar.elapsed = 0
 	bar.data = { scale = 1 }

@@ -178,9 +178,6 @@ function Neuron:OnInitialize()
 	--Initialize the chat commands (i.e. /neuron)
 	Neuron:RegisterChatCommand("neuron", "slashHandler")
 
-	--Load bars and buttons
-	Neuron:Startup()
-
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -231,10 +228,8 @@ function Neuron:OnEnable()
 
 	Neuron:LoginMessage()
 
-
-	for _,bar in pairs(Neuron.BARIndex) do
-		bar:Load()
-	end
+	---Load bars and buttons
+	Neuron:Startup()
 
 end
 
