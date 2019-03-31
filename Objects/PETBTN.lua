@@ -174,7 +174,7 @@ function PETBTN:PET_UpdateCooldown()
 	end
 end
 
-function PETBTN:PET_UpdateTexture(force)
+function PETBTN:PET_UpdateTexture()
 
 	local actionID = self.actionID
 

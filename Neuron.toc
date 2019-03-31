@@ -27,6 +27,8 @@ Utilities/DB-Fixer.lua
 Objects/BUTTON.lua
 Objects/BAR.lua
 Objects/ACTIONBUTTON.lua
+Objects/ACTIONBUTTON_DragAndDrop.lua
+Objects/ACTIONBUTTON_Flyout.lua
 Objects/BAGBTN.lua
 Objects/EXITBTN.lua
 Objects/EXTRABTN.lua
@@ -34,8 +36,7 @@ Objects/MENUBTN.lua
 Objects/PETBTN.lua
 Objects/STATUSBTN.lua
 Objects/ZONEABILITYBTN.lua
-Objects/ACTIONBUTTON_FLYOUTBTN.lua
-Objects/BAR_SNAPTO.lua
+Objects/BAR_SnapTo.lua
 Objects/KEYBINDER.lua
 
 Neuron-DisableBlizzardUI.lua
