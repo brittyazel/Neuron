@@ -1587,6 +1587,17 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 		end
 
 		self.UpdateTooltip = nil
+	else
+		local spell_id, spellName
+
+		spellName,_,_,_,_,_,spell_id = GetSpellInfo(spell)
+
+		if (self.UberTooltips) then
+			GameTooltip:SetSpellByID(spell_id)
+		else
+			GameTooltip:SetTexts(spellName, 1, 1, 1)
+		end
+
 	end
 end
 

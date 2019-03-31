@@ -94,11 +94,9 @@ function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 		if (isToken) then
 			self.iconframeicon:SetTexture(_G[texture])
 			self.tooltipName = _G[spell]
-			self.tooltipSubtext = _G[spell.."_TOOLTIP"]
 		else
 			self.iconframeicon:SetTexture(texture)
 			self.tooltipName = spell
-			self.tooltipSubtext = subtext
 		end
 
 		self.iconframeicon:Show()
@@ -201,7 +199,9 @@ function PETBTN:PET_UpdateOnEvent(state)
 		self:PET_UpdateTexture()
 		self:PET_UpdateIcon(spell, texture, isToken)
 		self:PET_UpdateCooldown()
+
 	end
+
 
 	if (self.updateRightClick and not InCombatLockdown()) then
 
@@ -327,9 +327,6 @@ function PETBTN:PET_SetTooltip(edit)
 			GameTooltip:SetText(self.tooltipName, 1.0, 1.0, 1.0)
 		end
 
-		if (self.tooltipSubtext and self.UberTooltips) then
-			GameTooltip:AddLine(self.tooltipSubtext, "", 0.5, 0.5, 0.5)
-		end
 	elseif (self.HasPetAction(actionID)) then
 		if (self.UberTooltips) then
 			GameTooltip:SetPetAction(actionID)
@@ -343,6 +340,8 @@ function PETBTN:PET_SetTooltip(edit)
 	elseif (edit) then
 		GameTooltip:SetText(L["Empty Button"])
 	end
+
+
 end
 
 
