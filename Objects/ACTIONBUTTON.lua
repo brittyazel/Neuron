@@ -230,7 +230,7 @@ function ACTIONBUTTON:SetType()
 	self:SetAttribute("type", "macro")
 	self:SetAttribute("*macrotext*", self.macroparse)
 
-	self:SetScript("OnMouseDown", function(self, mousebutton) self:OnMouseDown(mousebutton) end)
+	self:SetScript("PreClick", function(self, mousebutton) self:PreClick(mousebutton) end)
 	self:SetScript("OnReceiveDrag", function(self, preclick) self:OnReceiveDrag(preclick) end)
 	self:SetScript("OnDragStart", function(self, mousebutton) self:OnDragStart(mousebutton) end)
 	self:SetScript("OnDragStop", function(self) self:OnDragStop() end)

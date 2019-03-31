@@ -28,19 +28,13 @@ local ACTIONBUTTON = Neuron.ACTIONBUTTON
 local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
 Neuron.macroDrag = macroDrag
 
-
-
 --------------------------------------
 --------------------------------------
 
 --this is the function that fires when you begin dragging an item
-function ACTIONBUTTON:OnDragStart(mousebutton)
-
-	print("OnDragStart")
-	print(self.id)
+function ACTIONBUTTON:OnDragStart()
 
 	if InCombatLockdown() or not self.bar or self.actionID then
-		--isBeingDragged = false
 		return
 	end
 
@@ -80,10 +74,6 @@ end
 
 --This is the function that fires when a button is receiving a dragged item
 function ACTIONBUTTON:OnReceiveDrag()
-
-	print("OnReceiveDrag")
-	print(self.id)
-
 	if InCombatLockdown() then --don't allow moving or changing macros while in combat. This will cause taint
 		return
 	end
@@ -93,7 +83,6 @@ function ACTIONBUTTON:OnReceiveDrag()
 	local cursorType, action1, action2, spellID = GetCursorInfo()
 
 	if (self:HasAction()) then --if our button being dropped onto already has content, we need to cache that content
-		print("caching")
 		macroCache[1] = self:GetDragAction()
 		macroCache[2] = self.data.macro_Text
 		macroCache[3] = self.data.macro_Icon
@@ -104,6 +93,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 		macroCache[8] = self.data.macro_Note
 		macroCache[9] = self.data.macro_UseNote
 
+		PickupSpell(self.spellID)
 	end
 
 
@@ -137,11 +127,8 @@ function ACTIONBUTTON:OnReceiveDrag()
 
 
 	if (macroCache[1]) then
+		wipe(macroDrag)
 		self:PickUpMacro(macroCache)
-		SetCursor(nil)
-		ClearCursor()
-		PickupSpell(self.spellID)
-		--PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 		Neuron:ToggleButtonGrid(true)
 	end
 
@@ -153,18 +140,28 @@ function ACTIONBUTTON:OnReceiveDrag()
 end
 
 
-function ACTIONBUTTON:OnMouseDown(mousebutton)
-	print("mousedown")
-end
+function ACTIONBUTTON:PreClick()
 
+	if (not InCombatLockdown() and MouseIsOver(self)) then
+
+		if (macroDrag[1]) then
+
+			self:SetType()
+
+			Neuron:ToggleButtonGrid(true)
+
+			self:OnReceiveDrag(true)
+
+		end
+	end
+
+end
 --------------------------------------
 --------------------------------------
 
 
 function ACTIONBUTTON:PickUpMacro(macroCache)
 
-	print("Pickup Macro")
-	print(self.id)
 
 	local pickup
 
@@ -233,9 +230,6 @@ function ACTIONBUTTON:PlaceMacro()
 
 
 	self:SetType()
-
-	print("PlaceMacro")
-	print(self.id)
 
 	wipe(macroDrag);
 
