@@ -230,8 +230,7 @@ function ACTIONBUTTON:SetType()
 	self:SetAttribute("type", "macro")
 	self:SetAttribute("*macrotext*", self.macroparse)
 
-	self:SetScript("PreClick", function(self, mousebutton) self:PreClick(mousebutton) end)
-	self:SetScript("PostClick", function(self, mousebutton) self:PostClick(mousebutton) end)
+	self:SetScript("OnMouseDown", function(self, mousebutton) self:OnMouseDown(mousebutton) end)
 	self:SetScript("OnReceiveDrag", function(self, preclick) self:OnReceiveDrag(preclick) end)
 	self:SetScript("OnDragStart", function(self, mousebutton) self:OnDragStart(mousebutton) end)
 	self:SetScript("OnDragStop", function(self) self:OnDragStop() end)
@@ -838,7 +837,7 @@ end
 function ACTIONBUTTON:ACTIONBAR_SHOWGRID(...)
 	self:ShowGrid()
 
-	Neuron.startDrag = true
+	Neuron.isBeingDragged = true
 end
 
 
@@ -1002,10 +1001,6 @@ function ACTIONBUTTON:OnEnter(...)
 	if (self.bar) then
 		if (self.tooltipsCombat and InCombatLockdown()) then
 			return
-		end
-
-		if(Neuron.macroDrag[1]) then --puts the icon back to the interact icon when moving abilities around and the mouse enters the WorldFrame
-			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
 		end
 
 		if (self.tooltips) then

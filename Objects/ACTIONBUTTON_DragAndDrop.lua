@@ -19,52 +19,95 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
+
+---The functions in this file are part of the ACTIONBUTTON class.
+---It was just easier to put them all in their own file for organization.
+
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
-local macroCache = {}
-Neuron.macroCache = macroCache
-
-local macroDrag = {}
+local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
 Neuron.macroDrag = macroDrag
 
-local startDrag = false
-Neuron.startDrag = startDrag
-
 
 
 --------------------------------------
 --------------------------------------
 
---This is the function that fires when a button is receiving a dragged item
-function ACTIONBUTTON:OnReceiveDrag()
-	if (InCombatLockdown()) then
+--this is the function that fires when you begin dragging an item
+function ACTIONBUTTON:OnDragStart(mousebutton)
+
+	print("OnDragStart")
+	print(self.id)
+
+	if InCombatLockdown() or not self.bar or self.actionID then
+		--isBeingDragged = false
 		return
 	end
 
+	self.drag = nil --flag that says if it's ok to drag or not
+
+	if (not self.barLock) then
+		self.drag = true
+	elseif (self.barLockAlt and IsAltKeyDown()) then
+		self.drag = true
+	elseif (self.barLockCtrl and IsControlKeyDown()) then
+		self.drag = true
+	elseif (self.barLockShift and IsShiftKeyDown()) then
+		self.drag = true
+	end
+
+	if (self.drag) then
+
+		self:PickUpMacro()
+
+		if (macroDrag[1]) then
+			Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
+		end
+
+		self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
+
+		self.border:Hide()
+	end
+
+end
+
+
+function ACTIONBUTTON:OnDragStop()
+	--note** The OnDragStop event fires on the button that was being dragged FROM not the button being dragged onto
+	SetCursor(nil)
+	ClearCursor()
+end
+
+--This is the function that fires when a button is receiving a dragged item
+function ACTIONBUTTON:OnReceiveDrag()
+
+	print("OnReceiveDrag")
+	print(self.id)
+
+	if InCombatLockdown() then --don't allow moving or changing macros while in combat. This will cause taint
+		return
+	end
+
+	local macroCache = {} --this will hold onto any previous contents of our button
+
 	local cursorType, action1, action2, spellID = GetCursorInfo()
 
-	local texture = self.iconframeicon:GetTexture()
-
-	if (self:HasAction()) then
-		wipe(macroCache)
-
-		--macroCache holds on to the previos macro's info if you are dropping a new macro on top of an existing macro
+	if (self:HasAction()) then --if our button being dropped onto already has content, we need to cache that content
+		print("caching")
 		macroCache[1] = self:GetDragAction()
-		macroCache[2] = self
-		macroCache[3] = self.data.macro_Text
-		macroCache[4] = self.data.macro_Icon
-		macroCache[5] = self.data.macro_Name
-		macroCache[6] = self.data.macro_Auto
-		macroCache[7] = self.data.macro_Watch
-		macroCache[8] = self.data.macro_Equip
-		macroCache[9] = self.data.macro_Note
-		macroCache[10] = self.data.macro_UseNote
+		macroCache[2] = self.data.macro_Text
+		macroCache[3] = self.data.macro_Icon
+		macroCache[4] = self.data.macro_Name
+		macroCache[5] = self.data.macro_Auto
+		macroCache[6] = self.data.macro_Watch
+		macroCache[7] = self.data.macro_Equip
+		macroCache[8] = self.data.macro_Note
+		macroCache[9] = self.data.macro_UseNote
 
-		macroCache.texture = texture
 	end
 
 
-	if (macroDrag[1]) then
+	if (macroDrag[1]) then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
 		self:PlaceMacro()
 	elseif (cursorType == "spell") then
 		self:PlaceSpell(action1, action2, spellID)
@@ -93,148 +136,112 @@ function ACTIONBUTTON:OnReceiveDrag()
 	end
 
 
-	if (startDrag and macroCache[1]) then
-		self:PickUpMacro()
+	if (macroCache[1]) then
+		self:PickUpMacro(macroCache)
+		SetCursor(nil)
+		ClearCursor()
+		PickupSpell(self.spellID)
+		--PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
 		Neuron:ToggleButtonGrid(true)
 	end
 
 	self:UpdateAll()
-
-	startDrag = false
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateObjectGUI()
 	end
 end
 
---this is the function that fires when you begin dragging an item
-function ACTIONBUTTON:OnDragStart(mousebutton)
 
-	if (InCombatLockdown() or not self.bar or self.vehicle_edit or self.actionID) then
-		startDrag = false
-		return
-	end
+function ACTIONBUTTON:OnMouseDown(mousebutton)
+	print("mousedown")
+end
 
-	self.drag = nil
+--------------------------------------
+--------------------------------------
+
+
+function ACTIONBUTTON:PickUpMacro(macroCache)
+
+	print("Pickup Macro")
+	print(self.id)
+
+	local pickup
 
 	if (not self.barLock) then
-		self.drag = true
+		pickup = true
 	elseif (self.barLockAlt and IsAltKeyDown()) then
-		self.drag = true
+		pickup = true
 	elseif (self.barLockCtrl and IsControlKeyDown()) then
-		self.drag = true
+		pickup = true
 	elseif (self.barLockShift and IsShiftKeyDown()) then
-		self.drag = true
+		pickup = true
 	end
 
-	if (self.drag) then
-		startDrag = self:GetParent():GetAttribute("activestate")
+	if (pickup) then
 
-		self.dragbutton = mousebutton
-		self:PickUpMacro()
+		if macroCache then  --triggers when picking up an existing button with a button in the cursor
 
-		if (macroDrag[1]) then
+			macroDrag = CopyTable(macroCache)
 
-			if (macroDrag[2] ~= self) then
-				self.dragbutton = nil
-			end
+		elseif (self:HasAction()) then
 
-			Neuron:ToggleButtonGrid(true)
-		else
-			self.dragbutton = nil
-		end
+			PickupSpell(self.spellID)
 
-		self.iconframecooldown.timer:SetText("")
+			macroDrag[1] = self:GetDragAction()
+			macroDrag[2] = self.data.macro_Text
+			macroDrag[3] = self.data.macro_Icon
+			macroDrag[4] = self.data.macro_Name
+			macroDrag[5] = self.data.macro_Auto
+			macroDrag[6] = self.data.macro_Watch
+			macroDrag[7] = self.data.macro_Equip
+			macroDrag[8] = self.data.macro_Note
+			macroDrag[9] = self.data.macro_UseNote
 
-		self.macroname:SetText("")
-		self.count:SetText("")
+			self.data.macro_Text = ""
+			self.data.macro_Icon = false
+			self.data.macro_Name = ""
+			self.data.macro_Auto = false
+			self.data.macro_Watch = false
+			self.data.macro_Equip = false
+			self.data.macro_Note = ""
+			self.data.macro_UseNote = false
 
-		self.macrospell = nil
-		self.spellID = nil
-		self.actionID = nil
-		self.macroitem = nil
-		self.macroshow = nil
-		self.macroicon = nil
-
-		self.border:Hide()
-
-		--shows all action bar buttons in the case you have show grid turned off
-
-
-	else
-		startDrag = false
-	end
-
-end
-
-
-function ACTIONBUTTON:OnDragStop()
-	self.drag = nil
-	self:UpdateAll()
-end
-
-
----This function will be used to check if we should release the cursor
-function ACTIONBUTTON:OnMouseDown()
-	if macroDrag[1] then
-		PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
-		wipe(macroDrag)
-
-		for _, bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectVisibility()
-		end
-	end
-end
-
-function ACTIONBUTTON:PreClick(mousebutton)
-	self.cursor = nil
-
-	if (not InCombatLockdown() and MouseIsOver(self)) then
-		local cursorType = GetCursorInfo()
-
-		if (cursorType or macroDrag[1]) then
-			self.cursor = true
-
-			startDrag = self:GetParent():GetAttribute("activestate")
+			self.macrospell = nil
+			self.spellID = nil
+			self.macroitem = nil
+			self.macroshow = nil
+			self.macroicon = nil
 
 			self:SetType()
 
-			Neuron:ToggleButtonGrid(true)
-
-			self:OnReceiveDrag(true)
-
-		elseif (mousebutton == "MiddleButton") then
-			self.middleclick = self:GetAttribute("type")
-
-			self:SetAttribute("type", "")
-
 		end
-	end
 
+	end
 end
 
 
-function ACTIONBUTTON:PostClick(mousebutton)
-	if (not InCombatLockdown() and MouseIsOver(self)) then
+function ACTIONBUTTON:PlaceMacro()
+	self.data.macro_Text = macroDrag[2]
+	self.data.macro_Icon = macroDrag[3]
+	self.data.macro_Name = macroDrag[4]
+	self.data.macro_Auto = macroDrag[5]
+	self.data.macro_Watch = macroDrag[6]
+	self.data.macro_Equip = macroDrag[7]
+	self.data.macro_Note = macroDrag[8]
+	self.data.macro_UseNote = macroDrag[9]
 
-		if (self.cursor) then
-			self:SetType()
 
-			self.cursor = nil
+	self:SetType()
 
-		elseif (self.middleclick) then
-			self:SetAttribute("type", self.middleclick)
+	print("PlaceMacro")
+	print(self.id)
 
-			self.middleclick = nil
-		end
-	end
-	self:UpdateState()
+	wipe(macroDrag);
+
+	Neuron:ToggleButtonGrid()
+
 end
-
-
---------------------------------------
---------------------------------------
-
 
 function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	local spell
@@ -275,9 +282,9 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 
-	if (not self.cursor) then
-		self:SetType()
-	end
+
+	self:SetType()
+
 
 	macroDrag[1] = false
 
@@ -306,9 +313,9 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-		if (not self.cursor) then
-			self:SetType()
-		end
+
+		self:SetType()
+
 	else
 		Neuron:Print("Sorry, you cannot place that ability at this time.")
 	end
@@ -343,9 +350,9 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 
-	if (not self.cursor) then
-		self:SetType()
-	end
+
+	self:SetType()
+
 
 	macroDrag[1] = false
 
@@ -379,9 +386,7 @@ function ACTIONBUTTON:PlaceBlizzMacro(action1)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-		if (not self.cursor) then
-			self:SetType()
-		end
+		self:SetType()
 
 		macroDrag[1] = false
 
@@ -424,9 +429,9 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-		if (not self.cursor) then
-			self:SetType()
-		end
+
+		self:SetType()
+
 
 		macroDrag[1] = false
 
@@ -471,9 +476,8 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-		if (not self.cursor) then
-			self:SetType()
-		end
+
+		self:SetType()
 
 		macroDrag[1] = false
 
@@ -508,9 +512,8 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-		if (not self.cursor) then
-			self:SetType()
-		end
+		self:SetType()
+
 
 		macroDrag[1] = false
 
@@ -537,9 +540,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 		self.data.macro_UseNote = false
 
 
-		if (not self.cursor) then
-			self:SetType()
-		end
+		self:SetType()
 
 		macroDrag[1] = false
 
@@ -597,108 +598,11 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 
 		self:UpdateFlyout(true)
 
-		if (not self.cursor) then
-			self:SetType()
-		end
+		self:SetType()
 
 		macroDrag[1] = false
 
 		ClearCursor()
 		SetCursor(nil)
-	end
-end
-
-
-function ACTIONBUTTON:PlaceMacro()
-	self.data.macro_Text = macroDrag[3]
-	self.data.macro_Icon = macroDrag[4]
-	self.data.macro_Name = macroDrag[5]
-	self.data.macro_Auto = macroDrag[6]
-	self.data.macro_Watch = macroDrag[7]
-	self.data.macro_Equip = macroDrag[8]
-	self.data.macro_Note = macroDrag[9]
-	self.data.macro_UseNote = macroDrag[10]
-
-	if (not self.cursor) then
-		self:SetType()
-	end
-
-	PlaySound(SOUNDKIT.IG_ABILITY_ICON_DROP)
-
-	wipe(macroDrag);
-	ClearCursor();
-	SetCursor(nil);
-
-	self:UpdateFlyout()
-	Neuron:ToggleButtonGrid(false)
-
-end
-
-
-function ACTIONBUTTON:PickUpMacro()
-	local pickup
-
-	if (not self.barLock) then
-		pickup = true
-	elseif (self.barLockAlt and IsAltKeyDown()) then
-		pickup = true
-	elseif (self.barLockCtrl and IsControlKeyDown()) then
-		pickup = true
-	elseif (self.barLockShift and IsShiftKeyDown()) then
-		pickup = true
-	end
-
-	if (pickup) then
-		local texture = self.iconframeicon:GetTexture()
-
-		if (macroCache[1]) then  --triggers when picking up an existing button with a button in the cursor
-
-			wipe(macroDrag)
-
-			for k,v in pairs(macroCache) do
-				macroDrag[k] = v
-			end
-
-			wipe(macroCache)
-
-			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
-
-
-		elseif (self:HasAction()) then
-			SetCursor("Interface\\CURSOR\\QUESTINTERACT.BLP")
-
-			macroDrag[1] = self:GetDragAction()
-			macroDrag[2] = self
-			macroDrag[3] = self.data.macro_Text
-			macroDrag[4] = self.data.macro_Icon
-			macroDrag[5] = self.data.macro_Name
-			macroDrag[6] = self.data.macro_Auto
-			macroDrag[7] = self.data.macro_Watch
-			macroDrag[8] = self.data.macro_Equip
-			macroDrag[9] = self.data.macro_Note
-			macroDrag[10] = self.data.macro_UseNote
-			macroDrag.texture = texture
-
-			self.data.macro_Text = ""
-			self.data.macro_Icon = false
-			self.data.macro_Name = ""
-			self.data.macro_Auto = false
-			self.data.macro_Watch = false
-			self.data.macro_Equip = false
-			self.data.macro_Note = ""
-			self.data.macro_UseNote = false
-
-			self.macrospell = nil
-			self.spellID = nil
-			self.macroitem = nil
-			self.macroshow = nil
-			self.macroicon = nil
-
-			self:UpdateFlyout()
-
-			self:SetType()
-
-		end
-
 	end
 end
