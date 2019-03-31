@@ -1314,7 +1314,7 @@ function ACTIONBUTTON:PickUpMacro()
 	end
 
 	if (pickup) then
-		local texture, move = self.iconframeicon:GetTexture()
+		local texture = self.iconframeicon:GetTexture()
 
 		if (macroCache[1]) then  ---triggers when picking up an existing button with a button in the cursor
 

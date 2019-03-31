@@ -56,41 +56,56 @@ end
 -----utilities
 
 
-function PETBTN.HasPetAction(id, icon)
-
-	if not id then return end --return if there is no id passed in
-
-	local _, texture = GetPetActionInfo(id)
-
-	if (GetPetActionSlotUsable(id)) then
-
-		if (texture) then
-			return true
-		else
-			return false
-		end
+function PETBTN.HasPetAction(id)
+	if (GetPetActionInfo(id)) then
+		return true
 	else
-
-		if (icon and texture) then
-			return true
-		else
-			return false
-		end
+		return false
 	end
 end
 
 
 -----
 
-function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 
-	self.isToken = isToken
+
+function PETBTN:SetType()
+
+	self:RegisterEvent("PET_BAR_UPDATE")
+	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
+	self:RegisterEvent("PET_SPECIALIZATION_CHANGED")
+	self:RegisterEvent("PET_DISMISS_START")
+	self:RegisterEvent("PLAYER_CONTROL_LOST")
+	self:RegisterEvent("PLAYER_CONTROL_GAINED")
+	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("UNIT_PET")
+
+	self.actionID = self.id
+
+	self:SetAttribute("type1", "pet")
+	self:SetAttribute("type2", "macro")
+	self:SetAttribute("*action1", self.actionID)
+
+	self:SetScript("PostClick", function(self) self:PostClick() end)
+	self:SetScript("OnDragStart", function(self) self:OnDragStart() end)
+	self:SetScript("OnDragStop", function(self) self:OnDragStop() end)
+	self:SetScript("OnReceiveDrag", function(self) self:OnReceiveDrag() end)
+	self:SetScript("OnEnter", function(self,...) self:OnEnter(...) end)
+	self:SetScript("OnLeave", function(self) self:OnLeave() end)
+
+	self:SetScript("OnAttributeChanged", nil)
+
+	self:SetSkinned()
+
+end
+
+function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 
 	self.macroname:SetText("")
 	self.count:SetText("")
 
 	if (texture) then
-
 		if (isToken) then
 			self.iconframeicon:SetTexture(_G[texture])
 			self.tooltipName = _G[spell]
@@ -100,7 +115,6 @@ function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 		end
 
 		self.iconframeicon:Show()
-
 	else
 		self.iconframeicon:SetTexture("")
 		self.iconframeicon:Hide()
@@ -166,7 +180,7 @@ function PETBTN:PET_UpdateTexture(force)
 
 	if (not self:GetSkinned()) then
 
-		if (self.HasPetAction(actionID, true) or force) then
+		if (self.HasPetAction(actionID)) then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -184,11 +198,8 @@ function PETBTN:PET_UpdateOnEvent(state)
 
 	if (not state) then
 
-		if (isToken) then
-			self.actionSpell = _G[spell]
-		else
-			self.actionSpell = spell
-		end
+		self.actionSpell = spell
+
 
 		if (self.actionSpell and NeuronSpellCache[self.actionSpell:lower()]) then
 			self.spellID = NeuronSpellCache[self.actionSpell:lower()].spellID
@@ -322,25 +333,13 @@ end
 function PETBTN:PET_SetTooltip(edit)
 	local actionID = self.actionID
 
-	if (self.isToken) then
-		if (self.tooltipName) then
-			GameTooltip:SetText(self.tooltipName, 1.0, 1.0, 1.0)
-		end
-
-	elseif (self.HasPetAction(actionID)) then
+	if (self.HasPetAction(actionID)) then
 		if (self.UberTooltips) then
 			GameTooltip:SetPetAction(actionID)
 		else
 			GameTooltip:SetText(self.actionSpell)
 		end
-
-		if (not edit) then
-			self.UpdateTooltip = self.PET_SetTooltip
-		end
-	elseif (edit) then
-		GameTooltip:SetText(L["Empty Button"])
 	end
-
 
 end
 
@@ -381,37 +380,5 @@ function PETBTN:SetObjectVisibility(show)
 	else
 		self:SetAlpha(0)
 	end
-
-end
-
-
-function PETBTN:SetType()
-
-	self:RegisterEvent("PET_BAR_UPDATE")
-	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
-	self:RegisterEvent("PET_SPECIALIZATION_CHANGED")
-	self:RegisterEvent("PET_DISMISS_START")
-	self:RegisterEvent("PLAYER_CONTROL_LOST")
-	self:RegisterEvent("PLAYER_CONTROL_GAINED")
-	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-	self:RegisterEvent("UNIT_PET")
-
-	self.actionID = self.id
-
-	self:SetAttribute("type1", "pet")
-	self:SetAttribute("type2", "macro")
-	self:SetAttribute("*action1", self.actionID)
-
-	self:SetScript("PostClick", function(self) self:PostClick() end)
-	self:SetScript("OnDragStart", function(self) self:OnDragStart() end)
-	self:SetScript("OnDragStop", function(self) self:OnDragStop() end)
-	self:SetScript("OnReceiveDrag", function(self) self:OnReceiveDrag() end)
-	self:SetScript("OnEnter", function(self,...) self:OnEnter(...) end)
-	self:SetScript("OnLeave", function(self) self:OnLeave() end)
-
-	self:SetScript("OnAttributeChanged", nil)
-
-	self:SetSkinned()
 
 end
