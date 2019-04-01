@@ -57,7 +57,7 @@ function ACTIONBUTTON:OnDragStart()
 		--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, becasue once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
 		--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
 		--TODO: Fix this so we don't keep default to the questionmark for any "non-spells"
-		if self.spellID and not self.data.macro_isPetSpell then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+		--[[if self.spellID and not self.data.macro_isPetSpell then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
 			PickupSpell(self.spellID) --We are only using this function for the icon effect.
 		elseif(self.macrospell and GetSpellInfo(self.macrospell) and not self.data.macro_isPetSpell) then
 			local spellID
@@ -65,9 +65,9 @@ function ACTIONBUTTON:OnDragStart()
 			if spellID then
 				PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
 			end
-		else
+		else]]
 			PickupItem(1217) --questionmark symbol
-		end
+		--end
 
 		self:PickUpMacro()
 
