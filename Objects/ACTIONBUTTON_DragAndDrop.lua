@@ -35,7 +35,6 @@ local macroCache = {} --this will hold onto any previous contents of our button
 
 --this is the function that fires when you begin dragging an item
 function ACTIONBUTTON:OnDragStart()
-
 	if InCombatLockdown() or not self.bar or self.actionID then
 		return
 	end
@@ -54,29 +53,21 @@ function ACTIONBUTTON:OnDragStart()
 
 	if (self.drag) then
 
-		if macroCache[1] then
-			self:PickUpMacro()
-		else
-			ClearCursor()
-			PickupSpell(self.spellID) --We are only using this function for the icon effect.
-			self:PickUpMacro()
-		end
+		ClearCursor()
+		PickupSpell(self.spellID) --We are only using this function for the icon effect.
+		self:PickUpMacro()
 
-
-		if (macroDrag[1]) then
-			Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
-		end
+		Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
 
 		self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
 
-		self.border:Hide()
+		--self.border:Hide()
 	end
 
 end
 
 --This is the function that fires when a button is receiving a dragged item
 function ACTIONBUTTON:OnReceiveDrag()
-
 	if InCombatLockdown() then --don't allow moving or changing macros while in combat. This will cause taint
 		return
 	end
@@ -93,10 +84,8 @@ function ACTIONBUTTON:OnReceiveDrag()
 		macroCache[7] = self.data.macro_Equip
 		macroCache[8] = self.data.macro_Note
 		macroCache[9] = self.data.macro_UseNote
-
-		ClearCursor()
-		PickupSpell(self.spellID) --We are only using this function for the icon effect.
-
+	else
+		wipe(macroCache)
 	end
 
 
@@ -128,15 +117,17 @@ function ACTIONBUTTON:OnReceiveDrag()
 		self:PlacePetAbility(action1, action2)
 	end
 
+	wipe(macroDrag)
+
 	if (macroCache[1]) then
 		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
 		Neuron:ToggleButtonGrid(true)
 	else
-		print("test")
 		SetCursor(nil)
 		ClearCursor() --if we did not pick up a new spell, clear the cursor
 	end
 
+	self:SetType()
 	self:UpdateAll()
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
@@ -147,13 +138,22 @@ end
 
 function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
 	self:OnReceiveDrag()
+	Neuron:ToggleButtonGrid()
+end
+
+function ACTIONBUTTON:WorldFrame_OnReceiveDrag()
+	if macroDrag[1] then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
+		SetCursor(nil)
+		ClearCursor()
+		wipe(macroDrag)
+		wipe(macroCache)
+	end
 end
 --------------------------------------
 --------------------------------------
 
 
 function ACTIONBUTTON:PickUpMacro()
-
 
 	local pickup
 
@@ -172,6 +172,7 @@ function ACTIONBUTTON:PickUpMacro()
 		if macroCache[1] then  --triggers when picking up an existing button with a button in the cursor
 
 			macroDrag = CopyTable(macroCache)
+			wipe(macroCache) --once macroCache is loaded into macroDrag, wipe it
 
 		elseif (self:HasAction()) then
 
@@ -217,13 +218,6 @@ function ACTIONBUTTON:PlaceMacro()
 	self.data.macro_Note = macroDrag[8]
 	self.data.macro_UseNote = macroDrag[9]
 
-
-	self:SetType()
-
-	wipe(macroDrag);
-
-	Neuron:ToggleButtonGrid()
-
 end
 
 function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
@@ -265,15 +259,6 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 
-
-	self:SetType()
-
-
-	macroDrag[1] = false
-
-	ClearCursor()
-	SetCursor(nil)
-
 end
 
 function ACTIONBUTTON:PlacePetAbility(action1, action2)
@@ -296,17 +281,9 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-
-		self:SetType()
-
 	else
 		Neuron:Print("Sorry, you cannot place that ability at this time.")
 	end
-
-	macroDrag[1] = false
-
-	ClearCursor()
-	SetCursor(nil)
 
 end
 
@@ -333,14 +310,6 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 
-
-	self:SetType()
-
-
-	macroDrag[1] = false
-
-	ClearCursor()
-	SetCursor(nil)
 end
 
 
@@ -369,12 +338,6 @@ function ACTIONBUTTON:PlaceBlizzMacro(action1)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-		self:SetType()
-
-		macroDrag[1] = false
-
-		ClearCursor()
-		SetCursor(nil)
 	end
 end
 
@@ -412,14 +375,6 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-
-		self:SetType()
-
-
-		macroDrag[1] = false
-
-		ClearCursor()
-		SetCursor(nil)
 	end
 end
 
@@ -459,13 +414,6 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-
-		self:SetType()
-
-		macroDrag[1] = false
-
-		ClearCursor()
-		SetCursor(nil)
 	end
 end
 
@@ -495,13 +443,6 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-		self:SetType()
-
-
-		macroDrag[1] = false
-
-		ClearCursor()
-		SetCursor(nil)
 	end
 end
 
@@ -522,13 +463,6 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
 
-
-		self:SetType()
-
-		macroDrag[1] = false
-
-		ClearCursor()
-		SetCursor(nil)
 	end
 end
 
@@ -581,11 +515,5 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 
 		self:UpdateFlyout(true)
 
-		self:SetType()
-
-		macroDrag[1] = false
-
-		ClearCursor()
-		SetCursor(nil)
 	end
 end
