@@ -239,6 +239,10 @@ function ACTIONBUTTON:SetType()
 		Neuron:HookScript(WorldFrame, "OnReceiveDrag", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
 	end
 
+	if not Neuron:IsHooked(WorldFrame, "OnMouseDown") then
+		Neuron:HookScript(WorldFrame, "OnMouseDown", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
+	end
+
 	self:SetScript("OnAttributeChanged", function(self, name, value) self:OnAttributeChanged(name, value) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)

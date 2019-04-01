@@ -26,7 +26,6 @@
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
 local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
-Neuron.macroDrag = macroDrag
 
 local macroCache = {} --this will hold onto any previous contents of our button
 
@@ -54,14 +53,26 @@ function ACTIONBUTTON:OnDragStart()
 	if (self.drag) then
 
 		ClearCursor()
-		PickupSpell(self.spellID) --We are only using this function for the icon effect.
+
+		--TODO: Fix this so we don't keep default to the questionmark for any "non-spells"
+		if self.spellID and not self.data.macro_isPetSpell then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+			PickupSpell(self.spellID) --We are only using this function for the icon effect.
+		elseif(self.macrospell and GetSpellInfo(self.macrospell) and not self.data.macro_isPetSpell) then
+			local spellID
+			_,_,_,_,_,_,spellID = GetSpellInfo(self.macrospell)
+			if spellID then
+				PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
+			end
+		else
+			PickupItem(1217) --questionmark symbol
+		end
+
 		self:PickUpMacro()
 
 		Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
 
 		self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
 
-		--self.border:Hide()
 	end
 
 end
@@ -127,6 +138,8 @@ function ACTIONBUTTON:OnReceiveDrag()
 		ClearCursor() --if we did not pick up a new spell, clear the cursor
 	end
 
+	test = self
+
 	self:SetType()
 	self:UpdateAll()
 
@@ -137,8 +150,10 @@ end
 
 
 function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
-	self:OnReceiveDrag()
-	Neuron:ToggleButtonGrid()
+	if macroDrag[1] then
+		self:OnReceiveDrag()
+		Neuron:ToggleButtonGrid()
+	end
 end
 
 function ACTIONBUTTON:WorldFrame_OnReceiveDrag()
@@ -280,6 +295,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		self.data.macro_Equip = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
+		self.data.macro_isPetSpell = true
 
 	else
 		Neuron:Print("Sorry, you cannot place that ability at this time.")
