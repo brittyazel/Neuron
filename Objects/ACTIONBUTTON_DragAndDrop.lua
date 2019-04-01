@@ -28,6 +28,8 @@ local ACTIONBUTTON = Neuron.ACTIONBUTTON
 local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
 Neuron.macroDrag = macroDrag
 
+local macroCache = {} --this will hold onto any previous contents of our button
+
 --------------------------------------
 --------------------------------------
 
@@ -52,7 +54,14 @@ function ACTIONBUTTON:OnDragStart()
 
 	if (self.drag) then
 
-		self:PickUpMacro()
+		if macroCache[1] then
+			self:PickUpMacro()
+		else
+			ClearCursor()
+			PickupSpell(self.spellID) --We are only using this function for the icon effect.
+			self:PickUpMacro()
+		end
+
 
 		if (macroDrag[1]) then
 			Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
@@ -65,20 +74,12 @@ function ACTIONBUTTON:OnDragStart()
 
 end
 
-
-function ACTIONBUTTON:OnDragStop()
-	--note** The OnDragStop event fires on the button that was being dragged FROM not the button being dragged onto
-	SetCursor(nil)
-	ClearCursor()
-end
-
 --This is the function that fires when a button is receiving a dragged item
 function ACTIONBUTTON:OnReceiveDrag()
+
 	if InCombatLockdown() then --don't allow moving or changing macros while in combat. This will cause taint
 		return
 	end
-
-	local macroCache = {} --this will hold onto any previous contents of our button
 
 	local cursorType, action1, action2, spellID = GetCursorInfo()
 
@@ -93,7 +94,9 @@ function ACTIONBUTTON:OnReceiveDrag()
 		macroCache[8] = self.data.macro_Note
 		macroCache[9] = self.data.macro_UseNote
 
-		PickupSpell(self.spellID)
+		ClearCursor()
+		PickupSpell(self.spellID) --We are only using this function for the icon effect.
+
 	end
 
 
@@ -125,11 +128,13 @@ function ACTIONBUTTON:OnReceiveDrag()
 		self:PlacePetAbility(action1, action2)
 	end
 
-
 	if (macroCache[1]) then
-		wipe(macroDrag)
-		self:PickUpMacro(macroCache)
+		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
 		Neuron:ToggleButtonGrid(true)
+	else
+		print("test")
+		SetCursor(nil)
+		ClearCursor() --if we did not pick up a new spell, clear the cursor
 	end
 
 	self:UpdateAll()
@@ -140,27 +145,14 @@ function ACTIONBUTTON:OnReceiveDrag()
 end
 
 
-function ACTIONBUTTON:PreClick()
-
-	if (not InCombatLockdown() and MouseIsOver(self)) then
-
-		if (macroDrag[1]) then
-
-			self:SetType()
-
-			Neuron:ToggleButtonGrid(true)
-
-			self:OnReceiveDrag(true)
-
-		end
-	end
-
+function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
+	self:OnReceiveDrag()
 end
 --------------------------------------
 --------------------------------------
 
 
-function ACTIONBUTTON:PickUpMacro(macroCache)
+function ACTIONBUTTON:PickUpMacro()
 
 
 	local pickup
@@ -177,13 +169,11 @@ function ACTIONBUTTON:PickUpMacro(macroCache)
 
 	if (pickup) then
 
-		if macroCache then  --triggers when picking up an existing button with a button in the cursor
+		if macroCache[1] then  --triggers when picking up an existing button with a button in the cursor
 
 			macroDrag = CopyTable(macroCache)
 
 		elseif (self:HasAction()) then
-
-			PickupSpell(self.spellID)
 
 			macroDrag[1] = self:GetDragAction()
 			macroDrag[2] = self.data.macro_Text
@@ -211,7 +201,6 @@ function ACTIONBUTTON:PickUpMacro(macroCache)
 			self.macroicon = nil
 
 			self:SetType()
-
 		end
 
 	end
