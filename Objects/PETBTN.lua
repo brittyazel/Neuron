@@ -319,6 +319,11 @@ function PETBTN:OnDragStop()
 end
 
 function PETBTN:OnReceiveDrag()
+
+	if InCombatLockdown() then
+		return
+	end
+
 	local cursorType = GetCursorInfo()
 
 	if (cursorType == "petaction") then

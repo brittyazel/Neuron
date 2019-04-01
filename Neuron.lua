@@ -216,12 +216,6 @@ function Neuron:OnEnable()
 		end)
 	end
 
-
-	--this is to allow for the correct releasing of the button when dragging icons off of the bar
-	if not Neuron:IsHooked(WorldFrame, "OnMouseDown") then
-		Neuron:HookScript(WorldFrame, "OnMouseDown", function() Neuron.ACTIONBUTTON:OnMouseDown() end)
-	end
-
 	Neuron:LoginMessage()
 
 	--Load bars and buttons
