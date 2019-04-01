@@ -54,6 +54,8 @@ function ACTIONBUTTON:OnDragStart()
 
 		ClearCursor()
 
+		--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, becasue once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
+		--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
 		--TODO: Fix this so we don't keep default to the questionmark for any "non-spells"
 		if self.spellID and not self.data.macro_isPetSpell then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
 			PickupSpell(self.spellID) --We are only using this function for the icon effect.
@@ -156,6 +158,7 @@ function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-c
 	end
 end
 
+--we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
 function ACTIONBUTTON:WorldFrame_OnReceiveDrag()
 	if macroDrag[1] then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
 		SetCursor(nil)

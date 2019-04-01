@@ -235,10 +235,10 @@ function ACTIONBUTTON:SetType()
 	self:SetScript("OnDragStart", function(self, mousebutton) self:OnDragStart(mousebutton) end)
 
 	--this is to allow for the correct releasing of the button when dragging icons off of the bar
+	--we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
 	if not Neuron:IsHooked(WorldFrame, "OnReceiveDrag") then
 		Neuron:HookScript(WorldFrame, "OnReceiveDrag", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
 	end
-
 	if not Neuron:IsHooked(WorldFrame, "OnMouseDown") then
 		Neuron:HookScript(WorldFrame, "OnMouseDown", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
 	end
