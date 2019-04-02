@@ -919,10 +919,15 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 
 		spellName,_,_,_,_,_,spell_id = GetSpellInfo(spell)
 
-		if (self.UberTooltips) then
-			GameTooltip:SetSpellByID(spell_id)
+		if spellName and spell_id then --add safety check in case spellName and spell_id come back as nil
+			if (self.UberTooltips ) then
+				GameTooltip:SetSpellByID(spell_id)
+			else
+				GameTooltip:SetText(spellName, 1, 1, 1)
+			end
+
 		else
-			GameTooltip:SetTexts(spellName, 1, 1, 1)
+			GameTooltip:SetText(UNKNOWN, 1, 1, 1)
 		end
 
 	end

@@ -54,7 +54,7 @@ function ACTIONBUTTON:OnDragStart()
 
 		ClearCursor()
 
-		--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, becasue once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
+		--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, because once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
 		--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
 		self:SetMouseCursor()
 
