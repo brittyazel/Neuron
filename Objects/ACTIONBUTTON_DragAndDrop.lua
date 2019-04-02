@@ -132,6 +132,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 
 	self:SetType()
 	self:UpdateAll()
+	self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateObjectGUI()
