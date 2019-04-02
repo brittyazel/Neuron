@@ -56,25 +56,15 @@ function ACTIONBUTTON:OnDragStart()
 
 		--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, becasue once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
 		--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
-		--TODO: Fix this so we don't keep default to the questionmark for any "non-spells"
-		--[[if self.spellID and not self.data.macro_isPetSpell then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
-			PickupSpell(self.spellID) --We are only using this function for the icon effect.
-		elseif(self.macrospell and GetSpellInfo(self.macrospell) and not self.data.macro_isPetSpell) then
-			local spellID
-			_,_,_,_,_,_,spellID = GetSpellInfo(self.macrospell)
-			if spellID then
-				PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
-			end
-		else]]
-			PickupItem(1217) --questionmark symbol
-		--end
+		self:SetMouseCursor()
 
 		self:PickUpMacro()
 
 		Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
 
+		self:SetType()
+		self:UpdateAll()
 		self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
-
 	end
 
 end
@@ -139,8 +129,6 @@ function ACTIONBUTTON:OnReceiveDrag()
 		SetCursor(nil)
 		ClearCursor() --if we did not pick up a new spell, clear the cursor
 	end
-
-	test = self
 
 	self:SetType()
 	self:UpdateAll()
@@ -535,4 +523,54 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 		self:UpdateFlyout(true)
 
 	end
+end
+
+
+function ACTIONBUTTON:SetMouseCursor()
+
+	if self.spellID then
+		PickupSpell(self.spellID)
+
+		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+			return
+		end
+	end
+
+	if self.macroshow then
+		local spellID
+		_,_,_,_,_,_,spellID = GetSpellInfo(self.macroshow)
+		if spellID then
+			PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
+		end
+		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+			return
+		end
+	end
+
+	if self.macrospell then
+		local spellID
+		_,_,_,_,_,_,spellID = GetSpellInfo(self.macrospell)
+		if spellID then
+			PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
+		end
+		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+			return
+		end
+	end
+
+	if self.macroitem then
+
+		PickupItem(self.macroitem) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
+
+		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+			return
+		end
+	end
+
+	--failsafe so there is 'something' on the mouse cursor
+	PickupItem(1217) --questionmark symbol
+
+
+
+
 end
