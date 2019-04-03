@@ -812,6 +812,7 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 
 	self:SetObjectVisibility()
 
+
 	Neuron.KEYBINDER:ApplyBindings(self)
 
 end
@@ -1284,22 +1285,6 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 		end
 	else
 		_,_,_,_,_,_,spellID = GetSpellInfo(spell)
-	end
-
-
-	--Spells that need their primary spell name overwritten
-	--This is mostly the case for hunter spells, but there could be others
-	local AlternateSpellNameList = {
-		[883]   = "Call Pet 1",
-		[83242] = "Call Pet 2",
-		[83243] = "Call Pet 3",
-		[83244] = "Call Pet 4",
-		[83245] = "Call Pet 5",
-	}
-
-	--actually overwrite the spell name
-	if spellID and AlternateSpellNameList[spellID] then
-		spell = AlternateSpellNameList[spellID]
 	end
 
 	local modifier, modKey = " ", nil
