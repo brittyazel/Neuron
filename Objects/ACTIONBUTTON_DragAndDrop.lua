@@ -528,14 +528,7 @@ end
 
 
 function ACTIONBUTTON:SetMouseCursor()
-
-	if self.spellID then
-		PickupSpell(self.spellID)
-
-		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
-			return
-		end
-	end
+	
 
 	if self.macroshow then
 		local spellID
@@ -560,8 +553,7 @@ function ACTIONBUTTON:SetMouseCursor()
 	end
 
 	if self.macroitem then
-
-		PickupItem(self.macroitem) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
+		PickupItem(self.macroitem) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
 
 		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
 			return
