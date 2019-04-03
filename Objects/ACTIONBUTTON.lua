@@ -812,6 +812,10 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 
 	self:SetObjectVisibility()
 
+	if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
+		self:ScheduleTimer(function() self:SetType() end, 1)
+	end
+
 
 	Neuron.KEYBINDER:ApplyBindings(self)
 
