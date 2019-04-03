@@ -60,13 +60,13 @@ function ACTIONBUTTON:OnDragStart()
 
 		self:PickUpMacro()
 
-		Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
-
 		self:SetType()
 		self:UpdateAll()
 		self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
+
 	end
 
+	Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
 end
 
 --This is the function that fires when a button is receiving a dragged item
@@ -122,6 +122,10 @@ function ACTIONBUTTON:OnReceiveDrag()
 
 	wipe(macroDrag)
 
+	self:SetType()
+	self:UpdateAll()
+	self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
+
 	if (macroCache[1]) then
 		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
 		Neuron:ToggleButtonGrid(true)
@@ -129,10 +133,6 @@ function ACTIONBUTTON:OnReceiveDrag()
 		SetCursor(nil)
 		ClearCursor() --if we did not pick up a new spell, clear the cursor
 	end
-
-	self:SetType()
-	self:UpdateAll()
-	self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
 
 	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateObjectGUI()
@@ -143,7 +143,6 @@ end
 function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
 	if macroDrag[1] then
 		self:OnReceiveDrag()
-		Neuron:ToggleButtonGrid()
 	end
 end
 
@@ -528,7 +527,7 @@ end
 
 
 function ACTIONBUTTON:SetMouseCursor()
-	
+
 
 	if self.macroshow then
 		local spellID

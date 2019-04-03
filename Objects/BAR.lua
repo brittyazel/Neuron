@@ -1202,7 +1202,6 @@ function BAR:LoadObjects()
 		object:SetType()
 
 		object:SetObjectVisibility()
-
 	end
 end
 
