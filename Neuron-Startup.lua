@@ -201,8 +201,6 @@ function Neuron:CreateBarsAndButtons()
 				for buttonID=1,#defaults.buttons do
 					newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID]) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
 				end
-
-				newBar:Load() --load the bar
 			end
 
 		end
@@ -220,8 +218,6 @@ function Neuron:CreateBarsAndButtons()
 					for buttonID=1,#newBar.DB.buttons do
 						newBar.objTemplate.new(newBar, buttonID) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
 					end
-
-					newBar:Load() --load the bar
 				end
 			end
 		end
