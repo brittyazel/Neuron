@@ -27,7 +27,7 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local LATEST_VERSION_NUM = 1.1 --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local LATEST_VERSION_NUM = "1.1.3" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local LATEST_DB_VERSION = 1.3
 
@@ -374,6 +374,7 @@ function Neuron:LoginMessage()
 		print("    Happy Spring!")
 		print("    Neuron is in for an exciting year, thank you so much for your support.")
 		print("    Please reach out if you are interested in contributing to Neuron's development, we always need more help coding and translating, and, as always, donations are welcome! :-)")
+		print("    Special thanks to Acey7 for translating Neuron into Simplified Chinese!")
 		print("       -Soyier")
 
 		if UnitFactionGroup('player') == "Horde" then
