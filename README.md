@@ -86,10 +86,11 @@ A good place to start coding is by looking through the **[issue tracker](https:/
 
 ## Credits:
 Translators:
-* German: Aszkarath
-* French: Cinedelle
+* German: Aszkarath, Wolfsmutter
+* French: Cinedelle, El_Mapache
 * Brazilian Portuguese: Alanbre20
 * Russian: Hubbotu
+* Simplified Chinese: Acey7, Cestmysndee
 
 **Disclaimer:**
 
