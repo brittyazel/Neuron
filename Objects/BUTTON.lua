@@ -260,30 +260,30 @@ function BUTTON:CooldownCounterUpdate()
 		else
 
 			if (coolDown >= 86400) then --append a "d" if the timer is longer than 1 day
-			formatted = string.format( "%.0f", coolDown/86400)
+				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >= 3600) then --append a "h" if the timer is longer than 1 hour
-			formatted = string.format( "%.0f",coolDown/3600)
+				formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >= 60) then --append a "m" if the timer is longer than 1 min
-			formatted = string.format( "%.0f",coolDown/60)
+				formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >=6) then --this is the 'normal' countdown text state
-			formatted = string.format( "%.0f",coolDown)
+				formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.45
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown < 6) then --this is the countdown text state but with the text larger and set to the expire color (usually red)
-			formatted = string.format( "%.0f",coolDown)
+				formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.6
 				if (expirecolor) then
 					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])

@@ -117,9 +117,9 @@ function BAR.new(class, barID)
 	newBar:SetWidth(375)
 	newBar:SetHeight(40)
 	newBar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-	                 edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-	                 tile = true, tileSize = 16, edgeSize = 12,
-	                 insets = {left = 4, right = 4, top = 4, bottom = 4}})
+	                    edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+	                    tile = true, tileSize = 16, edgeSize = 12,
+	                    insets = {left = 4, right = 4, top = 4, bottom = 4}})
 	newBar:SetBackdropColor(0,0,0,0.4)
 	newBar:SetBackdropBorderColor(0,0,0,0)
 	newBar:RegisterForClicks("AnyDown", "AnyUp")
