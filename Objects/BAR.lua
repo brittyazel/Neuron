@@ -392,8 +392,9 @@ function BAR:AutoHideUpdate()
 		end
 	end
 
+end
 
-
+function BAR:AlphaUpUpdate()
 	if (self.data.alphaUp and self.handler~=nil) then
 
 		if (self:IsShown()) then
@@ -528,7 +529,6 @@ function BAR:AutoHideUpdate()
 			end
 		end
 	end
-
 end
 
 
@@ -563,6 +563,16 @@ function BAR:SetAutoHide()
 		end
 	else
 		self:CancelTimer(self.autoHideTimer)
+	end
+end
+
+function BAR:SetAlphaUp()
+	if (self.data.alphaUp) then
+		if self:TimeLeft(self.alphaUpTimer) == 0 then --safety check to make sure we don't re-set an already active timer
+			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", .05)
+		end
+	else
+		self:CancelTimer(self.alphaUpTimer)
 	end
 end
 
@@ -1081,6 +1091,7 @@ function BAR:Update(show, hide)
 
 	self:SetHidden(handler, show, hide)
 	self:SetAutoHide()
+	self:SetAlphaUp()
 	self.text:SetText(self.data.name)
 	handler:SetAlpha(self.data.alpha)
 

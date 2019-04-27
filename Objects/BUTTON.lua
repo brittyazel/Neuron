@@ -156,13 +156,12 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 			CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
 		end
 
-		----- Clear the charge cooldown frame if it is still going from a different ability in a different state (i.e. frenzied regen in the same spot as Swiftmend)
+		-- Clear the charge cooldown frame if it is still going from a different ability in a different state (i.e. frenzied regen in the same spot as Swiftmend)
 		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
 			CooldownFrame_Clear(self.iconframechargecooldown)
 		end
-		-----
 
-		---this is only for abilities that have CD's >4 sec. Any less than that and we don't want to track the CD with text or alpha, just with the standard animation
+		--this is only for abilities that have CD's >4 sec. Any less than that and we don't want to track the CD with text or alpha, just with the standard animation
 		if (duration >= Neuron.TIMERLIMIT) then --if spells have a cooldown less than 4sec then don't show a full cooldown
 
 			if (showCountdownTimer or showCountdownAlpha) then --only set a timer if we explicitely want to (this saves CPU for a lot of people)
@@ -221,7 +220,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 		self.iconframecooldown.showCountdownTimer = false
 		self.iconframecooldown.showCountdownAlpha = false
 
-		---clear previous sweeping cooldown animations
+		--clear previous sweeping cooldown animations
 		CooldownFrame_Clear(self.iconframecooldown) --clear the cooldown frame
 		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
 			CooldownFrame_Clear(self.iconframechargecooldown)
@@ -260,30 +259,30 @@ function BUTTON:CooldownCounterUpdate()
 
 		else
 
-			if (coolDown >= 86400) then ---append a "d" if the timer is longer than 1 day
+			if (coolDown >= 86400) then --append a "d" if the timer is longer than 1 day
 			formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
-			elseif (coolDown >= 3600) then ---append a "h" if the timer is longer than 1 hour
+			elseif (coolDown >= 3600) then --append a "h" if the timer is longer than 1 hour
 			formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
-			elseif (coolDown >= 60) then ---append a "m" if the timer is longer than 1 min
+			elseif (coolDown >= 60) then --append a "m" if the timer is longer than 1 min
 			formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
 				size = self.iconframecooldown.button:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
-			elseif (coolDown >=6) then ---this is the 'normal' countdown text state
+			elseif (coolDown >=6) then --this is the 'normal' countdown text state
 			formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.45
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
-			elseif (coolDown < 6) then ---this is the countdown text state but with the text larger and set to the expire color (usually red)
+			elseif (coolDown < 6) then --this is the countdown text state but with the text larger and set to the expire color (usually red)
 			formatted = string.format( "%.0f",coolDown)
 				size = self.iconframecooldown.button:GetWidth()*0.6
 				if (expirecolor) then
@@ -635,7 +634,7 @@ function BUTTON:UpdateCooldown()
 	elseif (item and #item>0) then
 		self:SetItemCooldown(item)
 	else
-		---this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
+		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
 		self:SetCooldownTimer()
 	end
 end
