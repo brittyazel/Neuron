@@ -371,8 +371,6 @@ function BAR:AutoHideUpdate()
 						else
 							self.handler:SetAlpha(1)
 						end
-					else
-						self.seen = 1;
 					end
 
 				end
@@ -384,8 +382,6 @@ function BAR:AutoHideUpdate()
 						else
 							self.handler:SetAlpha(0)
 						end
-					else
-						self.seen = 0;
 					end
 				end
 			end
@@ -411,8 +407,6 @@ function BAR:AlphaUpUpdate()
 						else
 							self.handler:SetAlpha(1)
 						end
-					else
-						self.seen = 1;
 					end
 
 				else
@@ -425,8 +419,6 @@ function BAR:AlphaUpUpdate()
 								else
 									self.handler:SetAlpha(1)
 								end
-							else
-								self.seen = 1;
 							end
 						else
 							if (self.handler:GetAlpha() > self.data.alpha) then
@@ -435,8 +427,6 @@ function BAR:AlphaUpUpdate()
 								else
 									self.handler:SetAlpha(self.data.alpha)
 								end
-							else
-								self.seen = 0;
 							end
 						end
 					else
@@ -446,8 +436,6 @@ function BAR:AlphaUpUpdate()
 							else
 								self.handler:SetAlpha(self.data.alpha)
 							end
-						else
-							self.seen = 0;
 						end
 					end
 				end
@@ -462,8 +450,6 @@ function BAR:AlphaUpUpdate()
 						else
 							self.handler:SetAlpha(1)
 						end
-					else
-						self.seen = 1;
 					end
 
 				else
@@ -476,8 +462,6 @@ function BAR:AlphaUpUpdate()
 								else
 									self.handler:SetAlpha(1)
 								end
-							else
-								self.seen = 1;
 							end
 						else
 							if (self.handler:GetAlpha() > self.data.alpha) then
@@ -486,8 +470,6 @@ function BAR:AlphaUpUpdate()
 								else
 									self.handler:SetAlpha(self.data.alpha)
 								end
-							else
-								self.seen = 0;
 							end
 						end
 					else
@@ -497,8 +479,6 @@ function BAR:AlphaUpUpdate()
 							else
 								self.handler:SetAlpha(k.alpha)
 							end
-						else
-							self.seen = 0;
 						end
 					end
 				end
@@ -512,8 +492,6 @@ function BAR:AlphaUpUpdate()
 						else
 							self.handler:SetAlpha(1)
 						end
-					else
-						self.seen = 1;
 					end
 				else
 					if (self.handler:GetAlpha() > self.data.alpha) then
@@ -522,8 +500,6 @@ function BAR:AlphaUpUpdate()
 						else
 							self.handler:SetAlpha(self.data.alpha)
 						end
-					else
-						self.seen = 0;
 					end
 				end
 			end
