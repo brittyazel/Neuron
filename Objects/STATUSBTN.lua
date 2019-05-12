@@ -1783,6 +1783,15 @@ end
 
 function STATUSBTN:SetObjectVisibility(show)
 
+	--hide the status bars if the ToggleAllFlag isn't set
+	if not Neuron.ToggleAllFlag then
+		self:SetAlpha(0)
+		return
+	else
+		self:SetAlpha(1)
+	end
+
+
 	if (show) then
 
 		self.editmode = true

@@ -216,7 +216,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 		--cleanup so on state changes the cooldowns don't persist
 		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 		self.iconframecooldown.timer:SetText("")
-		if Neuron.ToggleAllFlag then
+		if Neuron.ToggleAllFlag then --check this flag to make sure we don't flash the Alpha for a split second before calling SetObjectVisibility below
 			self.iconframecooldown.button:SetAlpha(1)
 		end
 		self.iconframecooldown.showCountdownTimer = false
