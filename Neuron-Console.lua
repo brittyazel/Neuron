@@ -70,6 +70,8 @@ local slashFunctions = {
 	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
 	{L["BlizzUI"], L["BlizzUI_Description"], "ToggleBlizzUI"},
+	{L["ToggleAll"], L["ToggleAll_Description"], "ToggleAll"},
+
 }
 
 

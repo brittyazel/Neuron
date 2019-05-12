@@ -160,6 +160,10 @@ L["BlizzUI_Description"] = "Toggle Blizzard's DefaultUI"
 L["MoveSpecButtons"] = true
 L["MoveSpecButtons_Description"] = "Copies the buttons from one spec to a second"
 
+L["ToggleAll"] = true
+L["ToggleAll_Description"] = "Toggles the visibility state of all bars"
+
+
 
 -----------------------------------------------
 ------------------General----------------------

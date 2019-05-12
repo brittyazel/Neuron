@@ -118,7 +118,7 @@ end
 
 function ZONEABILITYBTN:SetObjectVisibility(show)
 
-	if GetZoneAbilitySpellInfo() or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+	if (GetZoneAbilitySpellInfo() or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode) and Neuron.ToggleAllFlag then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self:SetAlpha(1)
 	else
 		self:SetAlpha(0)

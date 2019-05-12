@@ -123,6 +123,8 @@ Neuron.SNAPTO_TOLLERANCE = 28
 
 Neuron.enteredWorld = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on logging with too many processes
 
+Neuron.ToggleAllFlag = true
+
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
@@ -649,13 +651,28 @@ end
 
 function Neuron:ToggleButtonGrid(show)
 	for _,bar in pairs(Neuron.BARIndex) do
-
 		if bar.barType == "ActionBar" or bar.barType == "PetBar" then
 			for _, button in pairs(bar.buttons) do
 				button:SetObjectVisibility(show)
 			end
 		end
 	end
+end
+
+function Neuron:ToggleAll()
+
+	if Neuron.ToggleAllFlag then
+		Neuron.ToggleAllFlag = false
+	else
+		Neuron.ToggleAllFlag = true
+	end
+
+	for _,bar in pairs(Neuron.BARIndex) do
+		for _, button in pairs(bar.buttons) do
+			button:SetObjectVisibility()
+		end
+	end
+
 end
 
 
