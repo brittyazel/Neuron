@@ -263,6 +263,7 @@ L["Left-Click to Configure Bars"] = true
 L["Right-Click to Configure Buttons"] = true
 L["Shift + Left-Click to Toggle Keybind Mode"] = true
 L["Shift + Right-Click to Toggle the Interface Menu"] = true
+L["Alt + Left-Click to Toggle the Visibility of all Neuron Bars"] = true
 
 
 L["Keybind_Tooltip_1"] = "Press a key to bind it to"

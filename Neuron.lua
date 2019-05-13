@@ -601,8 +601,7 @@ end
 
 
 function Neuron:UpdateStanceStrings()
-	if (Neuron.class == "DRUID" or
-			Neuron.class == "ROGUE") then
+	if (Neuron.class == "DRUID" or Neuron.class == "ROGUE") then
 
 		local icon, active, castable, spellID
 

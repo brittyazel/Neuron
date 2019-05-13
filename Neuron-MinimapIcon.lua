@@ -62,15 +62,25 @@ function Neuron:Minimap_OnClickHandler(frame, button)
 	end
 
 	PlaySound(SOUNDKIT.IG_CHAT_SCROLL_DOWN)
+	
+	if button == "LeftButton" then
 
-	if (button == "LeftButton" and not IsShiftKeyDown()) then
-		Neuron:ToggleBarEditMode(true)
-	elseif (button == "RightButton" and not IsShiftKeyDown()) then
-		Neuron:ToggleButtonEditMode(true)
-	elseif (button == "LeftButton" and IsShiftKeyDown()) then
-		Neuron:ToggleBindingMode(true)
-	elseif (button == "RightButton" and IsShiftKeyDown()) then
-		Neuron:ToggleMainMenu()
+		if IsShiftKeyDown() then
+			Neuron:ToggleBindingMode(true)
+		elseif IsAltKeyDown() then
+			Neuron:ToggleAll()
+		else
+			Neuron:ToggleBarEditMode(true)
+		end
+
+	elseif button == "RightButton" then
+
+		if IsShiftKeyDown() then
+			Neuron:ToggleMainMenu()
+		else
+			Neuron:ToggleButtonEditMode(true)
+		end
+
 	end
 
 end
@@ -78,10 +88,14 @@ end
 function Neuron:Minimap_TooltipHandler(tooltip)
 
 	tooltip:SetText("Neuron", 1, 1, 1)
+	tooltip:AddLine(" ")
 	tooltip:AddLine(L["Left-Click to Configure Bars"])
 	tooltip:AddLine(L["Right-Click to Configure Buttons"])
+	tooltip:AddLine(" ")
 	tooltip:AddLine(L["Shift + Left-Click to Toggle Keybind Mode"])
 	tooltip:AddLine(L["Shift + Right-Click to Toggle the Interface Menu"])
+	tooltip:AddLine(" ")
+	tooltip:AddLine(L["Alt + Left-Click to Toggle the Visibility of all Neuron Bars"])
 
 	tooltip:Show()
 
