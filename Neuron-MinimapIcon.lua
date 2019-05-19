@@ -62,7 +62,7 @@ function Neuron:Minimap_OnClickHandler(frame, button)
 	end
 
 	PlaySound(SOUNDKIT.IG_CHAT_SCROLL_DOWN)
-	
+
 	if button == "LeftButton" then
 
 		if IsShiftKeyDown() then
@@ -88,14 +88,13 @@ end
 function Neuron:Minimap_TooltipHandler(tooltip)
 
 	tooltip:SetText("Neuron", 1, 1, 1)
-	tooltip:AddLine(" ")
-	tooltip:AddLine(L["Left-Click to Configure Bars"])
-	tooltip:AddLine(L["Right-Click to Configure Buttons"])
-	tooltip:AddLine(" ")
-	tooltip:AddLine(L["Shift + Left-Click to Toggle Keybind Mode"])
-	tooltip:AddLine(L["Shift + Right-Click to Toggle the Interface Menu"])
-	tooltip:AddLine(" ")
-	tooltip:AddLine(L["Alt + Left-Click to Toggle the Visibility of all Neuron Bars"])
+	--the formatting for the following strings is such that the key combo is in yellow, and the description is in white. This helps it be more readable at a glance
+	--another route would be to use AddDoubleLine, to have a left justified string and a right justified string on the same line
+	tooltip:AddLine(L["Left-Click"] .. ":    " .. "|cFFFFFFFF"..L["Configure Bars"])
+	tooltip:AddLine(L["Right-Click"] .. ":    " .. "|cFFFFFFFF"..L["Configure Buttons"])
+	tooltip:AddLine(L["Shift"] .. " + " .. L["Left-Click"] .. ":    " .. "|cFFFFFFFF"..L["Toggle Keybind Mode"])
+	tooltip:AddLine(L["Shift"] .. " + " .. L["Right-Click"] .. ":    " .. "|cFFFFFFFF"..L["Open the Interface Menu"])
+	tooltip:AddLine(L["Alt"] .. " + " .. L["Left-Click"] .. ":    " .. "|cFFFFFFFF"..L["Toggle Visibility of Neuron Bars"])
 
 	tooltip:Show()
 

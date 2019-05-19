@@ -259,11 +259,17 @@ L["Healer Form"] = true
 L["Melee"] = true
 L["Shadow Dance"] = true
 
-L["Left-Click to Configure Bars"] = true
-L["Right-Click to Configure Buttons"] = true
-L["Shift + Left-Click to Toggle Keybind Mode"] = true
-L["Shift + Right-Click to Toggle the Interface Menu"] = true
-L["Alt + Left-Click to Toggle the Visibility of all Neuron Bars"] = true
+
+L["Left-Click"] = true
+L["Right-Click"] = true
+
+L["Configure Bars"] = true
+L["Configure Buttons"] = true
+
+L["Toggle Keybind Mode"] = true
+L["Open the Interface Menu"] = true
+
+L["Toggle Visibility of Neuron Bars"] = true
 
 
 L["Keybind_Tooltip_1"] = "Press a key to bind it to"
