@@ -25,6 +25,7 @@ Neuron.KEYBINDER = KEYBINDER
 
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+LibStub("AceTimer-3.0"):Embed(KEYBINDER)
 
 
 local DEFAULT_VIRTUAL_KEY = "LeftButton"
@@ -49,7 +50,6 @@ function KEYBINDER.new(button)
 	newKeyBinder:SetScript("OnClick", function(self, mouseButton) self:OnClick(mouseButton) end)
 	newKeyBinder:SetScript("OnKeyDown", function(self, key) self:OnKeyDown(key) end)
 	newKeyBinder:SetScript("OnMouseWheel", function(self, delta) self:OnMouseWheel(delta) end)
-	newKeyBinder:SetScript("OnUpdate", function(self) self:OnUpdate() end)
 
 	newKeyBinder.type:SetText(L["Bind"])
 	newKeyBinder.button = button
@@ -174,24 +174,6 @@ function KEYBINDER:ClearBindings(key)
 end
 
 
---- Sets a keybinding to a button
---- @param key string @The key to be used
-function KEYBINDER:SetNeuronBinding(key)
-	local found
-
-	self.button.keys.hotKeys:gsub("[^:]+", function(binding) if(binding == key) then found = true end end)
-
-	if (not found) then
-		local keytext = self:GetKeyText(key)
-
-		self.button.keys.hotKeys = self.button.keys.hotKeys..key..":"
-		self.button.keys.hotKeyText = self.button.keys.hotKeyText..keytext..":"
-	end
-
-	self:ApplyBindings()
-end
-
-
 --- Applies binding to button
 function KEYBINDER:ApplyBindings()
 
@@ -223,23 +205,44 @@ end
 --- Processes the change to a key bind
 --- @param key string @The key to be used
 function KEYBINDER:ProcessBinding(key)
+
+	--if the button is locked, warn the user as to the locked status
 	if (self.button and self.button.keys and self.button.keys.hotKeyLock) then
 		UIErrorsFrame:AddMessage(L["Bindings_Locked_Notice"], 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME)
 		return
 	end
 
+	--if the key being pressed is escape, clear the bindings on the button
 	if (key == "ESCAPE") then
+
 		self:ClearBindings()
+
+		--if the key is anything else, keybind the button to this key
 	elseif (key) then --checks to see if another keybind already has that key, and if so clears it from the other button
+
+		--check to see if any other button has this key bound to it, ignoring locked buttons, and if so remove the key from the other button
 		for _,binder in pairs(Neuron.BINDIndex) do
-			if (self.button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
+			if (self.button ~= binder.button and not binder.button.keys.hotKeyLock) then
 				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then binder:ClearBindings(binding) binder:ApplyBindings() end end)
 			end
 		end
 
-		self:SetNeuronBinding(key)
+		--search the current hotKeys to see if our new key is missing, and if so add it
+		local found
+		self.button.keys.hotKeys:gsub("[^:]+", function(binding) if(binding == key) then found = true end end)
+
+		if not found then
+			local keytext = self:GetKeyText(key)
+
+			self.button.keys.hotKeys = self.button.keys.hotKeys..key..":"
+			self.button.keys.hotKeyText = self.button.keys.hotKeyText..keytext..":"
+		end
+
+		self:ApplyBindings()
+
 	end
 
+	--update the tooltip to reflect the changes to the keybinds
 	if (self:IsVisible()) then
 		self:OnEnter()
 	end
@@ -266,13 +269,23 @@ function KEYBINDER:OnShow()
 		self.type:SetText(priority.."|cffffffff"..L["Bind"].."|r")
 	end
 
+	--set a repeating timer when the keybinder is shown to enable or disable Keyboard input on mouseover.
+	self.keybindUpdateTimer = self:ScheduleRepeatingTimer(function()
+		if (self:IsMouseOver()) then
+			self:EnableKeyboard(true)
+		else
+			self:EnableKeyboard(false)
+		end
+	end, 0.1)
+
 end
 
 
 --- OnHide Event handler
 function KEYBINDER:OnHide()
+	--Cancel the repeating time when hiding the bar
+	self:CancelTimer(self.keybindUpdateTimer)
 end
-
 
 --- OnEnter Event handler
 function KEYBINDER:OnEnter()
@@ -315,19 +328,6 @@ function KEYBINDER:OnLeave()
 	self.select:Hide()
 	GameTooltip:Hide()
 end
-
-
---- OnUpdate Event handler
-function KEYBINDER:OnUpdate()
-	if(Neuron.enteredWorld) then
-		if (self:IsMouseOver()) then
-			self:EnableKeyboard(true)
-		else
-			self:EnableKeyboard(false)
-		end
-	end
-end
-
 
 --- OnClick Event handler
 --- @param mousebutton string @The button that was clicked
