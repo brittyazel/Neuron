@@ -86,7 +86,7 @@ function ZONEABILITYBTN:OnEvent(event, ...)
 	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
-		Neuron.KEYBINDER:ApplyBindings(self)
+		self.binder:ApplyBindings()
 	end
 end
 

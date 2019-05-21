@@ -63,9 +63,6 @@ function KEYBINDER.new(button)
 
 	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = newKeyBinder
 
-	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
-	button:SetAttribute("hotkeys", button.keys.hotKeys)
-
 	newKeyBinder:Hide()
 
 	return newKeyBinder
@@ -76,7 +73,7 @@ end
 
 --- Returns a string representation of the modifier that is currently being pressed down, if any
 --- @return string @Field of the key modifiers currently being pressed
-function KEYBINDER:GetModifier()
+local function GetModifier()
 	local modifier
 
 	if (IsAltKeyDown()) then
@@ -104,13 +101,12 @@ end
 
 
 --- Returns the keybind for a given button
---- @param button BUTTON @The button to keybindings to look up
 --- @return string @The current key that is bound to the selected button
-function KEYBINDER:GetBindkeyList(button)
+function KEYBINDER:GetBindkeyList()
 
-	if (not button.data) then return L["None"] end
+	if (not self.button.data) then return L["None"] end
 
-	local bindkeys = button.keys.hotKeyText:gsub(":", ", ")
+	local bindkeys = self.button.keys.hotKeyText:gsub(":", ", ")
 
 	bindkeys = bindkeys:gsub("^, ", "")
 	bindkeys = bindkeys:gsub(", $", "")
@@ -162,19 +158,18 @@ end
 
 
 --- Clears the bindings of a given button
---- @param button BUTTON @The button to clear
 --- @param key string @Which key was pressed
-function KEYBINDER:ClearBindings(button, key)
+function KEYBINDER:ClearBindings(key)
 	if (key) then
-		SetOverrideBinding(button, true, key, nil)
+		SetOverrideBinding(self.button, true, key, nil)
 
 		local newkey = key:gsub("%-", "%%-")
-		button.keys.hotKeys = button.keys.hotKeys:gsub(newkey..":", "")
+		self.button.keys.hotKeys = self.button.keys.hotKeys:gsub(newkey..":", "")
 
 		local keytext = self:GetKeyText(key)
-		button.keys.hotKeyText = button.keys.hotKeyText:gsub(keytext..":", "")
+		self.button.keys.hotKeyText = self.button.keys.hotKeyText:gsub(keytext..":", "")
 	else
-		local bindCmdPrefix = "CLICK " .. button:GetName()
+		local bindCmdPrefix = "CLICK " .. self.button:GetName()
 
 		---clear bindings for all virtual keys (LeftButton, Hotkey, ...)
 		---using the bindCmdPrefix and concatenating it with each virtual key
@@ -186,87 +181,79 @@ function KEYBINDER:ClearBindings(button, key)
 			end
 		end
 
-		ClearOverrideBindings(button)
-		button.keys.hotKeys = ":"
-		button.keys.hotKeyText = ":"
+		ClearOverrideBindings(self.button)
+		self.button.keys.hotKeys = ":"
+		self.button.keys.hotKeyText = ":"
 	end
 
-	self:ApplyBindings(button)
+	self:ApplyBindings()
 end
 
 
 --- Sets a keybinding to a button
---- @param button BUTTON @The button to set keybinding for
 --- @param key string @The key to be used
-function KEYBINDER:SetNeuronBinding(button, key)
+function KEYBINDER:SetNeuronBinding(key)
 	local found
 
-	gsub(button.keys.hotKeys, "[^:]+", function(binding) if(binding == key) then found = true end end)
+	self.button.keys.hotKeys:gsub("[^:]+", function(binding) if(binding == key) then found = true end end)
 
 	if (not found) then
 		local keytext = self:GetKeyText(key)
 
-		button.keys.hotKeys = button.keys.hotKeys..key..":"
-		button.keys.hotKeyText = button.keys.hotKeyText..keytext..":"
+		self.button.keys.hotKeys = self.button.keys.hotKeys..key..":"
+		self.button.keys.hotKeyText = self.button.keys.hotKeyText..keytext..":"
 	end
 
-	self:ApplyBindings(button)
+	self:ApplyBindings()
 end
 
 
 --- Applies binding to button
---- @param button BUTTON @The button to apply settings go
-function KEYBINDER:ApplyBindings(button)
-	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
+function KEYBINDER:ApplyBindings()
 
 	local virtualKey
 
 	---checks if the button is a Neuron action or a special Blizzard action (such as a zone ability)
 	---this is necessary because Blizzard buttons usually won't work and can give very weird results
 	---if clicked with a virtual key other than the default "LeftButton"
-	if (button.class == "ActionBar") then
+	if (self.button.class == "ActionBar") then
 		virtualKey = NEURON_VIRTUAL_KEY
 	else
 		virtualKey = DEFAULT_VIRTUAL_KEY
 	end
 
-	if (button:IsVisible() or button:GetParent():GetAttribute("concealed")) then
-		gsub(button.keys.hotKeys, "[^:]+", function(key) SetOverrideBindingClick(button, button.keys.hotKeyPri, key, button:GetName(), virtualKey) end)
+	if (self.button:IsVisible() or self.button:GetParent():GetAttribute("concealed")) then
+		self.button.keys.hotKeys:gsub("[^:]+", function(key) SetOverrideBindingClick(self.button, self.button.keys.hotKeyPri, key, self.button:GetName(), virtualKey) end)
 	end
 
-	button:SetAttribute("hotkeys", button.keys.hotKeys)
+	self.button.hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
 
-	button.hotkey:SetText(button.keys.hotKeyText:match("^:([^:]+)") or "")
-
-	if (button.bindText) then
-		button.hotkey:Show()
+	if (self.button.bindText) then
+		self.button.hotkey:Show()
 	else
-		button.hotkey:Hide()
+		self.button.hotkey:Hide()
 	end
-
-	if (GetCurrentBindingSet() > 0 and GetCurrentBindingSet() < 3) then SaveBindings(GetCurrentBindingSet()) end
 end
 
 
 --- Processes the change to a key bind
 --- @param key string @The key to be used
---- @param button BUTTON @The button to set keybinding for
-function KEYBINDER:ProcessBinding(key, button)
-	if (button and button.keys and button.keys.hotKeyLock) then
+function KEYBINDER:ProcessBinding(key)
+	if (self.button and self.button.keys and self.button.keys.hotKeyLock) then
 		UIErrorsFrame:AddMessage(L["Bindings_Locked_Notice"], 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME)
 		return
 	end
 
 	if (key == "ESCAPE") then
-		self:ClearBindings(button)
+		self:ClearBindings()
 	elseif (key) then --checks to see if another keybind already has that key, and if so clears it from the other button
 		for _,binder in pairs(Neuron.BINDIndex) do
-			if (button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
-				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then binder:ClearBindings(binder.button, binding) binder:ApplyBindings(binder.button) end end)
+			if (self.button ~= binder.button and binder.button.keys and not binder.button.keys.hotKeyLock) then
+				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then binder:ClearBindings(binding) binder:ApplyBindings() end end)
 			end
 		end
 
-		self:SetNeuronBinding(button, key)
+		self:SetNeuronBinding(key)
 	end
 
 	if (self:IsVisible()) then
@@ -278,26 +265,23 @@ end
 
 --- OnShow Event handler
 function KEYBINDER:OnShow()
-	local button = self.button
 
-	if (button) then
-
-		if (button.bar) then
-			self:SetFrameLevel(button.bar:GetFrameLevel()+1)
-		end
-
-		local priority = ""
-
-		if (button.keys.hotKeyPri) then
-			priority = "|cff00ff00"..L["Priority"].."|r\n"
-		end
-
-		if (button.keys.hotKeyLock) then
-			self.type:SetText(priority.."|cfff00000"..L["Locked"].."|r")
-		else
-			self.type:SetText(priority.."|cffffffff"..L["Bind"].."|r")
-		end
+	if (self.button.bar) then
+		self:SetFrameLevel(self.button.bar:GetFrameLevel()+1)
 	end
+
+	local priority = ""
+
+	if (self.button.keys.hotKeyPri) then
+		priority = "|cff00ff00"..L["Priority"].."|r\n"
+	end
+
+	if (self.button.keys.hotKeyLock) then
+		self.type:SetText(priority.."|cfff00000"..L["Locked"].."|r")
+	else
+		self.type:SetText(priority.."|cffffffff"..L["Bind"].."|r")
+	end
+
 end
 
 
@@ -332,7 +316,7 @@ function KEYBINDER:OnEnter()
 	GameTooltip:ClearLines()
 	GameTooltip:SetText("Neuron", 1.0, 1.0, 1.0)
 	GameTooltip:AddLine(L["Keybind_Tooltip_1"] .. ": |cffffffff" .. name  .. "|r")
-	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffffff" .. self:GetBindkeyList(self.button) .. "|r")
+	GameTooltip:AddLine(L["Keybind_Tooltip_2"] .. ": |cffffffff" .. self:GetBindkeyList() .. "|r")
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddLine(L["Keybind_Tooltip_3"])
 	GameTooltip:AddLine(L["Keybind_Tooltip_4"])
@@ -362,10 +346,10 @@ end
 
 
 --- OnClick Event handler
---- @param buttonpressed string @The button that was clicked
-function KEYBINDER:OnClick(buttonpressed)
+--- @param mousebutton string @The button that was clicked
+function KEYBINDER:OnClick(mousebutton)
 
-	if (buttonpressed == "LeftButton") then
+	if (mousebutton == "LeftButton") then
 
 		if (self.button.keys.hotKeyLock) then
 			self.button.keys.hotKeyLock = false
@@ -378,33 +362,34 @@ function KEYBINDER:OnClick(buttonpressed)
 		return
 	end
 
-	if (buttonpressed == "RightButton") then
+	if (mousebutton== "RightButton") then
 		if (self.button.keys.hotKeyPri) then
 			self.button.keys.hotKeyPri = false
 		else
 			self.button.keys.hotKeyPri = true
 		end
 
-		self:ApplyBindings(self.button)
+		self:ApplyBindings()
 
 		self:OnShow()
 
 		return
 	end
 
-	local modifier, key = self:GetModifier()
+	local modifier = GetModifier()
+	local key
 
-	if (buttonpressed == "MiddleButton") then
+	if (mousebutton == "MiddleButton") then
 		key = "Button3"
 	else
-		key = buttonpressed
+		key = mousebutton
 	end
 
 	if (modifier) then
 		key = modifier..key
 	end
 
-	self:ProcessBinding(key, self.button)
+	self:ProcessBinding(key)
 end
 
 
@@ -415,20 +400,22 @@ function KEYBINDER:OnKeyDown(key)
 		return
 	end
 
-	local modifier = self:GetModifier()
+	local modifier = GetModifier()
 
 	if (modifier) then
 		key = modifier..key
 	end
 
-	self:ProcessBinding(key, self.button)
+	self:ProcessBinding(key)
 end
 
 
 --- OnMouseWheel Event handler
 --- @param delta number @direction mouse wheel moved
 function KEYBINDER:OnMouseWheel(delta)
-	local modifier, key, action = self:GetModifier()
+	local modifier = GetModifier()
+	local key
+	local action
 
 	if (delta > 0) then
 		key = "MOUSEWHEELUP"
@@ -442,5 +429,5 @@ function KEYBINDER:OnMouseWheel(delta)
 		key = modifier..key
 	end
 
-	self:ProcessBinding(key, self.button)
+	self:ProcessBinding(key)
 end
