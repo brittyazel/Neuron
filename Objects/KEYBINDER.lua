@@ -51,7 +51,7 @@ function KEYBINDER.new(button)
 	newKeyBinder:SetScript("OnKeyDown", function(self, key) self:OnKeyDown(key) end)
 	newKeyBinder:SetScript("OnMouseWheel", function(self, delta) self:OnMouseWheel(delta) end)
 
-	newKeyBinder.type:SetText(L["Bind"])
+	newKeyBinder.label:SetText(L["Bind"])
 	newKeyBinder.button = button
 	newKeyBinder.bindType = "button"
 
@@ -264,9 +264,9 @@ function KEYBINDER:OnShow()
 	end
 
 	if (self.button.keys.hotKeyLock) then
-		self.type:SetText(priority.."|cfff00000"..L["Locked"].."|r")
+		self.label:SetText(priority.."|cfff00000"..L["Locked"].."|r")
 	else
-		self.type:SetText(priority.."|cffffffff"..L["Bind"].."|r")
+		self.label:SetText(priority.."|cffffffff"..L["Bind"].."|r")
 	end
 
 	--set a repeating timer when the keybinder is shown to enable or disable Keyboard input on mouseover.
