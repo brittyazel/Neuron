@@ -67,8 +67,6 @@ function Neuron:Minimap_OnClickHandler(frame, button)
 
 		if IsShiftKeyDown() then
 			Neuron:ToggleBindingMode(true)
-		elseif IsAltKeyDown() then
-			Neuron:ToggleAll()
 		else
 			Neuron:ToggleBarEditMode(true)
 		end
@@ -94,7 +92,6 @@ function Neuron:Minimap_TooltipHandler(tooltip)
 	tooltip:AddLine(L["Right-Click"] .. ":    " .. "|cFFFFFFFF"..L["Configure Buttons"])
 	tooltip:AddLine(L["Shift"] .. " + " .. L["Left-Click"] .. ":    " .. "|cFFFFFFFF"..L["Toggle Keybind Mode"])
 	tooltip:AddLine(L["Shift"] .. " + " .. L["Right-Click"] .. ":    " .. "|cFFFFFFFF"..L["Open the Interface Menu"])
-	tooltip:AddLine(L["Alt"] .. " + " .. L["Left-Click"] .. ":    " .. "|cFFFFFFFF"..L["Toggle Visibility of Neuron Bars"])
 
 	tooltip:Show()
 

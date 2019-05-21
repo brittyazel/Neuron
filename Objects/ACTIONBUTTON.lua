@@ -145,19 +145,9 @@ function ACTIONBUTTON:SetObjectVisibility(show)
 	self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
 	self:SetAttribute("isshown", show)
 
-	--hide the action buttons if the ToggleAllFlag isn't set
-	--this is important to be separate from the conditional below so that the button is still active, just hidden. Otherwise keybinds would stop working and revert to the default game keybinds
-	if not Neuron.ToggleAllFlag then
-		self:SetAlpha(0)
-		return
-	end
-
-
 	if self:HasAction() or show or self.showGrid or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
-		self:SetAlpha(1)
 		self:Show()
 	else
-		self:SetAlpha(0)
 		self:Hide()
 	end
 end

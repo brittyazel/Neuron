@@ -144,7 +144,7 @@ end
 
 function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
 
-	if ( start and start > 0 and duration > 0 and enable > 0) and Neuron.ToggleAllFlag then
+	if start and start > 0 and duration > 0 and enable > 0 then
 
 		if duration > 2 then --sets non GCD cooldowns
 			if charges and charges > 0 and maxCharges > 1 then
@@ -216,9 +216,9 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 		--cleanup so on state changes the cooldowns don't persist
 		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 		self.iconframecooldown.timer:SetText("")
-		if Neuron.ToggleAllFlag then --check this flag to make sure we don't flash the Alpha for a split second before calling SetObjectVisibility below
-			self.iconframecooldown.button:SetAlpha(1)
-		end
+
+		self.iconframecooldown.button:SetAlpha(1)
+
 		self.iconframecooldown.showCountdownTimer = false
 		self.iconframecooldown.showCountdownAlpha = false
 
@@ -476,11 +476,7 @@ end
 
 
 function BUTTON:SetObjectVisibility(show)
-	if Neuron.ToggleAllFlag then
-		self:SetAlpha(1)
-	else
-		self:SetAlpha(0)
-	end
+ --empty
 end
 
 

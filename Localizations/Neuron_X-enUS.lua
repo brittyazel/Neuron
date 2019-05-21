@@ -160,9 +160,6 @@ L["BlizzUI_Description"] = "Toggle Blizzard's DefaultUI"
 L["MoveSpecButtons"] = true
 L["MoveSpecButtons_Description"] = "Copies the buttons from one spec to a second"
 
-L["ToggleAll"] = true
-L["ToggleAll_Description"] = "Toggles the visibility state of all bars"
-
 
 
 -----------------------------------------------
@@ -268,8 +265,6 @@ L["Configure Buttons"] = true
 
 L["Toggle Keybind Mode"] = true
 L["Open the Interface Menu"] = true
-
-L["Toggle Visibility of Neuron Bars"] = true
 
 
 L["Keybind_Tooltip_1"] = "Press a key to bind it to"
