@@ -30,12 +30,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local DEFAULT_VIRTUAL_KEY = "LeftButton"
 local NEURON_VIRTUAL_KEY = "Hotkey"
 
-local VIRTUAL_KEY_LIST = {
-	DEFAULT_VIRTUAL_KEY,
-	NEURON_VIRTUAL_KEY
-}
-
-
 ----------------------------------------------------------
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -160,26 +154,16 @@ end
 --- Clears the bindings of a given button
 --- @param key string @Which key was pressed
 function KEYBINDER:ClearBindings(key)
+
 	if (key) then
-		SetOverrideBinding(self.button, true, key, nil)
 
 		local newkey = key:gsub("%-", "%%-")
 		self.button.keys.hotKeys = self.button.keys.hotKeys:gsub(newkey..":", "")
 
 		local keytext = self:GetKeyText(key)
 		self.button.keys.hotKeyText = self.button.keys.hotKeyText:gsub(keytext..":", "")
+
 	else
-		local bindCmdPrefix = "CLICK " .. self.button:GetName()
-
-		---clear bindings for all virtual keys (LeftButton, Hotkey, ...)
-		---using the bindCmdPrefix and concatenating it with each virtual key
-		for _, virtualKey in ipairs(VIRTUAL_KEY_LIST) do
-			local bindCmd = bindCmdPrefix .. ":" .. virtualKey
-
-			while (GetBindingKey(bindCmd)) do
-				SetBinding(GetBindingKey(bindCmd), nil)
-			end
-		end
 
 		ClearOverrideBindings(self.button)
 		self.button.keys.hotKeys = ":"
