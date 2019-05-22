@@ -261,10 +261,14 @@ end
 
 
 function PETBTN:PLAYER_ENTERING_WORLD(event, ...)
-	if InCombatLockdown() then return end
-	self.binder:ApplyBindings()
+
 	self.updateRightClick = true
+
+	self:UpdateAll()
+
 	self:SetObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
+
+	self.binder:ApplyBindings()
 
 	---This part is so that the grid get's set properly on login
 	self:ScheduleTimer(function() self.bar:UpdateObjectVisibility() end, 2)
