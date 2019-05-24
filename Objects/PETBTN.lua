@@ -271,7 +271,7 @@ function PETBTN:PLAYER_ENTERING_WORLD(event, ...)
 	self.binder:ApplyBindings()
 
 	---This part is so that the grid get's set properly on login
-	self:ScheduleTimer(function() self.bar:UpdateObjectVisibility() end, 2)
+	self:ScheduleTimer(function() self.bar:UpdateObjectVisibility() self.binder:ApplyBindings() end, 2)
 
 end
 

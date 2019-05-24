@@ -34,10 +34,15 @@ Objects/EXITBTN.lua
 Objects/EXTRABTN.lua
 Objects/MENUBTN.lua
 Objects/PETBTN.lua
-Objects/STATUSBTN.lua
 Objects/ZONEABILITYBTN.lua
 Objects/BAR_SnapTo.lua
 Objects/KEYBINDER.lua
+Objects/STATUSBTN.lua
+Objects/XPBTN.lua
+Objects/REPBTN.lua
+Objects/CASTBTN.lua
+Objects/MIRRORBTN.lua
+
 
 Neuron-DisableBlizzardUI.lua
 Neuron-Console.lua
