@@ -4092,8 +4092,7 @@ function NeuronGUI:ObjEditor_CreateEditFrame(button)
 end
 
 
-
-
+--[[
 ----------------------------------------------------------------------------
 --------------------------Status Bar Editor---------------------------------
 ----------------------------------------------------------------------------
@@ -4121,11 +4120,11 @@ local sbadjOptions = {
 	[4] = { "BORDER", L["Border"], 2, "UpdateBorder", nil, nil, nil, BarBordersData },
 	[5] = { "ORIENT", L["Orientation"], 2, "UpdateOrientation", nil, nil, nil, Neuron.BarOrientations },
 	[6] = { "UNIT_WATCH", L["Unit"], 2, "UpdateUnit", nil, nil, nil, Neuron.BarUnits },
-	[7] = { "CENTER_TEXT", L["Center Text"], 2, "UpdateCenterText", nil, nil, nil, Neuron.sbStrings },
-	[8] = { "LEFT_TEXT", L["Left Text"], 2, "UpdateLeftText", nil, nil, nil, Neuron.sbStrings  },
-	[9] = { "RIGHT_TEXT", L["Right Text"], 2, "UpdateRightText", nil, nil, nil, Neuron.sbStrings  },
-	[10] = { "MOUSE_TEXT", L["Mouseover Text"], 2, "UpdateMouseover", nil, nil, nil, Neuron.sbStrings  },
-	[11] = { "TOOLTIP_TEXT", L["Tooltip Text"], 2, "UpdateTooltip", nil, nil, nil, Neuron.sbStrings  },
+	[7] = { "CENTER_TEXT", L["Center Text"], 2, "UpdateCenterText", nil, nil, nil, self.sbStrings },
+	[8] = { "LEFT_TEXT", L["Left Text"], 2, "UpdateLeftText", nil, nil, nil, self.sbStrings  },
+	[9] = { "RIGHT_TEXT", L["Right Text"], 2, "UpdateRightText", nil, nil, nil, self.sbStrings  },
+	[10] = { "MOUSE_TEXT", L["Mouseover Text"], 2, "UpdateMouseover", nil, nil, nil, self.sbStrings  },
+	[11] = { "TOOLTIP_TEXT", L["Tooltip Text"], 2, "UpdateTooltip", nil, nil, nil, self.sbStrings  },
 }
 
 
@@ -4197,7 +4196,7 @@ function NeuronGUI:StatusBarEditorUpdate(reset)
 					for types, data in pairs(f.optData) do
 						if (types == sb.config.sbType) then
 							for k,v in pairs(data) do
-								popupData[k.."_"..v[1]] = tostring(k)
+								popupData[k.."_"..v[1]]--[[ = tostring(k)
 							end
 						end
 					end
@@ -4553,8 +4552,8 @@ function NeuronGUI:SB_AdjustableOptions_OnLoad(frame)
 
 		f.text:SetText(options[2]..":")
 		f.method = options[3]
-		f["method"..options[3]]:Show()
-		f.edit = f["method"..options[3]].edit
+		f["method"..options[3]]--[[:Show()
+		f.edit = f["method"..options[3]]--[[.edit
 		f.edit.frame = f
 		f.option = options[1]
 		f.func = options[4]
@@ -4625,4 +4624,4 @@ function NeuronGUI:SB_CreateEditFrame(button)
 
 	editor:Hide()
 
-end
+end]]

@@ -177,7 +177,6 @@ function Neuron:DBFixer(profile, oldDBVersion) --converted objectTable from a si
 		oldDBVersion = 1.3 --increment oldDBVersion up to the latest that this set of code fixes
 		Neuron:Print("Neuron database migrated to version " .. 1.3)
 
-
 	end
 
 end

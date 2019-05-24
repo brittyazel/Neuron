@@ -56,9 +56,6 @@ function Neuron:RegisterBars()
 	--Neuron Bag Bar
 	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN,5)
 
-	--Neuron Status Bar
-	Neuron:RegisterBarClass("StatusBar", "StatusBar", L["Status Bar"], "Status Bar", DB.StatusBar, Neuron.STATUSBTN, 20)
-
 	--Neuron Exit Bar
 	Neuron:RegisterBarClass("ExitBar", "ExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.ExitBar, Neuron.EXITBTN,1)
 
@@ -67,6 +64,18 @@ function Neuron:RegisterBars()
 
 	--Neuron Pet Bar
 	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10)
+
+	--Neuron XP Bar
+	Neuron:RegisterBarClass("XPBar", "XPBar", L["XP Bar"], "XP Button", DB.XPBar, Neuron.XPBTN, 10)
+
+	--Neuron Rep Bar
+	Neuron:RegisterBarClass("RepBar", "RepBar", L["Rep Bar"], "Rep Button", DB.RepBar, Neuron.REPBTN, 10)
+
+	--Neuron Cast Bar
+	Neuron:RegisterBarClass("CastBar", "CastBar", L["Cast Bar"], "Cast Button", DB.CastBar, Neuron.CASTBTN, 10)
+
+	--Neuron Mirror Bar
+	Neuron:RegisterBarClass("MirrorBar", "MirrorBar", L["Mirror Bar"], "Mirror Button", DB.MirrorBar, Neuron.MIRRORBTN, 10)
 
 end
 
@@ -259,11 +268,18 @@ function Neuron:Overrides()
 
 	for _,v in ipairs(Neuron.BARIndex) do
 
-		if v.barType == "StatusBar" then
+		if v.barType == "CastBar" then
 			for _, button in ipairs(v.buttons) do
-				if button.config.sbType == "cast" then
+				if button then
 					disableDefaultCast = true
-				elseif button.config.sbType == "mirror" then
+				end
+			end
+		end
+
+
+		if v.barType == "MirrorBar" then
+			for _, button in ipairs(v.buttons) do
+				if button then
 					disableDefaultMirror = true
 				end
 			end

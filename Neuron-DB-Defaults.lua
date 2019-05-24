@@ -87,7 +87,6 @@ local genericSpecData = {
 }
 
 local genericStatusBtnData= {
-	sbType = "statusbar",
 
 	width = 250,
 	height = 18,
@@ -125,6 +124,12 @@ local genericStatusBtnData= {
 	failColor = "1;0;0;1",
 
 	showIcon = false,
+
+	repID = 2,
+	autoWatch = 2,
+
+	unit = 2,
+
 
 }
 
@@ -301,7 +306,19 @@ NeuronDefaults = {
 			['*'] = CopyTable(genericBarData)
 		},
 
-		StatusBar = {
+		XPBar = {
+			['*'] = CopyTable(genericBarData)
+		},
+
+		RepBar = {
+			['*'] = CopyTable(genericBarData)
+		},
+
+		CastBar = {
+			['*'] = CopyTable(genericBarData)
+		},
+
+		MirrorBar = {
 			['*'] = CopyTable(genericBarData)
 		},
 	}
@@ -321,10 +338,30 @@ NeuronDefaults.profile.ActionBar['*'].buttons = {
 	}
 }
 
-NeuronDefaults.profile.StatusBar['*'].buttons ={
+NeuronDefaults.profile.RepBar['*'].buttons ={
 	['*'] = {
 		['config'] = CopyTable(genericStatusBtnData),
 		['keys'] = CopyTable(genericKeyData),
-		['data'] = {unit = 2, repID = 0, autoWatch = 2,},
+	}
+}
+
+NeuronDefaults.profile.XPBar['*'].buttons ={
+	['*'] = {
+		['config'] = CopyTable(genericStatusBtnData),
+		['keys'] = CopyTable(genericKeyData),
+	}
+}
+
+NeuronDefaults.profile.CastBar['*'].buttons ={
+	['*'] = {
+		['config'] = CopyTable(genericStatusBtnData),
+		['keys'] = CopyTable(genericKeyData),
+	}
+}
+
+NeuronDefaults.profile.MirrorBar['*'].buttons ={
+	['*'] = {
+		['config'] = CopyTable(genericStatusBtnData),
+		['keys'] = CopyTable(genericKeyData),
 	}
 }

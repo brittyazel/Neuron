@@ -2369,7 +2369,7 @@
 	</ColorSelect>
 
 
-	<Frame name="NeuronStatusBarEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" clampedToScreen="true" hidden="true">
+	<!--<Frame name="NeuronStatusBarEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" clampedToScreen="true" hidden="true">
 		<Frames>
 			<Frame name="$parentTypes" parentKey="types">
 				<Anchors>
@@ -2425,7 +2425,7 @@
 				self:GetParent():StopMovingOrSizing()
 			</OnDragStop>
 		</Scripts>
-	</Frame>
+	</Frame>-->
 
 
 </Ui>

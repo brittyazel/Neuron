@@ -156,7 +156,47 @@ NeuronDefaultBarOptions.BagBar = {
 	}
 }
 
-NeuronDefaultBarOptions.StatusBar = {
+
+NeuronDefaultBarOptions.XPBar = {
+	[1] = {
+		showGrid = true,
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = 0,
+		y = 24,
+
+		buttons = {
+			[1] = {
+				config = {cIndex = 2, lIndex = 6, rIndex = 4, mIndex = 3, width = 450},
+			},
+		},
+	},
+
+}
+
+NeuronDefaultBarOptions.RepBar = {
+
+	[1] = {
+		showGrid = true,
+		snapTo = false,
+		snapToFrame = false,
+		snapToPoint = false,
+		point = "BOTTOM",
+		x = 0,
+		y = 7,
+
+		buttons = {
+			[1] = {
+				config = {cIndex = 3, lIndex = 2, rIndex = 4, mIndex = 6, width = 450},
+			},
+		},
+	},
+
+}
+
+NeuronDefaultBarOptions.CastBar = {
 	[1] = {
 		showGrid = true,
 		snapTo = false,
@@ -168,45 +208,16 @@ NeuronDefaultBarOptions.StatusBar = {
 
 		buttons = {
 			[1] = {
-				config = {sbType = "cast", cIndex = 1, lIndex = 2, rIndex = 3, showIcon = true},
+				config = {cIndex = 1, lIndex = 2, rIndex = 3, showIcon = true},
 			}
 		},
 
 	},
+}
 
-	[2] = {
-		showGrid = true,
-		snapTo = false,
-		snapToFrame = false,
-		snapToPoint = false,
-		point = "BOTTOM",
-		x = 0,
-		y = 24,
+NeuronDefaultBarOptions.MirrorBar = {
 
-		buttons = {
-			[1] = {
-				config = { sbType = "xp", cIndex = 2, lIndex = 6, rIndex = 4, mIndex = 3, width = 450},
-			},
-		},
-	},
-
-	[3] = {
-		showGrid = true,
-		snapTo = false,
-		snapToFrame = false,
-		snapToPoint = false,
-		point = "BOTTOM",
-		x = 0,
-		y = 7,
-
-		buttons = {
-			[1] = {
-				config = { sbType = "rep", cIndex = 3, lIndex = 2, rIndex = 4, mIndex = 6, width = 450},
-			},
-		},
-	},
-
-	[4] = {
+	[1] = {
 		showGrid = true,
 		columns = 1,
 		snapTo = false,
@@ -218,13 +229,13 @@ NeuronDefaultBarOptions.StatusBar = {
 
 		buttons = {
 			[1] = {
-				config = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
+				config = {cIndex = 1, lIndex = 2, rIndex = 3},
 			},
 			[2] = {
-				config = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
+				config = {cIndex = 1, lIndex = 2, rIndex = 3},
 			},
 			[3] = {
-				config = { sbType = "mirror", cIndex = 1, lIndex = 2, rIndex = 3},
+				config = {cIndex = 1, lIndex = 2, rIndex = 3},
 			},
 		},
 

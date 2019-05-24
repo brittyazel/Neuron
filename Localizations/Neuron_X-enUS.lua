@@ -440,20 +440,17 @@ L["Select the Self-Cast Modifier"] = true
 
 L["Spell_Targeting_Modifier_None_Reminder"] = "\"None\" as modifier for Self & Focus Casting means its disabled. \nFor Mouse-Over Casting it means its always active, and no modifier is required."
 
-
-L["XP Bar"] = true
-L["Rep Bar"] = true
-L["Cast Bar"] = true
-L["Mirror Bar"] = true
-
 L["Action Bar"] = true
 L["Zone Action Bar"] = true
-L["Status Bar"] = true
 L["Stance Bar"] = true
 L["Extra Action Bar"] = true
 L["Bag Bar"] = true
 L["Pet Bar"] = true
 L["Menu Bar"] = true
+L["XP Bar"] = true
+L["Rep Bar"] = true
+L["Cast Bar"] = true
+L["Mirror Bar"] = true
 
 L["Track Character XP"] = true
 L["Track Azerite Power"] = true
