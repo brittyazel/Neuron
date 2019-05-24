@@ -56,3 +56,5 @@ XML/NeuronCheckButtonTextureTemplate.xml
 XML/NeuronStatusBarTemplate.xml
 
 Neuron-Startup.lua
+
+NeuronGUI.lua

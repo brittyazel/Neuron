@@ -227,6 +227,7 @@ function Neuron:OnEnable()
 		v:Load()
 	end
 
+	Neuron.NeuronGUI:Initialize_GUI()
 end
 
 --- **OnDisable**, which is only called when your addon is manually being disabled.
@@ -690,8 +691,8 @@ function Neuron:ToggleBarEditMode(show)
 			bar:UpdateObjects()
 		end
 
-		if (NeuronBarEditor)then
-			NeuronBarEditor:Hide()
+		if NeuronEditor:IsVisible() then
+			NeuronEditor:Hide()
 		end
 
 	end
@@ -745,8 +746,8 @@ function Neuron:ToggleButtonEditMode(show)
 
 		Neuron.BUTTON:ChangeObject()
 
-		if (NeuronObjectEditor)then
-			NeuronObjectEditor:Hide()
+		if NeuronEditor:IsVisible() then
+			NeuronEditor:Hide()
 		end
 
 	end

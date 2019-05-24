@@ -1451,18 +1451,8 @@ function BAR:OnClick(...)
 	elseif (click == "RightButton" and not self.action and not down) then
 		self.mousewheelfunc = nil
 
-		if (NeuronBarEditor) then
-			if (not newBar and NeuronBarEditor:IsVisible()) then
-				NeuronBarEditor:Hide()
-			else
-				NeuronBarEditor:Show()
-			end
-		end
+		Neuron.NeuronGUI:ToggleEditor()
 
-	elseif (not down) then
-		if (not newBar) then
-			--updateState(bar, 1)
-		end
 	end
 
 end
