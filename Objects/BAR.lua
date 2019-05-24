@@ -240,9 +240,6 @@ function BAR:DeleteBar()
 
 	table.remove(Neuron.BARIndex, self.index)
 
-	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
-		Neuron.NeuronGUI:UpdateBarGUI()
-	end
 
 	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
 		v:Update()
@@ -1071,10 +1068,6 @@ function BAR:Update(show, hide)
 	self.text:SetText(self.data.name)
 	handler:SetAlpha(self.data.alpha)
 
-	if (not hide and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
-		Neuron.NeuronGUI:UpdateBarGUI()
-	end
-
 	if self.data.auraInd == true then
 		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	else
@@ -1166,9 +1159,6 @@ function BAR:SetFauxState(state)
 		object:SetFauxState(state)
 	end
 
-	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
-		Neuron.NeuronGUI:UpdateObjectGUI()
-	end
 end
 
 
@@ -1475,9 +1465,6 @@ function BAR:OnClick(...)
 		end
 	end
 
-	if (not down and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
-		Neuron.NeuronGUI:UpdateBarGUI(newBar)
-	end
 end
 
 

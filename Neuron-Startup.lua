@@ -147,14 +147,6 @@ function Neuron:RegisterGUI()
 		TOOLTIPS = true, },
 			false, false)
 
-	--Neuron Status Bar
-	Neuron:RegisterGUIOptions("StatusBar", {
-		AUTOHIDE = true,
-		SNAPTO = true,
-		HIDDEN = true,
-		TOOLTIPS = true },
-			false, false)
-
 	--Neuron Exit Bar
 	Neuron:RegisterGUIOptions("ExitBar", {
 		AUTOHIDE = true,
@@ -193,6 +185,38 @@ function Neuron:RegisterGUI()
 		CDTEXT = true,
 		CDALPHA = true },
 			false, 65)
+
+	--Neuron XP Bar
+	Neuron:RegisterGUIOptions("XPBar", {
+		AUTOHIDE = true,
+		SNAPTO = true,
+		HIDDEN = true,
+		TOOLTIPS = true },
+			false, false)
+
+	--Neuron Rep Bar
+	Neuron:RegisterGUIOptions("RepBar", {
+		AUTOHIDE = true,
+		SNAPTO = true,
+		HIDDEN = true,
+		TOOLTIPS = true },
+			false, false)
+
+	--Neuron Cast Bar
+	Neuron:RegisterGUIOptions("CastBar", {
+		AUTOHIDE = true,
+		SNAPTO = true,
+		HIDDEN = true,
+		TOOLTIPS = true },
+			false, false)
+
+	--Neuron Mirror Bar
+	Neuron:RegisterGUIOptions("MirrorBar", {
+		AUTOHIDE = true,
+		SNAPTO = true,
+		HIDDEN = true,
+		TOOLTIPS = true },
+			false, false)
 
 end
 

@@ -76,10 +76,6 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	if Neuron.NeuronGUI then
-		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(newButton)
-	end
-
 	newButton.binder = Neuron.KEYBINDER.new(newButton)
 
 	return newButton

@@ -134,9 +134,6 @@ function ACTIONBUTTON:OnReceiveDrag()
 		ClearCursor() --if we did not pick up a new spell, clear the cursor
 	end
 
-	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
-		Neuron.NeuronGUI:UpdateObjectGUI()
-	end
 end
 
 
