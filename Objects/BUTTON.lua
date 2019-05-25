@@ -350,7 +350,6 @@ function BUTTON:SetData(bar)
 			self.cdAlpha = 1
 		end
 
-		self.auraText = bar.data.auraText
 		self.auraInd = bar.data.auraInd
 
 		self.rangeInd = bar.data.rangeInd
@@ -702,10 +701,8 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 			uaw_duration = tonumber(uaw_duration)
 			uaw_timeLeft = tonumber(uaw_timeLeft)
 
-			--if (self.auraText or self.auraInd) then
 			if (self.auraInd) then
 
-				--self.iconframecooldown.showAuraCountdown = self.auraText
 				self.iconframecooldown.showAuraBorder = self.auraInd
 
 				self.iconframecooldown.auraType = uaw_auraType

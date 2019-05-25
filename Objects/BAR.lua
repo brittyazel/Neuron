@@ -2870,30 +2870,6 @@ function BAR:CDAlphaSet(msg, gui, checked, query)
 end
 
 
-function BAR:AuraTextSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.auraText, self.data.auracolor1, self.data.auracolor2
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.auraText = true
-		else
-			self.data.auraText = false
-		end
-
-	else
-		if (self.data.auraText) then
-			self.data.auraText = false
-		else
-			self.data.auraText = true
-		end
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
 
 function BAR:AuraIndSet(msg, gui, checked, query)
 	if (query) then

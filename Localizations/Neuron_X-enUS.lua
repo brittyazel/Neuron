@@ -133,9 +133,6 @@ L["CDText_Description"] = "Toggle cooldown counts text on the current bar"
 L["CDAlpha"] = true
 L["CDAlpha_Description"] = "Toggle a button's transparancy while on cooldown"
 
-L["AuraText"] = true
-L["AuraText_Description"] = "Toggle aura watch text on the current bar"
-
 L["AuraInd"] = true
 L["AuraInd_Description"] = "Toggle aura button indicators on the current bar"
 

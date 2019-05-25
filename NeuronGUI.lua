@@ -39,6 +39,58 @@ local renameBox = {} --the rename bar Box
 local barEditOptionsContainer = {} --The container that houses the add/remove bar buttons
 
 
+local chkOptions = {
+	[1] = { "AUTOHIDE", L["AutoHide"], 1, "AutoHideBar" },
+	[2] = { "SHOWGRID", L["Show Grid"], 1, "ShowGridSet" },
+	[3] = { "SNAPTO", L["SnapTo"], 1, "SnapToBar" },
+	[4] = { "UPCLICKS", L["Up Clicks"], 1, "UpClicksSet" },
+	[5] = { "DOWNCLICKS", L["Down Clicks"], 1, "DownClicksSet" },
+	[6] = { "MULTISPEC", L["Multi Spec"], 1, "MultiSpecSet" },
+	[7] = { "HIDDEN", L["Hidden"], 1, "ConcealBar" },
+	[8] = { "SPELLGLOW", L["Spell Alerts"], 1, "SpellGlowSet" },
+	[9] = { "SPELLGLOW", L["Default Alert"], 1, "SpellGlowSet", "default" },
+	[10] = { "SPELLGLOW", L["Subdued Alert"], 1, "SpellGlowSet", "alt" },
+	[11] = { "LOCKBAR", L["Lock Actions"], 1, "LockSet" },
+	[12] = { "LOCKBAR", L["Unlock on SHIFT"], 0.9, "LockSet", "shift" },
+	[13] = { "LOCKBAR", L["Unlock on CTRL"], 0.9, "LockSet", "ctrl" },
+	[14] = { "LOCKBAR", L["Unlock on ALT"], 0.9, "LockSet", "alt" },
+	[15] = { "TOOLTIPS", L["Enable Tooltips"], 1, "ToolTipSet" },
+	[16] = { "TOOLTIPS", L["Enhanced"], 0.9, "ToolTipSet", "enhanced" },
+	[17] = { "TOOLTIPS", L["Hide in Combat"], 0.9, "ToolTipSet", "combat" },
+	[18] = { "BORDERSTYLE", L["Show Border Style"], 1, "SetBorderStyle"},
+}
+
+local adjOptions = {
+	[1] = { "SCALE", L["Scale"], 1, "ScaleBar", 0.01, 0.1, 4 },
+	[2] = { "SHAPE", L["Shape"], 2, "ShapeBar", nil, nil, nil, Neuron.BarShapes },
+	[3] = { "COLUMNS", L["Columns"], 1, "ColumnsSet", 1 , 0},
+	[4] = { "ARCSTART", L["Arc Start"], 1, "ArcStartSet", 1, 0, 359 },
+	[5] = { "ARCLENGTH", L["Arc Length"], 1, "ArcLengthSet", 1, 0, 359 },
+	[6] = { "HPAD",L["Horiz Padding"], 1, "PadHSet", 0.5 },
+	[7] = { "VPAD", L["Vert Padding"], 1, "PadVSet", 0.5 },
+	[8] = { "HVPAD", L["H+V Padding"], 1, "PadHVSet", 0.5 },
+	[9] = { "STRATA", L["Strata"], 2, "StrataSet", nil, nil, nil, Neuron.STRATAS },
+	[10] = { "ALPHA", L["Alpha"], 1, "AlphaSet", 0.01, 0, 1 },
+	[11] = { "ALPHAUP", L["AlphaUp"], 2, "AlphaUpSet", nil, nil, nil, Neuron.AlphaUps },
+	[12] = { "ALPHAUP", L["AlphaUp Speed"], 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
+	[13] = { "XPOS", L["X Position"], 1, "XAxisSet", 1, nil, nil, nil, "%0.2f", 1, "" },
+	[14] = { "YPOS", L["Y Position"], 1, "YAxisSet", 1, nil, nil, nil, "%0.2f", 1, "" },
+}
+
+local swatchOptions = {
+	[1] = { "BINDTEXT", L["Keybind Label"], 1, "BindTextSet", true, nil, "bindColor" },
+	[2] = { "MACROTEXT", L["Macro Name"], 1, "MacroTextSet", true, nil, "macroColor" },
+	[3] = { "COUNTTEXT", L["Stack/Charge Count Label"], 1, "CountTextSet", true, nil, "countColor" },
+	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "RangeIndSet", true, nil, "rangecolor" },
+	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
+	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "CDAlphaSet", nil, nil },
+	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
+}
+
+-----------------------------------------------------------------------------
+--------------------------Initialize-----------------------------------------
+-----------------------------------------------------------------------------
+
 
 function NeuronGUI:Initialize_GUI()
 
@@ -46,11 +98,8 @@ function NeuronGUI:Initialize_GUI()
 
 	NeuronGUI:LoadInterfaceOptions()
 
-	NeuronGUI:CreateBarEditor()
+	NeuronGUI:CreateEditor()
 	NeuronEditor:Hide()
-	NeuronGUI.GUILoaded = true
-
-	NeuronEditor:DoLayout() ---we need to keep this here to recomupute the layout, as it doesn't get it right the first time
 
 end
 
@@ -86,9 +135,9 @@ function NeuronGUI:RefreshEditor()
 end
 
 
-function NeuronGUI:CreateBarEditor()
+function NeuronGUI:CreateEditor()
 
-	---Outer Window
+	--Outer Window
 	NeuronEditor = AceGUI:Create("Frame")
 	NeuronEditor:SetTitle("Neuron Editor")
 	NeuronEditor:SetWidth("1000")
@@ -103,57 +152,68 @@ function NeuronGUI:CreateBarEditor()
 	NeuronEditor:SetLayout("Flow")
 
 
-	---Container for the Right Column
+
+	--Container for the Left Column
+	local leftContainer = AceGUI:Create("SimpleGroup")
+	leftContainer:SetRelativeWidth(.79)
+	leftContainer:SetFullHeight(true)
+	leftContainer:SetLayout("Flow")
+	NeuronEditor:AddChild(leftContainer)
+
+	--Tab group that will contain all of our settings to configure
+	local tabFrame = AceGUI:Create("TabGroup")
+	tabFrame:SetLayout("Flow")
+	tabFrame:SetFullHeight(true)
+	tabFrame:SetFullWidth(true)
+	tabFrame:SetTabs({{text="Bar Settings", value="tab1"}, {text="Button Settings", value="tab2"}})
+	tabFrame:SetCallback("OnGroupSelected", function(self, event, tab) NeuronGUI:SelectTab(self, event, tab) end)
+	tabFrame:SelectTab("tab1")
+	leftContainer:AddChild(tabFrame)
+
+
+
+
+	--Container for the Right Column
 	local rightContainer = AceGUI:Create("SimpleGroup")
 	rightContainer:SetRelativeWidth(.20)
 	rightContainer:SetFullHeight(true)
 	rightContainer:SetLayout("Flow")
 	NeuronEditor:AddChild(rightContainer)
 
-	---Container for the Rename box in the right column
+	local topPadding = AceGUI:Create("SimpleGroup")
+	topPadding:SetHeight(20)
+	rightContainer:AddChild(topPadding)
+
+	--Container for the Add/Delete bars buttons
+	barEditOptionsContainer = AceGUI:Create("InlineGroup")
+	barEditOptionsContainer:SetTitle("Create a new bar:")
+	barEditOptionsContainer:SetLayout("Flow")
+	barEditOptionsContainer:SetFullWidth(true)
+	rightContainer:AddChild(barEditOptionsContainer)
+	NeuronGUI:PopulateEditOptions(barEditOptionsContainer) --this is to make the Rename/Create/Delete Bars group
+
+	--Container for the Rename box in the right column
 	local barRenameContainer = AceGUI:Create("SimpleGroup")
-	barRenameContainer:SetHeight(20)
 	barRenameContainer:SetLayout("Flow")
+	barRenameContainer:SetHeight(30)
+	barRenameContainer:SetFullWidth(true)
 	rightContainer:AddChild(barRenameContainer)
 	NeuronGUI:PopulateRenameBar(barRenameContainer) --this is to make the Rename/Create/Delete Bars group
 
 
-	---Container for the Bar List scroll frame
+	--Container for the Bar List scroll frame
 	local barListContainer = AceGUI:Create("InlineGroup")
-	barListContainer:SetTitle("Select an available bar  ")
-	barListContainer:SetHeight(480)
+	barListContainer:SetTitle("Select an available bar:")
 	barListContainer:SetLayout("Fill")
+	barListContainer:SetFullWidth(true)
+	barListContainer:SetFullHeight(true)
 	rightContainer:AddChild(barListContainer)
 
-
-	---Scroll frame that will contain the Bar List
+	--Scroll frame that will contain the Bar List
 	barListFrame = AceGUI:Create("ScrollFrame")
 	barListFrame:SetLayout("Flow")
 	barListContainer:AddChild(barListFrame)
 	NeuronGUI:PopulateBarList(barListFrame) --fill the bar list frame with the actual list of the bars
-
-	---Container for the Add/Delete bars buttons
-	barEditOptionsContainer = AceGUI:Create("SimpleGroup")
-	barEditOptionsContainer:SetHeight(110)
-	barEditOptionsContainer:SetLayout("Flow")
-	rightContainer:AddChild(barEditOptionsContainer)
-	NeuronGUI:PopulateEditOptions(barEditOptionsContainer) --this is to make the Rename/Create/Delete Bars group
-
-
-	---Container for the tab frame
-	local tabFrameContainer = AceGUI:Create("SimpleGroup")
-	tabFrameContainer:SetRelativeWidth(.79)
-	tabFrameContainer:SetFullHeight(true)
-	tabFrameContainer:SetLayout("Fill")
-	NeuronEditor:AddChild(tabFrameContainer, rightContainer)
-
-	---Tab group that will contain all of our settings to configure
-	local tabFrame = AceGUI:Create("TabGroup")
-	tabFrame:SetLayout("Flow")
-	tabFrame:SetTabs({{text="Bar Settings", value="tab1"}, {text="Button Settings", value="tab2"}})
-	tabFrame:SetCallback("OnGroupSelected", function(self, event, tab) NeuronGUI:SelectTab(self, event, tab) end)
-	tabFrame:SelectTab("tab1")
-	tabFrameContainer:AddChild(tabFrame)
 
 end
 
@@ -162,7 +222,7 @@ function NeuronGUI:PopulateBarList()
 	for _, bar in pairs(Neuron.BARIndex) do
 		local barLabel = AceGUI:Create("InteractiveLabel")
 		barLabel:SetText(bar.data.name)
-		barLabel:SetFont("Fonts\\FRIZQT__.TTF", 18)
+		barLabel:SetFont("Fonts\\FRIZQT__.TTF", 12)
 		barLabel:SetFullWidth(true)
 		barLabel:SetHighlight("Interface\\QuestFrame\\UI-QuestTitleHighlight")
 		if Neuron.CurrentBar == bar then
@@ -200,13 +260,11 @@ function NeuronGUI:PopulateEditOptions(container)
 	container:AddChild(deleteBarButton)
 
 
-	---populate the dropdown menu with available bar types
+	--populate the dropdown menu with available bar types
 	local barTypes = {}
 
 	for class, info in pairs(Neuron.registeredBarData) do
-		if (info.barCreateMore or NeuronGUI:MissingBarCheck(class)) then
-			barTypes[class] = info.barLabel
-		end
+		barTypes[class] = info.barLabel
 	end
 
 	local selectedBarType
@@ -232,21 +290,7 @@ function NeuronGUI:PopulateRenameBar(container)
 
 end
 
---TODO: rework this Missing Bar Check code to be smarter
-function NeuronGUI:MissingBarCheck(class)
-	local allow = true
-	if (class == "extrabar" and DB.extrabar[1])
-			or (class == "zoneabilitybar" and DB.zoneabilitybar[1])
-			or (class == "pet" and DB.petbar[1])
-			or (class == "bag" and DB.bagbar[1])
-			or (class == "menu" and DB.menubar[1]) then
-		allow = false
-	end
-	return allow
-end
-
 function NeuronGUI:updateBarName(editBox)
-
 	local bar = Neuron.CurrentBar
 
 	if (bar) then
@@ -258,8 +302,11 @@ function NeuronGUI:updateBarName(editBox)
 	end
 end
 
+
+
+
 -----------------------------------------------------------------------------
---------------------------Inner WIndow---------------------------------------
+--------------------------Inner Window---------------------------------------
 -----------------------------------------------------------------------------
 
 
@@ -302,6 +349,13 @@ function NeuronGUI:ButtonEditWindow(tabContainer)
 	desc:SetFullWidth(true)
 	settingContainer:AddChild(desc)
 end
+
+
+
+-----------------------------------------------------------------------------
+--------------------------Bar Editor-----------------------------------------
+-----------------------------------------------------------------------------
+
 
 
 

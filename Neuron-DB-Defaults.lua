@@ -51,7 +51,6 @@ local genericButtonData = {
 	cdcolor1 = "1;0.82;0;1",
 	cdcolor2 = "1;0.1;0.1;1",
 
-	auraText = false,
 	auracolor1 = "0;0.82;0;1",
 	auracolor2 = "1;0.1;0.1;1",
 
@@ -222,7 +221,6 @@ local genericBarData = {
 
 	cdText = false,
 	cdAlpha = false,
-	auraText = false,
 	auraInd = false,
 
 	showBorderStyle = true,

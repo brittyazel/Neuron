@@ -99,7 +99,6 @@ function Neuron:RegisterGUI()
 		RANGEIND = true,
 		CDTEXT = true,
 		CDALPHA = true,
-		AURATEXT = true,
 		AURAIND = true },
 			true, 115)
 
