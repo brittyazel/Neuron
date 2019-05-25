@@ -34,6 +34,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 ---This loads the Neuron interface panel
 function NeuronGUI:LoadInterfaceOptions()
+
+	DB = Neuron.db.profile
+
 	--ACE GUI OPTION TABLE
 	local interfaceOptions = {
 		name = "Neuron",
