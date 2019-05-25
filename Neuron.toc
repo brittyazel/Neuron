@@ -58,3 +58,4 @@ XML/NeuronStatusBarTemplate.xml
 Neuron-Startup.lua
 
 GUI/MainWindow.lua
+GUI/InterfacePanel.lua
