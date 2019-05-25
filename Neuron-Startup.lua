@@ -100,7 +100,7 @@ function Neuron:RegisterGUI()
 		CDTEXT = true,
 		CDALPHA = true,
 		AURAIND = true },
-			true, 115)
+			true)
 
 	--Neuron Zone Ability Bar
 	Neuron:RegisterGUIOptions("ZoneAbilityBar", {
@@ -115,7 +115,7 @@ function Neuron:RegisterGUI()
 		BINDTEXT = true,
 		COUNTTEXT = true,
 		BORDERSTYLE = true,},
-			false, 65)
+			false)
 
 
 	--Neuron Extra Bar
@@ -131,7 +131,7 @@ function Neuron:RegisterGUI()
 		BINDTEXT = true,
 		COUNTTEXT = true,
 		BORDERSTYLE = true,},
-			false, 65)
+			false)
 
 
 	--Neuron Bag Bar
@@ -144,7 +144,7 @@ function Neuron:RegisterGUI()
 		HIDDEN = true,
 		LOCKBAR = false,
 		TOOLTIPS = true, },
-			false, false)
+			false)
 
 	--Neuron Exit Bar
 	Neuron:RegisterGUIOptions("ExitBar", {
@@ -155,7 +155,7 @@ function Neuron:RegisterGUI()
 		DOWNCLICKS = true,
 		HIDDEN = true,
 		LOCKBAR = false, },
-			false, 65)
+			false)
 
 	--Neuron Menu Bar
 	Neuron:RegisterGUIOptions("MenuBar", {
@@ -167,7 +167,7 @@ function Neuron:RegisterGUI()
 		HIDDEN = true,
 		LOCKBAR = false,
 		TOOLTIPS = true },
-			false, false)
+			false)
 
 	--Neuron Pet Bar
 	Neuron:RegisterGUIOptions("PetBar", {
@@ -183,7 +183,7 @@ function Neuron:RegisterGUI()
 		RANGEIND = true,
 		CDTEXT = true,
 		CDALPHA = true },
-			false, 65)
+			false)
 
 	--Neuron XP Bar
 	Neuron:RegisterGUIOptions("XPBar", {
@@ -191,7 +191,7 @@ function Neuron:RegisterGUI()
 		SNAPTO = true,
 		HIDDEN = true,
 		TOOLTIPS = true },
-			false, false)
+			false)
 
 	--Neuron Rep Bar
 	Neuron:RegisterGUIOptions("RepBar", {
@@ -199,7 +199,7 @@ function Neuron:RegisterGUI()
 		SNAPTO = true,
 		HIDDEN = true,
 		TOOLTIPS = true },
-			false, false)
+			false)
 
 	--Neuron Cast Bar
 	Neuron:RegisterGUIOptions("CastBar", {
@@ -207,7 +207,7 @@ function Neuron:RegisterGUI()
 		SNAPTO = true,
 		HIDDEN = true,
 		TOOLTIPS = true },
-			false, false)
+			false)
 
 	--Neuron Mirror Bar
 	Neuron:RegisterGUIOptions("MirrorBar", {
@@ -215,7 +215,7 @@ function Neuron:RegisterGUI()
 		SNAPTO = true,
 		HIDDEN = true,
 		TOOLTIPS = true },
-			false, false)
+			false)
 
 end
 

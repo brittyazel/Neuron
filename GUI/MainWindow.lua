@@ -40,51 +40,48 @@ local barEditOptionsContainer = {} --The container that houses the add/remove ba
 
 
 local chkOptions = {
-	[1] = { "AUTOHIDE", L["AutoHide"], 1, "AutoHideBar" },
-	[2] = { "SHOWGRID", L["Show Grid"], 1, "ShowGridSet" },
-	[3] = { "SNAPTO", L["SnapTo"], 1, "SnapToBar" },
-	[4] = { "UPCLICKS", L["Up Clicks"], 1, "UpClicksSet" },
-	[5] = { "DOWNCLICKS", L["Down Clicks"], 1, "DownClicksSet" },
-	[6] = { "MULTISPEC", L["Multi Spec"], 1, "MultiSpecSet" },
-	[7] = { "HIDDEN", L["Hidden"], 1, "ConcealBar" },
-	[8] = { "SPELLGLOW", L["Spell Alerts"], 1, "SpellGlowSet" },
-	[9] = { "SPELLGLOW", L["Default Alert"], 1, "SpellGlowSet", "default" },
-	[10] = { "SPELLGLOW", L["Subdued Alert"], 1, "SpellGlowSet", "alt" },
-	[11] = { "LOCKBAR", L["Lock Actions"], 1, "LockSet" },
-	[12] = { "LOCKBAR", L["Unlock on SHIFT"], 0.9, "LockSet", "shift" },
-	[13] = { "LOCKBAR", L["Unlock on CTRL"], 0.9, "LockSet", "ctrl" },
-	[14] = { "LOCKBAR", L["Unlock on ALT"], 0.9, "LockSet", "alt" },
-	[15] = { "TOOLTIPS", L["Enable Tooltips"], 1, "ToolTipSet" },
-	[16] = { "TOOLTIPS", L["Enhanced"], 0.9, "ToolTipSet", "enhanced" },
-	[17] = { "TOOLTIPS", L["Hide in Combat"], 0.9, "ToolTipSet", "combat" },
-	[18] = { "BORDERSTYLE", L["Show Border Style"], 1, "SetBorderStyle"},
+	[1] = { "AUTOHIDE", L["AutoHide"], 1, "SetAutoHide" },
+	[2] = { "SHOWGRID", L["Show Grid"], 1, "SetShowGrid" },
+	[3] = { "SNAPTO", L["SnapTo"], 1, "SetSnapTo" },
+	[4] = { "UPCLICKS", L["Up Clicks"], 1, "SetUpClicks" },
+	[5] = { "DOWNCLICKS", L["Down Clicks"], 1, "SetDownClicks" },
+	[6] = { "MULTISPEC", L["Multi Spec"], 1, "SetMultiSpec" },
+	[7] = { "HIDDEN", L["Hidden"], 1, "SetBarConceal" },
+	[8] = { "SPELLGLOW", L["Spell Alerts"], 1, "SetSpellGlow" },
+	[9] = { "LOCKBAR", L["Lock Actions"], 1, "SetBarLock" },
+	[10] = { "LOCKBAR", L["Unlock on SHIFT"], 0.9, "SetBarLock", "shift" },
+	[1] = { "LOCKBAR", L["Unlock on CTRL"], 0.9, "SetBarLock", "ctrl" },
+	[12] = { "LOCKBAR", L["Unlock on ALT"], 0.9, "SetBarLock", "alt" },
+	[13] = { "TOOLTIPS", L["Enable Tooltips"], 1, "SetTooltipEnable" },
+	[14] = { "TOOLTIPS", L["Enhanced"], 0.9, "SetTooltipEnhanced" },
+	[15] = { "TOOLTIPS", L["Hide in Combat"], 0.9, "SetTooltipCombat" },
+	[16] = { "BORDERSTYLE", L["Show Border Style"], 1, "SetBorderStyle"},
 }
 
 local adjOptions = {
-	[1] = { "SCALE", L["Scale"], 1, "ScaleBar", 0.01, 0.1, 4 },
-	[2] = { "SHAPE", L["Shape"], 2, "ShapeBar", nil, nil, nil, Neuron.BarShapes },
-	[3] = { "COLUMNS", L["Columns"], 1, "ColumnsSet", 1 , 0},
-	[4] = { "ARCSTART", L["Arc Start"], 1, "ArcStartSet", 1, 0, 359 },
-	[5] = { "ARCLENGTH", L["Arc Length"], 1, "ArcLengthSet", 1, 0, 359 },
-	[6] = { "HPAD",L["Horiz Padding"], 1, "PadHSet", 0.5 },
-	[7] = { "VPAD", L["Vert Padding"], 1, "PadVSet", 0.5 },
-	[8] = { "HVPAD", L["H+V Padding"], 1, "PadHVSet", 0.5 },
-	[9] = { "STRATA", L["Strata"], 2, "StrataSet", nil, nil, nil, Neuron.STRATAS },
-	[10] = { "ALPHA", L["Alpha"], 1, "AlphaSet", 0.01, 0, 1 },
-	[11] = { "ALPHAUP", L["AlphaUp"], 2, "AlphaUpSet", nil, nil, nil, Neuron.AlphaUps },
-	[12] = { "ALPHAUP", L["AlphaUp Speed"], 1, "AlphaUpSpeedSet", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
-	[13] = { "XPOS", L["X Position"], 1, "XAxisSet", 1, nil, nil, nil, "%0.2f", 1, "" },
-	[14] = { "YPOS", L["Y Position"], 1, "YAxisSet", 1, nil, nil, nil, "%0.2f", 1, "" },
+	[1] = { "SCALE", L["Scale"], 1, "SetScale", 0.01, 0.1, 4 },
+	[2] = { "SHAPE", L["Shape"], 2, "SetBarShape", nil, nil, nil, Neuron.BarShapes },
+	[3] = { "COLUMNS", L["Columns"], 1, "SetColumns", 1 , 0},
+	[4] = { "ARCSTART", L["Arc Start"], 1, "SetArcStart", 1, 0, 359 },
+	[5] = { "ARCLENGTH", L["Arc Length"], 1, "SetArcLength", 1, 0, 359 },
+	[6] = { "HPAD",L["Horiz Padding"], 1, "SetHorizontalPad", 0.5 },
+	[7] = { "VPAD", L["Vert Padding"], 1, "SetVerticalPad", 0.5 },
+	[9] = { "STRATA", L["Strata"], 2, "SetStrata", nil, nil, nil, Neuron.STRATAS },
+	[10] = { "ALPHA", L["Alpha"], 1, "SetBarAlpha", 0.01, 0, 1 },
+	[11] = { "ALPHAUP", L["AlphaUp"], 2, "SetAlphaUp", nil, nil, nil, Neuron.AlphaUps },
+	[12] = { "ALPHAUP", L["AlphaUp Speed"], 1, "SetAlphaUpSpeed", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
+	[13] = { "XPOS", L["X Position"], 1, "SetXAxis", 1, nil, nil, nil, "%0.2f", 1, "" },
+	[14] = { "YPOS", L["Y Position"], 1, "SetYAxis", 1, nil, nil, nil, "%0.2f", 1, "" },
 }
 
 local swatchOptions = {
-	[1] = { "BINDTEXT", L["Keybind Label"], 1, "BindTextSet", true, nil, "bindColor" },
-	[2] = { "MACROTEXT", L["Macro Name"], 1, "MacroTextSet", true, nil, "macroColor" },
-	[3] = { "COUNTTEXT", L["Stack/Charge Count Label"], 1, "CountTextSet", true, nil, "countColor" },
-	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "RangeIndSet", true, nil, "rangecolor" },
-	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
-	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "CDAlphaSet", nil, nil },
-	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
+	[1] = { "BINDTEXT", L["Keybind Label"], 1, "SetBindText", true, nil, "bindColor" },
+	[2] = { "MACROTEXT", L["Macro Name"], 1, "SetMacroText", true, nil, "macroColor" },
+	[3] = { "COUNTTEXT", L["Stack/Charge Count Label"], 1, "SetCountText", true, nil, "countColor" },
+	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "SetRangeInd", true, nil, "rangecolor" },
+	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "SetCDText", true, true, "cdcolor1", "cdcolor2" },
+	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "SetCDAlpha", nil, nil },
+	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "SetAuraInd", true, true, "buffcolor", "debuffcolor" },
 }
 
 -----------------------------------------------------------------------------
@@ -280,7 +277,7 @@ function NeuronGUI:PopulateRenameBar(container)
 
 	renameBox = AceGUI:Create("EditBox")
 	if Neuron.CurrentBar then
-		renameBox:SetText(Neuron.CurrentBar.data.name)
+		renameBox:SetText(Neuron.CurrentBar:GetName())
 	end
 	renameBox:SetLabel("Rename selected bar")
 
@@ -294,8 +291,8 @@ function NeuronGUI:updateBarName(editBox)
 	local bar = Neuron.CurrentBar
 
 	if (bar) then
-		bar.data.name = editBox:GetText()
-		bar.text:SetText(bar.data.name)
+		bar:SetName(editBox:GetText())
+		bar.text:SetText(bar:GetName())
 
 		editBox:ClearFocus()
 		NeuronGUI:RefreshEditor()

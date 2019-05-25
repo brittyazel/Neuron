@@ -326,17 +326,12 @@ function BUTTON:SetData(bar)
 		self.bar = bar
 
 		self.barLock = bar.data.barLock
-		self.barLockAlt = bar.data.barLockAlt
-		self.barLockCtrl = bar.data.barLockCtrl
-		self.barLockShift = bar.data.barLockShift
 
 		self.tooltips = bar.data.tooltips
 		self.tooltipsEnhanced = bar.data.tooltipsEnhanced
 		self.tooltipsCombat = bar.data.tooltipsCombat
 
 		self.spellGlow = bar.data.spellGlow
-		self.spellGlowDef = bar.data.spellGlowDef
-		self.spellGlowAlt = bar.data.spellGlowAlt
 
 		self.bindText = bar.data.bindText
 		self.macroText = bar.data.macroText
@@ -366,49 +361,7 @@ function BUTTON:SetData(bar)
 
 		self.macroname:SetText(self.data.macro_Name) --custom macro's weren't showing the name
 
-		if (not self.cdcolor1) then
-			self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
-		else
-			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
-		end
-
-		if (not self.cdcolor2) then
-			self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
-		else
-			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
-		end
-
-		if (not self.auracolor1) then
-			self.auracolor1 = { (";"):split(bar.data.auracolor1) }
-		else
-			self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], self.auracolor1[4] = (";"):split(bar.data.auracolor1)
-		end
-
-		if (not self.auracolor2) then
-			self.auracolor2 = { (";"):split(bar.data.auracolor2) }
-		else
-			self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], self.auracolor2[4] = (";"):split(bar.data.auracolor2)
-		end
-
-		if (not self.buffcolor) then
-			self.buffcolor = { (";"):split(bar.data.buffcolor) }
-		else
-			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.data.buffcolor)
-		end
-
-		if (not self.debuffcolor) then
-			self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
-		else
-			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
-		end
-
-		if (not self.rangecolor) then
-			self.rangecolor = { (";"):split(bar.data.rangecolor) }
-		else
-			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.data.rangecolor)
-		end
-
-		self:SetFrameStrata(bar.data.objectStrata)
+		self:SetFrameStrata(Neuron.STRATAS[bar.data.strata-1])
 
 		self:SetScale(bar.data.scale)
 	end
@@ -416,7 +369,7 @@ function BUTTON:SetData(bar)
 	if (self.bindText) then
 		self.hotkey:Show()
 		if (self.bindColor) then
-			self.hotkey:SetTextColor((";"):split(self.bindColor))
+			self.hotkey:SetTextColor(self.bindColor[1],self.bindColor[2],self.bindColor[3],self.bindColor[4])
 		end
 	else
 		self.hotkey:Hide()
@@ -425,7 +378,7 @@ function BUTTON:SetData(bar)
 	if (self.macroText) then
 		self.macroname:Show()
 		if (self.macroColor) then
-			self.macroname:SetTextColor((";"):split(self.macroColor))
+			self.macroname:SetTextColor(self.macroColor[1],self.macroColor[2],self.macroColor[3],self.macroColor[4])
 		end
 	else
 		self.macroname:Hide()
@@ -434,7 +387,7 @@ function BUTTON:SetData(bar)
 	if (self.countText) then
 		self.count:Show()
 		if (self.countColor) then
-			self.count:SetTextColor((";"):split(self.countColor))
+			self.count:SetTextColor(self.countColor[1],self.countColor[2],self.countColor[3],self.countColor[4])
 		end
 	else
 		self.count:Hide()
@@ -753,30 +706,6 @@ function BUTTON:AuraCounterUpdate()
 	local coolDown, formatted, size
 
 	coolDown = self:TimeLeft(self.iconframecooldown.auraTimer) - 1
-
-	--[[if self.iconframecooldown.showAuraCountdown and not self.iconframecooldown.showCountdownTimer then
-
-		if (coolDown < 1) then
-			self.iconframecooldown.timer:SetText("")
-		else
-
-			formatted = string.format( "%.0f",coolDown)
-
-			size = self.iconframecooldown.button:GetWidth()*0.45
-
-			if (self.iconframecooldown.auraType == "buff") then
-				self.border:SetVertexColor(self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], 1.0)
-			elseif (self.iconframecooldown.auraType == "debuff" and self.iconframecooldown.unit == "target") then
-				self.border:SetVertexColor(self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], 1.0)
-			end
-
-			self.iconframecooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
-
-			self.iconframecooldown.timer:SetText(formatted)
-
-		end
-
-	end]]
 
 
 	if self.iconframecooldown.showAuraBorder then

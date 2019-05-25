@@ -31,39 +31,33 @@ local genericButtonData = {
 
 	upClicks = true,
 	downClicks = false,
-	copyDrag = false,
-	muteSFX = false,
-	clearerrors= false,
 	cooldownAlpha = 1,
 
 	bindText = true,
-	bindColor = "1;1;1;1",
+	bindColor = {1,1,1,1},
 
 	countText = true,
 	spellCounts = false,
 	comboCounts = false,
-	countColor = "1;1;1;1",
+	countColor = {1,1,1,1},
 
 	macroText = false,
-	macroColor = "1;1;1;1",
+	macroColor = {1,1,1,1},
 
 	cdText = false,
-	cdcolor1 = "1;0.82;0;1",
-	cdcolor2 = "1;0.1;0.1;1",
-
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
+	cdcolor1 = {1,0.82,0,1},
+	cdcolor2 = {1,0.1,0.1,1},
 
 	auraInd = false,
-	buffcolor = "0;0.8;0;1",
-	debuffcolor = "0.8;0;0;1",
+	buffcolor = {0,0.8,0,1},
+	debuffcolor = {0.8,0,0,1},
 
 	rangeInd = true,
-	rangecolor = "0.7;0.15;0.15;1",
+	rangecolor = {0.7,0.15,0.15,1},
 
-	skincolor = "1;1;1;1",
-	hovercolor = "0.1;0.1;1;1",
-	equipcolor = "0.1;1;0.1;1",
+	skincolor = {1,1,1,1},
+	hovercolor = {0.1,0.1,1,1},
+	equipcolor = {0.1,1,0.1,1},
 
 	scale = 1,
 	alpha = 1,
@@ -98,29 +92,29 @@ local genericStatusBtnData= {
 	orientation = 1,
 
 	cIndex = 1,
-	cColor = "1;1;1;1",
+	cColor = {1,1,1,1},
 
 	lIndex = 1,
-	lColor = "1;1;1;1",
+	lColor = {1,1,1,1},
 
 	rIndex = 1,
-	rColor = "1;1;1;1",
+	rColor = {1,1,1,1},
 
 	mIndex = 1,
-	mColor = "1;1;1;1",
+	mColor = {1,1,1,1},
 
 	tIndex = 1,
-	tColor = "1;1;1;1",
+	tColor = {1,1,1,1},
 
-	bordercolor = "1;1;1;1",
+	bordercolor = {1,1,1,1},
 
-	norestColor = "1;0;1;1",
-	restColor = "0;0;1;1",
+	norestColor = {1,0,1,1},
+	restColor = {0,0,1,1},
 
-	castColor = "1;0.7;0;1",
-	channelColor = "0;1;0;1",
-	successColor = "0;1;0;1",
-	failColor = "1;0;0;1",
+	castColor = {1,0.7,0,1},
+	channelColor = {0,1,0,1},
+	successColor = {0,1,0,1},
+	failColor = {1,0,0,1},
 
 	showIcon = false,
 
@@ -166,8 +160,7 @@ local genericBarData = {
 	alphaMax = 1,
 	fadeSpeed = 0.5,
 
-	barStrata = "MEDIUM",
-	objectStrata = "LOW",
+	strata = 3,
 
 	padH = 0,
 	padV = 0,
@@ -182,16 +175,14 @@ local genericBarData = {
 	autoHide = false,
 	showGrid = true,
 
-	bindColor = "1;1;1;1",
-	macroColor = "1;1;1;1",
-	countColor = "1;1;1;1",
-	cdcolor1 = "1;0.82;0;1",
-	cdcolor2 = "1;0.1;0.1;1",
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
-	buffcolor = "0;0.8;0;1",
-	debuffcolor = "0.8;0;0;1",
-	rangecolor = "0.7;0.15;0.15;1",
+	bindColor = {1,1,1,1},
+	macroColor = {1,1,1,1},
+	countColor = {1,1,1,1},
+	cdcolor1 = {1,0.82,0,1},
+	cdcolor2 = {1,0.1,0.1,1},
+	buffcolor = {0,0.8,0,1},
+	debuffcolor = {0.8,0,0,1},
+	rangecolor = {0.7,0.15,0.15,1},
 	border = true,
 
 	upClicks = true,
@@ -201,9 +192,7 @@ local genericBarData = {
 
 	multiSpec = false,
 
-	spellGlow = true,
-	spellGlowDef = true,
-	spellGlowAlt = false,
+	spellGlow = "default",
 
 	barLock = false,
 	barLockAlt = false,

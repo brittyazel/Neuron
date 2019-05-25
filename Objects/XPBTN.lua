@@ -199,9 +199,9 @@ function XPBTN:XPBar_OnEvent(event, ...)
 		currXP, nextXP, isRested = self:xpstrings_Update()
 
 		if (isRested) then
-			self.sb:SetStatusBarColor(self.sb.restColor[1], self.sb.restColor[2], self.sb.restColor[3], self.sb.restColor[4])
+			self.sb:SetStatusBarColor(self.config.restColor[1], self.config.restColor[2], self.config.restColor[3], self.config.restColor[4])
 		else
-			self.sb:SetStatusBarColor(self.sb.norestColor[1], self.sb.norestColor[2], self.sb.norestColor[3], self.sb.norestColor[4])
+			self.sb:SetStatusBarColor(self.config.norestColor[1], self.config.norestColor[2], self.config.norestColor[3], self.config.norestColor[4])
 		end
 
 		hasChanged = true;

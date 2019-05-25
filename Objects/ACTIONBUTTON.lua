@@ -585,23 +585,21 @@ end
 
 
 function ACTIONBUTTON:StartGlow()
-
 	if self.spellGlow then
-		if (self.spellGlowDef) then
+		if self.spellGlow == "default" then
 			ActionButton_ShowOverlayGlow(self)
-		elseif (self.spellGlowAlt) then
+		else
 			self.shine:Show()
-			AutoCastShine_AutoCastStart(self.shine);
+			AutoCastShine_AutoCastStart(self.shine)
 		end
 	end
 end
 
 function ACTIONBUTTON:StopGlow()
-
 	if self.spellGlow then
-		if (self.spellGlowDef) then
+		if self.spellGlow == "default" then
 			ActionButton_HideOverlayGlow(self)
-		elseif (self.spellGlowAlt) then
+		else
 			self.shine:Hide()
 			AutoCastShine_AutoCastStop(self.shine);
 		end

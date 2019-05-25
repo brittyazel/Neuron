@@ -47,7 +47,14 @@ NeuronCollectionCache = {} --Stores a cache of all Mounts and Battle Pets that h
 NeuronToyCache = {} --Stores a cache of all toys that have been seen by a Neuron button
 
 
-Neuron.STRATAS = {"BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP"}
+Neuron.STRATAS = {
+	[1] = "BACKGROUND",
+	[2] = "LOW",
+	[3] = "MEDIUM",
+	[4] = "HIGH",
+	[5] = "DIALOG",
+	[6] = "TOOLTIP"
+}
 
 
 Neuron.STATES = {
@@ -172,7 +179,7 @@ function Neuron:OnInitialize()
 	Neuron:Minimap_IconInitialize()
 
 	--Initialize the chat commands (i.e. /neuron)
-	Neuron:RegisterChatCommand("neuron", "slashHandler")
+	--Neuron:RegisterChatCommand("neuron", "slashHandler")
 
 	--build all bar and button frames and run initial setup
 	Neuron:Startup()
@@ -816,11 +823,10 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 end
 
 
-function Neuron:RegisterGUIOptions(class, chkOpt, stateOpt, adjOpt)
+function Neuron:RegisterGUIOptions(class, chkOpt, stateOpt)
 	Neuron.registeredGUIData[class] = {
 		class = class;
 		chkOpt = chkOpt,
 		stateOpt = stateOpt,
-		adjOpt = adjOpt,
 	}
 end

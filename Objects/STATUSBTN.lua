@@ -484,7 +484,7 @@ function STATUSBTN:SetData(bar)
 		self.alpha = bar.data.alpha
 		self.showGrid = bar.data.showGrid
 
-		self:SetFrameStrata(bar.data.objectStrata)
+		self:SetFrameStrata(Neuron.STRATAS[bar.data.strata-1])
 		self:SetScale(bar.data.scale)
 
 	end
@@ -492,20 +492,13 @@ function STATUSBTN:SetData(bar)
 	self:SetWidth(self.config.width)
 	self:SetHeight(self.config.height)
 
-	self.bordercolor = { (";"):split(self.config.bordercolor) }
-
-	self.cColor = { (";"):split(self.config.cColor) }
-	self.lColor = { (";"):split(self.config.lColor) }
-	self.rColor = { (";"):split(self.config.rColor) }
-	self.mColor = { (";"):split(self.config.mColor) }
-	self.tColor = { (";"):split(self.config.tColor) }
 
 	self.sb.parent = self
 
-	self.sb.cText:SetTextColor(self.cColor[1], self.cColor[2], self.cColor[3], self.cColor[4])
-	self.sb.lText:SetTextColor(self.lColor[1], self.lColor[2], self.lColor[3], self.lColor[4])
-	self.sb.rText:SetTextColor(self.rColor[1], self.rColor[2], self.rColor[3], self.rColor[4])
-	self.sb.mText:SetTextColor(self.mColor[1], self.mColor[2], self.mColor[3], self.mColor[4])
+	self.sb.cText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
+	self.sb.lText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
+	self.sb.rText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
+	self.sb.mText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
 
 
 	if (not self.sbStrings[self.config.cIndex]) then
@@ -539,14 +532,6 @@ function STATUSBTN:SetData(bar)
 	self.sb.rText:SetText(self.sb.rFunc(self.sb))
 	self.sb.mText:SetText(self.sb.mFunc(self.sb))
 
-	self.sb.norestColor = { (";"):split(self.config.norestColor) }
-	self.sb.restColor = { (";"):split(self.config.restColor) }
-
-	self.sb.castColor = { (";"):split(self.config.castColor) }
-	self.sb.channelColor = { (";"):split(self.config.channelColor) }
-	self.sb.successColor = { (";"):split(self.config.successColor) }
-	self.sb.failColor = { (";"):split(self.config.failColor) }
-
 	self.sb.orientation = self.config.orientation
 	self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
 	self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
@@ -571,8 +556,8 @@ function STATUSBTN:SetData(bar)
 		self.fbframe.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
 	end
 
-	self:SetBorder(self.sb, self.config, self.bordercolor)
-	self:SetBorder(self.fbframe.feedback, self.config, self.bordercolor)
+	self:SetBorder(self.sb, self.config, self.config.bordercolor)
+	self:SetBorder(self.fbframe.feedback, self.config, self.config.bordercolor)
 
 	self:SetFrameLevel(4)
 

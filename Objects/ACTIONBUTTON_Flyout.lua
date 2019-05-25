@@ -802,9 +802,7 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 
 		self.tooltips = true
 		self.tooltipsEnhanced = true
-		--self.tooltipsCombat = bar.data.tooltipsCombat
-		--self:SetFrameStrata(bar.data.objectStrata)
-		--self:SetScale(bar.data.scale)
+
 	end
 
 	self.hotkey:Hide()
@@ -814,8 +812,6 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 	self.equipcolor = { 0.1, 1, 0.1, 1 }
 	self.cdcolor1 = { 1, 0.82, 0, 1 }
 	self.cdcolor2 = { 1, 0.1, 0.1, 1 }
-	self.auracolor1 = { 0, 0.82, 0, 1 }
-	self.auracolor2 = { 1, 0.1, 0.1, 1 }
 	self.buffcolor = { 0, 0.8, 0, 1 }
 	self.debuffcolor = { 0.8, 0, 0, 1 }
 	self.manacolor = { 0.5, 0.5, 1.0 }

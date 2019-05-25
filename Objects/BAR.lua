@@ -316,6 +316,17 @@ function BAR:RemoveObjectsFromBar(num) --called from NeuronGUI
 	end
 
 end
+
+
+function BAR:Load()
+	self:SetPosition()
+	self:LoadObjects()
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:EnableKeyboard(false)
+	self:Update()
+end
 -----------------------------------
 
 
@@ -529,7 +540,7 @@ function BAR:SetHidden(handler, show, hide)
 	end
 end
 
-function BAR:SetAutoHide()
+function BAR:LaunchAutoHide()
 	if (self.data.autoHide) then
 		if self:TimeLeft(self.autoHideTimer) == 0 then --safety check to make sure we don't re-set an already active timer
 			self.autoHideTimer = self:ScheduleRepeatingTimer("AutoHideUpdate", .05)
@@ -539,7 +550,7 @@ function BAR:SetAutoHide()
 	end
 end
 
-function BAR:SetAlphaUp()
+function BAR:LaunchAlphaUp()
 	if (self.data.alphaUp) then
 		if self:TimeLeft(self.alphaUpTimer) == 0 then --safety check to make sure we don't re-set an already active timer
 			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", .05)
@@ -1063,8 +1074,8 @@ function BAR:Update(show, hide)
 	end
 
 	self:SetHidden(handler, show, hide)
-	self:SetAutoHide()
-	self:SetAlphaUp()
+	self:LaunchAutoHide()
+	self:LaunchAlphaUp()
 	self.text:SetText(self.data.name)
 	handler:SetAlpha(self.data.alpha)
 
@@ -1138,7 +1149,7 @@ function BAR:SetPosition()
 		self:ClearAllPoints()
 		self:SetPoint("CENTER", "UIParent", point, x, y)
 		self:SetUserPlaced(true)
-		self:SetFrameStrata(self.data.barStrata)
+		self:SetFrameStrata(Neuron.STRATAS[self.data.strata])
 
 		if (self.message) then
 			self.message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
@@ -1444,10 +1455,6 @@ function BAR:OnClick(...)
 			newBar = self:ChangeBar()
 		end
 
-		if (down) then
-			--Neuron:ConcealBar(nil, true)
-		end
-
 	elseif (click == "RightButton" and not self.action and not down) then
 		self.mousewheelfunc = nil
 
@@ -1487,11 +1494,10 @@ end
 function BAR:OnDragStart(...)
 	self:ChangeBar()
 
-	self:SetFrameStrata(self.data.barStrata)
+	self:SetFrameStrata(Neuron.STRATAS[self.data.strata])
 	self:EnableKeyboard(false)
 
 	self.adjusting = true
-	self.selected = true
 	self.isMoving = true
 
 	self.data.snapToPoint = false
@@ -1695,7 +1701,6 @@ function BAR:ChangeBar()
 		if (self and Neuron.CurrentBar ~= self) then
 			Neuron.CurrentBar = self
 
-			self.selected = true
 			self.action = nil
 
 			if (self.data.hidden) then
@@ -1742,7 +1747,21 @@ function BAR:ChangeBar()
 end
 
 
-function BAR:SetState(msg, gui, checked, query)
+-----------------------------------------------------
+-------------------Sets and Gets---------------------
+-----------------------------------------------------
+
+function BAR:SetName(name)
+	self.data.name = name
+	self:Update()
+end
+
+function BAR:GetName()
+	return self.data.name
+end
+
+--TODO: Rewrite this and simplify it
+function BAR:SetState(msg, gui, checked)
 	if (msg) then
 		local state = msg:match("^%S+")
 		local command = msg:gsub(state, "");
@@ -1875,9 +1894,7 @@ function BAR:SetState(msg, gui, checked, query)
 
 end
 
-
---I have no clue what or how any of this works. I took out the annoying print statements, but for now I'll just leave it. -Soyier
-
+--TODO: Rewrite this and simplify it
 function BAR:SetVisibility(msg, gui, checked, query)
 	if (msg) then
 		wipe(statetable)
@@ -1947,9 +1964,6 @@ function BAR:SetVisibility(msg, gui, checked, query)
 			end
 
 			if (#statetable > 0) then
-				--[[if (statetable[0]) then
-					desc, showhide = (":"):split(statetable[0])
-				end]]
 
 				for k,v in ipairs(statetable) do
 					if (v ~= "ignore") then
@@ -1969,49 +1983,25 @@ function BAR:SetVisibility(msg, gui, checked, query)
 end
 
 
-function BAR:AutoHideBar(msg, gui, checked, query)
-	if (query) then
-		return self.data.autoHide
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.autoHide = true
-		else
-			self.data.autoHide = false
-		end
-
+function BAR:SetAutoHide(checked)
+	if (checked) then
+		self.data.autoHide = true
 	else
-		local toggle = self.data.autoHide
-
-		if (toggle) then
-			self.data.autoHide = false
-		else
-			self.data.autoHide = true
-		end
+		self.data.autoHide = false
 	end
 
 	self:Update()
 end
 
+function BAR:GetAutoHide()
+	return self.data.autoHide
+end
 
-function BAR:ShowGridSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.showGrid
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.showGrid = true
-		else
-			self.data.showGrid = false
-		end
+function BAR:SetShowGrid(checked)
+	if (checked) then
+		self.data.showGrid = true
 	else
-		if (self.data.showGrid) then
-			self.data.showGrid = false
-		else
-			self.data.showGrid = true
-		end
+		self.data.showGrid = false
 	end
 
 	self:UpdateObjectData()
@@ -2019,945 +2009,646 @@ function BAR:ShowGridSet(msg, gui, checked, query)
 	self:Update()
 end
 
-
-function BAR:spellGlowMod(msg, gui)
-	if (msg:lower() == "default") then
-		if (self.data.spellGlowDef) then
-			self.data.spellGlowDef = false
-		else
-			self.data.spellGlowDef = true
-			self.data.spellGlowAlt = false
-		end
-
-		if (not self.data.spellGlowDef and not self.data.spellGlowAlt) then
-			self.data.spellGlowDef = true
-		end
-
-	elseif (msg:lower() == "alt") then
-		if (self.data.spellGlowAlt) then
-			self.data.spellGlowAlt = false
-		else
-			self.data.spellGlowAlt = true
-			self.data.spellGlowDef = false
-		end
-
-		if (not self.data.spellGlowDef and not self.data.spellGlowAlt) then
-			self.data.spellGlowDef = true
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Spellglow_Instructions"])
-	end
+function BAR:GetShowGrid()
+	return self.data.showGrid
 end
 
-
-function BAR:SpellGlowSet(msg, gui, checked, query)
-	if (query) then
-		if (msg == "default") then
-			return self.data.spellGlowDef
-		elseif(msg == "alt") then
-			return self.data.spellGlowAlt
+function BAR:SetSpellGlow(option)
+	if option then
+		if option == "default" then
+			self.data.spellGlow = "default"
 		else
-			return self.data.spellGlow
+			self.data.spellGlow = "alternate"
 		end
-	end
-
-	if (gui) then
-		if (msg) then
-			self:spellGlowMod(msg, gui)
-		elseif (checked) then
-			self.data.spellGlow = true
-		else
-			self.data.spellGlow = false
-		end
-
 	else
-		if (msg) then
-			self:spellGlowMod(msg, gui)
-		elseif (self.data.spellGlow) then
-			self.data.spellGlow = false
-		else
-			self.data.spellGlow = true
-		end
+		self.data.spellGlow = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetSpellGlow()
+	return self.data.spellGlow
+end
 
-function BAR:SnapToBar(msg, gui, checked, query)
-	if (query) then
-		return self.data.snapTo
-	end
 
-	if (gui) then
-		if (checked) then
-			self.data.snapTo = true
-		else
-			self.data.snapTo = false
-		end
+function BAR:SetSnapTo(checked)
+	if (checked) then
+		self.data.snapTo = true
 	else
-		local toggle = self.data.snapTo
+		self.data.snapTo = false
 
-		if (toggle) then
-			self.data.snapTo = false
-			self.data.snapToPoint = false
-			self.data.snapToFrame = false
+		self.data.snapToPoint = false
+		self.data.snapToFrame = false
 
-			self:SetUserPlaced(true)
-			self.data.point, self.data.x, self.data.y = self:GetPosition()
-			self:SetPosition()
-		else
-			self.data.snapTo = true
-		end
+		self:SetUserPlaced(true)
+		self.data.point, self.data.x, self.data.y = self:GetPosition()
+		self:SetPosition()
 	end
 
 	self:Update()
 end
 
-function BAR:UpClicksSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.upClicks
-	end
+function BAR:GetSnapTo()
+	return self.data.snapTo
+end
 
-	if (gui) then
-		if (checked) then
-			self.data.upClicks = true
-		else
-			self.data.upClicks = false
-		end
+function BAR:SetUpClicks(checked)
 
+	if (checked) then
+		self.data.upClicks = true
 	else
-		if (self.data.upClicks) then
-			self.data.upClicks = false
-		else
-			self.data.upClicks = true
-		end
+		self.data.upClicks = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetUpClicks()
+	return self.data.upClicks
+end
 
-function BAR:DownClicksSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.downClicks
-	end
 
-	if (gui) then
-		if (checked) then
-			self.data.downClicks = true
-		else
-			self.data.downClicks = false
-		end
-
+function BAR:SetDownClicks(checked)
+	if (checked) then
+		self.data.downClicks = true
 	else
-		if (self.data.downClicks) then
-			self.data.downClicks = false
-		else
-			self.data.downClicks = true
-		end
+		self.data.downClicks = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetDownClicks()
+	return self.data.downClicks
+end
 
-function BAR:MultiSpecSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.multiSpec
-	end
 
-	if (gui) then
-		if (checked) then
-			self.data.multiSpec = true
-		else
-			self.data.multiSpec = false
-		end
+function BAR:SetMultiSpec(checked)
+	if (checked) then
+		self.data.multiSpec = true
 	else
-		local toggle = self.data.multiSpec
-
-		if (toggle) then
-			self.data.multiSpec = false
-		else
-			self.data.multiSpec = true
-		end
+		self.data.multiSpec = false
 	end
 
-	for i, object in ipairs(self.buttons) do
-
-		if object then
-			object:UpdateButtonSpec(self)
-		end
-
+	for _,object in ipairs(self.buttons) do
+		object:UpdateButtonSpec(self)
 	end
 
 	self:Update()
 end
 
+function BAR:GetMultiSpec()
+	return self.data.multiSpec
+end
 
-function BAR:ConcealBar(msg, gui, checked, query)
-	if (InCombatLockdown()) then
-		return
-	end
 
-	if (query) then
-		return self.data.conceal
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.conceal = true
-		else
-			self.data.conceal = false
-		end
-
+function BAR:SetBarConceal(checked)
+	if (checked) then
+		self.data.conceal = true
+		self:SetBackdropColor(1,0,0,0.4)
 	else
-		local toggle = self.data.conceal
-
-		if (toggle) then
-			self.data.conceal = false
-		else
-			self.data.conceal = true
-		end
-	end
-
-	if (self.data.conceal) then
-		if (self.selected) then
-			self:SetBackdropColor(1,0,0,0.6)
-		else
-			self:SetBackdropColor(1,0,0,0.4)
-		end
-	else
-		if (self.selected) then
-			self:SetBackdropColor(0,0,1,0.5)
-		else
-			self:SetBackdropColor(0,0,0,0.4)
-		end
+		self.data.conceal = false
+		self:SetBackdropColor(0,0,0,0.4)
 	end
 
 	self:Update()
 end
 
-
-function BAR:barLockMod(msg, gui)
-	if (msg:lower() == "alt") then
-		if (self.data.barLockAlt) then
-			self.data.barLockAlt = false
-		else
-			self.data.barLockAlt = true
-		end
-
-	elseif (msg:lower() == "ctrl") then
-		if (self.data.barLockCtrl) then
-			self.data.barLockCtrl = false
-		else
-			self.data.barLockCtrl = true
-		end
-
-	elseif (msg:lower() == "shift") then
-		if (self.data.barLockShift) then
-			self.data.barLockShift = false
-		else
-			self.data.barLockShift = true
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Bar_Lock_Modifier_Instructions"])
-	end
+function BAR:GetBarConceal()
+	return self.data.conceal
 end
 
-function BAR:LockSet(msg, gui, checked, query)
-	if (query) then
-		if (msg == "shift") then
-			return self.data.barLockShift
-		elseif(msg == "ctrl") then
-			return self.data.barLockCtrl
-		elseif(msg == "alt") then
-			return self.data.barLockAlt
+function BAR:SetBarLock(option)
+	if option then
+		if option == "shift" then
+			self.data.barLock = "shift"
+		elseif option == "ctrl" then
+			self.data.barLock = "ctrl"
 		else
-			return self.data.barLock
+			self.data.barLock = "alt"
 		end
-	end
-
-	if (gui) then
-		if (msg) then
-			self:barLockMod(msg, gui)
-		elseif (checked) then
-			self.data.barLock = true
-		else
-			self.data.barLock = false
-		end
-
 	else
-		if (msg) then
-			self:barLockMod(msg, gui)
-		else
-			if (self.data.barLock) then
-				self.data.barLock = false
-			else
-				self.data.barLock = true
-			end
-		end
+		self.data.barLock = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
-
-function BAR:toolTipMod(msg, gui)
-	if (msg:lower() == "enhanced") then
-		if (self.data.tooltipsEnhanced) then
-			self.data.tooltipsEnhanced = false
-		else
-			self.data.tooltipsEnhanced = true
-		end
-
-	elseif (msg:lower() == "combat") then
-		if (self.data.tooltipsCombat) then
-			self.data.tooltipsCombat = false
-		else
-			self.data.tooltipsCombat = true
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Tooltip_Instructions"])
-	end
+function BAR:GetBarLock()
+	return self.data.barLock
 end
 
 
-function BAR:ToolTipSet(msg, gui, checked, query)
-	if (query) then
-		if (msg == "enhanced") then
-			return self.data.tooltipsEnhanced
-		elseif(msg == "combat") then
-			return self.data.tooltipsCombat
-		else
-			return self.data.tooltips
-		end
-	end
-
-	if (gui) then
-		if (msg) then
-			self:toolTipMod(msg, gui)
-		elseif (checked) then
-			self.data.tooltips = true
-		else
-			self.data.tooltips = false
-		end
-
+function BAR:SetTooltipEnable(checked)
+	if checked then
+		self.data.tooltips = true
 	else
-		if (msg) then
-			self:toolTipMod(msg, gui)
-		else
-			if (self.data.tooltips) then
-				self.data.tooltips = false
-			else
-				self.data.tooltips = true
-			end
-		end
+		self.data.tooltips = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
-
-function BAR:NameBar(name, gui)
-	if (name) then
-		self.data.name = name
-		self:Update()
-	end
+function BAR:SetTooltipEnable()
+	return self.data.tooltips
 end
 
-
-function BAR:ShapeBar(shape, gui, query)
-	if (query) then
-		return barShapes[self.data.shape]
+function BAR:SetTooltipEnhanced(checked)
+	if checked then
+		self.data.tooltipsEnhanced = true
+	else
+		self.data.tooltipsEnhanced = false
 	end
 
-	shape = tonumber(shape)
-
-	if (shape and barShapes[shape]) then
-		self.data.shape = shape
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-		self:Update()
-	elseif (not gui) then
-		Neuron:Print(L["Bar_Shapes_List"])
-	end
+	self:UpdateObjectData()
+	self:Update()
 end
 
+function BAR:GetTooltipEnhanced()
+	return self.data.tooltipsEnhanced
+end
 
-function BAR:ColumnsSet(command, gui, query, skipupdate)
-	if (query) then
-		if (self.data.columns) then
-			return self.data.columns
-		else
-			return L["Off"]
-		end
+function BAR:SetTooltipCombat(checked)
+	if checked then
+		self.data.tooltipsCombat = true
+	else
+		self.data.tooltipsCombat = false
 	end
 
-	local columns = tonumber(command)
+	self:UpdateObjectData()
+	self:Update()
+end
 
-	if (columns and columns > 0) then
-		self.data.columns = round(columns, 0)
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+function BAR:GetTooltipCombat()
+	return self.data.tooltipsCombat
+end
 
-		if (not skipupdate) then
-			self:Update()
-		end
+function BAR:SetBarShape(option)
+	if option then
+		self.data.shape = option
+	else
+		self.data.shape = false
+	end
 
-	elseif (not columns or columns <= 0) then
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
+end
+
+function BAR:GetBarShape()
+	return self.data.shape
+end
+
+function BAR:SetColumns(option)
+	if option then
+		self.data.columns = option
+	else
 		self.data.columns = false
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Bar_Column_Instructions"])
 	end
+
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
+end
+
+function BAR:GetColumns()
+	return self.data.columns
+end
+
+function BAR:SetArcStart(option)
+	if option then
+		self.data.arcStart = option
+	else
+		self.data.arcStart = 0
+	end
+
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
+end
+
+function BAR:GetArcStart()
+	return self.data.arcStart
+end
+
+function BAR:SetArcLength(option)
+	if option then
+		self.data.arcLength = option
+	else
+		self.data.arcLength = 359
+	end
+
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
+end
+
+function BAR:GetArcLength()
+	return self.data.arcLength
 end
 
 
-function BAR:ArcStartSet(command, gui, query, skipupdate)
-	if (query) then
-		return self.data.arcStart
+
+function BAR:SetHorizontalPad(option)
+	if option then
+		self.data.padH = option
+	else
+		self.data.padH = 0
 	end
 
-	local start = tonumber(command)
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
+end
 
-	if (start and start>=0 and start<=359) then
-		self.data.arcStart = start
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
+function BAR:GetHorizontalPad()
+	return self.data.padH
+end
 
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Bar_ArcStart_Instructions"])
+function BAR:SetVerticalPad(option)
+	if option then
+		self.data.padV = option
+	else
+		self.data.padV = 0
 	end
+
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
+end
+
+function BAR:GetVerticalPad()
+	return self.data.padV
 end
 
 
-function BAR:ArcLengthSet(command, gui, query, skipupdate)
-	if (query) then
-		return self.data.arcLength
+function BAR:SetScale(option)
+	if option then
+		self.data.scale = option
+	else
+		self.data.scale = 1
 	end
 
-	local length = tonumber(command)
-
-	if (length and length>=0 and length<=359) then
-		self.data.arcLength = length
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Bar_ArcLength_Instructions"])
-	end
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
 end
 
-
-function BAR:PadHSet(command, gui, query, skipupdate)
-	if (query) then
-		return self.data.padH
-	end
-
-	local padh = tonumber(command)
-
-	if (padh) then
-		self.data.padH = round(padh, 1)
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Horozontal_Padding_Instructions"])
-	end
+function BAR:GetScale()
+	return self.data.scale
 end
 
-
-function BAR:PadVSet(command, gui, query, skipupdate)
-	if (query) then
-		return self.data.padV
+function BAR:SetStrata(option)
+	--option should be numeric, and should not ever be lower than 2. In the GUI we should make sure the list starts at 2 and runs until 6
+	if option and option <=2 and option >= 6 then
+		self.data.strata = option
+	else
+		self.data.strata = 3
 	end
 
-	local padv = tonumber(command)
-
-	if (padv) then
-		self.data.padV = round(padv, 1)
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Vertical_Padding_Instructions"])
-	end
+	self:SetPosition()
+	self:UpdateObjectData()
+	self:Update()
 end
 
-
-function BAR:PadHVSet(command, gui, query, skipupdate)
-	if (query) then
-		return "---"
-	end
-
-	local padhv = tonumber(command)
-
-	if (padhv) then
-		self.data.padH = round(self.data.padH + padhv, 1)
-		self.data.padV = round(self.data.padV + padhv, 1)
-
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Horozontal_and_Vertical_Padding_Instructions"])
-	end
+function BAR:GetStrata()
+	return self.data.strata
 end
 
-
-function BAR:ScaleBar(scale, gui, query, skipupdate)
-	if (query) then
-		return self.data.scale
+function BAR:SetBarAlpha(option)
+	if option then
+		self.data.alpha = option
+	else
+		self.data.alpha = 1
 	end
 
-	scale = tonumber(scale)
-
-	if (scale) then
-		self.data.scale = round(scale, 2)
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-
-		if (not skipupdate) then
-			self:Update()
-		end
-	end
+	self.handler:SetAlpha(self.data.alpha) --not sure if this should be here
+	self:Update()
 end
 
-
-function BAR:StrataSet(command, gui, query)
-	if (query) then
-		return self.data.objectStrata
-	end
-
-	local strata = tonumber(command)
-
-	if (strata and Neuron.STRATAS[strata] and Neuron.STRATAS[strata+1]) then
-		self.data.barStrata = Neuron.STRATAS[strata+1]
-		self.data.objectStrata = Neuron.STRATAS[strata]
-
-		self:SetPosition()
-		self:UpdateObjectData()
-		self:Update()
-
-	elseif (not gui) then
-		Neuron:Print(L["Bar_Strata_List"])
-	end
+function BAR:GetAlpha()
+	return self.data.alpha
 end
 
-
-function BAR:AlphaSet(command, gui, query, skipupdate)
-	if (query) then
-		return self.data.alpha
+function BAR:SetAlphaUp(option)
+	if option then
+		self.data.alphaUp = option
+	else
+		self.data.alphaUp = L["Off"]
 	end
 
-	local alpha = tonumber(command)
-
-	if (alpha and alpha>=0 and alpha<=1) then
-		self.data.alpha = round(alpha, 2)
-		self.handler:SetAlpha(self.data.alpha)
-
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["Bar_Alpha_Instructions"])
-	end
+	self:Update()
 end
 
-function BAR:AlphaUpSet(command, gui, query)
-	if (query) then
-		--temp fix
-		if (self.data.alphaUp == "none" or self.data.alphaUp == 1) then
-			self.data.alphaUp = alphaUps[1]
-		end
-
-		return self.data.alphaUp
-	end
-
-	local alphaUp = tonumber(command)
-
-	if (alphaUp and alphaUps[alphaUp]) then
-		self.data.alphaUp = alphaUps[alphaUp]
-		self:Update()
-	elseif (not gui) then
-		local text = ""
-
-		for k,v in ipairs(alphaUps) do
-			text = text.."\n"..k.."="..v
-			Neuron:Print(text)
-		end
-	end
+function BAR:GetAlphaUp()
+	return self.data.alphaUp
 end
 
-
-function BAR:AlphaUpSpeedSet(command, gui, query, skipupdate)
-	if (query) then
-		return self.data.fadeSpeed
-	end
-
-	local speed = tonumber(command)
-
-	if (speed) then
-		self.data.fadeSpeed = round(speed, 2)
-
-		if (self.data.fadeSpeed > 1) then
-			self.data.fadeSpeed = 1
-		end
-
-		if (self.data.fadeSpeed < 0.01) then
+function BAR:SetAlphaUpSpeed(option)
+	if option then
+		if option < 0.01 then
 			self.data.fadeSpeed = 0.01
+		elseif option > 1 then
+			self.data.fadeSpeed = 1
+		else
+			self.data.fadeSpeed = option
 		end
-
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
+	else
+		self.data.fadeSpeed = 0.5
 	end
+
+	self:Update()
 end
 
-function BAR:XAxisSet(command, gui, query, skipupdate)
-	if (query) then
-		return self.data.x
-	end
+function BAR:GetAlphaUpSpeed()
+	return self.data.fadeSpeed
+end
 
-	local x = tonumber(command)
-
-	if (x) then
-		self.data.x = round(x, 2)
+function BAR:SetXAxis(option)
+	if option then
+		self.data.x = option
 		self.data.snapTo = false
 		self.data.snapToPoint = false
 		self.data.snapToFrame = false
-		self:SetPosition()
-		self.data.point, self.data.x, self.data.y = self:GetPosition()
-
-		if (not gui) then
-			self.message:Show()
-			self.messagebg:Show()
-		end
-
-		if (not skipupdate) then
-			self:Update()
-		end
-
-	elseif (not gui) then
-		Neuron:Print(L["X_Position_Instructions"])
+	else
+		self.data.x = 0
 	end
+
+	self:SetPosition()
+	self:Update()
 end
 
+function BAR:GetXAxis()
+	return self.data.x
+end
 
-function BAR:YAxisSet(command, gui, query, skipupdate)
-	if (query) then
-		return self.data.y
-	end
-
-	local y = tonumber(command)
-
-	if (y) then
-		self.data.y = round(y, 2)
+function BAR:SetYAxis(option)
+	if option then
+		self.data.y = option
 		self.data.snapTo = false
 		self.data.snapToPoint = false
 		self.data.snapToFrame = false
-		self:SetPosition()
-		self.data.point, self.data.x, self.data.y = self:GetPosition()
-
-		if (not gui) then
-			self.message:Show()
-			self.messagebg:Show()
-		end
-
-		if (not skipupdate) then
-			self:Update()
-		end
-	elseif (not gui) then
-		Neuron:Print(L["Y_Position_Instructions"])
+	else
+		self.data.y = 190
 	end
+
+	self:SetPosition()
+	self:Update()
 end
 
+function BAR:GetYAxis()
+	return self.data.y
+end
 
-function BAR:BindTextSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.bindText, self.data.bindColor
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.bindText = true
-		else
-			self.data.bindText = false
-		end
-
+function BAR:SetBindText(checked)
+	if checked then
+		self.data.bindText = true
 	else
-		if (self.data.bindText) then
-			self.data.bindText = false
-		else
-			self.data.bindText = true
-		end
+		self.data.bindText = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetBindText()
+	return self.data.bindText
+end
 
-function BAR:MacroTextSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.macroText, self.data.macroColor
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.macroText = true
-		else
-			self.data.macroText = false
-		end
-
+function BAR:SetBindColor(option)
+	if option then
+		self.data.bindColor = option
 	else
-		if (self.data.macroText) then
-			self.data.macroText = false
-		else
-			self.data.macroText = true
-		end
+		self.data.bindColor = {1,1,1,1}
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetBindColor()
+	return self.data.bindColor
+end
 
-function BAR:CountTextSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.countText, self.data.countColor
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.countText = true
-		else
-			self.data.countText = false
-		end
-
+function BAR:SetMacroText(checked)
+	if checked then
+		self.data.macroText = true
 	else
-		if (self.data.countText) then
-			self.data.countText = false
-		else
-			self.data.countText = true
-		end
+		self.data.macroText = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetMacroText()
+	return self.data.macroText
+end
 
-function BAR:RangeIndSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.rangeInd, self.data.rangecolor
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.rangeInd = true
-		else
-			self.data.rangeInd = false
-		end
-
+function BAR:SetMacroColor(option)
+	if option then
+		self.data.macroColor = option
 	else
-		if (self.data.rangeInd) then
-			self.data.rangeInd = false
-		else
-			self.data.rangeInd = true
-		end
+		self.data.macroColor = {1,1,1,1}
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetMacroColor()
+	return self.data.macroColor
+end
 
-function BAR:CDTextSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.cdText, self.data.cdcolor1, self.data.cdcolor2
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.cdText = true
-		else
-			self.data.cdText = false
-		end
-
+function BAR:SetCountText(checked)
+	if checked then
+		self.data.countText = true
 	else
-		if (self.data.cdText) then
-			self.data.cdText = false
-		else
-			self.data.cdText = true
-		end
+		self.data.countText = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetCountText()
+	return self.data.countText
+end
 
-function BAR:CDAlphaSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.cdAlpha
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.cdAlpha = true
-		else
-			self.data.cdAlpha = false
-		end
-
+function BAR:SetCountColor(option)
+	if option then
+		self.data.countColor = option
 	else
-		if (self.data.cdAlpha) then
-			self.data.cdAlpha = false
-		else
-			self.data.cdAlpha = true
-		end
+		self.data.countColor = {1,1,1,1}
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
+function BAR:GetCountColor()
+	return self.data.countColor
+end
 
-
-function BAR:AuraIndSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.auraInd, self.data.buffcolor, self.data.debuffcolor
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.auraInd = true
-		else
-			self.data.auraInd = false
-		end
-
+function BAR:SetRangeInd(checked)
+	if checked then
+		self.data.rangeInd = true
 	else
-		if (self.data.auraInd) then
-			self.data.auraInd = false
-		else
-			self.data.auraInd = true
-		end
+		self.data.rangeInd = false
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
-function BAR:SetBorderStyle(msg, gui, checked, query)
-	if (query) then
-		return self.data.showBorderStyle
+function BAR:GetRangeInd()
+	return self.data.rangeInd
+end
+
+function BAR:SetRangeColor(option)
+	if option then
+		self.data.rangecolor = option
+	else
+		self.data.rangecolor = {0.7,0.15,0.15,1}
 	end
 
-	if (gui) then
-		if (checked) then
-			self.data.showBorderStyle = true
-		else
-			self.data.showBorderStyle = false
-		end
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetRangeColor()
+	return self.data.rangecolor
+end
+
+function BAR:SetCDText(checked)
+	if checked then
+		self.data.cdText = true
 	else
-		if (self.data.showBorderStyle) then
-			self.data.showBorderStyle = false
-		else
-			self.data.showBorderStyle = true
-		end
+		self.data.cdText = false
+	end
+
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetCDText()
+	return self.data.cdText
+end
+
+function BAR:SetCDColor1(option)
+	if option then
+		self.data.cdcolor1 = option
+	else
+		self.data.cdcolor1 = {1,0.82,0,1}
+	end
+
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetCDColor1()
+	return self.data.cdcolor1
+end
+
+function BAR:SetCDColor2(option)
+	if option then
+		self.data.cdcolor2 = option
+	else
+		self.data.cdcolor2 = {1,0.1,0.1,1}
+	end
+
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetCDColor2()
+	return self.data.cdcolor2
+end
+
+function BAR:SetCDAlpha(checked)
+	if checked then
+		self.data.cdAlpha = true
+	else
+		self.data.cdAlpha = false
+	end
+
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetCDAlpha()
+	return self.data.cdAlpha
+end
+
+function BAR:SetAuraInd(checked)
+	if checked then
+		self.data.auraInd = true
+	else
+		self.data.auraInd = false
+	end
+
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetAuraInd()
+	return self.data.auraInd
+end
+
+function BAR:SetBuffColor(option)
+	if option then
+		self.data.buffcolor = option
+	else
+		self.data.buffcolor = {0,0.8,0,1}
+	end
+
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetBuffColor()
+	return self.data.buffcolor
+end
+
+function BAR:SetDebuffColor(option)
+	if option then
+		self.data.debuffcolor = option
+	else
+		self.data.debuffcolor = {0.8,0,0,1}
+	end
+
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetDebuffColor()
+	return self.data.debuffcolor
+end
+
+function BAR:SetBorderStyle(checked)
+
+	if (checked) then
+		self.data.showBorderStyle = true
+	else
+		self.data.showBorderStyle = false
 	end
 
 	self:UpdateIcons()
 end
 
-
-function BAR:Load()
-	self:SetPosition()
-	self:LoadObjects()
-	self:SetObjectLoc()
-	self:SetPerimeter()
-	self:SetSize()
-	self:EnableKeyboard(false)
-	self:Update()
-end
-
-
-
-
---- Sets a Target Casting state for a bar
--- @param value(string): Database refrence value to be set
--- @param gui(Bool): Toggle to determine if call was from the GUI
--- @param checked(Bool) : Used when using a GUI checkbox - It is the box's current state
--- @param query: N/A
-function BAR:SetCastingTarget(value, gui, checked, query)
-	if (value) then
-		if (gui) then
-
-			if (checked) then
-				self.data[value] = true
-			else
-				self.data[value] = false
-			end
-
-		else
-
-			local toggle = self.data[value]
-
-			if (toggle) then
-				self.data[value] = false
-			else
-				self.data[value] = true
-			end
-		end
-
-		Neuron.ACTIONBUTTON:UpdateMacroCastTargets()
-		self:Update()
-	end
+function BAR:GetBorderStyle()
+	return self.data.showBorderStyle
 end

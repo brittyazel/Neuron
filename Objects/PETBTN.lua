@@ -288,21 +288,21 @@ end
 
 function PETBTN:OnDragStart()
 
-	if InCombatLockdown() then
-		return
+	if InCombatLockdown() then return end
+
+	local drag
+
+	if self.data.barLock == "alt" and IsAltKeyDown() then
+		drag = true
+	elseif self.data.barLock == "ctrl" and IsControlKeyDown() then
+		drag = true
+	elseif self.data.barLock == "shift" and IsShiftKeyDown() then
+		drag = true
+	else
+		drag = false
 	end
 
-	if (not self.barLock) then
-		self.drag = true
-	elseif (self.barLockAlt and IsAltKeyDown()) then
-		self.drag = true
-	elseif (self.barLockCtrl and IsControlKeyDown()) then
-		self.drag = true
-	elseif (self.barLockShift and IsShiftKeyDown()) then
-		self.drag = true
-	end
-
-	if (self.drag) then
+	if (drag) then
 		self:SetChecked(0)
 
 		PickupPetAction(self.actionID)

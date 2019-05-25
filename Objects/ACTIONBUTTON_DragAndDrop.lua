@@ -38,19 +38,19 @@ function ACTIONBUTTON:OnDragStart()
 		return
 	end
 
-	self.drag = nil --flag that says if it's ok to drag or not
+	local drag
 
-	if (not self.barLock) then
-		self.drag = true
-	elseif (self.barLockAlt and IsAltKeyDown()) then
-		self.drag = true
-	elseif (self.barLockCtrl and IsControlKeyDown()) then
-		self.drag = true
-	elseif (self.barLockShift and IsShiftKeyDown()) then
-		self.drag = true
+	if self.data.barLock == "alt" and IsAltKeyDown() then
+		drag = true
+	elseif self.data.barLock == "ctrl" and IsControlKeyDown() then
+		drag = true
+	elseif self.data.barLock == "shift" and IsShiftKeyDown() then
+		drag = true
+	else
+		drag = false
 	end
 
-	if (self.drag) then
+	if (drag) then
 
 		ClearCursor()
 
@@ -160,14 +160,14 @@ function ACTIONBUTTON:PickUpMacro()
 
 	local pickup
 
-	if (not self.barLock) then
+	if self.data.barLock == "alt" and IsAltKeyDown() then
 		pickup = true
-	elseif (self.barLockAlt and IsAltKeyDown()) then
+	elseif self.data.barLock == "ctrl" and IsControlKeyDown() then
 		pickup = true
-	elseif (self.barLockCtrl and IsControlKeyDown()) then
+	elseif self.data.barLock == "shift" and IsShiftKeyDown() then
 		pickup = true
-	elseif (self.barLockShift and IsShiftKeyDown()) then
-		pickup = true
+	else
+		pickup = false
 	end
 
 	if (pickup) then

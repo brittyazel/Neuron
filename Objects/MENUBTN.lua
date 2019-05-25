@@ -94,7 +94,7 @@ end
 function MENUBTN:SetData(bar)
 	if (bar) then
 		self.bar = bar
-		self:SetFrameStrata(bar.data.objectStrata)
+		self:SetFrameStrata(Neuron.STRATAS[bar.data.strata-1])
 		self:SetScale(bar.data.scale)
 	end
 
