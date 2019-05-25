@@ -112,7 +112,7 @@ function CASTBTN:CastBar_Reset()
 	self.sb.fadeOut = 1
 	self.sb.casting = false
 	self.sb.channeling = false
-	self.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
+	self.sb:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
 
 	if (not self.editmode) then
 		self.sb:Hide()
@@ -144,7 +144,7 @@ function CASTBTN:CastBar_OnEvent(event, ...)
 			return
 		end
 
-		self.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
+		self.sb:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
 
 		if (self.sb.spark) then
 			self.sb.spark:SetTexture("Interface\\AddOns\\Neuron\\Images\\CastingBar_Spark_"..self.sb.orientation)
@@ -195,7 +195,7 @@ function CASTBTN:CastBar_OnEvent(event, ...)
 
 	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then
 
-		self.sb:SetStatusBarColor(self.sb.successColor[1], self.sb.successColor[2], self.sb.successColor[3], self.sb.successColor[4])
+		self.sb:SetStatusBarColor(self.config.successColor[1], self.config.successColor[2], self.config.successColor[3], self.config.successColor[4])
 
 	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and self.sb.channeling) then
 
@@ -229,7 +229,7 @@ function CASTBTN:CastBar_OnEvent(event, ...)
 
 			self.sb:SetValue(self.sb.maxValue)
 
-			self.sb:SetStatusBarColor(self.sb.failColor[1], self.sb.failColor[2], self.sb.failColor[3], self.sb.failColor[4])
+			self.sb:SetStatusBarColor(self.config.failColor[1], self.config.failColor[2], self.config.failColor[3], self.config.failColor[4])
 
 			if (self.sb.spark) then
 				self.sb.spark:Hide()
@@ -264,7 +264,7 @@ function CASTBTN:CastBar_OnEvent(event, ...)
 
 			if (not self.sb.casting) then
 
-				self.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
+				self.sb:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
 
 				self.sb.spark:Show()
 				self.sb.barflash:SetAlpha(0.0)
@@ -286,7 +286,7 @@ function CASTBTN:CastBar_OnEvent(event, ...)
 			return
 		end
 
-		self.sb:SetStatusBarColor(self.sb.channelColor[1], self.sb.channelColor[2], self.sb.channelColor[3], self.sb.channelColor[4])
+		self.sb:SetStatusBarColor(self.config.channelColor[1], self.config.channelColor[2], self.config.channelColor[3], self.config.channelColor[4])
 
 		self.sb.value = ((endTime/1000)-GetTime())
 		self.sb.maxValue = (endTime - startTime) / 1000;
