@@ -36,6 +36,21 @@ CASTBTN.sbStrings = {
 }
 
 
+local BarUnits = {
+	[1] = "-none-",
+	[2] = "player",
+	[3] = "pet",
+	[4] = "target",
+	[5] = "targettarget",
+	[6] = "focus",
+	[7] = "mouseover",
+	[8] = "party1",
+	[9] = "party2",
+	[10] = "party3",
+	[11] = "party4",
+}
+Neuron.BarUnits = BarUnits
+
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param bar BAR @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
@@ -66,7 +81,8 @@ function CASTBTN:SetType()
 	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
 
-	self.sb.unit = Neuron.BarUnits[self.config.unit]
+	self.sb.unit = BarUnits[self.config.unit]
+
 	self.sb.showIcon = self.config.showIcon
 
 	self.sb.casting = false
@@ -123,9 +139,7 @@ end
 
 
 
-function CASTBTN:CastBar_OnEvent(event, ...)
-
-	local unit = ...
+function CASTBTN:CastBar_OnEvent(event, unit, ...)
 
 	if (unit ~= self.sb.unit) then
 		return

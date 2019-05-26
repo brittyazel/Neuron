@@ -27,22 +27,6 @@ Neuron.STATUSBTN = STATUSBTN
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 
-local BarUnits = {
-	[1] = "-none-",
-	[2] = "player",
-	[3] = "pet",
-	[4] = "target",
-	[5] = "targettarget",
-	[6] = "focus",
-	[7] = "mouseover",
-	[8] = "party1",
-	[9] = "party2",
-	[10] = "party3",
-	[11] = "party4",
-}
-Neuron.BarUnits = BarUnits
-
-
 local BarTextures = {
 	[1] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_2", L["Default"] },
 	[2] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_2", L["Contrast"] },

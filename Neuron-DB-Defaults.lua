@@ -78,7 +78,6 @@ local genericRepBtnData= {
 
 	repID = 2,
 	autoWatch = 2,
-	unit = 2,
 
 	width = 450,
 	height = 18,
@@ -141,6 +140,8 @@ local genericCastBtnData= {
 	channelColor = {0,1,0,1},
 	successColor = {0,1,0,1},
 	failColor = {1,0,0,1},
+
+	unit = 2,
 
 	showIcon = true,
 }
