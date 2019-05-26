@@ -515,18 +515,13 @@ function BAR:SetHidden(handler, show, hide)
 		end
 	end
 
-	local isAnchorChild = handler:GetAttribute("isAnchorChild")
-
-	if (not hide and not isAnchorChild and (show or self:IsVisible())) then
+	if (not hide and (show or self:IsVisible())) then
 
 		handler:Show()
 	else
-		if (self.data.conceal) then
+		if (self:GetBarConceal()) then
 			handler:SetAttribute("concealed", true)
 			handler:Hide()
-		elseif (not self.data.barLink and not isAnchorChild) then
-			handler:SetAttribute("concealed", nil)
-			handler:Show()
 		end
 	end
 end
@@ -1127,10 +1122,10 @@ end
 
 function BAR:SetPosition()
 	if (self.data.snapToPoint and self.data.snapToFrame) then
-		self:StickToPoint(_G[self.data.snapToFrame], self.data.snapToPoint, self.data.padH, self.data.padV)
+		self:StickToPoint(_G[self.data.snapToFrame], self.data.snapToPoint,self:GetHorizontalPad(), self:GetVerticalPad())
 	else
 
-		local point, x, y = self.data.point, self.data.x, self.data.y
+		local point, x, y = self.data.point, self:GetXAxis(), self:GetYAxis()
 
 		if (point:find("SnapTo")) then
 			self.data.point = "CENTER"; point = "CENTER"
@@ -1186,9 +1181,9 @@ end
 
 
 function BAR:SetObjectLoc()
-	local width, height, num, origCol = 0, 0, 0, self.data.columns
+	local width, height, num, origCol = 0, 0, 0, self:GetColumns()
 	local x, y, lastObj, placed
-	local shape, padH, padV, arcStart, arcLength = self.data.shape, self.data.padH, self.data.padV, self.data.arcStart, self.data.arcLength
+	local shape, padH, padV, arcStart, arcLength = self:GetBarShape(), self:GetHorizontalPad(), self:GetVerticalPad(), self:GetArcStart(), self:GetArcLength()
 	local cAdjust, rAdjust = 0.5, 1
 	local columns, rows
 
@@ -1214,7 +1209,7 @@ function BAR:SetObjectLoc()
 	if (not origCol) then
 		origCol = count; rows = 1
 	else
-		rows = (round(ceil(count/self.data.columns), 1)/2)+0.5
+		rows = (round(ceil(count/self:GetColumns()), 1)/2)+0.5
 	end
 
 	for i, object in ipairs(buttons) do --once the flyout bars are fixed, this can be changed to ipairs(self.buttons)
@@ -1414,13 +1409,13 @@ function BAR:OnClick(...)
 			self.message:Hide()
 			self.messagebg:Hide()
 		else
-			self.data.snapTo = false
+			self:SetSnapTo(false)
 			self.data.snapToPoint = false
 			self.data.snapToFrame = false
 			self.microAdjust = 1
 			self:EnableKeyboard(true)
 			self.message:Show()
-			self.message:SetText(self.data.point:lower().."     x: "..format("%0.2f", self.data.x).."     y: "..format("%0.2f", self.data.y))
+			self.message:SetText(self.data.point:lower().."     x: "..format("%0.2f", self:GetXAxis()).."     y: "..format("%0.2f", self:GetYAxis()))
 			self.messagebg:Show()
 			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
 			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
@@ -1442,7 +1437,7 @@ end
 
 
 function BAR:OnEnter(...)
-	if (self.data.conceal) then
+	if (self:GetBarConceal()) then
 		self:SetBackdropColor(1,0,0,0.6)
 	else
 		self:SetBackdropColor(0,0,1,0.5)
@@ -1454,7 +1449,7 @@ end
 
 function BAR:OnLeave(...)
 	if (self ~= Neuron.CurrentBar) then
-		if (self.data.conceal) then
+		if (self:GetBarConceal()) then
 			self:SetBackdropColor(1,0,0,0.4)
 		else
 			self:SetBackdropColor(0,0,0,0.4)
@@ -1489,15 +1484,15 @@ function BAR:OnDragStop(...)
 	self:StopMovingOrSizing()
 
 	for _,v in pairs(Neuron.BARIndex) do
-		if (not point and self.data.snapTo and v.data.snapTo and self ~= v) then
-			point = self:Stick(v, Neuron.SNAPTO_TOLLERANCE, self.data.padH, self.data.padV)
+		if (not point and self:GetSnapTo() and v:GetSnapTo() and self ~= v) then
+			point = self:Stick(v, Neuron.SNAPTO_TOLLERANCE, self:GetHorizontalPad(), self:GetVerticalPad())
 
 			if (point) then
 				self.data.snapToPoint = point
 				self.data.snapToFrame = v:GetName()
 				self.data.point = "SnapTo: "..point
-				self.data.x = 0
-				self.data.y = 0
+				self:SetXAxis(0)
+				self:SetYAxis(0)
 			end
 		end
 	end
@@ -1505,11 +1500,16 @@ function BAR:OnDragStop(...)
 	if (not point) then
 		self.data.snapToPoint = false
 		self.data.snapToFrame = false
-		self.data.point, self.data.x, self.data.y = self:GetPosition()
+
+		local point, x, y = self:GetPosition()
+		self.data.point = point
+		self:SetXAxis(x)
+		self:SetYAxis(y)
+
 		self:SetPosition()
 	end
 
-	if (self.data.snapTo and not self.data.snapToPoint) then
+	if (self:GetSnapTo() and not self.data.snapToPoint) then
 		self:StickToEdge()
 	end
 
@@ -1527,18 +1527,22 @@ function BAR:OnKeyDown(key, onupdate)
 			self.elapsed = 0
 		end
 
-		self.data.point, self.data.x, self.data.y = self:GetPosition()
+		local point, x, y = self:GetPosition()
+		self.data.point = point
+		self:SetXAxis(x)
+		self:SetYAxis(y)
+
 		self:SetUserPlaced(false)
 		self:ClearAllPoints()
 
 		if (key == "UP") then
-			self.data.y = self.data.y + .1 * self.microAdjust
+			self:SetYAxis(self:GetYAxis() + .1 * self.microAdjust)
 		elseif (key == "DOWN") then
-			self.data.y = self.data.y - .1 * self.microAdjust
+			self:SetYAxis(self:GetYAxis() - .1 * self.microAdjust)
 		elseif (key == "LEFT") then
-			self.data.x = self.data.x - .1 * self.microAdjust
+			self:SetXAxis(self:GetXAxis() - .1 * self.microAdjust)
 		elseif (key == "RIGHT") then
-			self.data.x = self.data.x + .1 * self.microAdjust
+			self:SetXAxis(self:GetXAxis() + .1 * self.microAdjust)
 		elseif (not key:find("SHIFT")) then
 			self.microAdjust = false
 			self:EnableKeyboard(false)
@@ -1561,14 +1565,14 @@ end
 function BAR:OnShow()
 	if (self == Neuron.CurrentBar) then
 
-		if (self.data.conceal) then
+		if (self:GetBarConceal()) then
 			self:SetBackdropColor(1,0,0,0.6)
 		else
 			self:SetBackdropColor(0,0,1,0.5)
 		end
 
 	else
-		if (self.data.conceal) then
+		if (self:GetBarConceal()) then
 			self:SetBackdropColor(1,0,0,0.4)
 		else
 			self:SetBackdropColor(0,0,0,0.4)
@@ -1695,7 +1699,7 @@ function BAR:ChangeBar()
 	for k,v in pairs(Neuron.BARIndex) do
 		if (v ~= self) then
 
-			if (v.data.conceal) then
+			if (v:GetBarConceal()) then
 				v:SetBackdropColor(1,0,0,0.4)
 			else
 				v:SetBackdropColor(0,0,0,0.4)
@@ -2359,6 +2363,7 @@ function BAR:SetXAxis(option)
 	if option then
 		self.data.x = option
 		self.data.snapTo = false
+
 		self.data.snapToPoint = false
 		self.data.snapToFrame = false
 	else
@@ -2377,6 +2382,7 @@ function BAR:SetYAxis(option)
 	if option then
 		self.data.y = option
 		self.data.snapTo = false
+
 		self.data.snapToPoint = false
 		self.data.snapToFrame = false
 	else

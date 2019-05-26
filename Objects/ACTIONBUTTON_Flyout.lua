@@ -645,27 +645,27 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 	end
 
 	if (shape) then
-		flyout.bar.data.shape = shape
+		flyout.bar:SetBarShape(shape)
 	else
-		flyout.bar.data.shape = 1
+		flyout.bar:SetBarShape(1)
 	end
 
 	if (columns) then
-		flyout.bar.data.columns = columns
+		flyout.bar:SetColumns(columns)
 	else
-		flyout.bar.data.columns = 12
+		flyout.bar:SetColumns(12)
 	end
 
 	if (pad) then
-		flyout.bar.data.padH = pad
-		flyout.bar.data.padV = pad
-		flyout.bar.data.arcStart = 0
-		flyout.bar.data.arcLength = 359
+		flyout.bar:SetHorizontalPad(pad)
+		flyout.bar:SetVerticalPad(pad)
+		flyout.bar:SetArcStart(0)
+		flyout.bar:SetArcLength(359)
 	else
-		flyout.bar.data.padH = 0
-		flyout.bar.data.padV = 0
-		flyout.bar.data.arcStart = 0
-		flyout.bar.data.arcLength = 359
+		flyout.bar:SetHorizontalPad(0)
+		flyout.bar.SetVerticalPad(0)
+		flyout.bar:SetArcStart(0)
+		flyout.bar:SetArcLength(359)
 	end
 	flyout.bar:ClearAllPoints()
 	flyout.bar:SetPoint(pointA, self, pointB, 0, 0)

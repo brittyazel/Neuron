@@ -454,16 +454,9 @@ function BUTTON:GetSkinned()
 		if (Skin) then
 			self.hasAction = Skin.Texture or false
 			self.noAction = Skin.EmptyTexture or false
-
-			if (self.__MSQ_Shape) then
-				self.shape = self.__MSQ_Shape:lower()
-			else
-				self.shape = "square"
-			end
 		else
 			self.hasAction = false
 			self.noAction = false
-			self.shape = "square"
 		end
 
 		return true

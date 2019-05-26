@@ -164,7 +164,7 @@ function BAR:StickToEdge()
 	if (not changed and point:find("TOP")) then calcX(3); calcY(2) end
 
 	if (changed) then
-		self.data.point = point; self.data.x = x; self.data.y = y
+		self.data.point = point; self:SetXAxis(x); self:SetYAxis(y)
 		self:SetPosition()
 	end
 end
