@@ -1062,7 +1062,7 @@ function BAR:Update(show, hide)
 	self:SetHidden(handler, show, hide)
 	self:LaunchAutoHide()
 	self:LaunchAlphaUp()
-	self.text:SetText(self.data.name)
+	self.text:SetText(self:GetName())
 	handler:SetAlpha(self:GetBarAlpha())
 
 	if  self:GetShowAuraIndicator() then
@@ -1633,8 +1633,8 @@ function BAR:LoadData()
 
 	self.data = self.DB
 
-	if (not self.data.name or self.data.name == ":") then
-		self.data.name = self.barLabel.." "..self.DB.id
+	if (not self:GetName() or self:GetName() == ":") then
+		self:SetName(self.barLabel.." "..self.DB.id)
 	end
 end
 
