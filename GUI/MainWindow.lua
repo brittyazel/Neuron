@@ -36,7 +36,8 @@ NeuronEditor = {} --outer frame for our editor window
 
 local barListFrame = {} --the frame containing just the bar list
 local renameBox = {} --the rename bar Box
-local barEditOptionsContainer = {} --The container that houses the add/remove bar buttons
+local barEditOptionsContainer = {}  --The container that houses the add/remove bar buttons
+local tabFrame = {}
 
 
 -----------------------------------------------------------------------------
@@ -70,6 +71,8 @@ function NeuronGUI:ToggleEditor()
 end
 
 function NeuronGUI:RefreshEditor()
+	NeuronEditor:ReleaseChildren()
+	NeuronGUI:PopulateEditorWindow()
 
 	if Neuron.CurrentBar then
 		renameBox:SetText(Neuron.CurrentBar:GetName())
@@ -78,18 +81,10 @@ function NeuronGUI:RefreshEditor()
 		renameBox:SetText("")
 		NeuronEditor:SetStatusText("Please select a bar from the right to begin")
 	end
-
-	barListFrame:ReleaseChildren()
-	NeuronGUI:PopulateBarList(barListFrame)
-
-	barEditOptionsContainer:ReleaseChildren()
-	NeuronGUI:PopulateEditOptions(barEditOptionsContainer)
 end
 
 
 function NeuronGUI:CreateEditor()
-
-	---Outer Window
 	NeuronEditor = AceGUI:Create("Frame")
 	NeuronEditor:SetTitle("Neuron Editor")
 	NeuronEditor:SetWidth("1000")
@@ -103,6 +98,10 @@ function NeuronGUI:CreateEditor()
 	NeuronEditor:SetCallback("OnClose", function() NeuronEditor:Hide() end)
 	NeuronEditor:SetLayout("Flow")
 
+	NeuronGUI:PopulateEditorWindow()
+end
+
+function NeuronGUI:PopulateEditorWindow()
 
 	---Left Column
 	--Container for the Left Column
@@ -113,7 +112,7 @@ function NeuronGUI:CreateEditor()
 	NeuronEditor:AddChild(leftContainer)
 
 	--Tab group that will contain all of our settings to configure
-	local tabFrame = AceGUI:Create("TabGroup")
+	tabFrame = AceGUI:Create("TabGroup")
 	tabFrame:SetLayout("Flow")
 	tabFrame:SetFullHeight(true)
 	tabFrame:SetFullWidth(true)
@@ -264,8 +263,6 @@ function NeuronGUI:updateBarName(editBox)
 		NeuronGUI:RefreshEditor()
 	end
 end
-
-
 
 
 -----------------------------------------------------------------------------

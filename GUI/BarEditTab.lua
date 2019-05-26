@@ -82,14 +82,19 @@ local swatchOptions = {
 
 function NeuronGUI:BarEditWindow(tabContainer)
 
-	local settingContainer = AceGUI:Create("SimpleGroup")
-	settingContainer:SetFullWidth(true)
-	settingContainer:SetLayout("Flow")
-	tabContainer:AddChild(settingContainer)
+	local barSettingsContainer = AceGUI:Create("SimpleGroup")
+	barSettingsContainer.loaded = true
+	barSettingsContainer:SetFullWidth(true)
+	barSettingsContainer:SetLayout("Flow")
+	tabContainer:AddChild(barSettingsContainer)
 
 	local desc = AceGUI:Create("Label")
-	desc:SetText("This is Tab 1")
+	if Neuron.CurrentBar then
+		desc:SetText(Neuron.CurrentBar:GetName())
+	else
+		desc:SetText("No Selected Bar")
+	end
 	desc:SetFullWidth(true)
-	settingContainer:AddChild(desc)
+	barSettingsContainer:AddChild(desc)
 
 end
