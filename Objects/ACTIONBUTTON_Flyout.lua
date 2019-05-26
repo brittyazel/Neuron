@@ -443,7 +443,7 @@ function ACTIONBUTTON:GetDataList(options)
 	return scanData
 end
 
-function ACTIONBUTTON:updateFlyoutBars(elapsed)
+function ACTIONBUTTON:updateFlyoutBars()
 
 	if (not InCombatLockdown() and Neuron.enteredWorld) then  --Workarout for protected taint if UI reload in combat
 		local bar = table.remove(barsToUpdate) ---this does nothing. It makes bar empty
@@ -850,8 +850,6 @@ function ACTIONBUTTON:Flyout_GetButton()
 	local button = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate") --create the new button frame using the desired parameters
 	setmetatable(button, {__index = ACTIONBUTTON})
 
-	button.elapsed = 0
-
 	local objects = Neuron:GetParentKeys(button)
 
 	for k,v in pairs(objects) do
@@ -946,7 +944,6 @@ function ACTIONBUTTON:Flyout_GetBar()
 	setmetatable(bar, {__index = Neuron.BAR})
 
 	bar.class = "FlyoutBar"
-	bar.elapsed = 0
 	bar.data = { scale = 1 }
 
 	bar.text:Hide()
@@ -973,7 +970,6 @@ function ACTIONBUTTON:Flyout_GetBar()
 	bar.handler:SetScript("OnShow", function() end)
 	bar.handler:SetAllPoints(bar)
 	bar.handler.bar = bar
-	bar.handler.elapsed = 0
 
 	----we need to activate all of these frames at least once. This place is as good as any I guess
 

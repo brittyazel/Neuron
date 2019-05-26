@@ -103,11 +103,9 @@ function BAR.new(class, barID)
 	newBar.class = class
 	newBar.stateschanged = true
 	newBar.vischanged =true
-	newBar.elapsed = 0
 	newBar.click = nil
 	newBar.dragged = false
 	newBar.selected = false
-	newBar.toggleframe = newBar
 	newBar.microAdjust = false
 	newBar.vis = {}
 	newBar.text:Hide()
@@ -1033,8 +1031,6 @@ function BAR:Update(show, hide)
 
 	local handler, driver = self.handler, self.driver
 
-	self.elapsed = 0;
-
 	if (self.stateschanged) then
 
 		self:UpdateStates(handler)
@@ -1398,7 +1394,6 @@ function BAR:OnClick(...)
 
 	self.click = click
 	self.dragged = false
-	self.elapsed = 0
 	self.pushed = 0
 
 	if (IsShiftKeyDown() and not down) then
@@ -1515,17 +1510,12 @@ function BAR:OnDragStop(...)
 
 	self.isMoving = false
 	self.dragged = true
-	self.elapsed = 0
 	self:Update()
 end
 
-function BAR:OnKeyDown(key, onupdate)
+function BAR:OnKeyDown(key)
 	if (self.microAdjust) then
 		self.keydown = key
-
-		if (not onupdate) then
-			self.elapsed = 0
-		end
 
 		local point, x, y = self:GetPosition()
 		self.data.point = point
@@ -1557,7 +1547,6 @@ function BAR:OnKeyUp(key)
 	if (self.microAdjust and not key:find("SHIFT")) then
 		self.microAdjust = 1
 		self.keydown = nil
-		self.elapsed = 0
 	end
 end
 
