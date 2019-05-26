@@ -1,0 +1,48 @@
+--Neuron, a World of Warcraft® user interface addon.
+
+--This file is part of Neuron.
+--
+--Neuron is free software: you can redistribute it and/or modify
+--it under the terms of the GNU General Public License as published by
+--the Free Software Foundation, either version 3 of the License, or
+--(at your option) any later version.
+--
+--Neuron is distributed in the hope that it will be useful,
+--but WITHOUT ANY WARRANTY; without even the implied warranty of
+--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+--GNU General Public License for more details.
+--
+--You should have received a copy of the GNU General Public License
+--along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
+--
+--Copyright for portions of Neuron are held by Connor Chenoweth,
+--a.k.a Maul, 2014 as part of his original project, Ion. All other
+--copyrights for Neuron are held by Britt Yazel, 2017-2018.
+
+
+local addonName = ...
+
+local DB
+
+local NeuronGUI = Neuron.NeuronGUI
+
+local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+local AceGUI = LibStub("AceGUI-3.0")
+
+
+-----------------------------------------------------------------------------
+--------------------------Button Editor--------------------------------------
+-----------------------------------------------------------------------------
+
+
+function NeuronGUI:ButtonEditWindow(tabContainer)
+	local settingContainer = AceGUI:Create("SimpleGroup")
+	settingContainer:SetFullWidth(true)
+	settingContainer:SetLayout("Flow")
+	tabContainer:AddChild(settingContainer)
+
+	local desc = AceGUI:Create("Label")
+	desc:SetText("This is Tab 2")
+	desc:SetFullWidth(true)
+	settingContainer:AddChild(desc)
+end

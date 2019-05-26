@@ -39,51 +39,6 @@ local renameBox = {} --the rename bar Box
 local barEditOptionsContainer = {} --The container that houses the add/remove bar buttons
 
 
---[[local chkOptions = {
-	[1] = { "AUTOHIDE", L["AutoHide"], 1, "SetAutoHide" },
-	[2] = { "SHOWGRID", L["Show Grid"], 1, "SetShowGrid" },
-	[3] = { "SNAPTO", L["SnapTo"], 1, "SetSnapTo" },
-	[4] = { "UPCLICKS", L["Up Clicks"], 1, "SetUpClicks" },
-	[5] = { "DOWNCLICKS", L["Down Clicks"], 1, "SetDownClicks" },
-	[6] = { "MULTISPEC", L["Multi Spec"], 1, "SetMultiSpec" },
-	[7] = { "HIDDEN", L["Hidden"], 1, "SetBarConceal" },
-	[8] = { "SPELLGLOW", L["Spell Alerts"], 1, "SetSpellGlow" },
-	[9] = { "LOCKBAR", L["Lock Actions"], 1, "SetBarLock" },
-	[10] = { "LOCKBAR", L["Unlock on SHIFT"], 0.9, "SetBarLock", "shift" },
-	[1] = { "LOCKBAR", L["Unlock on CTRL"], 0.9, "SetBarLock", "ctrl" },
-	[12] = { "LOCKBAR", L["Unlock on ALT"], 0.9, "SetBarLock", "alt" },
-	[13] = { "TOOLTIPS", L["Enable Tooltips"], 1, "SetTooltipEnable" },
-	[14] = { "TOOLTIPS", L["Enhanced"], 0.9, "SetTooltipEnhanced" },
-	[15] = { "TOOLTIPS", L["Hide in Combat"], 0.9, "SetTooltipCombat" },
-	[16] = { "BORDERSTYLE", L["Show Border Style"], 1, "SetShowBorderStyle"},
-}
-
-local adjOptions = {
-	[1] = { "SCALE", L["Scale"], 1, "SetScale", 0.01, 0.1, 4 },
-	[2] = { "SHAPE", L["Shape"], 2, "SetBarShape", nil, nil, nil, Neuron.BarShapes },
-	[3] = { "COLUMNS", L["Columns"], 1, "SetColumns", 1 , 0},
-	[4] = { "ARCSTART", L["Arc Start"], 1, "SetArcStart", 1, 0, 359 },
-	[5] = { "ARCLENGTH", L["Arc Length"], 1, "SetArcLength", 1, 0, 359 },
-	[6] = { "HPAD",L["Horiz Padding"], 1, "SetHorizontalPad", 0.5 },
-	[7] = { "VPAD", L["Vert Padding"], 1, "SetVerticalPad", 0.5 },
-	[9] = { "STRATA", L["Strata"], 2, "SetStrata", nil, nil, nil, Neuron.STRATAS },
-	[10] = { "ALPHA", L["Alpha"], 1, "SetBarAlpha", 0.01, 0, 1 },
-	[11] = { "ALPHAUP", L["AlphaUp"], 2, "SetAlphaUp", nil, nil, nil, Neuron.AlphaUps },
-	[12] = { "ALPHAUP", L["AlphaUp Speed"], 1, "SetAlphaUpSpeed", 0.01, 0.01, 1, nil, "%0.0f", 100, "%" },
-	[13] = { "XPOS", L["X Position"], 1, "SetXAxis", 1, nil, nil, nil, "%0.2f", 1, "" },
-	[14] = { "YPOS", L["Y Position"], 1, "SetYAxis", 1, nil, nil, nil, "%0.2f", 1, "" },
-}
-
-local swatchOptions = {
-	[1] = { "BINDTEXT", L["Keybind Label"], 1, "SetShowBindText", true, nil, "bindColor" },
-	[2] = { "MACROTEXT", L["Macro Name"], 1, "SetShowMacroText", true, nil, "macroColor" },
-	[3] = { "COUNTTEXT", L["Stack/Charge Count Label"], 1, "SetShowCountText", true, nil, "countColor" },
-	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "SetShowRangeIndicator", true, nil, "rangecolor" },
-	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "SetShowCooldownText", true, true, "cdcolor1", "cdcolor2" },
-	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "SetShowCooldownAlpha", nil, nil },
-	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "SetShowAuraIndicator", true, true, "buffcolor", "debuffcolor" },
-}]]
-
 -----------------------------------------------------------------------------
 --------------------------Initialize-----------------------------------------
 -----------------------------------------------------------------------------
@@ -314,7 +269,7 @@ end
 
 
 -----------------------------------------------------------------------------
---------------------------Inner Window---------------------------------------
+--------------------------Tab Frame------------------------------------------
 -----------------------------------------------------------------------------
 
 
@@ -329,37 +284,3 @@ function NeuronGUI:SelectTab(tabContainer, event, tab)
 	end
 
 end
-
-
-function NeuronGUI:BarEditWindow(tabContainer)
-
-	local settingContainer = AceGUI:Create("SimpleGroup")
-	settingContainer:SetFullWidth(true)
-	settingContainer:SetLayout("Flow")
-	tabContainer:AddChild(settingContainer)
-
-	local desc = AceGUI:Create("Label")
-	desc:SetText("This is Tab 1")
-	desc:SetFullWidth(true)
-	settingContainer:AddChild(desc)
-
-end
-
-
-function NeuronGUI:ButtonEditWindow(tabContainer)
-	local settingContainer = AceGUI:Create("SimpleGroup")
-	settingContainer:SetFullWidth(true)
-	settingContainer:SetLayout("Flow")
-	tabContainer:AddChild(settingContainer)
-
-	local desc = AceGUI:Create("Label")
-	desc:SetText("This is Tab 2")
-	desc:SetFullWidth(true)
-	settingContainer:AddChild(desc)
-end
-
-
-
------------------------------------------------------------------------------
---------------------------Bar Editor-----------------------------------------
------------------------------------------------------------------------------

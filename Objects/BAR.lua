@@ -200,7 +200,10 @@ function BAR:DeleteBar()
 		end
 	end
 
-	self:RemoveObjectsFromBar(#self.buttons)
+
+	for i = 1,#self.buttons do
+		self:RemoveObjectFromBar()
+	end
 
 	self:SetScript("OnClick", function() end)
 	self:SetScript("OnDragStart", function() end)
@@ -244,23 +247,13 @@ end
 
 
 
-function BAR:AddObjectsToBar(num) --called from NeuronGUI
+function BAR:AddObjectToBar() --called from NeuronGUI
 
-	num = tonumber(num)
+	local id = #self.buttons + 1
 
-	if (not num) then
-		num = 1
-	end
-
-	for i=1,num do
-
-		local buttonID = #self.buttons + 1
-
-		if (#self.buttons < self.objMax) then
-			local buttonBaseObject = Neuron.registeredBarData[self.class].objTemplate
-			buttonBaseObject.new(self, buttonID)
-		end
-
+	if (#self.buttons < self.objMax) then
+		local buttonBaseObject = Neuron.registeredBarData[self.class].objTemplate
+		buttonBaseObject.new(self, id)
 	end
 
 	self:LoadObjects()
@@ -269,47 +262,33 @@ function BAR:AddObjectsToBar(num) --called from NeuronGUI
 	self:SetSize()
 	self:Update()
 	self:UpdateObjectVisibility()
-
 end
 
 
-function BAR:RemoveObjectsFromBar(num) --called from NeuronGUI
+function BAR:RemoveObjectFromBar() --called from NeuronGUI
 
-	if (not num) then
-		num = 1
-	end
+	local id = #self.buttons --always the last button
 
+	local object = self.buttons[id]
 
-	for i=1,num do
+	if (object) then
 
-		local id = #self.buttons --always the last button
+		object:ClearAllPoints()
 
-		local object = self.buttons[id]
+		table.remove(self.DB.buttons, id) --this is somewhat redundant if deleting a bar, but it doesn't hurt and is important for individual button deletions
+		table.remove(self.buttons, id)
 
-		if (object) then
-
-			object:ClearAllPoints()
-
-
-			table.remove(self.DB.buttons, id) --this is somewhat redundant if deleting a bar, but it doesn't hurt and is important for individual button deletions
-			table.remove(self.buttons, id)
-
-
-			if (object.binder) then
-				object.binder:ClearBindings()
-			end
-
-			object:SetParent(TRASHCAN)
-
-
+		if (object.binder) then
+			object.binder:ClearBindings()
 		end
 
-		self:SetObjectLoc()
-		self:SetPerimeter()
-		self:SetSize()
-		self:Update()
+		object:SetParent(TRASHCAN)
 	end
 
+	self:SetObjectLoc()
+	self:SetPerimeter()
+	self:SetSize()
+	self:Update()
 end
 
 

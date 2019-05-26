@@ -59,3 +59,5 @@ Neuron-Startup.lua
 
 GUI/MainWindow.lua
 GUI/InterfacePanel.lua
+GUI/BarEditTab.lua
+GUI/ButtonEditTab.lua
