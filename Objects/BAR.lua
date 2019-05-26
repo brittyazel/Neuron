@@ -373,9 +373,9 @@ function BAR:AutoHideUpdate()
 			else
 
 				if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
-					if (self.handler:GetAlpha() < self.data.alpha) then
-						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
-							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+					if (self.handler:GetAlpha() < self:GetBarAlpha()) then
+						if (self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1) then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 						else
 							self.handler:SetAlpha(1)
 						end
@@ -385,8 +385,8 @@ function BAR:AutoHideUpdate()
 
 				if (not BAR.IsMouseOverSelfOrWatchFrame(self)) then
 					if (self.handler:GetAlpha() > 0) then
-						if (self.handler:GetAlpha()-self.data.fadeSpeed >= 0) then
-							self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+						if (self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= 0) then
+							self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 						else
 							self.handler:SetAlpha(0)
 						end
@@ -399,114 +399,105 @@ function BAR:AutoHideUpdate()
 end
 
 function BAR:AlphaUpUpdate()
-	if (self.data.alphaUp and self.handler~=nil) then
+	if (self:GetAlphaUp() and self.handler~=nil) then
 
 		if (self:IsShown()) then
 			self.handler:SetAlpha(1)
 		else
 
-			if (self.data.alphaUp == alphaUps[3] or self.data.alphaUp == alphaUps[4]) then
+			if (self:GetAlphaUp() == alphaUps[3] or self:GetAlphaUp() == alphaUps[4]) then
 
 				if (InCombatLockdown()) then
 
 					if (self.handler:GetAlpha() < 1) then
-						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
-							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+						if (self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1) then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 						else
 							self.handler:SetAlpha(1)
 						end
 					end
 
 				else
-					if (self.data.alphaUp == alphaUps[4]) then
+					if (self:GetAlphaUp() == alphaUps[4]) then
 
 						if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
 							if (self.handler:GetAlpha() < 1) then
-								if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
-									self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+								if (self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1) then
+									self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 								else
 									self.handler:SetAlpha(1)
 								end
 							end
 						else
-							if (self.handler:GetAlpha() > self.data.alpha) then
-								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
-									self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+							if (self.handler:GetAlpha() > self:GetBarAlpha()) then
+								if (self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha()) then
+									self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 								else
-									self.handler:SetAlpha(self.data.alpha)
+									self.handler:SetAlpha(self:GetBarAlpha())
 								end
 							end
 						end
 					else
-						if (self.handler:GetAlpha() > self.data.alpha) then
-							if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
-								self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+						if (self.handler:GetAlpha() > self:GetBarAlpha()) then
+							if (self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha()) then
+								self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 							else
-								self.handler:SetAlpha(self.data.alpha)
+								self.handler:SetAlpha(self:GetBarAlpha())
 							end
 						end
 					end
 				end
 
-			elseif (self.data.alphaUp == alphaUps[5] or self.data.alphaUp == alphaUps[6]) then
+			elseif (self:GetAlphaUp() == alphaUps[5] or self:GetAlphaUp() == alphaUps[6]) then
 
-				if (not InCombatLockdown()) then
+				if not InCombatLockdown() then
 
 					if (self.handler:GetAlpha() < 1) then
-						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
-							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+						if (self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1) then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 						else
 							self.handler:SetAlpha(1)
 						end
 					end
 
 				else
-					if (self.data.alphaUp == alphaUps[6]) then
-
+					if (self:GetAlphaUp() == alphaUps[6]) then
 						if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
 							if (self.handler:GetAlpha() < 1) then
-								if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
-									self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+								if (self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1) then
+									self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 								else
 									self.handler:SetAlpha(1)
 								end
 							end
 						else
-							if (self.handler:GetAlpha() > self.data.alpha) then
-								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
-									self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+							if (self.handler:GetAlpha() > self:GetBarAlpha()) then
+								if (self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha()) then
+									self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 								else
-									self.handler:SetAlpha(self.data.alpha)
+									self.handler:SetAlpha(self:GetBarAlpha())
 								end
-							end
-						end
-					else
-						if (self.handler:GetAlpha() > k.alpha) then
-							if (self.handler:GetAlpha()-self.data.fadeSpeed >= k.alpha) then
-								self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
-							else
-								self.handler:SetAlpha(k.alpha)
 							end
 						end
 					end
 				end
 
-			elseif (self.data.alphaUp == alphaUps[2]) then
+			elseif (self:GetAlphaUp() == alphaUps[2]) then
 
 				if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
 					if (self.handler:GetAlpha() < 1) then
-						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
-							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
+						if (self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1) then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 						else
 							self.handler:SetAlpha(1)
 						end
 					end
 				else
-					if (self.handler:GetAlpha() > self.data.alpha) then
-						if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
-							self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
+					if (self.handler:GetAlpha() > self:GetBarAlpha()) then
+						if (self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha()) then
+							self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 						else
-							self.handler:SetAlpha(self.data.alpha)
+							self.handler:SetAlpha(self:GetBarAlpha())
 						end
 					end
 				end
@@ -551,7 +542,7 @@ function BAR:LaunchAutoHide()
 end
 
 function BAR:LaunchAlphaUp()
-	if (self.data.alphaUp) then
+	if (self:GetAlphaUp()) then
 		if self:TimeLeft(self.alphaUpTimer) == 0 then --safety check to make sure we don't re-set an already active timer
 			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", .05)
 		end
@@ -1077,9 +1068,9 @@ function BAR:Update(show, hide)
 	self:LaunchAutoHide()
 	self:LaunchAlphaUp()
 	self.text:SetText(self.data.name)
-	handler:SetAlpha(self.data.alpha)
+	handler:SetAlpha(self:GetBarAlpha())
 
-	if self.data.auraInd == true then
+	if  self:GetShowAuraIndicator() then
 		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 	else
 		self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
@@ -1149,7 +1140,7 @@ function BAR:SetPosition()
 		self:ClearAllPoints()
 		self:SetPoint("CENTER", "UIParent", point, x, y)
 		self:SetUserPlaced(true)
-		self:SetFrameStrata(Neuron.STRATAS[self.data.strata])
+		self:SetFrameStrata(Neuron.STRATAS[self:GetStrata()])
 
 		if (self.message) then
 			self.message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
@@ -1177,7 +1168,7 @@ end
 function BAR:LoadObjects()
 	local spec
 
-	if (self.data.multiSpec) then
+	if self:GetMultiSpec() then
 		spec = GetSpecialization()
 	else
 		spec = 1
@@ -1388,28 +1379,13 @@ end
 
 function BAR:SetSize()
 	if (self.right) then
-		self:SetWidth(((self.right-self.left)+5)*(self.data.scale))
-		self:SetHeight(((self.top-self.bottom)+5)*(self.data.scale))
+		self:SetWidth(((self.right-self.left)+5) * self:GetBarScale())
+		self:SetHeight(((self.top-self.bottom)+5) * self:GetBarScale())
 	else
 		self:SetWidth(195)
-		self:SetHeight(36*(self.data.scale))
+		self:SetHeight(36 * self:GetBarScale())
 	end
 end
-
-----------------------------------------------------------------------
-----------------------------------------------------------------------
-------------------------Event Handlers __-----------------------------
----TODO:I need to figure out what to do with this
-
---[[function NeuronBar:ACTIVE_TALENT_GROUP_CHANGED(bar, ...)
-	if (Neuron.enteredWorld) then
-		bar.stateschanged = true
-		bar.vischanged = true
-		bar:Update()
-	end
-end]]
-----------------------------------------------------------------------
-----------------------------------------------------------------------
 
 
 
@@ -1494,7 +1470,7 @@ end
 function BAR:OnDragStart(...)
 	self:ChangeBar()
 
-	self:SetFrameStrata(Neuron.STRATAS[self.data.strata])
+	self:SetFrameStrata(Neuron.STRATAS[self:GetStrata()])
 	self:EnableKeyboard(false)
 
 	self.adjusting = true
@@ -2097,7 +2073,7 @@ function BAR:SetMultiSpec(checked)
 	end
 
 	for _,object in ipairs(self.buttons) do
-		object:UpdateButtonSpec(self)
+		object:UpdateButtonSpec()
 	end
 
 	self:Update()
@@ -2157,7 +2133,7 @@ function BAR:SetTooltipEnable(checked)
 	self:Update()
 end
 
-function BAR:SetTooltipEnable()
+function BAR:GetTooltipEnable()
 	return self.data.tooltips
 end
 
@@ -2296,7 +2272,7 @@ function BAR:GetVerticalPad()
 end
 
 
-function BAR:SetScale(option)
+function BAR:SetBarScale(option)
 	if option then
 		self.data.scale = option
 	else
@@ -2309,7 +2285,7 @@ function BAR:SetScale(option)
 	self:Update()
 end
 
-function BAR:GetScale()
+function BAR:GetBarScale()
 	return self.data.scale
 end
 
@@ -2341,7 +2317,7 @@ function BAR:SetBarAlpha(option)
 	self:Update()
 end
 
-function BAR:GetAlpha()
+function BAR:GetBarAlpha()
 	return self.data.alpha
 end
 
@@ -2415,7 +2391,7 @@ function BAR:GetYAxis()
 	return self.data.y
 end
 
-function BAR:SetBindText(checked)
+function BAR:SetShowBindText(checked)
 	if checked then
 		self.data.bindText = true
 	else
@@ -2426,7 +2402,7 @@ function BAR:SetBindText(checked)
 	self:Update()
 end
 
-function BAR:GetBindText()
+function BAR:GetShowBindText()
 	return self.data.bindText
 end
 
@@ -2445,7 +2421,7 @@ function BAR:GetBindColor()
 	return self.data.bindColor
 end
 
-function BAR:SetMacroText(checked)
+function BAR:SetShowMacroText(checked)
 	if checked then
 		self.data.macroText = true
 	else
@@ -2456,7 +2432,7 @@ function BAR:SetMacroText(checked)
 	self:Update()
 end
 
-function BAR:GetMacroText()
+function BAR:GetShowMacroText()
 	return self.data.macroText
 end
 
@@ -2475,7 +2451,7 @@ function BAR:GetMacroColor()
 	return self.data.macroColor
 end
 
-function BAR:SetCountText(checked)
+function BAR:SetShowCountText(checked)
 	if checked then
 		self.data.countText = true
 	else
@@ -2486,7 +2462,7 @@ function BAR:SetCountText(checked)
 	self:Update()
 end
 
-function BAR:GetCountText()
+function BAR:GetShowCountText()
 	return self.data.countText
 end
 
@@ -2505,7 +2481,7 @@ function BAR:GetCountColor()
 	return self.data.countColor
 end
 
-function BAR:SetRangeInd(checked)
+function BAR:SetShowRangeIndicator(checked)
 	if checked then
 		self.data.rangeInd = true
 	else
@@ -2516,7 +2492,7 @@ function BAR:SetRangeInd(checked)
 	self:Update()
 end
 
-function BAR:GetRangeInd()
+function BAR:GetShowRangeIndicator()
 	return self.data.rangeInd
 end
 
@@ -2535,7 +2511,7 @@ function BAR:GetRangeColor()
 	return self.data.rangecolor
 end
 
-function BAR:SetCDText(checked)
+function BAR:SetShowCooldownText(checked)
 	if checked then
 		self.data.cdText = true
 	else
@@ -2546,11 +2522,11 @@ function BAR:SetCDText(checked)
 	self:Update()
 end
 
-function BAR:GetCDText()
+function BAR:GetShowCooldownText()
 	return self.data.cdText
 end
 
-function BAR:SetCDColor1(option)
+function BAR:SetCooldownColor1(option)
 	if option then
 		self.data.cdcolor1 = option
 	else
@@ -2561,11 +2537,11 @@ function BAR:SetCDColor1(option)
 	self:Update()
 end
 
-function BAR:GetCDColor1()
+function BAR:GetCooldownColor1()
 	return self.data.cdcolor1
 end
 
-function BAR:SetCDColor2(option)
+function BAR:SetCooldownColor2(option)
 	if option then
 		self.data.cdcolor2 = option
 	else
@@ -2576,26 +2552,26 @@ function BAR:SetCDColor2(option)
 	self:Update()
 end
 
-function BAR:GetCDColor2()
+function BAR:GetCooldownColor2()
 	return self.data.cdcolor2
 end
 
-function BAR:SetCDAlpha(checked)
+function BAR:SetShowCooldownAlpha(checked)
 	if checked then
-		self.data.cdAlpha = true
+		self.data.cdAlpha = 0.2 --hardcoded for now, maybe one day add an option to configure this value
 	else
-		self.data.cdAlpha = false
+		self.data.cdAlpha = 1
 	end
 
 	self:UpdateObjectData()
 	self:Update()
 end
 
-function BAR:GetCDAlpha()
+function BAR:GetShowCooldownAlpha()
 	return self.data.cdAlpha
 end
 
-function BAR:SetAuraInd(checked)
+function BAR:SetShowAuraIndicator(checked)
 	if checked then
 		self.data.auraInd = true
 	else
@@ -2606,7 +2582,7 @@ function BAR:SetAuraInd(checked)
 	self:Update()
 end
 
-function BAR:GetAuraInd()
+function BAR:GetShowAuraIndicator()
 	return self.data.auraInd
 end
 
@@ -2640,7 +2616,7 @@ function BAR:GetDebuffColor()
 	return self.data.debuffcolor
 end
 
-function BAR:SetBorderStyle(checked)
+function BAR:SetShowBorderStyle(checked)
 
 	if (checked) then
 		self.data.showBorderStyle = true
@@ -2651,6 +2627,21 @@ function BAR:SetBorderStyle(checked)
 	self:UpdateIcons()
 end
 
-function BAR:GetBorderStyle()
+function BAR:GetShowBorderStyle()
 	return self.data.showBorderStyle
+end
+
+function BAR:SetManaColor(option)
+	if option then
+		self.data.manacolor = option
+	else
+		self.data.manacolor = {0.5,0.5,1,1}
+	end
+
+	self:UpdateObjectData()
+	self:Update()
+end
+
+function BAR:GetManaColor()
+	return self.data.manacolor
 end

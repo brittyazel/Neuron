@@ -23,46 +23,6 @@
 
 local genericButtonData = {
 	btnType = "macro",
-
-	mouseAnchor = false,
-	clickAnchor = false,
-	anchorDelay = false,
-	anchoredBar = false,
-
-	upClicks = true,
-	downClicks = false,
-	cooldownAlpha = 1,
-
-	bindText = true,
-	bindColor = {1,1,1,1},
-
-	countText = true,
-	spellCounts = false,
-	comboCounts = false,
-	countColor = {1,1,1,1},
-
-	macroText = false,
-	macroColor = {1,1,1,1},
-
-	cdText = false,
-	cdcolor1 = {1,0.82,0,1},
-	cdcolor2 = {1,0.1,0.1,1},
-
-	auraInd = false,
-	buffcolor = {0,0.8,0,1},
-	debuffcolor = {0.8,0,0,1},
-
-	rangeInd = true,
-	rangecolor = {0.7,0.15,0.15,1},
-
-	skincolor = {1,1,1,1},
-	hovercolor = {0.1,0.1,1,1},
-	equipcolor = {0.1,1,0.1,1},
-
-	scale = 1,
-	alpha = 1,
-	XOffset = 0,
-	YOffset = 0,
 }
 
 
@@ -79,7 +39,76 @@ local genericSpecData = {
 	macro_UseNote = false,
 }
 
-local genericStatusBtnData= {
+local genericXPBtnData= {
+
+	curXPType = "player_xp",
+
+	width = 450,
+	height = 18,
+	scale = 1,
+	XOffset = 0,
+	YOffset = 0,
+	texture = 7,
+	border = 1,
+
+	orientation = 1,
+
+	cIndex = 2,
+	cColor = {1,1,1,1},
+
+	lIndex = 6,
+	lColor = {1,1,1,1},
+
+	rIndex = 4,
+	rColor = {1,1,1,1},
+
+	mIndex = 3,
+	mColor = {1,1,1,1},
+
+	tIndex = 1,
+	tColor = {1,1,1,1},
+
+	bordercolor = {1,1,1,1},
+
+	norestColor = {1,0,1,1},
+	restColor = {0,0,1,1},
+}
+
+local genericRepBtnData= {
+
+	repID = 2,
+	autoWatch = 2,
+	unit = 2,
+
+	width = 450,
+	height = 18,
+	scale = 1,
+	XOffset = 0,
+	YOffset = 0,
+	texture = 7,
+	border = 1,
+
+	orientation = 1,
+
+	cIndex = 3,
+	cColor = {1,1,1,1},
+
+	lIndex = 2,
+	lColor = {1,1,1,1},
+
+	rIndex = 4,
+	rColor = {1,1,1,1},
+
+	mIndex = 6,
+	mColor = {1,1,1,1},
+
+	tIndex = 1,
+	tColor = {1,1,1,1},
+
+	bordercolor = {1,1,1,1},
+}
+
+local genericCastBtnData= {
 
 	width = 250,
 	height = 18,
@@ -94,10 +123,10 @@ local genericStatusBtnData= {
 	cIndex = 1,
 	cColor = {1,1,1,1},
 
-	lIndex = 1,
+	lIndex = 2,
 	lColor = {1,1,1,1},
 
-	rIndex = 1,
+	rIndex = 3,
 	rColor = {1,1,1,1},
 
 	mIndex = 1,
@@ -108,23 +137,45 @@ local genericStatusBtnData= {
 
 	bordercolor = {1,1,1,1},
 
-	norestColor = {1,0,1,1},
-	restColor = {0,0,1,1},
-
 	castColor = {1,0.7,0,1},
 	channelColor = {0,1,0,1},
 	successColor = {0,1,0,1},
 	failColor = {1,0,0,1},
 
-	showIcon = false,
+	showIcon = true,
+}
 
-	repID = 2,
-	autoWatch = 2,
+local genericMirrorBtnData= {
 
-	unit = 2,
+	width = 250,
+	height = 18,
+	scale = 1,
+	XOffset = 0,
+	YOffset = 0,
+	texture = 7,
+	border = 1,
 
+	orientation = 1,
+
+	cIndex = 1,
+	cColor = {1,1,1,1},
+
+	lIndex = 2,
+	lColor = {1,1,1,1},
+
+	rIndex = 3,
+	rColor = {1,1,1,1},
+
+	mIndex = 1,
+	mColor = {1,1,1,1},
+
+	tIndex = 1,
+	tColor = {1,1,1,1},
+
+	bordercolor = {1,1,1,1},
 
 }
+
 
 local genericKeyData = {
 	hotKeyLock = false,
@@ -183,6 +234,8 @@ local genericBarData = {
 	buffcolor = {0,0.8,0,1},
 	debuffcolor = {0.8,0,0,1},
 	rangecolor = {0.7,0.15,0.15,1},
+	manacolor = {0.5,0.5,1.0,1},
+
 	border = true,
 
 	upClicks = true,
@@ -206,7 +259,7 @@ local genericBarData = {
 	rangeInd = true,
 
 	cdText = false,
-	cdAlpha = false,
+	cdAlpha = 1,
 	auraInd = false,
 
 	showBorderStyle = true,
@@ -324,28 +377,28 @@ NeuronDefaults.profile.ActionBar['*'].buttons = {
 
 NeuronDefaults.profile.RepBar['*'].buttons ={
 	['*'] = {
-		['config'] = CopyTable(genericStatusBtnData),
+		['config'] = CopyTable(genericRepBtnData),
 		['keys'] = CopyTable(genericKeyData),
 	}
 }
 
 NeuronDefaults.profile.XPBar['*'].buttons ={
 	['*'] = {
-		['config'] = CopyTable(genericStatusBtnData),
+		['config'] = CopyTable(genericXPBtnData),
 		['keys'] = CopyTable(genericKeyData),
 	}
 }
 
 NeuronDefaults.profile.CastBar['*'].buttons ={
 	['*'] = {
-		['config'] = CopyTable(genericStatusBtnData),
+		['config'] = CopyTable(genericCastBtnData),
 		['keys'] = CopyTable(genericKeyData),
 	}
 }
 
 NeuronDefaults.profile.MirrorBar['*'].buttons ={
 	['*'] = {
-		['config'] = CopyTable(genericStatusBtnData),
+		['config'] = CopyTable(genericMirrorBtnData),
 		['keys'] = CopyTable(genericKeyData),
 	}
 }

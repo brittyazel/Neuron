@@ -136,11 +136,6 @@ end
 
 
 
-function STATUSBTN:OnClick(mousebutton)
- --empty--
-end
-
-
 function STATUSBTN:OnEnter()
 
 	if (self.config.mIndex > 1) then
@@ -152,24 +147,14 @@ function STATUSBTN:OnEnter()
 	end
 
 	if (self.config.tIndex > 1) then
+		if (self.bar:GetTooltipCombat() and InCombatLockdown()) then
+			return
+		end
 
-		if (self.bar) then
-
-			if (self.bar.data.tooltipsCombat and InCombatLockdown()) then
-				return
-			end
-
-			if (self.bar.data.tooltips) then
-
-				if (self.bar.data.tooltipsEnhanced) then
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				else
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				end
-
-				GameTooltip:SetText(self.sb.tFunc(self.sb) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
-				GameTooltip:Show()
-			end
+		if (self.bar:GetTooltipEnable()) then
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText(self.sb.tFunc(self.sb) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
+			GameTooltip:Show()
 		end
 	end
 end
@@ -478,22 +463,14 @@ end
 
 function STATUSBTN:SetData(bar)
 
-	if (bar) then
+	self.bar = bar
 
-		self.bar = bar
-		self.alpha = bar.data.alpha
-		self.showGrid = bar.data.showGrid
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
+	self:SetScale(self.bar:GetBarScale())
 
-		self:SetFrameStrata(Neuron.STRATAS[bar.data.strata-1])
-		self:SetScale(bar.data.scale)
-
-	end
 
 	self:SetWidth(self.config.width)
 	self:SetHeight(self.config.height)
-
-
-	self.sb.parent = self
 
 	self.sb.cText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
 	self.sb.lText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])

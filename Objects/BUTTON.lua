@@ -309,7 +309,7 @@ function BUTTON:CooldownCounterUpdate()
 	if self.iconframecooldown.showCountdownAlpha and self.iconframecooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
 		if coolDown > 0 then
-			self.iconframecooldown.button:SetAlpha(self.iconframecooldown.button.cdAlpha)
+			self.iconframecooldown.button:SetAlpha(self.bar:GetShowCooldownAlpha())
 		else
 			self.iconframecooldown.button:SetAlpha(1)
 		end
@@ -321,96 +321,49 @@ end
 
 
 function BUTTON:SetData(bar)
-	if (bar) then
 
-		self.bar = bar
+	self.bar = bar
 
-		self.barLock = bar.data.barLock
+	self.macroname:SetText(self.data.macro_Name) --custom macro's weren't showing the name
 
-		self.tooltips = bar.data.tooltips
-		self.tooltipsEnhanced = bar.data.tooltipsEnhanced
-		self.tooltipsCombat = bar.data.tooltipsCombat
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 
-		self.spellGlow = bar.data.spellGlow
+	self:SetScale(self.bar:GetBarScale())
 
-		self.bindText = bar.data.bindText
-		self.macroText = bar.data.macroText
-		self.countText = bar.data.countText
 
-		self.cdText = bar.data.cdText
-
-		if (bar.data.cdAlpha) then
-			self.cdAlpha = 0.2
-		else
-			self.cdAlpha = 1
-		end
-
-		self.auraInd = bar.data.auraInd
-
-		self.rangeInd = bar.data.rangeInd
-
-		self.upClicks = bar.data.upClicks
-		self.downClicks = bar.data.downClicks
-
-		self.multiSpec = bar.data.multiSpec
-
-		self.bindColor = bar.data.bindColor
-		self.macroColor = bar.data.macroColor
-		self.countColor = bar.data.countColor
-
-		self.macroname:SetText(self.data.macro_Name) --custom macro's weren't showing the name
-
-		self:SetFrameStrata(Neuron.STRATAS[bar.data.strata-1])
-
-		self:SetScale(bar.data.scale)
-	end
-
-	if (self.bindText) then
+	if (self.bar:GetShowBindText()) then
 		self.hotkey:Show()
-		if (self.bindColor) then
-			self.hotkey:SetTextColor(self.bindColor[1],self.bindColor[2],self.bindColor[3],self.bindColor[4])
-		end
+		self.hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
+
 	else
 		self.hotkey:Hide()
 	end
 
-	if (self.macroText) then
+	if (self.bar:GetShowMacroText()) then
 		self.macroname:Show()
-		if (self.macroColor) then
-			self.macroname:SetTextColor(self.macroColor[1],self.macroColor[2],self.macroColor[3],self.macroColor[4])
-		end
+		self.macroname:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
 	else
 		self.macroname:Hide()
 	end
 
-	if (self.countText) then
+	if (self.bar:GetShowCountText()) then
 		self.count:Show()
-		if (self.countColor) then
-			self.count:SetTextColor(self.countColor[1],self.countColor[2],self.countColor[3],self.countColor[4])
-		end
+		self.count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3],self.bar:GetCountColor()[4])
 	else
 		self.count:Hide()
 	end
 
 	local down, up = "", ""
 
-	if (self.upClicks) then up = up.."AnyUp" end
-	if (self.downClicks) then down = down.."AnyDown" end
+	if (self.bar:GetUpClicks()) then
+		up = up.."AnyUp"
+	end
+	if (self.bar:GetDownClicks()) then
+		down = down.."AnyDown"
+	end
 
 	self:RegisterForClicks(down, up)
 	self:RegisterForDrag("LeftButton", "RightButton")
-
-	if (not self.equipcolor) then
-		self.equipcolor = { 0.1, 1, 0.1, 1 }
-	else
-		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3], self.equipcolor[4] = 0.1, 1, 0.1, 1
-	end
-
-	if (not self.manacolor) then
-		self.manacolor = { 0.5, 0.5, 1.0, 1 }
-	else
-		self.manacolor[1], self.manacolor[2], self.manacolor[3], self.manacolor[4] = 0.5, 0.5, 1.0, 1
-	end
 
 	self:GetSkinned()
 
@@ -603,10 +556,10 @@ function BUTTON:SetSpellCooldown(spell)
 	local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(spell)
 
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
-		self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+		self:SetCooldownTimer(chStart, chDuration, enable, self.bar:GetShowCooldownText(), chargemodrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
 	end
 
-	self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+	self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
 
 end
 
@@ -620,7 +573,7 @@ function BUTTON:SetItemCooldown(item)
 
 		local start, duration, enable, modrate = GetItemCooldown(id)
 
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha())
 	end
 end
 
@@ -634,7 +587,7 @@ function BUTTON:ACTION_SetCooldown(action)
 
 			local start, duration, enable, modrate = GetActionCooldown(actionID)
 
-			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha())
 		end
 	end
 end
@@ -653,9 +606,7 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 			uaw_duration = tonumber(uaw_duration)
 			uaw_timeLeft = tonumber(uaw_timeLeft)
 
-			if (self.auraInd) then
-
-				self.iconframecooldown.showAuraBorder = self.auraInd
+			if self.bar:GetShowAuraIndicator() then
 
 				self.iconframecooldown.auraType = uaw_auraType
 				self.iconframecooldown.unit = unit
@@ -678,9 +629,6 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 
 				self.iconframecooldown.auraUpdateTimer = self:ScheduleRepeatingTimer("AuraCounterUpdate", 0.20)
 
-			else
-				--self.iconframecooldown.showAuraCountdown = false
-				self.iconframecooldown.showAuraBorder = false
 			end
 
 			self.auraWatchUnit = unit
@@ -688,11 +636,7 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 		elseif (self.auraWatchUnit == unit) then
 
 			self:CancelTimer(self.iconframecooldown.auraUpdateTimer)
-			--self.iconframecooldown.timer:SetText("")
 			self.border:Hide()
-
-			--self.iconframecooldown.showAuraCountdown = false
-			self.iconframecooldown.showAuraBorder = false
 
 			self.auraWatchUnit = nil
 		end
@@ -707,7 +651,7 @@ function BUTTON:AuraCounterUpdate()
 	coolDown = self:TimeLeft(self.iconframecooldown.auraTimer) - 1
 
 
-	if self.iconframecooldown.showAuraBorder then
+	if self.bar:GetShowAuraIndicator() then
 		if coolDown > 0 then
 			if (self.iconframecooldown.auraType == "buff") then
 				self.border:SetVertexColor(self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], 1.0)

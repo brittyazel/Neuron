@@ -138,7 +138,7 @@ function ACTIONBUTTON:SetObjectVisibility(show)
 
 	if InCombatLockdown() then return end
 
-	self:SetAttribute("showGrid", self.bar:GetShowGrid()) --this is important because in our state switching code, we can't querry self.showGrid directly
+	self:SetAttribute("showGrid", self.bar:GetShowGrid()) --this is important because in our state switching code, we can't query GetShowGrid() directly
 	self:SetAttribute("isshown", show)
 
 	if self:HasAction() or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
@@ -558,7 +558,7 @@ end
 
 
 function ACTIONBUTTON:UpdateGlow()
-	if (self.spellGlow and self.spellID) then
+	if (self.bar:GetSpellGlow() and self.spellID) then
 
 		--druid fix for thrash glow not showing for feral druids.
 		--Thrash Guardian: 77758
@@ -585,8 +585,8 @@ end
 
 
 function ACTIONBUTTON:StartGlow()
-	if self.spellGlow then
-		if self.spellGlow == "default" then
+	if self.bar:GetSpellGlow() then
+		if self.bar:GetSpellGlow() == "default" then
 			ActionButton_ShowOverlayGlow(self)
 		else
 			self.shine:Show()
@@ -596,8 +596,8 @@ function ACTIONBUTTON:StartGlow()
 end
 
 function ACTIONBUTTON:StopGlow()
-	if self.spellGlow then
-		if self.spellGlow == "default" then
+	if self.bar:GetSpellGlow() then
+		if self.bar:GetSpellGlow() == "default" then
 			ActionButton_HideOverlayGlow(self)
 		else
 			self.shine:Hide()
@@ -649,12 +649,12 @@ function ACTIONBUTTON:UpdateUsableSpell(spell)
 	isUsable, notEnoughMana = IsUsableSpell(spellName)
 
 	if (notEnoughMana) then
-		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+		self.iconframeicon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
 	elseif (isUsable) then
-		if (self.rangeInd and IsSpellInRange(spellName, self.unit) == 0) then
-			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and (self.rangeInd and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
-			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		if self.bar:GetShowRangeIndicator() and IsSpellInRange(spellName, self.unit) == 0 then
+			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
+		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and (self.bar:GetShowRangeIndicator() and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
+			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 		end
@@ -672,13 +672,15 @@ end
 function ACTIONBUTTON:UpdateUsableItem(item)
 	local isUsable, notEnoughMana = IsUsableItem(item)
 
-	if NeuronToyCache[item:lower()] then isUsable = true end
+	if NeuronToyCache[item:lower()] then
+		isUsable = true
+	end
 
-	if (notEnoughMana and self.manacolor) then
-		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	if notEnoughMana then
+		self.iconframeicon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2],self.bar:GetManaColor()[3])
 	elseif (isUsable) then
-		if (self.rangeInd and IsItemInRange(spell, self.unit) == 0) then
-			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		if (self.bar:GetShowRangeIndicator() and IsItemInRange(item, self.unit) == 0) then
+			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 		end
@@ -760,25 +762,7 @@ ACTIONBUTTON.SPELL_ACTIVATION_OVERLAY_GLOW_HIDE = ACTIONBUTTON.SPELL_ACTIVATION_
 
 
 function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
-
-	if(InCombatLockdown()) then
-		return
-	end
-
-	local spec
-
-	if (self.multiSpec) then
-		spec = GetSpecialization()
-	else
-		spec = 1
-	end
-
-	self:LoadData(spec, self:GetParent():GetAttribute("activestate") or "homestate")
-	self:UpdateFlyout()
-	self:SetType()
-	self:UpdateAll()
-	self:SetObjectVisibility()
-
+	self:UpdateButtonSpec()
 end
 
 
@@ -882,7 +866,7 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 
 		local spell_id = NeuronSpellCache[spell].spellID
 
-		if (self.UberTooltips) then
+		if (self.bar:GetTooltipEnhanced()) then
 			GameTooltip:SetSpellByID(spell_id)
 		else
 			GameTooltip:SetText(NeuronSpellCache[spell:lower()].spellName, 1, 1, 1)
@@ -891,7 +875,7 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 
 	elseif (NeuronCollectionCache[spell]) then
 
-		if (self.UberTooltips and NeuronCollectionCache[spell].creatureType =="MOUNT") then
+		if (self.bar:GetTooltipEnhanced() and NeuronCollectionCache[spell].creatureType =="MOUNT") then
 			GameTooltip:SetHyperlink("spell:"..NeuronCollectionCache[spell].spellID)
 		else
 			GameTooltip:SetText(NeuronCollectionCache[spell].creatureName, 1, 1, 1)
@@ -904,7 +888,7 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 		spellName,_,_,_,_,_,spell_id = GetSpellInfo(spell)
 
 		if spellName and spell_id then --add safety check in case spellName and spell_id come back as nil
-			if (self.UberTooltips ) then
+			if (self.bar:GetTooltipEnhanced()) then
 				GameTooltip:SetSpellByID(spell_id)
 			else
 				GameTooltip:SetText(spellName, 1, 1, 1)
@@ -922,7 +906,7 @@ function ACTIONBUTTON:SetItemTooltip(item)
 	local name, link = GetItemInfo(item)
 
 	if (NeuronToyCache[item]) then
-		if (self.UberTooltips) then
+		if (self.bar:GetTooltipEnhanced()) then
 			local itemID = NeuronToyCache[item]
 			GameTooltip:ClearLines()
 			GameTooltip:SetToyByItemID(itemID)
@@ -931,14 +915,14 @@ function ACTIONBUTTON:SetItemTooltip(item)
 		end
 
 	elseif (link) then
-		if (self.UberTooltips) then
+		if (self.bar:GetTooltipEnhanced()) then
 			GameTooltip:SetHyperlink(link)
 		else
 			GameTooltip:SetText(name, 1, 1, 1)
 		end
 
 	elseif (NeuronItemCache[item]) then
-		if (self.UberTooltips) then
+		if (self.bar:GetTooltipEnhanced()) then
 			GameTooltip:SetHyperlink("item:"..NeuronItemCache[item]..":0:0:0:0:0:0:0")
 		else
 			GameTooltip:SetText(NeuronItemCache[item], 1, 1, 1)
@@ -982,29 +966,18 @@ end
 
 
 function ACTIONBUTTON:OnEnter(...)
-	if (self.bar) then
-		if (self.tooltipsCombat and InCombatLockdown()) then
-			return
-		end
+	if (self.bar:GetTooltipCombat() and InCombatLockdown()) then
+		return
+	end
 
-		if (self.tooltips) then
-			if (self.tooltipsEnhanced) then
-				self.UberTooltips = true
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			else
-				self.UberTooltips = false
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			end
+	if (self.bar:GetTooltipEnable()) then
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		self:SetTooltip()
+		GameTooltip:Show()
+	end
 
-			self:SetTooltip()
-
-			GameTooltip:Show()
-		end
-
-		if (self.flyout and self.flyout.arrow) then
-			self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX/0.625, self.flyout.arrowY/0.625)
-		end
-
+	if (self.flyout and self.flyout.arrow) then
+		self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX/0.625, self.flyout.arrowY/0.625)
 	end
 end
 
@@ -1110,17 +1083,17 @@ end
 
 
 
-function ACTIONBUTTON:UpdateButtonSpec(bar)
+function ACTIONBUTTON:UpdateButtonSpec()
 	local spec
 
-	if (bar.data.multiSpec) then
+	if self.bar:GetMultiSpec() then
 		spec = GetSpecialization()
 	else
 		spec = 1
 	end
 
-	self:SetData(bar)
-	self:LoadData(spec, bar.handler:GetAttribute("activestate"))
+	self:SetData(self.bar)
+	self:LoadData(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
 	self:UpdateFlyout()
 	self:SetType()
 	self:SetObjectVisibility()
@@ -1419,15 +1392,15 @@ function ACTIONBUTTON:ACTION_UpdateUsable(action)
 		else
 			local isUsable, notEnoughMana = IsUsableAction(actionID)
 
-			if (isUsable) then
+			if isUsable then
 				if (IsActionInRange(action, self.unit) == 0) then
-					self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+					self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 				else
 					self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 				end
 
-			elseif (notEnoughMana and self.manacolor) then
-				self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+			elseif notEnoughMana then
+				self.iconframeicon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
 			else
 				self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
 			end

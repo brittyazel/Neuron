@@ -800,22 +800,14 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 
 		self.bar = bar
 
-		self.tooltips = true
-		self.tooltipsEnhanced = true
+		self.bar:SetTooltipEnable(true)
+		self.bar:SetTooltipEnhanced(true)
 
 	end
 
 	self.hotkey:Hide()
 	self.macroname:Hide()
 	self:RegisterForClicks("AnyUp")
-
-	self.equipcolor = { 0.1, 1, 0.1, 1 }
-	self.cdcolor1 = { 1, 0.82, 0, 1 }
-	self.cdcolor2 = { 1, 0.1, 0.1, 1 }
-	self.buffcolor = { 0, 0.8, 0, 1 }
-	self.debuffcolor = { 0.8, 0, 0, 1 }
-	self.manacolor = { 0.5, 0.5, 1.0 }
-	self.rangecolor = { 0.7, 0.15, 0.15, 1 }
 
 	self:GetSkinned()
 end
@@ -982,10 +974,6 @@ function ACTIONBUTTON:Flyout_GetBar()
 	bar.handler:SetAllPoints(bar)
 	bar.handler.bar = bar
 	bar.handler.elapsed = 0
-
-	--bar.handler:SetBackdrop({ bgFile = "Interface/Tooltips/UI-Tooltip-Background", edgeFile = "Interface/Tooltips/UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 12, insets = { left = 4, right = 4, top = 4, bottom = 4 } })
-	--bar.handler:SetBackdropColor(0,0,0,1)
-	--bar.handler:SetBackdropBorderColor(0,0,0,1)
 
 	----we need to activate all of these frames at least once. This place is as good as any I guess
 

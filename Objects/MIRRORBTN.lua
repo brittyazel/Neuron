@@ -115,7 +115,6 @@ function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 			mbar.sb.mirror = type
 			mbar.sb.value = (value / 1000)
 			mbar.sb.maxvalue = (maxvalue / 1000)
-			mbar.sb.scale = scale
 
 			if ( paused > 0 ) then
 				mbar.sb.paused = 1

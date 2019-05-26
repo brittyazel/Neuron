@@ -170,7 +170,7 @@ function PETBTN:PET_UpdateCooldown()
 
 		local start, duration, enable, modrate = GetPetActionCooldown(actionID)
 
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha())
 	end
 end
 
@@ -345,7 +345,7 @@ function PETBTN:PET_SetTooltip(edit)
 	local actionID = self.actionID
 
 	if (self.HasPetAction(actionID)) then
-		if (self.UberTooltips) then
+		if (self.bar:GetTooltipEnhanced()) then
 			GameTooltip:SetPetAction(actionID)
 		else
 			GameTooltip:SetText(self.actionSpell)
@@ -356,22 +356,13 @@ end
 
 
 function PETBTN:OnEnter(...)
-	if (self.tooltipsCombat and InCombatLockdown()) then
+	if (self.bar:GetTooltipCombat() and InCombatLockdown()) then
 		return
 	end
 
-	if (self.tooltips) then
-		if (self.tooltipsEnhanced) then
-			self.UberTooltips = true
-
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		else
-			self.UberTooltips = false
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		end
-
+	if (self.bar:GetTooltipEnable()) then
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		self:PET_SetTooltip()
-
 		GameTooltip:Show()
 	end
 end

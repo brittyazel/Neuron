@@ -101,6 +101,8 @@ function REPBTN:SetType()
 
 	self:SetData(self.bar)
 
+	self:repbar_OnEvent() --we need this here to load the bar when first creating it
+
 end
 
 

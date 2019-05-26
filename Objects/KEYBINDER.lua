@@ -55,6 +55,8 @@ function KEYBINDER.new(button)
 	newKeyBinder.button = button
 	newKeyBinder.bindType = "button"
 
+	newKeyBinder.bar = button.bar
+
 	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = newKeyBinder
 
 	newKeyBinder:Hide()
@@ -194,7 +196,7 @@ function KEYBINDER:ApplyBindings()
 
 	self.button.hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
 
-	if (self.button.bindText) then
+	if (self.bar:GetShowBindText()) then
 		self.button.hotkey:Show()
 	else
 		self.button.hotkey:Hide()

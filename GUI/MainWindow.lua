@@ -55,7 +55,7 @@ local barEditOptionsContainer = {} --The container that houses the add/remove ba
 	[13] = { "TOOLTIPS", L["Enable Tooltips"], 1, "SetTooltipEnable" },
 	[14] = { "TOOLTIPS", L["Enhanced"], 0.9, "SetTooltipEnhanced" },
 	[15] = { "TOOLTIPS", L["Hide in Combat"], 0.9, "SetTooltipCombat" },
-	[16] = { "BORDERSTYLE", L["Show Border Style"], 1, "SetBorderStyle"},
+	[16] = { "BORDERSTYLE", L["Show Border Style"], 1, "SetShowBorderStyle"},
 }
 
 local adjOptions = {
@@ -75,13 +75,13 @@ local adjOptions = {
 }
 
 local swatchOptions = {
-	[1] = { "BINDTEXT", L["Keybind Label"], 1, "SetBindText", true, nil, "bindColor" },
-	[2] = { "MACROTEXT", L["Macro Name"], 1, "SetMacroText", true, nil, "macroColor" },
-	[3] = { "COUNTTEXT", L["Stack/Charge Count Label"], 1, "SetCountText", true, nil, "countColor" },
-	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "SetRangeInd", true, nil, "rangecolor" },
-	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "SetCDText", true, true, "cdcolor1", "cdcolor2" },
-	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "SetCDAlpha", nil, nil },
-	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "SetAuraInd", true, true, "buffcolor", "debuffcolor" },
+	[1] = { "BINDTEXT", L["Keybind Label"], 1, "SetShowBindText", true, nil, "bindColor" },
+	[2] = { "MACROTEXT", L["Macro Name"], 1, "SetShowMacroText", true, nil, "macroColor" },
+	[3] = { "COUNTTEXT", L["Stack/Charge Count Label"], 1, "SetShowCountText", true, nil, "countColor" },
+	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "SetShowRangeIndicator", true, nil, "rangecolor" },
+	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "SetShowCooldownText", true, true, "cdcolor1", "cdcolor2" },
+	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "SetShowCooldownAlpha", nil, nil },
+	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "SetShowAuraIndicator", true, true, "buffcolor", "debuffcolor" },
 }]]
 
 -----------------------------------------------------------------------------

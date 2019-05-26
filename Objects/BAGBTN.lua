@@ -73,8 +73,8 @@ function BAGBTN:SetData(bar)
 
 	if (bar) then
 		self.bar = bar
-		self:SetFrameStrata(Neuron.STRATAS[bar.data.strata-1])
-		self:SetScale(bar.data.scale)
+		self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
+		self:SetScale(self.bar:GetBarScale())
 	end
 end
 
