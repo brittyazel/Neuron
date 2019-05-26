@@ -40,11 +40,13 @@ function ACTIONBUTTON:OnDragStart()
 
 	local drag
 
-	if self.data.barLock == "alt" and IsAltKeyDown() then
+	if not self.bar:GetBarLock() then
 		drag = true
-	elseif self.data.barLock == "ctrl" and IsControlKeyDown() then
+	elseif self.bar:GetBarLock() == "alt" and IsAltKeyDown() then
 		drag = true
-	elseif self.data.barLock == "shift" and IsShiftKeyDown() then
+	elseif self.bar:GetBarLock() == "ctrl" and IsControlKeyDown() then
+		drag = true
+	elseif self.bar:GetBarLock() == "shift" and IsShiftKeyDown() then
 		drag = true
 	else
 		drag = false
@@ -160,11 +162,13 @@ function ACTIONBUTTON:PickUpMacro()
 
 	local pickup
 
-	if self.data.barLock == "alt" and IsAltKeyDown() then
+	if not self.bar:GetBarLock() then
 		pickup = true
-	elseif self.data.barLock == "ctrl" and IsControlKeyDown() then
+	elseif self.bar:GetBarLock() == "alt" and IsAltKeyDown() then
 		pickup = true
-	elseif self.data.barLock == "shift" and IsShiftKeyDown() then
+	elseif self.bar:GetBarLock() == "ctrl" and IsControlKeyDown() then
+		pickup = true
+	elseif self.bar:GetBarLock() == "shift" and IsShiftKeyDown() then
 		pickup = true
 	else
 		pickup = false

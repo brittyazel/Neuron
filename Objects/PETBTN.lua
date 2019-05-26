@@ -292,11 +292,13 @@ function PETBTN:OnDragStart()
 
 	local drag
 
-	if self.data.barLock == "alt" and IsAltKeyDown() then
+	if not self.bar:GetBarLock() then
 		drag = true
-	elseif self.data.barLock == "ctrl" and IsControlKeyDown() then
+	elseif self.bar:GetBarLock() == "alt" and IsAltKeyDown() then
 		drag = true
-	elseif self.data.barLock == "shift" and IsShiftKeyDown() then
+	elseif self.bar:GetBarLock() == "ctrl" and IsControlKeyDown() then
+		drag = true
+	elseif self.bar:GetBarLock() == "shift" and IsShiftKeyDown() then
 		drag = true
 	else
 		drag = false
@@ -354,25 +356,23 @@ end
 
 
 function PETBTN:OnEnter(...)
-	if (self.bar) then
-		if (self.tooltipsCombat and InCombatLockdown()) then
-			return
+	if (self.tooltipsCombat and InCombatLockdown()) then
+		return
+	end
+
+	if (self.tooltips) then
+		if (self.tooltipsEnhanced) then
+			self.UberTooltips = true
+
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		else
+			self.UberTooltips = false
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		end
 
-		if (self.tooltips) then
-			if (self.tooltipsEnhanced) then
-				self.UberTooltips = true
+		self:PET_SetTooltip()
 
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			else
-				self.UberTooltips = false
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			end
-
-			self:PET_SetTooltip()
-
-			GameTooltip:Show()
-		end
+		GameTooltip:Show()
 	end
 end
 
@@ -384,7 +384,7 @@ end
 
 function PETBTN:SetObjectVisibility(show)
 
-	if show or self.showGrid or self.HasPetAction(self.actionID) or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if show or self.bar:GetShowGrid() or self.HasPetAction(self.actionID) or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self:SetAlpha(1)
 	else
 		self:SetAlpha(0)

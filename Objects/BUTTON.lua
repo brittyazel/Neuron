@@ -352,7 +352,6 @@ function BUTTON:SetData(bar)
 		self.upClicks = bar.data.upClicks
 		self.downClicks = bar.data.downClicks
 
-		self.showGrid = bar.data.showGrid
 		self.multiSpec = bar.data.multiSpec
 
 		self.bindColor = bar.data.bindColor

@@ -170,7 +170,6 @@ function BAR:CreateNewBar(class)
 	local barID = #Neuron.registeredBarData[class].barDB + 1 --increment 1 higher than the current number of bars in this class of bar's database
 
 	local newBar = BAR.new(class, barID) --create new bar
-	Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar --add handle for our new bar into a bar index table
 
 	newBar.objTemplate.new(newBar, 1) --add at least 1 button to a new bar
 	newBar:ChangeBar()
@@ -240,6 +239,7 @@ function BAR:DeleteBar()
 
 	table.remove(Neuron.BARIndex, self.index)
 
+	Neuron.CurrentBar = nil
 
 	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
 		v:Update()
@@ -301,7 +301,7 @@ function BAR:RemoveObjectsFromBar(num) --called from NeuronGUI
 
 
 			if (object.binder) then
-				Neuron.KEYBINDER:ClearBindings(object)
+				object.binder:ClearBindings()
 			end
 
 			object:SetParent(TRASHCAN)
@@ -364,7 +364,7 @@ end
 ---this function is set via a repeating scheduled timer in SetAutoHide()
 function BAR:AutoHideUpdate()
 
-	if (self.data.autoHide and self.handler~=nil) then
+	if (self:GetAutoHide() and self.handler~=nil) then
 
 		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
 
@@ -541,7 +541,7 @@ function BAR:SetHidden(handler, show, hide)
 end
 
 function BAR:LaunchAutoHide()
-	if (self.data.autoHide) then
+	if (self:GetAutoHide()) then
 		if self:TimeLeft(self.autoHideTimer) == 0 then --safety check to make sure we don't re-set an already active timer
 			self.autoHideTimer = self:ScheduleRepeatingTimer("AutoHideUpdate", .05)
 		end
@@ -1696,52 +1696,54 @@ end
 function BAR:ChangeBar()
 	local newBar = false
 
-	if (Neuron.enteredWorld) then
+	if (self and Neuron.CurrentBar ~= self) then
+		Neuron.CurrentBar = self
 
-		if (self and Neuron.CurrentBar ~= self) then
-			Neuron.CurrentBar = self
+		self.action = nil
 
-			self.action = nil
+		if (self.data.hidden) then
+			self:SetBackdropColor(1,0,0,0.6)
+		else
+			self:SetBackdropColor(0,0,1,0.5)
+		end
 
-			if (self.data.hidden) then
-				self:SetBackdropColor(1,0,0,0.6)
+		newBar = true
+	end
+
+	if (not self) then
+		Neuron.CurrentBar = nil
+	elseif (self.text) then
+		self.text:Show()
+	end
+
+	for k,v in pairs(Neuron.BARIndex) do
+		if (v ~= self) then
+
+			if (v.data.conceal) then
+				v:SetBackdropColor(1,0,0,0.4)
 			else
-				self:SetBackdropColor(0,0,1,0.5)
+				v:SetBackdropColor(0,0,0,0.4)
 			end
 
-			newBar = true
-		end
-
-		if (not self) then
-			Neuron.CurrentBar = nil
-		elseif (self.text) then
-			self.text:Show()
-		end
-
-		for k,v in pairs(Neuron.BARIndex) do
-			if (v ~= self) then
-
-				if (v.data.conceal) then
-					v:SetBackdropColor(1,0,0,0.4)
-				else
-					v:SetBackdropColor(0,0,0,0.4)
-				end
-
-				v.selected = false
-				v.microAdjust = false
-				v:EnableKeyboard(false)
-				v.text:Hide()
-				v.message:Hide()
-				v.messagebg:Hide()
-				v.mousewheelfunc = nil
-				v.action = nil
-			end
-		end
-
-		if (Neuron.CurrentBar) then
-			self:OnEnter(Neuron.CurrentBar)
+			v.selected = false
+			v.microAdjust = false
+			v:EnableKeyboard(false)
+			v.text:Hide()
+			v.message:Hide()
+			v.messagebg:Hide()
+			v.mousewheelfunc = nil
+			v.action = nil
 		end
 	end
+
+	if (Neuron.CurrentBar) then
+		self:OnEnter(Neuron.CurrentBar)
+	end
+
+	if NeuronEditor then
+		Neuron.NeuronGUI:RefreshEditor()
+	end
+
 
 	return newBar
 end

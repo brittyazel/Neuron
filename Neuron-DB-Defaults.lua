@@ -195,9 +195,6 @@ local genericBarData = {
 	spellGlow = "default",
 
 	barLock = false,
-	barLockAlt = false,
-	barLockCtrl = false,
-	barLockShift = false,
 
 	tooltips = true,
 	tooltipsEnhanced = true,

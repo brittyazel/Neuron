@@ -39,7 +39,7 @@ local renameBox = {} --the rename bar Box
 local barEditOptionsContainer = {} --The container that houses the add/remove bar buttons
 
 
-local chkOptions = {
+--[[local chkOptions = {
 	[1] = { "AUTOHIDE", L["AutoHide"], 1, "SetAutoHide" },
 	[2] = { "SHOWGRID", L["Show Grid"], 1, "SetShowGrid" },
 	[3] = { "SNAPTO", L["SnapTo"], 1, "SetSnapTo" },
@@ -82,7 +82,7 @@ local swatchOptions = {
 	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "SetCDText", true, true, "cdcolor1", "cdcolor2" },
 	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "SetCDAlpha", nil, nil },
 	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "SetAuraInd", true, true, "buffcolor", "debuffcolor" },
-}
+}]]
 
 -----------------------------------------------------------------------------
 --------------------------Initialize-----------------------------------------
@@ -134,7 +134,7 @@ end
 
 function NeuronGUI:CreateEditor()
 
-	--Outer Window
+	---Outer Window
 	NeuronEditor = AceGUI:Create("Frame")
 	NeuronEditor:SetTitle("Neuron Editor")
 	NeuronEditor:SetWidth("1000")
@@ -149,7 +149,7 @@ function NeuronGUI:CreateEditor()
 	NeuronEditor:SetLayout("Flow")
 
 
-
+	---Left Column
 	--Container for the Left Column
 	local leftContainer = AceGUI:Create("SimpleGroup")
 	leftContainer:SetRelativeWidth(.79)
@@ -168,8 +168,7 @@ function NeuronGUI:CreateEditor()
 	leftContainer:AddChild(tabFrame)
 
 
-
-
+	---Right Column
 	--Container for the Right Column
 	local rightContainer = AceGUI:Create("SimpleGroup")
 	rightContainer:SetRelativeWidth(.20)
@@ -214,6 +213,7 @@ function NeuronGUI:CreateEditor()
 
 end
 
+---Bar List Window
 function NeuronGUI:PopulateBarList()
 
 	for _, bar in pairs(Neuron.BARIndex) do
@@ -238,24 +238,15 @@ function NeuronGUI:PopulateBarList()
 
 end
 
+
+---Add/Delete Bars
 function NeuronGUI:PopulateEditOptions(container)
 
-	local barTypeDropdown = AceGUI:Create("Dropdown")
-	barTypeDropdown:SetText("Select a Bar Type")
-	container:AddChild(barTypeDropdown)
+	local barTypeDropdown
+	local newBarButton
+	local deleteBarButton
 
-	local newBarButton = AceGUI:Create("Button")
-	newBarButton:SetText("Create New Bar")
-	newBarButton:SetDisabled(true) --we want to disable it until they chose a bar type in the dropdown
-	container:AddChild(newBarButton)
-
-	local deleteBarButton = AceGUI:Create("Button")
-	deleteBarButton:SetText("Delete Current Bar")
-	if not Neuron.CurrentBar then
-		deleteBarButton:SetDisabled(true)
-	end
-	container:AddChild(deleteBarButton)
-
+	local selectedBarType
 
 	--populate the dropdown menu with available bar types
 	local barTypes = {}
@@ -264,15 +255,35 @@ function NeuronGUI:PopulateEditOptions(container)
 		barTypes[class] = info.barLabel
 	end
 
-	local selectedBarType
+	--bar type list dropdown menu
+	barTypeDropdown = AceGUI:Create("Dropdown")
+	barTypeDropdown:SetText("Select a Bar Type")
+	container:AddChild(barTypeDropdown)
 
 	barTypeDropdown:SetList(barTypes) --assign the bar type table to the dropdown menu
-	barTypeDropdown:SetCallback("OnValueChanged", function(self, key) selectedBarType = key; newBarButton:SetDisabled(false) end)
+	barTypeDropdown:SetCallback("OnValueChanged", function(self, callBackType, key) selectedBarType = key; newBarButton:SetDisabled(false) end)
+
+	--Create New Bar button
+	newBarButton = AceGUI:Create("Button")
+	newBarButton:SetText("Create New Bar")
+	newBarButton:SetCallback("OnClick", function() if selectedBarType then Neuron.BAR:CreateNewBar(selectedBarType); NeuronGUI:RefreshEditor() end end)
+	newBarButton:SetDisabled(true) --we want to disable it until they chose a bar type in the dropdown
+	container:AddChild(newBarButton)
 
 
+	--Delete Current Bar button
+	deleteBarButton = AceGUI:Create("Button")
+	deleteBarButton:SetText("Delete Current Bar")
+	deleteBarButton:SetCallback("OnClick", function() if Neuron.CurrentBar then Neuron.CurrentBar:DeleteBar(); NeuronGUI:RefreshEditor() end end)
+	if not Neuron.CurrentBar then
+		deleteBarButton:SetDisabled(true)
+	end
+	container:AddChild(deleteBarButton)
 
 end
 
+
+---Bar Rename
 function NeuronGUI:PopulateRenameBar(container)
 
 	renameBox = AceGUI:Create("EditBox")

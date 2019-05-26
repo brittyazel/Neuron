@@ -138,10 +138,10 @@ function ACTIONBUTTON:SetObjectVisibility(show)
 
 	if InCombatLockdown() then return end
 
-	self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
+	self:SetAttribute("showGrid", self.bar:GetShowGrid()) --this is important because in our state switching code, we can't querry self.showGrid directly
 	self:SetAttribute("isshown", show)
 
-	if self:HasAction() or show or self.showGrid or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if self:HasAction() or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self:Show()
 	else
 		self:Hide()
