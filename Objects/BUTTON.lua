@@ -121,7 +121,6 @@ function BUTTON:ChangeObject(object)
 
 			object.editor.select:Show()
 
-			object.selected = true
 			object.action = nil
 
 			newObj = true

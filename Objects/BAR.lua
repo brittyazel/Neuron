@@ -103,9 +103,6 @@ function BAR.new(class, barID)
 	newBar.class = class
 	newBar.stateschanged = true
 	newBar.vischanged =true
-	newBar.click = nil
-	newBar.dragged = false
-	newBar.selected = false
 	newBar.microAdjust = false
 	newBar.vis = {}
 	newBar.text:Hide()
@@ -1035,7 +1032,7 @@ function BAR:Update(show, hide)
 
 		self:UpdateStates(handler)
 
-		self.stateschanged = nil
+		self.stateschanged = false
 	end
 
 	if (self.vischanged) then
@@ -1044,15 +1041,7 @@ function BAR:Update(show, hide)
 
 		self:UpdateVisibility(driver)
 
-		self.vischanged = nil
-	end
-
-	if (self.countChanged) then
-
-		self:UpdateObjectData()
-
-		self.countChanged = nil
-
+		self.vischanged = false
 	end
 
 	self:SetHidden(handler, show, hide)
@@ -1392,10 +1381,6 @@ function BAR:OnClick(...)
 		newBar = self:ChangeBar()
 	end
 
-	self.click = click
-	self.dragged = false
-	self.pushed = 0
-
 	if (IsShiftKeyDown() and not down) then
 
 		if (self.microAdjust) then
@@ -1509,7 +1494,6 @@ function BAR:OnDragStop(...)
 	end
 
 	self.isMoving = false
-	self.dragged = true
 	self:Update()
 end
 
@@ -1694,7 +1678,6 @@ function BAR:ChangeBar()
 				v:SetBackdropColor(0,0,0,0.4)
 			end
 
-			v.selected = false
 			v.microAdjust = false
 			v:EnableKeyboard(false)
 			v.text:Hide()
