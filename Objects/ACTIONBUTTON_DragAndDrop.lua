@@ -52,7 +52,7 @@ function ACTIONBUTTON:OnDragStart()
 		drag = false
 	end
 
-	if (drag) then
+	if (drag and self.data.macro_Text ~= "") then
 
 		ClearCursor()
 
@@ -160,58 +160,42 @@ end
 
 function ACTIONBUTTON:PickUpMacro()
 
-	local pickup
+	if macroCache[1] then  --triggers when picking up an existing button with a button in the cursor
 
-	if not self.bar:GetBarLock() then
-		pickup = true
-	elseif self.bar:GetBarLock() == "alt" and IsAltKeyDown() then
-		pickup = true
-	elseif self.bar:GetBarLock() == "ctrl" and IsControlKeyDown() then
-		pickup = true
-	elseif self.bar:GetBarLock() == "shift" and IsShiftKeyDown() then
-		pickup = true
-	else
-		pickup = false
+		macroDrag = CopyTable(macroCache)
+		wipe(macroCache) --once macroCache is loaded into macroDrag, wipe it
+
+	elseif (self:HasAction()) then
+
+		macroDrag[1] = self:GetDragAction()
+		macroDrag[2] = self.data.macro_Text
+		macroDrag[3] = self.data.macro_Icon
+		macroDrag[4] = self.data.macro_Name
+		macroDrag[5] = self.data.macro_Auto
+		macroDrag[6] = self.data.macro_Watch
+		macroDrag[7] = self.data.macro_Equip
+		macroDrag[8] = self.data.macro_Note
+		macroDrag[9] = self.data.macro_UseNote
+
+		self.data.macro_Text = ""
+		self.data.macro_Icon = false
+		self.data.macro_Name = ""
+		self.data.macro_Auto = false
+		self.data.macro_Watch = false
+		self.data.macro_Equip = false
+		self.data.macro_Note = ""
+		self.data.macro_UseNote = false
+
+		self.macrospell = nil
+		self.spellID = nil
+		self.macroitem = nil
+		self.macroshow = nil
+		self.macroicon = nil
+
+		self:SetType()
 	end
 
-	if (pickup) then
 
-		if macroCache[1] then  --triggers when picking up an existing button with a button in the cursor
-
-			macroDrag = CopyTable(macroCache)
-			wipe(macroCache) --once macroCache is loaded into macroDrag, wipe it
-
-		elseif (self:HasAction()) then
-
-			macroDrag[1] = self:GetDragAction()
-			macroDrag[2] = self.data.macro_Text
-			macroDrag[3] = self.data.macro_Icon
-			macroDrag[4] = self.data.macro_Name
-			macroDrag[5] = self.data.macro_Auto
-			macroDrag[6] = self.data.macro_Watch
-			macroDrag[7] = self.data.macro_Equip
-			macroDrag[8] = self.data.macro_Note
-			macroDrag[9] = self.data.macro_UseNote
-
-			self.data.macro_Text = ""
-			self.data.macro_Icon = false
-			self.data.macro_Name = ""
-			self.data.macro_Auto = false
-			self.data.macro_Watch = false
-			self.data.macro_Equip = false
-			self.data.macro_Note = ""
-			self.data.macro_UseNote = false
-
-			self.macrospell = nil
-			self.spellID = nil
-			self.macroitem = nil
-			self.macroshow = nil
-			self.macroicon = nil
-
-			self:SetType()
-		end
-
-	end
 end
 
 
