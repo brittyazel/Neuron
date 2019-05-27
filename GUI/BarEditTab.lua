@@ -70,26 +70,74 @@ local swatchOptions = {
 	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "SetShowAuraIndicator", true, true, "buffcolor", "debuffcolor" },
 }]]
 
+local currentTab = "tab1" --remember which tab we were using between refreshes
+
 -----------------------------------------------------------------------------
 --------------------------Bar Editor-----------------------------------------
 -----------------------------------------------------------------------------
 
 
-function NeuronGUI:BarEditWindow(tabFrame)
+function NeuronGUI:BarEditPanel(tabFrame)
 
-	local barSettingsContainer = AceGUI:Create("SimpleGroup")
-	barSettingsContainer.loaded = true
-	barSettingsContainer:SetFullWidth(true)
-	barSettingsContainer:SetLayout("Flow")
-	tabFrame:AddChild(barSettingsContainer)
+	--Tab group that will contain all of our settings to configure
+	local innerTabFrame = AceGUI:Create("TabGroup")
+	innerTabFrame:SetLayout("Flow")
+	innerTabFrame:SetFullWidth(true)
+	innerTabFrame:SetFullHeight(true)
+	innerTabFrame:SetTabs({{text="General Configuration", value="tab1"}, {text="Bar States", value="tab2"}, {text="Bar Visibility", value="tab3"}, {text="Spell Target Options", value="tab4"}})
+	innerTabFrame:SetCallback("OnGroupSelected", function(self, _, tab) NeuronGUI:SelectInnerTab(self, _, tab) end)
+	innerTabFrame:SelectTab(currentTab)
+	tabFrame:AddChild(innerTabFrame)
+
+end
+
+-----------------------------------------------------------------------------
+----------------------Inner Tab Frame----------------------------------------
+-----------------------------------------------------------------------------
+
+
+function NeuronGUI:SelectInnerTab(tabFrame, _, tab)
+
+	tabFrame:ReleaseChildren()
+
+	if tab == "tab1" then
+		NeuronGUI:GeneralConfigPanel(tabFrame)
+		currentTab = "tab1"
+	elseif tab == "tab2" then
+		NeuronGUI:BarStatesPanel(tabFrame)
+		currentTab = "tab2"
+	elseif tab == "tab3" then
+		NeuronGUI:BarVisibilityPanel(tabFrame)
+		currentTab = "tab3"
+	elseif tab == "tab4" then
+		NeuronGUI:SpellTargetingPanel(tabFrame)
+		currentTab = "tab4"
+	end
+
+end
+
+
+
+function NeuronGUI:GeneralConfigPanel(tabFrame)
 
 	local desc = AceGUI:Create("Label")
 	if Neuron.CurrentBar then
-		desc:SetText(Neuron.CurrentBar:GetName())
+		desc:SetText("This is a test " .. Neuron.CurrentBar:GetName())
 	else
 		desc:SetText("No Selected Bar")
 	end
 	desc:SetFullWidth(true)
-	barSettingsContainer:AddChild(desc)
+	tabFrame:AddChild(desc)
+end
+
+function NeuronGUI:BarStatesPanel(tabFrame)
+
+end
+
+function NeuronGUI:BarVisibilityPanel(tabFrame)
+
+end
+
+function NeuronGUI:SpellTargetingPanel(tabFrame)
 
 end

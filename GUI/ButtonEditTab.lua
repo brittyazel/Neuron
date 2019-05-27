@@ -35,7 +35,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 -----------------------------------------------------------------------------
 
 
-function NeuronGUI:ButtonEditWindow(tabContainer)
+function NeuronGUI:ButtonEditPanel(tabContainer)
 	local settingContainer = AceGUI:Create("SimpleGroup")
 	settingContainer:SetFullWidth(true)
 	settingContainer:SetLayout("Flow")
