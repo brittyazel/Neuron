@@ -90,6 +90,7 @@ end
 
 function NeuronGUI:PopulateEditorWindow()
 
+	----------------------------------
 	---Left Column
 	--Tab group that will contain all of our settings to configure
 	local tabFrame = AceGUI:Create("TabGroup")
@@ -102,6 +103,7 @@ function NeuronGUI:PopulateEditorWindow()
 	NeuronEditor:AddChild(tabFrame)
 
 
+	----------------------------------
 	---Right Column
 	--Container for the Right Column
 	local rightContainer = AceGUI:Create("SimpleGroup")
@@ -113,19 +115,59 @@ function NeuronGUI:PopulateEditorWindow()
 
 	local padding1 = AceGUI:Create("Heading")
 	padding1:SetWidth(0)
-	padding1:SetHeight(27)
+	padding1:SetHeight(32)
 	rightContainer:AddChild(padding1)
 
 	--Heading spacer
 	local heading1 = AceGUI:Create("Heading")
 	heading1:SetFullWidth(true)
-	heading1:SetHeight(25)
-	heading1:SetText("Create a new bar:")
+	heading1:SetHeight(20)
+	heading1:SetText("Create a new bar")
 	rightContainer:AddChild(heading1)
 
 	--Rename/Add/Delete Bar options
-	NeuronGUI:PopulateEditOptions(rightContainer) --this is to make the Rename/Create/Delete Bars group
+	local barTypeDropdown
+	local newBarButton
+	local deleteBarButton
 
+	-------------------------------
+	--populate the dropdown menu with available bar types
+	local barTypes = {}
+	for class, info in pairs(Neuron.registeredBarData) do
+		barTypes[class] = info.barLabel
+	end
+
+	--bar type list dropdown menu
+	barTypeDropdown = AceGUI:Create("Dropdown")
+	barTypeDropdown:SetText("Select a Bar Type")
+	barTypeDropdown:SetFullWidth(true)
+	rightContainer:AddChild(barTypeDropdown)
+
+	barTypeDropdown:SetList(barTypes) --assign the bar type table to the dropdown menu
+	barTypeDropdown:SetCallback("OnValueChanged", function(self, callBackType, key) selectedBarType = key; newBarButton:SetDisabled(false) end)
+
+	--Create New Bar button
+	newBarButton = AceGUI:Create("Button")
+	newBarButton:SetText("Create New Bar")
+	newBarButton:SetFullWidth(true)
+	newBarButton:SetCallback("OnClick", function() if selectedBarType then Neuron.BAR:CreateNewBar(selectedBarType); NeuronGUI:RefreshEditor() end end)
+	newBarButton:SetDisabled(true) --we want to disable it until they chose a bar type in the dropdown
+	rightContainer:AddChild(newBarButton)
+
+
+	--Delete Current Bar button
+	deleteBarButton = AceGUI:Create("Button")
+	deleteBarButton:SetText("Delete Current Bar")
+	deleteBarButton:SetFullWidth("true")
+	deleteBarButton:SetCallback("OnClick", function() if Neuron.CurrentBar then Neuron.CurrentBar:DeleteBar(); NeuronGUI:RefreshEditor() end end)
+	if not Neuron.CurrentBar then
+		deleteBarButton:SetDisabled(true)
+	end
+	rightContainer:AddChild(deleteBarButton)
+
+	----------------------------------
+
+	--small padding
 	local padding2 = AceGUI:Create("Heading")
 	padding2:SetWidth(0)
 	padding2:SetHeight(10)
@@ -134,7 +176,6 @@ function NeuronGUI:PopulateEditorWindow()
 	--Heading spacer
 	local heading2 = AceGUI:Create("Heading")
 	heading2:SetFullWidth(true)
-	heading2:SetHeight(25)
 	heading2:SetText("Rename selected bar")
 	rightContainer:AddChild(heading2)
 
@@ -189,51 +230,6 @@ function NeuronGUI:PopulateBarList(barListFrame)
 end
 
 
----Add/Delete Bars
-function NeuronGUI:PopulateEditOptions(container)
-
-	local barTypeDropdown
-	local newBarButton
-	local deleteBarButton
-
-	--populate the dropdown menu with available bar types
-	local barTypes = {}
-
-	for class, info in pairs(Neuron.registeredBarData) do
-		barTypes[class] = info.barLabel
-	end
-
-	--bar type list dropdown menu
-	barTypeDropdown = AceGUI:Create("Dropdown")
-	barTypeDropdown:SetText("Select a Bar Type")
-	barTypeDropdown:SetFullWidth(true)
-	container:AddChild(barTypeDropdown)
-
-	barTypeDropdown:SetList(barTypes) --assign the bar type table to the dropdown menu
-	barTypeDropdown:SetCallback("OnValueChanged", function(self, callBackType, key) selectedBarType = key; newBarButton:SetDisabled(false) end)
-
-	--Create New Bar button
-	newBarButton = AceGUI:Create("Button")
-	newBarButton:SetText("Create New Bar")
-	newBarButton:SetFullWidth(true)
-	newBarButton:SetCallback("OnClick", function() if selectedBarType then Neuron.BAR:CreateNewBar(selectedBarType); NeuronGUI:RefreshEditor() end end)
-	newBarButton:SetDisabled(true) --we want to disable it until they chose a bar type in the dropdown
-	container:AddChild(newBarButton)
-
-
-	--Delete Current Bar button
-	deleteBarButton = AceGUI:Create("Button")
-	deleteBarButton:SetText("Delete Current Bar")
-	deleteBarButton:SetFullWidth("true")
-	deleteBarButton:SetCallback("OnClick", function() if Neuron.CurrentBar then Neuron.CurrentBar:DeleteBar(); NeuronGUI:RefreshEditor() end end)
-	if not Neuron.CurrentBar then
-		deleteBarButton:SetDisabled(true)
-	end
-	container:AddChild(deleteBarButton)
-
-end
-
-
 ---Bar Rename
 function NeuronGUI:updateBarName(editBox)
 	local bar = Neuron.CurrentBar
@@ -246,11 +242,6 @@ function NeuronGUI:updateBarName(editBox)
 		NeuronGUI:RefreshEditor()
 	end
 end
-
-
------------------------------------------------------------------------------
---------------------------Tab Frame------------------------------------------
------------------------------------------------------------------------------
 
 
 function NeuronGUI:SelectTab(tabFrame, _, tab)

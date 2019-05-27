@@ -1685,7 +1685,10 @@ end
 -----------------------------------------------------
 
 function BAR:SetName(name)
-	self.data.name = name
+
+	if name and name ~= "" then
+		self.data.name = name
+	end
 	self:Update()
 end
 
