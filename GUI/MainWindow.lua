@@ -19,11 +19,6 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
-
-local addonName = ...
-
-local DB
-
 local NeuronGUI = {}
 Neuron.NeuronGUI = NeuronGUI
 
@@ -32,12 +27,8 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 NeuronEditor = {} --outer frame for our editor window
 
----Class level handles for frame elements that need to be refreshed often
-
-local barListFrame = {} --the frame containing just the bar list
-local renameBox = {} --the rename bar Box
-local barEditOptionsContainer = {}  --The container that houses the add/remove bar buttons
-local tabFrame = {}
+local currentTab = "tab1" --remember which tab we were using between refreshes
+local selectedBarType --remember which bar type was selected for creating new bars between refreshes
 
 
 -----------------------------------------------------------------------------
@@ -46,8 +37,6 @@ local tabFrame = {}
 
 
 function NeuronGUI:Initialize_GUI()
-
-	DB = Neuron.db.profile
 
 	NeuronGUI:LoadInterfaceOptions()
 
@@ -75,10 +64,8 @@ function NeuronGUI:RefreshEditor()
 	NeuronGUI:PopulateEditorWindow()
 
 	if Neuron.CurrentBar then
-		renameBox:SetText(Neuron.CurrentBar:GetName())
 		NeuronEditor:SetStatusText("The currently selected bar is: " .. Neuron.CurrentBar:GetName())
 	else
-		renameBox:SetText("")
 		NeuronEditor:SetStatusText("Please select a bar from the right to begin")
 	end
 end
@@ -112,13 +99,13 @@ function NeuronGUI:PopulateEditorWindow()
 	NeuronEditor:AddChild(leftContainer)
 
 	--Tab group that will contain all of our settings to configure
-	tabFrame = AceGUI:Create("TabGroup")
+	local tabFrame = AceGUI:Create("TabGroup")
 	tabFrame:SetLayout("Flow")
 	tabFrame:SetFullHeight(true)
 	tabFrame:SetFullWidth(true)
 	tabFrame:SetTabs({{text="Bar Settings", value="tab1"}, {text="Button Settings", value="tab2"}})
 	tabFrame:SetCallback("OnGroupSelected", function(self, event, tab) NeuronGUI:SelectTab(self, event, tab) end)
-	tabFrame:SelectTab("tab1")
+	tabFrame:SelectTab(currentTab)
 	leftContainer:AddChild(tabFrame)
 
 
@@ -135,7 +122,7 @@ function NeuronGUI:PopulateEditorWindow()
 	rightContainer:AddChild(topPadding)
 
 	--Container for the Add/Delete bars buttons
-	barEditOptionsContainer = AceGUI:Create("InlineGroup")
+	local barEditOptionsContainer = AceGUI:Create("InlineGroup")
 	barEditOptionsContainer:SetTitle("Create a new bar:")
 	barEditOptionsContainer:SetLayout("Flow")
 	barEditOptionsContainer:SetFullWidth(true)
@@ -160,7 +147,7 @@ function NeuronGUI:PopulateEditorWindow()
 	rightContainer:AddChild(barListContainer)
 
 	--Scroll frame that will contain the Bar List
-	barListFrame = AceGUI:Create("ScrollFrame")
+	local barListFrame = AceGUI:Create("ScrollFrame")
 	barListFrame:SetLayout("Flow")
 	barListContainer:AddChild(barListFrame)
 	NeuronGUI:PopulateBarList(barListFrame) --fill the bar list frame with the actual list of the bars
@@ -168,7 +155,7 @@ function NeuronGUI:PopulateEditorWindow()
 end
 
 ---Bar List Window
-function NeuronGUI:PopulateBarList()
+function NeuronGUI:PopulateBarList(barListFrame)
 
 	for _, bar in pairs(Neuron.BARIndex) do
 		local barLabel = AceGUI:Create("InteractiveLabel")
@@ -199,8 +186,6 @@ function NeuronGUI:PopulateEditOptions(container)
 	local barTypeDropdown
 	local newBarButton
 	local deleteBarButton
-
-	local selectedBarType
 
 	--populate the dropdown menu with available bar types
 	local barTypes = {}
@@ -240,7 +225,7 @@ end
 ---Bar Rename
 function NeuronGUI:PopulateRenameBar(container)
 
-	renameBox = AceGUI:Create("EditBox")
+	local renameBox = AceGUI:Create("EditBox")
 	if Neuron.CurrentBar then
 		renameBox:SetText(Neuron.CurrentBar:GetName())
 	end
@@ -270,14 +255,16 @@ end
 -----------------------------------------------------------------------------
 
 
-function NeuronGUI:SelectTab(tabContainer, event, tab)
+function NeuronGUI:SelectTab(tabFrame, _, tab)
 
-	tabContainer:ReleaseChildren()
+	tabFrame:ReleaseChildren()
 
 	if tab == "tab1" then
-		NeuronGUI:BarEditWindow(tabContainer)
+		NeuronGUI:BarEditWindow(tabFrame)
+		currentTab = "tab1"
 	elseif tab == "tab2" then
-		NeuronGUI:ButtonEditWindow(tabContainer)
+		NeuronGUI:ButtonEditWindow(tabFrame)
+		currentTab = "tab2"
 	end
 
 end

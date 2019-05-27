@@ -19,11 +19,6 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
-
-local addonName = ...
-
-local DB
-
 local NeuronGUI = Neuron.NeuronGUI
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -80,13 +75,13 @@ local swatchOptions = {
 -----------------------------------------------------------------------------
 
 
-function NeuronGUI:BarEditWindow(tabContainer)
+function NeuronGUI:BarEditWindow(tabFrame)
 
 	local barSettingsContainer = AceGUI:Create("SimpleGroup")
 	barSettingsContainer.loaded = true
 	barSettingsContainer:SetFullWidth(true)
 	barSettingsContainer:SetLayout("Flow")
-	tabContainer:AddChild(barSettingsContainer)
+	tabFrame:AddChild(barSettingsContainer)
 
 	local desc = AceGUI:Create("Label")
 	if Neuron.CurrentBar then
