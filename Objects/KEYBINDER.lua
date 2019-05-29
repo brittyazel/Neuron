@@ -59,6 +59,9 @@ function KEYBINDER.new(button)
 
 	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = newKeyBinder
 
+	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
+	button:SetAttribute("hotkeys", button.keys.hotKeys)
+
 	newKeyBinder:Hide()
 
 	return newKeyBinder
@@ -193,6 +196,10 @@ function KEYBINDER:ApplyBindings()
 	if (self.button:IsVisible() or self.button:GetParent():GetAttribute("concealed")) then
 		self.button.keys.hotKeys:gsub("[^:]+", function(key) SetOverrideBindingClick(self.button, self.button.keys.hotKeyPri, key, self.button:GetName(), virtualKey) end)
 	end
+
+	self.button:SetAttribute("hotkeypri", self.button.keys.hotKeyPri)
+	self.button:SetAttribute("hotkeys", self.button.keys.hotKeys)
+
 
 	self.button.hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
 

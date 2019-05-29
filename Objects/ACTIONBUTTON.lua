@@ -242,6 +242,21 @@ function ACTIONBUTTON:SetType()
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
+	--This is so that hotkeypri works properly with priority/locked buttons
+	self:WrapScript(self, "OnShow", [[
+						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
+							self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
+						end
+						]])
+
+	self:WrapScript(self, "OnHide", [[
+						if (not self:GetParent():GetAttribute("concealed")) then
+							for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
+								self:ClearBinding(key)
+							end
+						end
+						]])
+
 
 	--new action ID's for vehicle 133-138
 	--new action ID's for possess 133-138
