@@ -180,8 +180,6 @@ end
 --- Applies binding to button
 function KEYBINDER:ApplyBindings()
 
-	self.button:SetAttribute("hotkeypri", self.button.keys.hotKeyPri)
-
 	local virtualKey
 
 	---checks if the button is a Neuron action or a special Blizzard action (such as a zone ability)
@@ -196,6 +194,10 @@ function KEYBINDER:ApplyBindings()
 	if (self.button:IsVisible() or self.button:GetParent():GetAttribute("concealed")) then
 		self.button.keys.hotKeys:gsub("[^:]+", function(key) SetOverrideBindingClick(self.button, self.button.keys.hotKeyPri, key, self.button:GetName(), virtualKey) end)
 	end
+
+	self.button:SetAttribute("hotkeypri", self.button.keys.hotKeyPri)
+	self.button:SetAttribute("hotkeys", self.button.keys.hotKeys)
+
 
 	self.button.hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
 
