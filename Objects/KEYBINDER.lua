@@ -57,6 +57,9 @@ function KEYBINDER.new(button)
 
 	Neuron.BINDIndex[button.class..button.bar.DB.id.."_"..button.id] = newKeyBinder
 
+	button:SetAttribute("hotkeypri", button.keys.hotKeyPri)
+	button:SetAttribute("hotkeys", button.keys.hotKeys)
+
 	newKeyBinder:Hide()
 
 	return newKeyBinder
@@ -176,6 +179,8 @@ end
 
 --- Applies binding to button
 function KEYBINDER:ApplyBindings()
+
+	self.button:SetAttribute("hotkeypri", self.button.keys.hotKeyPri)
 
 	local virtualKey
 
