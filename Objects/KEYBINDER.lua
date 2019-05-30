@@ -195,8 +195,10 @@ function KEYBINDER:ApplyBindings()
 		self.button.keys.hotKeys:gsub("[^:]+", function(key) SetOverrideBindingClick(self.button, self.button.keys.hotKeyPri, key, self.button:GetName(), virtualKey) end)
 	end
 
-	self.button:SetAttribute("hotkeypri", self.button.keys.hotKeyPri)
-	self.button:SetAttribute("hotkeys", self.button.keys.hotKeys)
+	if not InCombatLockdown() then
+		self.button:SetAttribute("hotkeypri", self.button.keys.hotKeyPri)
+		self.button:SetAttribute("hotkeys", self.button.keys.hotKeys)
+	end
 
 
 	self.button.hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
