@@ -79,15 +79,24 @@ local currentTab = "tab1" --remember which tab we were using between refreshes
 
 function NeuronGUI:BarEditPanel(tabFrame)
 
-	--Tab group that will contain all of our settings to configure
-	local innerTabFrame = AceGUI:Create("TabGroup")
-	innerTabFrame:SetLayout("Flow")
-	innerTabFrame:SetFullWidth(true)
-	innerTabFrame:SetFullHeight(true)
-	innerTabFrame:SetTabs({{text="General Configuration", value="tab1"}, {text="Bar States", value="tab2"}, {text="Bar Visibility", value="tab3"}, {text="Spell Target Options", value="tab4"}})
-	innerTabFrame:SetCallback("OnGroupSelected", function(self, _, tab) NeuronGUI:SelectInnerTab(self, _, tab) end)
-	innerTabFrame:SelectTab(currentTab)
-	tabFrame:AddChild(innerTabFrame)
+	if Neuron.CurrentBar then
+		--Tab group that will contain all of our settings to configure
+		local innerTabFrame = AceGUI:Create("TabGroup")
+		innerTabFrame:SetLayout("Flow")
+		innerTabFrame:SetFullWidth(true)
+		innerTabFrame:SetFullHeight(true)
+		innerTabFrame:SetTabs({{text="General Configuration", value="tab1"}, {text="Bar States", value="tab2"}, {text="Bar Visibility", value="tab3"}, {text="Spell Target Options", value="tab4"}})
+		innerTabFrame:SetCallback("OnGroupSelected", function(self, _, tab) NeuronGUI:SelectInnerTab(self, _, tab) end)
+		innerTabFrame:SelectTab(currentTab)
+		tabFrame:AddChild(innerTabFrame)
+	else
+		local selectBarMessage = AceGUI:Create("Label")
+		selectBarMessage:SetFullWidth(true)
+		selectBarMessage:SetFullHeight(true)
+		selectBarMessage:SetText("Please select a bar to continue")
+		selectBarMessage:SetFont("Fonts\\FRIZQT__.TTF", 30)
+		tabFrame:AddChild(selectBarMessage)
+	end
 
 end
 
@@ -120,14 +129,9 @@ end
 
 function NeuronGUI:GeneralConfigPanel(tabFrame)
 
-	local desc = AceGUI:Create("Label")
-	if Neuron.CurrentBar then
-		desc:SetText("This is a test " .. Neuron.CurrentBar:GetName())
-	else
-		desc:SetText("No Selected Bar")
-	end
-	desc:SetFullWidth(true)
-	tabFrame:AddChild(desc)
+	NeuronGUI:PopulateAddOrRemoveButtonContainer(tabFrame)
+
+
 end
 
 function NeuronGUI:BarStatesPanel(tabFrame)
@@ -140,4 +144,49 @@ end
 
 function NeuronGUI:SpellTargetingPanel(tabFrame)
 
+end
+
+
+----------------------------------------------------
+--------------Internal Elements---------------------
+----------------------------------------------------
+
+function NeuronGUI:PopulateAddOrRemoveButtonContainer(tabFrame)
+
+	local currentNumObjectsLabel
+
+	local addOrRemoveButtonContainer = AceGUI:Create("InlineGroup")
+	addOrRemoveButtonContainer:SetWidth(150)
+	addOrRemoveButtonContainer:SetHeight(50)
+	addOrRemoveButtonContainer:SetLayout("Flow")
+	addOrRemoveButtonContainer:SetTitle("Number of Buttons")
+	tabFrame:AddChild(addOrRemoveButtonContainer)
+
+	local subtractObjectButton = AceGUI:Create("Button")
+	subtractObjectButton:SetText("-")
+	subtractObjectButton:SetRelativeWidth(.35)
+	subtractObjectButton:SetFullHeight(true)
+	subtractObjectButton:SetCallback("OnClick", function(self)
+		Neuron.CurrentBar:RemoveObjectFromBar()
+		currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
+	end)
+	addOrRemoveButtonContainer:AddChild(subtractObjectButton)
+
+
+	currentNumObjectsLabel = AceGUI:Create("Label")
+	currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
+	currentNumObjectsLabel:SetFont("Fonts\\FRIZQT__.TTF", 20)
+	currentNumObjectsLabel:SetRelativeWidth(.3)
+	currentNumObjectsLabel:SetFullHeight(true)
+	addOrRemoveButtonContainer:AddChild(currentNumObjectsLabel)
+
+	local addObjectButton = AceGUI:Create("Button")
+	addObjectButton:SetText("+")
+	addObjectButton:SetRelativeWidth(.35)
+	addObjectButton:SetFullHeight(true)
+	addObjectButton:SetCallback("OnClick", function(self)
+		Neuron.CurrentBar:AddObjectToBar()
+		currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
+	end)
+	addOrRemoveButtonContainer:AddChild(addObjectButton)
 end

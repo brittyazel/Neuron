@@ -115,15 +115,8 @@ function NeuronGUI:PopulateEditorWindow()
 
 	local padding1 = AceGUI:Create("Heading")
 	padding1:SetWidth(0)
-	padding1:SetHeight(32)
+	padding1:SetHeight(55)
 	rightContainer:AddChild(padding1)
-
-	--Heading spacer
-	local heading1 = AceGUI:Create("Heading")
-	heading1:SetFullWidth(true)
-	heading1:SetHeight(20)
-	heading1:SetText("Create a new bar")
-	rightContainer:AddChild(heading1)
 
 	--Rename/Add/Delete Bar options
 	local barTypeDropdown
@@ -174,10 +167,10 @@ function NeuronGUI:PopulateEditorWindow()
 	rightContainer:AddChild(padding2)
 
 	--Heading spacer
-	local heading2 = AceGUI:Create("Heading")
-	heading2:SetFullWidth(true)
-	heading2:SetText("Rename selected bar")
-	rightContainer:AddChild(heading2)
+	local heading1 = AceGUI:Create("Heading")
+	heading1:SetFullWidth(true)
+	heading1:SetText("Rename selected bar")
+	rightContainer:AddChild(heading1)
 
 	--Bar Rename Box
 	local renameBox = AceGUI:Create("EditBox")
@@ -191,7 +184,7 @@ function NeuronGUI:PopulateEditorWindow()
 	--Container for the Bar List scroll frame
 	local barListContainer = AceGUI:Create("InlineGroup")
 	barListContainer:SetLayout("Fill")
-	barListContainer:SetTitle("Select an available bar:")
+	barListContainer:SetTitle("Select an available bar")
 	barListContainer:SetFullWidth(true)
 	barListContainer:SetFullHeight(true)
 	rightContainer:AddChild(barListContainer)

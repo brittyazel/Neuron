@@ -1696,6 +1696,10 @@ function BAR:GetName()
 	return self.data.name
 end
 
+function BAR:GetNumObjects()
+	return #self.buttons
+end
+
 --TODO: Rewrite this and simplify it
 function BAR:SetState(msg, gui, checked)
 	if (msg) then
