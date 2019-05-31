@@ -131,11 +131,11 @@ function STATUSBTN:OnEnter()
 	end
 
 	if (self.config.tIndex > 1) then
-		if (self.bar:GetTooltipCombat() and InCombatLockdown()) then
+		if (not self.bar:GetTooltipCombat() and InCombatLockdown()) then
 			return
 		end
 
-		if (self.bar:GetTooltipEnable()) then
+		if (self.bar:GetTooltipOption()) then
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetText(self.sb.tFunc(self.sb) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
 			GameTooltip:Show()

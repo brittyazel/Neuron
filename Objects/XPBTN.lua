@@ -29,7 +29,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 XPBTN.sbStrings = {
 	[1] = { L["None"], function(sb) return "" end },
-	[2] = { L["Current/Next"], function(sb) test = sb if (sb.XPWatch) then return sb.XPWatch.current end end },
+	[2] = { L["Current/Next"], function(sb) if (sb.XPWatch) then return sb.XPWatch.current end end },
 	[3] = { L["Rested Levels"], function(sb) if (sb.XPWatch) then return sb.XPWatch.rested end end },
 	[4] = { L["Percent"], function(sb) if (sb.XPWatch) then return sb.XPWatch.percent end end },
 	[5] = { L["Bubbles"], function(sb) if (sb.XPWatch) then return sb.XPWatch.bubbles end end },

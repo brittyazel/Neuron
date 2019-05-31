@@ -378,8 +378,6 @@ function ACTIONBUTTON:filter_toy()
 
 	end
 
-	test = data
-
 	return data
 
 end
@@ -800,8 +798,7 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 
 		self.bar = bar
 
-		self.bar:SetTooltipEnable(true)
-		self.bar:SetTooltipEnhanced(true)
+		self.bar:SetTooltipOption("enhanced")
 
 	end
 

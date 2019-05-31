@@ -1957,8 +1957,10 @@ function BAR:SetSpellGlow(option)
 	if option then
 		if option == "default" then
 			self.data.spellGlow = "default"
-		else
+		elseif option == "alternate" then
 			self.data.spellGlow = "alternate"
+		elseif option == "none" then
+			self.data.spellGlow = false
 		end
 	else
 		self.data.spellGlow = false
@@ -2068,8 +2070,10 @@ function BAR:SetBarLock(option)
 			self.data.barLock = "shift"
 		elseif option == "ctrl" then
 			self.data.barLock = "ctrl"
-		else
+		elseif option == "alt" then
 			self.data.barLock = "alt"
+		elseif option =="none" then
+			self.data.barLock = false
 		end
 	else
 		self.data.barLock = false
@@ -2084,9 +2088,15 @@ function BAR:GetBarLock()
 end
 
 
-function BAR:SetTooltipEnable(checked)
-	if checked then
-		self.data.tooltips = true
+function BAR:SetTooltipOption(option)
+	if option then
+		if option == "minimal" then
+			self.data.tooltips = "minimal"
+		elseif option == "enhanced" then
+			self.data.tooltips = "enhanced"
+		elseif option == "off" then
+			self.data.tooltips = false
+		end
 	else
 		self.data.tooltips = false
 	end
@@ -2095,23 +2105,8 @@ function BAR:SetTooltipEnable(checked)
 	self:Update()
 end
 
-function BAR:GetTooltipEnable()
+function BAR:GetTooltipOption()
 	return self.data.tooltips
-end
-
-function BAR:SetTooltipEnhanced(checked)
-	if checked then
-		self.data.tooltipsEnhanced = true
-	else
-		self.data.tooltipsEnhanced = false
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
-function BAR:GetTooltipEnhanced()
-	return self.data.tooltipsEnhanced
 end
 
 function BAR:SetTooltipCombat(checked)

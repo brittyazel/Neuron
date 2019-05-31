@@ -56,7 +56,7 @@ local slashFunctions = {
 	{L["Vis"], L["Vis_Description"], "SetVisibility"},
 	{L["ShowGrid"], L["ShowGrid_Description"], "SetShowGrid"},
 	{L["Lock"], L["Lock_Description"], "SetBarLock"},
-	{L["Tooltips"], L["Tooltips_Description"], "SetTooltipEnable"},
+	{L["Tooltips"], L["Tooltips_Description"], "SetTooltipOption"},
 	{L["SpellGlow"], L["SpellGlow_Description"], "SetSpellGlow"},
 	{L["BindText"], L["BindText_Description"], "SetShowBindText"},
 	{L["MacroText"], L["MacroText_Description"], "SetShowMacroText"},

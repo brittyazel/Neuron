@@ -881,7 +881,7 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 
 		local spell_id = NeuronSpellCache[spell].spellID
 
-		if (self.bar:GetTooltipEnhanced()) then
+		if (self.bar:GetTooltipOption() == "enhanced") then
 			GameTooltip:SetSpellByID(spell_id)
 		else
 			GameTooltip:SetText(NeuronSpellCache[spell:lower()].spellName, 1, 1, 1)
@@ -890,7 +890,7 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 
 	elseif (NeuronCollectionCache[spell]) then
 
-		if (self.bar:GetTooltipEnhanced() and NeuronCollectionCache[spell].creatureType =="MOUNT") then
+		if (self.bar:GetTooltipOption() == "enhanced" and NeuronCollectionCache[spell].creatureType =="MOUNT") then
 			GameTooltip:SetHyperlink("spell:"..NeuronCollectionCache[spell].spellID)
 		else
 			GameTooltip:SetText(NeuronCollectionCache[spell].creatureName, 1, 1, 1)
@@ -903,7 +903,7 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 		spellName,_,_,_,_,_,spell_id = GetSpellInfo(spell)
 
 		if spellName and spell_id then --add safety check in case spellName and spell_id come back as nil
-			if (self.bar:GetTooltipEnhanced()) then
+			if (self.bar:GetTooltipOption() == "enhanced") then
 				GameTooltip:SetSpellByID(spell_id)
 			else
 				GameTooltip:SetText(spellName, 1, 1, 1)
@@ -921,7 +921,7 @@ function ACTIONBUTTON:SetItemTooltip(item)
 	local name, link = GetItemInfo(item)
 
 	if (NeuronToyCache[item]) then
-		if (self.bar:GetTooltipEnhanced()) then
+		if (self.bar:GetTooltipOption() == "enhanced") then
 			local itemID = NeuronToyCache[item]
 			GameTooltip:ClearLines()
 			GameTooltip:SetToyByItemID(itemID)
@@ -930,14 +930,14 @@ function ACTIONBUTTON:SetItemTooltip(item)
 		end
 
 	elseif (link) then
-		if (self.bar:GetTooltipEnhanced()) then
+		if (self.bar:GetTooltipOption() == "enhanced") then
 			GameTooltip:SetHyperlink(link)
 		else
 			GameTooltip:SetText(name, 1, 1, 1)
 		end
 
 	elseif (NeuronItemCache[item]) then
-		if (self.bar:GetTooltipEnhanced()) then
+		if (self.bar:GetTooltipOption() == "enhanced") then
 			GameTooltip:SetHyperlink("item:"..NeuronItemCache[item]..":0:0:0:0:0:0:0")
 		else
 			GameTooltip:SetText(NeuronItemCache[item], 1, 1, 1)
@@ -981,14 +981,13 @@ end
 
 
 function ACTIONBUTTON:OnEnter(...)
-	if (self.bar:GetTooltipCombat() and InCombatLockdown()) then
+	if (not self.bar:GetTooltipCombat() and InCombatLockdown()) then
 		return
 	end
 
-	if (self.bar:GetTooltipEnable()) then
+	if (self.bar:GetTooltipOption()) then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		self:SetTooltip()
-		GameTooltip:Show()
 	end
 
 	if (self.flyout and self.flyout.arrow) then

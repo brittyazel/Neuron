@@ -25,25 +25,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
 
 
---[[local chkOptions = {
-	[1] = { "AUTOHIDE", L["AutoHide"], 1, "SetAutoHide" },
-	[2] = { "SHOWGRID", L["Show Grid"], 1, "SetShowGrid" },
-	[3] = { "SNAPTO", L["SnapTo"], 1, "SetSnapTo" },
-	[4] = { "UPCLICKS", L["Up Clicks"], 1, "SetUpClicks" },
-	[5] = { "DOWNCLICKS", L["Down Clicks"], 1, "SetDownClicks" },
-	[6] = { "MULTISPEC", L["Multi Spec"], 1, "SetMultiSpec" },
-	[7] = { "HIDDEN", L["Hidden"], 1, "SetBarConceal" },
-	[8] = { "SPELLGLOW", L["Spell Alerts"], 1, "SetSpellGlow" },
-	[9] = { "LOCKBAR", L["Lock Actions"], 1, "SetBarLock" },
-	[10] = { "LOCKBAR", L["Unlock on SHIFT"], 0.9, "SetBarLock", "shift" },
-	[1] = { "LOCKBAR", L["Unlock on CTRL"], 0.9, "SetBarLock", "ctrl" },
-	[12] = { "LOCKBAR", L["Unlock on ALT"], 0.9, "SetBarLock", "alt" },
-	[13] = { "TOOLTIPS", L["Enable Tooltips"], 1, "SetTooltipEnable" },
-	[14] = { "TOOLTIPS", L["Enhanced"], 0.9, "SetTooltipEnhanced" },
-	[15] = { "TOOLTIPS", L["Hide in Combat"], 0.9, "SetTooltipCombat" },
-	[16] = { "BORDERSTYLE", L["Show Border Style"], 1, "SetShowBorderStyle"},
-}
-
+--[[
 local adjOptions = {
 	[1] = { "SCALE", L["Scale"], 1, "SetScale", 0.01, 0.1, 4 },
 	[2] = { "SHAPE", L["Shape"], 2, "SetBarShape", nil, nil, nil, Neuron.BarShapes },
@@ -129,30 +111,226 @@ end
 
 function NeuronGUI:GeneralConfigPanel(tabFrame)
 
-	NeuronGUI:PopulateAddOrRemoveButtonContainer(tabFrame)
+	--Heading spacer
+	local heading1 = AceGUI:Create("Heading")
+	heading1:SetText("Bar Options")
+	heading1:SetHeight(40)
+	heading1:SetFullWidth(true)
+	tabFrame:AddChild(heading1)
+
+	-------------------------------------------------
+
+	--AutoHide
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.AUTOHIDE then
+		local autoHideCheckbox = AceGUI:Create("CheckBox")
+		autoHideCheckbox:SetLabel(L["AutoHide"])
+		autoHideCheckbox:SetRelativeWidth(.25)
+		autoHideCheckbox:SetHeight(40)
+		autoHideCheckbox:SetValue(Neuron.CurrentBar:GetAutoHide())
+		autoHideCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetAutoHide(self:GetValue())
+		end)
+		tabFrame:AddChild(autoHideCheckbox)
+	end
+
+	--ShowGrid
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.SHOWGRID then
+		local showGridCheckbox = AceGUI:Create("CheckBox")
+		showGridCheckbox:SetLabel(L["Show Grid"])
+		showGridCheckbox:SetRelativeWidth(.25)
+		showGridCheckbox:SetHeight(40)
+		showGridCheckbox:SetValue(Neuron.CurrentBar:GetShowGrid())
+		showGridCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetShowGrid(self:GetValue())
+		end)
+		tabFrame:AddChild(showGridCheckbox)
+	end
+
+	--SnapTo
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.SNAPTO then
+		local snapToCheckbox = AceGUI:Create("CheckBox")
+		snapToCheckbox:SetLabel(L["SnapTo"])
+		snapToCheckbox:SetRelativeWidth(.25)
+		snapToCheckbox:SetHeight(40)
+		snapToCheckbox:SetValue(Neuron.CurrentBar:GetSnapTo())
+		snapToCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetSnapTo(self:GetValue())
+		end)
+		tabFrame:AddChild(snapToCheckbox)
+	end
+
+	--UpClicks
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.UPCLICKS then
+		local upClicksCheckbox = AceGUI:Create("CheckBox")
+		upClicksCheckbox:SetLabel(L["Up Clicks"])
+		upClicksCheckbox:SetRelativeWidth(.25)
+		upClicksCheckbox:SetHeight(40)
+		upClicksCheckbox:SetValue(Neuron.CurrentBar:GetUpClicks())
+		upClicksCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetUpClicks(self:GetValue())
+		end)
+		tabFrame:AddChild(upClicksCheckbox)
+	end
+
+	--DownClicks
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.DOWNCLICKS then
+		local downClicksCheckbox = AceGUI:Create("CheckBox")
+		downClicksCheckbox:SetLabel(L["Down Clicks"])
+		downClicksCheckbox:SetRelativeWidth(.25)
+		downClicksCheckbox:SetHeight(40)
+		downClicksCheckbox:SetValue(Neuron.CurrentBar:GetDownClicks())
+		downClicksCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetDownClicks(self:GetValue())
+		end)
+		tabFrame:AddChild(downClicksCheckbox)
+	end
+
+	--MultiSpec
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.MULTISPEC then
+		local multiSpecCheckbox = AceGUI:Create("CheckBox")
+		multiSpecCheckbox:SetLabel(L["Multi Spec"])
+		multiSpecCheckbox:SetRelativeWidth(.25)
+		multiSpecCheckbox:SetHeight(40)
+		multiSpecCheckbox:SetValue(Neuron.CurrentBar:GetMultiSpec())
+		multiSpecCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetMultiSpec(self:GetValue())
+		end)
+		tabFrame:AddChild(multiSpecCheckbox)
+	end
+
+	--Hidden
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.HIDDEN then
+		local barConcealCheckbox = AceGUI:Create("CheckBox")
+		barConcealCheckbox:SetLabel(L["Hidden"])
+		barConcealCheckbox:SetRelativeWidth(.25)
+		barConcealCheckbox:SetHeight(40)
+		barConcealCheckbox:SetValue(Neuron.CurrentBar:GetBarConceal())
+		barConcealCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetBarConceal(self:GetValue())
+		end)
+		tabFrame:AddChild(barConcealCheckbox)
+	end
+
+	--SpellGlow
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.SPELLGLOW then
+
+		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
+		spellAlertDropdownContainer:SetRelativeWidth(.25)
+		spellAlertDropdownContainer:SetHeight(40)
+
+		local currentGlow
+		if Neuron.CurrentBar:GetSpellGlow() then
+			currentGlow = Neuron.CurrentBar:GetSpellGlow()
+		else
+			currentGlow = "none"
+		end
+
+		local spellAlertDropdown = AceGUI:Create("Dropdown")
+		spellAlertDropdown:SetLabel(L["Spell Alerts"])
+		spellAlertDropdown:SetRelativeWidth(.8)
+		spellAlertDropdown:SetList({["none"] = L["None"], ["default"] = L["Default Alert"], ["alternate"] = L["Subdued Alert"]},
+				{[1] = "none", [2] = "default", [3] = "alternate"})
+		spellAlertDropdown:SetValue(currentGlow)
+		spellAlertDropdown:SetCallback("OnValueChanged", function(self, callBackType, key)
+			Neuron.CurrentBar:SetSpellGlow(key)
+		end)
+		spellAlertDropdownContainer:AddChild(spellAlertDropdown)
+		tabFrame:AddChild(spellAlertDropdownContainer)
+	end
+
+	--BarLock
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.LOCKBAR then
+
+		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
+		spellAlertDropdownContainer:SetRelativeWidth(.25)
+		spellAlertDropdownContainer:SetHeight(40)
+
+		local currentLock
+		if Neuron.CurrentBar:GetBarLock() then
+			currentLock = Neuron.CurrentBar:GetBarLock()
+		else
+			currentLock = "none"
+		end
+
+		local spellAlertDropdown = AceGUI:Create("Dropdown")
+		spellAlertDropdown:SetLabel(L["Lock Actions"])
+		spellAlertDropdown:SetRelativeWidth(.8)
+		spellAlertDropdown:SetList({["none"] = L["None"], ["shift"] = L["Shift"], ["ctrl"] = L["Ctrl"], ["alt"] = L["Alt"]},
+				{[1] = "none", [2] = "shift", [3] = "ctrl", [4] = "alt"})
+		spellAlertDropdown:SetValue(currentLock)
+		spellAlertDropdown:SetCallback("OnValueChanged", function(self, callBackType, key)
+			Neuron.CurrentBar:SetBarLock(key)
+		end)
+		spellAlertDropdownContainer:AddChild(spellAlertDropdown)
+		tabFrame:AddChild(spellAlertDropdownContainer)
+	end
+
+	--Tooltips
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.TOOLTIPS then
+
+		local tooltipDropdownContainer = AceGUI:Create("SimpleGroup")
+		tooltipDropdownContainer:SetRelativeWidth(.25)
+		tooltipDropdownContainer:SetHeight(40)
+
+		local currentTooltipOption
+		if Neuron.CurrentBar:GetTooltipOption() then
+			currentTooltipOption = Neuron.CurrentBar:GetTooltipOption()
+		else
+			currentTooltipOption = "none"
+		end
+
+		local tooltipDropdown = AceGUI:Create("Dropdown")
+		tooltipDropdown:SetLabel(L["Enable Tooltips"])
+		tooltipDropdown:SetRelativeWidth(.8)
+		tooltipDropdown:SetList({["off"] = L["Off"], ["minimal"] = L["Minimal"], ["enhanced"] = L["Enhanced"]},
+				{[1] = "off", [2] = "minimal", [3] = "enhanced"})
+		tooltipDropdown:SetValue(currentTooltipOption)
+		tooltipDropdown:SetCallback("OnValueChanged", function(self, callBackType, key)
+			Neuron.CurrentBar:SetTooltipOption(key)
+		end)
+
+		tooltipDropdownContainer:AddChild(tooltipDropdown)
+		tabFrame:AddChild(tooltipDropdownContainer)
+	end
+
+	--Tooltips in Combat
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.TOOLTIPS then
+		local combatTooltipsCheckbox = AceGUI:Create("CheckBox")
+		combatTooltipsCheckbox:SetLabel(L["Tooltips in Combat"])
+		combatTooltipsCheckbox:SetRelativeWidth(.25)
+		combatTooltipsCheckbox:SetHeight(40)
+		combatTooltipsCheckbox:SetValue(Neuron.CurrentBar:GetTooltipCombat())
+		combatTooltipsCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetTooltipCombat(self:GetValue())
+		end)
+		tabFrame:AddChild(combatTooltipsCheckbox)
+	end
+
+	--Border Style
+	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.BORDERSTYLE then
+		local borderStyleCheckbox = AceGUI:Create("CheckBox")
+		borderStyleCheckbox:SetLabel(L["Show Border Style"])
+		borderStyleCheckbox:SetRelativeWidth(.25)
+		borderStyleCheckbox:SetHeight(40)
+		borderStyleCheckbox:SetValue(Neuron.CurrentBar:GetShowBorderStyle())
+		borderStyleCheckbox:SetCallback("OnValueChanged", function(self)
+			Neuron.CurrentBar:SetShowBorderStyle(self:GetValue())
+		end)
+		tabFrame:AddChild(borderStyleCheckbox)
+	end
 
 
-end
+	-----------------------------------------------
 
-function NeuronGUI:BarStatesPanel(tabFrame)
-
-end
-
-function NeuronGUI:BarVisibilityPanel(tabFrame)
-
-end
-
-function NeuronGUI:SpellTargetingPanel(tabFrame)
-
-end
+	--Heading spacer
+	local heading2 = AceGUI:Create("Heading")
+	heading2:SetText("Layout Configuration")
+	heading2:SetHeight(40)
+	heading2:SetFullWidth(true)
+	tabFrame:AddChild(heading2)
 
 
-----------------------------------------------------
---------------Internal Elements---------------------
-----------------------------------------------------
-
-function NeuronGUI:PopulateAddOrRemoveButtonContainer(tabFrame)
-
+	---Add or Remove Button Widget
 	local currentNumObjectsLabel
 
 	local addOrRemoveButtonContainer = AceGUI:Create("InlineGroup")
@@ -189,4 +367,18 @@ function NeuronGUI:PopulateAddOrRemoveButtonContainer(tabFrame)
 		currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
 	end)
 	addOrRemoveButtonContainer:AddChild(addObjectButton)
+
+
+end
+
+function NeuronGUI:BarStatesPanel(tabFrame)
+
+end
+
+function NeuronGUI:BarVisibilityPanel(tabFrame)
+
+end
+
+function NeuronGUI:SpellTargetingPanel(tabFrame)
+
 end

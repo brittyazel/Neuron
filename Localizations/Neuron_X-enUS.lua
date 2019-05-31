@@ -355,7 +355,8 @@ L["Unlock on CTRL"] = true
 L["Unlock on ALT"] = true
 L["Enable Tooltips"] = true
 L["Enhanced"] = true
-L["Hide in Combat"] = true
+L["Minimal"] = true
+L["Tooltips in Combat"] = true
 L["Show Border Style"] = true
 
 L["Preset Action States"] = true

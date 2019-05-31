@@ -345,7 +345,7 @@ function PETBTN:PET_SetTooltip(edit)
 	local actionID = self.actionID
 
 	if (self.HasPetAction(actionID)) then
-		if (self.bar:GetTooltipEnhanced()) then
+		if (self.bar:GetTooltipOption() == "enhanced") then
 			GameTooltip:SetPetAction(actionID)
 		else
 			GameTooltip:SetText(self.actionSpell)
@@ -356,11 +356,11 @@ end
 
 
 function PETBTN:OnEnter(...)
-	if (self.bar:GetTooltipCombat() and InCombatLockdown()) then
+	if (not self.bar:GetTooltipCombat() and InCombatLockdown()) then
 		return
 	end
 
-	if (self.bar:GetTooltipEnable()) then
+	if (self.bar:GetTooltipOption()) then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		self:PET_SetTooltip()
 		GameTooltip:Show()

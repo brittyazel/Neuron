@@ -157,15 +157,15 @@ end
 
 
 function EXTRABTN:OnEnter(...)
-	if (self.bar:GetTooltipCombat() and InCombatLockdown()) then
+	if (not self.bar:GetTooltipCombat() and InCombatLockdown()) then
 		return
 	end
 
-	if (self.bar:GetTooltipEnable()) then
+	if (self.bar:GetTooltipOption()) then
 
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-		if (self.bar:GetTooltipEnhanced() and self.spellID) then
+		if (self.bar:GetTooltipOption() == "enhanced" and self.spellID) then
 			GameTooltip:SetSpellByID(self.spellID)
 		elseif (self.spellName) then
 			GameTooltip:SetText(self.spellName)
