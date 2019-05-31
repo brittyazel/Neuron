@@ -37,8 +37,8 @@ local function frameIsDependentOnFrame(frame, otherFrame)
 	end
 end
 
-local function canAttach(frame, otherFrame)
 
+local function canAttach(frame, otherFrame)
 	if not(frame and otherFrame) then
 		return
 	elseif (frame:GetNumPoints() == 0 or otherFrame:GetNumPoints() == 0) then

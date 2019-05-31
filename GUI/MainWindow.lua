@@ -175,7 +175,7 @@ function NeuronGUI:PopulateEditorWindow()
 	--Bar Rename Box
 	local renameBox = AceGUI:Create("EditBox")
 	if Neuron.CurrentBar then
-		renameBox:SetText(Neuron.CurrentBar:GetName())
+		renameBox:SetText(Neuron.CurrentBar:GetBarName())
 	end
 	renameBox:SetFullWidth(true)
 	renameBox:SetCallback("OnEnterPressed", function(self) NeuronGUI:updateBarName(self) end)
@@ -228,7 +228,7 @@ function NeuronGUI:updateBarName(editBox)
 	local bar = Neuron.CurrentBar
 
 	if (bar) then
-		bar:SetName(editBox:GetText())
+		bar:SetBarName(editBox:GetText())
 		bar.text:SetText(bar:GetName())
 
 		editBox:ClearFocus()

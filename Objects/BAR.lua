@@ -1424,9 +1424,6 @@ function BAR:OnDragStart(...)
 	self:SetFrameStrata(Neuron.STRATAS[self:GetStrata()])
 	self:EnableKeyboard(false)
 
-	self.adjusting = true
-	self.isMoving = true
-
 	self.data.snapToPoint = false
 	self.data.snapToFrame = false
 
@@ -1469,7 +1466,6 @@ function BAR:OnDragStop(...)
 		self:StickToEdge()
 	end
 
-	self.isMoving = false
 	self:Update()
 end
 
@@ -1681,7 +1677,7 @@ end
 -------------------Sets and Gets---------------------
 -----------------------------------------------------
 
-function BAR:SetName(name)
+function BAR:SetBarName(name)
 
 	if name and name ~= "" then
 		self.data.name = name
@@ -1689,7 +1685,7 @@ function BAR:SetName(name)
 	self:Update()
 end
 
-function BAR:GetName()
+function BAR:GetBarName()
 	return self.data.name
 end
 
@@ -1982,14 +1978,14 @@ function BAR:SetSnapTo(checked)
 		self.data.snapToFrame = false
 
 		self:SetUserPlaced(true)
+
+		local newPoint, x, y = self:GetPosition()
+
+		self.data.point = newPoint
+		self:SetXAxis(x)
+		self:SetYAxis(y)
+		self:SetPosition()
 	end
-
-	local newPoint, x, y = self:GetPosition()
-
-	self.data.point = newPoint
-	self:SetXAxis(x)
-	self:SetYAxis(y)
-	self:SetPosition()
 
 	self:Update()
 end
