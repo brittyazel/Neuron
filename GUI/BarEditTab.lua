@@ -111,6 +111,8 @@ end
 
 function NeuronGUI:GeneralConfigPanel(tabFrame)
 
+	-------------------------------------------------
+
 	--Heading spacer
 	local heading1 = AceGUI:Create("Heading")
 	heading1:SetText("Bar Options")
@@ -329,13 +331,14 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading2:SetFullWidth(true)
 	tabFrame:AddChild(heading2)
 
+	-------------------------------------------------
 
-	---Add or Remove Button Widget
+	--Add or Remove Button Widget
 	local currentNumObjectsLabel
 
 	local addOrRemoveButtonContainer = AceGUI:Create("InlineGroup")
-	addOrRemoveButtonContainer:SetWidth(150)
-	addOrRemoveButtonContainer:SetHeight(50)
+	addOrRemoveButtonContainer:SetRelativeWidth(.25)
+	addOrRemoveButtonContainer:SetHeight(40)
 	addOrRemoveButtonContainer:SetLayout("Flow")
 	addOrRemoveButtonContainer:SetTitle("Number of Buttons")
 	tabFrame:AddChild(addOrRemoveButtonContainer)
@@ -349,7 +352,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
 	end)
 	addOrRemoveButtonContainer:AddChild(subtractObjectButton)
-
 
 	currentNumObjectsLabel = AceGUI:Create("Label")
 	currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
@@ -367,7 +369,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
 	end)
 	addOrRemoveButtonContainer:AddChild(addObjectButton)
-
 
 end
 
