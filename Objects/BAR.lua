@@ -1368,9 +1368,6 @@ function BAR:OnClick(...)
 			self.message:Hide()
 			self.messagebg:Hide()
 		else
-			self:SetSnapTo(false)
-			self.data.snapToPoint = false
-			self.data.snapToFrame = false
 			self.microAdjust = 1
 			self:EnableKeyboard(true)
 			self.message:Show()
@@ -1460,8 +1457,8 @@ function BAR:OnDragStop(...)
 		self.data.snapToPoint = false
 		self.data.snapToFrame = false
 
-		local point, x, y = self:GetPosition()
-		self.data.point = point
+		local newPoint, x, y = self:GetPosition()
+		self.data.point = newPoint
 		self:SetXAxis(x)
 		self:SetYAxis(y)
 
@@ -1480,8 +1477,8 @@ function BAR:OnKeyDown(key)
 	if (self.microAdjust) then
 		self.keydown = key
 
-		local point, x, y = self:GetPosition()
-		self.data.point = point
+		local newPoint, x, y = self:GetPosition()
+		self.data.point = newPoint
 		self:SetXAxis(x)
 		self:SetYAxis(y)
 
@@ -1985,9 +1982,14 @@ function BAR:SetSnapTo(checked)
 		self.data.snapToFrame = false
 
 		self:SetUserPlaced(true)
-		self.data.point, self.data.x, self.data.y = self:GetPosition()
-		self:SetPosition()
 	end
+
+	local newPoint, x, y = self:GetPosition()
+
+	self.data.point = newPoint
+	self:SetXAxis(x)
+	self:SetYAxis(y)
+	self:SetPosition()
 
 	self:Update()
 end
@@ -2315,10 +2317,6 @@ end
 function BAR:SetXAxis(option)
 	if option then
 		self.data.x = option
-		self.data.snapTo = false
-
-		self.data.snapToPoint = false
-		self.data.snapToFrame = false
 	else
 		self.data.x = 0
 	end
@@ -2334,10 +2332,6 @@ end
 function BAR:SetYAxis(option)
 	if option then
 		self.data.y = option
-		self.data.snapTo = false
-
-		self.data.snapToPoint = false
-		self.data.snapToFrame = false
 	else
 		self.data.y = 190
 	end

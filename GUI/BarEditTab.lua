@@ -336,12 +336,18 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	--Add or Remove Button Widget
 	local currentNumObjectsLabel
 
-	local addOrRemoveButtonContainer = AceGUI:Create("InlineGroup")
-	addOrRemoveButtonContainer:SetRelativeWidth(.25)
-	addOrRemoveButtonContainer:SetHeight(40)
-	addOrRemoveButtonContainer:SetLayout("Flow")
-	addOrRemoveButtonContainer:SetTitle("Number of Buttons")
-	tabFrame:AddChild(addOrRemoveButtonContainer)
+	local addOrRemoveButtonOuterContainer = AceGUI:Create("SimpleGroup")
+	addOrRemoveButtonOuterContainer:SetRelativeWidth(.25)
+	addOrRemoveButtonOuterContainer:SetHeight(40)
+
+	tabFrame:AddChild(addOrRemoveButtonOuterContainer)
+
+	local addOrRemoveButtonInnerContainer = AceGUI:Create("InlineGroup")
+	addOrRemoveButtonInnerContainer:SetRelativeWidth(.9)
+	addOrRemoveButtonInnerContainer:SetLayout("Flow")
+	addOrRemoveButtonInnerContainer:SetTitle("Number of Buttons")
+
+	addOrRemoveButtonOuterContainer:AddChild(addOrRemoveButtonInnerContainer)
 
 	local subtractObjectButton = AceGUI:Create("Button")
 	subtractObjectButton:SetText("-")
@@ -351,14 +357,14 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		Neuron.CurrentBar:RemoveObjectFromBar()
 		currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
 	end)
-	addOrRemoveButtonContainer:AddChild(subtractObjectButton)
+	addOrRemoveButtonInnerContainer:AddChild(subtractObjectButton)
 
 	currentNumObjectsLabel = AceGUI:Create("Label")
 	currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
 	currentNumObjectsLabel:SetFont("Fonts\\FRIZQT__.TTF", 20)
 	currentNumObjectsLabel:SetRelativeWidth(.3)
 	currentNumObjectsLabel:SetFullHeight(true)
-	addOrRemoveButtonContainer:AddChild(currentNumObjectsLabel)
+	addOrRemoveButtonInnerContainer:AddChild(currentNumObjectsLabel)
 
 	local addObjectButton = AceGUI:Create("Button")
 	addObjectButton:SetText("+")
@@ -368,7 +374,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		Neuron.CurrentBar:AddObjectToBar()
 		currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
 	end)
-	addOrRemoveButtonContainer:AddChild(addObjectButton)
+	addOrRemoveButtonInnerContainer:AddChild(addObjectButton)
 
 end
 
