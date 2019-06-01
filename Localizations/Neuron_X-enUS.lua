@@ -501,7 +501,7 @@ L["Dialog"] = true
 L["Horizontal"] = true
 L["Vertical"] = true
 
-L["Number of Buttons"] = true
+L["Buttons"] = true
 
 L["Reward"] = true
 
