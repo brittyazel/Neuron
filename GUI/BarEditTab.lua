@@ -332,6 +332,8 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 
 	-------------------------------------------------
 
+
+	--------------------------------
 	--------------------------------
 	--Add or Remove Button Widget
 	local currentNumObjectsLabel
@@ -359,8 +361,15 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end)
 	addOrRemoveButtonInnerContainer:AddChild(subtractObjectButton)
 
+	local currentText = Neuron.CurrentBar:GetNumObjects() --hack to try to keep the number centered between the buttons
+	if currentText > 9 then
+		currentText = " "..currentText --one space leading two-digit numbers
+	else
+		currentText = "  "..currentText --two spaces leading one-digit numbers
+	end
+
 	currentNumObjectsLabel = AceGUI:Create("Label")
-	currentNumObjectsLabel:SetText(" " .. Neuron.CurrentBar:GetNumObjects())
+	currentNumObjectsLabel:SetText(currentText)
 	currentNumObjectsLabel:SetFont("Fonts\\FRIZQT__.TTF", 20)
 	currentNumObjectsLabel:SetRelativeWidth(.3)
 	currentNumObjectsLabel:SetFullHeight(true)
@@ -376,7 +385,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end)
 	addOrRemoveButtonInnerContainer:AddChild(addObjectButton)
 	--------------------------------
+	--------------------------------
 
+	
 	--Add or Remove Column Widget
 	local currentNumColumns = Neuron.CurrentBar:GetColumns()
 
