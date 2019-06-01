@@ -224,6 +224,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
 		spellAlertDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		spellAlertDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
+		tabFrame:AddChild(spellAlertDropdownContainer)
 
 		local currentGlow = Neuron.CurrentBar:GetSpellGlow()
 		if not currentGlow then
@@ -236,11 +237,10 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		spellAlertDropdown:SetList({["none"] = L["None"], ["default"] = L["Default Alert"], ["alternate"] = L["Subdued Alert"]},
 				{[1] = "none", [2] = "default", [3] = "alternate"})
 		spellAlertDropdown:SetValue(currentGlow)
-		spellAlertDropdown:SetCallback("OnValueChanged", function(self, callBackType, key)
+		spellAlertDropdown:SetCallback("OnValueChanged", function(_, _, key)
 			Neuron.CurrentBar:SetSpellGlow(key)
 		end)
 		spellAlertDropdownContainer:AddChild(spellAlertDropdown)
-		tabFrame:AddChild(spellAlertDropdownContainer)
 	end
 
 	--BarLock
@@ -249,6 +249,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
 		spellAlertDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		spellAlertDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
+		tabFrame:AddChild(spellAlertDropdownContainer)
 
 		local currentLock = Neuron.CurrentBar:GetBarLock()
 		if not currentLock then
@@ -261,11 +262,10 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		spellAlertDropdown:SetList({["none"] = L["None"], ["shift"] = L["Shift"], ["ctrl"] = L["Ctrl"], ["alt"] = L["Alt"]},
 				{[1] = "none", [2] = "shift", [3] = "ctrl", [4] = "alt"})
 		spellAlertDropdown:SetValue(currentLock)
-		spellAlertDropdown:SetCallback("OnValueChanged", function(self, callBackType, key)
+		spellAlertDropdown:SetCallback("OnValueChanged", function(_, _, key)
 			Neuron.CurrentBar:SetBarLock(key)
 		end)
 		spellAlertDropdownContainer:AddChild(spellAlertDropdown)
-		tabFrame:AddChild(spellAlertDropdownContainer)
 	end
 
 	--Tooltips
@@ -274,6 +274,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local tooltipDropdownContainer = AceGUI:Create("SimpleGroup")
 		tooltipDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		tooltipDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
+		tabFrame:AddChild(tooltipDropdownContainer)
 
 		local currentTooltipOption = Neuron.CurrentBar:GetTooltipOption()
 		if not currentTooltipOption then
@@ -286,12 +287,11 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		tooltipDropdown:SetList({["off"] = L["Off"], ["minimal"] = L["Minimal"], ["enhanced"] = L["Enhanced"]},
 				{[1] = "off", [2] = "minimal", [3] = "enhanced"})
 		tooltipDropdown:SetValue(currentTooltipOption)
-		tooltipDropdown:SetCallback("OnValueChanged", function(self, callBackType, key)
+		tooltipDropdown:SetCallback("OnValueChanged", function(_, _, key)
 			Neuron.CurrentBar:SetTooltipOption(key)
 		end)
 
 		tooltipDropdownContainer:AddChild(tooltipDropdown)
-		tabFrame:AddChild(tooltipDropdownContainer)
 	end
 
 	--Tooltips in Combat
@@ -311,7 +311,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.BORDERSTYLE then
 		local borderStyleCheckbox = AceGUI:Create("CheckBox")
 		borderStyleCheckbox:SetLabel(L["Show Border Style"])
-		borderStyleCheckbox:SeteWidth(WIDGET_GRID_WIDTH)
+		borderStyleCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		borderStyleCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
 		borderStyleCheckbox:SetValue(Neuron.CurrentBar:GetShowBorderStyle())
 		borderStyleCheckbox:SetCallback("OnValueChanged", function(self)
@@ -355,7 +355,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	subtractObjectButton:SetText("|TInterface\\Buttons\\Arrow-Down-Up:15:15:2:-5|t") --this is an escape sequence that gives us a down arrow centered on the button
 	subtractObjectButton:SetRelativeWidth(.35)
 	subtractObjectButton:SetFullHeight(true)
-	subtractObjectButton:SetCallback("OnClick", function(self)
+	subtractObjectButton:SetCallback("OnClick", function()
 		Neuron.CurrentBar:RemoveObjectFromBar()
 		NeuronGUI:RefreshEditor()
 	end)
@@ -379,7 +379,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	addObjectButton:SetText("|TInterface\\Buttons\\Arrow-Up-Up:15:15:2:2|t") --this is an escape sequence that gives us an up arrow centered on the button
 	addObjectButton:SetRelativeWidth(.35)
 	addObjectButton:SetFullHeight(true)
-	addObjectButton:SetCallback("OnClick", function(self)
+	addObjectButton:SetCallback("OnClick", function()
 		Neuron.CurrentBar:AddObjectToBar()
 		NeuronGUI:RefreshEditor()
 	end)
@@ -387,7 +387,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	--------------------------------
 	--------------------------------
 
-	
+
 	--Add or Remove Column Widget
 	local currentNumColumns = Neuron.CurrentBar:GetColumns()
 

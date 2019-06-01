@@ -64,7 +64,7 @@ function NeuronGUI:RefreshEditor()
 	NeuronGUI:PopulateEditorWindow()
 
 	if Neuron.CurrentBar then
-		NeuronEditor:SetStatusText("The currently selected bar is: " .. Neuron.CurrentBar:GetName())
+		NeuronEditor:SetStatusText("The currently selected bar is: " .. Neuron.CurrentBar:GetBarName())
 	else
 		NeuronEditor:SetStatusText("Please select a bar from the right to begin")
 	end
@@ -202,7 +202,7 @@ function NeuronGUI:PopulateBarList(barListFrame)
 
 	for _, bar in pairs(Neuron.BARIndex) do
 		local barLabel = AceGUI:Create("InteractiveLabel")
-		barLabel:SetText(bar:GetName())
+		barLabel:SetText(bar:GetBarName())
 		barLabel:SetFont("Fonts\\FRIZQT__.TTF", 12)
 		barLabel:SetFullWidth(true)
 		barLabel:SetHighlight("Interface\\QuestFrame\\UI-QuestTitleHighlight")
@@ -229,7 +229,7 @@ function NeuronGUI:updateBarName(editBox)
 
 	if (bar) then
 		bar:SetBarName(editBox:GetText())
-		bar.text:SetText(bar:GetName())
+		bar.text:SetText(bar:GetBarName())
 
 		editBox:ClearFocus()
 		NeuronGUI:RefreshEditor()
