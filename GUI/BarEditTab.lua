@@ -56,7 +56,7 @@ local currentTab = "tab1" --remember which tab we were using between refreshes
 
 
 local WIDGET_GRID_WIDTH = 165
-local WIDGET_GRID_HEIGHT = 40
+local WIDGET_GRID_HEIGHT = 30
 
 local INNER_WIDGET_RATIO = 0.9
 -----------------------------------------------------------------------------
