@@ -1170,8 +1170,9 @@ function BAR:SetObjectLoc()
 	end
 	--------------------------------------------------------------------------
 
-	if (not origCol) then
-		origCol = count; rows = 1
+	if not origCol then
+		origCol = count
+		rows = 1
 	else
 		rows = (round(ceil(count/self:GetColumns()), 1)/2)+0.5
 	end
@@ -2141,7 +2142,11 @@ end
 
 function BAR:SetColumns(option)
 	if option then
-		self.data.columns = option
+		if option > 0 then
+			self.data.columns = option
+		else
+			self.data.columns = false
+		end
 	else
 		self.data.columns = false
 	end
