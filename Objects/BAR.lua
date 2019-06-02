@@ -34,19 +34,6 @@ local MBS = Neuron.MANAGED_BAR_STATES
 
 local alphaDir, alphaTimer = 0, 0
 
-Neuron.AlphaUps = {
-	L["Off"],
-	L["Mouseover"],
-	L["Combat"],
-	L["Combat + Mouseover"],
-	L["Retreat"],
-	L["Retreat + Mouseover"],
-}
-local alphaUps = Neuron.AlphaUps
-
-
-
-
 
 local statetable = {}
 
@@ -373,7 +360,7 @@ function BAR:AlphaUpUpdate()
 			self.handler:SetAlpha(1)
 		else
 
-			if (self:GetAlphaUp() == alphaUps[3] or self:GetAlphaUp() == alphaUps[4]) then
+			if (self:GetAlphaUp() == "combat" or self:GetAlphaUp() == "combat + mouseover") then
 
 				if (InCombatLockdown()) then
 
@@ -386,7 +373,7 @@ function BAR:AlphaUpUpdate()
 					end
 
 				else
-					if (self:GetAlphaUp() == alphaUps[4]) then
+					if (self:GetAlphaUp() == "combat + mouseover") then
 
 						if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
 							if (self.handler:GetAlpha() < 1) then
@@ -416,7 +403,7 @@ function BAR:AlphaUpUpdate()
 					end
 				end
 
-			elseif (self:GetAlphaUp() == alphaUps[5] or self:GetAlphaUp() == alphaUps[6]) then
+			elseif (self:GetAlphaUp() == "retreat" or self:GetAlphaUp() == "retreat + mouseover") then
 
 				if not InCombatLockdown() then
 
@@ -429,7 +416,7 @@ function BAR:AlphaUpUpdate()
 					end
 
 				else
-					if (self:GetAlphaUp() == alphaUps[6]) then
+					if (self:GetAlphaUp() == "retreat + mouseover") then
 						if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
 							if (self.handler:GetAlpha() < 1) then
 								if (self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1) then
@@ -450,7 +437,7 @@ function BAR:AlphaUpUpdate()
 					end
 				end
 
-			elseif (self:GetAlphaUp() == alphaUps[2]) then
+			elseif (self:GetAlphaUp() == "mouseover") then
 
 				if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
 					if (self.handler:GetAlpha() < 1) then
@@ -1086,7 +1073,8 @@ function BAR:SetPosition()
 		local point, x, y = self.data.point, self:GetXAxis(), self:GetYAxis()
 
 		if (point:find("SnapTo")) then
-			self.data.point = "CENTER"; point = "CENTER"
+			self.data.point = "CENTER"
+			point = "CENTER"
 		end
 
 		self:SetUserPlaced(false)
@@ -1100,8 +1088,6 @@ function BAR:SetPosition()
 			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
 			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
 		end
-
-		self.posSet = true
 	end
 end
 
@@ -1439,8 +1425,6 @@ function BAR:OnDragStop(...)
 				self.data.snapToPoint = point
 				self.data.snapToFrame = v:GetName()
 				self.data.point = "SnapTo: "..point
-				self:SetXAxis(0)
-				self:SetYAxis(0)
 			end
 		end
 	end
@@ -2249,7 +2233,7 @@ end
 
 function BAR:SetStrata(option)
 	--option should be numeric, and should not ever be lower than 2. In the GUI we should make sure the list starts at 2 and runs until 6
-	if option and option <=2 and option >= 6 then
+	if option and option >=2 and option <= 6 then
 		self.data.strata = option
 	else
 		self.data.strata = 3
@@ -2271,7 +2255,7 @@ function BAR:SetBarAlpha(option)
 		self.data.alpha = 1
 	end
 
-	self.handler:SetAlpha(self.data.alpha) --not sure if this should be here
+	--self.handler:SetAlpha(self.data.alpha) --not sure if this should be here
 	self:Update()
 end
 
@@ -2281,9 +2265,13 @@ end
 
 function BAR:SetAlphaUp(option)
 	if option then
-		self.data.alphaUp = option
+		if option == "off" or option == "mouseover" or option == "combat" or option =="combat + mouseover" or option == "retreat" or option == "retreat + mouseover" then
+			self.data.alphaUp = option
+		else
+			self.data.alphaUp = "off"
+		end
 	else
-		self.data.alphaUp = L["Off"]
+		self.data.alphaUp = "off"
 	end
 
 	self:Update()

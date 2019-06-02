@@ -58,7 +58,7 @@ local currentTab = "tab1" --remember which tab we were using between refreshes
 local WIDGET_GRID_WIDTH = 165
 local WIDGET_GRID_HEIGHT = 30
 
-local INNER_WIDGET_RATIO = 0.9
+local INNER_WIDGET_RATIO = 0.95
 -----------------------------------------------------------------------------
 --------------------------Bar Editor-----------------------------------------
 -----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	--AutoHide
 	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.AUTOHIDE then
 		local autoHideCheckbox = AceGUI:Create("CheckBox")
-		autoHideCheckbox:SetLabel(L["AutoHide"])
+		autoHideCheckbox:SetLabel(L["Auto Hide"])
 		autoHideCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		autoHideCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
 		autoHideCheckbox:SetValue(Neuron.CurrentBar:GetAutoHide())
@@ -341,18 +341,13 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	--Add or Remove Button Widget
 	local currentNumObjectsLabel
 
-	local addOrRemoveButtonOuterContainer = AceGUI:Create("SimpleGroup")
-	addOrRemoveButtonOuterContainer:SetWidth(WIDGET_GRID_WIDTH)
-	addOrRemoveButtonOuterContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	local addOrRemoveButtonContainer = AceGUI:Create("InlineGroup")
+	addOrRemoveButtonContainer:SetWidth(WIDGET_GRID_WIDTH)
+	addOrRemoveButtonContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	addOrRemoveButtonContainer:SetLayout("Flow")
+	addOrRemoveButtonContainer:SetTitle(L["Buttons"])
 
-	tabFrame:AddChild(addOrRemoveButtonOuterContainer)
-
-	local addOrRemoveButtonInnerContainer = AceGUI:Create("InlineGroup")
-	addOrRemoveButtonInnerContainer:SetRelativeWidth(INNER_WIDGET_RATIO)
-	addOrRemoveButtonInnerContainer:SetLayout("Flow")
-	addOrRemoveButtonInnerContainer:SetTitle(L["Buttons"])
-
-	addOrRemoveButtonOuterContainer:AddChild(addOrRemoveButtonInnerContainer)
+	tabFrame:AddChild(addOrRemoveButtonContainer)
 
 	local subtractObjectButton = AceGUI:Create("Button")
 	subtractObjectButton:SetText("|TInterface\\Buttons\\Arrow-Down-Up:15:15:2:-5|t") --this is an escape sequence that gives us a down arrow centered on the button
@@ -362,7 +357,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		Neuron.CurrentBar:RemoveObjectFromBar()
 		NeuronGUI:RefreshEditor()
 	end)
-	addOrRemoveButtonInnerContainer:AddChild(subtractObjectButton)
+	addOrRemoveButtonContainer:AddChild(subtractObjectButton)
 
 	local currentText = Neuron.CurrentBar:GetNumObjects() --hack to try to keep the number centered between the buttons
 	if currentText > 9 then
@@ -376,7 +371,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	currentNumObjectsLabel:SetFont("Fonts\\FRIZQT__.TTF", 20)
 	currentNumObjectsLabel:SetRelativeWidth(.3)
 	currentNumObjectsLabel:SetFullHeight(true)
-	addOrRemoveButtonInnerContainer:AddChild(currentNumObjectsLabel)
+	addOrRemoveButtonContainer:AddChild(currentNumObjectsLabel)
 
 	local addObjectButton = AceGUI:Create("Button")
 	addObjectButton:SetText("|TInterface\\Buttons\\Arrow-Up-Up:15:15:2:2|t") --this is an escape sequence that gives us an up arrow centered on the button
@@ -386,7 +381,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		Neuron.CurrentBar:AddObjectToBar()
 		NeuronGUI:RefreshEditor()
 	end)
-	addOrRemoveButtonInnerContainer:AddChild(addObjectButton)
+	addOrRemoveButtonContainer:AddChild(addObjectButton)
 	--------------------------------
 	--------------------------------
 
@@ -400,7 +395,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local currentNumColumnsContainer = AceGUI:Create("SimpleGroup")
 	currentNumColumnsContainer:SetWidth(WIDGET_GRID_WIDTH)
 	currentNumColumnsContainer:SetHeight(WIDGET_GRID_HEIGHT)
-
 	tabFrame:AddChild(currentNumColumnsContainer)
 
 	local columnSlider = AceGUI:Create("Slider")
@@ -419,7 +413,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local setScaleContainer = AceGUI:Create("SimpleGroup")
 	setScaleContainer:SetWidth(WIDGET_GRID_WIDTH)
 	setScaleContainer:SetHeight(WIDGET_GRID_HEIGHT)
-
 	tabFrame:AddChild(setScaleContainer)
 
 	local scaleSlider = AceGUI:Create("Slider")
@@ -449,11 +442,125 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	barShapeDropdown:SetCallback("OnValueChanged", function(_, _, key)
 		Neuron.CurrentBar:SetBarShape(key)
 	end)
-
 	barShapeDropdownContainer:AddChild(barShapeDropdown)
 
 
+	--Set Horizontal Padding Widget
+	local horizPadContainer = AceGUI:Create("SimpleGroup")
+	horizPadContainer:SetWidth(WIDGET_GRID_WIDTH)
+	horizPadContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	tabFrame:AddChild(horizPadContainer)
 
+	local horizPadSlider = AceGUI:Create("Slider")
+	horizPadSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
+	horizPadSlider:SetSliderValues(-200,200,1)
+	horizPadSlider:SetLabel(L["Horizontal Padding"])
+	horizPadSlider:SetValue(Neuron.CurrentBar:GetHorizontalPad())
+	horizPadSlider:SetCallback("OnValueChanged", function(self)
+		Neuron.CurrentBar:SetHorizontalPad(self:GetValue())
+	end)
+	horizPadContainer:AddChild(horizPadSlider)
+
+
+	--Set Vertical Padding Widget
+	local vertPadContainer = AceGUI:Create("SimpleGroup")
+	vertPadContainer:SetWidth(WIDGET_GRID_WIDTH)
+	vertPadContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	tabFrame:AddChild(vertPadContainer)
+
+	local vertPadSlider = AceGUI:Create("Slider")
+	vertPadSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
+	vertPadSlider:SetSliderValues(-200,200,1)
+	vertPadSlider:SetLabel(L["Vertical Padding"])
+	vertPadSlider:SetValue(Neuron.CurrentBar:GetVerticalPad())
+	vertPadSlider:SetCallback("OnValueChanged", function(self)
+		Neuron.CurrentBar:SetVerticalPad(self:GetValue())
+	end)
+	vertPadContainer:AddChild(vertPadSlider)
+
+
+	--Set Alpha Widget
+	local alphaContainer = AceGUI:Create("SimpleGroup")
+	alphaContainer:SetWidth(WIDGET_GRID_WIDTH)
+	alphaContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	tabFrame:AddChild(alphaContainer)
+
+	local alphaSlider = AceGUI:Create("Slider")
+	alphaSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
+	alphaSlider:SetSliderValues(.01,1,.01)
+	alphaSlider:SetIsPercent(true)
+	alphaSlider:SetLabel(L["Alpha"])
+	alphaSlider:SetValue(Neuron.CurrentBar:GetBarAlpha())
+	alphaSlider:SetCallback("OnValueChanged", function(self)
+		Neuron.CurrentBar:SetBarAlpha(self:GetValue())
+	end)
+	alphaContainer:AddChild(alphaSlider)
+
+
+	--Alpha Ups Widget
+	local AlphaUpDropdownContainer = AceGUI:Create("SimpleGroup")
+	AlphaUpDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
+	AlphaUpDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	tabFrame:AddChild(AlphaUpDropdownContainer)
+
+	local alphaUpDropdown = AceGUI:Create("Dropdown")
+	alphaUpDropdown:SetLabel(L["AlphaUp"])
+	alphaUpDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
+	alphaUpDropdown:SetList({["off"] = L["Off"], ["mouseover"] = L["Mouseover"], ["combat"] = L["Combat"], ["combat + mouseover"] = L["Combat + Mouseover"], ["retreat"] = L["Retreat"], ["retreat + mouseover"] = L["Retreat + Mouseover"]},
+			{[1] = "off", [2] = "mouseover", [3] = "combat", [4] = "combat + mouseover", [5] = "retreat", [6] = "retreat + mouseover"})
+	alphaUpDropdown:SetValue(Neuron.CurrentBar:GetAlphaUp())
+	alphaUpDropdown:SetCallback("OnValueChanged", function(_, _, key)
+		Neuron.CurrentBar:SetAlphaUp(key)
+	end)
+	AlphaUpDropdownContainer:AddChild(alphaUpDropdown)
+
+
+	--Set Alpha Up Speed
+	local alphaSpeedContainer = AceGUI:Create("SimpleGroup")
+	alphaSpeedContainer:SetWidth(WIDGET_GRID_WIDTH)
+	alphaSpeedContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	tabFrame:AddChild(alphaSpeedContainer)
+
+	local alphaSpeedSlider = AceGUI:Create("Slider")
+	alphaSpeedSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
+	alphaSpeedSlider:SetSliderValues(.01,1,.01)
+	alphaSpeedSlider:SetIsPercent(true)
+	alphaSpeedSlider:SetLabel(L["AlphaUp Speed"])
+	alphaSpeedSlider:SetValue(Neuron.CurrentBar:GetAlphaUpSpeed())
+	alphaSpeedSlider:SetCallback("OnValueChanged", function(self)
+		Neuron.CurrentBar:SetAlphaUpSpeed(self:GetValue())
+	end)
+	alphaSpeedContainer:AddChild(alphaSpeedSlider)
+
+
+	--Stratas Widget
+	local strataDropdownContainer = AceGUI:Create("SimpleGroup")
+	strataDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
+	strataDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	tabFrame:AddChild(strataDropdownContainer)
+
+	local strataDropdown = AceGUI:Create("Dropdown")
+	strataDropdown:SetLabel(L["Strata"])
+	strataDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
+	strataDropdown:SetList({[2] = L["Low"], [3] = L["Medium"], [4] = L["High"], [5] = L["Dialog"], [6] = L["Tooltip"]},
+			{[1] = 2, [2] = 3, [3] = 4, [4] = 5, [5] = 6})
+	strataDropdown:SetValue(Neuron.CurrentBar:GetStrata())
+	strataDropdown:SetCallback("OnValueChanged", function(_, _, key)
+		Neuron.CurrentBar:SetStrata(key)
+	end)
+	strataDropdownContainer:AddChild(strataDropdown)
+
+
+	---------------------------------------------------------
+	----------------------Style Options----------------------
+	---------------------------------------------------------
+
+	--Heading spacer
+	local heading3 = AceGUI:Create("Heading")
+	heading3:SetText("Style Options")
+	heading3:SetHeight(WIDGET_GRID_HEIGHT)
+	heading3:SetFullWidth(true)
+	tabFrame:AddChild(heading3)
 
 end
 

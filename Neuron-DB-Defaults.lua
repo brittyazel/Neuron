@@ -208,7 +208,7 @@ local genericBarData = {
 	columns = false,
 
 	alpha = 1,
-	alphaUp = 1,
+	alphaUp = "off",
 	alphaMax = 1,
 	fadeSpeed = 0.5,
 

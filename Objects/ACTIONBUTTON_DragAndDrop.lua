@@ -467,7 +467,7 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 		local columns = self.bar.data.columns or count
 		local rows = count/columns
 
-		local point = self:GetPosition(UIParent)
+		local point = self:GetPosition()
 
 		if (columns/rows > 1) then
 

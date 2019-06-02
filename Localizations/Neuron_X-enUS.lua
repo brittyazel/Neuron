@@ -172,6 +172,13 @@ L["No bar selected or command invalid"] = true
 L["Custom_Option"] = "For custom states, add a desired state string (/neuron state custom <state string>) where <state string> is a semicolon seperated list of state conditions"
 
 
+
+L["Low"] = true
+L["Medium"] = true
+L["High"] = true
+L["Dialog"] = true
+L["Tooltip"] = true
+
 L["Valid States"]=true
 L["Invalid index"] = true
 
@@ -181,6 +188,8 @@ L["Show"] = true
 
 L["Home State"] = true
 L["Last State"] = true
+
+L["Auto Hide"] = true
 
 
 L["Paged"] = true
@@ -372,9 +381,8 @@ L["Alpha"] = true
 L["AlphaUp Speed"] = true
 L["Strata"] = true
 L["Shape"] = true
-L["Horiz Padding"] = true
-L["Vert Padding"] = true
-L["H+V Padding"] = true
+L["Horizontal Padding"] = true
+L["Vertical Padding"] = true
 L["Columns"] = true
 L["Arc Start"] = true
 L["Arc Length"] = true
