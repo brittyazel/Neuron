@@ -114,9 +114,7 @@ function BAR.new(class, barID)
 	newBar:SetScript("OnShow", function(self) self:OnShow() end)
 	newBar:SetScript("OnHide", function(self) self:OnHide() end)
 
-	newBar.index = #Neuron.BARIndex + 1
-	Neuron.BARIndex[newBar.index] = newBar --add handle for our new bar into a bar index table
-
+	table.insert(Neuron.BARIndex, newBar) --insert our new bar at the end of the table
 
 	newBar:CreateDriver()
 	newBar:CreateHandler()
@@ -216,13 +214,20 @@ function BAR:DeleteBar()
 		end
 	end
 
+	local index --find the location of our bar in the bar table
+	for i,v in ipairs(Neuron.BARIndex) do
+		if v == self then
+			index = i
+		end
+	end
 
-	table.remove(Neuron.BARIndex, self.index)
+	if index then --if our index was found (it should always be found) remove it from the array
+		table.remove(Neuron.BARIndex, index)
+	end
 
 	Neuron.CurrentBar = nil
 
 	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
-		v.index = i --reset the bar index values to match their new position
 		v:Update()
 	end
 
