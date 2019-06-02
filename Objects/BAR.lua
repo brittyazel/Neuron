@@ -114,6 +114,9 @@ function BAR.new(class, barID)
 	newBar:SetScript("OnShow", function(self) self:OnShow() end)
 	newBar:SetScript("OnHide", function(self) self:OnHide() end)
 
+	newBar.index = #Neuron.BARIndex + 1
+	Neuron.BARIndex[newBar.index] = newBar --add handle for our new bar into a bar index table
+
 
 	newBar:CreateDriver()
 	newBar:CreateHandler()
@@ -122,8 +125,6 @@ function BAR.new(class, barID)
 	newBar:LoadData()
 
 	newBar:Hide() --hide the transparent blue overlay that we show in the edit mode
-
-	Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar --add handle for our new bar into a bar index table
 
 	return newBar
 end
@@ -221,6 +222,7 @@ function BAR:DeleteBar()
 	Neuron.CurrentBar = nil
 
 	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
+		v.index = i --reset the bar index values to match their new position
 		v:Update()
 	end
 
@@ -1007,7 +1009,7 @@ function BAR:Update(show, hide)
 	self:SetHidden(handler, show, hide)
 	self:LaunchAutoHide()
 	self:LaunchAlphaUp()
-	self.text:SetText(self:GetName())
+	self.text:SetText(self:GetBarName())
 	handler:SetAlpha(self:GetBarAlpha())
 
 	if  self:GetShowAuraIndicator() then
@@ -1557,8 +1559,8 @@ function BAR:LoadData()
 
 	self.data = self.DB
 
-	if (not self:GetName() or self:GetName() == ":") then
-		self:SetName(self.barLabel.." "..self.DB.id)
+	if (not self:GetBarName() or self:GetBarName() == ":") then
+		self:SetBarName(self.barLabel.." "..self.DB.id)
 	end
 end
 
