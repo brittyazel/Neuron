@@ -204,7 +204,7 @@ local genericBarData = {
 	y = 190,
 
 	scale = 1,
-	shape = 1,
+	shape = "linear",
 	columns = false,
 
 	alpha = 1,

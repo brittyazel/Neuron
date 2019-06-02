@@ -45,16 +45,10 @@ Neuron.AlphaUps = {
 local alphaUps = Neuron.AlphaUps
 
 
-Neuron.BarShapes = {
-	L["Linear"],
-	L["Circle"],
-	L["Circle + One"],
-}
+
 
 
 local statetable = {}
-
-local barShapes = Neuron.BarShapes
 
 local handlerMT = setmetatable({}, { __index = CreateFrame("Frame") })
 
@@ -1192,7 +1186,7 @@ function BAR:SetObjectLoc()
 				columns = origCol/2
 			end
 
-			if (shape == 2) then
+			if (shape == "circle") then
 				if (not placed) then
 					placed = arcStart
 				end
@@ -1204,7 +1198,7 @@ function BAR:SetObjectLoc()
 
 				placed = placed - (arcLength/count)
 
-			elseif (shape == 3) then
+			elseif (shape == "circle + one") then
 				if (not placed) then
 					placed = arcStart
 					object:SetPoint("CENTER", self, "CENTER", 0, 0)
@@ -2125,9 +2119,13 @@ end
 
 function BAR:SetBarShape(option)
 	if option then
-		self.data.shape = option
+		if option == "linear" or option == "circle" or option == "circle + one" then
+			self.data.shape = option
+		else
+			self.data.shape = "linear"
+		end
 	else
-		self.data.shape = false
+		self.data.shape = "linear"
 	end
 
 	self:SetObjectLoc()

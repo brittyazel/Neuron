@@ -116,7 +116,9 @@ end
 
 function NeuronGUI:GeneralConfigPanel(tabFrame)
 
-	-------------------------------------------------
+	---------------------------------------------------------
+	----------------------Bar Options------------------------
+	---------------------------------------------------------
 
 	--Heading spacer
 	local heading1 = AceGUI:Create("Heading")
@@ -125,7 +127,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading1:SetFullWidth(true)
 	tabFrame:AddChild(heading1)
 
-	-------------------------------------------------
 
 	--AutoHide
 	if Neuron.registeredGUIData[Neuron.CurrentBar.class].chkOpt.AUTOHIDE then
@@ -321,7 +322,11 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end
 
 
-	-----------------------------------------------
+
+
+	---------------------------------------------------------
+	----------------------Layout Configuration---------------
+	---------------------------------------------------------
 
 	--Heading spacer
 	local heading2 = AceGUI:Create("Heading")
@@ -329,8 +334,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading2:SetHeight(WIDGET_GRID_HEIGHT)
 	heading2:SetFullWidth(true)
 	tabFrame:AddChild(heading2)
-
-	-------------------------------------------------
 
 
 	--------------------------------
@@ -387,8 +390,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	--------------------------------
 	--------------------------------
 
-
-	--Add or Remove Column Widget
+	--Add or Remove Columns Widget
 	local currentNumColumns = Neuron.CurrentBar:GetColumns()
 
 	if not currentNumColumns then
@@ -410,6 +412,47 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		Neuron.CurrentBar:SetColumns(self:GetValue())
 	end)
 	currentNumColumnsContainer:AddChild(columnSlider)
+
+
+
+	--Set Scale Widget
+	local setScaleContainer = AceGUI:Create("SimpleGroup")
+	setScaleContainer:SetWidth(WIDGET_GRID_WIDTH)
+	setScaleContainer:SetHeight(WIDGET_GRID_HEIGHT)
+
+	tabFrame:AddChild(setScaleContainer)
+
+	local scaleSlider = AceGUI:Create("Slider")
+	scaleSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
+	scaleSlider:SetSliderValues(0.1,2,0.05)
+	scaleSlider:SetIsPercent(true)
+	scaleSlider:SetLabel(L["Scale"])
+	scaleSlider:SetValue(Neuron.CurrentBar:GetBarScale())
+	scaleSlider:SetCallback("OnValueChanged", function(self)
+		Neuron.CurrentBar:SetBarScale(self:GetValue())
+	end)
+	setScaleContainer:AddChild(scaleSlider)
+
+
+	--BarShape
+	local barShapeDropdownContainer = AceGUI:Create("SimpleGroup")
+	barShapeDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
+	barShapeDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	tabFrame:AddChild(barShapeDropdownContainer)
+
+	local barShapeDropdown = AceGUI:Create("Dropdown")
+	barShapeDropdown:SetLabel(L["Shape"])
+	barShapeDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
+	barShapeDropdown:SetList({["linear"] = L["Linear"], ["circle"] = L["Circle"], ["circle + one"] = L["Circle + One"]},
+			{[1] = "linear", [2] = "circle", [3] = "circle + one"})
+	barShapeDropdown:SetValue(Neuron.CurrentBar:GetBarShape())
+	barShapeDropdown:SetCallback("OnValueChanged", function(_, _, key)
+		Neuron.CurrentBar:SetBarShape(key)
+	end)
+
+	barShapeDropdownContainer:AddChild(barShapeDropdown)
+
+
 
 
 end

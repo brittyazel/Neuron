@@ -610,10 +610,10 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 	local flyout = self.flyout
 	local pointA, pointB, hideArrow, shape, columns, pad
 
-	if (flyout.shape and flyout.shape:lower():find("^c")) then
-		shape = 2
+	if (flyout.shape) then
+		shape = "circle"
 	else
-		shape = 1
+		shape = "linear"
 	end
 
 	if (flyout.point) then
@@ -625,9 +625,9 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 	end
 
 	if (flyout.colrad and tonumber(flyout.colrad)) then
-		if (shape == 1) then
+		if (shape == "linear") then
 			columns = tonumber(flyout.colrad)
-		elseif (shape == 2) then
+		elseif (shape == "circle") then
 			pad = tonumber(flyout.colrad)
 		end
 	end
@@ -645,7 +645,7 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 	if (shape) then
 		flyout.bar:SetBarShape(shape)
 	else
-		flyout.bar:SetBarShape(1)
+		flyout.bar:SetBarShape("linear")
 	end
 
 	if (columns) then
