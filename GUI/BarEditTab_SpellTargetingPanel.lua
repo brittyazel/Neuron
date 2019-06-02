@@ -30,6 +30,23 @@ function NeuronGUI:SpellTargetingPanel(tabFrame)
 end
 
 
+--[[
+--- ACE GUI OPTION GET & SET FUnctions
+-- @param self: macro editor frame
+function NeuronGUI:settingGetter(info)
+	if Neuron.CurrentBar then
+		return Neuron.CurrentBar.data[ info[#info]]--[[
+
+	end
+end
+
+
+function NeuronGUI:SetBarCastTarget(value, toggle)
+	if Neuron.CurrentBar then
+		Neuron.CurrentBar:SetCastingTarget(value, true, toggle)
+	end
+end
+
 
 --TODO:This is the old spell target options code, convert it to our new system
 --ACE GUI OPTION TABLE for Bar Targeting
@@ -128,4 +145,4 @@ NeuronGUI.target_options = {
 			name = "\n" .. L["Spell_Targeting_Modifier_None_Reminder"],
 		},
 	} ,
-}
+}]]
