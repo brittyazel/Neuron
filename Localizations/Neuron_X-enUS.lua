@@ -388,13 +388,13 @@ L["Arc Start"] = true
 L["Arc Length"] = true
 
 L["Keybind Label"] = true
+L["Keybind Label Color"] = true
 L["Macro Name"] = true
-L["Stack/Charge Count Label"] = true
-L["Out-of-Range Indicator"] = true
-L["Cooldown Countdown"] = true
-L["Cooldown Transparency"] = true
-L["Buff/Debuff Aura Countdown"] = true
-L["Buff/Debuff Aura Border"] = true
+L["Stack/Charge"] = true
+L["Out-of-Range"] = true
+L["CD Counter"] = true
+L["Cooldown Alpha"] = true
+L["Buff/Debuff"] = true
 
 L["Point"] = true
 L["X Position"] = true
@@ -490,10 +490,6 @@ L["Levels"] = true
 L["Level"] = true
 L["Points"] = true
 L["Prestige"] = true
-
-
-
-L["Keybind Label"]  = true
 
 
 L["Auto Select"] = true

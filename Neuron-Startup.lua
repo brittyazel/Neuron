@@ -82,140 +82,118 @@ end
 function Neuron:RegisterGUI()
 
 	--Neuron Action Bar
-	Neuron:RegisterGUIOptions("ActionBar", {
-		AUTOHIDE = true,
-		SHOWGRID = true,
-		SPELLGLOW = true,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		MULTISPEC = true,
-		HIDDEN = true,
-		LOCKBAR = true,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		MACROTEXT = true,
-		COUNTTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true,
-		AURAIND = true },
-			true)
+	Neuron:RegisterGUIOptions("ActionBar",
+			{AUTOHIDE = true,
+			 SHOWGRID = true,
+			 SPELLGLOW = true,
+			 SNAPTO = true,
+			 UPCLICKS = true,
+			 DOWNCLICKS = true,
+			 MULTISPEC = true,
+			 HIDDEN = true,
+			 LOCKBAR = true,
+			 TOOLTIPS = true},
+
+			{BINDTEXT = true,
+			 MACROTEXT = true,
+			 COUNTTEXT = true,
+			 RANGEIND = true,
+			 CDTEXT = true,
+			 CDALPHA = true,
+			 AURAIND = true})
 
 	--Neuron Zone Ability Bar
-	Neuron:RegisterGUIOptions("ZoneAbilityBar", {
-		AUTOHIDE = true,
-		SHOWGRID = false,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		HIDDEN = true,
-		LOCKBAR = false,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		COUNTTEXT = true,
-		BORDERSTYLE = true,},
-			false)
+	Neuron:RegisterGUIOptions("ZoneAbilityBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 UPCLICKS = true,
+			 DOWNCLICKS = true,
+			 HIDDEN = true,
+			 TOOLTIPS = true,
+			 BORDERSTYLE = true},
+
+			{BINDTEXT = true,
+			 COUNTTEXT = true})
 
 
 	--Neuron Extra Bar
-	Neuron:RegisterGUIOptions("ExtraBar", {
-		AUTOHIDE = true,
-		SHOWGRID = false,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		HIDDEN = true,
-		LOCKBAR = false,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		COUNTTEXT = true,
-		BORDERSTYLE = true,},
-			false)
+	Neuron:RegisterGUIOptions("ExtraBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 UPCLICKS = true,
+			 DOWNCLICKS = true,
+			 HIDDEN = true,
+			 TOOLTIPS = true,
+			 BORDERSTYLE = true},
+
+			{BINDTEXT = true,
+			 COUNTTEXT = true})
 
 
 	--Neuron Bag Bar
-	Neuron:RegisterGUIOptions("BagBar", {
-		AUTOHIDE = true,
-		SHOWGRID = false,
-		SPELLGLOW = false,
-		SNAPTO = true,
-		MULTISPEC = false,
-		HIDDEN = true,
-		LOCKBAR = false,
-		TOOLTIPS = true, },
-			false)
+	Neuron:RegisterGUIOptions("BagBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 HIDDEN = true,
+			 TOOLTIPS = true})
 
 	--Neuron Exit Bar
-	Neuron:RegisterGUIOptions("ExitBar", {
-		AUTOHIDE = true,
-		SHOWGRID = false,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		HIDDEN = true,
-		LOCKBAR = false, },
-			false)
+	Neuron:RegisterGUIOptions("ExitBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 UPCLICKS = true,
+			 DOWNCLICKS = true,
+			 HIDDEN = true})
 
 	--Neuron Menu Bar
-	Neuron:RegisterGUIOptions("MenuBar", {
-		AUTOHIDE = true,
-		SHOWGRID = false,
-		SPELLGLOW = false,
-		SNAPTO = true,
-		MULTISPEC = false,
-		HIDDEN = true,
-		LOCKBAR = false,
-		TOOLTIPS = true },
-			false)
+	Neuron:RegisterGUIOptions("MenuBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 HIDDEN = true,
+			 TOOLTIPS = true})
 
 	--Neuron Pet Bar
-	Neuron:RegisterGUIOptions("PetBar", {
-		AUTOHIDE = true,
-		SHOWGRID = false,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		HIDDEN = true,
-		LOCKBAR = true,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		RANGEIND = true,
-		CDTEXT = true,
-		CDALPHA = true },
-			false)
+	Neuron:RegisterGUIOptions("PetBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 UPCLICKS = true,
+			 DOWNCLICKS = true,
+			 HIDDEN = true,
+			 LOCKBAR = true,
+			 TOOLTIPS = true},
+
+			{BINDTEXT = true,
+			 RANGEIND = true,
+			 CDTEXT = true,
+			 CDALPHA = true})
 
 	--Neuron XP Bar
-	Neuron:RegisterGUIOptions("XPBar", {
-		AUTOHIDE = true,
-		SNAPTO = true,
-		HIDDEN = true,
-		TOOLTIPS = true },
-			false)
+	Neuron:RegisterGUIOptions("XPBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 HIDDEN = true,
+			 TOOLTIPS = true})
 
 	--Neuron Rep Bar
-	Neuron:RegisterGUIOptions("RepBar", {
-		AUTOHIDE = true,
-		SNAPTO = true,
-		HIDDEN = true,
-		TOOLTIPS = true },
-			false)
+	Neuron:RegisterGUIOptions("RepBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 HIDDEN = true,
+			 TOOLTIPS = true })
 
 	--Neuron Cast Bar
-	Neuron:RegisterGUIOptions("CastBar", {
-		AUTOHIDE = true,
-		SNAPTO = true,
-		HIDDEN = true,
-		TOOLTIPS = true },
-			false)
+	Neuron:RegisterGUIOptions("CastBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 HIDDEN = true,
+			 TOOLTIPS = true })
 
 	--Neuron Mirror Bar
-	Neuron:RegisterGUIOptions("MirrorBar", {
-		AUTOHIDE = true,
-		SNAPTO = true,
-		HIDDEN = true,
-		TOOLTIPS = true },
-			false)
+	Neuron:RegisterGUIOptions("MirrorBar",
+			{AUTOHIDE = true,
+			 SNAPTO = true,
+			 HIDDEN = true,
+			 TOOLTIPS = true })
 
 end
 

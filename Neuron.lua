@@ -823,10 +823,10 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 end
 
 
-function Neuron:RegisterGUIOptions(class, chkOpt, stateOpt)
+function Neuron:RegisterGUIOptions(class, generalOptions, styleOptions)
 	Neuron.registeredGUIData[class] = {
 		class = class;
-		chkOpt = chkOpt,
-		stateOpt = stateOpt,
+		generalOptions = generalOptions,
+		styleOptions = styleOptions,
 	}
 end
