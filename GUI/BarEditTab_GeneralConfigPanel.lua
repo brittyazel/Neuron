@@ -507,4 +507,29 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading3:SetFullWidth(true)
 	tabFrame:AddChild(heading3)
 
+
+
+	--Bind Text
+	local BindTextContainer = AceGUI:Create("SimpleGroup")
+	BindTextContainer:SetWidth(WIDGET_GRID_WIDTH)
+	BindTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
+	BindTextContainer:SetLayout("Flow")
+	tabFrame:AddChild(BindTextContainer)
+
+	local bindTextCheckbox = AceGUI:Create("CheckBox")
+	bindTextCheckbox:SetLabel(L["Keybind Label"])
+	bindTextCheckbox:SetRelativeWidth(.80)
+	bindTextCheckbox:SetValue(Neuron.CurrentBar:GetShowBindText())
+	bindTextCheckbox:SetCallback("OnValueChanged", function(self)
+		Neuron.CurrentBar:SetShowBindText(self:GetValue())
+	end)
+	BindTextContainer:AddChild(bindTextCheckbox)
+
+	local bindTextColorPicker = AceGUI:Create("ColorPicker")
+	bindTextColorPicker:SetRelativeWidth(.20)
+	bindTextColorPicker:SetColor(Neuron.CurrentBar:GetBindColor()[1],Neuron.CurrentBar:GetBindColor()[2],Neuron.CurrentBar:GetBindColor()[3],Neuron.CurrentBar:GetBindColor()[4])
+	bindTextColorPicker:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
+		Neuron.CurrentBar:SetBindColor({r,g,b,a})
+	end)
+	BindTextContainer:AddChild(bindTextColorPicker)
 end

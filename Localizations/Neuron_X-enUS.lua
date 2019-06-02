@@ -492,6 +492,10 @@ L["Points"] = true
 L["Prestige"] = true
 
 
+
+L["Keybind Label"]  = true
+
+
 L["Auto Select"] = true
 
 L["Default"] = true
