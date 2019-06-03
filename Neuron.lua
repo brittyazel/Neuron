@@ -98,26 +98,6 @@ Neuron.STATES = {
 	target1 = L["No Target"],
 }
 
-Neuron.STATEINDEX = {
-	paged = "paged",
-	stance = "stance",
-	pet = "pet",
-	alt = "alt",
-	ctrl = "ctrl",
-	shift = "shift",
-	stealth = "stealth",
-	reaction = "reaction",
-	combat = "combat",
-	group = "group",
-	fishing = "fishing",
-	vehicle = "vehicle",
-	possess = "possess",
-	override = "override",
-	extrabar = "extrabar",
-	custom = "custom",
-	target = "target",
-}
-
 Neuron.barEditMode = false
 Neuron.buttonEditMode = false
 Neuron.bindingMode = false
@@ -157,10 +137,6 @@ function Neuron:OnInitialize()
 	NeuronSpellCache = DB.NeuronSpellCache
 	NeuronCollectionCache = DB.NeuronCollectionCache
 	NeuronToyCache = DB.NeuronToyCache
-
-	--these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
-	Neuron.MAS = Neuron.MANAGED_ACTION_STATES
-	Neuron.MBS = Neuron.MANAGED_BAR_STATES
 
 
 	Neuron.class = select(2, UnitClass("player"))
@@ -648,7 +624,7 @@ function Neuron:UpdateStanceStrings()
 
 		states = states:gsub("; $", "")
 
-		Neuron.MAS.stance.states = states
+		Neuron.MANAGED_BAR_STATES.stance.states = states
 	end
 end
 

@@ -28,10 +28,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 LibStub("AceTimer-3.0"):Embed(BAR)
 LibStub("AceEvent-3.0"):Embed(BAR)
 
-
-local MAS = Neuron.MANAGED_ACTION_STATES
-local MBS = Neuron.MANAGED_BAR_STATES
-
 local alphaDir, alphaTimer = 0, 0
 
 
@@ -165,7 +161,7 @@ function BAR:DeleteBar()
 	handler:SetAttribute("showstates", "homestate")
 	self:ClearStates(handler, "homestate")
 
-	for state, values in pairs(MAS) do
+	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
 		if (self.data[state] and self[state] and self[state].registered) then
 			if (state == "custom" and self.data.customRange) then
 				local start = tonumber(string.match(self.data.customRange, "^%d+"))
@@ -511,7 +507,7 @@ end
 
 function BAR:AddVisibilityDriver(handler, state, conditions)
 
-	if (MBS[state]) then
+	if (Neuron.MANAGED_BAR_STATES[state]) then
 
 		RegisterAttributeDriver(handler, "state-"..state, conditions);
 
@@ -544,7 +540,7 @@ end
 
 function BAR:UpdateVisibility(driver)
 
-	for state, values in pairs(MBS) do
+	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
 
 		if (self.data.hidestates:find(":"..state)) then
 
@@ -586,9 +582,9 @@ function BAR:BuildStateMap(remapState)
 		else
 			local newstate = remapState..remap
 
-			if (MAS[remapState] and
-					MAS[remapState].homestate and
-					MAS[remapState].homestate == newstate) then
+			if (Neuron.MANAGED_BAR_STATES[remapState] and
+					Neuron.MANAGED_BAR_STATES[remapState].homestate and
+					Neuron.MANAGED_BAR_STATES[remapState].homestate == newstate) then
 				statemap = statemap.."["..state..":"..map.."] homestate; "
 			else
 				statemap = statemap.."["..state..":"..map.."] "..newstate.."; "
@@ -606,12 +602,12 @@ function BAR:AddStates(handler, state, conditions)
 
 	if (state) then
 
-		if (MAS[state]) then
+		if (Neuron.MANAGED_BAR_STATES[state]) then
 			RegisterAttributeDriver(handler, "state-"..state, conditions);
 		end
 
-		if (MAS[state].homestate) then
-			handler:SetAttribute("handler-homestate", MAS[state].homestate)
+		if (Neuron.MANAGED_BAR_STATES[state].homestate) then
+			handler:SetAttribute("handler-homestate", Neuron.MANAGED_BAR_STATES[state].homestate)
 		end
 
 		self[state].registered = true
@@ -623,7 +619,7 @@ function BAR:ClearStates(handler, state)
 
 	if (state ~= "homestate") then
 
-		if (MAS[state].homestate) then
+		if (Neuron.MANAGED_BAR_STATES[state].homestate) then
 			handler:SetAttribute("handler-homestate", nil)
 		end
 
@@ -640,7 +636,7 @@ end
 
 
 function BAR:UpdateStates(handler)
-	for state, values in pairs(MAS) do
+	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
 
 		if (self.data[state]) then
 
@@ -703,10 +699,10 @@ function BAR:CreateDriver()
 	setmetatable(driver, { __index = handlerMT })
 
 	driver:SetID(self.DB.id)
-	--Dynamicly builds driver attributes based on stated in Neuron.STATEINDEX using localized attribute text from a above
-	for _, modifier in pairs(Neuron.STATEINDEX) do
-		local action = DRIVER_BASE_ACTION:gsub("<MODIFIER>", modifier)
-		driver:SetAttribute("_onstate-"..modifier, action)
+	--Dynamicly builds driver attributes based on stated in Neuron.MANAGED_BAR_STATES using localized attribute text from a above
+	for _, stateInfo in pairs(Neuron.MANAGED_BAR_STATES) do
+		local action = DRIVER_BASE_ACTION:gsub("<MODIFIER>", stateInfo.modifier)
+		driver:SetAttribute("_onstate-"..stateInfo.modifier, action)
 	end
 
 	driver:SetAttribute("activestates", "")
@@ -781,10 +777,10 @@ function BAR:CreateHandler()
 
 	handler:SetID(self.DB.id)
 
-	--Dynamicly builds handler actions based on states in Neuron.STATEINDEX using Global text
-	for _, modifier in pairs(Neuron.STATEINDEX) do
-		local action = HANDLER_BASE_ACTION:gsub("<MODIFIER>", modifier)
-		handler:SetAttribute("_onstate-"..modifier, action)
+	--Dynamicly builds handler actions based on states in Neuron.MANAGED_BAR_STATES using Global text
+	for _, stateInfo in pairs(Neuron.MANAGED_BAR_STATES) do
+		local action = HANDLER_BASE_ACTION:gsub("<MODIFIER>", stateInfo.modifier)
+		handler:SetAttribute("_onstate-"..stateInfo.modifier, action)
 	end
 
 	handler:SetAttribute("_onstate-paged", [[
@@ -1305,7 +1301,7 @@ end
 
 
 function BAR:SetRemap_Stance()
-	local start = tonumber(MAS.stance.homestate:match("%d+"))
+	local start = tonumber(Neuron.MANAGED_BAR_STATES.stance.homestate:match("%d+"))
 
 	if (start) then
 		self.data.remap = ""
@@ -1686,7 +1682,7 @@ function BAR:SetState(msg, gui, checked)
 		local command = msg:gsub(state, "");
 		command = command:gsub("^%s+", "")
 
-		if (not MAS[state]) then
+		if (not Neuron.MANAGED_BAR_STATES[state]) then
 			if (not gui) then
 				Neuron:PrintStateList()
 			else
@@ -1795,12 +1791,12 @@ function BAR:SetState(msg, gui, checked)
 	elseif (not gui) then
 		wipe(statetable)
 
-		for k,v in pairs(Neuron.STATEINDEX) do
+		for k,v in pairs(Neuron.MANAGED_BAR_STATES) do
 
 			if (self.data[k]) then
-				table.insert(statetable, k..": on")
+				table.insert(statetable, v.localizedName..": on")
 			else
-				table.insert(statetable, k..": off")
+				table.insert(statetable, v.localizedName..": off")
 			end
 		end
 
@@ -1814,91 +1810,90 @@ function BAR:SetState(msg, gui, checked)
 end
 
 --TODO: Rewrite this and simplify it
-function BAR:SetVisibility(msg, gui, checked, query)
-	if (msg) then
-		wipe(statetable)
-		local toggle, index, num = (" "):split(msg)
-		toggle = toggle:lower()
+function BAR:SetVisibility(msg)
 
-		if (toggle and Neuron.STATEINDEX[toggle]) then
-			if (index) then
-				num = index:match("%d+")
+	wipe(statetable)
+	local toggle, index, num = (" "):split(msg)
+	toggle = toggle:lower()
 
-				if (num) then
-					local hidestate = Neuron.STATEINDEX[toggle]..num
-					if (Neuron.STATES[hidestate]) or (toggle == "custom" and self.data.customNames) then
-						if (self.data.hidestates:find(hidestate)) then
-							self.data.hidestates = self.data.hidestates:gsub(hidestate..":", "")
-						else
-							self.data.hidestates = self.data.hidestates..hidestate..":"
-						end
+	if (toggle and Neuron.MANAGED_BAR_STATES[toggle]) then
+		if (index) then
+			num = index:match("%d+")
+
+			if (num) then
+				local hidestate = Neuron.MANAGED_BAR_STATES[toggle].modifier..num
+				if (Neuron.STATES[hidestate]) or (toggle == "custom" and self.data.customNames) then
+					if (self.data.hidestates:find(hidestate)) then
+						self.data.hidestates = self.data.hidestates:gsub(hidestate..":", "")
 					else
-						Neuron:Print(L["Invalid index"]); return
+						self.data.hidestates = self.data.hidestates..hidestate..":"
 					end
-
-				elseif (index == L["Show"]) then
-					local hidestate = Neuron.STATEINDEX[toggle].."%d+"
-					self.data.hidestates = self.data.hidestates:gsub(hidestate..":", "")
-				elseif (index == L["Hide"]) then
-					local hidestate = Neuron.STATEINDEX[toggle]
-
-					for state in pairs(Neuron.STATES) do
-						if (state:find("^"..hidestate) and not self.data.hidestates:find(state)) then
-							self.data.hidestates = self.data.hidestates..state..":"
-						end
-					end
+				else
+					Neuron:Print(L["Invalid index"]); return
 				end
-			end
 
+			elseif (index == L["Show"]) then
+				local hidestate = Neuron.MANAGED_BAR_STATES[toggle].modifier.."%d+"
+				self.data.hidestates = self.data.hidestates:gsub(hidestate..":", "")
+			elseif (index == L["Hide"]) then
+				local hidestate = Neuron.MANAGED_BAR_STATES[toggle].modifier
 
-			local hidestates = self.data.hidestates
-			local showhide
-
-			local highindex = 0
-
-			for state,desc in pairs(Neuron.STATES) do
-				index = state:match("%d+$")
-
-				if (index) then
-					index = tonumber(index)
-
-					if (index and state:find("^"..toggle)) then
-						if (hidestates:find(state)) then
-							statetable[index] = desc..":".."Hide:"..state
-						else
-							statetable[index] = desc..":".."Show:"..state
-						end
-
-						if (index > highindex) then
-							highindex = index
-						end
+				for state in pairs(Neuron.STATES) do
+					if (state:find("^"..hidestate) and not self.data.hidestates:find(state)) then
+						self.data.hidestates = self.data.hidestates..state..":"
 					end
 				end
 			end
-
-			for i=1,highindex do
-				if (not statetable[i]) then
-					statetable[i] = "ignore"
-				end
-			end
-
-			if (#statetable > 0) then
-
-				for k,v in ipairs(statetable) do
-					if (v ~= "ignore") then
-						desc, showhide = (":"):split(v)
-					end
-				end
-			end
-
-
-			self.vischanged = true
-			self:Update()
-		else
-			Neuron:PrintStateList()
 		end
+
+
+		local hidestates = self.data.hidestates
+		local showhide
+
+		local highindex = 0
+
+		for state,desc in pairs(Neuron.STATES) do
+			index = state:match("%d+$")
+
+			if (index) then
+				index = tonumber(index)
+
+				if (index and state:find("^"..toggle)) then
+					if (hidestates:find(state)) then
+						statetable[index] = desc..":".."Hide:"..state
+					else
+						statetable[index] = desc..":".."Show:"..state
+					end
+
+					if (index > highindex) then
+						highindex = index
+					end
+				end
+			end
+		end
+
+		for i=1,highindex do
+			if (not statetable[i]) then
+				statetable[i] = "ignore"
+			end
+		end
+
+		if (#statetable > 0) then
+
+			for k,v in ipairs(statetable) do
+				if (v ~= "ignore") then
+					desc, showhide = (":"):split(v)
+				end
+			end
+		end
+
+
+		self.vischanged = true
+		self:Update()
 	else
+		Neuron:PrintStateList()
 	end
+
 end
 
 

@@ -141,10 +141,8 @@ function Neuron:PrintStateList()
 	local data = {}
 	local list
 
-	for k,v in pairs(Neuron.MANAGED_ACTION_STATES) do
-		if (Neuron.STATEINDEX[k]) then
-			data[v.order] = Neuron.STATEINDEX[k]
-		end
+	for k,v in pairs(Neuron.MANAGED_BAR_STATES) do
+		data[v.order] = v.localizedName
 	end
 
 	for k,v in ipairs(data) do
