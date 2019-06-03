@@ -63,5 +63,5 @@ GUI/BarEditTab.lua
 GUI/BarEditTab_GeneralConfigPanel.lua
 GUI/BarEditTab_BarStatesPanel.lua
 GUI/BarEditTab_BarVisibilityPanel.lua
-GUI/BarEditTab_SpellTargetingPanel.lua
+#GUI/BarEditTab_SpellTargetingPanel.lua
 GUI/ButtonEditTab.lua

@@ -2592,3 +2592,31 @@ end
 function BAR:GetManaColor()
 	return self.data.manacolor
 end
+
+
+--[[
+function BAR:SetCastingTarget(value, gui, checked, query)
+	if (value) then
+		if (gui) then
+
+			if (checked) then
+				self.data[value] = true
+			else
+				self.data[value] = false
+			end
+
+		else
+
+			local toggle = self.data[value]
+
+			if (toggle) then
+				self.data[value] = false
+			else
+				self.data[value] = true
+			end
+		end
+
+		Neuron.ACTIONBUTTON:UpdateMacroCastTargets()
+		self:Update()
+	end
+end]]
