@@ -141,7 +141,7 @@ function NeuronGUI:OnEnable()
 	NeuronGUI:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	NeuronGUI:RegisterEvent("ADDON_LOADED")
 
-	LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-GUI", NeuronGUI.target_options)
+	--LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-GUI", NeuronGUI.target_options)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-Flyout", NeuronGUI.flyout_options)
 
 end
@@ -806,7 +806,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 	NeuronGUI:VisEditorScrollFrameUpdate()
 	NeuronGUI:SecondaryPresetsScrollFrameUpdate()
 
-	LibStub("AceConfigDialog-3.0"):Open("Neuron-GUI", NBE.ACEmenu)
+	--LibStub("AceConfigDialog-3.0"):Open("Neuron-GUI", NBE.ACEmenu)
 
 end
 
@@ -931,13 +931,13 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetWidth(140)
 	f:SetHeight(28)
 	f:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -28, -8.5)
-	f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
+	--f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
 	f:SetChecked(nil)
-	f.text:SetText(L["Spell Target Options"])
+	--f.text:SetText(L["Spell Target Options"])
 	frame.tab3 = f; frame.tabs[f] = frame.targetoptions
 
-	f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
+	local f = CreateFrame("CheckButton", nil, frame, "NeuronCheckButtonTemplate1")
 	f:SetWidth(140)
 	f:SetHeight(28)
 	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)

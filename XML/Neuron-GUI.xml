@@ -1719,7 +1719,7 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						Neuron.NeuronGUI:TargetOptions_OnLoad(self)
+						--Neuron.NeuronGUI:TargetOptions_OnLoad(self)
 					</OnLoad>
 				</Scripts>
 			</Frame>
