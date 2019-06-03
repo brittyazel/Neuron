@@ -40,7 +40,7 @@ function NeuronGUI:BarEditPanel(tabFrame)
 		innerTabFrame:SetLayout("Flow")
 		innerTabFrame:SetFullWidth(true)
 		innerTabFrame:SetFullHeight(true)
-		innerTabFrame:SetTabs({{text="General Configuration", value="tab1"}, {text="Bar States", value="tab2"}, {text="Bar Visibility", value="tab3"}}) --{,text="Spell Target Options", value="tab4"}})
+		innerTabFrame:SetTabs({{text="General Configuration", value="tab1"}, {text="Bar States", value="tab2"}, {text="Bar Visibility", value="tab3"}})
 		innerTabFrame:SetCallback("OnGroupSelected", function(self, _, tab) NeuronGUI:SelectInnerTab(self, _, tab) end)
 		innerTabFrame:SelectTab(currentTab)
 		tabFrame:AddChild(innerTabFrame)
@@ -73,9 +73,6 @@ function NeuronGUI:SelectInnerTab(tabFrame, _, tab)
 	elseif tab == "tab3" then
 		NeuronGUI:BarVisibilityPanel(tabFrame)
 		currentTab = "tab3"
-	--[[elseif tab == "tab4" then
-		NeuronGUI:SpellTargetingPanel(tabFrame)
-		currentTab = "tab4"]]
 	end
 
 end
