@@ -21,6 +21,48 @@
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
+Neuron.STATES = {
+	homestate = L["Home State"],
+	laststate = L["Last State"],
+	paged1 = L["Page 1"],
+	paged2 = L["Page 2"],
+	paged3 = L["Page 3"],
+	paged4 = L["Page 4"],
+	paged5 = L["Page 5"],
+	paged6 = L["Page 6"],
+	pet0 = L["No Pet"],
+	pet1 = L["Pet Exists"],
+	alt0 = L["Alt Up"],
+	alt1 = L["Alt Down"],
+	ctrl0 = L["Control Up"],
+	ctrl1 = L["Control Down"],
+	shift0 = L["Shift Up"],
+	shift1 = L["Shift Down"],
+	stealth0 = L["No Stealth"],
+	stealth1 = L["Stealth"],
+	reaction0 = L["Friendly"],
+	reaction1 = L["Hostile"],
+	combat0 = L["Out of Combat"],
+	combat1 = L["In Combat"],
+	group0 = L["No Group"],
+	group1 = L["Group: Raid"],
+	group2 = L["Group: Party"],
+	fishing0 = L["No Fishing Pole"],
+	fishing1 = L["Fishing Pole"],
+	vehicle0 = L["No Vehicle"],
+	vehicle1 = L["Vehicle"],
+	possess0 = L["No Possess"],
+	possess1 = L["Possess"],
+	override0 = L["No Override Bar"],
+	override1 = L["Override Bar"],
+	extrabar0 = L["No Extra Bar"],
+	extrabar1 = L["Extra Bar"],
+	custom0 = L["Custom States"],
+	target0 = L["Has Target"],
+	target1 = L["No Target"],
+}
+
+
 Neuron.MANAGED_BAR_STATES = {
 
 	paged = {
