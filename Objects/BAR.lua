@@ -138,6 +138,7 @@ function BAR.new(class, barID)
 	newBar:SetScript("OnShow", function(self) self:OnShow() end)
 	newBar:SetScript("OnHide", function(self) self:OnHide() end)
 
+	table.insert(Neuron.BARIndex, newBar) --insert our new bar at the end of the table
 
 	newBar:CreateDriver()
 	newBar:CreateHandler()
@@ -146,8 +147,6 @@ function BAR.new(class, barID)
 	newBar:LoadData()
 
 	newBar:Hide() --hide the transparent blue overlay that we show in the edit mode
-
-	Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar --add handle for our new bar into a bar index table
 
 	return newBar
 end
@@ -237,8 +236,16 @@ function BAR:DeleteBar()
 		end
 	end
 
+	local index --find the location of our bar in the bar table
+	for i,v in ipairs(Neuron.BARIndex) do
+		if v == self then
+			index = i
+		end
+	end
 
-	table.remove(Neuron.BARIndex, self.index)
+	if index then --if our index was found (it should always be found) remove it from the array
+		table.remove(Neuron.BARIndex, index)
+	end
 
 	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
 		Neuron.NeuronGUI:UpdateBarGUI()
