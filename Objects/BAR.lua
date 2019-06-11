@@ -169,7 +169,6 @@ function BAR:CreateNewBar(class)
 	local barID = #Neuron.registeredBarData[class].barDB + 1 --increment 1 higher than the current number of bars in this class of bar's database
 
 	local newBar = BAR.new(class, barID) --create new bar
-	Neuron.BARIndex[#Neuron.BARIndex + 1] = newBar --add handle for our new bar into a bar index table
 
 	newBar.objTemplate.new(newBar, 1) --add at least 1 button to a new bar
 	newBar:ChangeBar()
