@@ -73,8 +73,8 @@ function EXTRABTN:SetType()
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
-	self:SetObjectVisibility()
 	self:UpdateIcon()
+	self:SetObjectVisibility()
 
 	self:SetSkinned()
 end

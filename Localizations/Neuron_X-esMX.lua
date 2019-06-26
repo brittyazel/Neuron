@@ -19,9 +19,6 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
-
-local AddOnFolderName, private = ...
-
 local L = LibStub("AceLocale-3.0"):NewLocale("Neuron", "esMX", false)
 
 if not L then return end
