@@ -57,7 +57,7 @@ end
 
 
 function PETBTN.HasPetAction(id)
-	if (GetPetActionInfo(id)) then
+	if id and GetPetActionInfo(id) then
 		return true
 	else
 		return false
