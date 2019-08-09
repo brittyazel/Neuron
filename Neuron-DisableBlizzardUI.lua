@@ -60,27 +60,30 @@ function Neuron:HideBlizzardUI()
 
 	-- disable override bar transition animations
 	disableFrameSlidingAnimation(MainMenuBar)
-	disableFrameSlidingAnimation(OverrideActionBar)
-
 	disableFrame(MultiBarBottomLeft, true)
 	disableFrame(MultiBarBottomRight, true)
 	disableFrame(MultiBarLeft, true)
 	disableFrame(MultiBarRight, true)
 	disableFrame(MainMenuBarArtFrame, true)
 	disableFrame(StanceBarFrame, true)
-	disableFrame(PossessBarFrame, true)
 	disableFrame(PetActionBarFrame, true)
-	disableFrame(MultiCastActionBarFrame, true)
-	disableFrame(ExtraActionBarFrame, true)
-	disableFrame(ZoneAbilityFrame, true)
 	disableFrame(MainMenuBarVehicleLeaveButton, true)
-	disableFrame(MicroButtonAndBagsBar, true)
 	disableFrame(MainMenuBarPerformanceBar)
 
-	StatusTrackingBarManager:UnregisterAllEvents()
+	if not Neuron.isWoWClassic then
+		disableFrameSlidingAnimation(OverrideActionBar)
+		disableFrame(PossessBarFrame, true)
+		disableFrame(MicroButtonAndBagsBar, true)
+		disableFrame(MultiCastActionBarFrame, true)
+		disableFrame(ExtraActionBarFrame, true)
+		disableFrame(ZoneAbilityFrame, true)
+
+		StatusTrackingBarManager:UnregisterAllEvents()
+	end
+
 
 	ActionBarController:UnregisterAllEvents()
-	StatusTrackingBarManager:UnregisterAllEvents()
+
 
 	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
 	if (not Neuron:IsHooked('ActionButton_OnEvent')) then
@@ -95,10 +98,6 @@ function Neuron:HideBlizzardUI()
 		Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
 
-	if (not Neuron:IsHooked('OverrideActionBar_UpdateSkin')) then
-		Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
-	end
-
 	if (not Neuron:IsHooked('ActionButton_HideGrid')) then
 		Neuron:RawHook('ActionButton_HideGrid', function() end, true)
 	end
@@ -110,6 +109,13 @@ function Neuron:HideBlizzardUI()
 	if (not Neuron:IsHooked('PetActionBar_Update')) then
 		Neuron:RawHook('PetActionBar_Update', function() end, true)
 	end
+
+	if not Neuron.isWoWClassic then
+		if (not Neuron:IsHooked('OverrideActionBar_UpdateSkin')) then
+			Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
+		end
+	end
+
 end
 
 

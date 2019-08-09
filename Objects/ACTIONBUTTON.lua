@@ -70,7 +70,7 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ACTIONBUTTON, "ActionBar", "ActionButton", "NeuronActionButtonTemplate")
 
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
+	newButton:LoadData(Neuron.activeSpec, "homestate")
 
 	if (defaults) then
 		newButton:SetDefaults(defaults)
@@ -160,10 +160,28 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("ACTIONBAR_SHOWGRID")
 	self:RegisterEvent("ACTIONBAR_HIDEGRID")
 
-	self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+	if not Neuron.isWoWClassic then
+		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+		self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+		self:RegisterEvent("UNIT_ENTERING_VEHICLE")
+		self:RegisterEvent("UNIT_EXITED_VEHICLE")
+		self:RegisterEvent("PLAYER_FOCUS_CHANGED")
+
+		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+
+		self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+		self:RegisterEvent("UPDATE_POSSESS_BAR")
+		self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+		self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+
+		--Makes it so the mount icon gets checked on and off appropriately
+		self:RegisterEvent("COMPANION_UPDATE")
+	end
+
 	self:RegisterEvent("UPDATE_MACROS")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
 	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
 	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
@@ -180,31 +198,17 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 	self:RegisterEvent("UNIT_SPELLCAST_FAILED")
 	self:RegisterEvent("UNIT_PET")
-	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-	self:RegisterEvent("UNIT_ENTERING_VEHICLE")
-	self:RegisterEvent("UNIT_EXITED_VEHICLE")
+
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
-	self:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
 	self:RegisterEvent("BAG_UPDATE_COOLDOWN")
 	self:RegisterEvent("BAG_UPDATE")
 
-	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-	self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
-
-	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-	self:RegisterEvent("UPDATE_POSSESS_BAR")
-	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-
 
 	self:RegisterEvent("PLAYER_STARTED_MOVING")
 	self:RegisterEvent("PLAYER_STOPPED_MOVING")
-
-	--Makes it so the mount icon gets checked on and off appropriately
-	self:RegisterEvent("COMPANION_UPDATE")
 
 
 	--Makes the action button get checked on and off when opening the trade skill UI widget
@@ -786,15 +790,7 @@ function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
 		return
 	end
 
-	local spec
-
-	if (self.multiSpec) then
-		spec = GetSpecialization()
-	else
-		spec = 1
-	end
-
-	self:LoadData(spec, self:GetParent():GetAttribute("activestate") or "homestate")
+	self:LoadData(Neuron.activeSpec, self:GetParent():GetAttribute("activestate") or "homestate")
 	self:UpdateFlyout()
 	self:SetType()
 	self:UpdateAll()
@@ -822,7 +818,10 @@ end
 
 function ACTIONBUTTON:SPELLS_CHANGED(...)
 	self:UpdateAll()
-	self:UpdateGlow()
+
+	if not Neuron.isWoWClassic then
+		self:UpdateGlow()
+	end
 end
 
 ACTIONBUTTON.MODIFIER_STATE_CHANGED = ACTIONBUTTON.SPELLS_CHANGED
@@ -1132,16 +1131,8 @@ end
 
 
 function ACTIONBUTTON:UpdateButtonSpec(bar)
-	local spec
-
-	if (bar.data.multiSpec) then
-		spec = GetSpecialization()
-	else
-		spec = 1
-	end
-
 	self:SetData(bar)
-	self:LoadData(spec, bar.handler:GetAttribute("activestate"))
+	self:LoadData(Neuron.activeSpec, bar.handler:GetAttribute("activestate"))
 	self:UpdateFlyout()
 	self:SetType()
 	self:SetObjectVisibility()
@@ -1177,10 +1168,14 @@ function ACTIONBUTTON:Reset()
 	self:UnregisterEvent("PET_BAR_UPDATE")
 	self:UnregisterEvent("PET_BAR_UPDATE_COOLDOWN")
 	self:UnregisterEvent("UNIT_FLAGS")
-	self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+
+	if not Neuron.isWoWClassic then
+		self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+		self:UnregisterEvent("EQUIPMENT_SETS_CHANGED")
+	end
+
 	self:UnregisterEvent("UPDATE_MACROS")
 	self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
-	self:UnregisterEvent("EQUIPMENT_SETS_CHANGED")
 
 	self:MACRO_Reset()
 end

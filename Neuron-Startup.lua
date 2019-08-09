@@ -47,11 +47,13 @@ function Neuron:RegisterBars()
 	--Neuron Action Bar
 	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.ActionBar, Neuron.ACTIONBUTTON, 250)
 
-	--Neuron Zone Ability Bar
-	Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
+	if not Neuron.isWoWClassic then
+		--Neuron Zone Ability Bar
+		Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
 
-	--Neuron Extra Bar
-	Neuron:RegisterBarClass("ExtraBar", "ExtraBar", L["Extra Action Bar"], "Extra Action Button", DB.ExtraBar, Neuron.EXTRABTN,1)
+		--Neuron Extra Bar
+		Neuron:RegisterBarClass("ExtraBar", "ExtraBar", L["Extra Action Bar"], "Extra Action Button", DB.ExtraBar, Neuron.EXTRABTN,1)
+	end
 
 	--Neuron Bag Bar
 	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN,5)
@@ -63,7 +65,7 @@ function Neuron:RegisterBars()
 	Neuron:RegisterBarClass("ExitBar", "ExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.ExitBar, Neuron.EXITBTN,1)
 
 	--Neuron Menu Bar
-	Neuron:RegisterBarClass("MenuBar", "MenuBar", L["Menu Bar"], "Menu Button", DB.MenuBar, Neuron.MENUBTN, 11)
+	Neuron:RegisterBarClass("MenuBar", "MenuBar", L["Menu Bar"], "Menu Button", DB.MenuBar, Neuron.MENUBTN, #MICRO_BUTTONS)
 
 	--Neuron Pet Bar
 	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10)
@@ -94,36 +96,38 @@ function Neuron:RegisterGUI()
 		AURAIND = true },
 			true, 115)
 
-	--Neuron Zone Ability Bar
-	Neuron:RegisterGUIOptions("ZoneAbilityBar", {
-		AUTOHIDE = true,
-		SHOWGRID = false,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		HIDDEN = true,
-		LOCKBAR = false,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		COUNTTEXT = true,
-		BORDERSTYLE = true,},
-			false, 65)
+	if not Neuron.isWoWClassic then
+		--Neuron Zone Ability Bar
+		Neuron:RegisterGUIOptions("ZoneAbilityBar", {
+			AUTOHIDE = true,
+			SHOWGRID = false,
+			SNAPTO = true,
+			UPCLICKS = true,
+			DOWNCLICKS = true,
+			HIDDEN = true,
+			LOCKBAR = false,
+			TOOLTIPS = true,
+			BINDTEXT = true,
+			COUNTTEXT = true,
+			BORDERSTYLE = true,},
+				false, 65)
 
 
-	--Neuron Extra Bar
-	Neuron:RegisterGUIOptions("ExtraBar", {
-		AUTOHIDE = true,
-		SHOWGRID = false,
-		SNAPTO = true,
-		UPCLICKS = true,
-		DOWNCLICKS = true,
-		HIDDEN = true,
-		LOCKBAR = false,
-		TOOLTIPS = true,
-		BINDTEXT = true,
-		COUNTTEXT = true,
-		BORDERSTYLE = true,},
-			false, 65)
+		--Neuron Extra Bar
+		Neuron:RegisterGUIOptions("ExtraBar", {
+			AUTOHIDE = true,
+			SHOWGRID = false,
+			SNAPTO = true,
+			UPCLICKS = true,
+			DOWNCLICKS = true,
+			HIDDEN = true,
+			LOCKBAR = false,
+			TOOLTIPS = true,
+			BINDTEXT = true,
+			COUNTTEXT = true,
+			BORDERSTYLE = true,},
+				false, 65)
+	end
 
 
 	--Neuron Bag Bar
@@ -192,14 +196,16 @@ function Neuron:CreateBarsAndButtons()
 	if (DB.firstRun) then
 
 		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
-			for i, defaults in ipairs(barDefaults) do --create the bar objects
-				local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor
+			if Neuron.registeredBarData[barClass] then
+				for i, defaults in ipairs(barDefaults) do --create the bar objects
+					local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor
 
-				--create the default button objects for a given bar with the default values
-				newBar:SetDefaults(defaults)
+					--create the default button objects for a given bar with the default values
+					newBar:SetDefaults(defaults)
 
-				for buttonID=1,#defaults.buttons do
-					newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID]) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
+					for buttonID=1,#defaults.buttons do
+						newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID]) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
+					end
 				end
 			end
 
@@ -210,13 +216,15 @@ function Neuron:CreateBarsAndButtons()
 	else
 
 		for barClass, barClassData in pairs (Neuron.registeredBarData) do
-			for id,data in pairs(barClassData.barDB) do
-				if (data ~= nil) then
-					local newBar = Neuron.BAR.new(barClass, id) --this calls the bar constructor
+			if Neuron.registeredBarData[barClass] then
+				for id,data in pairs(barClassData.barDB) do
+					if (data ~= nil) then
+						local newBar = Neuron.BAR.new(barClass, id) --this calls the bar constructor
 
-					--create all the saved button objects for a given bar
-					for buttonID=1,#newBar.DB.buttons do
-						newBar.objTemplate.new(newBar, buttonID) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
+						--create all the saved button objects for a given bar
+						for buttonID=1,#newBar.DB.buttons do
+							newBar.objTemplate.new(newBar, buttonID) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
+						end
 					end
 				end
 			end

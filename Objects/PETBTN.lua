@@ -41,7 +41,7 @@ function PETBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, PETBTN, "PetBar", "PetButton", "NeuronActionButtonTemplate")
 
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
+	newButton:LoadData(Neuron.activeSpec, "homestate")
 
 	if (defaults) then
 		newButton:SetDefaults(defaults)
@@ -73,7 +73,9 @@ function PETBTN:SetType()
 
 	self:RegisterEvent("PET_BAR_UPDATE")
 	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
-	self:RegisterEvent("PET_SPECIALIZATION_CHANGED")
+	if not Neuron.isWoWClassic then
+		self:RegisterEvent("PET_SPECIALIZATION_CHANGED")
+	end
 	self:RegisterEvent("PET_DISMISS_START")
 	self:RegisterEvent("PLAYER_CONTROL_LOST")
 	self:RegisterEvent("PLAYER_CONTROL_GAINED")
