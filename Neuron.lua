@@ -179,7 +179,7 @@ function Neuron:OnInitialize()
 	Neuron:RegisterChatCommand("neuron", "slashHandler")
 
 	if not Neuron.isWoWClassic then
-		Neuron.activeSpec = Neuron.activeSpec
+		Neuron.activeSpec = GetSpecialization()
 	end
 
 	--build all bar and button frames and run initial setup
@@ -294,7 +294,7 @@ end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()
 
-	Neuron.activeSpec = Neuron.activeSpec
+	Neuron.activeSpec = GetSpecialization()
 
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()

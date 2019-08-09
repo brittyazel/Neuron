@@ -785,12 +785,21 @@ ACTIONBUTTON.SPELL_ACTIVATION_OVERLAY_GLOW_HIDE = ACTIONBUTTON.SPELL_ACTIVATION_
 
 
 function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
+	Neuron.activeSpec = GetSpecialization()
 
 	if(InCombatLockdown()) then
 		return
 	end
 
-	self:LoadData(Neuron.activeSpec, self:GetParent():GetAttribute("activestate") or "homestate")
+	local spec
+
+	if (self.multiSpec) then
+		spec = Neuron.activeSpec
+	else
+		spec = 1
+	end
+
+	self:LoadData(spec, self:GetParent():GetAttribute("activestate") or "homestate")
 	self:UpdateFlyout()
 	self:SetType()
 	self:UpdateAll()
@@ -1131,8 +1140,17 @@ end
 
 
 function ACTIONBUTTON:UpdateButtonSpec(bar)
+
+	local spec
+
+	if (bar.data.multiSpec) then
+		spec = Neuron.activeSpec
+	else
+		spec = 1
+	end
+
 	self:SetData(bar)
-	self:LoadData(Neuron.activeSpec, bar.handler:GetAttribute("activestate"))
+	self:LoadData(spec, bar.handler:GetAttribute("activestate"))
 	self:UpdateFlyout()
 	self:SetType()
 	self:SetObjectVisibility()
