@@ -1180,18 +1180,10 @@ end
 
 ---loads all the object stored for a given bar
 function BAR:LoadObjects()
-	local spec
-
-	if (self.data.multiSpec) then
-		spec = GetSpecialization()
-	else
-		spec = 1
-	end
-
 	for i, object in ipairs(self.buttons) do
 		---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
 		object:SetData(self)
-		object:LoadData(spec, self.handler:GetAttribute("activestate"))
+		object:LoadData(Neuron.activeSpec, self.handler:GetAttribute("activestate"))
 		object:SetType()
 
 		object:SetObjectVisibility()

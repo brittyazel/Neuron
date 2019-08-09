@@ -87,7 +87,7 @@ local swatchOptions = {
 	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
 }
 
-local specoveride = GetActiveSpecGroup() or 1
+local specoveride = Neuron.activeSpec
 
 local updater
 
@@ -138,7 +138,9 @@ function NeuronGUI:OnEnable()
 	updater.elapsed = 0
 	updater:Hide()
 
-	NeuronGUI:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	if not Neuron.isWoWClassic then
+		NeuronGUI:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	end
 	NeuronGUI:RegisterEvent("ADDON_LOADED")
 
 	--LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-GUI", NeuronGUI.target_options)
@@ -2507,7 +2509,7 @@ end
 function NeuronGUI:specUpdateIcon(button,state)
 
 	local texture = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
-	local buttonSpec = GetSpecialization()
+	local buttonSpec = Neuron.activeSpec
 	local data = button.DB[specoveride][state]
 
 	if (button.bar.data.multiSpec and specoveride ~= buttonSpec) then
@@ -2543,7 +2545,7 @@ function NeuronGUI:MacroEditorUpdate()
 	if (Neuron.CurrentObject and Neuron.CurrentObject.objType == "ACTIONBUTTON") then
 		local button, NBTNE = Neuron.CurrentObject, NeuronButtonEditor
 		local state = button.bar.handler:GetAttribute("fauxstate")
-		local buttonSpec = GetSpecialization()
+		local buttonSpec = Neuron.activeSpec
 
 		if (button.bar.data.multiSpec) then
 			buttonSpec = specoveride
@@ -2554,7 +2556,7 @@ function NeuronGUI:MacroEditorUpdate()
 			NBTNE["spec"..buttonSpec]:SetChecked(true)
 
 			--Sets current spec marker to proper tab
-			NBTNE.activespc:SetParent(NBTNE["spec"..GetSpecialization()])
+			NBTNE.activespc:SetParent(NBTNE["spec"..Neuron.activeSpec])
 			NBTNE.activespc:SetPoint("LEFT")
 			NBTNE.spec1:Show()
 			NBTNE.spec2:Show()
@@ -2634,7 +2636,9 @@ function NeuronGUI:ButtonEditorUpdate(reset)
 
 		NeuronButtonEditor.macroicon.icon:SetTexture("")
 
-		specoveride = GetSpecialization() or 1 --GetActiveSpecGroup()
+
+		specoveride = Neuron.activeSpec
+
 	end
 
 	NeuronGUI:ActionListScrollFrameUpdate()
@@ -2715,7 +2719,7 @@ function NeuronGUI:macroButton_Changed(frame, button, down)
 	local state = object.bar.handler:GetAttribute("fauxstate")
 
 	--handler to check if viewing non current spec button settings
-	if (specoveride ~= GetSpecialization()) then
+	if (specoveride ~= Neuron.activeSpec) then
 		data = object.DB[buttonSpec][state]
 	end
 
@@ -3129,7 +3133,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetPoint("BOTTOMLEFT", frame.macroicon, "BOTTOMRIGHT", 2, -7)
 	f:SetWidth(34)
 	f:SetHeight(34)
-	--f:SetScript("OnClick", function(self) SetActiveSpecGroup(GetActiveSpecGroup() == 1 and 2 or 1);  end)
+	--f:SetScript("OnClick", function(self) SetActiveSpecGroup(Neuron.activeSpec == 1 and 2 or 1);  end)
 	f:SetScript("OnClick", function(self) NeuronGUI:ResetButtonFields(self) end)
 	f:SetScript("OnEnter", function(self)
 		if ( self.tooltipText ) then

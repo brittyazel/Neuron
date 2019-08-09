@@ -134,7 +134,7 @@ function STATUSBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
 
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
+	newButton:LoadData(Neuron.activeSpec, "homestate")
 
 	if (defaults) then
 		newButton:SetDefaults(defaults)
@@ -333,13 +333,31 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 	UIDropDownMenu_AddButton(info)
 	wipe(info)
 
-	if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
+	if not Neuron.isWoWClassic then
+
+		if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
+			info.arg1 = self
+			info.arg2 = "azerite_xp"
+			info.text = L["Track Azerite Power"]
+			info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
+
+			if (self.sb.curXPType == "azerite_xp") then
+				info.checked = 1
+			else
+				info.checked = nil
+			end
+
+			UIDropDownMenu_AddButton(info)
+			wipe(info)
+		end
+
+
 		info.arg1 = self
-		info.arg2 = "azerite_xp"
-		info.text = L["Track Azerite Power"]
+		info.arg2 = "honor_points"
+		info.text = L["Track Honor Points"]
 		info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
 
-		if (self.sb.curXPType == "azerite_xp") then
+		if (self.sb.curXPType == "honor_points") then
 			info.checked = 1
 		else
 			info.checked = nil
@@ -347,22 +365,8 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 
 		UIDropDownMenu_AddButton(info)
 		wipe(info)
+
 	end
-
-
-	info.arg1 = self
-	info.arg2 = "honor_points"
-	info.text = L["Track Honor Points"]
-	info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
-
-	if (self.sb.curXPType == "honor_points") then
-		info.checked = 1
-	else
-		info.checked = nil
-	end
-
-	UIDropDownMenu_AddButton(info)
-	wipe(info)
 
 end
 
@@ -417,7 +421,9 @@ function STATUSBTN:repstrings_Update(line)
 
 		for i=1, GetNumFactions() do
 			local name, _, ID, min, max, value, _, _, isHeader, _, hasRep, _, _, factionID = GetFactionInfo(i)
-			local fID, fRep, fMaxRep, fName, fText, fTexture, fTextLevel, fThreshold, nextFThreshold = GetFriendshipReputation(factionID)
+			if not Neuron.isWoWClassic then
+				local fID, fRep, fMaxRep, fName, fText, fTexture, fTextLevel, fThreshold, nextFThreshold = GetFriendshipReputation(factionID)
+			end
 			local colors, standing
 			local hasFriendStatus = false
 
@@ -427,24 +433,29 @@ function STATUSBTN:repstrings_Update(line)
 
 			if ((not isHeader or hasRep) and not IsFactionInactive(i)) then
 				if (fID and not BrawlerGuildFactions[fID]) then
-					colors = BarRepColors[ID+2]; standing = fTextLevel
+					colors = BarRepColors[ID+2]
+					standing = fTextLevel
 					hasFriendStatus = true
 				elseif (fID and BrawlerGuildFactions[fID]) then
-					colors = BarRepColors[ID]; standing = fTextLevel
+					colors = BarRepColors[ID]
+					standing = fTextLevel
 					hasFriendStatus = true
 				else
-					colors = BarRepColors[ID]; standing = (colors.l):gsub("^%a%p", "")
+					colors = BarRepColors[ID];
+					standing = (colors.l):gsub("^%a%p", "")
 				end
 
-				if (factionID and C_Reputation.IsFactionParagon(factionID)) then
-					local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
-					value = para_value % para_max;
-					max = para_max
-					if hasRewardPending then
-						name = name.." ("..L["Reward"]:upper()..")"
+				if not Neuron.isWoWClassic then
+					if (factionID and C_Reputation.IsFactionParagon(factionID)) then
+						local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
+						value = para_value % para_max;
+						max = para_max
+						if hasRewardPending then
+							name = name.." ("..L["Reward"]:upper()..")"
+						end
+						min = 0
+						colors = BarRepColors[11]
 					end
-					min = 0
-					colors = BarRepColors[11]
 				end
 
 				local repData = self:SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
@@ -769,7 +780,13 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 	if (event == "UNIT_SPELLCAST_START") then
 
-		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
+		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible
+
+		if not Neuron.isWoWClassic then
+			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
+		else
+			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo()
+		end
 
 		if (not name) then
 			self:CastBar_Reset()
@@ -883,7 +900,13 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		if (self.sb:IsShown()) then
 
-			local name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
+			local name, text, texture, startTime, endTime, isTradeSkill
+
+			if not Neuron.isWoWClassic then
+				name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
+			else
+				name, text, texture, startTime, endTime, isTradeSkill = CastingInfo()
+			end
 
 			if (not name) then
 				self:CastBar_Reset()
@@ -1847,8 +1870,11 @@ function STATUSBTN:SetType()
 		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBar_OnEvent")
-		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
-		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
+
+		if not Neuron.isWoWClassic then
+			self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
+			self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
+		end
 
 		self.sb.unit = BarUnits[self.data.unit]
 		self.sb.showIcon = self.config.showIcon
@@ -1878,11 +1904,15 @@ function STATUSBTN:SetType()
 		self:SetHitRectInsets(0, 0, 0, 0)
 
 		self:RegisterEvent("PLAYER_XP_UPDATE", "XPBar_OnEvent")
-		self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
+
 		self:RegisterEvent("UPDATE_EXHAUSTION", "XPBar_OnEvent")
 		self:RegisterEvent("PLAYER_ENTERING_WORLD", "XPBar_OnEvent")
-		self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
 		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "XPBar_OnEvent")
+
+		if not Neuron.isWoWClassic then
+			self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
+			self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
+		end
 
 		self.sb:Show()
 

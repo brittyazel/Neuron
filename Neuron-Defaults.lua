@@ -256,21 +256,13 @@ NeuronDefaultBarOptions.MenuBar = {
 		x = -348,
 		y = 24,
 
-		buttons = {
-			[1] = {},
-			[2] = {},
-			[3] = {},
-			[4] = {},
-			[5] = {},
-			[6] = {},
-			[7] = {},
-			[8] = {},
-			[9] = {},
-			[10] = {},
-			[11] = {},
-		},
+		buttons = {},
 	}
 }
+
+for i = 1,#MICRO_BUTTONS do
+	NeuronDefaultBarOptions.MenuBar[1].buttons[i] = {}
+end
 
 NeuronDefaultBarOptions.PetBar = {
 	[1] = {
