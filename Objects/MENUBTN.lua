@@ -23,12 +23,25 @@
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
+local menuElements = {
+	CharacterMicroButton,
+	SpellbookMicroButton,
+	TalentMicroButton,
+	AchievementMicroButton,
+	QuestLogMicroButton,
+	GuildMicroButton,
+	LFDMicroButton,
+	CollectionsMicroButton,
+	EJMicroButton,
+	StoreMicroButton,
+	MainMenuMicroButton}
 
 
-local menuElements = {}
-
-for i=1, #MICRO_BUTTONS do
-	table.insert(menuElements, _G[MICRO_BUTTONS[i]])
+if Neuron.isWoWClassic then
+	wipe(menuElements)
+	for i=1, #MICRO_BUTTONS do
+		table.insert(menuElements, _G[MICRO_BUTTONS[i]])
+	end
 end
 ---------------------------------------------------------
 
