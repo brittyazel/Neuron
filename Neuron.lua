@@ -178,13 +178,6 @@ function Neuron:OnInitialize()
 	--Initialize the chat commands (i.e. /neuron)
 	Neuron:RegisterChatCommand("neuron", "slashHandler")
 
-	if not Neuron.isWoWClassic then
-		Neuron.activeSpec = GetSpecialization()
-	end
-
-	--build all bar and button frames and run initial setup
-	Neuron:Startup()
-
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -192,6 +185,13 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function Neuron:OnEnable()
+
+	if not Neuron.isWoWClassic then
+		Neuron.activeSpec = GetSpecialization()
+	end
+
+	--build all bar and button frames and run initial setup
+	Neuron:Startup()
 
 	Neuron:RegisterEvent("PLAYER_REGEN_DISABLED")
 	Neuron:RegisterEvent("PLAYER_ENTERING_WORLD")
