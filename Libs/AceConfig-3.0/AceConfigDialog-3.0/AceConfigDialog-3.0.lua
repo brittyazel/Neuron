@@ -564,7 +564,15 @@ do
 			end
 		end)
 
-		local border = CreateFrame("Frame", nil, frame, "DeveloperConsoleBackgroundTemplate")
+
+		--hack Soyier did for WoW Classic, shouldn't affect live
+		local border
+		if select(4, GetBuildInfo()) > 20000 then
+			border = CreateFrame("Frame", nil, frame, "DialogBorderDarkTemplate")
+		else
+			border = CreateFrame("Frame", nil, frame, "DeveloperConsoleBackgroundTemplate")
+		end
+
 		border:SetAllPoints(frame)
 
 		local text = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
