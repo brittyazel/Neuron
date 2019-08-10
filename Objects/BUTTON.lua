@@ -468,7 +468,7 @@ end
 
 
 --TODO: This should be consolodated as each child has a VERY similar function
-function BUTTON:LoadData(spec, state)
+function BUTTON:LoadData()
 	self.config = self.DB.config
 	self.keys = self.DB.keys
 	self.data = self.DB.data

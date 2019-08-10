@@ -36,13 +36,9 @@ function EXTRABTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
 
-	newButton:LoadData(Neuron.activeSpec, "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
-
-	newButton.binder = Neuron.KEYBINDER.new(newButton)
 
 	newButton.style = newButton:CreateTexture(nil, "OVERLAY")
 	newButton.style:SetPoint("CENTER", -2, 1)

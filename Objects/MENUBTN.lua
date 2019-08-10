@@ -54,8 +54,6 @@ function MENUBTN.new(bar, buttonID, defaults)
 	---call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, MENUBTN, "MenuBar", "MenuButton", "NeuronAnchorButtonTemplate")
 
-	newButton:LoadData(Neuron.activeSpec, "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end

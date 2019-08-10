@@ -70,8 +70,6 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ACTIONBUTTON, "ActionBar", "ActionButton", "NeuronActionButtonTemplate")
 
-	newButton:LoadData(Neuron.activeSpec, "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
@@ -79,8 +77,6 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 	if Neuron.NeuronGUI then
 		Neuron.NeuronGUI:ObjEditor_CreateEditFrame(newButton)
 	end
-
-	newButton.binder = Neuron.KEYBINDER.new(newButton)
 
 	return newButton
 end
@@ -160,26 +156,6 @@ function ACTIONBUTTON:SetUpEvents()
 	self:RegisterEvent("ACTIONBAR_SHOWGRID")
 	self:RegisterEvent("ACTIONBAR_HIDEGRID")
 
-	if not Neuron.isWoWClassic then
-		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-		self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-		self:RegisterEvent("UNIT_ENTERING_VEHICLE")
-		self:RegisterEvent("UNIT_EXITED_VEHICLE")
-		self:RegisterEvent("PLAYER_FOCUS_CHANGED")
-
-		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
-
-		self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-		self:RegisterEvent("UPDATE_POSSESS_BAR")
-		self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-		self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
-
-		--Makes it so the mount icon gets checked on and off appropriately
-		self:RegisterEvent("COMPANION_UPDATE")
-	end
-
 	self:RegisterEvent("UPDATE_MACROS")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
@@ -214,6 +190,26 @@ function ACTIONBUTTON:SetUpEvents()
 	--Makes the action button get checked on and off when opening the trade skill UI widget
 	self:RegisterEvent("TRADE_SKILL_SHOW")
 	self:RegisterEvent("TRADE_SKILL_CLOSE")
+
+	if not Neuron.isWoWClassic then
+		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+		self:RegisterEvent("UNIT_ENTERED_VEHICLE")
+		self:RegisterEvent("UNIT_ENTERING_VEHICLE")
+		self:RegisterEvent("UNIT_EXITED_VEHICLE")
+		self:RegisterEvent("PLAYER_FOCUS_CHANGED")
+
+		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
+		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+
+		self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+		self:RegisterEvent("UPDATE_POSSESS_BAR")
+		self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
+		self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+
+		--Makes it so the mount icon gets checked on and off appropriately
+		self:RegisterEvent("COMPANION_UPDATE")
+	end
 
 end
 
@@ -1187,13 +1183,13 @@ function ACTIONBUTTON:Reset()
 	self:UnregisterEvent("PET_BAR_UPDATE_COOLDOWN")
 	self:UnregisterEvent("UNIT_FLAGS")
 
+	self:UnregisterEvent("UPDATE_MACROS")
+	self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+
 	if not Neuron.isWoWClassic then
 		self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		self:UnregisterEvent("EQUIPMENT_SETS_CHANGED")
 	end
-
-	self:UnregisterEvent("UPDATE_MACROS")
-	self:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
 	self:MACRO_Reset()
 end

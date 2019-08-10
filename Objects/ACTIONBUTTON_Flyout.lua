@@ -430,7 +430,7 @@ function ACTIONBUTTON:GetDataList(options)
 			scanData = self:filter_item()
 		elseif (types:find("^c")) and not Neuron.isWoWClassic then --Companion
 			scanData = self:filter_pet()
-		elseif (types:find("^f")) then  --toy
+		elseif (types:find("^f")) and not Neuron.isWoWClassic then  --toy
 			scanData = self:filter_toy()
 		elseif (types:find("^m")) then  --Mount
 			scanData = self:filter_mount()

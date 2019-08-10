@@ -137,3 +137,64 @@ function Neuron:ToggleBlizzUI()
 		StaticPopup_Show("ReloadUI")
 	end
 end
+
+function Neuron:Overrides()
+
+	local DB = Neuron.db.profile
+
+	--bag bar overrides
+	if DB.blizzbar == false then
+		--hide the weird color border around bag bars
+		CharacterBag0Slot.IconBorder:Hide()
+		CharacterBag1Slot.IconBorder:Hide()
+		CharacterBag2Slot.IconBorder:Hide()
+		CharacterBag3Slot.IconBorder:Hide()
+
+		--overwrite the Show function with a null function because it keeps coming back and won't stay hidden
+		if not Neuron:IsHooked(CharacterBag0Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag0Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag1Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag1Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag2Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag2Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag3Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag3Slot.IconBorder, "Show", function() end, true)
+		end
+	end
+
+	--status bar overrides
+	local disableDefaultCast = false
+	local disableDefaultMirror = false
+
+	for _,v in ipairs(Neuron.BARIndex) do
+
+		if v.barType == "StatusBar" then
+			for _, button in ipairs(v.buttons) do
+				if button.config.sbType == "cast" then
+					disableDefaultCast = true
+				elseif button.config.sbType == "mirror" then
+					disableDefaultMirror = true
+				end
+			end
+		end
+	end
+
+	if disableDefaultCast then
+		CastingBarFrame:UnregisterAllEvents()
+		CastingBarFrame:SetParent(Neuron.hiddenFrame)
+	end
+
+	if disableDefaultMirror then
+		UIParent:UnregisterEvent("MIRROR_TIMER_START")
+		MirrorTimer1:UnregisterAllEvents()
+		MirrorTimer1:SetParent(Neuron.hiddenFrame)
+		MirrorTimer2:UnregisterAllEvents()
+		MirrorTimer2:SetParent(Neuron.hiddenFrame)
+		MirrorTimer3:UnregisterAllEvents()
+		MirrorTimer3:SetParent(Neuron.hiddenFrame)
+	end
+
+end

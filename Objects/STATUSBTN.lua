@@ -134,8 +134,6 @@ function STATUSBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
 
-	newButton:LoadData(Neuron.activeSpec, "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
@@ -421,9 +419,7 @@ function STATUSBTN:repstrings_Update(line)
 
 		for i=1, GetNumFactions() do
 			local name, _, ID, min, max, value, _, _, isHeader, _, hasRep, _, _, factionID = GetFactionInfo(i)
-			if not Neuron.isWoWClassic then
-				local fID, fRep, fMaxRep, fName, fText, fTexture, fTextLevel, fThreshold, nextFThreshold = GetFriendshipReputation(factionID)
-			end
+
 			local colors, standing
 			local hasFriendStatus = false
 
@@ -432,6 +428,12 @@ function STATUSBTN:repstrings_Update(line)
 			end
 
 			if ((not isHeader or hasRep) and not IsFactionInactive(i)) then
+
+				local fID, fTextLevel
+				if not Neuron.isWoWClassic then
+					fID, _, _, _, _, _, fTextLevel, _, _ = GetFriendshipReputation(factionID)
+				end
+
 				if (fID and not BrawlerGuildFactions[fID]) then
 					colors = BarRepColors[ID+2]
 					standing = fTextLevel
@@ -785,7 +787,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 		if not Neuron.isWoWClassic then
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
 		else
-			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo()
+			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo() --classic doesn't have UnitCastingInfo()
 		end
 
 		if (not name) then
@@ -905,7 +907,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 			if not Neuron.isWoWClassic then
 				name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
 			else
-				name, text, texture, startTime, endTime, isTradeSkill = CastingInfo()
+				name, text, texture, startTime, endTime, isTradeSkill = CastingInfo() --Classic doesn't have UnitCastingInfo()
 			end
 
 			if (not name) then

@@ -178,6 +178,9 @@ function Neuron:OnInitialize()
 	--Initialize the chat commands (i.e. /neuron)
 	Neuron:RegisterChatCommand("neuron", "slashHandler")
 
+	--build all bar and button frames and run initial setup
+	Neuron:Startup()
+
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -185,13 +188,6 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function Neuron:OnEnable()
-
-	if not Neuron.isWoWClassic then
-		Neuron.activeSpec = GetSpecialization()
-	end
-
-	--build all bar and button frames and run initial setup
-	Neuron:Startup()
 
 	Neuron:RegisterEvent("PLAYER_REGEN_DISABLED")
 	Neuron:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -232,11 +228,16 @@ function Neuron:OnEnable()
 
 	Neuron:LoginMessage()
 
+	if not Neuron.isWoWClassic then
+		Neuron.activeSpec = GetSpecialization()
+	end
 
 	--Load all bars and buttons
 	for i,v in pairs(Neuron.BARIndex) do
 		v:Load()
 	end
+
+	Neuron:Overrides()
 
 end
 
@@ -272,7 +273,6 @@ function Neuron:PLAYER_ENTERING_WORLD()
 
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
-
 
 	if not Neuron.isWoWClassic then
 		Neuron:UpdateCollectionCache()
@@ -820,7 +820,7 @@ end
 
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax, keybindable)
 
 	Neuron.registeredBarData[class] = {
 		class = class;
@@ -830,6 +830,7 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		barDB = barDB,
 		objTemplate = objTemplate,
 		objMax = objMax,
+		keybindable = keybindable,
 	}
 
 end

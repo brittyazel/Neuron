@@ -36,8 +36,6 @@ function EXITBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, EXITBTN, "ExitBar", "VehicleExitButton", "NeuronActionButtonTemplate")
 
-	newButton:LoadData(Neuron.activeSpec, "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
@@ -50,14 +48,13 @@ end
 
 function EXITBTN:SetType()
 
-	if not Neuron.isWoWClassic then
-		self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
-		self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
-		self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "OnEvent");
-		self:RegisterEvent("UNIT_ENTERED_VEHICLE", "OnEvent")
-		self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
-		self:RegisterEvent("VEHICLE_UPDATE", "OnEvent")
-	end
+	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
+	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
+	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "OnEvent");
+	self:RegisterEvent("UNIT_ENTERED_VEHICLE", "OnEvent")
+	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
+	self:RegisterEvent("VEHICLE_UPDATE", "OnEvent")
+
 
 	self:SetScript("OnClick", function(self) self:OnClick() end)
 	self:SetScript("OnEnter", function(self) self:OnEnter() end)
@@ -76,19 +73,12 @@ end
 
 function EXITBTN:SetObjectVisibility(show)
 
-	if not Neuron.isWoWClassic then
-		if CanExitVehicle() or UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-			self:SetAlpha(1)
-		else
-			self:SetAlpha(0)
-		end
+	if CanExitVehicle() or UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+		self:SetAlpha(1)
 	else
-		if UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-			self:SetAlpha(1)
-		else
-			self:SetAlpha(0)
-		end
+		self:SetAlpha(0)
 	end
+
 end
 
 function EXITBTN:SetButtonTex()

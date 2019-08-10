@@ -138,10 +138,12 @@ function NeuronGUI:OnEnable()
 	updater.elapsed = 0
 	updater:Hide()
 
+	NeuronGUI:RegisterEvent("ADDON_LOADED")
+
 	if not Neuron.isWoWClassic then
 		NeuronGUI:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	end
-	NeuronGUI:RegisterEvent("ADDON_LOADED")
+
 
 	--LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-GUI", NeuronGUI.target_options)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("Neuron-Flyout", NeuronGUI.flyout_options)
