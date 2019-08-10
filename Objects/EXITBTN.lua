@@ -76,12 +76,19 @@ end
 
 function EXITBTN:SetObjectVisibility(show)
 
-	if UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-		self:SetAlpha(1)
+	if not Neuron.isWoWClassic then
+		if CanExitVehicle() or UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+			self:SetAlpha(1)
+		else
+			self:SetAlpha(0)
+		end
 	else
-		self:SetAlpha(0)
+		if UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+			self:SetAlpha(1)
+		else
+			self:SetAlpha(0)
+		end
 	end
-
 end
 
 function EXITBTN:SetButtonTex()
