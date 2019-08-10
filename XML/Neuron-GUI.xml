@@ -1210,7 +1210,7 @@
 
 	<!-- Not Templates -->
 
-	<Frame name="NeuronMainMenu" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent" clampedToScreen="true">
+	<Frame name="NeuronMainMenu" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent">
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
 				<Offset x="0" y="75"/>
@@ -1232,7 +1232,7 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="NeuronBarEditor" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent" clampedToScreen="true">
+	<Frame name="NeuronBarEditor" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent">
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
 				<Offset x="0" y="75"/>
@@ -1853,7 +1853,7 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="NeuronObjectEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" clampedToScreen="true" hidden="true">
+	<Frame name="NeuronObjectEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" hidden="true">
 		<Size x="500" y="415"/>
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
@@ -1900,7 +1900,7 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="NeuronButtonEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="NeuronObjectEditor" clampedToScreen="true" hidden="true">
+	<Frame name="NeuronButtonEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="NeuronObjectEditor" hidden="true">
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="NeuronObjectEditor" relativePoint="TOPLEFT">
 				<Offset x="0" y="0"/>
@@ -2369,7 +2369,7 @@
 	</ColorSelect>
 
 
-	<Frame name="NeuronStatusBarEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" clampedToScreen="true" hidden="true">
+	<Frame name="NeuronStatusBarEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" hidden="true">
 		<Frames>
 			<Frame name="$parentTypes" parentKey="types">
 				<Anchors>
