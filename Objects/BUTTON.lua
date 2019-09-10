@@ -532,9 +532,9 @@ function BUTTON:SetSkinned(flyout)
 			}
 
 			if (flyout) then
-				SKIN:Group("Neuron", self.anchor.bar.data.name):AddButton(self, btnData)
+				SKIN:Group("Neuron", self.anchor.bar.data.name):AddButton(self, btnData, "Action")
 			else
-				SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
+				SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData, "Action")
 			end
 
 			self.skinned = true

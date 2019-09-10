@@ -96,7 +96,7 @@ function BAGBTN:SetSkinned()
 				Highlight = self.element:GetHighlightTexture(),
 			}
 
-			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData, "Item")
 
 			self.skinned = true
 		end
