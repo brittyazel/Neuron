@@ -510,14 +510,12 @@ end
 function BUTTON:SetSkinned(flyout)
 
 	if (SKIN) then
-
 		local bar = self.bar
 
 		if (bar) then
 			local btnData = {
 				Normal = self.normaltexture,
 				Icon = self.iconframeicon,
-				Cooldown = self.iconframecooldown,
 				HotKey = self.hotkey,
 				Count = self.count,
 				Name = self.name,
@@ -538,7 +536,6 @@ function BUTTON:SetSkinned(flyout)
 			end
 
 			self.skinned = true
-
 		end
 	end
 end
