@@ -59,6 +59,7 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type1", "action")

@@ -153,7 +153,9 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation for ability cooldown. Show Draw Edge.
 			end
 		else --sets GCD cooldowns
-			CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
+			if self:GetAlpha() ~= 0 then
+				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
+			end
 		end
 
 		-- Clear the charge cooldown frame if it is still going from a different ability in a different state (i.e. frenzied regen in the same spot as Swiftmend)
@@ -514,6 +516,7 @@ function BUTTON:SetSkinned(flyout)
 
 		if (bar) then
 			local btnData = {
+				--don't specify explicitely the cooldown texture, otherwise the texture sits on top of all others for some reason.
 				Normal = self.normaltexture,
 				Icon = self.iconframeicon,
 				HotKey = self.hotkey,
@@ -526,7 +529,6 @@ function BUTTON:SetSkinned(flyout)
 				Pushed = self:GetPushedTexture(),
 				Disabled = self:GetDisabledTexture(),
 				Highlight = self.highlighttexture,
-
 			}
 
 			if (flyout) then
