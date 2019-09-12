@@ -516,7 +516,6 @@ function BUTTON:SetSkinned(flyout)
 
 		if (bar) then
 			local btnData = {
-				--don't specify explicitely the cooldown texture, otherwise the texture sits on top of all others for some reason.
 				Normal = self.normaltexture,
 				Icon = self.iconframeicon,
 				HotKey = self.hotkey,
@@ -524,6 +523,7 @@ function BUTTON:SetSkinned(flyout)
 				Name = self.name,
 				Border = self.border,
 				AutoCast = self.shine,
+				Cooldown = self.iconframecooldown,
 				AutoCastable = self.autocastable,
 				Checked = self.checkedtexture,
 				Pushed = self:GetPushedTexture(),
