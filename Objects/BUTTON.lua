@@ -522,7 +522,7 @@ function BUTTON:SetSkinned(flyout)
 				Count = self.count,
 				Name = self.name,
 				Border = self.border,
-				AutoCast = self.shine,
+				Shine = self.shine,
 				Cooldown = self.iconframecooldown,
 				AutoCastable = self.autocastable,
 				Checked = self.checkedtexture,
