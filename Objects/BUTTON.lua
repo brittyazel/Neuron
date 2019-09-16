@@ -210,7 +210,13 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 			--Cancel Timers as they're unnecessary
 			self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 			self.iconframecooldown.timer:SetText("")
-			self.iconframecooldown.button:SetAlpha(1)
+
+			if self.data.alpha then
+				self:SetAlpha(self.data.alpha) --try to restore the original alpha
+			else
+				self:SetAlpha(1)
+			end
+
 			self.iconframecooldown.showCountdownTimer = false
 			self.iconframecooldown.showCountdownAlpha = false
 		end
@@ -219,7 +225,11 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 		self.iconframecooldown.timer:SetText("")
 
-		self.iconframecooldown.button:SetAlpha(1)
+		if self.data.alpha then
+			self:SetAlpha(self.data.alpha) --try to restore the original alpha
+		else
+			self:SetAlpha(1)
+		end
 
 		self.iconframecooldown.showCountdownTimer = false
 		self.iconframecooldown.showCountdownAlpha = false
@@ -266,29 +276,29 @@ function BUTTON:CooldownCounterUpdate()
 			if (coolDown >= 86400) then --append a "d" if the timer is longer than 1 day
 				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
-				size = self.iconframecooldown.button:GetWidth()*0.3
+				size = self:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >= 3600) then --append a "h" if the timer is longer than 1 hour
 				formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
-				size = self.iconframecooldown.button:GetWidth()*0.3
+				size = self:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >= 60) then --append a "m" if the timer is longer than 1 min
 				formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
-				size = self.iconframecooldown.button:GetWidth()*0.3
+				size = self:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >=6) then --this is the 'normal' countdown text state
 				formatted = string.format( "%.0f",coolDown)
-				size = self.iconframecooldown.button:GetWidth()*0.45
+				size = self:GetWidth()*0.45
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown < 6) then --this is the countdown text state but with the text larger and set to the expire color (usually red)
 				formatted = string.format( "%.0f",coolDown)
-				size = self.iconframecooldown.button:GetWidth()*0.6
+				size = self:GetWidth()*0.6
 				if (expirecolor) then
 					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
 					expirecolor = nil
@@ -311,12 +321,20 @@ function BUTTON:CooldownCounterUpdate()
 	if self.iconframecooldown.showCountdownAlpha and self.iconframecooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
 		if coolDown > 0 then
-			self.iconframecooldown.button:SetAlpha(self.iconframecooldown.button.cdAlpha)
+			self:SetAlpha(self.cdAlpha)
 		else
-			self.iconframecooldown.button:SetAlpha(1)
+			if self.data.alpha then
+				self:SetAlpha(self.data.alpha) --try to restore the original alpha
+			else
+				self:SetAlpha(1)
+			end
 		end
 	else
-		self.iconframecooldown.button:SetAlpha(1) --restore alpha to 1 in case it somehow was stuck at a lower value
+		if self.data.alpha then
+			self:SetAlpha(self.data.alpha) --try to restore the original alpha
+		else
+			self:SetAlpha(1)
+		end
 	end
 
 end
@@ -772,7 +790,7 @@ function BUTTON:AuraCounterUpdate()
 
 			formatted = string.format( "%.0f",coolDown)
 
-			size = self.iconframecooldown.button:GetWidth()*0.45
+			size = self:GetWidth()*0.45
 
 			if (self.iconframecooldown.auraType == "buff") then
 				self.border:SetVertexColor(self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], 1.0)
