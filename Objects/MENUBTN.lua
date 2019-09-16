@@ -98,6 +98,8 @@ function MENUBTN:SetData(bar)
 		self.bar = bar
 		self:SetFrameStrata(bar.data.objectStrata)
 		self:SetScale(bar.data.scale)
+
+		self.isShown = true
 	end
 
 	self:SetFrameLevel(4)

@@ -384,9 +384,11 @@ end
 function PETBTN:SetObjectVisibility(show)
 
 	if show or self.showGrid or self.HasPetAction(self.actionID) or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
-		self:SetAlpha(1)
+		self.isShown = true
 	else
-		self:SetAlpha(0)
+		self.isShown = false
 	end
+
+	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
 
 end

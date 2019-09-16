@@ -125,10 +125,13 @@ end
 function EXTRABTN:SetObjectVisibility(show)
 
 	if HasExtraActionBar() or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-		self:SetAlpha(1)
+		self.isShown = true
 	else
-		self:SetAlpha(0)
+		self.isShown = false
 	end
+
+	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
+
 end
 
 

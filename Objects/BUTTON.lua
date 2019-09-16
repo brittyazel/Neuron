@@ -477,8 +477,16 @@ function BUTTON:LoadData()
 end
 
 
-function BUTTON:SetObjectVisibility(show)
- --empty
+function BUTTON:SetObjectVisibility()
+	if self.isShown then
+		if self.data.alpha then
+			self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
+		else
+			self:SetAlpha(1)
+		end
+	else
+		self:SetAlpha(0)
+	end
 end
 
 
