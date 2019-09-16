@@ -144,6 +144,10 @@ end
 
 function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
 
+	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
+		return
+	end
+
 	if start and start > 0 and duration > 0 and enable > 0 then
 
 		if duration > 2 then --sets non GCD cooldowns
@@ -153,9 +157,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation for ability cooldown. Show Draw Edge.
 			end
 		else --sets GCD cooldowns
-			if self:GetAlpha() ~= 0 then
-				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
-			end
+			CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
 		end
 
 		-- Clear the charge cooldown frame if it is still going from a different ability in a different state (i.e. frenzied regen in the same spot as Swiftmend)
@@ -496,14 +498,32 @@ end
 
 
 function BUTTON:SetObjectVisibility()
-	if self.isShown then
-		if self.data.alpha then
-			self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
+
+	if self.bar.class ~= "ActionBar" then --TODO: I'd like to not have separate logic for ActionBars in the future
+		if self.isShown then
+			if self.data.alpha then
+				self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
+			else
+				self:SetAlpha(1)
+			end
 		else
-			self:SetAlpha(1)
+			self:SetAlpha(0)
 		end
 	else
-		self:SetAlpha(0)
+
+		if InCombatLockdown() then
+			return
+		end
+
+		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
+		self:SetAttribute("isshown", show)
+
+		if self.isShown then
+			self:Show()
+		else
+			self:Hide()
+		end
+
 	end
 end
 
