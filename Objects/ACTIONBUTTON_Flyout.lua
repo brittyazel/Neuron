@@ -32,7 +32,7 @@ local bagsToCache = {[0]=true,[1]=true,[2]=true,[3]=true,[4]=true,["Worn"]=true 
 local timerTimes = {} -- indexed by arbitrary name, the duration to run the timer
 local timersRunning = {} -- indexed numerically, timers that are running
 local cacheTimeout
-
+local bindTypeAlternatives = { "on pickup","on equip","on use","quest" }
 
 local flyoutsNeedFilled
 local firstLogin
@@ -139,21 +139,143 @@ end
 --- Filter handler for items
 -- item:id will get all items of that itemID
 -- item:name will get all items that contain "name" in its name
-function ACTIONBUTTON:filter_item()
+function ACTIONBUTTON:filter_item(tooltip)
 
 	local data = {}
 
+	local itemsToSkip = {}
+
+	local bagItemsTooltips = {}
+
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+	-- TODO: add mandatory and optional functionality
+	--[[
 	for ckey in gmatch(keys, "[^,]+") do
+		repeat
+			local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
 
-		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
+			arg = arg:lower()
 
-		arg = arg:lower()
+			local name= GetItemInfo(arg)
 
-		local name= GetItemInfo(arg)
+			if name then
+				if (cmd:match("!")) then
+					itemsToSkip[name] = true;
+					data[name] = nil
+					break -- next bag slot
+				end
+				data[name] = "item"
+			end
+		until true
+	end
+	]]
+	if (tooltip) then -- part I of tooltip cache version
+		for i=0,4 do
+			for j=1, GetContainerNumSlots(i) do
+				local itemId = GetContainerItemID(i,j)
+				if (itemId) then
+					GameTooltip:SetOwner(UIParent,"ANCHOR_NONE")
+					GameTooltip:SetBagItem(i,j)
+					local itemTooltip = ""
+					for k=GameTooltip:NumLines(),2,-1 do
+						local text = _G["GameTooltipTextLeft"..k]:GetText()
+						if (text) then
+							itemTooltip = text.." "..itemTooltip
+						end
+					end
+					bagItemsTooltips[i..":"..j] = itemTooltip:lower()
+				end
+			end
+		end
+	end
 
-		if name then
-			data[name] = "item"
+	if (#data<1) then -- above search failed
+		for ckey in gmatch(keys, "[^,]+") do
+			local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
+			arg = arg:lower()
+
+			for i=0,4 do
+				for j=1, GetContainerNumSlots(i) do
+					local itemId = GetContainerItemID(i,j)
+					if (itemId) then
+						local name,_,_,_,_,_,_,_,_,_,_,_,_,bindType =  GetItemInfo(itemId)
+						repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
+							if (itemsToSkip[name]) then
+								-- item shouldn't be in the list: take next bag slot. This is so we don't have to run all checks below
+								-- again (especially the expensive tooltip scan) just to add the same item again.
+								break
+							end
+							-- match on name
+							if (name and name:lower():find(arg)) then
+								if (GetItemCount(name,false,true)>0) then
+									if (cmd:match("!")) then
+										itemsToSkip[name] = true;
+										data[name] = nil -- item could have been added by previous arg:s
+										break -- next bag slot
+									end
+									data[name] = "item"
+								end
+							end
+							if (tooltip) then
+								if (name and bindType) then
+									for k,v in ipairs(bindTypeAlternatives) do
+										if(arg:match(v) and bindType == k) then
+											if (cmd:match("!")) then
+												itemsToSkip[name] = true;
+												data[name] = nil -- item could have been added by previous arg:s
+												break
+											else
+												data[name] = "item"
+											end
+										end
+									end
+									if (itemsToSkip[name]) then
+										break -- take next bag slot
+									end
+								end
+								if (name) then
+									-- part II of tooltip cache version -  this should be better the more arg:s there is as it goes through the whole tooltip.
+									local itemTooltip = bagItemsTooltips[i..":"..j]
+									if (itemTooltip) then
+										if (itemTooltip:match(arg)) then
+											if (cmd:match("!")) then
+												itemsToSkip[name] = true;
+												data[name] = nil -- item could have been added by previous arg:s
+												break -- take next bag slot
+											end
+											data[name] = "item"
+										end
+									else
+										print("Neuron - DEBUG: Other version of tooltip scan (per name) should be used")
+									end
+									--[[ per name version of tooltip scan - this might be better for very few args as it only goes through the tooltip one row at a time till it finds a match
+									--get tooltip and scan, this is a bit expensive.
+									GameTooltip:SetOwner(UIParent,"ANCHOR_NONE")
+									GameTooltip:SetBagItem(i,j)
+									for k=GameTooltip:NumLines(),2,-1 do
+										if ((_G["GameTooltipTextLeft"..k]:GetText() or ""):lower():match(arg)) then
+											if (cmd:match("!")) then
+												itemsToSkip[name] = true;
+												data[name] = nil
+												break -- breaks tooltip scan, nothing left to do but take next bag slot
+											end
+											data[name] = "item"
+											if (not NeuronItemCache[name]) then
+												NeuronItemCache[name] = itemId
+											end
+											break -- we have found a match in the tooltip, don't have to look further.
+										end
+									end
+									]]
+								end
+							end
+							if (data[name] and not NeuronItemCache[name]) then
+								NeuronItemCache[name] = itemId -- if it isn't in the items cache the icon and tooltip won't show.
+							end
+						until true
+					end
+				end
+			end
 		end
 	end
 
@@ -427,7 +549,7 @@ function ACTIONBUTTON:GetDataList(options)
 		elseif (types:find("^s")) then  --Spell
 			scanData = self:filter_spell()
 		elseif (types:find("^i")) then  --Item
-			scanData = self:filter_item()
+			scanData = self:filter_item(tooltip)
 		elseif (types:find("^c")) and not Neuron.isWoWClassic then --Companion
 			scanData = self:filter_pet()
 		elseif (types:find("^f")) and not Neuron.isWoWClassic then  --toy
