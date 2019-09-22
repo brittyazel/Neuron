@@ -79,8 +79,8 @@ end
 
 function EXTRABTN:OnEvent(event, ...)
 
-	self:UpdateButton()
 	self:SetObjectVisibility()
+	self:UpdateButton()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
