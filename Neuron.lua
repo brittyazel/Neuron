@@ -117,7 +117,6 @@ Neuron.bindingMode = false
 
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
-Neuron.THROTTLE = 0.2
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLLERANCE = 28
 
