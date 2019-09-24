@@ -123,7 +123,9 @@ Neuron.SNAPTO_TOLLERANCE = 28
 
 Neuron.enteredWorld = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on logging with too many processes
 
-Neuron.isWoWClassic = select(4, GetBuildInfo()) < 20000
+if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then --boolean check to set a flag if the current session is WoW Classic. Retail == 1, Classic == 2
+	Neuron.isWoWClassic = true
+end
 
 Neuron.activeSpec = 1
 
