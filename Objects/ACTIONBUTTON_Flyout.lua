@@ -378,8 +378,6 @@ function ACTIONBUTTON:filter_toy()
 
 	end
 
-	test = data
-
 	return data
 
 end

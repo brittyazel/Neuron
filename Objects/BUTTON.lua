@@ -530,25 +530,23 @@ end
 
 
 function BUTTON:SetDefaults(defaults)
-	if defaults then
-		for k,v in pairs(defaults) do
-
-			if defaults.config then
-				for k2, v2 in pairs(defaults.config) do
-					self.config[k2] = v2
-				end
-			end
-
-			if defaults.keys then
-				for k2, v2 in pairs(defaults.keys) do
-					self.keys[k2] = v2
-				end
-			end
-
-		end
-
-
+	if not defaults then
+		return
 	end
+
+	if defaults.config then
+		for k, v in pairs(defaults.config) do
+			self.DB.config[k] = v
+		end
+	end
+
+	if defaults.keys then
+		for k, v in pairs(defaults.keys) do
+			self.DB.keys[k] = v
+		end
+	end
+
+
 end
 
 function BUTTON:SetType()
