@@ -36,8 +36,6 @@ function BAGBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, BAGBTN, "BagBar", "BagButton", "NeuronAnchorButtonTemplate")
 
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
@@ -75,6 +73,7 @@ function BAGBTN:SetData(bar)
 		self.bar = bar
 		self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 		self:SetScale(self.bar:GetBarScale())
+		self.isShown = true
 	end
 end
 
@@ -98,7 +97,7 @@ function BAGBTN:SetSkinned()
 				Highlight = self.element:GetHighlightTexture(),
 			}
 
-			SKIN:Group("Neuron", bar:GetName()):AddButton(self, btnData)
+			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData, "Item")
 
 			self.skinned = true
 		end

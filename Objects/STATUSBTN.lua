@@ -65,8 +65,6 @@ function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
 	--local newButton = Neuron.BUTTON.new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
 	local newButton = Neuron.BUTTON.new(bar, buttonID, barObj, barType, objType, "NeuronStatusBarTemplate")
 
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end

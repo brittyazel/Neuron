@@ -36,13 +36,9 @@ function EXTRABTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
 
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
-
-	newButton.binder = Neuron.KEYBINDER.new(newButton)
 
 	newButton.style = newButton:CreateTexture(nil, "OVERLAY")
 	newButton.style:SetPoint("CENTER", -2, 1)
@@ -63,6 +59,7 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type1", "action")
@@ -82,8 +79,8 @@ end
 
 function EXTRABTN:OnEvent(event, ...)
 
-	self:UpdateButton()
 	self:SetObjectVisibility()
+	self:UpdateButton()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
@@ -128,10 +125,13 @@ end
 function EXTRABTN:SetObjectVisibility(show)
 
 	if HasExtraActionBar() or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-		self:SetAlpha(1)
+		self.isShown = true
 	else
-		self:SetAlpha(0)
+		self.isShown = false
 	end
+
+	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
+
 end
 
 

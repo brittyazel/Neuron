@@ -143,6 +143,10 @@ end
 
 function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
 
+	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
+		return
+	end
+
 	if start and start > 0 and duration > 0 and enable > 0 then
 
 		if duration > 2 then --sets non GCD cooldowns
@@ -207,7 +211,13 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 			--Cancel Timers as they're unnecessary
 			self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 			self.iconframecooldown.timer:SetText("")
-			self.iconframecooldown.button:SetAlpha(1)
+
+			if self.data.alpha then
+				self:SetAlpha(self.data.alpha) --try to restore the original alpha
+			else
+				self:SetAlpha(1)
+			end
+
 			self.iconframecooldown.showCountdownTimer = false
 			self.iconframecooldown.showCountdownAlpha = false
 		end
@@ -216,7 +226,11 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 		self.iconframecooldown.timer:SetText("")
 
-		self.iconframecooldown.button:SetAlpha(1)
+		if self.data.alpha then
+			self:SetAlpha(self.data.alpha) --try to restore the original alpha
+		else
+			self:SetAlpha(1)
+		end
 
 		self.iconframecooldown.showCountdownTimer = false
 		self.iconframecooldown.showCountdownAlpha = false
@@ -263,29 +277,29 @@ function BUTTON:CooldownCounterUpdate()
 			if (coolDown >= 86400) then --append a "d" if the timer is longer than 1 day
 				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
-				size = self.iconframecooldown.button:GetWidth()*0.3
+				size = self:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >= 3600) then --append a "h" if the timer is longer than 1 hour
 				formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
-				size = self.iconframecooldown.button:GetWidth()*0.3
+				size = self:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >= 60) then --append a "m" if the timer is longer than 1 min
 				formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
-				size = self.iconframecooldown.button:GetWidth()*0.3
+				size = self:GetWidth()*0.3
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown >=6) then --this is the 'normal' countdown text state
 				formatted = string.format( "%.0f",coolDown)
-				size = self.iconframecooldown.button:GetWidth()*0.45
+				size = self:GetWidth()*0.45
 				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif (coolDown < 6) then --this is the countdown text state but with the text larger and set to the expire color (usually red)
 				formatted = string.format( "%.0f",coolDown)
-				size = self.iconframecooldown.button:GetWidth()*0.6
+				size = self:GetWidth()*0.6
 				if (expirecolor) then
 					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
 					expirecolor = nil
@@ -310,10 +324,18 @@ function BUTTON:CooldownCounterUpdate()
 		if coolDown > 0 then
 			self.iconframecooldown.button:SetAlpha(self.bar:GetShowCooldownAlpha())
 		else
-			self.iconframecooldown.button:SetAlpha(1)
+			if self.data.alpha then
+				self:SetAlpha(self.data.alpha) --try to restore the original alpha
+			else
+				self:SetAlpha(1)
+			end
 		end
 	else
-		self.iconframecooldown.button:SetAlpha(1) --restore alpha to 1 in case it somehow was stuck at a lower value
+		if self.data.alpha then
+			self:SetAlpha(self.data.alpha) --try to restore the original alpha
+		else
+			self:SetAlpha(1)
+		end
 	end
 
 end
@@ -371,39 +393,63 @@ end
 
 
 --TODO: This should be consolodated as each child has a VERY similar function
-function BUTTON:LoadData(spec, state)
+function BUTTON:LoadData()
 	self.config = self.DB.config
 	self.keys = self.DB.keys
 	self.data = self.DB.data
 end
 
 
-function BUTTON:SetObjectVisibility(show)
- --empty
+function BUTTON:SetObjectVisibility()
+
+	if self.bar.class ~= "ActionBar" then --TODO: I'd like to not have separate logic for ActionBars in the future
+		if self.isShown then
+			if self.data.alpha then
+				self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
+			else
+				self:SetAlpha(1)
+			end
+		else
+			self:SetAlpha(0)
+		end
+	else
+
+		if InCombatLockdown() then
+			return
+		end
+
+		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
+		self:SetAttribute("isshown", show)
+
+		if self.isShown then
+			self:Show()
+		else
+			self:Hide()
+		end
+
+	end
 end
 
 
 
 function BUTTON:SetDefaults(defaults)
-	if defaults then
-		for k,v in pairs(defaults) do
-
-			if defaults.config then
-				for k2, v2 in pairs(defaults.config) do
-					self.config[k2] = v2
-				end
-			end
-
-			if defaults.keys then
-				for k2, v2 in pairs(defaults.keys) do
-					self.keys[k2] = v2
-				end
-			end
-
-		end
-
-
+	if not defaults then
+		return
 	end
+
+	if defaults.config then
+		for k, v in pairs(defaults.config) do
+			self.DB.config[k] = v
+		end
+	end
+
+	if defaults.keys then
+		for k, v in pairs(defaults.keys) do
+			self.DB.keys[k] = v
+		end
+	end
+
+
 end
 
 function BUTTON:SetType()
@@ -413,35 +459,32 @@ end
 function BUTTON:SetSkinned(flyout)
 
 	if (SKIN) then
-
 		local bar = self.bar
 
 		if (bar) then
 			local btnData = {
 				Normal = self.normaltexture,
 				Icon = self.iconframeicon,
-				Cooldown = self.iconframecooldown,
 				HotKey = self.hotkey,
 				Count = self.count,
 				Name = self.name,
 				Border = self.border,
-				AutoCast = self.shine,
+				Shine = self.shine,
+				Cooldown = self.iconframecooldown,
 				AutoCastable = self.autocastable,
 				Checked = self.checkedtexture,
 				Pushed = self:GetPushedTexture(),
 				Disabled = self:GetDisabledTexture(),
 				Highlight = self.highlighttexture,
-
 			}
 
 			if (flyout) then
-				SKIN:Group("Neuron", self.anchor.bar:GetName()):AddButton(self, btnData)
+				SKIN:Group("Neuron", self.anchor.bar.data.name):AddButton(self, btnData, "Action")
 			else
-				SKIN:Group("Neuron", bar:GetName()):AddButton(self, btnData)
+				SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData, "Action")
 			end
 
 			self.skinned = true
-
 		end
 	end
 end
@@ -549,9 +592,9 @@ function BUTTON:SetSpellCooldown(spell)
 
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
 		self:SetCooldownTimer(chStart, chDuration, enable, self.bar:GetShowCooldownText(), chargemodrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
-	end
-
-	self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+	else
+        self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+    end
 
 end
 

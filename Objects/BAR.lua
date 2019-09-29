@@ -1110,17 +1110,21 @@ end
 function BAR:LoadObjects()
 	local spec
 
-	if self:GetMultiSpec() then
-		spec = GetSpecialization()
+	if (self.data.multiSpec) then
+		spec = Neuron.activeSpec
 	else
 		spec = 1
 	end
 
 	for i, object in ipairs(self.buttons) do
 		---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
-		object:SetData(self)
 		object:LoadData(spec, self.handler:GetAttribute("activestate"))
+		object:SetData(self)
 		object:SetType()
+
+		if Neuron.registeredBarData[object.class] and Neuron.registeredBarData[object.class].keybindable then
+			object.binder = Neuron.KEYBINDER.new(object)
+		end
 
 		object:SetObjectVisibility()
 	end

@@ -36,8 +36,6 @@ function Neuron:Startup()
 
 	Neuron:CreateBarsAndButtons()
 
-	Neuron:Overrides()
-
 end
 
 
@@ -45,25 +43,16 @@ end
 function Neuron:RegisterBars()
 
 	--Neuron Action Bar
-	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.ActionBar, Neuron.ACTIONBUTTON, 250)
-
-	--Neuron Zone Ability Bar
-	Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
-
-	--Neuron Extra Bar
-	Neuron:RegisterBarClass("ExtraBar", "ExtraBar", L["Extra Action Bar"], "Extra Action Button", DB.ExtraBar, Neuron.EXTRABTN,1)
+	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.ActionBar, Neuron.ACTIONBUTTON, 250, true)
 
 	--Neuron Bag Bar
-	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN,5)
-
-	--Neuron Exit Bar
-	Neuron:RegisterBarClass("ExitBar", "ExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.ExitBar, Neuron.EXITBTN,1)
+	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN,5, false)
 
 	--Neuron Menu Bar
-	Neuron:RegisterBarClass("MenuBar", "MenuBar", L["Menu Bar"], "Menu Button", DB.MenuBar, Neuron.MENUBTN, 11)
+	Neuron:RegisterBarClass("MenuBar", "MenuBar", L["Menu Bar"], "Menu Button", DB.MenuBar, Neuron.MENUBTN, 11, false)
 
 	--Neuron Pet Bar
-	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10)
+	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10, true)
 
 	--Neuron XP Bar
 	Neuron:RegisterBarClass("XPBar", "XPBar", L["XP Bar"], "XP Button", DB.XPBar, Neuron.XPBTN, 10)
@@ -76,6 +65,17 @@ function Neuron:RegisterBars()
 
 	--Neuron Mirror Bar
 	Neuron:RegisterBarClass("MirrorBar", "MirrorBar", L["Mirror Bar"], "Mirror Button", DB.MirrorBar, Neuron.MIRRORBTN, 10)
+
+	if not Neuron.isWoWClassic then
+		--Neuron Zone Ability Bar
+		Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 1, true)
+
+		--Neuron Extra Bar
+		Neuron:RegisterBarClass("ExtraBar", "ExtraBar", L["Extra Action Bar"], "Extra Action Button", DB.ExtraBar, Neuron.EXTRABTN,1, true)
+
+		--Neuron Exit Bar
+		Neuron:RegisterBarClass("ExitBar", "ExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.ExitBar, Neuron.EXITBTN,1, false)
+	end
 
 end
 
@@ -102,33 +102,6 @@ function Neuron:RegisterGUI()
 			 CDALPHA = true,
 			 AURAIND = true})
 
-	--Neuron Zone Ability Bar
-	Neuron:RegisterGUIOptions("ZoneAbilityBar",
-			{AUTOHIDE = true,
-			 SNAPTO = true,
-			 UPCLICKS = true,
-			 DOWNCLICKS = true,
-			 HIDDEN = true,
-			 TOOLTIPS = true,
-			 BORDERSTYLE = true},
-
-			{BINDTEXT = true,
-			 COUNTTEXT = true})
-
-
-	--Neuron Extra Bar
-	Neuron:RegisterGUIOptions("ExtraBar",
-			{AUTOHIDE = true,
-			 SNAPTO = true,
-			 UPCLICKS = true,
-			 DOWNCLICKS = true,
-			 HIDDEN = true,
-			 TOOLTIPS = true,
-			 BORDERSTYLE = true},
-
-			{BINDTEXT = true,
-			 COUNTTEXT = true})
-
 
 	--Neuron Bag Bar
 	Neuron:RegisterGUIOptions("BagBar",
@@ -136,14 +109,6 @@ function Neuron:RegisterGUI()
 			 SNAPTO = true,
 			 HIDDEN = true,
 			 TOOLTIPS = true})
-
-	--Neuron Exit Bar
-	Neuron:RegisterGUIOptions("ExitBar",
-			{AUTOHIDE = true,
-			 SNAPTO = true,
-			 UPCLICKS = true,
-			 DOWNCLICKS = true,
-			 HIDDEN = true})
 
 	--Neuron Menu Bar
 	Neuron:RegisterGUIOptions("MenuBar",
@@ -160,9 +125,8 @@ function Neuron:RegisterGUI()
 			 DOWNCLICKS = true,
 			 HIDDEN = true,
 			 LOCKBAR = true,
-			 TOOLTIPS = true},
-
-			{BINDTEXT = true,
+			 TOOLTIPS = true,
+			 BINDTEXT = true,
 			 RANGEIND = true,
 			 CDTEXT = true,
 			 CDALPHA = true})
@@ -195,6 +159,48 @@ function Neuron:RegisterGUI()
 			 HIDDEN = true,
 			 TOOLTIPS = true })
 
+	if not Neuron.isWoWClassic then
+		--Neuron Zone Ability Bar
+		Neuron:RegisterGUIOptions("ZoneAbilityBar",
+				{AUTOHIDE = true,
+				 SNAPTO = true,
+				 UPCLICKS = true,
+				 DOWNCLICKS = true,
+				 HIDDEN = true,
+				 TOOLTIPS = true,
+				 BORDERSTYLE = true},
+
+				{BINDTEXT = true,
+				 COUNTTEXT = true})
+
+
+		--Neuron Extra Bar
+		Neuron:RegisterGUIOptions("ExtraBar",
+				{AUTOHIDE = true,
+				 SNAPTO = true,
+				 UPCLICKS = true,
+				 DOWNCLICKS = true,
+				 HIDDEN = true,
+				 TOOLTIPS = true,
+				 BORDERSTYLE = true},
+
+				{BINDTEXT = true,
+				 COUNTTEXT = true})
+
+		--Neuron Exit Bar
+		Neuron:RegisterGUIOptions("ExitBar",
+				{ AUTOHIDE = true,
+				  SHOWGRID = false,
+				  SNAPTO = true,
+				  UPCLICKS = true,
+				  DOWNCLICKS = true,
+				  HIDDEN = true,
+				  LOCKBAR = false, },
+
+				false, 65)
+
+	end
+
 end
 
 function Neuron:CreateBarsAndButtons()
@@ -202,14 +208,16 @@ function Neuron:CreateBarsAndButtons()
 	if (DB.firstRun) then
 
 		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
-			for i, defaults in ipairs(barDefaults) do --create the bar objects
-				local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor
+			if Neuron.registeredBarData[barClass] then --only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
+				for i, defaults in ipairs(barDefaults) do --create the bar objects
+					local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor
 
-				--create the default button objects for a given bar with the default values
-				newBar:SetDefaults(defaults)
+					--create the default button objects for a given bar with the default values
+					newBar:SetDefaults(defaults)
 
-				for buttonID=1,#defaults.buttons do
-					newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID]) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
+					for buttonID=1,#defaults.buttons do
+						newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID]) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
+					end
 				end
 			end
 

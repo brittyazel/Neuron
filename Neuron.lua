@@ -62,11 +62,16 @@ Neuron.bindingMode = false
 
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
-Neuron.THROTTLE = 0.2
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLLERANCE = 28
 
 Neuron.enteredWorld = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on logging with too many processes
+
+if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then --boolean check to set a flag if the current session is WoW Classic. Retail == 1, Classic == 2
+	Neuron.isWoWClassic = true
+end
+
+Neuron.activeSpec = 1
 
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
@@ -131,9 +136,12 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("SPELLS_CHANGED")
 	Neuron:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	Neuron:RegisterEvent("LEARNED_SPELL_IN_TAB")
-	Neuron:RegisterEvent("COMPANION_LEARNED")
-	Neuron:RegisterEvent("TOYS_UPDATED")
-	Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+
+	if not Neuron.isWoWClassic then
+		Neuron:RegisterEvent("COMPANION_LEARNED")
+		Neuron:RegisterEvent("TOYS_UPDATED")
+		Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
+	end
 
 	Neuron:UpdateStanceStrings()
 
@@ -162,11 +170,16 @@ function Neuron:OnEnable()
 
 	Neuron:LoginMessage()
 
+	if not Neuron.isWoWClassic then
+		Neuron.activeSpec = GetSpecialization()
+	end
 
 	--Load all bars and buttons
 	for i,v in pairs(Neuron.BARIndex) do
 		v:Load()
 	end
+
+	Neuron:Overrides()
 
 	Neuron.NeuronGUI:Initialize_GUI()
 end
@@ -203,8 +216,11 @@ function Neuron:PLAYER_ENTERING_WORLD()
 
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
-	Neuron:UpdateCollectionCache()
-	Neuron:UpdateToyCache()
+
+	if not Neuron.isWoWClassic then
+		Neuron:UpdateCollectionCache()
+		Neuron:UpdateToyCache()
+	end
 
 	--Fix for Titan causing the Main Bar to not be hidden
 	if (IsAddOnLoaded("Titan")) then
@@ -220,6 +236,9 @@ function Neuron:PLAYER_ENTERING_WORLD()
 end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()
+
+	Neuron.activeSpec = GetSpecialization()
+
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
 end
@@ -440,26 +459,28 @@ function Neuron:UpdateSpellCache()
 		end
 	end
 
-	for i = 1, select("#", GetProfessions()) do
-		local index = select(i, GetProfessions())
+	if not Neuron.isWoWClassic then
+		for i = 1, select("#", GetProfessions()) do
+			local index = select(i, GetProfessions())
 
-		if (index) then
-			local _, _, _, _, numSpells, spelloffset = GetProfessionInfo(index)
+			if (index) then
+				local _, _, _, _, numSpells, spelloffset = GetProfessionInfo(index)
 
-			for j=1,numSpells do
+				for j=1,numSpells do
 
-				local offsetIndex = j + spelloffset
-				local spellName, _ = GetSpellBookItemName(offsetIndex, BOOKTYPE_PROFESSION)
-				local spellType, spellID = GetSpellBookItemInfo(offsetIndex, BOOKTYPE_PROFESSION)
-				local icon
+					local offsetIndex = j + spelloffset
+					local spellName, _ = GetSpellBookItemName(offsetIndex, BOOKTYPE_PROFESSION)
+					local spellType, spellID = GetSpellBookItemInfo(offsetIndex, BOOKTYPE_PROFESSION)
+					local icon
 
-				if (spellName and spellType ~= "FUTURESPELL") then
-					icon = GetSpellTexture(spellID)
-					local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellType, spellName, spellID, icon,nil,  nil, nil)
+					if (spellName and spellType ~= "FUTURESPELL") then
+						icon = GetSpellTexture(spellID)
+						local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellType, spellName, spellID, icon,nil,  nil, nil)
 
-					NeuronSpellCache[(spellName):lower()] = spellData
-					NeuronSpellCache[(spellName):lower().."()"] = spellData
+						NeuronSpellCache[(spellName):lower()] = spellData
+						NeuronSpellCache[(spellName):lower().."()"] = spellData
 
+					end
 				end
 			end
 		end
@@ -574,7 +595,7 @@ function Neuron:UpdateStanceStrings()
 			Neuron.STATES["stance2"] = L["Vanish"]
 			states = states.."[stance:2] stance2; "
 
-			if(GetSpecialization() == 3) then
+			if(Neuron.activeSpec == 3) then
 				Neuron.STATES["stance3"] = L["Shadow Dance"]
 				states = states.."[stance:3] stance3; "
 			end
@@ -742,7 +763,7 @@ end
 
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax, keybindable)
 
 	Neuron.registeredBarData[class] = {
 		class = class;
@@ -752,6 +773,7 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		barDB = barDB,
 		objTemplate = objTemplate,
 		objMax = objMax,
+		keybindable = keybindable,
 	}
 
 end
