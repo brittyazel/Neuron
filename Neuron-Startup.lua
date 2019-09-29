@@ -55,16 +55,16 @@ function Neuron:RegisterBars()
 	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10, true)
 
 	--Neuron XP Bar
-	Neuron:RegisterBarClass("XPBar", "XPBar", L["XP Bar"], "XP Button", DB.XPBar, Neuron.XPBTN, 10)
+	Neuron:RegisterBarClass("XPBar", "XPBar", L["XP Bar"], "XP Button", DB.XPBar, Neuron.XPBTN, 10, false)
 
 	--Neuron Rep Bar
-	Neuron:RegisterBarClass("RepBar", "RepBar", L["Rep Bar"], "Rep Button", DB.RepBar, Neuron.REPBTN, 10)
+	Neuron:RegisterBarClass("RepBar", "RepBar", L["Rep Bar"], "Rep Button", DB.RepBar, Neuron.REPBTN, 10, false)
 
 	--Neuron Cast Bar
-	Neuron:RegisterBarClass("CastBar", "CastBar", L["Cast Bar"], "Cast Button", DB.CastBar, Neuron.CASTBTN, 10)
+	Neuron:RegisterBarClass("CastBar", "CastBar", L["Cast Bar"], "Cast Button", DB.CastBar, Neuron.CASTBTN, 10, false)
 
 	--Neuron Mirror Bar
-	Neuron:RegisterBarClass("MirrorBar", "MirrorBar", L["Mirror Bar"], "Mirror Button", DB.MirrorBar, Neuron.MIRRORBTN, 10)
+	Neuron:RegisterBarClass("MirrorBar", "MirrorBar", L["Mirror Bar"], "Mirror Button", DB.MirrorBar, Neuron.MIRRORBTN, 10, false)
 
 	if not Neuron.isWoWClassic then
 		--Neuron Zone Ability Bar
@@ -120,6 +120,7 @@ function Neuron:RegisterGUI()
 	--Neuron Pet Bar
 	Neuron:RegisterGUIOptions("PetBar",
 			{AUTOHIDE = true,
+			 SHOWGRID = true,
 			 SNAPTO = true,
 			 UPCLICKS = true,
 			 DOWNCLICKS = true,

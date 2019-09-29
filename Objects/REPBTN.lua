@@ -142,7 +142,7 @@ function REPBTN:repstrings_Update(line)
 
 		for i=1, GetNumFactions() do
 			local name, _, ID, min, max, value, _, _, isHeader, _, hasRep, _, _, factionID = GetFactionInfo(i)
-			local fID, fRep, fMaxRep, fName, fText, fTexture, fTextLevel, fThreshold, nextFThreshold = GetFriendshipReputation(factionID)
+
 			local colors, standing
 			local hasFriendStatus = false
 
@@ -151,25 +151,36 @@ function REPBTN:repstrings_Update(line)
 			end
 
 			if ((not isHeader or hasRep) and not IsFactionInactive(i)) then
-				if (fID and not BrawlerGuildFactions[fID]) then
-					colors = BarRepColors[ID+2]; standing = fTextLevel
-					hasFriendStatus = true
-				elseif (fID and BrawlerGuildFactions[fID]) then
-					colors = BarRepColors[ID]; standing = fTextLevel
-					hasFriendStatus = true
-				else
-					colors = BarRepColors[ID]; standing = (colors.l):gsub("^%a%p", "")
+
+				local fID, fTextLevel
+				if not Neuron.isWoWClassic then
+					fID, _, _, _, _, _, fTextLevel, _, _ = GetFriendshipReputation(factionID)
 				end
 
-				if (factionID and C_Reputation.IsFactionParagon(factionID)) then
-					local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
-					value = para_value % para_max;
-					max = para_max
-					if hasRewardPending then
-						name = name.." ("..L["Reward"]:upper()..")"
+				if (fID and not BrawlerGuildFactions[fID]) then
+					colors = BarRepColors[ID+2]
+					standing = fTextLevel
+					hasFriendStatus = true
+				elseif (fID and BrawlerGuildFactions[fID]) then
+					colors = BarRepColors[ID]
+					standing = fTextLevel
+					hasFriendStatus = true
+				else
+					colors = BarRepColors[ID];
+					standing = (colors.l):gsub("^%a%p", "")
+				end
+
+				if not Neuron.isWoWClassic then
+					if (factionID and C_Reputation.IsFactionParagon(factionID)) then
+						local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
+						value = para_value % para_max;
+						max = para_max
+						if hasRewardPending then
+							name = name.." ("..L["Reward"]:upper()..")"
+						end
+						min = 0
+						colors = BarRepColors[11]
 					end
-					min = 0
-					colors = BarRepColors[11]
 				end
 
 				local repData = self:SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)

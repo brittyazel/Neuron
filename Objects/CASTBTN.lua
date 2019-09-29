@@ -78,8 +78,11 @@ function CASTBTN:SetType()
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
+
+	if not Neuron.isWoWClassic then
+		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
+	end
 
 	self.sb.unit = BarUnits[self.config.unit]
 
@@ -151,7 +154,13 @@ function CASTBTN:CastBar_OnEvent(event, unit, ...)
 
 	if (event == "UNIT_SPELLCAST_START") then
 
-		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
+		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible
+
+		if not Neuron.isWoWClassic then
+			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
+		else
+			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo() --classic doesn't have UnitCastingInfo()
+		end
 
 		if (not name) then
 			self:CastBar_Reset()

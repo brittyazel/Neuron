@@ -65,11 +65,14 @@ function XPBTN:SetType()
 	self:SetHitRectInsets(0, 0, 0, 0)
 
 	self:RegisterEvent("PLAYER_XP_UPDATE", "XPBar_OnEvent")
-	self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
 	self:RegisterEvent("UPDATE_EXHAUSTION", "XPBar_OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "XPBar_OnEvent")
-	self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "XPBar_OnEvent")
+
+	if not Neuron.isWoWClassic then
+		self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
+		self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
+	end
 
 	self.sb:Show()
 
@@ -261,13 +264,31 @@ function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosi
 	UIDropDownMenu_AddButton(info)
 	wipe(info)
 
-	if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
+	if not Neuron.isWoWClassic then
+
+		if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
+			info.arg1 = self
+			info.arg2 = "azerite_xp"
+			info.text = L["Track Azerite Power"]
+			info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
+
+			if (self.config.curXPType == "azerite_xp") then
+				info.checked = 1
+			else
+				info.checked = nil
+			end
+
+			UIDropDownMenu_AddButton(info)
+			wipe(info)
+		end
+
+
 		info.arg1 = self
-		info.arg2 = "azerite_xp"
-		info.text = L["Track Azerite Power"]
+		info.arg2 = "honor_points"
+		info.text = L["Track Honor Points"]
 		info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
 
-		if (self.config.curXPType == "azerite_xp") then
+		if (self.config.curXPType == "honor_points") then
 			info.checked = 1
 		else
 			info.checked = nil
@@ -275,22 +296,8 @@ function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosi
 
 		UIDropDownMenu_AddButton(info)
 		wipe(info)
+
 	end
-
-
-	info.arg1 = self
-	info.arg2 = "honor_points"
-	info.text = L["Track Honor Points"]
-	info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
-
-	if (self.config.curXPType == "honor_points") then
-		info.checked = 1
-	else
-		info.checked = nil
-	end
-
-	UIDropDownMenu_AddButton(info)
-	wipe(info)
 
 end
 
