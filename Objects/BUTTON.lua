@@ -418,9 +418,6 @@ function BUTTON:SetObjectVisibility()
 			return
 		end
 
-		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
-		self:SetAttribute("isshown", show)
-
 		if self.isShown then
 			self:Show()
 		else

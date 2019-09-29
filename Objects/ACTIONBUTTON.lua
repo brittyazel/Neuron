@@ -70,13 +70,11 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ACTIONBUTTON, "ActionBar", "ActionButton", "NeuronActionButtonTemplate")
 
-	--newButton:LoadData(GetActiveSpecGroup(), "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton.binder = Neuron.KEYBINDER.new(newButton)
+	--newButton.binder = Neuron.KEYBINDER.new(newButton)
 
 	return newButton
 end
@@ -136,13 +134,20 @@ end
 
 function ACTIONBUTTON:SetObjectVisibility(show)
 
-	if self:HasAction() or show or self.showGrid or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if InCombatLockdown() then
+		return
+	end
+
+	self:SetAttribute("showGrid", self.bar:GetShowGrid()) --this is important because in our state switching code, we can't querry self.showGrid directly
+	self:SetAttribute("isshown", show)
+
+	if self:HasAction() or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
+	Neuron.BUTTON.SetObjectVisibility(self, show) --call parent function
 
 end
 
