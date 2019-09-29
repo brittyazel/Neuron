@@ -23,8 +23,6 @@
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
-
-
 local menuElements = {
 	CharacterMicroButton,
 	SpellbookMicroButton,
@@ -38,6 +36,12 @@ local menuElements = {
 	StoreMicroButton,
 	MainMenuMicroButton}
 
+if Neuron.isWoWClassic then
+	wipe(menuElements)
+	for i=1, #MICRO_BUTTONS do
+		table.insert(menuElements, _G[MICRO_BUTTONS[i]])
+	end
+end
 ---------------------------------------------------------
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -49,8 +53,6 @@ function MENUBTN.new(bar, buttonID, defaults)
 
 	---call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, MENUBTN, "MenuBar", "MenuButton", "NeuronAnchorButtonTemplate")
-
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
 
 	if (defaults) then
 		newButton:SetDefaults(defaults)
@@ -64,7 +66,7 @@ end
 
 function MENUBTN:SetType()
 
-	if not self:IsEventRegistered("PET_BATTLE_CLOSE") then --only run this code on the first SetType, not the reloads after pet battles and such
+	if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic then --only run this code on the first SetType, not the reloads after pet battles and such
 		self:RegisterEvent("PET_BATTLE_CLOSE")
 	end
 
@@ -92,7 +94,8 @@ end
 
 
 function MENUBTN:SetData(bar)
-
+	
+    self.isShown = true
 	self.bar = bar
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
@@ -115,7 +118,7 @@ function MENUBTN.ModifiedMoveMicroButtons(anchor, anchorTo, relAnchor, x, y, isS
 	menuElements[1]:ClearAllPoints();
 	menuElements[1]:SetPoint(anchor, anchorTo, relAnchor, x-5, y+4);
 
-	for i=2,11 do
+	for i=2,#menuElements do
 		menuElements[i]:ClearAllPoints();
 		menuElements[i]:SetPoint("BOTTOMLEFT", menuElements[i-1], "BOTTOMRIGHT", -2,0)
 		if isStacked and i == 6 then

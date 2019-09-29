@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 80205
 ## Title: Neuron
 ## Notes: A macro-based action bar and object manager add-on
 ## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (aka Maul)

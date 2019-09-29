@@ -60,27 +60,30 @@ function Neuron:HideBlizzardUI()
 
 	-- disable override bar transition animations
 	disableFrameSlidingAnimation(MainMenuBar)
-	disableFrameSlidingAnimation(OverrideActionBar)
-
 	disableFrame(MultiBarBottomLeft, true)
 	disableFrame(MultiBarBottomRight, true)
 	disableFrame(MultiBarLeft, true)
 	disableFrame(MultiBarRight, true)
 	disableFrame(MainMenuBarArtFrame, true)
 	disableFrame(StanceBarFrame, true)
-	disableFrame(PossessBarFrame, true)
 	disableFrame(PetActionBarFrame, true)
-	disableFrame(MultiCastActionBarFrame, true)
-	disableFrame(ExtraActionBarFrame, true)
-	disableFrame(ZoneAbilityFrame, true)
 	disableFrame(MainMenuBarVehicleLeaveButton, true)
-	disableFrame(MicroButtonAndBagsBar, true)
 	disableFrame(MainMenuBarPerformanceBar)
 
-	StatusTrackingBarManager:UnregisterAllEvents()
+	if not Neuron.isWoWClassic then
+		disableFrameSlidingAnimation(OverrideActionBar)
+		disableFrame(PossessBarFrame, true)
+		disableFrame(MicroButtonAndBagsBar, true)
+		disableFrame(MultiCastActionBarFrame, true)
+		disableFrame(ExtraActionBarFrame, true)
+		disableFrame(ZoneAbilityFrame, true)
+
+		StatusTrackingBarManager:UnregisterAllEvents()
+	end
+
 
 	ActionBarController:UnregisterAllEvents()
-	StatusTrackingBarManager:UnregisterAllEvents()
+
 
 	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
 	if (not Neuron:IsHooked('ActionButton_OnEvent')) then
@@ -95,10 +98,6 @@ function Neuron:HideBlizzardUI()
 		Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
 
-	if (not Neuron:IsHooked('OverrideActionBar_UpdateSkin')) then
-		Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
-	end
-
 	if (not Neuron:IsHooked('ActionButton_HideGrid')) then
 		Neuron:RawHook('ActionButton_HideGrid', function() end, true)
 	end
@@ -110,6 +109,13 @@ function Neuron:HideBlizzardUI()
 	if (not Neuron:IsHooked('PetActionBar_Update')) then
 		Neuron:RawHook('PetActionBar_Update', function() end, true)
 	end
+
+	if not Neuron.isWoWClassic then
+		if (not Neuron:IsHooked('OverrideActionBar_UpdateSkin')) then
+			Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
+		end
+	end
+
 end
 
 
@@ -130,4 +136,65 @@ function Neuron:ToggleBlizzUI()
 		DB.blizzbar = true
 		StaticPopup_Show("ReloadUI")
 	end
+end
+
+function Neuron:Overrides()
+
+	local DB = Neuron.db.profile
+
+	--bag bar overrides
+	if DB.blizzbar == false then
+		--hide the weird color border around bag bars
+		CharacterBag0Slot.IconBorder:Hide()
+		CharacterBag1Slot.IconBorder:Hide()
+		CharacterBag2Slot.IconBorder:Hide()
+		CharacterBag3Slot.IconBorder:Hide()
+
+		--overwrite the Show function with a null function because it keeps coming back and won't stay hidden
+		if not Neuron:IsHooked(CharacterBag0Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag0Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag1Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag1Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag2Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag2Slot.IconBorder, "Show", function() end, true)
+		end
+		if not Neuron:IsHooked(CharacterBag3Slot.IconBorder, "Show") then
+			Neuron:RawHook(CharacterBag3Slot.IconBorder, "Show", function() end, true)
+		end
+	end
+
+	--status bar overrides
+	local disableDefaultCast = false
+	local disableDefaultMirror = false
+
+	for _,v in ipairs(Neuron.BARIndex) do
+
+		if v.barType == "StatusBar" then
+			for _, button in ipairs(v.buttons) do
+				if button.config.sbType == "cast" then
+					disableDefaultCast = true
+				elseif button.config.sbType == "mirror" then
+					disableDefaultMirror = true
+				end
+			end
+		end
+	end
+
+	if disableDefaultCast then
+		CastingBarFrame:UnregisterAllEvents()
+		CastingBarFrame:SetParent(Neuron.hiddenFrame)
+	end
+
+	if disableDefaultMirror then
+		UIParent:UnregisterEvent("MIRROR_TIMER_START")
+		MirrorTimer1:UnregisterAllEvents()
+		MirrorTimer1:SetParent(Neuron.hiddenFrame)
+		MirrorTimer2:UnregisterAllEvents()
+		MirrorTimer2:SetParent(Neuron.hiddenFrame)
+		MirrorTimer3:UnregisterAllEvents()
+		MirrorTimer3:SetParent(Neuron.hiddenFrame)
+	end
+
 end

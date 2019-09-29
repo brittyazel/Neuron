@@ -36,8 +36,6 @@ function EXITBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, EXITBTN, "ExitBar", "VehicleExitButton", "NeuronActionButtonTemplate")
 
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
@@ -57,6 +55,7 @@ function EXITBTN:SetType()
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
 	self:RegisterEvent("VEHICLE_UPDATE", "OnEvent")
 
+
 	self:SetScript("OnClick", function(self) self:OnClick() end)
 	self:SetScript("OnEnter", function(self) self:OnEnter() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
@@ -75,10 +74,12 @@ end
 function EXITBTN:SetObjectVisibility(show)
 
 	if CanExitVehicle() or UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-		self:SetAlpha(1)
+		self.isShown = true
 	else
-		self:SetAlpha(0)
+		self.isShown = false
 	end
+
+	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
 
 end
 

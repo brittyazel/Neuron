@@ -36,13 +36,9 @@ function ZONEABILITYBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
 
-	newButton:LoadData(GetActiveSpecGroup(), "homestate")
-
 	if (defaults) then
 		newButton:SetDefaults(defaults)
 	end
-
-	newButton.binder = Neuron.KEYBINDER.new(newButton)
 
 	newButton.style = newButton:CreateTexture(nil, "OVERLAY")
 	newButton.style:SetPoint("CENTER", -2, 1)
@@ -119,10 +115,13 @@ end
 function ZONEABILITYBTN:SetObjectVisibility(show)
 
 	if GetZoneAbilitySpellInfo() or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
-		self:SetAlpha(1)
+		self.isShown = true
 	else
-		self:SetAlpha(0)
+		self.isShown = false
 	end
+
+	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
+
 end
 
 
