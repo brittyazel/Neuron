@@ -1,6 +1,6 @@
 <!--Neuron, a World of Warcraft® user interface addon.-->
 
-<!--	This file is part of Neuron.
+<!--This file is part of Neuron.
 
 	Neuron is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -13,11 +13,11 @@
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
+	along with this add-on.  If not, see <https://www.gnu.org/licenses/>.
 
 	Copyright for portions of Neuron are held by Connor Chenoweth,
 	a.k.a Maul, 2014 as part of his original project, Ion. All other
-	copyrights for Neuron are held by Britt Yazel, 2017-2018.-->
+	copyrights for Neuron are held by Britt Yazel, 2017-2019.-->
 
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://github.com/Ellypse/wow-ui-source/blob/live/FrameXML/UI.xsd">
 
