@@ -13,11 +13,11 @@
 --GNU General Public License for more details.
 --
 --You should have received a copy of the GNU General Public License
---along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
+--along with this add-on.  If not, see <https://www.gnu.org/licenses/>.
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2018.
+--copyrights for Neuron are held by Britt Yazel, 2017-2019.
 
 ---@class BAR : CheckButton @This is our bar object that serves as the container for all of our button objects
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
