@@ -329,11 +329,11 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 	end
 
 	UIDropDownMenu_AddButton(info)
-	wipe(info)
 
 	if not Neuron.isWoWClassic then
 
 		if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
+			info = UIDropDownMenu_CreateInfo()
 			info.arg1 = self
 			info.arg2 = "azerite_xp"
 			info.text = L["Track Azerite Power"]
@@ -346,10 +346,9 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 			end
 
 			UIDropDownMenu_AddButton(info)
-			wipe(info)
 		end
 
-
+		info = UIDropDownMenu_CreateInfo()
 		info.arg1 = self
 		info.arg2 = "honor_points"
 		info.text = L["Track Honor Points"]
@@ -362,8 +361,6 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 		end
 
 		UIDropDownMenu_AddButton(info)
-		wipe(info)
-
 	end
 
 end
@@ -534,8 +531,7 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 
 		UIDropDownMenu_AddButton(info)
 
-		wipe(info)
-
+		info = UIDropDownMenu_CreateInfo()
 		info.arg1 = nil
 		info.arg2 = nil
 		info.text = " "
@@ -547,7 +543,6 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 
 		UIDropDownMenu_AddButton(info) --this is a spacer in the menu between Auto Select and the different factions
 
-		wipe(info)
 
 		local data = {}
 		local order, ID, text, friends
@@ -569,6 +564,8 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		table.sort(data) --sort data alphabetically
 
 		for k,v in ipairs(data) do
+
+			info = UIDropDownMenu_CreateInfo()
 
 			order, ID, text = (";"):split(v)
 
@@ -597,13 +594,12 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 
 				UIDropDownMenu_AddButton(info)
 
-				wipe(info)
-
 				friends = true
 			end
 
 			ID = tonumber(ID)
 
+			info = UIDropDownMenu_CreateInfo()
 			info.arg1 = self
 			info.arg2 = nil
 			info.text = text
@@ -625,8 +621,6 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 			info.notCheckable = nil
 
 			UIDropDownMenu_AddButton(info)
-
-			wipe(info)
 		end
 	end
 end
