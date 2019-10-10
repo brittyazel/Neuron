@@ -48,7 +48,7 @@ local sbStrings = {
 		[3] = { L["Current/Next"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
 		[4] = { L["Percent"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
 		[5] = { L["Bubbles"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
-		[6] = { L["Current Level/Rank"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rank end end },
+		[6] = { L["Current Level/Rank"], function(sb) if (RepWatch[sb.repID]) then if RepWatch[sb.repID].specialStanding then return RepWatch[sb.repID].specialStanding else return RepWatch[sb.repID].standing end end end},
 	},
 	mirror = {
 		[1] = { L["None"], function(sb) return "" end },
@@ -294,61 +294,41 @@ end
 
 function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
 
-	local info = UIDropDownMenu_CreateInfo()
+	local menuFrame = CreateFrame("Frame", nil, self.sb, "UIDropDownMenuTemplate")
 
-	info.arg1 = self
-	info.arg2 = "player_xp"
-	info.text = L["Track Character XP"]
-	info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
+	local menu = {}
 
-	if (self.sb.curXPType == "player_xp") then
-		info.checked = 1
-	else
-		info.checked = nil
-	end
-
-	UIDropDownMenu_AddButton(info)
+	table.insert(menu, {
+		arg1=self,
+		arg2="player_xp",
+		text = L["Track Character XP"],
+		func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
+		checked = self.sb.curXPType == "player_xp",
+	})
 
 	if not Neuron.isWoWClassic then
 
 		if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
-			info = UIDropDownMenu_CreateInfo()
-			info.arg1 = self
-			info.arg2 = "azerite_xp"
-			info.text = L["Track Azerite Power"]
-			info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
-
-			if (self.sb.curXPType == "azerite_xp") then
-				info.checked = 1
-			else
-				info.checked = nil
-			end
-
-			UIDropDownMenu_AddButton(info)
+			table.insert(menu, {
+				arg1=self,
+				arg2 = "azerite_xp",
+				text = L["Track Azerite Power"],
+				func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
+				checked = self.sb.curXPType == "azerite_xp",
+			})
 		end
 
-		info = UIDropDownMenu_CreateInfo()
-		info.arg1 = self
-		info.arg2 = "honor_points"
-		info.text = L["Track Honor Points"]
-		info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
-
-		if (self.sb.curXPType == "honor_points") then
-			info.checked = 1
-		else
-			info.checked = nil
-		end
-
-		UIDropDownMenu_AddButton(info)
+		table.insert(menu, {
+			arg1=self,
+			arg2 =  "honor_points",
+			text = L["Track Honor Points"],
+			func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
+			checked = self.sb.curXPType == "honor_points",
+		})
 	end
 
-end
+	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1)
 
-
-function STATUSBTN:XPBar_DropDown_OnLoad()
-
-	UIDropDownMenu_Initialize(self.dropdown, function() self:xpDropDown_Initialize() end, "MENU")
-	self.dropdown_init = true
 end
 
 
@@ -363,10 +343,11 @@ end
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
 -- @return reptable:  Table containing provided data
-function STATUSBTN:SetRepWatch(name, standing, minrep, maxrep, value, colors, specialRep)
+function STATUSBTN:SetRepWatch(ID, name, standing, minrep, maxrep, value, colors, specialStanding)
 	local reptable = {}
-	reptable.rep = name
-	reptable.rank = standing
+	reptable.ID = ID
+	reptable.name = name
+	reptable.standing = standing
 	reptable.current = (value-minrep).." / "..(maxrep-minrep)
 	reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
 	reptable.bubbles = tostring(math.floor(((((value-minrep)/(maxrep-minrep))*100)/5))).." / 20 "..L["Bubbles"]
@@ -377,7 +358,7 @@ function STATUSBTN:SetRepWatch(name, standing, minrep, maxrep, value, colors, sp
 	reptable.r = colors.r
 	reptable.g = colors.g
 	reptable.b = colors.b
-	reptable.specialRep = specialRep
+	reptable.specialStanding = specialStanding
 
 	return reptable
 end
@@ -385,7 +366,7 @@ end
 
 function STATUSBTN:repstrings_Update(repGainedString)
 
-	local BarRepData = {
+	local BAR_REP_DATA = {
 		[0] = { l="Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
 		[1] = { l="Hated", r=0.6, g=0.1, b=0.1, a=1.0 },
 		[2] = { l="Hostile", r=0.7, g=0.2, b=0.2, a=1.0 },
@@ -399,7 +380,7 @@ function STATUSBTN:repstrings_Update(repGainedString)
 	}
 
 	--These factions return fID but have 8 levels instead of 6
-	local BrawlerGuildFactions = {
+	local BRAWLERS_GUILD_FACTIONS = {
 		[1419] = true, --Alliance
 		[1374] = true, --Horde
 	}
@@ -411,8 +392,7 @@ function STATUSBTN:repstrings_Update(repGainedString)
 	wipe(RepWatch)
 
 	for i=1, GetNumFactions() do
-		local name, _, standingID, min, max, value, _, _, isHeader, _, hasRep, _, _, factionID = GetFactionInfo(i)
-
+		local name, _, standingID, min, max, value, _, _, isHeader, _, hasRep, _, isChild, factionID = GetFactionInfo(i)
 		local colors = {}
 
 		if standingID == 8 then
@@ -421,7 +401,7 @@ function STATUSBTN:repstrings_Update(repGainedString)
 
 		if (not isHeader or hasRep) and not IsFactionInactive(i) then
 
-			local fID, standing, isParagon, specialRep
+			local fID, standing, isParagon, specialStanding
 			if not Neuron.isWoWClassic then
 				fID, _, _, _, _, _, standing, _, _ = GetFriendshipReputation(factionID)
 				isParagon = C_Reputation.IsFactionParagon(factionID)
@@ -429,8 +409,8 @@ function STATUSBTN:repstrings_Update(repGainedString)
 
 			if not fID then --not a "Friendship" faction, i.e. Chromie or Brawlers Guild
 				if not isParagon then
-					colors.r, colors.g, colors.b = BarRepData[standingID].r, BarRepData[standingID].g, BarRepData[standingID].b
-					standing = BarRepData[standingID].l --convert numerical standingID to text i.e "Exalted" instead of 8
+					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
+					standing = BAR_REP_DATA[standingID].l --convert numerical standingID to text i.e "Exalted" instead of 8
 				else
 					local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
 					value = para_value % para_max;
@@ -439,22 +419,27 @@ function STATUSBTN:repstrings_Update(repGainedString)
 						name = name.." ("..L["Reward"]:upper()..")"
 					end
 					min = 0
-					colors.r, colors.g, colors.b = BarRepData[9].r, BarRepData[9].g, BarRepData[9].b
-					standing = BarRepData[9].l --set standing text to be "Paragon"
+					colors.r, colors.g, colors.b = BAR_REP_DATA[9].r, BAR_REP_DATA[9].g, BAR_REP_DATA[9].b
+					standing = BAR_REP_DATA[9].l --set standing text to be "Paragon"
 				end
 			else --is a "Friendship" faction
-				if BrawlerGuildFactions[fID] then
-					colors.r, colors.g, colors.b = BarRepData[standingID].r, BarRepData[standingID].g, BarRepData[standingID].b
-					specialRep = "Brawler's Guild"
+				if BRAWLERS_GUILD_FACTIONS[fID] then
+					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
+					specialStanding = "Brawler's Guild"
+					standing = "Other"
 				else
-					colors.r, colors.g, colors.b = BarRepData[standingID+2].r, BarRepData[standingID+2].g, BarRepData[standingID+2].b
-					specialRep = "Friendship"
+					if standingID + 2 > 8 then --safety to make sure we don't set our colors higher than 8, or "exalted", when we offset below
+						standingID = 6
+					end
+					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID+2].r, BAR_REP_DATA[standingID+2].g, BAR_REP_DATA[standingID+2].b --offset by two, because friendships don't have "hated" or "hostile" ranks
+					specialStanding = standing
+					standing = "Other"
 				end
 			end
 
-			local repData = self:SetRepWatch(name, standing, min, max, value, colors, specialRep)
+			local repData = self:SetRepWatch(i, name, standing, min, max, value, colors, specialStanding)
 
-			--repGainedString is a sentence that reads like "Reputation with Zandalari Empire increased by 75."
+			--repGainedString is a phrase that reads like "Reputation with Zandalari Empire increased by 75."
 			if repGainedString and repGainedString:find(name) or self.data.autoWatch == i then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
 				RepWatch[0] = repData --RepWatch is what holds all of our Repuation data for all of the factions, and the zeroth element is the Autowatch slot, which is always the latest updated data
 				self.data.autoWatch = i
@@ -474,9 +459,6 @@ function STATUSBTN:repstrings_Update(repGainedString)
 
 	end
 end
-
-
-
 
 
 function STATUSBTN:repbar_OnEvent(event,...)
@@ -499,7 +481,6 @@ function STATUSBTN:repbar_OnEvent(event,...)
 	self.sb.mText:SetText(self.sb.mFunc(self.sb))
 end
 
-test = RepWatch
 
 function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for choosing a rep
 
@@ -507,134 +488,95 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		return
 	end
 
-	--Build an EasyMenu table from the RepWatch data
-	local data = {}
-	local order, ID, text, friends
+	local repDataTable = {}
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
-
-		if (k > 0) then
-
-			local percent = tonumber(v.percent:match("%d+"))
-
-			if (percent < 10) then
-				percent = "0"..percent
+		if (k > 0) then --skip the "0" entry which is our autowatch
+			if not repDataTable[v.standing]then
+				repDataTable[v.standing] = {}
 			end
-
-			table.insert(data, v.rank..percent..";"..k..";".."|cff"..v.hex..v.rep.." - "..v.percent.."|r")
+			table.insert(repDataTable[v.standing], { ID=v.ID, name=v.name, percent = v.percent, hex=v.hex})
 		end
 	end
 
-	--table.sort(data) --sort data alphabetically
 
+	local menuFrame = CreateFrame("Frame", nil, self.sb, "UIDropDownMenuTemplate")
 
+	local menu = {} --we need to build this table into the EasyMenu data format
+	table.insert(menu, {text = "Select an Option", isTitle = true, notCheckable=true})
 
-
-	local info = UIDropDownMenu_CreateInfo()
-	local checked
-
-
-	info.arg1 = self
-	info.arg2 = nil
-	info.text = L["Auto Select"]
-	info.func = function(dropdown, self) --self is arg1
-		self.data.repID = dropdown.value
-		self.sb.repID = dropdown.value
-		self:repbar_OnEvent()
-	end
-
-	if (self.data.repID == 0) then
-		checked = 1
-	else
-		checked = nil
-	end
-
-	info.value = 0
-	info.checked = checked
-
-	UIDropDownMenu_AddButton(info)
-
-	info = UIDropDownMenu_CreateInfo()
-	info.arg1 = nil
-	info.arg2 = nil
-	info.text = " "
-	info.func = function() end
-	info.value = nil
-	info.checked = nil
-	info.notClickable = true
-	info.notCheckable = 1
-
-	UIDropDownMenu_AddButton(info) --this is a spacer in the menu between Auto Select and the different factions
-
-
-
-
-	for k,v in ipairs(data) do
-
-		info = UIDropDownMenu_CreateInfo()
-
-		order, ID, text = (";"):split(v)
-
-		if (order:find("^z") and not friends) then
-
-			info.arg1 = nil
-			info.arg2 = nil
-			info.text = " "
-			info.func = function() end
-			info.value = nil
-			info.checked = nil
-			info.notClickable = true
-			info.notCheckable = 1
-
-			UIDropDownMenu_AddButton(info)
-
-			info.arg1 = nil
-			info.arg2 = nil
-			info.text = "Friends"
-			info.func = function() end
-			info.value = nil
-			info.checked = nil
-			info.notClickable = true
-			info.notCheckable = 1
-			info.leftPadding = 17
-
-			UIDropDownMenu_AddButton(info)
-
-			friends = true
-		end
-
-		ID = tonumber(ID)
-
-		info = UIDropDownMenu_CreateInfo()
-		info.arg1 = self
-		info.arg2 = nil
-		info.text = text
-		info.func = function(dropdown, self) --self is arg1
+	table.insert(menu, {
+		arg1=self,
+		arg2=nil,
+		text=L["Auto Select"],
+		func= function(dropdown, self) --self is arg1
 			self.data.repID = dropdown.value
 			self.sb.repID = dropdown.value
 			self:repbar_OnEvent()
+		end,
+		value=0,
+		checked=self.data.repID == 0})
+
+
+	--this is a spacer between autowatch and everything else
+	table.insert(menu,	{
+		arg1=nil,
+		arg2=nil,
+		text=" ",
+		func=function() end,
+		value=nil,
+		checked=nil,
+		notClickable=true,
+		notCheckable=true})
+
+	--build the rest of the options based on the repDataTable
+	for k,v in pairs(repDataTable) do
+		local info = {}
+		info.menuList = {}
+
+		for _,v2 in pairs(v) do
+			table.insert(info.menuList, {
+				arg1=self,
+				arg2 = nil,
+				text = v2.name .. " - " .. v2.percent,
+				func = function(dropdown, self) --self is arg1
+					self.data.repID = dropdown.value
+					self.sb.repID = dropdown.value
+					self:repbar_OnEvent()
+					menuFrame:Hide()
+				end,
+				value = v2.ID,
+				colorCode="|cff"..v2.hex,
+				checked = self.data.repID == v2.ID,
+				notClickable = false,
+				notCheckable = false})
 		end
 
-		if (self.data.repID == ID) then
-			checked = 1
-		else
-			checked = nil
-		end
-
-		info.value = ID
-		info.checked = checked
-		info.notClickable = nil
-		info.notCheckable = nil
-
-		UIDropDownMenu_AddButton(info)
+		table.insert(menu, {text=k, hasArrow=true, colorCode="|cff"..v[1].hex, notCheckable=true, menuList=info.menuList})
 	end
-end
 
+	--this is a spacer between everything else and close
+	table.insert(menu,	{
+		arg1=nil,
+		arg2=nil,
+		text=" ",
+		func=function() end,
+		value=nil,
+		checked=nil,
+		notClickable=true,
+		notCheckable=true})
 
-function STATUSBTN:RepBar_DropDown_OnLoad()
+	table.insert(menu, {
+		arg1=self,
+		arg2=nil,
+		text="Close",
+		func= function() --self is arg1
+			menuFrame:Hide()
+		end,
+		notCheckable = true})
 
-	UIDropDownMenu_Initialize(self.dropdown, function() self:repDropDown_Initialize() end, "MENU")
-	self.dropdown_init = true
+	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1);
+
 end
 
 
@@ -1223,29 +1165,12 @@ end
 
 
 
-function STATUSBTN:OnClick(mousebutton, down)
-
-
+function STATUSBTN:OnClick(mousebutton)
 	if (mousebutton == "RightButton") then
-		if (self.config.sbType == "xp" and not self.dropdown_init) then
-			self:XPBar_DropDown_OnLoad()
-		elseif(self.config.sbType == "rep" and not self.dropdown_init) then
-			self:RepBar_DropDown_OnLoad()
-		end
-
-
-		if (DropDownList1:IsVisible()) then
-			DropDownList1:Hide()
-		else
-			self:repstrings_Update()
-
-			ToggleDropDownMenu(1, nil, self.dropdown, self, 0, 0)
-
-			DropDownList1:ClearAllPoints()
-			DropDownList1:SetPoint("LEFT", self, "RIGHT", 3, 0)
-			DropDownList1:SetClampedToScreen(true)
-
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		if self.config.sbType == "xp" then
+			self:xpDropDown_Initialize()
+		elseif self.config.sbType == "rep" then
+			self:repDropDown_Initialize()
 		end
 	end
 end
