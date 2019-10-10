@@ -26,27 +26,6 @@ Neuron.STATUSBTN = STATUSBTN
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BarRepColors = {
-	[0] = { l="a_Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
-	[1] = { l="b_Hated", r=0.6, g=0.1, b=0.1, a=1.0 },
-	[2] = { l="c_Hostile", r=0.7, g=0.2, b=0.2, a=1.0 },
-	[3] = { l="d_Unfriendly", r=0.75, g=0.27, b=0, a=1.0 },
-	[4] = { l="e_Neutral", r=0.9, g=0.7, b=0, a=1.0 },
-	[5] = { l="f_Friendly", r=0.5, g=0.6, b=0.1, a=1.0 },
-	[6] = { l="g_Honored", r=0.1, g=0.5, b=0.20, a=1.0 },
-	[7] = { l="h_Revered", r=0.0, g=0.39, b=0.88, a=1.0 },
-	[8] = { l="i_Exalted", r=0.58, g=0.0, b=0.55, a=1.0 },
-	[9] = { l="i_Exalted2", r=0.58, g=0.0, b=0.55, a=1.0 },
-	[10] = { l="i_Exalted3", r=0.58, g=0.0, b=0.55, a=1.0 },
-	[11] = { l="p_Paragon", r=1, g=0.5, b=0, a=1.0 },
-}
-
---These factions return fID but have 8 levels instead of 6
-local BrawlerGuildFactions = {
-	[1419] = true, --Alliance
-	[1374] = true, --Horde
-}
-
 local CastWatch, RepWatch, MirrorWatch, MirrorBars = {}, {}, {}, {}
 
 local sbStrings = {
@@ -384,14 +363,13 @@ end
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
 -- @return reptable:  Table containing provided data
-function STATUSBTN:SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, value, colors)
+function STATUSBTN:SetRepWatch(name, standing, minrep, maxrep, value, colors, specialRep)
 	local reptable = {}
 	reptable.rep = name
 	reptable.rank = standing
 	reptable.current = (value-minrep).." / "..(maxrep-minrep)
 	reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
 	reptable.bubbles = tostring(math.floor(((((value-minrep)/(maxrep-minrep))*100)/5))).." / 20 "..L["Bubbles"]
-	reptable.rephour = "---"
 	reptable.min = minrep
 	reptable.max = maxrep
 	reptable.value = value
@@ -399,83 +377,101 @@ function STATUSBTN:SetRepWatch(name, hasFriendStatus, standing, minrep, maxrep, 
 	reptable.r = colors.r
 	reptable.g = colors.g
 	reptable.b = colors.b
+	reptable.specialRep = specialRep
 
-	if hasFriendStatus then
-		reptable.l = "z"..colors.l
-	else
-		reptable.l = colors.l
-	end
 	return reptable
 end
 
 
-function STATUSBTN:repstrings_Update(line)
+function STATUSBTN:repstrings_Update(repGainedString)
 
-	if (GetNumFactions() > 0) then
-		wipe(RepWatch)
+	local BarRepData = {
+		[0] = { l="Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
+		[1] = { l="Hated", r=0.6, g=0.1, b=0.1, a=1.0 },
+		[2] = { l="Hostile", r=0.7, g=0.2, b=0.2, a=1.0 },
+		[3] = { l="Unfriendly", r=0.75, g=0.27, b=0, a=1.0 },
+		[4] = { l="Neutral", r=0.9, g=0.7, b=0, a=1.0 },
+		[5] = { l="Friendly", r=0.5, g=0.6, b=0.1, a=1.0 },
+		[6] = { l="Honored", r=0.1, g=0.5, b=0.20, a=1.0 },
+		[7] = { l="Revered", r=0.0, g=0.39, b=0.88, a=1.0 },
+		[8] = { l="Exalted", r=0.58, g=0.0, b=0.55, a=1.0 },
+		[9] = { l="Paragon", r=1, g=0.5, b=0, a=1.0 },
+	}
 
-		for i=1, GetNumFactions() do
-			local name, _, ID, min, max, value, _, _, isHeader, _, hasRep, _, _, factionID = GetFactionInfo(i)
+	--These factions return fID but have 8 levels instead of 6
+	local BrawlerGuildFactions = {
+		[1419] = true, --Alliance
+		[1374] = true, --Horde
+	}
 
-			local colors, standing
-			local hasFriendStatus = false
+	if GetNumFactions() <= 0 then --quit if for some reason the number of known factions is 0 or less (should never happen, this is just for safety)
+		return
+	end
 
-			if ID == 8 then
-				min = 0
+	wipe(RepWatch)
+
+	for i=1, GetNumFactions() do
+		local name, _, standingID, min, max, value, _, _, isHeader, _, hasRep, _, _, factionID = GetFactionInfo(i)
+
+		local colors = {}
+
+		if standingID == 8 then
+			min = 0
+		end
+
+		if (not isHeader or hasRep) and not IsFactionInactive(i) then
+
+			local fID, standing, isParagon, specialRep
+			if not Neuron.isWoWClassic then
+				fID, _, _, _, _, _, standing, _, _ = GetFriendshipReputation(factionID)
+				isParagon = C_Reputation.IsFactionParagon(factionID)
 			end
 
-			if ((not isHeader or hasRep) and not IsFactionInactive(i)) then
-
-				local fID, fTextLevel
-				if not Neuron.isWoWClassic then
-					fID, _, _, _, _, _, fTextLevel, _, _ = GetFriendshipReputation(factionID)
-				end
-
-				if (fID and not BrawlerGuildFactions[fID]) then
-					colors = BarRepColors[ID+2]
-					standing = fTextLevel
-					hasFriendStatus = true
-				elseif (fID and BrawlerGuildFactions[fID]) then
-					colors = BarRepColors[ID]
-					standing = fTextLevel
-					hasFriendStatus = true
+			if not fID then --not a "Friendship" faction, i.e. Chromie or Brawlers Guild
+				if not isParagon then
+					colors.r, colors.g, colors.b = BarRepData[standingID].r, BarRepData[standingID].g, BarRepData[standingID].b
+					standing = BarRepData[standingID].l --convert numerical standingID to text i.e "Exalted" instead of 8
 				else
-					colors = BarRepColors[ID];
-					standing = (colors.l):gsub("^%a%p", "")
-				end
-
-				if not Neuron.isWoWClassic then
-					if (factionID and C_Reputation.IsFactionParagon(factionID)) then
-						local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
-						value = para_value % para_max;
-						max = para_max
-						if hasRewardPending then
-							name = name.." ("..L["Reward"]:upper()..")"
-						end
-						min = 0
-						colors = BarRepColors[11]
+					local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
+					value = para_value % para_max;
+					max = para_max
+					if hasRewardPending then
+						name = name.." ("..L["Reward"]:upper()..")"
 					end
+					min = 0
+					colors.r, colors.g, colors.b = BarRepData[9].r, BarRepData[9].g, BarRepData[9].b
+					standing = BarRepData[9].l --set standing text to be "Paragon"
 				end
+			else --is a "Friendship" faction
+				if BrawlerGuildFactions[fID] then
+					colors.r, colors.g, colors.b = BarRepData[standingID].r, BarRepData[standingID].g, BarRepData[standingID].b
+					specialRep = "Brawler's Guild"
+				else
+					colors.r, colors.g, colors.b = BarRepData[standingID+2].r, BarRepData[standingID+2].g, BarRepData[standingID+2].b
+					specialRep = "Friendship"
+				end
+			end
 
-				local repData = self:SetRepWatch(name, hasFriendStatus, standing, min, max, value, colors)
-				RepWatch[i] = repData --set current reptable into growing RepWatch table
+			local repData = self:SetRepWatch(name, standing, min, max, value, colors, specialRep)
 
-				if (((line and type(line)~= "boolean") and line:find(name)) or self.data.autoWatch == i) then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
-					RepWatch[0] = repData --RepWatch is what holds all of our Repuation data for all of the factions, and the zeroth element is the Autowatch slot, which is always the latest updated data
-					self.data.autoWatch = i
+			--repGainedString is a sentence that reads like "Reputation with Zandalari Empire increased by 75."
+			if repGainedString and repGainedString:find(name) or self.data.autoWatch == i then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
+				RepWatch[0] = repData --RepWatch is what holds all of our Repuation data for all of the factions, and the zeroth element is the Autowatch slot, which is always the latest updated data
+				self.data.autoWatch = i
 
-					---safety check in case repData comes back as nil, which happens sometimes for some strange reason
-					---this will at the very least keep it from being an ugly, grey, empty bar.
-					if not RepWatch[0] then
-						RepWatch[0] = CopyTable(RepWatch[2]) -- default to the lowest valid rep (RepWatch[1] is a header)
-						self.data.autoWatch = 2
-					end
-
+				---safety check in case repData comes back as nil, which happens sometimes for some strange reason
+				---this will at the very least keep it from being an ugly, grey, empty bar.
+				if not RepWatch[0] then
+					RepWatch[0] = CopyTable(RepWatch[2]) -- default to the lowest valid rep (RepWatch[1] is a header)
+					self.data.autoWatch = 2
 				end
 
 			end
+
+			RepWatch[i] = repData --set current reptable into growing RepWatch table
 
 		end
+
 	end
 end
 
@@ -503,125 +499,134 @@ function STATUSBTN:repbar_OnEvent(event,...)
 	self.sb.mText:SetText(self.sb.mFunc(self.sb))
 end
 
+test = RepWatch
 
 function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for choosing a rep
 
-	if (self.sb) then
+	if not self.sb then
+		return
+	end
 
-		local info = UIDropDownMenu_CreateInfo()
-		local checked, repLine, repIndex
+	--Build an EasyMenu table from the RepWatch data
+	local data = {}
+	local order, ID, text, friends
 
+	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
+
+		if (k > 0) then
+
+			local percent = tonumber(v.percent:match("%d+"))
+
+			if (percent < 10) then
+				percent = "0"..percent
+			end
+
+			table.insert(data, v.rank..percent..";"..k..";".."|cff"..v.hex..v.rep.." - "..v.percent.."|r")
+		end
+	end
+
+	--table.sort(data) --sort data alphabetically
+
+
+
+
+	local info = UIDropDownMenu_CreateInfo()
+	local checked
+
+
+	info.arg1 = self
+	info.arg2 = nil
+	info.text = L["Auto Select"]
+	info.func = function(dropdown, self) --self is arg1
+		self.data.repID = dropdown.value
+		self.sb.repID = dropdown.value
+		self:repbar_OnEvent()
+	end
+
+	if (self.data.repID == 0) then
+		checked = 1
+	else
+		checked = nil
+	end
+
+	info.value = 0
+	info.checked = checked
+
+	UIDropDownMenu_AddButton(info)
+
+	info = UIDropDownMenu_CreateInfo()
+	info.arg1 = nil
+	info.arg2 = nil
+	info.text = " "
+	info.func = function() end
+	info.value = nil
+	info.checked = nil
+	info.notClickable = true
+	info.notCheckable = 1
+
+	UIDropDownMenu_AddButton(info) --this is a spacer in the menu between Auto Select and the different factions
+
+
+
+
+	for k,v in ipairs(data) do
+
+		info = UIDropDownMenu_CreateInfo()
+
+		order, ID, text = (";"):split(v)
+
+		if (order:find("^z") and not friends) then
+
+			info.arg1 = nil
+			info.arg2 = nil
+			info.text = " "
+			info.func = function() end
+			info.value = nil
+			info.checked = nil
+			info.notClickable = true
+			info.notCheckable = 1
+
+			UIDropDownMenu_AddButton(info)
+
+			info.arg1 = nil
+			info.arg2 = nil
+			info.text = "Friends"
+			info.func = function() end
+			info.value = nil
+			info.checked = nil
+			info.notClickable = true
+			info.notCheckable = 1
+			info.leftPadding = 17
+
+			UIDropDownMenu_AddButton(info)
+
+			friends = true
+		end
+
+		ID = tonumber(ID)
+
+		info = UIDropDownMenu_CreateInfo()
 		info.arg1 = self
 		info.arg2 = nil
-		info.text = L["Auto Select"]
+		info.text = text
 		info.func = function(dropdown, self) --self is arg1
 			self.data.repID = dropdown.value
 			self.sb.repID = dropdown.value
 			self:repbar_OnEvent()
 		end
 
-		if (self.data.repID == 0) then
+		if (self.data.repID == ID) then
 			checked = 1
 		else
 			checked = nil
 		end
 
-		info.value = 0
+		info.value = ID
 		info.checked = checked
+		info.notClickable = nil
+		info.notCheckable = nil
 
 		UIDropDownMenu_AddButton(info)
-
-		info = UIDropDownMenu_CreateInfo()
-		info.arg1 = nil
-		info.arg2 = nil
-		info.text = " "
-		info.func = function() end
-		info.value = nil
-		info.checked = nil
-		info.notClickable = true
-		info.notCheckable = 1
-
-		UIDropDownMenu_AddButton(info) --this is a spacer in the menu between Auto Select and the different factions
-
-
-		local data = {}
-		local order, ID, text, friends
-
-		for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
-
-			if (k > 0) then
-
-				local percent = tonumber(v.percent:match("%d+"))
-
-				if (percent < 10) then
-					percent = "0"..percent
-				end
-
-				table.insert(data, v.l..percent..";"..k..";".."|cff"..v.hex..v.rep.." - "..v.percent.."|r")
-			end
-		end
-
-		table.sort(data) --sort data alphabetically
-
-		for k,v in ipairs(data) do
-
-			info = UIDropDownMenu_CreateInfo()
-
-			order, ID, text = (";"):split(v)
-
-			if (order:find("^z") and not friends) then
-
-				info.arg1 = nil
-				info.arg2 = nil
-				info.text = " "
-				info.func = function() end
-				info.value = nil
-				info.checked = nil
-				info.notClickable = true
-				info.notCheckable = 1
-
-				UIDropDownMenu_AddButton(info)
-
-				info.arg1 = nil
-				info.arg2 = nil
-				info.text = "Friends"
-				info.func = function() end
-				info.value = nil
-				info.checked = nil
-				info.notClickable = true
-				info.notCheckable = 1
-				info.leftPadding = 17
-
-				UIDropDownMenu_AddButton(info)
-
-				friends = true
-			end
-
-			ID = tonumber(ID)
-
-			info = UIDropDownMenu_CreateInfo()
-			info.arg1 = self
-			info.arg2 = nil
-			info.text = text
-			info.func = function(dropdown, self) --self is arg1
-				self.data.repID = dropdown.value
-				self.sb.repID = dropdown.value
-				self:repbar_OnEvent()
-			end
-
-			if (self.data.repID == ID) then
-				checked = 1
-			else
-				checked = nil
-			end
-
-			info.value = ID
-			info.checked = checked
-			info.notClickable = nil
-			info.notCheckable = nil
-
-			UIDropDownMenu_AddButton(info)
-		end
 	end
 end
 
@@ -1178,15 +1183,15 @@ end
 function STATUSBTN:SetBorder(statusbutton, config, bordercolor)
 
 	statusbutton.border:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-	                            edgeFile = BarBorders[config.border][2],
-	                            tile = true,
-	                            tileSize = BarBorders[config.border][7],
-	                            edgeSize = BarBorders[config.border][8],
-	                            insets = { left = BarBorders[config.border][3],
-	                                       right = BarBorders[config.border][4],
-	                                       top = BarBorders[config.border][5],
-	                                       bottom = BarBorders[config.border][6]
-	                            }
+	                                  edgeFile = BarBorders[config.border][2],
+	                                  tile = true,
+	                                  tileSize = BarBorders[config.border][7],
+	                                  edgeSize = BarBorders[config.border][8],
+	                                  insets = { left = BarBorders[config.border][3],
+	                                             right = BarBorders[config.border][4],
+	                                             top = BarBorders[config.border][5],
+	                                             bottom = BarBorders[config.border][6]
+	                                  }
 	})
 
 	statusbutton.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
@@ -1202,15 +1207,15 @@ function STATUSBTN:SetBorder(statusbutton, config, bordercolor)
 
 	if (statusbutton.barflash) then
 		statusbutton.barflash:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		                              edgeFile = BarBorders[config.border][2],
-		                              tile = true,
-		                              tileSize = BarBorders[config.border][7],
-		                              edgeSize = BarBorders[config.border][8],
-		                              insets = { left = BarBorders[config.border][3],
-		                                         right = BarBorders[config.border][4],
-		                                         top = BarBorders[config.border][5],
-		                                         bottom = BarBorders[config.border][6]
-		                              }
+		                                    edgeFile = BarBorders[config.border][2],
+		                                    tile = true,
+		                                    tileSize = BarBorders[config.border][7],
+		                                    edgeSize = BarBorders[config.border][8],
+		                                    insets = { left = BarBorders[config.border][3],
+		                                               right = BarBorders[config.border][4],
+		                                               top = BarBorders[config.border][5],
+		                                               bottom = BarBorders[config.border][6]
+		                                    }
 		})
 	end
 end
