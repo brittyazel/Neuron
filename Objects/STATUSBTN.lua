@@ -48,7 +48,7 @@ local sbStrings = {
 		[3] = { L["Current/Next"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
 		[4] = { L["Percent"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
 		[5] = { L["Bubbles"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
-		[6] = { L["Current Level/Rank"], function(sb) if (RepWatch[sb.repID]) then if RepWatch[sb.repID].specialStanding then return RepWatch[sb.repID].specialStanding else return RepWatch[sb.repID].standing end end end},
+		[6] = { L["Current Level/Rank"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].standing end end},
 	},
 	mirror = {
 		[1] = { L["None"], function(sb) return "" end },
@@ -294,6 +294,7 @@ end
 
 function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
 
+	--this is the frame that will hold our dropdown menu
 	local menuFrame = CreateFrame("Frame", nil, self, "UIDropDownMenuTemplate")
 	menuFrame:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 0, 0)
 
@@ -302,19 +303,22 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 	-- Menu Title
 	table.insert(menu, {text = L["Select an Option"], isTitle = true, notCheckable=true, justifyH = "CENTER",})
 
+	--add Player XP option
 	table.insert(menu, {
-		arg1=self,
-		arg2="player_xp",
+		arg1 = self,
+		arg2 = "player_xp",
 		text = L["Track Character XP"],
 		func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
 		checked = self.sb.curXPType == "player_xp",
 	})
 
+	--wow classic doesn't have Honor points nor Azerite, carefull
 	if not Neuron.isWoWClassic then
 
+		--add Heart of Azeroth option
 		if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
 			table.insert(menu, {
-				arg1=self,
+				arg1 = self,
 				arg2 = "azerite_xp",
 				text = L["Track Azerite Power"],
 				func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
@@ -322,9 +326,10 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 			})
 		end
 
+		--add PvP Honor option
 		table.insert(menu, {
-			arg1=self,
-			arg2 =  "honor_points",
+			arg1 = self,
+			arg2 = "honor_points",
 			text = L["Track Honor Points"],
 			func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
 			checked = self.sb.curXPType == "honor_points",
@@ -336,10 +341,11 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 		arg1=nil,
 		arg2=nil,
 		text=" ",
+		disabled=true,
 		func=function() end,
 		value=nil,
 		checked=nil,
-		notClickable=true,
+		justifyH = "CENTER",
 		notCheckable=true
 	})
 
@@ -355,12 +361,10 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 		justifyH = "CENTER",
 	})
 
-	EasyMenu(menu, menuFrame, menuFrame, 0 , 0, "MENU", 1)
+	--build the EasyMenu with the newly created menu table "menu"
+	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1)
 
 end
-
-
-
 
 
 ----------------------------------------------
@@ -371,11 +375,12 @@ end
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
 -- @return reptable:  Table containing provided data
-function STATUSBTN:SetRepWatch(ID, name, standing, minrep, maxrep, value, colors, specialStanding)
+function STATUSBTN:SetRepWatch(ID, name, standing, header, minrep, maxrep, value, colors)
 	local reptable = {}
 	reptable.ID = ID
 	reptable.name = name
 	reptable.standing = standing
+	reptable.header = header
 	reptable.current = (value-minrep).." / "..(maxrep-minrep)
 	reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
 	reptable.bubbles = tostring(math.floor(((((value-minrep)/(maxrep-minrep))*100)/5))).." / 20 "..L["Bubbles"]
@@ -386,7 +391,6 @@ function STATUSBTN:SetRepWatch(ID, name, standing, minrep, maxrep, value, colors
 	reptable.r = colors.r
 	reptable.g = colors.g
 	reptable.b = colors.b
-	reptable.specialStanding = specialStanding
 
 	return reptable
 end
@@ -419,6 +423,8 @@ function STATUSBTN:repstrings_Update(repGainedString)
 
 	wipe(RepWatch)
 
+	local header --we set this on each header to categorize all the factions that follow
+
 	for i=1, GetNumFactions() do
 		local name, _, standingID, min, max, value, _, _, isHeader, _, hasRep, _, isChild, factionID = GetFactionInfo(i)
 		local colors = {}
@@ -427,10 +433,18 @@ function STATUSBTN:repstrings_Update(repGainedString)
 			min = 0
 		end
 
+		if isHeader and not isChild then --set a header variable that will get set on each rep that follows until the next header is set
+			if name == "Guild" then --get rid of the "Guild" category and just tuck it under "Other" for clarity
+				header = "Other"
+			else
+				header = name
+			end
+		end
+
 		if (not isHeader or hasRep) and not IsFactionInactive(i) then
 
-			local fID, standing, isParagon, specialStanding
-			if not Neuron.isWoWClassic then
+			local fID, standing, isParagon
+			if not Neuron.isWoWClassic then --classic doesn't have Friendships or Paragon, carefull
 				fID, _, _, _, _, _, standing, _, _ = GetFriendshipReputation(factionID)
 				isParagon = C_Reputation.IsFactionParagon(factionID)
 			end
@@ -453,22 +467,18 @@ function STATUSBTN:repstrings_Update(repGainedString)
 			else --is a "Friendship" faction
 				if BRAWLERS_GUILD_FACTIONS[fID] then
 					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
-					specialStanding = "Brawler's Guild"
-					standing = "Other"
 				else
 					if standingID + 2 > 8 then --safety to make sure we don't set our colors higher than 8, or "exalted", when we offset below
 						standingID = 6
 					end
 					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID+2].r, BAR_REP_DATA[standingID+2].g, BAR_REP_DATA[standingID+2].b --offset by two, because friendships don't have "hated" or "hostile" ranks
-					specialStanding = standing
-					standing = "Other"
 				end
 			end
 
-			local repData = self:SetRepWatch(i, name, standing, min, max, value, colors, specialStanding)
+			local repData = self:SetRepWatch(i, name, standing, header, min, max, value, colors)
 
-			--repGainedString is a phrase that reads like "Reputation with Zandalari Empire increased by 75."
-			if repGainedString and repGainedString:find(name) or self.data.autoWatch == i then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
+			--repGainedString is a phrase that reads like "Reputation with Zandalari Empire increased by 75.", except on login it's type boolean for some reason
+			if repGainedString and type(repGainedString) ~= "boolean" and repGainedString:find(name) or self.data.autoWatch == i then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
 				RepWatch[0] = repData --RepWatch is what holds all of our Repuation data for all of the factions, and the zeroth element is the Autowatch slot, which is always the latest updated data
 				self.data.autoWatch = i
 
@@ -520,10 +530,10 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
 		if (k > 0) then --skip the "0" entry which is our autowatch
-			if not repDataTable[v.standing]then
-				repDataTable[v.standing] = {}
+			if not repDataTable[v.header]then
+				repDataTable[v.header] = {}
 			end
-			table.insert(repDataTable[v.standing], { ID=v.ID, name=v.name, percent = v.percent, hex=v.hex})
+			table.insert(repDataTable[v.header], { ID=v.ID, name=v.name, standing=v.standing, percent=v.percent, hex=v.hex})
 		end
 	end
 
@@ -536,6 +546,7 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 	-- Menu Title
 	table.insert(menu, {text = L["Select an Option"], isTitle = true, notCheckable=true, justifyH = "CENTER",})
 
+	--this is the Auto Select entry for automatically picking faction to watch based on the latest gained
 	table.insert(menu, {
 		arg1=self,
 		arg2=nil,
@@ -549,31 +560,30 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		checked=self.data.repID == 0
 	})
 
-
-	--this is a spacer between autowatch and everything else
+	--this is a spacer between everything else and close
 	table.insert(menu,	{
 		arg1=nil,
 		arg2=nil,
 		text=" ",
+		disabled = true,
 		func=function() end,
 		value=nil,
+		justifyH = "CENTER",
 		checked=nil,
-		notClickable=true,
 		notCheckable=true
 	})
 
-	local innerMenu = {}
-
+	local innerMenu = {} --temp table that will hold all of our faction header parents
 	--build the rest of the options based on the repDataTable
 	for k,v in pairs(repDataTable) do
-		local info = {}
-		info.menuList = {}
+		local temp = {} --temp table
+		temp.menuList = {} --table that holds the sub-tables (factions)
 
 		for _,v2 in pairs(v) do
-			table.insert(info.menuList, {
+			table.insert(temp.menuList, {
 				arg1=self,
 				arg2 = nil,
-				text = v2.name .. " - " .. v2.percent,
+				text = v2.name .. " - " .. v2.percent .." - ".. v2.standing,
 				func = function(dropdown, self) --self is arg1
 					self.data.repID = dropdown.value
 					self.sb.repID = dropdown.value
@@ -589,19 +599,22 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		end
 
 		--sort the list of factions (in a given reputation bracket) alphabetically
-		table.sort(info.menuList, function(a,b)
+		table.sort(temp.menuList, function(a,b)
 			return a.text<b.text
 		end)
 
-		table.insert(innerMenu, {text=k, hasArrow=true, colorCode="|cff"..v[1].hex, notCheckable=true, menuList=info.menuList})
-	end
+		--insert values into the growing innerMenu table
+		table.insert(innerMenu, {text=k, hasArrow=true, notCheckable=true, menuList=temp.menuList})
+	end--create a comparison table for our custom sort routine
 
-	--create a comparison table for our custom sort routine
-	local STANDING_SORT_TABLE = {Unknown=1, Hated=2, Hostile=3, Unfriendly=4, Neutral=5, Friendly=6, Honored=7, Revered=8, Exalted=9, Paragon=10, Other=11}
-
+	local SORT_TABLE = {["Battle for Azeroth"]=1, ["Legion"]=2, ["Mists of Pandaria"]=3, ["Cataclysm"]=4, ["Wrath of the Lich King"]=5, ["The Burning Crusade"]=6, ["Classic"]=7, ["Other"]=8}
 	--sort the list of our reputation brackets according the priority table above
 	table.sort(innerMenu, function(a,b)
-		return STANDING_SORT_TABLE[a.text]<STANDING_SORT_TABLE[b.text]
+		if SORT_TABLE[a.text] and SORT_TABLE[b.text] then
+			return SORT_TABLE[a.text]<SORT_TABLE[b.text]
+		else
+			return a.text < b.text
+		end
 	end)
 
 	--insert each (now sorted) entry individually into our menu table
@@ -614,10 +627,11 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		arg1=nil,
 		arg2=nil,
 		text=" ",
+		disabled = true,
 		func=function() end,
 		value=nil,
+		justifyH = "CENTER",
 		checked=nil,
-		notClickable=true,
 		notCheckable=true
 	})
 
@@ -633,11 +647,10 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		justifyH = "CENTER",
 	})
 
-
-	EasyMenu(menu, menuFrame, menuFrame, 0, 0, "MENU", 1)
+	--build the EasyMenu with the newly created menu table "menu"
+	EasyMenu(menu, menuFrame, "cursor", 0, 0, "MENU", 1)
 
 end
-
 
 
 ----------------------------------------------------
