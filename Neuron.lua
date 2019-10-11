@@ -27,7 +27,7 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local LATEST_VERSION_NUM = "1.1.3" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local LATEST_VERSION_NUM = "1.2.3" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local LATEST_DB_VERSION = 1.3
 
@@ -385,33 +385,26 @@ end
 
 function Neuron:LoginMessage()
 
-	---displays a info window on login for either fresh installs or updates
+	--displays a info window on login for either fresh installs or updates
 	if (not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM ) then
 
 		print(" ")
-		print("         ~~~~~~~~~~NEURON~~~~~~~~~")
-		print("    Happy Spring!")
-		print("    Neuron is in for an exciting year, thank you so much for your support.")
-		print("    Please reach out if you are interested in contributing to Neuron's development, we always need more help coding and translating, and, as always, donations are welcome! :-)")
-		print("    Special thanks to Acey7 for translating Neuron into Simplified Chinese!")
+		print("                  ~~~~~~~~~~NEURON~~~~~~~~~")
+		print("    Ladies and Gentlemen,")
+		print("    Lots of work is underway on Neuron 2.0, which will include a fully rewritten core, GUI, modules, and more. Likewise, please reach out if you are interested in contributing to Neuron's development, we always need more help coding and translating, and, as always, donations are welcome!")
+		print("    In addition, we recently released a custom Masque theme just for Neuron, called Masque: Neuron. You can find it on CurseForge or the Twitch app.")
 		print("       -Soyier")
-
-		if UnitFactionGroup('player') == "Horde" then
-			print(" ")
-			print("    Use the following link to join the Neuron (Horde) in-game community")
-			print("    https://bit.ly/2Lu72NZ")
-		end
 
 		if not IsAddOnLoaded("Masque") then
 			print(" ")
 			print("    You do not currently have Masque installed or enabled.")
 			print("    Please consider using Masque for enhancing the visual appearance of Neuron's action buttons.")
+			print("    We recommend using Masque: Neuron, the theme made by Soyier for use with Neuron.")
 		end
 
 		print(" ")
 
 	end
-
 
 	DB.updateWarning = LATEST_VERSION_NUM
 end
