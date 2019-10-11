@@ -509,6 +509,8 @@ L["Vertical"] = true
 L["Number of Buttons"] = true
 
 L["Reward"] = true
+L["Close"] = true
+L["Select an Option"] = true
 
 L["Item"] = true
 L["Spell"] = true
