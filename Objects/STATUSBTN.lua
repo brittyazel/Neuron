@@ -607,7 +607,7 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		table.insert(innerMenu, {text=k, hasArrow=true, notCheckable=true, menuList=temp.menuList})
 	end--create a comparison table for our custom sort routine
 
-	local SORT_TABLE = {["Battle for Azeroth"]=1, ["Legion"]=2, ["Mists of Pandaria"]=3, ["Cataclysm"]=4, ["Wrath of the Lich King"]=5, ["The Burning Crusade"]=6, ["Classic"]=7, ["Other"]=8}
+	local SORT_TABLE = {["Battle for Azeroth"]=1, ["Legion"]=2, ["Warlords of Draenor"]=3, ["Mists of Pandaria"]=4, ["Cataclysm"]=5, ["Wrath of the Lich King"]=6, ["The Burning Crusade"]=7, ["Classic"]=8, ["Other"]=9}
 	--sort the list of our reputation brackets according the priority table above
 	table.sort(innerMenu, function(a,b)
 		if SORT_TABLE[a.text] and SORT_TABLE[b.text] then
