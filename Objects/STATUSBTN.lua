@@ -44,7 +44,7 @@ local sbStrings = {
 	},
 	rep = {
 		[1] = { L["None"], function(sb) return "" end },
-		[2] = { L["Faction"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].rep end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
+		[2] = { L["Faction"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].name end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
 		[3] = { L["Current/Next"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
 		[4] = { L["Percent"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
 		[5] = { L["Bubbles"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
@@ -294,9 +294,13 @@ end
 
 function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
 
-	local menuFrame = CreateFrame("Frame", nil, self.sb, "UIDropDownMenuTemplate")
+	local menuFrame = CreateFrame("Frame", nil, self, "UIDropDownMenuTemplate")
+	menuFrame:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 0, 0)
 
 	local menu = {}
+
+	-- Menu Title
+	table.insert(menu, {text = L["Select an Option"], isTitle = true, notCheckable=true, justifyH = "CENTER",})
 
 	table.insert(menu, {
 		arg1=self,
@@ -327,7 +331,31 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 		})
 	end
 
-	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1)
+	--this is a spacer between everything else and close
+	table.insert(menu,	{
+		arg1=nil,
+		arg2=nil,
+		text=" ",
+		func=function() end,
+		value=nil,
+		checked=nil,
+		notClickable=true,
+		notCheckable=true
+	})
+
+	--close button in case you don't want to change
+	table.insert(menu, {
+		arg1=self,
+		arg2=nil,
+		text=L["Close"],
+		func= function() --self is arg1
+			menuFrame:Hide()
+		end,
+		notCheckable = true,
+		justifyH = "CENTER",
+	})
+
+	EasyMenu(menu, menuFrame, menuFrame, 0 , 0, "MENU", 1)
 
 end
 
@@ -500,10 +528,13 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 	end
 
 
-	local menuFrame = CreateFrame("Frame", nil, self.sb, "UIDropDownMenuTemplate")
+	local menuFrame = CreateFrame("Frame", nil, self, "UIDropDownMenuTemplate")
+	menuFrame:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 0, 0)
 
 	local menu = {} --we need to build this table into the EasyMenu data format
-	table.insert(menu, {text = "Select an Option", isTitle = true, notCheckable=true})
+
+	-- Menu Title
+	table.insert(menu, {text = L["Select an Option"], isTitle = true, notCheckable=true, justifyH = "CENTER",})
 
 	table.insert(menu, {
 		arg1=self,
@@ -515,7 +546,8 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 			self:repbar_OnEvent()
 		end,
 		value=0,
-		checked=self.data.repID == 0})
+		checked=self.data.repID == 0
+	})
 
 
 	--this is a spacer between autowatch and everything else
@@ -527,7 +559,10 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		value=nil,
 		checked=nil,
 		notClickable=true,
-		notCheckable=true})
+		notCheckable=true
+	})
+
+	local innerMenu = {}
 
 	--build the rest of the options based on the repDataTable
 	for k,v in pairs(repDataTable) do
@@ -549,10 +584,29 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 				colorCode="|cff"..v2.hex,
 				checked = self.data.repID == v2.ID,
 				notClickable = false,
-				notCheckable = false})
+				notCheckable = false
+			})
 		end
 
-		table.insert(menu, {text=k, hasArrow=true, colorCode="|cff"..v[1].hex, notCheckable=true, menuList=info.menuList})
+		--sort the list of factions (in a given reputation bracket) alphabetically
+		table.sort(info.menuList, function(a,b)
+			return a.text<b.text
+		end)
+
+		table.insert(innerMenu, {text=k, hasArrow=true, colorCode="|cff"..v[1].hex, notCheckable=true, menuList=info.menuList})
+	end
+
+	--create a comparison table for our custom sort routine
+	local STANDING_SORT_TABLE = {Unknown=1, Hated=2, Hostile=3, Unfriendly=4, Neutral=5, Friendly=6, Honored=7, Revered=8, Exalted=9, Paragon=10, Other=11}
+
+	--sort the list of our reputation brackets according the priority table above
+	table.sort(innerMenu, function(a,b)
+		return STANDING_SORT_TABLE[a.text]<STANDING_SORT_TABLE[b.text]
+	end)
+
+	--insert each (now sorted) entry individually into our menu table
+	for _,v in pairs(innerMenu) do
+		table.insert(menu, v)
 	end
 
 	--this is a spacer between everything else and close
@@ -564,18 +618,23 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		value=nil,
 		checked=nil,
 		notClickable=true,
-		notCheckable=true})
+		notCheckable=true
+	})
 
+	--close button in case you don't want to change
 	table.insert(menu, {
 		arg1=self,
 		arg2=nil,
-		text="Close",
+		text=L["Close"],
 		func= function() --self is arg1
 			menuFrame:Hide()
 		end,
-		notCheckable = true})
+		notCheckable = true,
+		justifyH = "CENTER",
+	})
 
-	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1);
+
+	EasyMenu(menu, menuFrame, menuFrame, 0, 0, "MENU", 1)
 
 end
 
