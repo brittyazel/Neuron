@@ -295,7 +295,12 @@ end
 function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
 
 	--this is the frame that will hold our dropdown menu
-	local menuFrame = CreateFrame("Frame", nil, self, "UIDropDownMenuTemplate")
+	local menuFrame
+	if not NeuronXPDropdownMenu then --try to avoid re-creating this over again if we don't have to
+		menuFrame = CreateFrame("Frame", "NeuronXPDropdownMenu", self, "UIDropDownMenuTemplate")
+	else
+		menuFrame = NeuronXPDropdownMenu
+	end
 	menuFrame:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 0, 0)
 
 	local menu = {}
@@ -537,8 +542,12 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		end
 	end
 
-
-	local menuFrame = CreateFrame("Frame", nil, self, "UIDropDownMenuTemplate")
+	local menuFrame
+	if not NeuronRepDropdownMenu then --try to avoid re-creating this over again if we don't have to
+		menuFrame = CreateFrame("Frame", "NeuronRepDropdownMenu", self, "UIDropDownMenuTemplate")
+	else
+		menuFrame = NeuronRepDropdownMenu
+	end
 	menuFrame:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 0, 0)
 
 	local menu = {} --we need to build this table into the EasyMenu data format
