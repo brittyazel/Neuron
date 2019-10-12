@@ -23,6 +23,7 @@
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 local BAR = Neuron.BAR
 
+local DEBUG = false
 
 local petIcons = {}
 
@@ -79,6 +80,10 @@ local POINTS = {
 -----------------------------
 ---helper funcs--------------
 -----------------------------
+
+local function debugPrint(text)
+	if DEBUG then print(text) end
+end
 
 -- returns true if arg and compareTo match. arg is a [Cc][Aa][Ss][Ee]-insensitive pattern
 -- so we can't equate them and to get an exact match we need to append ^ and $ to the pattern
@@ -165,6 +170,30 @@ local function isAnyMatchIn(needles,haystack)
 	end
 	if numNeedles < 1 then return false end
 	return hit
+end
+
+---@index index: number,
+---@bookType bookType: string constant ("spell" or "pet")
+---@return string, string, string, number, number
+local function getSpellInfo(index, bookType)
+	local spellBookSpellName, spellRankOrSubtype = GetSpellBookItemName(index, bookType)
+	local spellType,spellIdOrActionId = GetSpellBookItemInfo(index, bookType)
+	local name, rank_testing,icon,_,_,_, spellID = GetSpellInfo(index, spellRankOrSubtype)
+
+	if rank_testing then debugPrint("RANNKKKKKK: "..rank_testing) end
+
+	if spellIdOrActionId ~= spellID then
+		local _actionId ,_spellID = "nil","nil"
+		if spellIdOrActionId then _actionId = spellIdOrActionId end
+		if spellID then _spellID = spellID end
+		debugPrint("NEURON flyout - spellID: ".._spellID.." != actionID: ".._actionId)
+	end
+	local return_name = spellBookSpellName
+	if(return_name ~= name) then
+		debugPrint("Name mismatch! <"..spellBookSpellName.."> != <"..spellBookSpellName.."> using: "..name)
+		return_name = name
+	end
+	return return_name, spellRankOrSubtype, spellType, spellID, icon
 end
 
 ---@list list: list of strings
@@ -338,29 +367,7 @@ function ACTIONBUTTON:filter_item(tooltip)
 	return data
 end
 
----@index index: number,
----@bookType bookType: string constant ("spell" or "pet")
----@return string, string, string, number, number
-local function getSpellInfo(index, bookType)
-	local spellBookSpellName, spellRankOrSubtype = GetSpellBookItemName(index, bookType)
-	local spellType,spellIdOrActionId = GetSpellBookItemInfo(index, bookType)
-	local name, rank_testing,icon,_,_,_, spellID = GetSpellInfo(index, spellRankOrSubtype)
 
-	if rank_testing then print("RANNKKKKKK: "..rank_testing) end
-
-	if spellIdOrActionId ~= spellID then
-		local _actionId ,_spellID = "nil","nil"
-		if spellIdOrActionId then _actionId = spellIdOrActionId end
-		if spellID then _spellID = spellID end
-		print("NEURON flyout - spellID: ".._spellID.." != actionID: ".._actionId)
-	end
-	local return_name = spellBookSpellName
-	if(return_name ~= name) then
-		print("Name mismatch! <"..spellBookSpellName.."> != <"..spellBookSpellName.."> using: "..name)
-		return_name = name
-	end
-	return return_name, spellRankOrSubtype, spellType, spellID, icon
-end
 --- Filter Handler for Spells
 -- spell:id will get all spells of that spellID
 -- spell:name will get all spells that contain "name" in its name or its flyout parent
@@ -399,7 +406,7 @@ function ACTIONBUTTON:filter_spell(tooltip)
 				local bookType = BOOKTYPE_SPELL
 				if i == 5 and HasPetSpells() then
 					bookType = BOOKTYPE_PET --assumed a fifth tab is a pet tab.
-					print("NEURON - spellbook tab 5 is presumed to be a pet spell tab!")
+					debugPrint("NEURON - spellbook tab 5 is presumed to be a pet spell tab!")
 				end
 				local name, rank, spellType, spellID, icon = getSpellInfo(j,bookType)
 
@@ -431,7 +438,7 @@ function ACTIONBUTTON:filter_spell(tooltip)
 			local bookType = BOOKTYPE_SPELL
 			if i == 5 and HasPetSpells() then
 				bookType = BOOKTYPE_PET --assumed a fifth tab is a pet tab.
-				print("NEURON - spellbook tab 5 is presumed to be a pet spell tab!")
+				debugPrint("NEURON - spellbook tab 5 is presumed to be a pet spell tab!")
 			end
 			local name, rank, spellType, spellID, icon = getSpellInfo(j,bookType)
 
@@ -439,7 +446,7 @@ function ACTIONBUTTON:filter_spell(tooltip)
 			if rank then
 				searchTerm = searchTerm.."("..rank..")"
 			else
-				print("Spell subtype/rank N/A! <"..name..">")
+				debugPrint("Spell subtype/rank N/A! <"..name..">")
 			end
 
 			repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
@@ -476,7 +483,7 @@ function ACTIONBUTTON:filter_spell(tooltip)
 						end
 					end
 				else
-					print("spell type: "..spellType)
+					debugPrint("spell type: "..spellType)
 				end
 			until true
 			if (data[searchTerm:lower()] and not (NeuronSpellCache[name:lower()] or NeuronSpellCache[name:lower().."()"])) then
