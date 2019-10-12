@@ -248,86 +248,88 @@ end
 
 function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
 
-	local info = UIDropDownMenu_CreateInfo()
-
-	info.arg1 = self
-	info.arg2 = "player_xp"
-	info.text = L["Track Character XP"]
-	info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
-
-	if (self.config.curXPType == "player_xp") then
-		info.checked = 1
+	--this is the frame that will hold our dropdown menu
+	local menuFrame
+	if not NeuronXPDropdownMenu then --try to avoid re-creating this over again if we don't have to
+		menuFrame = CreateFrame("Frame", "NeuronXPDropdownMenu", self, "UIDropDownMenuTemplate")
 	else
-		info.checked = nil
+		menuFrame = NeuronXPDropdownMenu
 	end
+	menuFrame:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 0, 0)
 
-	UIDropDownMenu_AddButton(info)
-	wipe(info)
+	local menu = {}
 
+	-- Menu Title
+	table.insert(menu, {text = L["Select an Option"], isTitle = true, notCheckable=true, justifyH = "CENTER",})
+
+	--add Player XP option
+	table.insert(menu, {
+		arg1 = self,
+		arg2 = "player_xp",
+		text = L["Track Character XP"],
+		func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
+		checked = self.config.curXPType == "player_xp",
+	})
+
+	--wow classic doesn't have Honor points nor Azerite, carefull
 	if not Neuron.isWoWClassic then
 
+		--add Heart of Azeroth option
 		if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
-			info.arg1 = self
-			info.arg2 = "azerite_xp"
-			info.text = L["Track Azerite Power"]
-			info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
-
-			if (self.config.curXPType == "azerite_xp") then
-				info.checked = 1
-			else
-				info.checked = nil
-			end
-
-			UIDropDownMenu_AddButton(info)
-			wipe(info)
+			table.insert(menu, {
+				arg1 = self,
+				arg2 = "azerite_xp",
+				text = L["Track Azerite Power"],
+				func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
+				checked = self.config.curXPType == "azerite_xp",
+			})
 		end
 
-
-		info.arg1 = self
-		info.arg2 = "honor_points"
-		info.text = L["Track Honor Points"]
-		info.func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end
-
-		if (self.config.curXPType == "honor_points") then
-			info.checked = 1
-		else
-			info.checked = nil
-		end
-
-		UIDropDownMenu_AddButton(info)
-		wipe(info)
-
+		--add PvP Honor option
+		table.insert(menu, {
+			arg1 = self,
+			arg2 = "honor_points",
+			text = L["Track Honor Points"],
+			func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
+			checked = self.config.curXPType == "honor_points",
+		})
 	end
 
-end
+	--this is a spacer between everything else and close
+	table.insert(menu,	{
+		arg1=nil,
+		arg2=nil,
+		text=" ",
+		disabled=true,
+		func=function() end,
+		value=nil,
+		checked=nil,
+		justifyH = "CENTER",
+		notCheckable=true
+	})
 
+	--close button in case you don't want to change
+	table.insert(menu, {
+		arg1=self,
+		arg2=nil,
+		text=L["Close"],
+		func= function() --self is arg1
+			menuFrame:Hide()
+		end,
+		notCheckable = true,
+		justifyH = "CENTER",
+	})
 
-function XPBTN:XPBar_DropDown_OnLoad()
+	--build the EasyMenu with the newly created menu table "menu"
+	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1)
 
-	UIDropDownMenu_Initialize(self.dropdown, function() self:xpDropDown_Initialize() end, "MENU")
-	self.dropdown_init = true
 end
 
 
 function XPBTN:OnClick(mousebutton)
 
 	if (mousebutton == "RightButton") then
-
-		if not self.dropdown_init then
-			self:XPBar_DropDown_OnLoad()
-		end
-
-
-		self:xpstrings_Update()
-
-		ToggleDropDownMenu(1, nil, self.dropdown, self, 0, 0)
-
-		DropDownList1:ClearAllPoints()
-		DropDownList1:SetPoint("LEFT", self, "RIGHT", 3, 0)
-		DropDownList1:SetClampedToScreen(true)
-
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
+		self:xpDropDown_Initialize()
 	end
 
 end
