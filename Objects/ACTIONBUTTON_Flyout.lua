@@ -135,6 +135,51 @@ local function timerFrame_OnUpdate(frame, elapsed)
 	end
 end
 
+---@needles needles: list of strings
+---@haystack haystack: string - a string to check in
+---@return boolean
+local function isAllMatchIn(needles,haystack)
+	if haystack == "" then return false end
+	local numNeedles, hit = 0, 0
+	for k,_ in pairs(needles) do
+		numNeedles = numNeedles + 1
+		if haystack:match(k) then
+			hit = hit + 1
+		end
+	end
+	return hit == numNeedles
+end
+
+---@needles needles: list of strings
+---@haystack haystack: string - a string to check in
+---@return boolean
+local function isAnyMatchIn(needles,haystack)
+	if haystack == "" then return false end
+	local numNeedles, hit = 0, false
+	for k,_ in pairs(needles) do
+		numNeedles = numNeedles + 1
+		if haystack:match(k) then
+			hit = true -- mark as hit
+			break
+		end
+	end
+	if numNeedles < 1 then return false end
+	return hit
+end
+
+---@list list: list of strings
+---@return string
+local function getKeys(list)
+	local txt = ""
+	for k,_ in pairs(list) do
+		if txt == "" then
+			txt = txt..k
+		else
+			txt = txt..", "..k
+		end
+	end
+	return txt
+end
 
 --- Filter handler for items
 -- item:id will get all items of that itemID
@@ -142,137 +187,148 @@ end
 function ACTIONBUTTON:filter_item(tooltip)
 
 	local data = {}
+	local itemTooltips = {}
 
-	local itemsToSkip = {}
-
-	local bagItemsTooltips = {}
-
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-	-- TODO: add mandatory and optional functionality
-	--[[
-	for ckey in gmatch(keys, "[^,]+") do
-		repeat
-			local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-
-			arg = arg:lower()
-
-			local name= GetItemInfo(arg)
-
-			if name then
-				if (cmd:match("!")) then
-					itemsToSkip[name] = true;
-					data[name] = nil
-					break -- next bag slot
-				end
-				data[name] = "item"
-			end
-		until true
+	local keys, itemSlotMatch, mandatoryMatch, optionalMatch, notMatching = self.flyout.keys, {}, {}, {}, {}
+	local numItemSlotMatch, numMandatory, numOptional, numNotMatching = 0,0,0,0
+	-- build key check tables
+	for ckey in gmatch(keys, "[^,]+") do -- sort requirements
+		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
+		arg = arg:lower()
+		if cmd:match("~") then
+			optionalMatch[arg] = true
+			numOptional = numOptional + 1
+		elseif cmd:match("!") then
+			notMatching[arg] = false
+			numNotMatching = numNotMatching + 1
+		elseif cmd:match("#") then
+			itemSlotMatch[arg] = true
+			numItemSlotMatch = numItemSlotMatch + 1
+		else
+			mandatoryMatch[arg] = true
+			numMandatory = numMandatory + 1
+		end
 	end
-	]]
+	-- build tooltip table
 	if (tooltip) then -- part I of tooltip cache version
-		for i=0,4 do
-			for j=1, GetContainerNumSlots(i) do
-				local itemId = GetContainerItemID(i,j)
-				if (itemId) then
-					GameTooltip:SetOwner(UIParent,"ANCHOR_NONE")
-					GameTooltip:SetBagItem(i,j)
-					local itemTooltip = ""
-					for k=GameTooltip:NumLines(),2,-1 do
-						local text = _G["GameTooltipTextLeft"..k]:GetText()
-						if (text) then
-							itemTooltip = text.." "..itemTooltip
+		for i,v in pairs(bagsToCache) do
+			if (tostring(i)):match("Worn") and v then --items worn
+				for j=0, 19 do -- go through equip slots
+					local itemId = GetInventoryItemID("player",j)
+					if (itemId) then
+						GameTooltip:SetOwner(UIParent,"ANCHOR_NONE")
+						GameTooltip:SetInventoryItem("player",j)
+						local itemTooltip = ""
+						for l=GameTooltip:NumLines(),2,-1 do
+							local text = _G["GameTooltipTextLeft"..l]:GetText()
+							if (text) then
+								itemTooltip = text.." "..itemTooltip
+							end
 						end
+						itemTooltips[i..":"..j] = "worn "..itemTooltip:lower()
 					end
-					bagItemsTooltips[i..":"..j] = itemTooltip:lower()
+				end
+			else --bags
+				for j=1, GetContainerNumSlots(i) do
+					local itemId = GetContainerItemID(i,j)
+					if (itemId) then
+						GameTooltip:SetOwner(UIParent,"ANCHOR_NONE")
+						GameTooltip:SetBagItem(i,j)
+						local itemTooltip = ""
+						for l=GameTooltip:NumLines(),2,-1 do
+							local text = _G["GameTooltipTextLeft"..l]:GetText()
+							if (text) then
+								itemTooltip = text.." "..itemTooltip
+							end
+						end
+						itemTooltips[i..":"..j] = itemTooltip:lower()
+					end
 				end
 			end
 		end
 	end
-
-	if (#data<1) then -- above search failed
-		for ckey in gmatch(keys, "[^,]+") do
-			local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-			arg = arg:lower()
-
-			for i=0,4 do
-				for j=1, GetContainerNumSlots(i) do
-					local itemId = GetContainerItemID(i,j)
-					if (itemId) then
-						local name,_,_,_,_,_,_,_,_,_,_,_,_,bindType =  GetItemInfo(itemId)
-						repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
-							if (itemsToSkip[name]) then
-								-- item shouldn't be in the list: take next bag slot. This is so we don't have to run all checks below
-								-- again (especially the expensive tooltip scan) just to add the same item again.
+	-- perform checks
+	for i,v in pairs(bagsToCache) do -- Go through bags
+		if (tostring(i)):match("Worn") and v then -- items worn
+			for j=0, 19 do -- go through equip slots
+				local itemId = GetInventoryItemID("player",j)
+				if (itemId and itemId ~= 0) then
+					local name,_,_,_,_,_,_,_,equipLoc,_,_,_,_,bindType =  GetItemInfo(itemId)
+					repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
+						if tooltip then
+							-- we built the index on the same logic so we know itemTooltips[i..":"..j] exists.
+							if isAnyMatchIn(notMatching,itemTooltips[i..":"..j]) or (numItemSlotMatch > 0 and not itemSlotMatch[""..j]) then
 								break
 							end
-							-- match on name
-							if (name and name:lower():find(arg)) then
-								if (GetItemCount(name,false,true)>0) then
-									if (cmd:match("!")) then
-										itemsToSkip[name] = true;
-										data[name] = nil -- item could have been added by previous arg:s
-										break -- next bag slot
-									end
+							if numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, itemTooltips[i..":"..j]) then
+								data[name] = "item"
+								break
+							end
+							if numMandatory > 0 and isAllMatchIn(mandatoryMatch,itemTooltips[i..":"..j]) then
+								if (numOptional > 0) and not isAnyMatchIn(optionalMatch, itemTooltips[i..":"..j]) then break end
+								data[name] = "item"
+								break
+							end
+						elseif (name) then -- match by name
+							local searchTerm = "worn "..(name:lower())
+							if (isAnyMatchIn(notMatching,searchTerm) or (numItemSlotMatch > 0 and not itemSlotMatch[""..j])) then
+								break
+							end
+							if (numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, searchTerm)) then
+								data[name] = "item"
+								break
+							end
+							if (numMandatory > 0 and isAllMatchIn(mandatoryMatch,searchTerm)) then
+								if (numOptional > 0) and not isAnyMatchIn(optionalMatch, searchTerm) then break end
+								data[name] = "item"
+								break
+							end
+						end
+					until true
+					if (name and data[name] and (not NeuronItemCache[name])) then
+						NeuronItemCache[name] = itemId -- if it isn't in the items cache the icon and tooltip won't show.
+					end
+				end
+			end
+		else -- bags
+			for j=1, GetContainerNumSlots(i) do
+				local itemId = GetContainerItemID(i,j)
+				if (itemId) then
+					local name,_,_,_,_,_,_,_,_,_,_,_,_,bindType =  GetItemInfo(itemId)
+					if name then
+						repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
+							if tooltip then
+								-- we built the index on the same logic so we know itemTooltips[i..":"..j] exists.
+								if isAnyMatchIn(notMatching,name:lower().." "..itemTooltips[i..":"..j]) or (numItemSlotMatch > 0 and not itemSlotMatch[""..j]) then
+									break
+								end
+								if numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, name:lower().." "..itemTooltips[i..":"..j]) then
 									data[name] = "item"
+									break
 								end
-							end
-							if (tooltip) then
-								if (name and bindType) then
-									for k,v in ipairs(bindTypeAlternatives) do
-										if(arg:match(v) and bindType == k) then
-											if (cmd:match("!")) then
-												itemsToSkip[name] = true;
-												data[name] = nil -- item could have been added by previous arg:s
-												break
-											else
-												data[name] = "item"
-											end
-										end
-									end
-									if (itemsToSkip[name]) then
-										break -- take next bag slot
-									end
+								if numMandatory > 0 and isAllMatchIn(mandatoryMatch,name:lower().." "..itemTooltips[i..":"..j]) then
+									if (numOptional > 0) and not isAnyMatchIn(optionalMatch, name:lower().." "..itemTooltips[i..":"..j]) then break end
+									data[name] = "item"
+									break
 								end
-								if (name) then
-									-- part II of tooltip cache version -  this should be better the more arg:s there is as it goes through the whole tooltip.
-									local itemTooltip = bagItemsTooltips[i..":"..j]
-									if (itemTooltip) then
-										if (itemTooltip:match(arg)) then
-											if (cmd:match("!")) then
-												itemsToSkip[name] = true;
-												data[name] = nil -- item could have been added by previous arg:s
-												break -- take next bag slot
-											end
-											data[name] = "item"
-										end
-									else
-										print("Neuron - DEBUG: Other version of tooltip scan (per name) should be used")
-									end
-									--[[ per name version of tooltip scan - this might be better for very few args as it only goes through the tooltip one row at a time till it finds a match
-									--get tooltip and scan, this is a bit expensive.
-									GameTooltip:SetOwner(UIParent,"ANCHOR_NONE")
-									GameTooltip:SetBagItem(i,j)
-									for k=GameTooltip:NumLines(),2,-1 do
-										if ((_G["GameTooltipTextLeft"..k]:GetText() or ""):lower():match(arg)) then
-											if (cmd:match("!")) then
-												itemsToSkip[name] = true;
-												data[name] = nil
-												break -- breaks tooltip scan, nothing left to do but take next bag slot
-											end
-											data[name] = "item"
-											if (not NeuronItemCache[name]) then
-												NeuronItemCache[name] = itemId
-											end
-											break -- we have found a match in the tooltip, don't have to look further.
-										end
-									end
-									]]
+							elseif (name) then -- match by name
+								if isAnyMatchIn(notMatching,name:lower()) or (numItemSlotMatch > 0 and not itemSlotMatch[""..j]) then
+									break
 								end
-							end
-							if (data[name] and not NeuronItemCache[name]) then
-								NeuronItemCache[name] = itemId -- if it isn't in the items cache the icon and tooltip won't show.
+								if (numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, name:lower())) then
+									data[name] = "item"
+									break
+								end
+								if (numMandatory > 0 and isAllMatchIn(mandatoryMatch,name:lower())) then
+									if (numOptional > 0) and not isAnyMatchIn(optionalMatch, name:lower()) then break end
+									data[name] = "item"
+									break
+								end
 							end
 						until true
+						if (data[name] and not NeuronItemCache[name]) then
+							NeuronItemCache[name] = itemId -- if it isn't in the items cache the icon and tooltip won't show.
+						end
 					end
 				end
 			end
@@ -282,30 +338,154 @@ function ACTIONBUTTON:filter_item(tooltip)
 	return data
 end
 
+---@index index: number,
+---@bookType bookType: string constant ("spell" or "pet")
+---@return string, string, string, number, number
+local function getSpellInfo(index, bookType)
+	local spellBookSpellName, spellRankOrSubtype = GetSpellBookItemName(index, bookType)
+	local spellType,spellIdOrActionId = GetSpellBookItemInfo(index, bookType)
+	local name, rank_testing,icon,_,_,_, spellID = GetSpellInfo(index, spellRankOrSubtype)
 
+	if rank_testing then print("RANNKKKKKK: "..rank_testing) end
+
+	if spellIdOrActionId ~= spellID then
+		local _actionId ,_spellID = "nil","nil"
+		if spellIdOrActionId then _actionId = spellIdOrActionId end
+		if spellID then _spellID = spellID end
+		print("NEURON flyout - spellID: ".._spellID.." != actionID: ".._actionId)
+	end
+	local return_name = spellBookSpellName
+	if(return_name ~= name) then
+		print("Name mismatch! <"..spellBookSpellName.."> != <"..spellBookSpellName.."> using: "..name)
+		return_name = name
+	end
+	return return_name, spellRankOrSubtype, spellType, spellID, icon
+end
 --- Filter Handler for Spells
 -- spell:id will get all spells of that spellID
 -- spell:name will get all spells that contain "name" in its name or its flyout parent
-function ACTIONBUTTON:filter_spell()
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
+function ACTIONBUTTON:filter_spell(tooltip)
+	--local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
 
 	local data = {}
+	local oldData = {}
 
-	for ckey in gmatch(keys, "[^,]+") do
+	local spellTooltips = {}
 
+	local keys, mandatoryMatch, optionalMatch, notMatching = self.flyout.keys, {}, {}, {}
+	local numMandatory, numOptional, numNotMatching = 0,0,0,0
+
+	-- build key check tables
+	for ckey in gmatch(keys, "[^,]+") do -- sort requirements
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
+		arg = arg:lower()
 
-		--revisit
+		if cmd:match("~") then
+			optionalMatch[arg] = true
+			numOptional = numOptional + 1
+		elseif cmd:match("!") then
+			notMatching[arg] = false
+			numNotMatching = numNotMatching + 1
+		else
+			mandatoryMatch[arg] = true
+			numMandatory = numMandatory + 1
+		end
+	end
+	-- build tooltip table
+	if (tooltip) then
+		for i=1, GetNumSpellTabs() do
+			local _,_,numSpellsInPrevTabs,entries = GetSpellTabInfo(i)
+			for j=numSpellsInPrevTabs + 1, numSpellsInPrevTabs + entries do -- go through entries
+				local bookType = BOOKTYPE_SPELL
+				if i == 5 and HasPetSpells() then
+					bookType = BOOKTYPE_PET --assumed a fifth tab is a pet tab.
+					print("NEURON - spellbook tab 5 is presumed to be a pet spell tab!")
+				end
+				local name, rank, spellType, spellID, icon = getSpellInfo(j,bookType)
 
-		local name, _, _, _, _, _,spellID = GetSpellInfo(arg)
-		if(name) then
-			if(IsSpellKnown(spellID)) then
-				data[name:lower()] = "spell"
+				repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
+					if IsPassiveSpell(j,bookType) then break end
+					if not IsSpellKnown(spellID,bookType == BOOKTYPE_PET) then break end
+
+					if (("SPELL FUTURESPELL"):match(spellType) and spellID) then
+						GameTooltip:SetOwner(UIParent,"ANCHOR_NONE")
+						GameTooltip:SetSpellBookItem(j, spellType)
+						-- GameTooltip:SetSpellByID(spellIdOrActionId)
+						local spellTooltip = ""
+						for l=GameTooltip:NumLines(),2,-1 do
+							local text = _G["GameTooltipTextLeft"..l]:GetText()
+							if (text) then
+								spellTooltip = text.." "..spellTooltip
+							end
+						end
+						spellTooltips[i..":"..j] = spellTooltip:lower()
+					end
+				until true
 			end
 		end
-
 	end
+	-- perform checks
+	for i=1, GetNumSpellTabs() do -- Go through spell tabs
+		local _,_,numSpellsInPrevTabs,entries = GetSpellTabInfo(i)
+		for j=numSpellsInPrevTabs + 1, numSpellsInPrevTabs + entries do -- go through entries
+			local bookType = BOOKTYPE_SPELL
+			if i == 5 and HasPetSpells() then
+				bookType = BOOKTYPE_PET --assumed a fifth tab is a pet tab.
+				print("NEURON - spellbook tab 5 is presumed to be a pet spell tab!")
+			end
+			local name, rank, spellType, spellID, icon = getSpellInfo(j,bookType)
 
+			local searchTerm = name
+			if rank then
+				searchTerm = searchTerm.."("..rank..")"
+			else
+				print("Spell subtype/rank N/A! <"..name..">")
+			end
+
+			repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
+				if IsPassiveSpell(j,bookType) then break end
+				if not IsSpellKnown(spellID,bookType == BOOKTYPE_PET) then break end
+
+				if (("SPELL FUTURESPELL"):match(spellType) and spellID) then
+					if tooltip then
+						-- we built the index on the same logic so we know itemTooltips[i..":"..j] exists.
+						if isAnyMatchIn(notMatching,searchTerm:lower().." "..spellTooltips[i..":"..j]) then
+							break
+						end
+						if numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, searchTerm:lower().." "..spellTooltips[i..":"..j]) then
+							data[searchTerm:lower()] = "spell"
+							break
+						end
+						if numMandatory > 0 and isAllMatchIn(mandatoryMatch,searchTerm:lower().." "..spellTooltips[i..":"..j]) then
+							if (numOptional > 0) and not isAnyMatchIn(optionalMatch, searchTerm:lower().." "..spellTooltips[i..":"..j]) then break end
+							data[searchTerm:lower()] = "spell"
+							break
+						end
+					else -- match by name
+						if isAnyMatchIn(notMatching,searchTerm:lower()) then
+							break
+						end
+						if (numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, searchTerm:lower())) then
+							data[searchTerm:lower()] = "spell"
+							break
+						end
+						if (numMandatory > 0 and isAllMatchIn(mandatoryMatch,searchTerm:lower())) then
+							if (numOptional > 0) and not isAnyMatchIn(optionalMatch, searchTerm:lower()) then break end
+							data[searchTerm:lower()] = "spell"
+							break
+						end
+					end
+				else
+					print("spell type: "..spellType)
+				end
+			until true
+			if (data[searchTerm:lower()] and not (NeuronSpellCache[name:lower()] or NeuronSpellCache[name:lower().."()"])) then
+				-- if it isn't in the items cache the icon and tooltip won't show.
+				NeuronSpellCache[name:lower()] = { ["booktype"] = bookType,["index"] = j, ["spellType"] = spellType,["spellID"]= spellID, ["icon"]=icon,["spellName"]=name }
+				NeuronSpellCache[name:lower().."()"] = { ["booktype"] = bookType,["index"] = j, ["spellType"] = spellType,["spellID"]= spellID, ["icon"]=icon,["spellName"]=name }
+			end
+		end
+	end
 	return data
 end
 
@@ -547,7 +727,7 @@ function ACTIONBUTTON:GetDataList(options)
 		if (types:find("^b")) then  --Blizzard Flyout
 			scanData = self:GetBlizzData()
 		elseif (types:find("^s")) then  --Spell
-			scanData = self:filter_spell()
+			scanData = self:filter_spell(tooltip)
 		elseif (types:find("^i")) then  --Item
 			scanData = self:filter_item(tooltip)
 		elseif (types:find("^c")) and not Neuron.isWoWClassic then --Companion
