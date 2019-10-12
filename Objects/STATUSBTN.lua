@@ -380,7 +380,7 @@ end
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
 -- @return reptable:  Table containing provided data
-function STATUSBTN:SetRepWatch(ID, name, standing, header, minrep, maxrep, value, colors)
+function STATUSBTN:SetRepWatch(ID, name, standing, header, minrep, maxrep, value, colors, headerOverride)
 	local reptable = {}
 	reptable.ID = ID
 	reptable.name = name
@@ -396,6 +396,7 @@ function STATUSBTN:SetRepWatch(ID, name, standing, header, minrep, maxrep, value
 	reptable.r = colors.r
 	reptable.g = colors.g
 	reptable.b = colors.b
+	reptable.headerOverride = headerOverride
 
 	return reptable
 end
@@ -416,12 +417,6 @@ function STATUSBTN:repstrings_Update(repGainedString)
 		[9] = { l="Paragon", r=1, g=0.5, b=0, a=1.0 },
 	}
 
-	--These factions return fID but have 8 levels instead of 6
-	local BRAWLERS_GUILD_FACTIONS = {
-		[1419] = true, --Alliance
-		[1374] = true, --Horde
-	}
-
 	if GetNumFactions() <= 0 then --quit if for some reason the number of known factions is 0 or less (should never happen, this is just for safety)
 		return
 	end
@@ -433,17 +428,14 @@ function STATUSBTN:repstrings_Update(repGainedString)
 	for i=1, GetNumFactions() do
 		local name, _, standingID, min, max, value, _, _, isHeader, _, hasRep, _, isChild, factionID = GetFactionInfo(i)
 		local colors = {}
+		local headerOverride
 
 		if standingID == 8 then
 			min = 0
 		end
 
 		if isHeader and not isChild then --set a header variable that will get set on each rep that follows until the next header is set
-			if name == "Guild" then --get rid of the "Guild" category and just tuck it under "Other" for clarity
-				header = "Other"
-			else
-				header = name
-			end
+			header = name
 		end
 
 		if (not isHeader or hasRep) and not IsFactionInactive(i) then
@@ -470,17 +462,18 @@ function STATUSBTN:repstrings_Update(repGainedString)
 					standing = BAR_REP_DATA[9].l --set standing text to be "Paragon"
 				end
 			else --is a "Friendship" faction
-				if BRAWLERS_GUILD_FACTIONS[fID] then
-					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
+				if string.find(name, "Brawl'gar Arena") or string.find(name, "Bizmo's Brawlpub") then
+					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b --offset by two, because friendships don't have "hated" or "hostile" ranks
 				else
-					if standingID + 2 > 8 then --safety to make sure we don't set our colors higher than 8, or "exalted", when we offset below
+					if standingID + 2 > 8 then
 						standingID = 6
 					end
 					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID+2].r, BAR_REP_DATA[standingID+2].g, BAR_REP_DATA[standingID+2].b --offset by two, because friendships don't have "hated" or "hostile" ranks
 				end
+				headerOverride = "Other"
 			end
 
-			local repData = self:SetRepWatch(i, name, standing, header, min, max, value, colors)
+			local repData = self:SetRepWatch(i, name, standing, header, min, max, value, colors, headerOverride)
 
 			--repGainedString is a phrase that reads like "Reputation with Zandalari Empire increased by 75.", except on login it's type boolean for some reason
 			if repGainedString and type(repGainedString) ~= "boolean" and repGainedString:find(name) or self.data.autoWatch == i then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
@@ -535,10 +528,20 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
 		if (k > 0) then --skip the "0" entry which is our autowatch
-			if not repDataTable[v.header]then
-				repDataTable[v.header] = {}
+			local header
+			if v.headerOverride then
+				header = v.headerOverride
+			else
+				header = v.header
+				if v.header == "Guild" then --the "Guild" category is kinda stupid to just have alone, so we should override it with "Other"
+					header = "Other"
+				end
 			end
-			table.insert(repDataTable[v.header], { ID=v.ID, name=v.name, standing=v.standing, percent=v.percent, hex=v.hex})
+
+			if not repDataTable[header]then
+				repDataTable[header] = {}
+			end
+			table.insert(repDataTable[header], { ID=v.ID, name=v.name, standing=v.standing, percent=v.percent, hex=v.hex})
 		end
 	end
 
@@ -616,7 +619,8 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		table.insert(innerMenu, {text=k, hasArrow=true, notCheckable=true, menuList=temp.menuList})
 	end--create a comparison table for our custom sort routine
 
-	local SORT_TABLE = {["Battle for Azeroth"]=1, ["Legion"]=2, ["Warlords of Draenor"]=3, ["Mists of Pandaria"]=4, ["Cataclysm"]=5, ["Wrath of the Lich King"]=6, ["The Burning Crusade"]=7, ["Classic"]=8, ["Other"]=9}
+	--these are the English Strings. It would be good to get these translated
+	local SORT_TABLE = {["Battle for Azeroth"]=1, ["Legion"]=2, ["Warlords of Draenor"]=3, ["Mists of Pandaria"]=4, ["Cataclysm"]=5, ["Wrath of the Lich King"]=6, ["The Burning Crusade"]=7, ["Classic"]=8, ["Guild"]=9, ["Other"]=10}
 	--sort the list of our reputation brackets according the priority table above
 	table.sort(innerMenu, function(a,b)
 		if SORT_TABLE[a.text] and SORT_TABLE[b.text] then
