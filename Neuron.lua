@@ -13,11 +13,11 @@
 --GNU General Public License for more details.
 --
 --You should have received a copy of the GNU General Public License
---along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
+--along with this add-on.  If not, see <https://www.gnu.org/licenses/>.
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2018.
+--copyrights for Neuron are held by Britt Yazel, 2017-2019.
 
 
 ---@class Neuron @define The main addon object for the Neuron Action Bar addon
@@ -27,7 +27,7 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local LATEST_VERSION_NUM = "1.1.3" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local LATEST_VERSION_NUM = "1.2.3a" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local LATEST_DB_VERSION = 1.3
 
@@ -117,13 +117,14 @@ Neuron.bindingMode = false
 
 Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
-Neuron.THROTTLE = 0.2
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLLERANCE = 28
 
 Neuron.enteredWorld = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on logging with too many processes
 
-Neuron.isWoWClassic = select(4, GetBuildInfo()) < 20000
+if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then --boolean check to set a flag if the current session is WoW Classic. Retail == 1, Classic == 2
+	Neuron.isWoWClassic = true
+end
 
 Neuron.activeSpec = 1
 
@@ -384,33 +385,26 @@ end
 
 function Neuron:LoginMessage()
 
-	---displays a info window on login for either fresh installs or updates
+	--displays a info window on login for either fresh installs or updates
 	if (not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM ) then
 
 		print(" ")
-		print("         ~~~~~~~~~~NEURON~~~~~~~~~")
-		print("    Happy Spring!")
-		print("    Neuron is in for an exciting year, thank you so much for your support.")
-		print("    Please reach out if you are interested in contributing to Neuron's development, we always need more help coding and translating, and, as always, donations are welcome! :-)")
-		print("    Special thanks to Acey7 for translating Neuron into Simplified Chinese!")
+		print("                  ~~~~~~~~~~NEURON~~~~~~~~~")
+		print("    Ladies and Gentlemen,")
+		print("    Lots of work is underway on Neuron 2.0, which will include a fully rewritten core, GUI, modules, and more. Likewise, please reach out if you are interested in contributing to Neuron's development, we always need more help coding and translating, and, as always, donations are welcome!")
+		print("    In addition, we recently released a custom Masque theme just for Neuron, called Masque: Neuron. You can find it on CurseForge or the Twitch app.")
 		print("       -Soyier")
-
-		if UnitFactionGroup('player') == "Horde" then
-			print(" ")
-			print("    Use the following link to join the Neuron (Horde) in-game community")
-			print("    https://bit.ly/2Lu72NZ")
-		end
 
 		if not IsAddOnLoaded("Masque") then
 			print(" ")
 			print("    You do not currently have Masque installed or enabled.")
 			print("    Please consider using Masque for enhancing the visual appearance of Neuron's action buttons.")
+			print("    We recommend using Masque: Neuron, the theme made by Soyier for use with Neuron.")
 		end
 
 		print(" ")
 
 	end
-
 
 	DB.updateWarning = LATEST_VERSION_NUM
 end

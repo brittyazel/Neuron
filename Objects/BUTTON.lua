@@ -13,11 +13,11 @@
 --GNU General Public License for more details.
 --
 --You should have received a copy of the GNU General Public License
---along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
+--along with this add-on.  If not, see <https://www.gnu.org/licenses/>.
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2018.
+--copyrights for Neuron are held by Britt Yazel, 2017-2019.
 
 ---@class BUTTON : CheckButton @define BUTTON as inheriting from CheckButton
 local BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
@@ -530,25 +530,23 @@ end
 
 
 function BUTTON:SetDefaults(defaults)
-	if defaults then
-		for k,v in pairs(defaults) do
-
-			if defaults.config then
-				for k2, v2 in pairs(defaults.config) do
-					self.config[k2] = v2
-				end
-			end
-
-			if defaults.keys then
-				for k2, v2 in pairs(defaults.keys) do
-					self.keys[k2] = v2
-				end
-			end
-
-		end
-
-
+	if not defaults then
+		return
 	end
+
+	if defaults.config then
+		for k, v in pairs(defaults.config) do
+			self.DB.config[k] = v
+		end
+	end
+
+	if defaults.keys then
+		for k, v in pairs(defaults.keys) do
+			self.DB.keys[k] = v
+		end
+	end
+
+
 end
 
 function BUTTON:SetType()
@@ -698,10 +696,9 @@ function BUTTON:SetSpellCooldown(spell)
 
 	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
 		self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+	else
+		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
 	end
-
-	self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
-
 end
 
 
