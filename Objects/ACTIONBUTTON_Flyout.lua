@@ -23,7 +23,7 @@
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 local BAR = Neuron.BAR
 
-local DEBUG = false
+local DEBUG = true
 
 local petIcons = {}
 
@@ -140,8 +140,8 @@ local function timerFrame_OnUpdate(frame, elapsed)
 	end
 end
 
----@needles needles: list of strings
----@haystack haystack: string - a string to check in
+---@param needles tablestring[]: list of strings
+---@param haystack string - a string to check in
 ---@return boolean
 local function isAllMatchIn(needles,haystack)
 	if haystack == "" then return false end
@@ -155,8 +155,8 @@ local function isAllMatchIn(needles,haystack)
 	return hit == numNeedles
 end
 
----@needles needles: list of strings
----@haystack haystack: string - a string to check in
+---@param needles: list of strings
+---@param haystack: string - a string to check in
 ---@return boolean
 local function isAnyMatchIn(needles,haystack)
 	if haystack == "" then return false end
@@ -172,9 +172,18 @@ local function isAnyMatchIn(needles,haystack)
 	return hit
 end
 
----@index index: number,
----@bookType bookType: string constant ("spell" or "pet")
----@return string, string, string, number, number
+local function addToFlyoutonAny(terms, document)
+	for k,v in pairs(terms) do
+		if document:match(k) then
+			return v
+		end
+	end
+	return false
+end
+
+---@param index number,
+---@param bookType string constant ("spell" or "pet")
+---@return string, string, string, number, number name, rank|subType, spellType, spellID, icon
 local function getSpellInfo(index, bookType)
 	local spellBookSpellName, spellRankOrSubtype = GetSpellBookItemName(index, bookType)
 	local spellType,spellIdOrActionId = GetSpellBookItemInfo(index, bookType)
@@ -196,8 +205,8 @@ local function getSpellInfo(index, bookType)
 	return return_name, spellRankOrSubtype, spellType, spellID, icon
 end
 
----@list list: list of strings
----@return string
+---@param list table<string|number,any> of <[string]|[number],[any]>
+---@return string comma separated string of the list
 local function getKeys(list)
 	local txt = ""
 	for k,_ in pairs(list) do
@@ -210,34 +219,176 @@ local function getKeys(list)
 	return txt
 end
 
+local function sequence(delim,first,...)
+	local head, tail = {first}, {...}
+	local switch =
+	{
+		["string"]=function(c,d,n) return c..(d and d or "")..n end,
+		["table"]=function(c,d,n) if #c == 0 then for k,v in pairs(n) do for _k,_v in pairs(d and d or {}) do c[_k] = _v end c[k]=v end else for _,v in ipairs(n) do for _,_v in ipairs(d and d or {}) do table.insert(c,_v) end table.insert(c,v) end end return c end,
+		["number"]=function(c,d,n) return c + (d and d or 0) + n end,
+		["function"]= function(c,d,n) return function(...) local args = {...} return c(args[1]),d and d(args[2]),n(args[3]) end end,
+		--["CFunction"]= function(c,d,n) return function(...) return c(...),d and d(...), n(...) end end,
+		["boolean"] = function(c,d,n) return c and ((d or n) and n) end,
+		["userdata"]=function(...) print("sequence for type userdata is not implemented") return end,
+		["thread"] = function(...) print("sequence for type thread is not implemented") return end,
+		["nil"] = function(...) return end,
+	}
+	while #tail > 0 do
+		if type(head[#head])~=type(tail[1]) or (delim and type(delim)~=type(head[#head])) then return end
+		head={switch[type(head[#head])](head[#head],delim,tail[1])}
+		table.remove(tail,1)
+	end
+	return table.unpack(head)
+end
+
+---Creates a list of Criteria based on user provided keys and the keys prefixes to match against or a default setting if none are provided.
+---
+---Returns the list of Criteria and the user provided keys, now been sorted, in the form of : ...
+---Criteria: { Must:CriteriaRule: { Match:CriteriaMatch: {Key:string,boolean}, MatchCount:CriteriaMatchCount: number},...}, keys: string
+---(default rules besides
+---
+---@overload fun():Criteria,string same as fun(true)
+---@overload fun(useDefault:boolean):Criteria,string
+---@overload fun(rules:CriteriaRule):Criteria,string
+---@overload fun(rules:nil,negativeRules:CriteriaRule):Criteria,string
+---@overload fun(rules:CriteriaRule,useDefault:boolean):Criteria,string
+---@overload fun(rules:CriteriaRule,negativeRules:CriteriaRule):(Criteria,string)
+---@overload fun(rules:CriteriaRule,negativeRules:CriteriaRule,useDefault:boolean):(Criteria,string)
+---@return (Criteria, string)
+---@param keyPrefixes string|table<number,table<string,Key>> keys as a comma separated string or list of name,value pairs. Matched keys have value: true.
+---@param negativeKeyPrefixes string|table<number,table<string,Key>> keys as a comma separated string or list of name,value pairs. Matched keys have value: false.
+---@param useDefault boolean flag whether or not to use default rules (table<name:string,value:Key: string> {"MustNot","!"}{"Optional","~"}{"Slot","#"})
+function ACTIONBUTTON:getCriteria(rules,negativeRules, useDefault)
+	if type(rules) == "boolean" and negativeRules == nil and useDefault == nil then
+		useDefault = rules
+		rules = nil
+		debugPrint("use default is: "..tostring(useDefault))
+	elseif type(negativeRules) == "boolean" and useDefault == nil then
+		useDefault = negativeRules
+		negativeRules = nil
+	end
+	if not (rules == nil and negativeRules == nil and useDefault == nil) then
+		local ok = true
+		if rules and (not type(rules) == "string" or type(rules) == "table") then
+			print("getCriteria expects rules parameter to be a string or a list table")
+			ok = false
+		end
+		if negativeRules and (not type(negativeRules) == "string" or type(negativeRules) == "table") then
+			print("getCriteria expects negativeRules parameter to be a string or a list table")
+			ok = false
+		end
+		if useDefault == nil and type(useDefault) ~= "boolean" then
+			print("getCriteria expects useDefault parameter to be a boolean")
+			ok =false
+		end
+		if not ok then return end
+	end
+	---@alias Key string
+	---@alias CriteriaMatchCount number
+	---@alias CriteriaMatch table<Key,boolean>
+	---@alias CriteriaRule string|table<number,table<string,Key>>
+	---@alias Criteria table<CriteriaRule,CriteriaMatch|CriteriaMatchCount>
+	---@type Criteria
+	local result = {}
+	function result:TypeCheckOK()
+		local ok = not type(self.params[1]) == "string" or (type(self.params[1]) == "table" and type(self.params[1].name) == "string" and type(self.params[1].value) == "string")
+		if not ok then
+			debugPrint("defineCriteria expects a string or table<string,string>")
+		end
+		return ok
+	end
+	function result:defineCriteria(rule, ckey, val)
+		self.params = {rule,ckey}
+		if not self:TypeCheckOK() then return end
+		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
+		arg = arg:lower()
+		if not self[rule.name] then
+			---@type CriteriaRule
+			self[rule.name] = {}
+			---@type CriteriaMatchCount
+			self[rule.name].MatchCount = 0
+		end
+		if (rule.value == "" and cmd == "") or (rule.value ~= "" and cmd:match(rule.value)) then
+			if not self[rule.name].Match then
+				---@type CriteriaMatch
+				self[rule.name].Match = {}
+				---@type Key
+				self[rule.name].Match[arg] = false
+			end
+			if self[rule.name].Match[arg] then -- added_or_positive ? negate : add.
+				self[rule.name].Match[arg] = false
+			else
+				self[rule.name].Match[arg] = val
+				self[rule.name].MatchCount = self[rule.name].MatchCount + 1
+			end
+		end
+	end
+
+	local keys, rulesInOrder, defaultRules = self.flyout.keys, {}, {{name="Optional",value="~"},{name="Slot",value="#"},"break",{name="MustNot",value="!"}}
+	if negativeRules and type(rules) == type(negativeRules) then
+		rulesInOrder = sequence(type(rules) == "string" and ",break," or {"break"} ,rules,negativeRules)
+	elseif negativeRules then
+		local toConvert, first, second = type(rules) == "string" and rules or negativeRules, {},{}
+		rulesInOrder = {}
+		for rule in gmatch(toConvert) do
+			table.insert(rulesInOrder,{["name"]=rule,["value"]=rule})
+		end
+		first = type(rules) == "string" and rulesInOrder or rules
+		second = type(rules) == "string" and negativeRules or rulesInOrder
+		rulesInOrder = sequence({"break"},first,second)
+	end
+	for ckey in gmatch(keys, "[^,]+") do -- sort requirements
+		local positive = true
+		if type(rulesInOrder) == "string" then
+			for rule in gmatch(rulesInOrder,"[^,]") do
+				if rule == "break" then positive = false else
+					result:defineCriteria(rule,ckey,positive)
+				end
+			end
+		else
+			for _,rule in ipairs(rulesInOrder) do
+				if rule == "break" then positive = false else
+					result:defineCriteria(rule,ckey,positive)
+				end
+			end
+		end
+		-- defalt behaviour
+		if useDefault or (not rules and not negativeRules) then
+			for _, rule in ipairs(defaultRules) do
+				if rule == "break" then positive = false else
+					result:defineCriteria(rule,ckey,positive)
+				end
+			end
+		end
+		result:defineCriteria({name="Must",value=""},ckey,true)
+	end
+	result.params = nil;
+	return result, keys
+end
+
+---@param Criteria Criteria - Default search criteria, (Rule names: MustNot, Optional and Slot)
+---@param haystack string - string to search for
+---@param index number - an index number, which Slot # to match against.
+local function isMatch(Criteria, haystack, index)
+	local hit, Search, haystack, j = false, Criteria, haystack, index
+	if (Search.MustNot.MatchCount > 0 and isAnyMatchIn(Search.MustNot.Match,haystack:lower())) or (j ~= nil and (Search.Slot.MatchCount > 0 and not Search.Slot.Match[""..j])) then
+		return hit
+	end
+	if (Search.Must.MatchCount == 0 and Search.Optional.MatchCount > 0 and isAnyMatchIn(Search.Optional.Match, haystack:lower())) then
+		hit = true
+	end
+	if (Search.Must.MatchCount > 0 and isAllMatchIn(Search.Must.Match,haystack:lower())) then
+		if (Search.Optional.MatchCount > 0) and not isAnyMatchIn(Search.Optional.Match, haystack:lower()) then return false end
+		hit = true
+	end
+	return hit
+end
+
 --- Filter handler for items
 -- item:id will get all items of that itemID
 -- item:name will get all items that contain "name" in its name
 function ACTIONBUTTON:filter_item(tooltip)
-
-	local data = {}
-	local itemTooltips = {}
-
-	local keys, itemSlotMatch, mandatoryMatch, optionalMatch, notMatching = self.flyout.keys, {}, {}, {}, {}
-	local numItemSlotMatch, numMandatory, numOptional, numNotMatching = 0,0,0,0
-	-- build key check tables
-	for ckey in gmatch(keys, "[^,]+") do -- sort requirements
-		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-		arg = arg:lower()
-		if cmd:match("~") then
-			optionalMatch[arg] = true
-			numOptional = numOptional + 1
-		elseif cmd:match("!") then
-			notMatching[arg] = false
-			numNotMatching = numNotMatching + 1
-		elseif cmd:match("#") then
-			itemSlotMatch[arg] = true
-			numItemSlotMatch = numItemSlotMatch + 1
-		else
-			mandatoryMatch[arg] = true
-			numMandatory = numMandatory + 1
-		end
-	end
+	local data, itemTooltips, Criteria = {},{}, self:getCriteria()
 	-- build tooltip table
 	if (tooltip) then -- part I of tooltip cache version
 		for i,v in pairs(bagsToCache) do
@@ -254,7 +405,7 @@ function ACTIONBUTTON:filter_item(tooltip)
 								itemTooltip = text.." "..itemTooltip
 							end
 						end
-						itemTooltips[i..":"..j] = "worn "..itemTooltip:lower()
+						itemTooltips[i..":"..j] = "worn "..itemTooltip
 					end
 				end
 			else --bags
@@ -270,7 +421,7 @@ function ACTIONBUTTON:filter_item(tooltip)
 								itemTooltip = text.." "..itemTooltip
 							end
 						end
-						itemTooltips[i..":"..j] = itemTooltip:lower()
+						itemTooltips[i..":"..j] = itemTooltip
 					end
 				end
 			end
@@ -282,35 +433,18 @@ function ACTIONBUTTON:filter_item(tooltip)
 			for j=0, 19 do -- go through equip slots
 				local itemId = GetInventoryItemID("player",j)
 				if (itemId and itemId ~= 0) then
-					local name,_,_,_,_,_,_,_,equipLoc,_,_,_,_,bindType =  GetItemInfo(itemId)
+					local name,_,_,_,_,_,_,_,equipLoc =  GetItemInfo(itemId)
 					repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
 						if tooltip then
 							-- we built the index on the same logic so we know itemTooltips[i..":"..j] exists.
-							if isAnyMatchIn(notMatching,itemTooltips[i..":"..j]) or (numItemSlotMatch > 0 and not itemSlotMatch[""..j]) then
-								break
-							end
-							if numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, itemTooltips[i..":"..j]) then
+							local findIn = name.." "..itemTooltips[i..":"..j]
+							if (isMatch(Criteria,findIn,j)) then
 								data[name] = "item"
-								break
-							end
-							if numMandatory > 0 and isAllMatchIn(mandatoryMatch,itemTooltips[i..":"..j]) then
-								if (numOptional > 0) and not isAnyMatchIn(optionalMatch, itemTooltips[i..":"..j]) then break end
-								data[name] = "item"
-								break
 							end
 						elseif (name) then -- match by name
-							local searchTerm = "worn "..(name:lower())
-							if (isAnyMatchIn(notMatching,searchTerm) or (numItemSlotMatch > 0 and not itemSlotMatch[""..j])) then
-								break
-							end
-							if (numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, searchTerm)) then
+							local findIn = "worn "..name
+							if (isMatch(Criteria,findIn,j)) then
 								data[name] = "item"
-								break
-							end
-							if (numMandatory > 0 and isAllMatchIn(mandatoryMatch,searchTerm)) then
-								if (numOptional > 0) and not isAnyMatchIn(optionalMatch, searchTerm) then break end
-								data[name] = "item"
-								break
 							end
 						end
 					until true
@@ -323,35 +457,22 @@ function ACTIONBUTTON:filter_item(tooltip)
 			for j=1, GetContainerNumSlots(i) do
 				local itemId = GetContainerItemID(i,j)
 				if (itemId) then
-					local name,_,_,_,_,_,_,_,_,_,_,_,_,bindType =  GetItemInfo(itemId)
+					local name =  GetItemInfo(itemId)
+					--itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
+					--itemEquipLoc, itemIcon, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID,
+					--isCraftingReagent = GetItemInfo(itemID or "itemString" or "itemName" or "itemLink")
 					if name then
 						repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
 							if tooltip then
 								-- we built the index on the same logic so we know itemTooltips[i..":"..j] exists.
-								if isAnyMatchIn(notMatching,name:lower().." "..itemTooltips[i..":"..j]) or (numItemSlotMatch > 0 and not itemSlotMatch[""..j]) then
-									break
-								end
-								if numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, name:lower().." "..itemTooltips[i..":"..j]) then
+								local findIn = name.." "..itemTooltips[i..":"..j]
+								--TODO: Get item equipable slot, this j is wrong
+								if (isMatch(Criteria,findIn,j)) then
 									data[name] = "item"
-									break
-								end
-								if numMandatory > 0 and isAllMatchIn(mandatoryMatch,name:lower().." "..itemTooltips[i..":"..j]) then
-									if (numOptional > 0) and not isAnyMatchIn(optionalMatch, name:lower().." "..itemTooltips[i..":"..j]) then break end
-									data[name] = "item"
-									break
 								end
 							elseif (name) then -- match by name
-								if isAnyMatchIn(notMatching,name:lower()) or (numItemSlotMatch > 0 and not itemSlotMatch[""..j]) then
-									break
-								end
-								if (numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, name:lower())) then
+								if (isMatch(Criteria,name,j)) then
 									data[name] = "item"
-									break
-								end
-								if (numMandatory > 0 and isAllMatchIn(mandatoryMatch,name:lower())) then
-									if (numOptional > 0) and not isAnyMatchIn(optionalMatch, name:lower()) then break end
-									data[name] = "item"
-									break
 								end
 							end
 						until true
@@ -363,41 +484,14 @@ function ACTIONBUTTON:filter_item(tooltip)
 			end
 		end
 	end
-
 	return data
 end
-
 
 --- Filter Handler for Spells
 -- spell:id will get all spells of that spellID
 -- spell:name will get all spells that contain "name" in its name or its flyout parent
 function ACTIONBUTTON:filter_spell(tooltip)
-	--local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-
-	local data = {}
-	local oldData = {}
-
-	local spellTooltips = {}
-
-	local keys, mandatoryMatch, optionalMatch, notMatching = self.flyout.keys, {}, {}, {}
-	local numMandatory, numOptional, numNotMatching = 0,0,0,0
-
-	-- build key check tables
-	for ckey in gmatch(keys, "[^,]+") do -- sort requirements
-		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-		arg = arg:lower()
-
-		if cmd:match("~") then
-			optionalMatch[arg] = true
-			numOptional = numOptional + 1
-		elseif cmd:match("!") then
-			notMatching[arg] = false
-			numNotMatching = numNotMatching + 1
-		else
-			mandatoryMatch[arg] = true
-			numMandatory = numMandatory + 1
-		end
-	end
+	local data, spellTooltips, Criteria = {},{}, self:getCriteria()
 	-- build tooltip table
 	if (tooltip) then
 		for i=1, GetNumSpellTabs() do
@@ -425,7 +519,7 @@ function ACTIONBUTTON:filter_spell(tooltip)
 								spellTooltip = text.." "..spellTooltip
 							end
 						end
-						spellTooltips[i..":"..j] = spellTooltip:lower()
+						spellTooltips[i..":"..j] = spellTooltip
 					end
 				until true
 			end
@@ -442,9 +536,9 @@ function ACTIONBUTTON:filter_spell(tooltip)
 			end
 			local name, rank, spellType, spellID, icon = getSpellInfo(j,bookType)
 
-			local searchTerm = name
+			local searchName = name
 			if rank then
-				searchTerm = searchTerm.."("..rank..")"
+				searchName = searchName.."("..rank..")"
 			else
 				debugPrint("Spell subtype/rank N/A! <"..name..">")
 			end
@@ -456,37 +550,20 @@ function ACTIONBUTTON:filter_spell(tooltip)
 				if (("SPELL FUTURESPELL"):match(spellType) and spellID) then
 					if tooltip then
 						-- we built the index on the same logic so we know itemTooltips[i..":"..j] exists.
-						if isAnyMatchIn(notMatching,searchTerm:lower().." "..spellTooltips[i..":"..j]) then
-							break
-						end
-						if numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, searchTerm:lower().." "..spellTooltips[i..":"..j]) then
-							data[searchTerm:lower()] = "spell"
-							break
-						end
-						if numMandatory > 0 and isAllMatchIn(mandatoryMatch,searchTerm:lower().." "..spellTooltips[i..":"..j]) then
-							if (numOptional > 0) and not isAnyMatchIn(optionalMatch, searchTerm:lower().." "..spellTooltips[i..":"..j]) then break end
-							data[searchTerm:lower()] = "spell"
-							break
+						local findIn = searchName.." "..spellTooltips[i..":"..j]
+						if (isMatch(Criteria,findIn)) then
+							data[name] = "item"
 						end
 					else -- match by name
-						if isAnyMatchIn(notMatching,searchTerm:lower()) then
-							break
-						end
-						if (numMandatory == 0 and numOptional > 0 and isAnyMatchIn(optionalMatch, searchTerm:lower())) then
-							data[searchTerm:lower()] = "spell"
-							break
-						end
-						if (numMandatory > 0 and isAllMatchIn(mandatoryMatch,searchTerm:lower())) then
-							if (numOptional > 0) and not isAnyMatchIn(optionalMatch, searchTerm:lower()) then break end
-							data[searchTerm:lower()] = "spell"
-							break
+						if (isMatch(Criteria,searchName)) then
+							data[name:lower()] = "item"
 						end
 					end
 				else
 					debugPrint("spell type: "..spellType)
 				end
 			until true
-			if (data[searchTerm:lower()] and not (NeuronSpellCache[name:lower()] or NeuronSpellCache[name:lower().."()"])) then
+			if (data[name:lower()] and not (NeuronSpellCache[name:lower()] or NeuronSpellCache[name:lower().."()"])) then
 				-- if it isn't in the items cache the icon and tooltip won't show.
 				NeuronSpellCache[name:lower()] = { ["booktype"] = bookType,["index"] = j, ["spellType"] = spellType,["spellID"]= spellID, ["icon"]=icon,["spellName"]=name }
 				NeuronSpellCache[name:lower().."()"] = { ["booktype"] = bookType,["index"] = j, ["spellType"] = spellType,["spellID"]= spellID, ["icon"]=icon,["spellName"]=name }
@@ -501,10 +578,59 @@ end
 -- type:quest will get all quest items in bags, or those on person with Quest in a type field
 -- type:name will get all items that have "name" in its type, subtype or slot name
 function ACTIONBUTTON:filter_type()
-	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
-
-	local data = {}
-
+	local data, itemTypes, Criteria = {},{}, self:getCriteria()
+	itemTypes = nil
+	--should this search tooltip by default? does the tooltip contain the type?
+	for i,v in pairs(bagsToCache) do -- Go through bags
+		if (tostring(i)):match("Worn") and v then -- items worn
+			for j=0, 19 do -- go through equip slots
+				local itemId = GetInventoryItemID("player",j)
+				if (itemId and itemId ~= 0) then
+					local name,_,_,_,_,itemType,itemSubType,_,equipLoc =  GetItemInfo(itemId)
+					repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
+						if (name) then -- match by name
+							local findIn = "worn "..itemType.." "..itemSubType
+							--TODO: Get item equipable slot, this j is wrong
+							print(tostring(i),tostring(j))
+							if (isMatch(Criteria,findIn,j)) then
+								data[name] = "item"
+							end
+						end
+					until true
+					if (name and data[name] and (not NeuronItemCache[name])) then
+						NeuronItemCache[name] = itemId -- if it isn't in the items cache the icon and tooltip won't show.
+					end
+				end
+			end
+		else -- bags
+			for j=1, GetContainerNumSlots(i) do
+				local itemId = GetContainerItemID(i,j)
+				if (itemId) then
+					local name,_,_,_,_,itemType,itemSubType,_,itemSlot =  GetItemInfo(itemId)
+					--itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount,
+					--itemEquipLoc, itemIcon, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID,
+					--isCraftingReagent = GetItemInfo(itemID or "itemString" or "itemName" or "itemLink")
+					local isQuestItem, questID, isActive = false,false,false
+					if GetContainerItemQuestInfo then
+						isQuestItem, questID, isActive = GetContainerItemQuestInfo(i,j)
+					end
+					if name then
+						repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
+							local findIn = name.." "..itemType.." "..itemSubType.." "..itemSlot.." "..((isQuestItem or questID or isActive) and "quest" or "")
+							if (isMatch(Criteria,findIn)) then
+								data[name] = "item"
+							end
+						until true
+						if (data[name] and not NeuronItemCache[name]) then
+							NeuronItemCache[name] = itemId -- if it isn't in the items cache the icon and tooltip won't show.
+						end
+					end
+				end
+			end
+		end
+	end
+	--why did we save itemId in data before and not name?
+	--[[
 	for ckey in gmatch(keys, "[^,]+") do
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
 		arg = arg:lower()
@@ -531,7 +657,7 @@ function ACTIONBUTTON:filter_type()
 			end
 		end
 	end
-
+	--]]
 	return data
 end
 
@@ -588,6 +714,7 @@ end
 
 
 --- Filter handler for professions
+--- not WoW Classic
 -- profession:arg filters professions that include arg in the name or arg="primary" or arg="secondary" or arg="all"
 function ACTIONBUTTON:filter_profession()
 
@@ -638,6 +765,7 @@ end
 
 
 --- Filter handler for companion pets
+--- not WoW Classic
 -- pet:arg filters companion pets that include arg in the name or arg="any" or arg="favorite(s)"
 function ACTIONBUTTON:filter_pet()
 
@@ -667,6 +795,7 @@ end
 
 
 ---Filter handler for toy items
+--- not WoW Classic
 -- toy:arg filters items from the toybox; arg="favorite" "any" or partial name
 function ACTIONBUTTON:filter_toy()
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
