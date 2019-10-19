@@ -172,15 +172,6 @@ local function isAnyMatchIn(needles,haystack)
 	return hit
 end
 
-local function addToFlyoutonAny(terms, document)
-	for k,v in pairs(terms) do
-		if document:match(k) then
-			return v
-		end
-	end
-	return false
-end
-
 ---@param index number,
 ---@param bookType string constant ("spell" or "pet")
 ---@return string, string, string, number, number name, rank|subType, spellType, spellID, icon
@@ -192,15 +183,13 @@ local function getSpellInfo(index, bookType)
 	if rank_testing then debugPrint("RANNKKKKKK: "..rank_testing) end
 
 	if spellIdOrActionId ~= spellID then
-		local _actionId ,_spellID = "nil","nil"
-		if spellIdOrActionId then _actionId = spellIdOrActionId end
-		if spellID then _spellID = spellID end
-		debugPrint("NEURON flyout - spellID: ".._spellID.." != actionID: ".._actionId)
+		debugPrint("NEURON flyout - spellID: "..(spellID and spellID or "nil").." != actionID: "..(spellIdOrActionId and spellIdOrActionId or "nil"))
+		spellID = spellID and spellID or spellIdOrActionId and spellIdOrActionId or ""
 	end
 	local return_name = spellBookSpellName
 	if(return_name ~= name) then
-		debugPrint("Name mismatch! <"..spellBookSpellName.."> != <"..spellBookSpellName.."> using: "..name)
-		return_name = name
+		debugPrint("Name mismatch! <"..(spellBookSpellName and spellBookSpellName or "nil").."> != <"..(name and name or "nil").."> using: "..(name and name or spellBookSpellName))
+		return_name = name and name or spellBookSpellName
 	end
 	return return_name, spellRankOrSubtype, spellType, spellID, icon
 end
