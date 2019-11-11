@@ -430,6 +430,12 @@ function STATUSBTN:repstrings_Update(repGainedString)
 		local colors = {}
 		local headerOverride
 
+		if not standingID then --not sure if we will ever be in a position where standingID comes back as nil, but if so, protect for it.
+			standingID = 0
+		elseif standingID > 9 then --protect just in case standingID comes back greater than 9. I'm not sure if this will ever trip, but it's a safety thing.
+			standingID = 9
+		end
+
 		if standingID == 8 then
 			min = 0
 		end
