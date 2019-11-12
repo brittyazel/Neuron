@@ -1,0 +1,18 @@
+tag b3710b114646b1d8d131c2eb5877c45473c7f9f5 v1.14
+Author:	Hendrik Leppkes <h.leppkes@gmail.com>
+Date:	Tue Aug 13 11:32:57 2019 +0200
+
+Tag as v1.14
+
+commit 218cdbdbc25348863124728fdf748eb4ea1e3608
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Tue Aug 13 11:32:47 2019 +0200
+
+    Update TOC
+
+commit 6ef8d5183a3efeb8d8fc9e96890dffaddb203bc5
+Author: Hendrik Leppkes <h.leppkes@gmail.com>
+Date:   Sat Aug 10 20:40:20 2019 +0200
+
+    Don't load on WoW Classic
+

@@ -477,7 +477,10 @@ function Neuron:UpdateSpellCache()
 	for i = 1,sIndexMax do
 		local spellName, _ = GetSpellBookItemName(i, BOOKTYPE_SPELL) --this returns the baseSpell name, even if it is augmented by talents. I.e. Roll and Chi Torpedo
 		local spellType, spellID = GetSpellBookItemInfo(i, BOOKTYPE_SPELL)
-		local isPassive = IsPassiveSpell(i, BOOKTYPE_SPELL)
+		local isPassive
+		if spellName then
+			isPassive = IsPassiveSpell(i, BOOKTYPE_SPELL)
+		end
 		local icon = GetSpellTexture(spellID)
 
 		local altName
