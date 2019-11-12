@@ -802,7 +802,8 @@ end
 
 function STATUSBTN:CastBar_OnEvent(event, ...)
 
-	local unit = ...
+	local unit = select(1, ...)
+	local eventCastID = select(2,...)--return payload is "unitTarget", "castGUID", spellID
 
 	if (unit ~= self.sb.unit) then
 		return
@@ -876,39 +877,13 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 		self.sb.cbtimer.castInfo[unit][1] = text
 		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
 
-	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then
+	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
 
 		self.sb:SetStatusBarColor(self.sb.successColor[1], self.sb.successColor[2], self.sb.successColor[3], self.sb.successColor[4])
 
-	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and self.sb.channeling) then
+	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") and self.sb.castID == eventCastID then
 
-		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
-
-	elseif (event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") then
-
-		if ((self.sb.casting and event == "UNIT_SPELLCAST_STOP") or
-				(self.sb.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP")) then
-
-			self.sb.spark:Hide()
-			self.sb.barflash:SetAlpha(0.0)
-			self.sb.barflash:Show()
-
-			self.sb:SetValue(self.sb.maxValue)
-
-			if (event == "UNIT_SPELLCAST_STOP") then
-				self.sb.casting = false
-			else
-				self.sb.channeling = false
-			end
-
-			self.sb.flash = 1
-			self.sb.fadeOut = 1
-			self.sb.holdTime = 0
-		end
-
-	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") then
-
-		if (self.sb:IsShown() and (self.sb.casting) and not self.sb.fadeOut) then
+		if (self.sb:IsShown() and ((self.sb.casting) or self.sb.channeling) and not self.sb.fadeOut) then
 
 			self.sb:SetValue(self.sb.maxValue)
 
