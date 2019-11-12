@@ -375,7 +375,6 @@ end
 
 
 function Neuron:RefreshConfig()
-	DB = Neuron.db.profile
 	StaticPopup_Show("ReloadUI")
 end
 
