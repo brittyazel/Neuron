@@ -940,7 +940,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
 
-	elseif ((event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_STOP") and self.sb.castID == eventCastID) or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
+	elseif ((event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") and self.sb.castID == eventCastID) or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
 
 		if (self.sb:IsShown() and (self.sb.casting or self.sb.channeling) and not self.sb.fadeOut) then
 
@@ -1025,8 +1025,6 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		self.sb.shield:Show()
 
-	else
-		self:CastBar_Reset()
 	end
 
 	self.sb.cText:SetText(self.sb.cFunc(self.sb))
@@ -1860,7 +1858,6 @@ function STATUSBTN:SetType()
 
 		self:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
-		self:RegisterEvent("UNIT_SPELLCAST_STOP", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_FAILED", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "CastBar_OnEvent")
