@@ -140,7 +140,7 @@ local function timerFrame_OnUpdate(frame, elapsed)
 	end
 end
 
----@param needles tablestring[]: list of strings
+---@param needles table<number,string>: list of strings
 ---@param haystack string - a string to check in
 ---@return boolean
 local function isAllMatchIn(needles,haystack)
@@ -178,20 +178,8 @@ end
 local function getSpellInfo(index, bookType)
 	local spellBookSpellName, spellRankOrSubtype = GetSpellBookItemName(index, bookType)
 	local spellType,spellIdOrActionId = GetSpellBookItemInfo(index, bookType)
-	local name, rank_testing,icon,_,_,_, spellID = GetSpellInfo(index, spellRankOrSubtype)
-
-	if rank_testing then debugPrint("RANNKKKKKK: "..rank_testing) end
-
-	if spellIdOrActionId ~= spellID then
-		debugPrint("NEURON flyout - spellID: "..(spellID and spellID or "nil").." != actionID: "..(spellIdOrActionId and spellIdOrActionId or "nil"))
-		spellID = spellID and spellID or spellIdOrActionId and spellIdOrActionId or ""
-	end
-	local return_name = spellBookSpellName
-	if(return_name ~= name) then
-		debugPrint("Name mismatch! <"..(spellBookSpellName and spellBookSpellName or "nil").."> != <"..(name and name or "nil").."> using: "..(name and name or spellBookSpellName))
-		return_name = name and name or spellBookSpellName
-	end
-	return return_name, spellRankOrSubtype, spellType, spellID, icon
+	local _,_, icon = GetSpellInfo(index, spellRankOrSubtype)
+	return spellBookSpellName, spellRankOrSubtype, spellType, spellIdOrActionId, icon
 end
 
 ---@param list table<string|number,any> of <[string]|[number],[any]>
@@ -423,22 +411,24 @@ function ACTIONBUTTON:filter_item(tooltip)
 				local itemId = GetInventoryItemID("player",j)
 				if (itemId and itemId ~= 0) then
 					local name,_,_,_,_,_,_,_,equipLoc =  GetItemInfo(itemId)
-					repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
-						if tooltip then
-							-- we built the index on the same logic so we know itemTooltips[i..":"..j] exists.
-							local findIn = name.." "..itemTooltips[i..":"..j]
-							if (isMatch(Criteria,findIn,j)) then
-								data[name] = "item"
+					if name then
+						repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
+							if tooltip then
+								-- we built the index on the same logic so we know itemTooltips[i..":"..j] exists.
+								local findIn = name.." "..itemTooltips[i..":"..j]
+								if (isMatch(Criteria,findIn,j)) then
+									data[name] = "item"
+								end
+							else -- match by name
+								local findIn = "worn "..name
+								if (isMatch(Criteria,findIn,j)) then
+									data[name] = "item"
+								end
 							end
-						elseif (name) then -- match by name
-							local findIn = "worn "..name
-							if (isMatch(Criteria,findIn,j)) then
-								data[name] = "item"
-							end
+						until true
+						if (data[name] and (not NeuronItemCache[name])) then
+							NeuronItemCache[name] = itemId -- if it isn't in the items cache the icon and tooltip won't show.
 						end
-					until true
-					if (name and data[name] and (not NeuronItemCache[name])) then
-						NeuronItemCache[name] = itemId -- if it isn't in the items cache the icon and tooltip won't show.
 					end
 				end
 			end
@@ -459,7 +449,7 @@ function ACTIONBUTTON:filter_item(tooltip)
 								if (isMatch(Criteria,findIn,j)) then
 									data[name] = "item"
 								end
-							elseif (name) then -- match by name
+							else -- match by name
 								if (isMatch(Criteria,name,j)) then
 									data[name] = "item"
 								end
@@ -528,8 +518,6 @@ function ACTIONBUTTON:filter_spell(tooltip)
 			local searchName = name
 			if rank then
 				searchName = searchName.."("..rank..")"
-			else
-				debugPrint("Spell subtype/rank N/A! <"..name..">")
 			end
 
 			repeat -- repeat until true gives breaks of the repeat the functionality of a C continue
