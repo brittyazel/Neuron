@@ -802,7 +802,8 @@ end
 
 function STATUSBTN:CastBar_OnEvent(event, ...)
 
-	local unit = ...
+	local unit = select(1, ...)
+	local eventCastID = select(2,...)--return payload is "unitTarget", "castGUID", spellID
 
 	if (unit ~= self.sb.unit) then
 		return
@@ -876,7 +877,62 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 		self.sb.cbtimer.castInfo[unit][1] = text
 		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
 
-	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then
+	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
+
+		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
+
+		if (not name) then
+			self:CastBar_Reset()
+			return
+		end
+
+		self.sb:SetStatusBarColor(self.sb.channelColor[1], self.sb.channelColor[2], self.sb.channelColor[3], self.sb.channelColor[4])
+
+		self.sb.value = ((endTime/1000)-GetTime())
+		self.sb.maxValue = (endTime - startTime) / 1000;
+		self.sb:SetMinMaxValues(0, self.sb.maxValue);
+		self.sb:SetValue(self.sb.value)
+
+		CastWatch[unit].spell = text
+
+		if (self.sb.showIcon) then
+
+			self.sb.icon:SetTexture(texture)
+			self.sb.icon:Show()
+
+			if (notInterruptible) then
+				self.sb.shield:Show()
+			else
+				self.sb.shield:Hide()
+			end
+
+		else
+			self.sb.icon:Hide()
+			self.sb.shield:Hide()
+		end
+
+		if (self.sb.spark) then
+			self.sb.spark:Hide()
+		end
+
+		self.sb:SetAlpha(1.0)
+		self.sb.holdTime = 0
+		self.sb.casting = false
+		self.sb.channeling = true
+		self.sb.fadeOut = nil
+
+		self.sb:Show()
+
+		--update text on castbar
+		if (not self.sb.cbtimer.castInfo[unit]) then
+			self.sb.cbtimer.castInfo[unit] = {}
+		end
+
+		self.sb.cbtimer.castInfo[unit][1] = text
+		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
+
+
+	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
 
 		self.sb:SetStatusBarColor(self.sb.successColor[1], self.sb.successColor[2], self.sb.successColor[3], self.sb.successColor[4])
 
@@ -884,31 +940,9 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
 
-	elseif (event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") then
+	elseif ((event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") and self.sb.castID == eventCastID) or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
 
-		if ((self.sb.casting and event == "UNIT_SPELLCAST_STOP") or
-				(self.sb.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP")) then
-
-			self.sb.spark:Hide()
-			self.sb.barflash:SetAlpha(0.0)
-			self.sb.barflash:Show()
-
-			self.sb:SetValue(self.sb.maxValue)
-
-			if (event == "UNIT_SPELLCAST_STOP") then
-				self.sb.casting = false
-			else
-				self.sb.channeling = false
-			end
-
-			self.sb.flash = 1
-			self.sb.fadeOut = 1
-			self.sb.holdTime = 0
-		end
-
-	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") then
-
-		if (self.sb:IsShown() and (self.sb.casting) and not self.sb.fadeOut) then
+		if (self.sb:IsShown() and (self.sb.casting or self.sb.channeling) and not self.sb.fadeOut) then
 
 			self.sb:SetValue(self.sb.maxValue)
 
@@ -966,60 +1000,6 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 			end
 		end
 
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
-
-		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
-
-		if (not name) then
-			self:CastBar_Reset()
-			return
-		end
-
-		self.sb:SetStatusBarColor(self.sb.channelColor[1], self.sb.channelColor[2], self.sb.channelColor[3], self.sb.channelColor[4])
-
-		self.sb.value = ((endTime/1000)-GetTime())
-		self.sb.maxValue = (endTime - startTime) / 1000;
-		self.sb:SetMinMaxValues(0, self.sb.maxValue);
-		self.sb:SetValue(self.sb.value)
-
-		CastWatch[unit].spell = text
-
-		if (self.sb.showIcon) then
-
-			self.sb.icon:SetTexture(texture)
-			self.sb.icon:Show()
-
-			if (notInterruptible) then
-				self.sb.shield:Show()
-			else
-				self.sb.shield:Hide()
-			end
-
-		else
-			self.sb.icon:Hide()
-			self.sb.shield:Hide()
-		end
-
-		if (self.sb.spark) then
-			self.sb.spark:Hide()
-		end
-
-		self.sb:SetAlpha(1.0)
-		self.sb.holdTime = 0
-		self.sb.casting = false
-		self.sb.channeling = true
-		self.sb.fadeOut = nil
-
-		self.sb:Show()
-
-		--update text on castbar
-		if (not self.sb.cbtimer.castInfo[unit]) then
-			self.sb.cbtimer.castInfo[unit] = {}
-		end
-
-		self.sb.cbtimer.castInfo[unit][1] = text
-		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
-
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
 
 		if (self.sb:IsShown()) then
@@ -1045,8 +1025,6 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		self.sb.shield:Show()
 
-	else
-		self:CastBar_Reset()
 	end
 
 	self.sb.cText:SetText(self.sb.cFunc(self.sb))
@@ -1880,7 +1858,6 @@ function STATUSBTN:SetType()
 
 		self:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
-		self:RegisterEvent("UNIT_SPELLCAST_STOP", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_FAILED", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "CastBar_OnEvent")

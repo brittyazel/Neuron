@@ -114,6 +114,15 @@ function NeuronGUI:OnInitialize()
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(NeuronGUI.interfaceOptions, addonName)
 	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, NeuronGUI.interfaceOptions)
 	NeuronGUI.interfaceOptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(Neuron.db)
+
+	-- Per spec profiles
+	if not Neuron.isWoWClassic then
+		local LibDualSpec = LibStub('LibDualSpec-1.0')
+		LibDualSpec:EnhanceDatabase(Neuron.db, addonName) --enhance the database object with per spec profile features
+		LibDualSpec:EnhanceOptions(NeuronGUI.interfaceOptions.args.profile, Neuron.db) -- enhance the profiles config panel with per spec profile features
+	end
+
+
 	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
 
 
