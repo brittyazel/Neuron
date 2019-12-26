@@ -71,7 +71,6 @@ function CASTBTN:SetType()
 
 	self:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_STOP", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "CastBar_OnEvent")
@@ -142,7 +141,10 @@ end
 
 
 
-function CASTBTN:CastBar_OnEvent(event, unit, ...)
+function CASTBTN:CastBar_OnEvent(event,...)
+
+	local unit = select(1, ...)
+	local eventCastID = select(2,...) --return payload is "unitTarget", "castGUID", spellID
 
 	if (unit ~= self.sb.unit) then
 		return
@@ -216,90 +218,6 @@ function CASTBTN:CastBar_OnEvent(event, unit, ...)
 		self.sb.cbtimer.castInfo[unit][1] = text
 		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
 
-	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then
-
-		self.sb:SetStatusBarColor(self.config.successColor[1], self.config.successColor[2], self.config.successColor[3], self.config.successColor[4])
-
-	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and self.sb.channeling) then
-
-		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
-
-	elseif (event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_CHANNEL_STOP") then
-
-		if ((self.sb.casting and event == "UNIT_SPELLCAST_STOP") or
-				(self.sb.channeling and event == "UNIT_SPELLCAST_CHANNEL_STOP")) then
-
-			self.sb.spark:Hide()
-			self.sb.barflash:SetAlpha(0.0)
-			self.sb.barflash:Show()
-
-			self.sb:SetValue(self.sb.maxValue)
-
-			if (event == "UNIT_SPELLCAST_STOP") then
-				self.sb.casting = false
-			else
-				self.sb.channeling = false
-			end
-
-			self.sb.flash = 1
-			self.sb.fadeOut = 1
-			self.sb.holdTime = 0
-		end
-
-	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") then
-
-		if (self.sb:IsShown() and (self.sb.casting) and not self.sb.fadeOut) then
-
-			self.sb:SetValue(self.sb.maxValue)
-
-			self.sb:SetStatusBarColor(self.config.failColor[1], self.config.failColor[2], self.config.failColor[3], self.config.failColor[4])
-
-			if (self.sb.spark) then
-				self.sb.spark:Hide()
-			end
-
-			if (event == "UNIT_SPELLCAST_FAILED") then
-				CastWatch[unit].spell = FAILED
-			else
-				CastWatch[unit].spell = INTERRUPTED
-			end
-
-			self.sb.casting = false
-			self.sb.channeling = false
-			self.sb.fadeOut = 1
-			self.sb.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
-		end
-
-	elseif (event == "UNIT_SPELLCAST_DELAYED") then
-
-		if (self.sb:IsShown()) then
-
-			local name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
-
-			if (not name) then
-				self:CastBar_Reset()
-				return
-			end
-
-			self.sb.value = (GetTime()-(startTime/1000))
-			self.sb.maxValue = (endTime-startTime)/1000
-			self.sb:SetMinMaxValues(0, self.sb.maxValue)
-
-			if (not self.sb.casting) then
-
-				self.sb:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
-
-				self.sb.spark:Show()
-				self.sb.barflash:SetAlpha(0.0)
-				self.sb.barflash:Hide()
-
-				self.sb.casting = true
-				self.sb.channeling = false
-				self.sb.flash = 0
-				self.sb.fadeOut = 0
-			end
-		end
-
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
@@ -354,6 +272,68 @@ function CASTBTN:CastBar_OnEvent(event, unit, ...)
 		self.sb.cbtimer.castInfo[unit][1] = text
 		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
 
+	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
+
+		self.sb:SetStatusBarColor(self.config.successColor[1], self.config.successColor[2], self.config.successColor[3], self.config.successColor[4])
+
+	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and self.sb.channeling) then
+
+		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
+
+	elseif ((event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") and self.sb.castID == eventCastID) or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
+
+		if (self.sb:IsShown() and (self.sb.casting or self.sb.channeling) and not self.sb.fadeOut) then
+
+			self.sb:SetValue(self.sb.maxValue)
+
+			self.sb:SetStatusBarColor(self.config.failColor[1], self.config.failColor[2], self.config.failColor[3], self.config.failColor[4])
+
+			if (self.sb.spark) then
+				self.sb.spark:Hide()
+			end
+
+			if (event == "UNIT_SPELLCAST_FAILED") then
+				CastWatch[unit].spell = FAILED
+			else
+				CastWatch[unit].spell = INTERRUPTED
+			end
+
+			self.sb.casting = false
+			self.sb.channeling = false
+			self.sb.fadeOut = 1
+			self.sb.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
+		end
+
+	elseif (event == "UNIT_SPELLCAST_DELAYED") then
+
+		if (self.sb:IsShown()) then
+
+			local name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
+
+			if (not name) then
+				self:CastBar_Reset()
+				return
+			end
+
+			self.sb.value = (GetTime()-(startTime/1000))
+			self.sb.maxValue = (endTime-startTime)/1000
+			self.sb:SetMinMaxValues(0, self.sb.maxValue)
+
+			if (not self.sb.casting) then
+
+				self.sb:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
+
+				self.sb.spark:Show()
+				self.sb.barflash:SetAlpha(0.0)
+				self.sb.barflash:Hide()
+
+				self.sb.casting = true
+				self.sb.channeling = false
+				self.sb.flash = 0
+				self.sb.fadeOut = 0
+			end
+		end
+
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
 
 		if (self.sb:IsShown()) then
@@ -379,8 +359,6 @@ function CASTBTN:CastBar_OnEvent(event, unit, ...)
 
 		self.sb.shield:Show()
 
-	else
-		self:CastBar_Reset()
 	end
 
 	self.sb.cText:SetText(self.sb.cFunc(self.sb))
