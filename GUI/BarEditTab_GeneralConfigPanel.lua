@@ -37,10 +37,10 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	---------------------------------------------------------
 
 	--Heading spacer
-	local heading1 = AceGUI:Create("Heading")
-	heading1:SetText("Bar Options")
+	local heading1 = AceGUI:Create("InlineGroup")
 	heading1:SetHeight(WIDGET_GRID_HEIGHT)
 	heading1:SetFullWidth(true)
+	heading1:SetLayout("Fill")
 	tabFrame:AddChild(heading1)
 
 
@@ -245,10 +245,10 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	---------------------------------------------------------
 
 	--Heading spacer
-	local heading2 = AceGUI:Create("Heading")
-	heading2:SetText("Layout Configuration")
+	local heading2 = AceGUI:Create("InlineGroup")
 	heading2:SetHeight(WIDGET_GRID_HEIGHT)
 	heading2:SetFullWidth(true)
+	heading2:SetLayout("Fill")
 	tabFrame:AddChild(heading2)
 
 
@@ -474,10 +474,10 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions then
 
 		--Heading spacer
-		local heading3 = AceGUI:Create("Heading")
-		heading3:SetText("Style Options")
+		local heading3 = AceGUI:Create("InlineGroup")
 		heading3:SetHeight(WIDGET_GRID_HEIGHT)
 		heading3:SetFullWidth(true)
+		heading3:SetLayout("Fill")
 		tabFrame:AddChild(heading3)
 
 

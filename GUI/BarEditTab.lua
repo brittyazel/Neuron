@@ -33,7 +33,6 @@ local currentTab = "tab1" --remember which tab we were using between refreshes
 
 
 function NeuronGUI:BarEditPanel(tabFrame)
-
 	if Neuron.CurrentBar then
 		--Tab group that will contain all of our settings to configure
 		local innerTabFrame = AceGUI:Create("TabGroup")
@@ -41,7 +40,7 @@ function NeuronGUI:BarEditPanel(tabFrame)
 		innerTabFrame:SetFullWidth(true)
 		innerTabFrame:SetFullHeight(true)
 		innerTabFrame:SetTabs({{text="General Configuration", value="tab1"}, {text="Bar States", value="tab2"}, {text="Bar Visibility", value="tab3"}})
-		innerTabFrame:SetCallback("OnGroupSelected", function(self, _, tab) NeuronGUI:SelectInnerTab(self, _, tab) end)
+		innerTabFrame:SetCallback("OnGroupSelected", function(self, _, tab) NeuronGUI:SelectInnerBarTab(self, _, tab) end)
 		innerTabFrame:SelectTab(currentTab)
 		tabFrame:AddChild(innerTabFrame)
 	else
@@ -60,7 +59,7 @@ end
 -----------------------------------------------------------------------------
 
 
-function NeuronGUI:SelectInnerTab(tabFrame, _, tab)
+function NeuronGUI:SelectInnerBarTab(tabFrame, _, tab)
 
 	tabFrame:ReleaseChildren()
 
@@ -74,5 +73,4 @@ function NeuronGUI:SelectInnerTab(tabFrame, _, tab)
 		NeuronGUI:BarVisibilityPanel(tabFrame)
 		currentTab = "tab3"
 	end
-
 end

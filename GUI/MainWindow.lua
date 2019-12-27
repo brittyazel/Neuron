@@ -248,5 +248,4 @@ function NeuronGUI:SelectTab(tabFrame, _, tab)
 		NeuronGUI:ButtonEditPanel(tabFrame)
 		currentTab = "tab2"
 	end
-
 end
