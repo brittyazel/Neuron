@@ -66,17 +66,34 @@ function Neuron:Minimap_OnClickHandler(frame, button)
 	if button == "LeftButton" then
 
 		if IsShiftKeyDown() then
-			Neuron:ToggleBindingMode(true)
+			if Neuron.bindingMode == true then
+				Neuron:ToggleBindingMode(false)
+			else
+				Neuron:ToggleBindingMode(true)
+			end
 		else
-			Neuron:ToggleBarEditMode(true)
+			if Neuron.barEditMode == true then
+				Neuron:ToggleBarEditMode(false)
+			else
+				Neuron:ToggleBarEditMode(true)
+			end
 		end
 
 	elseif button == "RightButton" then
 
 		if IsShiftKeyDown() then
-			Neuron:ToggleMainMenu()
+			if InterfaceOptionsFrame:IsShown() then
+				InterfaceOptionsFrame:Hide();
+			else
+				Neuron:ToggleMainMenu()
+			end
+
 		else
-			Neuron:ToggleButtonEditMode(true)
+			if Neuron.buttonEditMode == true then
+				Neuron:ToggleButtonEditMode(false)
+			else
+				Neuron:ToggleButtonEditMode(true)
+			end
 		end
 
 	end

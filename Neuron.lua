@@ -624,7 +624,7 @@ end
 
 function Neuron:ToggleBarEditMode(show)
 
-	if show and Neuron.barEditMode == false then
+	if show then
 
 		Neuron.barEditMode = true
 
@@ -639,7 +639,6 @@ function Neuron:ToggleBarEditMode(show)
 		end
 
 	else
-
 		Neuron.barEditMode = false
 
 		for _, bar in pairs(Neuron.BARIndex) do
@@ -659,14 +658,13 @@ end
 
 function Neuron:ToggleButtonEditMode(show)
 
-	if show and Neuron.buttonEditMode == false then
+	if show then
 
 		Neuron.buttonEditMode = true
 
 		Neuron:ToggleBarEditMode(false)
 		Neuron:ToggleBindingMode(false)
-
-
+		
 		for _, editor in pairs(Neuron.EDITIndex) do
 			editor:Show()
 			editor.object.editmode = true
@@ -681,7 +679,6 @@ function Neuron:ToggleButtonEditMode(show)
 			bar:UpdateObjectVisibility(true)
 			bar:UpdateObjects()
 		end
-
 
 	else
 
@@ -714,7 +711,7 @@ end
 
 function Neuron:ToggleBindingMode(show)
 
-	if show and Neuron.bindingMode == false then
+	if show then
 
 		Neuron.bindingMode = true
 

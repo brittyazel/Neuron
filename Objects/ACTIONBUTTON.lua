@@ -74,7 +74,7 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	--newButton.binder = Neuron.KEYBINDER.new(newButton)
+	Neuron.BUTTON:EditorOverlay_CreateEditFrame(newButton)
 
 	return newButton
 end

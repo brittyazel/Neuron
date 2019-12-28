@@ -25,6 +25,7 @@ Utilities/DB-Fixer.lua
 
 
 Objects/BUTTON.lua
+Objects/BUTTON_EditorOverlay.lua
 Objects/BAR.lua
 Objects/ACTIONBUTTON.lua
 Objects/ACTIONBUTTON_DragAndDrop.lua
@@ -54,6 +55,7 @@ XML/NeuronBarTemplate.xml
 XML/NeuronBindFrameTemplate.xml
 XML/NeuronCheckButtonTextureTemplate.xml
 XML/NeuronStatusBarTemplate.xml
+XML/NeuronEditFrameTemplate.xml
 
 Neuron-Startup.lua
 
