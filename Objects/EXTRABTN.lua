@@ -83,6 +83,7 @@ function EXTRABTN:OnEvent(event, ...)
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
+		self:UpdateIcon()
 	end
 
 end

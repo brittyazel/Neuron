@@ -692,8 +692,8 @@ function Neuron:ToggleBarEditMode(show)
 		for _, bar in pairs(Neuron.BARIndex) do
 			bar:Show() --this shows the transparent overlay over a bar
 			bar:Update(true)
-			bar:UpdateObjectVisibility(true)
 			bar:UpdateObjects()
+			bar:UpdateObjectVisibility(true)
 		end
 
 	else
@@ -703,8 +703,8 @@ function Neuron:ToggleBarEditMode(show)
 		for _, bar in pairs(Neuron.BARIndex) do
 			bar:Hide()
 			bar:Update(nil, true)
-			bar:UpdateObjectVisibility()
 			bar:UpdateObjects()
+			bar:UpdateObjectVisibility()
 		end
 
 		if (NeuronBarEditor)then
@@ -736,8 +736,8 @@ function Neuron:ToggleButtonEditMode(show)
 		end
 
 		for _,bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectVisibility(true)
 			bar:UpdateObjects()
+			bar:UpdateObjectVisibility(true)
 		end
 
 
@@ -752,8 +752,8 @@ function Neuron:ToggleButtonEditMode(show)
 		end
 
 		for _,bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectVisibility()
 			bar:UpdateObjects()
+			bar:UpdateObjectVisibility()
 
 			if (bar.handler:GetAttribute("assertstate")) then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
@@ -792,8 +792,8 @@ function Neuron:ToggleBindingMode(show)
 		end
 
 		for _,bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectVisibility(true)
 			bar:UpdateObjects()
+			bar:UpdateObjectVisibility(true)
 		end
 
 	else
@@ -809,8 +809,8 @@ function Neuron:ToggleBindingMode(show)
 		end
 
 		for _,bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectVisibility()
 			bar:UpdateObjects()
+			bar:UpdateObjectVisibility()
 		end
 	end
 end
