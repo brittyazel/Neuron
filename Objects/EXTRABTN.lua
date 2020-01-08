@@ -60,18 +60,17 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
-	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type1", "action")
 
 	--action content gets set in UpdateButton
 	self:UpdateButton()
+	self:SetObjectVisibility()
 
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
-	self:UpdateIcon()
-	self:SetObjectVisibility()
+
 
 	self:SetSkinned()
 end
@@ -79,11 +78,12 @@ end
 
 function EXTRABTN:OnEvent(event, ...)
 
-	self:SetObjectVisibility()
 	self:UpdateButton()
+	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
+		self:UpdateIcon()
 	end
 
 end
@@ -122,9 +122,9 @@ function EXTRABTN:UpdateButton()
 end
 
 
-function EXTRABTN:SetObjectVisibility(show)
+function EXTRABTN:SetObjectVisibility()
 
-	if HasExtraActionBar() or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+	if HasExtraActionBar() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
 	else
 		self.isShown = false

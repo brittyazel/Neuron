@@ -158,30 +158,6 @@
 							</OnLoad>
 						</Scripts>
 					</Cooldown>
-					<Cooldown name="$parentChargeCooldown" inherits="CooldownFrameTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT"/>
-							<Anchor point="BOTTOMRIGHT"/>
-						</Anchors>
-						<Layers>
-							<Layer level="OVERLAY" textureSubLevel="3">
-								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal">
-									<Anchors>
-										<Anchor point="CENTER">
-											<Offset x="0.5" y="0"/>
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnLoad>
-								self:SetFrameLevel(3)
-								self.button = self:GetParent():GetParent()
-								self:SetDrawSwipe(false);
-							</OnLoad>
-						</Scripts>
-					</Cooldown>
 				</Frames>
 				<Scripts>
 					<OnLoad>

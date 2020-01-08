@@ -140,10 +140,33 @@ function BUTTON:ChangeObject(object)
 	return newObj, newEditor
 end
 
+function BUTTON:CancelCooldownTimer(stopAnimation)
+	--cleanup so on state changes the cooldowns don't persist
+	if self:TimeLeft(self.iconframecooldown.cooldownTimer) ~= 0 then
+		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
+	end
+	self.iconframecooldown.timer:SetText("")
+
+	if self.data.alpha then
+		self:SetAlpha(self.data.alpha) --try to restore the original alpha
+	else
+		self:SetAlpha(1)
+	end
+
+	self.iconframecooldown.showCountdownTimer = false
+	self.iconframecooldown.showCountdownAlpha = false
+
+	--clear previous sweeping cooldown animations
+	if stopAnimation then
+		CooldownFrame_Clear(self.iconframecooldown) --clear the cooldown frame
+	end
+end
+
 
 function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
 
 	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
+		self:CancelCooldownTimer(true)
 		return
 	end
 
@@ -151,17 +174,15 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 
 		if duration > 2 then --sets non GCD cooldowns
 			if charges and charges > 0 and maxCharges > 1 then
-				CooldownFrame_Set(self.iconframechargecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation. Show Draw Edge.
+				self.iconframecooldown:SetDrawSwipe(false);
+				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation. Show Draw Edge.
 			else
+				self.iconframecooldown:SetDrawSwipe(true);
 				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation for ability cooldown. Show Draw Edge.
 			end
 		else --sets GCD cooldowns
+			self.iconframecooldown:SetDrawSwipe(true);
 			CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
-		end
-
-		-- Clear the charge cooldown frame if it is still going from a different ability in a different state (i.e. frenzied regen in the same spot as Swiftmend)
-		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
-			CooldownFrame_Clear(self.iconframechargecooldown)
 		end
 
 		--this is only for abilities that have CD's >4 sec. Any less than that and we don't want to track the CD with text or alpha, just with the standard animation
@@ -208,42 +229,12 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 			end
 
 		else
-			--Cancel Timers as they're unnecessary
-			self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
-			self.iconframecooldown.timer:SetText("")
-
-			if self.data.alpha then
-				self:SetAlpha(self.data.alpha) --try to restore the original alpha
-			else
-				self:SetAlpha(1)
-			end
-
-			self.iconframecooldown.showCountdownTimer = false
-			self.iconframecooldown.showCountdownAlpha = false
+			self:CancelCooldownTimer(false)
 		end
 	else
-		--cleanup so on state changes the cooldowns don't persist
-		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
-		self.iconframecooldown.timer:SetText("")
-
-		if self.data.alpha then
-			self:SetAlpha(self.data.alpha) --try to restore the original alpha
-		else
-			self:SetAlpha(1)
-		end
-
-		self.iconframecooldown.showCountdownTimer = false
-		self.iconframecooldown.showCountdownAlpha = false
-
-		--clear previous sweeping cooldown animations
-		CooldownFrame_Clear(self.iconframecooldown) --clear the cooldown frame
-		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
-			CooldownFrame_Clear(self.iconframechargecooldown)
-		end
+		self:CancelCooldownTimer(true)
 	end
 
-	--this is important for items like the ExtraActionButton who use Alpha to show and hide itself (to avoid in-combat restrictions). Without it the button would stay visible
-	self:SetObjectVisibility()
 end
 
 
@@ -575,6 +566,7 @@ function BUTTON:UpdateCooldown()
 		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
 		self:SetCooldownTimer()
 	end
+
 end
 
 
