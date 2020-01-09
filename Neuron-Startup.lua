@@ -46,7 +46,7 @@ function Neuron:RegisterBars()
 	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.ActionBar, Neuron.ACTIONBUTTON, 250, true)
 
 	--Neuron Bag Bar
-	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN,5, false)
+	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN, Neuron.NUM_BAG_BUTTONS, false) --Neuron.NUM_BAG_BUTTONS == 5 for retail and 6 for classic due to the keyring
 
 	--Neuron Status Bar
 	Neuron:RegisterBarClass("StatusBar", "StatusBar", L["Status Bar"], "Status Bar", DB.StatusBar, Neuron.STATUSBTN, 20, false)
