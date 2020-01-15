@@ -752,7 +752,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 
 			--Sets bar primaary options
 			for i,f in ipairs(barOpt.pri) do
-				if (f.option == "stance" and (GetNumShapeshiftForms() < 1 or Neuron.class == "DEATHKNIGHT" or Neuron.class == "PALADIN" or Neuron.class == "HUNTER")) then
+				if (f.option == "stance" and ((GetNumShapeshiftForms() < 1 or Neuron.class == "DEATHKNIGHT" or Neuron.class == "PALADIN" or Neuron.class == "HUNTER"))) and not Neuron.class=="SHAMAN" then
 					f:SetChecked(nil)
 					f:Disable()
 					f.text:SetTextColor(0.5,0.5,0.5)
@@ -1822,7 +1822,7 @@ function NeuronGUI:ActionEditor_OnLoad(frame)
 			--Renames Stance for rogues to Stealth as that is what should really be used
 			if state == "stance" and (class == "ROGUE") then
 				f.text:SetText(L["Stealth"])--:upper())
-			elseif state == "stance" and (class == "DRUID") then
+			elseif state == "stance" and (class == "DRUID" or class=="SHAMAN") then
 				f.text:SetText(L["Shapeshift"])--:upper())
 			else
 				f.text:SetText(MAS[state].localizedName)--:upper())
