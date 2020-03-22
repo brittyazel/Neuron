@@ -654,21 +654,24 @@ end
 
 
 function BUTTON:UpdateCooldown()
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
 	if (self.actionID) then
 		self:ACTION_SetCooldown(self.actionID)
-	elseif (show and #show>0) then
-		if (NeuronItemCache[show]) then
-			self:SetItemCooldown(show)
+
+	elseif (self.macroshow and #self.macroshow>0) then
+
+		if (NeuronItemCache[self.macroshow]) then
+			self:SetItemCooldown(self.macroshow)
 		else
-			self:SetSpellCooldown(show)
+			self:SetSpellCooldown(self.macroshow)
 		end
 
-	elseif (spell and #spell>0) then
-		self:SetSpellCooldown(spell)
-	elseif (item and #item>0) then
-		self:SetItemCooldown(item)
+	elseif (self.macrospell and #self.macrospell>0) then
+		self:SetSpellCooldown(self.macrospell)
+
+	elseif (self.macroitem and #self.macroitem>0) then
+		self:SetItemCooldown(self.macroitem)
+
 	else
 		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
 		self:SetCooldownTimer()
