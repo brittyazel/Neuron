@@ -148,11 +148,7 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 	end
 	self.iconframecooldown.timer:SetText("")
 
-	if self.data.alpha then
-		self:SetAlpha(self.data.alpha) --try to restore the original alpha
-	else
-		self:SetAlpha(1)
-	end
+	self:SetObjectVisibility()
 
 	self.iconframecooldown.showCountdownTimer = false
 	self.iconframecooldown.showCountdownAlpha = false
@@ -167,7 +163,10 @@ end
 function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
 
 	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
-		self:CancelCooldownTimer(true)
+		--if there's currently a timer, cancel it
+		if self:TimeLeft(self.iconframecooldown.cooldownTimer) ~= 0 then
+			self:CancelCooldownTimer(true)
+		end
 		return
 	end
 
@@ -500,6 +499,7 @@ function BUTTON:SetObjectVisibility()
 		else
 			self:SetAlpha(0)
 		end
+
 	else
 
 		if InCombatLockdown() then

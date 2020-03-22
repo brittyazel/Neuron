@@ -57,9 +57,9 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
-	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
-	self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
+	--self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
+	--self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
+	--self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
 
 	self:SetAttribute("type1", "action")
 
@@ -70,8 +70,6 @@ function EXTRABTN:SetType()
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
-
-
 	self:SetSkinned()
 end
 
@@ -79,7 +77,6 @@ end
 function EXTRABTN:OnEvent(event, ...)
 
 	self:UpdateButton()
-	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
@@ -106,6 +103,8 @@ function EXTRABTN:UpdateButton()
 
 	_, self.spellID = GetActionInfo(self.actionID)
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+
+	self:SetObjectVisibility()
 
 	if self.spellID then
 		self:UpdateIcon()
@@ -137,11 +136,6 @@ end
 
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateIcon()
-	self:SetButtonTex()
-end
-
-
-function EXTRABTN:SetButtonTex()
 
 	self.iconframeicon:SetTexture(self.spellIcon)
 
@@ -153,6 +147,7 @@ function EXTRABTN:SetButtonTex()
 	else
 		self.style:Hide()
 	end
+
 end
 
 

@@ -79,7 +79,6 @@ end
 function ZONEABILITYBTN:OnEvent(event, ...)
 
 	self:UpdateButton();
-	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
@@ -92,6 +91,8 @@ function ZONEABILITYBTN:UpdateButton()
 	---update the ZoneAbility spell ID
 	self.spellID = GetZoneAbilitySpellInfo();
 	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+
+	self:SetObjectVisibility()
 
 	if self.spellID then
 		self:UpdateIcon()
@@ -127,10 +128,6 @@ end
 
 ---overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
-	self:SetButtonTex()
-end
-
-function ZONEABILITYBTN:SetButtonTex()
 
 	self.iconframeicon:SetTexture(self.spellIcon);
 
@@ -142,7 +139,9 @@ function ZONEABILITYBTN:SetButtonTex()
 	else
 		self.style:Hide()
 	end
+
 end
+
 
 function ZONEABILITYBTN:OnEnter(...)
 
