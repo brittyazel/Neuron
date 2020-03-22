@@ -101,7 +101,7 @@ function ZONEABILITYBTN:UpdateButton()
 			self:SetAttribute("macrotext1", "/cast " .. self.spellName .. "();")
 		end
 
-		self:SetSpellCooldown(self.spellName)
+		self:UpdateCooldown()
 
 		---zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
 		self:UpdateSpellCount(self.spellName)
@@ -112,6 +112,12 @@ function ZONEABILITYBTN:UpdateButton()
 
 end
 
+---overwrite function in parent class BUTTON
+function ZONEABILITYBTN:UpdateCooldown()
+	if self.spellName then
+		self:SetSpellCooldown(self.spellName)
+	end
+end
 
 function ZONEABILITYBTN:SetObjectVisibility(show)
 

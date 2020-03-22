@@ -57,9 +57,9 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
-	--self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
-	--self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
-	--self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
+	self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
 
 	self:SetAttribute("type1", "action")
 
@@ -71,6 +71,8 @@ function EXTRABTN:SetType()
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
+
+	test = self;
 end
 
 
@@ -109,7 +111,7 @@ function EXTRABTN:UpdateButton()
 	if self.spellID then
 		self:UpdateIcon()
 
-		self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
+		self:UpdateCooldown()
 
 		---extra button charges (some quests have ability charges)
 		self:UpdateSpellCount(self.spellID)
@@ -118,6 +120,13 @@ function EXTRABTN:UpdateButton()
 	---make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 
+end
+
+---overwrite function in parent class BUTTON
+function EXTRABTN:UpdateCooldown()
+	if self.spellID then
+		self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
+	end
 end
 
 
