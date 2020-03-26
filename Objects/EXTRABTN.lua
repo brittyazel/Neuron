@@ -65,14 +65,17 @@ function EXTRABTN:SetType()
 
 	--action content gets set in UpdateButton
 	self:UpdateButton()
-	self:SetObjectVisibility()
+
+	self:SetScript("OnDragStart", function(self)
+		if self.spellID then
+			PickupSpell(self.spellID)
+		end
+	end)
 
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
-
-	test = self;
 end
 
 
@@ -90,10 +93,10 @@ end
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateButton()
 
-	---default to 169 as is the most of then the case as of 8.1
+	--default to 169 as is the most of then the case as of 8.1
 	self.actionID = 169
 
-	---get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
+	--get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
 		local extraPage = GetExtraBarIndex()
 		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
@@ -103,21 +106,23 @@ function EXTRABTN:UpdateButton()
 		self:SetAttribute("action1", self.actionID)
 	end
 
-	_, self.spellID = GetActionInfo(self.actionID)
-	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
-
 	self:SetObjectVisibility()
 
+	_, self.spellID = GetActionInfo(self.actionID)
+
 	if self.spellID then
+
+		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+
 		self:UpdateIcon()
 
 		self:UpdateCooldown()
 
-		---extra button charges (some quests have ability charges)
+		--extra button charges (some quests have ability charges)
 		self:UpdateSpellCount(self.spellID)
 	end
 
-	---make sure our button gets the correct Normal texture if we're not using a Masque skin
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 
 end
