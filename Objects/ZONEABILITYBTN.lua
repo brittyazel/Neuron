@@ -65,12 +65,13 @@ function ZONEABILITYBTN:SetType()
 	--macro content gets set in UpdateButton
 	self:UpdateButton()
 
-	self:SetScript("OnDragStart", function(self) PickupSpell(self.spellID) end)
+	self:SetScript("OnDragStart", function(self)
+		if self.spellID then
+			PickupSpell(self.spellID)
+		end
+	end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
-
-	self:SetObjectVisibility()
-	self:UpdateIcon()
 
 	self:SetSkinned()
 end
@@ -79,42 +80,47 @@ end
 function ZONEABILITYBTN:OnEvent(event, ...)
 
 	self:UpdateButton();
-	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
+		self:UpdateIcon()
 	end
 end
 
 ---overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateButton()
 
-	---update the ZoneAbility spell ID
+	--update the ZoneAbility spell ID
 	self.spellID = GetZoneAbilitySpellInfo();
-	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
 	if self.spellID then
-		self:UpdateIcon()
-
-		if (self.spellName and not InCombatLockdown()) then
+		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+		if self.spellName and not InCombatLockdown() then
 			self:SetAttribute("macrotext1", "/cast " .. self.spellName .. "();")
 		end
-
-		self:SetSpellCooldown(self.spellName)
-
-		---zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
-		self:UpdateSpellCount(self.spellName)
+	else
+		self.spellName = ""
+		self.spellIcon = ""
 	end
 
-	---make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:SetObjectVisibility()
+	self:UpdateIcon()
+	self:UpdateCooldown()
+	--zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
+	self:UpdateSpellCount(self.spellName)
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 
 end
 
+--overwrite function in parent class BUTTON
+function ZONEABILITYBTN:UpdateCooldown()
+	self:SetSpellCooldown(self.spellName)
+end
 
-function ZONEABILITYBTN:SetObjectVisibility(show)
+function ZONEABILITYBTN:SetObjectVisibility()
 
-	if GetZoneAbilitySpellInfo() or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+	if HasZoneAbility() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
 	else
 		self.isShown = false
@@ -125,12 +131,8 @@ function ZONEABILITYBTN:SetObjectVisibility(show)
 end
 
 
----overwrite function in parent class BUTTON
+--overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
-	self:SetButtonTex()
-end
-
-function ZONEABILITYBTN:SetButtonTex()
 
 	self.iconframeicon:SetTexture(self.spellIcon);
 
@@ -142,7 +144,9 @@ function ZONEABILITYBTN:SetButtonTex()
 	else
 		self.style:Hide()
 	end
+
 end
+
 
 function ZONEABILITYBTN:OnEnter(...)
 

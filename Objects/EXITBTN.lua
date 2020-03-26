@@ -66,7 +66,7 @@ end
 
 
 function EXITBTN:OnEvent(event, ...)
-	self:SetButtonTex()
+	self:UpdateIcon()
 	self:SetObjectVisibility()
 end
 
@@ -83,7 +83,8 @@ function EXITBTN:SetObjectVisibility(show)
 
 end
 
-function EXITBTN:SetButtonTex()
+---overwrite function in parent class BUTTON
+function EXITBTN:UpdateIcon()
 
 	self.iconframeicon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
 

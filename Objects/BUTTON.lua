@@ -143,15 +143,14 @@ end
 function BUTTON:CancelCooldownTimer(stopAnimation)
 	--cleanup so on state changes the cooldowns don't persist
 	if self:TimeLeft(self.iconframecooldown.cooldownTimer) ~= 0 then
+		self:CancelTimer(self.iconframecooldown.cooldownTimer)
+	end
+
+	if self:TimeLeft(self.iconframecooldown.cooldownUpdateTimer) ~= 0 then
 		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 	end
-	self.iconframecooldown.timer:SetText("")
 
-	if self.data.alpha then
-		self:SetAlpha(self.data.alpha) --try to restore the original alpha
-	else
-		self:SetAlpha(1)
-	end
+	self.iconframecooldown.timer:SetText("")
 
 	self.iconframecooldown.showCountdownTimer = false
 	self.iconframecooldown.showCountdownAlpha = false
@@ -160,12 +159,16 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 	if stopAnimation then
 		CooldownFrame_Clear(self.iconframecooldown) --clear the cooldown frame
 	end
+
+	self:SetObjectVisibility()
+
 end
 
 
 function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
 
 	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
+		--if there's currently a timer, cancel it
 		self:CancelCooldownTimer(true)
 		return
 	end
@@ -313,7 +316,7 @@ function BUTTON:CooldownCounterUpdate()
 	if self.iconframecooldown.showCountdownAlpha and self.iconframecooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
 		if coolDown > 0 then
-			self.iconframecooldown.button:SetAlpha(self.bar:GetShowCooldownAlpha())
+			self.iconframecooldown.button:SetAlpha(0.2)
 		else
 			if self.data.alpha then
 				self:SetAlpha(self.data.alpha) --try to restore the original alpha
@@ -403,6 +406,7 @@ function BUTTON:SetObjectVisibility()
 		else
 			self:SetAlpha(0)
 		end
+
 	else
 
 		if InCombatLockdown() then
@@ -519,14 +523,17 @@ end
 
 ---Updates the buttons "count", i.e. the spell charges
 function BUTTON:UpdateSpellCount(spell)
-	local charges, maxCharges = GetSpellCharges(spell)
+	if spell then
+		local charges, maxCharges = GetSpellCharges(spell)
+		local count = GetSpellCount(spell)
 
-	local count = GetSpellCount(spell)
-
-	if (maxCharges and maxCharges > 1) then
-		self.count:SetText(charges)
-	elseif count and count > 0 then
-		self.count:SetText(count)
+		if (maxCharges and maxCharges > 1) then
+			self.count:SetText(charges)
+		elseif count and count > 0 then
+			self.count:SetText(count)
+		else
+			self.count:SetText("")
+		end
 	else
 		self.count:SetText("")
 	end
@@ -547,21 +554,24 @@ end
 
 
 function BUTTON:UpdateCooldown()
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
 
 	if (self.actionID) then
 		self:ACTION_SetCooldown(self.actionID)
-	elseif (show and #show>0) then
-		if (NeuronItemCache[show]) then
-			self:SetItemCooldown(show)
+
+	elseif (self.macroshow and #self.macroshow>0) then
+
+		if (NeuronItemCache[self.macroshow]) then
+			self:SetItemCooldown(self.macroshow)
 		else
-			self:SetSpellCooldown(show)
+			self:SetSpellCooldown(self.macroshow)
 		end
 
-	elseif (spell and #spell>0) then
-		self:SetSpellCooldown(spell)
-	elseif (item and #item>0) then
-		self:SetItemCooldown(item)
+	elseif (self.macrospell and #self.macrospell>0) then
+		self:SetSpellCooldown(self.macrospell)
+
+	elseif (self.macroitem and #self.macroitem>0) then
+		self:SetItemCooldown(self.macroitem)
+
 	else
 		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
 		self:SetCooldownTimer()
@@ -571,48 +581,49 @@ end
 
 
 function BUTTON:SetSpellCooldown(spell)
+	if spell then
+		if type(spell) == "string" then
+			spell = (spell):lower()
+		end
 
-	if type(spell) == "string" then
-		spell = (spell):lower()
-	end
+		local start, duration, enable, modrate = GetSpellCooldown(spell)
+		local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(spell)
 
-	local start, duration, enable, modrate = GetSpellCooldown(spell)
-	local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(spell)
-
-	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
-		self:SetCooldownTimer(chStart, chDuration, enable, self.bar:GetShowCooldownText(), chargemodrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+		if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
+		    self:SetCooldownTimer(chStart, chDuration, enable, self.bar:GetShowCooldownText(), chargemodrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+		else
+            self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+		end
 	else
-        self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
-    end
-
+		self:CancelCooldownTimer(true)
+	end
 end
 
 
 
 function BUTTON:SetItemCooldown(item)
-
-	local id = NeuronItemCache[item]
-
-	if (id) then
-
-		local start, duration, enable, modrate = GetItemCooldown(id)
-
-		self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha())
+	if item then
+		local id = NeuronItemCache[item]
+		if (id) then
+			local start, duration, enable, modrate = GetItemCooldown(id)
+		    self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha())
+		end
+	else
+		self:CancelCooldownTimer(true)
 	end
 end
 
 function BUTTON:ACTION_SetCooldown(action)
-
-	local actionID = tonumber(action)
-
-	if (actionID) then
-
-		if (HasAction(actionID)) then
-
-			local start, duration, enable, modrate = GetActionCooldown(actionID)
-
-			self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha())
+	if action then
+		local actionID = tonumber(action)
+		if (actionID) then
+			if (HasAction(actionID)) then
+				local start, duration, enable, modrate = GetActionCooldown(actionID)
+			    self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha())
+			end
 		end
+	else
+		self:CancelCooldownTimer(true)
 	end
 end
 

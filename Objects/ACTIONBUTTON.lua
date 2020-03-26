@@ -251,18 +251,22 @@ function ACTIONBUTTON:SetType()
 
 	--This is so that hotkeypri works properly with priority/locked buttons
 	self:WrapScript(self, "OnShow", [[
-						for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
-							self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
-						end
-						]])
+
+			for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
+				self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
+			end
+
+			]])
 
 	self:WrapScript(self, "OnHide", [[
-						if (not self:GetParent():GetAttribute("concealed")) then
-							for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
-								self:ClearBinding(key)
-							end
-						end
-						]])
+
+			if not self:GetParent():GetAttribute("concealed") then
+				for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
+					self:ClearBinding(key)
+				end
+			end
+
+			]])
 
 
 	--new action ID's for vehicle 133-138
@@ -272,61 +276,57 @@ function ACTIONBUTTON:SetType()
 	self:SetAttribute("overrideID_Offset", 156)
 	self:SetAttribute("vehicleID_Offset", 132)
 
-	self:SetAttribute("_childupdate", [=[
+	self:SetAttribute("_childupdate",
+			[[
 
-				if (message) then
+				if message then
 
 					local msg = (":"):split(message)
 
-					if (msg:find("vehicle")) then
+					if msg:find("vehicle") then
 
-						if (not self:GetAttribute(msg.."-actionID")) then
-
+						if not self:GetAttribute(msg.."-actionID") then
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-							
 						end
 
 						self:SetAttribute("SpecialAction", "vehicle")
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
-					elseif (msg:find("possess")) then
+					elseif msg:find("possess") then
 
-						if (not self:GetAttribute(msg.."-actionID")) then
+						if not self:GetAttribute(msg.."-actionID") then
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-
 						end
 
 						self:SetAttribute("SpecialAction", "possess")
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
-					elseif (msg:find("override")) then
-						if (not self:GetAttribute(msg.."-actionID")) then
+					elseif msg:find("override") then
 
+						if not self:GetAttribute(msg.."-actionID") then
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
 							self:SetAttribute("HasActionID", true)
-
 						end
 
 						self:SetAttribute("SpecialAction", "override")
-
 						self:SetAttribute("HasActionID", true)
-
 						self:Show()
 
 					else
-						if (not self:GetAttribute(msg.."-actionID")) then
+
+						if not self:GetAttribute(msg.."-actionID") then
 
 							self:SetAttribute("type", "macro")
 							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
 
 							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("isshown") then
 								self:Show()
-							elseif (not self:GetAttribute("showGrid")) then
+							elseif not self:GetAttribute("showGrid") then
 								self:Hide()
 							end
 
@@ -342,7 +342,7 @@ function ACTIONBUTTON:SetType()
 
 				end
 
-			]=])
+			]])
 
 
 	--this is our rangecheck timer for each button. Every 0.5 seconds it queries if the button is usable
@@ -1171,22 +1171,20 @@ function ACTIONBUTTON:SetFauxState(state)
 
 		local msg = (":"):split(state)
 
-		if (msg:find("vehicle")) then
+		if msg:find("vehicle") then
 
-			if (not self:GetAttribute(msg.."-actionID")) then
-
+			if not self:GetAttribute(msg.."-actionID") then
 				self:SetAttribute("type", "action")
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
-
 			end
 
 			self:SetAttribute("SpecialAction", "vehicle")
 			self:SetAttribute("HasActionID", true)
 			self:Show()
 
-		elseif (msg:find("possess")) then
-			if (not self:GetAttribute(msg.."-actionID")) then
+		elseif msg:find("possess") then
 
+			if not self:GetAttribute(msg.."-actionID") then
 				self:SetAttribute("type", "action")
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 			end
@@ -1195,30 +1193,27 @@ function ACTIONBUTTON:SetFauxState(state)
 			self:SetAttribute("HasActionID", true)
 			self:Show()
 
-		elseif (msg:find("override")) then
-			if (not self:GetAttribute(msg.."-actionID")) then
+		elseif msg:find("override") then
 
+			if not self:GetAttribute(msg.."-actionID") then
 				self:SetAttribute("type", "action")
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
 				self:SetAttribute("HasActionID", true)
-
 			end
 
 			self:SetAttribute("SpecialAction", "override")
-
 			self:SetAttribute("HasActionID", true)
-
 			self:Show()
 
 		else
-			if (not self:GetAttribute(msg.."-actionID")) then
 
+			if not self:GetAttribute(msg.."-actionID") then
 				self:SetAttribute("type", "macro")
 				self:SetAttribute("*self*", self:GetAttribute(msg.."-macro_Text"))
 
 				if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("isshown") then
 					self:Show()
-				elseif (not self:GetAttribute("showGrid")) then
+				elseif not self:GetAttribute("showGrid") then
 					self:Hide()
 				end
 

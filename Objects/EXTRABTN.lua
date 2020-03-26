@@ -65,12 +65,9 @@ function EXTRABTN:SetType()
 
 	--action content gets set in UpdateButton
 	self:UpdateButton()
-	self:SetObjectVisibility()
 
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
-
-
 
 	self:SetSkinned()
 end
@@ -79,7 +76,6 @@ end
 function EXTRABTN:OnEvent(event, ...)
 
 	self:UpdateButton()
-	self:SetObjectVisibility()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
@@ -91,10 +87,10 @@ end
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateButton()
 
-	---default to 169 as is the most of then the case as of 8.1
+	--default to 169 as is the most of then the case as of 8.1
 	self.actionID = 169
 
-	---get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
+	--get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
 		local extraPage = GetExtraBarIndex()
 		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
@@ -104,21 +100,29 @@ function EXTRABTN:UpdateButton()
 		self:SetAttribute("action1", self.actionID)
 	end
 
+	-----------------------
 	_, self.spellID = GetActionInfo(self.actionID)
-	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
 
 	if self.spellID then
-		self:UpdateIcon()
-
-		self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
-
-		---extra button charges (some quests have ability charges)
-		self:UpdateSpellCount(self.spellID)
+		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+	else
+		self.spellName = ""
+		self.spellIcon = ""
 	end
 
-	---make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:SetObjectVisibility()
+	self:UpdateIcon()
+	self:UpdateCooldown()
+	--extra button charges (some quests have ability charges)
+	self:UpdateSpellCount(self.spellID)
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 
+end
+
+---overwrite function in parent class BUTTON
+function EXTRABTN:UpdateCooldown()
+	self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
 end
 
 
@@ -137,11 +141,6 @@ end
 
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateIcon()
-	self:SetButtonTex()
-end
-
-
-function EXTRABTN:SetButtonTex()
 
 	self.iconframeicon:SetTexture(self.spellIcon)
 
@@ -153,6 +152,7 @@ function EXTRABTN:SetButtonTex()
 	else
 		self.style:Hide()
 	end
+
 end
 
 

@@ -23,6 +23,30 @@
 local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.BAGBTN = BAGBTN
 
+if Neuron.isWoWClassic then
+	Neuron.NUM_BAG_BUTTONS = 6
+else
+	Neuron.NUM_BAG_BUTTONS = 5
+end
+
+local bagElements
+
+if Neuron.isWoWClassic then
+	bagElements = {
+		KeyRingButton, --wow classic has a keyring button
+		CharacterBag3Slot,
+		CharacterBag2Slot,
+		CharacterBag1Slot,
+		CharacterBag0Slot,
+		MainMenuBarBackpackButton}
+else
+	bagElements = {
+		CharacterBag3Slot,
+		CharacterBag2Slot,
+		CharacterBag1Slot,
+		CharacterBag0Slot,
+		MainMenuBarBackpackButton}
+end
 
 ---------------------------------------------------------
 
@@ -46,14 +70,6 @@ end
 
 --------------------------------------------------------
 
-local bagElements = {
-	CharacterBag3Slot,
-	CharacterBag2Slot,
-	CharacterBag1Slot,
-	CharacterBag0Slot,
-	MainMenuBarBackpackButton}
-
-
 function BAGBTN:SetType()
 
 	if (bagElements[self.id]) then
@@ -61,7 +77,11 @@ function BAGBTN:SetType()
 		self.element:ClearAllPoints()
 		self.element:SetParent(self)
 		self.element:Show()
-		self.element:SetPoint("CENTER", self, "CENTER")
+		if Neuron.isWoWClassic and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
+			self.element:SetPoint("RIGHT", self, "RIGHT")
+		else
+			self.element:SetPoint("CENTER", self, "CENTER")
+		end
 	end
 
 	self:SetSkinned()
