@@ -144,11 +144,14 @@ end
 function BUTTON:CancelCooldownTimer(stopAnimation)
 	--cleanup so on state changes the cooldowns don't persist
 	if self:TimeLeft(self.iconframecooldown.cooldownTimer) ~= 0 then
+		self:CancelTimer(self.iconframecooldown.cooldownTimer)
+	end
+
+	if self:TimeLeft(self.iconframecooldown.cooldownUpdateTimer) ~= 0 then
 		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
 	end
-	self.iconframecooldown.timer:SetText("")
 
-	self:SetObjectVisibility()
+	self.iconframecooldown.timer:SetText("")
 
 	self.iconframecooldown.showCountdownTimer = false
 	self.iconframecooldown.showCountdownAlpha = false
@@ -157,6 +160,9 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 	if stopAnimation then
 		CooldownFrame_Clear(self.iconframecooldown) --clear the cooldown frame
 	end
+
+	self:SetObjectVisibility()
+
 end
 
 
@@ -164,9 +170,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 
 	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
 		--if there's currently a timer, cancel it
-		if self:TimeLeft(self.iconframecooldown.cooldownTimer) ~= 0 then
-			self:CancelCooldownTimer(true)
-		end
+		self:CancelCooldownTimer(true)
 		return
 	end
 
@@ -626,14 +630,17 @@ end
 
 ---Updates the buttons "count", i.e. the spell charges
 function BUTTON:UpdateSpellCount(spell)
-	local charges, maxCharges = GetSpellCharges(spell)
+	if spell then
+		local charges, maxCharges = GetSpellCharges(spell)
+		local count = GetSpellCount(spell)
 
-	local count = GetSpellCount(spell)
-
-	if (maxCharges and maxCharges > 1) then
-		self.count:SetText(charges)
-	elseif count and count > 0 then
-		self.count:SetText(count)
+		if (maxCharges and maxCharges > 1) then
+			self.count:SetText(charges)
+		elseif count and count > 0 then
+			self.count:SetText(count)
+		else
+			self.count:SetText("")
+		end
 	else
 		self.count:SetText("")
 	end
@@ -681,47 +688,56 @@ end
 
 
 function BUTTON:SetSpellCooldown(spell)
+	if spell then
+		if type(spell) == "string" then
+			spell = (spell):lower()
+		end
 
-	if type(spell) == "string" then
-		spell = (spell):lower()
-	end
+		local start, duration, enable, modrate = GetSpellCooldown(spell)
+		local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(spell)
 
-	local start, duration, enable, modrate = GetSpellCooldown(spell)
-	local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(spell)
-
-	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
-		self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+		if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
+			self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+		else
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+		end
 	else
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+		self:CancelCooldownTimer(true)
 	end
 end
 
 
 
 function BUTTON:SetItemCooldown(item)
+	if item then
+		local id = NeuronItemCache[item]
 
-	local id = NeuronItemCache[item]
+		if (id) then
 
-	if (id) then
+			local start, duration, enable, modrate = GetItemCooldown(id)
 
-		local start, duration, enable, modrate = GetItemCooldown(id)
-
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		end
+	else
+		self:CancelCooldownTimer(true)
 	end
 end
 
 function BUTTON:ACTION_SetCooldown(action)
+	if action then
+		local actionID = tonumber(action)
 
-	local actionID = tonumber(action)
+		if (actionID) then
 
-	if (actionID) then
+			if (HasAction(actionID)) then
 
-		if (HasAction(actionID)) then
+				local start, duration, enable, modrate = GetActionCooldown(actionID)
 
-			local start, duration, enable, modrate = GetActionCooldown(actionID)
-
-			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+				self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			end
 		end
+	else
+		self:CancelCooldownTimer(true)
 	end
 end
 

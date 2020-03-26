@@ -155,6 +155,8 @@ function Neuron:RegisterGUI()
 			TOOLTIPS = true,
 			BINDTEXT = true,
 			COUNTTEXT = true,
+			CDTEXT = true,
+			CDALPHA = true,
 			BORDERSTYLE = true,},
 				false, 65)
 
@@ -171,6 +173,8 @@ function Neuron:RegisterGUI()
 			TOOLTIPS = true,
 			BINDTEXT = true,
 			COUNTTEXT = true,
+			CDTEXT = true,
+			CDALPHA = true,
 			BORDERSTYLE = true,},
 				false, 65)
 

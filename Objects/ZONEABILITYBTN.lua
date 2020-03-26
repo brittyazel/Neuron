@@ -90,27 +90,24 @@ end
 ---overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateButton()
 
-	self:SetObjectVisibility()
-
 	--update the ZoneAbility spell ID
 	self.spellID = GetZoneAbilitySpellInfo();
 
 	if self.spellID then
-
 		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
-
-		self:UpdateIcon()
-
-		if (self.spellName and not InCombatLockdown()) then
+		if self.spellName and not InCombatLockdown() then
 			self:SetAttribute("macrotext1", "/cast " .. self.spellName .. "();")
 		end
-
-		self:UpdateCooldown()
-
-		--zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
-		self:UpdateSpellCount(self.spellName)
+	else
+		self.spellName = ""
+		self.spellIcon = ""
 	end
 
+	self:SetObjectVisibility()
+	self:UpdateIcon()
+	self:UpdateCooldown()
+	--zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
+	self:UpdateSpellCount(self.spellName)
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 
@@ -118,9 +115,7 @@ end
 
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateCooldown()
-	if self.spellName then
-		self:SetSpellCooldown(self.spellName)
-	end
+	self:SetSpellCooldown(self.spellName)
 end
 
 function ZONEABILITYBTN:SetObjectVisibility()

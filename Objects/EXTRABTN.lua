@@ -66,12 +66,6 @@ function EXTRABTN:SetType()
 	--action content gets set in UpdateButton
 	self:UpdateButton()
 
-	self:SetScript("OnDragStart", function(self)
-		if self.spellID then
-			PickupSpell(self.spellID)
-		end
-	end)
-
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
@@ -106,22 +100,21 @@ function EXTRABTN:UpdateButton()
 		self:SetAttribute("action1", self.actionID)
 	end
 
-	self:SetObjectVisibility()
-
+	-----------------------
 	_, self.spellID = GetActionInfo(self.actionID)
 
 	if self.spellID then
-
 		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
-
-		self:UpdateIcon()
-
-		self:UpdateCooldown()
-
-		--extra button charges (some quests have ability charges)
-		self:UpdateSpellCount(self.spellID)
+	else
+		self.spellName = ""
+		self.spellIcon = ""
 	end
 
+	self:SetObjectVisibility()
+	self:UpdateIcon()
+	self:UpdateCooldown()
+	--extra button charges (some quests have ability charges)
+	self:UpdateSpellCount(self.spellID)
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 
@@ -129,9 +122,7 @@ end
 
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateCooldown()
-	if self.spellID then
-		self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
-	end
+	self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
 end
 
 
