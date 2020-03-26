@@ -1,8 +1,8 @@
-## Interface: 80200
+## Interface: 80300
 ## LoadOnDemand: 1
 ## Title: Lib: DualSpec-1.0
-## Version: v1.14
-## X-Date: 2019-08-13T9:32:47Z
+## Version: v1.15
+## X-Date: 2020-01-14T19:03:43Z
 ## Notes: Adds spec switching support to individual AceDB-3.0 databases.
 ## Author: Adirelle
 ## OptionalDeps: Ace3

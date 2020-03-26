@@ -1,18 +1,12 @@
-tag b3710b114646b1d8d131c2eb5877c45473c7f9f5 v1.14
-Author:	Hendrik Leppkes <h.leppkes@gmail.com>
-Date:	Tue Aug 13 11:32:57 2019 +0200
+tag d37c1d1d24edfea5a517b71c5630d405fa2f61ec v1.15
+Author:	Kyle Buller <bullerk@gmail.com>
+Date:	Tue Jan 14 13:04:06 2020 -0600
 
-Tag as v1.14
+Tagging as v1.15
 
-commit 218cdbdbc25348863124728fdf748eb4ea1e3608
-Author: Hendrik Leppkes <h.leppkes@gmail.com>
-Date:   Tue Aug 13 11:32:47 2019 +0200
+commit 01bd5332f5c5eef7d9a8342551df02a643f6f142
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Tue Jan 14 13:03:43 2020 -0600
 
     Update TOC
-
-commit 6ef8d5183a3efeb8d8fc9e96890dffaddb203bc5
-Author: Hendrik Leppkes <h.leppkes@gmail.com>
-Date:   Sat Aug 10 20:40:20 2019 +0200
-
-    Don't load on WoW Classic
 
