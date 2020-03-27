@@ -65,7 +65,7 @@ function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
 	--local newButton = Neuron.BUTTON.new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
 	local newButton = Neuron.BUTTON.new(bar, buttonID, barObj, barType, objType, "NeuronStatusBarTemplate")
 
-	if (defaults) then
+	if defaults then
 		newButton:SetDefaults(defaults)
 	end
 
@@ -79,16 +79,18 @@ end
 
 function STATUSBTN:SetBorder(statusbutton, config, bordercolor)
 
-	statusbutton.border:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-	                                  edgeFile = BarBorders[config.border][2],
-	                                  tile = true,
-	                                  tileSize = BarBorders[config.border][7],
-	                                  edgeSize = BarBorders[config.border][8],
-	                                  insets = { left = BarBorders[config.border][3],
-	                                             right = BarBorders[config.border][4],
-	                                             top = BarBorders[config.border][5],
-	                                             bottom = BarBorders[config.border][6]
-	                                  }
+	statusbutton.border:SetBackdrop({
+		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+		edgeFile = BarBorders[config.border][2],
+		tile = true,
+		tileSize = BarBorders[config.border][7],
+		edgeSize = BarBorders[config.border][8],
+		insets = {
+			left = BarBorders[config.border][3],
+			right = BarBorders[config.border][4],
+			top = BarBorders[config.border][5],
+			bottom = BarBorders[config.border][6]
+		}
 	})
 
 	statusbutton.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
@@ -102,17 +104,19 @@ function STATUSBTN:SetBorder(statusbutton, config, bordercolor)
 	statusbutton.bg:SetBackdropBorderColor(0, 0, 0, 0)
 	statusbutton.bg:SetFrameLevel(0)
 
-	if (statusbutton.barflash) then
-		statusbutton.barflash:SetBackdrop({ bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		                                    edgeFile = BarBorders[config.border][2],
-		                                    tile = true,
-		                                    tileSize = BarBorders[config.border][7],
-		                                    edgeSize = BarBorders[config.border][8],
-		                                    insets = { left = BarBorders[config.border][3],
-		                                               right = BarBorders[config.border][4],
-		                                               top = BarBorders[config.border][5],
-		                                               bottom = BarBorders[config.border][6]
-		                                    }
+	if statusbutton.barflash then
+		statusbutton.barflash:SetBackdrop({
+			bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+			edgeFile = BarBorders[config.border][2],
+			tile = true,
+			tileSize = BarBorders[config.border][7],
+			edgeSize = BarBorders[config.border][8],
+			insets = {
+				left = BarBorders[config.border][3],
+				right = BarBorders[config.border][4],
+				top = BarBorders[config.border][5],
+				bottom = BarBorders[config.border][6]
+			}
 		})
 	end
 end
@@ -122,7 +126,7 @@ end
 
 function STATUSBTN:OnEnter()
 
-	if (self.config.mIndex > 1) then
+	if self.config.mIndex > 1 then
 		self.sb.cText:Hide()
 		self.sb.lText:Hide()
 		self.sb.rText:Hide()
@@ -130,12 +134,12 @@ function STATUSBTN:OnEnter()
 		self.sb.mText:SetText(self.sb.mFunc(self.sb))
 	end
 
-	if (self.config.tIndex > 1) then
-		if (not self.bar:GetTooltipCombat() and InCombatLockdown()) then
+	if self.config.tIndex > 1 then
+		if not self.bar:GetTooltipCombat() and InCombatLockdown() then
 			return
 		end
 
-		if (self.bar:GetTooltipOption()) then
+		if self.bar:GetTooltipOption() then
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetText(self.sb.tFunc(self.sb) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
 			GameTooltip:Show()
@@ -148,7 +152,7 @@ end
 
 function STATUSBTN:OnLeave()
 
-	if (self.config.mIndex > 1) then
+	if self.config.mIndex > 1 then
 		self.sb.cText:Show()
 		self.sb.lText:Show()
 		self.sb.rText:Show()
@@ -158,7 +162,7 @@ function STATUSBTN:OnLeave()
 		self.sb.rText:SetText(self.sb.rFunc(self.sb))
 	end
 
-	if (self.config.tIndex > 1) then
+	if self.config.tIndex > 1 then
 		GameTooltip:Hide()
 	end
 end
@@ -168,13 +172,13 @@ end
 
 function STATUSBTN:UpdateWidth(command, gui, query, skipupdate)
 
-	if (query) then
+	if query then
 		return self.config.width
 	end
 
 	local width = tonumber(command)
 
-	if (width and width >= 10) then
+	if width and width >= 10 then
 
 		self.config.width = width
 
@@ -186,7 +190,7 @@ function STATUSBTN:UpdateWidth(command, gui, query, skipupdate)
 
 		self.bar:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self.bar:Update()
 		end
 	end
@@ -197,13 +201,13 @@ end
 
 function STATUSBTN:UpdateHeight(command, gui, query, skipupdate)
 
-	if (query) then
+	if query then
 		return self.config.height
 	end
 
 	local height = tonumber(command)
 
-	if (height and height >= 4) then
+	if height and height >= 4 then
 
 		self.config.height = height
 
@@ -215,7 +219,7 @@ function STATUSBTN:UpdateHeight(command, gui, query, skipupdate)
 
 		self.bar:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self.bar:Update()
 		end
 	end
@@ -226,13 +230,13 @@ end
 
 function STATUSBTN:UpdateBarFill(command, gui, query, skipupdate)
 
-	if (query) then
+	if query then
 		return BarTextures[self.config.texture][3]
 	end
 
 	local index = tonumber(command)
 
-	if (index and BarTextures[index]) then
+	if index and BarTextures[index] then
 
 		self.config.texture = index
 
@@ -248,13 +252,13 @@ end
 
 function STATUSBTN:UpdateBorder(command, gui, query, skipupdate)
 
-	if (query) then
+	if query then
 		return BarBorders[self.config.border][1]
 	end
 
 	local index = tonumber(command)
 
-	if (index and BarBorders[index]) then
+	if index and BarBorders[index] then
 
 		self.config.border = index
 
@@ -269,13 +273,13 @@ end
 
 function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 
-	if (query) then
+	if query then
 		return BarOrientations[self.config.orientation]
 	end
 
 	orientationIndex = tonumber(orientationIndex)
 
-	if (orientationIndex) then
+	if orientationIndex then
 
 		--only update if we're changing, not staying the same
 		if self.config.orientation ~= orientationIndex then
@@ -286,7 +290,7 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 			self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
 			self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
-			if (self.config.orientation == 2) then
+			if self.config.orientation == 2 then
 				self.sb.cText:SetAlpha(0)
 				self.sb.lText:SetAlpha(0)
 				self.sb.rText:SetAlpha(0)
@@ -315,7 +319,7 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 
 			self.bar:SetSize()
 
-			if (not skipupdate) then
+			if not skipupdate then
 				self.bar:Update()
 			end
 
@@ -328,13 +332,13 @@ end
 
 function STATUSBTN:UpdateCenterText(command, gui, query)
 
-	if (query) then
+	if query then
 		return self.sbStrings[self.config.cIndex][1]
 	end
 
 	local index = tonumber(command)
 
-	if (index) then
+	if index then
 
 		self.config.cIndex = index
 
@@ -349,13 +353,13 @@ end
 
 function STATUSBTN:UpdateLeftText(command, gui, query)
 
-	if (query) then
+	if query then
 		return self.sbStrings[self.config.lIndex][1]
 	end
 
 	local index = tonumber(command)
 
-	if (index) then
+	if index then
 
 		self.config.lIndex = index
 
@@ -373,17 +377,17 @@ end
 
 function STATUSBTN:UpdateRightText(command, gui, query)
 
-	if (not self.sbStrings) then
+	if not self.sbStrings then
 		return "---"
 	end
 
-	if (query) then
+	if query then
 		return self.sbStrings[self.config.rIndex][1]
 	end
 
 	local index = tonumber(command)
 
-	if (index) then
+	if index then
 
 		self.config.rIndex = index
 
@@ -399,17 +403,17 @@ end
 
 function STATUSBTN:UpdateMouseover(command, gui, query)
 
-	if (not self.sbStrings) then
+	if not self.sbStrings then
 		return "---"
 	end
 
-	if (query) then
+	if query then
 		return self.sbStrings[self.config.mIndex][1]
 	end
 
 	local index = tonumber(command)
 
-	if (index) then
+	if index then
 
 		self.config.mIndex = index
 
@@ -424,17 +428,17 @@ end
 
 function STATUSBTN:UpdateTooltip(command, gui, query)
 
-	if (not self.sbStrings) then
+	if not self.sbStrings then
 		return "---"
 	end
 
-	if (query) then
+	if query then
 		return self.sbStrings[self.config.tIndex][1]
 	end
 
 	local index = tonumber(command)
 
-	if (index) then
+	if index then
 
 		self.config.tIndex = index
 
@@ -462,27 +466,27 @@ function STATUSBTN:SetData(bar)
 	self.sb.mText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
 
 
-	if (not self.sbStrings[self.config.cIndex]) then
+	if not self.sbStrings[self.config.cIndex] then
 		self.config.cIndex = 1
 	end
 	self.sb.cFunc = self.sbStrings[self.config.cIndex][2]
 
-	if (not self.sbStrings[self.config.lIndex]) then
+	if not self.sbStrings[self.config.lIndex] then
 		self.config.lIndex = 1
 	end
 	self.sb.lFunc = self.sbStrings[self.config.lIndex][2]
 
-	if (not self.sbStrings[self.config.rIndex]) then
+	if not self.sbStrings[self.config.rIndex] then
 		self.config.rIndex = 1
 	end
 	self.sb.rFunc = self.sbStrings[self.config.rIndex][2]
 
-	if (not self.sbStrings[self.config.mIndex]) then
+	if not self.sbStrings[self.config.mIndex] then
 		self.config.mIndex = 1
 	end
 	self.sb.mFunc = self.sbStrings[self.config.mIndex][2]
 
-	if (not self.sbStrings[self.config.tIndex]) then
+	if not self.sbStrings[self.config.tIndex] then
 		self.config.tIndex = 1
 	end
 	self.sb.tFunc = self.sbStrings[self.config.tIndex][2]
@@ -497,7 +501,7 @@ function STATUSBTN:SetData(bar)
 	self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
 	self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
-	if (self.config.orientation == 2) then
+	if self.config.orientation == 2 then
 		self.sb.cText:SetAlpha(0)
 		self.sb.lText:SetAlpha(0)
 		self.sb.rText:SetAlpha(0)
@@ -509,7 +513,7 @@ function STATUSBTN:SetData(bar)
 		self.sb.mText:SetAlpha(1)
 	end
 
-	if (BarTextures[self.config.texture]) then
+	if BarTextures[self.config.texture] then
 		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 		self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 	else
@@ -551,6 +555,6 @@ end
 
 function STATUSBTN:SetType()
 
- --empty--
+	--empty--
 
 end

@@ -52,7 +52,7 @@ function ACTIONBUTTON:OnDragStart()
 		drag = false
 	end
 
-	if (drag and self.data.macro_Text ~= "") then
+	if drag and self.data.macro_Text ~= "" then
 
 		ClearCursor()
 
@@ -79,7 +79,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 
 	local cursorType, action1, action2, spellID = GetCursorInfo()
 
-	if (self:HasAction()) then --if our button being dropped onto already has content, we need to cache that content
+	if self:HasAction() then --if our button being dropped onto already has content, we need to cache that content
 		macroCache[1] = self:GetDragAction()
 		macroCache[2] = self.data.macro_Text
 		macroCache[3] = self.data.macro_Icon
@@ -94,31 +94,31 @@ function ACTIONBUTTON:OnReceiveDrag()
 	end
 
 
-	if (macroDrag[1]) then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
+	if macroDrag[1] then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
 		self:PlaceMacro()
-	elseif (cursorType == "spell") then
+	elseif cursorType == "spell" then
 		self:PlaceSpell(action1, action2, spellID)
 
-	elseif (cursorType == "item") then
+	elseif cursorType == "item" then
 		self:PlaceItem(action1, action2)
 
-	elseif (cursorType == "macro") then
+	elseif cursorType == "macro" then
 		self:PlaceBlizzMacro(action1)
 
-	elseif (cursorType == "equipmentset") then
+	elseif cursorType == "equipmentset" then
 		self:PlaceBlizzEquipSet(action1)
 
-	elseif (cursorType == "mount") then
+	elseif cursorType == "mount" then
 		self:PlaceMount(action1, action2)
 
-	elseif (cursorType == "flyout") then
+	elseif cursorType == "flyout" then
 		self:PlaceFlyout(action1, action2)
 
-	elseif (cursorType == "battlepet") then
+	elseif cursorType == "battlepet" then
 		self:PlaceBattlePet(action1, action2)
-	elseif(cursorType == "companion") then
+	elseif cursorType == "companion" then
 		self:PlaceCompanion(action1, action2)
-	elseif (cursorType == "petaction") then
+	elseif cursorType == "petaction" then
 		self:PlacePetAbility(action1, action2)
 	end
 
@@ -128,7 +128,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 	self:UpdateAll()
 	self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
 
-	if (macroCache[1]) then
+	if macroCache[1] then
 		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
 		Neuron:ToggleButtonGrid(true)
 	else
@@ -165,7 +165,7 @@ function ACTIONBUTTON:PickUpMacro()
 		macroDrag = CopyTable(macroCache)
 		wipe(macroCache) --once macroCache is loaded into macroDrag, wipe it
 
-	elseif (self:HasAction()) then
+	elseif self:HasAction() then
 
 		macroDrag[1] = self:GetDragAction()
 		macroDrag[2] = self.data.macro_Text
@@ -214,7 +214,7 @@ end
 function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	local spell
 
-	if (action1 == 0) then
+	if action1 == 0 then
 		-- I am unsure under what conditions (if any) we wouldn't have a spell ID
 		if not spellID or spellID == 0 then
 			return
@@ -229,7 +229,7 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 
 	local spellInfoName, icon
 
-	if (NeuronSpellCache[spell]) then
+	if NeuronSpellCache[spell] then
 		spellInfoName = NeuronSpellCache[spell].spellName
 		icon = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
 		if not icon then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
@@ -288,7 +288,7 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 		NeuronItemCache[item] = itemID
 	end
 
-	if (IsEquippableItem(item)) then
+	if IsEquippableItem(item) then
 		self.data.macro_Text = "/equip "..item.."\n/use "..item
 	else
 		self.data.macro_Text = "/use "..item
@@ -306,13 +306,13 @@ end
 
 
 function ACTIONBUTTON:PlaceBlizzMacro(action1)
-	if (action1 == 0) then
+	if action1 == 0 then
 		return
 	else
 
 		local name, icon, body = GetMacroInfo(action1)
 
-		if (body) then
+		if body then
 
 			self.data.macro_Text = body
 			self.data.macro_Name = name
@@ -335,7 +335,7 @@ end
 
 
 function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
-	if (equipmentSetName == 0) then
+	if equipmentSetName == 0 then
 		return
 	else
 
@@ -349,7 +349,7 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 
 
 		local name, icon = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
-		if (texture) then
+		if texture then
 			self.data.macro_Text = "/equipset "..equipmentSetName
 			self.data.macro_Equip = equipmentSetName
 			self.data.macro_Name = name
@@ -383,7 +383,7 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 
 	local mountName, mountSpellID, mountIcon = C_MountJournal.GetMountInfoByID(action1)
 
-	if (action1 == 0) then
+	if action1 == 0 then
 		return
 	else
 		--The Summon Random Mount from the Mount Journal
@@ -412,14 +412,14 @@ end
 
 function ACTIONBUTTON:PlaceCompanion(action1, action2)
 
-	if (action1 == 0) then
+	if action1 == 0 then
 		return
 
 	else
 		local _, _, spellID, icon = GetCompanionInfo(action2, action1)
 		local name = GetSpellInfo(spellID)
 
-		if (name) then
+		if name then
 			self.data.macro_Name = name
 			self.data.macro_Text = self:AutoWriteMacro(name)
 			self.data.macro_Auto = name
@@ -441,7 +441,7 @@ end
 function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 	local petName, petIcon
 
-	if (action1 == 0) then
+	if action1 == 0 then
 		return
 	else
 		_, _, _, _, _, _, _,petName, petIcon= C_PetJournal.GetPetInfoByPetID(action1)
@@ -460,7 +460,7 @@ end
 
 
 function ACTIONBUTTON:PlaceFlyout(action1, action2)
-	if (action1 == 0) then
+	if action1 == 0 then
 		return
 	else
 		local count = #self.bar.buttons
@@ -469,27 +469,27 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 
 		local point = self:GetPosition()
 
-		if (columns/rows > 1) then
+		if columns/rows > 1 then
 
-			if ((point):find("BOTTOM")) then
+			if point:find("BOTTOM") then
 				point = "b:t:1"
-			elseif ((point):find("TOP")) then
+			elseif point:find("TOP") then
 				point = "t:b:1"
-			elseif ((point):find("RIGHT")) then
+			elseif point:find("RIGHT") then
 				point = "r:l:12"
-			elseif ((point):find("LEFT")) then
+			elseif point:find("LEFT") then
 				point = "l:r:12"
 			else
 				point = "r:l:12"
 			end
 		else
-			if ((point):find("RIGHT")) then
+			if point:find("RIGHT") then
 				point = "r:l:12"
-			elseif ((point):find("LEFT")) then
+			elseif point:find("LEFT") then
 				point = "l:r:12"
-			elseif ((point):find("BOTTOM")) then
+			elseif point:find("BOTTOM") then
 				point = "b:t:1"
-			elseif ((point):find("TOP")) then
+			elseif point:find("TOP") then
 				point = "t:b:1"
 			else
 				point = "r:l:12"
@@ -512,7 +512,6 @@ end
 
 
 function ACTIONBUTTON:SetMouseCursor()
-
 
 	if self.macroshow then
 		local spellID
@@ -546,8 +545,5 @@ function ACTIONBUTTON:SetMouseCursor()
 
 	--failsafe so there is 'something' on the mouse cursor
 	PickupItem(1217) --questionmark symbol
-
-
-
 
 end

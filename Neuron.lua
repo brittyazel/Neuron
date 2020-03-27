@@ -150,17 +150,17 @@ function Neuron:OnEnable()
 	if not Neuron:IsHooked(GameMenuFrame, "OnUpdate") then
 		Neuron:HookScript(GameMenuFrame, "OnUpdate", function(self)
 
-			if (Neuron.barEditMode) then
+			if Neuron.barEditMode then
 				HideUIPanel(self)
 				Neuron:ToggleBarEditMode(false)
 			end
 
-			if (Neuron.buttonEditMode) then
+			if Neuron.buttonEditMode then
 				HideUIPanel(self)
 				Neuron:ToggleButtonEditMode(false)
 			end
 
-			if (Neuron.bindingMode) then
+			if Neuron.bindingMode then
 				HideUIPanel(self)
 				Neuron:ToggleBindingMode(false)
 			end
@@ -196,15 +196,15 @@ end
 
 function Neuron:PLAYER_REGEN_DISABLED()
 
-	if (Neuron.buttonEditMode) then
+	if Neuron.buttonEditMode then
 		Neuron:ToggleButtonEditMode(false)
 	end
 
-	if (Neuron.bindingMode) then
+	if Neuron.bindingMode then
 		Neuron:ToggleBindingMode(false)
 	end
 
-	if (Neuron.barEditMode) then
+	if Neuron.barEditMode then
 		Neuron:ToggleBarEditMode(false)
 	end
 
@@ -223,11 +223,11 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	end
 
 	--Fix for Titan causing the Main Bar to not be hidden
-	if (IsAddOnLoaded("Titan")) then
+	if IsAddOnLoaded("Titan") then
 		TitanUtils_AddonAdjust("MainMenuBar", true)
 	end
 
-	if (DB.blizzbar == false) then
+	if DB.blizzbar == false then
 		Neuron:HideBlizzardUI()
 	end
 
@@ -327,7 +327,7 @@ end
 function Neuron:LoginMessage()
 
 	--displays a info window on login for either fresh installs or updates
-	if (not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM ) then
+	if not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM  then
 
 		print(" ")
 		print("                  ~~~~~~~~~~NEURON~~~~~~~~~")
@@ -353,7 +353,7 @@ end
 
 --I'm not sure what this function does, but it returns a table of all the names of children of a given frame
 function Neuron:GetParentKeys(frame)
-	if (frame == nil) then
+	if frame == nil then
 		return
 	end
 
@@ -447,7 +447,7 @@ function Neuron:UpdateSpellCache()
 			--reverse main and alt so we can put both in the table accurately
 			local altSpellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellType, altName, altSpellID, altIcon, spellName, spellID, icon)
 
-			if (altName and altName ~= spellName) then
+			if altName and altName ~= spellName then
 				NeuronSpellCache[(altName):lower()] = altSpellData
 				NeuronSpellCache[(altName):lower().."()"] = altSpellData
 			end
@@ -459,7 +459,7 @@ function Neuron:UpdateSpellCache()
 		for i = 1, select("#", GetProfessions()) do
 			local index = select(i, GetProfessions())
 
-			if (index) then
+			if index then
 				local _, _, _, _, numSpells, spelloffset = GetProfessionInfo(index)
 
 				for j=1,numSpells do
@@ -469,7 +469,7 @@ function Neuron:UpdateSpellCache()
 					local spellType, spellID = GetSpellBookItemInfo(offsetIndex, BOOKTYPE_PROFESSION)
 					local icon
 
-					if (spellName and spellType ~= "FUTURESPELL") then
+					if spellName and spellType ~= "FUTURESPELL" then
 						icon = GetSpellTexture(spellID)
 						local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellType, spellName, spellID, icon,nil,  nil, nil)
 
@@ -530,9 +530,9 @@ function Neuron:UpdateCollectionCache()
 
 		local petID, speciesID, owned, _, _, _, _, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i)
 
-		if (petID and owned) then
+		if petID and owned then
 			local spell = speciesName
-			if (spell) then
+			if spell then
 				local companionData = Neuron:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
 				NeuronCollectionCache[spell:lower()] = companionData
 				NeuronCollectionCache[spell:lower().."()"] = companionData
@@ -544,9 +544,9 @@ function Neuron:UpdateCollectionCache()
 	for i,id in pairs(mountIDs) do
 		local creatureName , spellID, _, _, _, _, _, _, _, _, collected = C_MountJournal.GetMountInfoByID(id)
 
-		if (spellID and collected) then
+		if spellID and collected then
 			local spell, _, icon = GetSpellInfo(spellID)
-			if (spell) then
+			if spell then
 				local companionData = Neuron:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
 				NeuronCollectionCache[spell:lower()] = companionData
 				NeuronCollectionCache[spell:lower().."()"] = companionData
@@ -558,13 +558,13 @@ end
 
 
 function Neuron:UpdateStanceStrings()
-	if (Neuron.class == "DRUID" or Neuron.class == "ROGUE") then
+	if Neuron.class == "DRUID" or Neuron.class == "ROGUE" then
 
 		local icon, active, castable, spellID
 
 		local states = "[stance:0] stance0; "
 
-		if (Neuron.class == "DRUID") then
+		if Neuron.class == "DRUID" then
 
 			Neuron.STATES["stance0"] = L["Caster Form"]
 
@@ -581,7 +581,7 @@ function Neuron:UpdateStanceStrings()
 		end
 
 		--Adds Shadow Dance State for Subelty Rogues
-		if (Neuron.class == "ROGUE") then
+		if Neuron.class == "ROGUE" then
 
 			Neuron.STATES["stance0"] = L["Melee"]
 
@@ -591,7 +591,7 @@ function Neuron:UpdateStanceStrings()
 			Neuron.STATES["stance2"] = L["Vanish"]
 			states = states.."[stance:2] stance2; "
 
-			if(Neuron.activeSpec == 3) then
+			if Neuron.activeSpec == 3 then
 				Neuron.STATES["stance3"] = L["Shadow Dance"]
 				states = states.."[stance:3] stance3; "
 			end
@@ -669,7 +669,7 @@ function Neuron:ToggleButtonEditMode(show)
 			editor:Show()
 			editor.object.editmode = true
 
-			if (editor.object.bar) then
+			if editor.object.bar then
 				editor:SetFrameStrata(editor.object.bar:GetFrameStrata())
 				editor:SetFrameLevel(editor.object.bar:GetFrameLevel()+4)
 			end
@@ -694,7 +694,7 @@ function Neuron:ToggleButtonEditMode(show)
 			bar:UpdateObjects()
 			bar:UpdateObjectVisibility()
 
-			if (bar.handler:GetAttribute("assertstate")) then
+			if bar.handler:GetAttribute("assertstate") then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
 			end
 		end
@@ -724,7 +724,7 @@ function Neuron:ToggleBindingMode(show)
 			binder:Show()
 			binder.button.editmode = true
 
-			if (binder.button.bar) then
+			if binder.button.bar then
 				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
 				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
 			end

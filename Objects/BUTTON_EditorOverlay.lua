@@ -83,9 +83,8 @@ function BUTTON:EditorOverlay_OnShow(editor)
 
 	local object = editor.object
 
-	if (object) then
-
-		if (object.bar) then
+	if object then
+		if object.bar then
 			editor:SetFrameLevel(object.bar:GetFrameLevel()+1)
 		end
 	end
@@ -103,7 +102,7 @@ end
 
 function BUTTON:EditorOverlay_OnLeave(editor)
 
-	if (editor.object ~= Neuron.CurrentObject) then
+	if editor.object ~= Neuron.CurrentObject then
 		editor.select:Hide()
 	end
 
@@ -115,7 +114,7 @@ function BUTTON:EditorOverlay_OnClick(editor, button)
 
 	local newObj, newEditor = Neuron.BUTTON:ChangeObject(editor.object)
 
-	if (button == "RightButton") then
+	if button == "RightButton" then
 
 	end
 

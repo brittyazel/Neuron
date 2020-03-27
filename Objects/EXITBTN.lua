@@ -36,7 +36,7 @@ function EXITBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, EXITBTN, "ExitBar", "VehicleExitButton", "NeuronActionButtonTemplate")
 
-	if (defaults) then
+	if defaults then
 		newButton:SetDefaults(defaults)
 	end
 
@@ -88,8 +88,8 @@ function EXITBTN:UpdateIcon()
 
 	self.iconframeicon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
 
-	if (not self:GetSkinned()) then
-		if (self:HasAction()) then
+	if not self:GetSkinned() then
+		if self:HasAction() then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -101,7 +101,7 @@ end
 
 
 function EXITBTN:OnClick()
-	if UnitOnTaxi("player")then
+	if UnitOnTaxi("player") then
 		TaxiRequestEarlyLanding()
 	else
 		VehicleExit()
@@ -110,7 +110,7 @@ end
 
 
 function EXITBTN:OnEnter()
-	if ( UnitOnTaxi("player") ) then
+	if  UnitOnTaxi("player") then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:ClearLines()
 		GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1);

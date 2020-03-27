@@ -54,7 +54,7 @@ function MENUBTN.new(bar, buttonID, defaults)
 	---call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, MENUBTN, "MenuBar", "MenuButton", "NeuronAnchorButtonTemplate")
 
-	if (defaults) then
+	if defaults then
 		newButton:SetDefaults(defaults)
 	end
 
@@ -74,7 +74,7 @@ function MENUBTN:SetType()
 		Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)
 	end
 
-	if (menuElements[self.id]) then
+	if menuElements[self.id] then
 
 		self:SetWidth(menuElements[self.id]:GetWidth()-2)
 		self:SetHeight(menuElements[self.id]:GetHeight()-2)

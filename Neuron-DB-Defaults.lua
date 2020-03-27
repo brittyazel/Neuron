@@ -259,7 +259,7 @@ local genericBarData = {
 	rangeInd = true,
 
 	cdText = false,
-	cdAlpha = 1,
+	cdAlpha = false,
 	auraInd = false,
 
 	showBorderStyle = true,

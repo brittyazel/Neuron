@@ -210,7 +210,7 @@ end
 
 function Neuron:CreateBarsAndButtons()
 
-	if (DB.firstRun) then
+	if DB.firstRun then
 
 		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
 			if Neuron.registeredBarData[barClass] then --only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
@@ -234,7 +234,7 @@ function Neuron:CreateBarsAndButtons()
 
 		for barClass, barClassData in pairs (Neuron.registeredBarData) do
 			for id,data in pairs(barClassData.barDB) do
-				if (data ~= nil) then
+				if data ~= nil then
 					local newBar = Neuron.BAR.new(barClass, id) --this calls the bar constructor
 
 					--create all the saved button objects for a given bar

@@ -41,7 +41,7 @@ function PETBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, PETBTN, "PetBar", "PetButton", "NeuronActionButtonTemplate")
 
-	if (defaults) then
+	if defaults then
 		newButton:SetDefaults(defaults)
 	end
 
@@ -104,8 +104,8 @@ function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 	self.macroname:SetText("")
 	self.count:SetText("")
 
-	if (texture) then
-		if (isToken) then
+	if texture then
+		if isToken then
 			self.iconframeicon:SetTexture(_G[texture])
 			self.tooltipName = _G[spell]
 		else
@@ -122,9 +122,9 @@ end
 
 function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 
-	if (isActive) then
+	if isActive then
 
-		if (IsPetAttackAction(self.actionID)) then
+		if IsPetAttackAction(self.actionID) then
 			self:GetCheckedTexture():SetAlpha(0.5)
 		else
 			self:GetCheckedTexture():SetAlpha(1.0)
@@ -136,13 +136,13 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 		self:SetChecked(nil)
 	end
 
-	if (allowed) then
+	if allowed then
 		self.autocastable:Show()
 	else
 		self.autocastable:Hide()
 	end
 
-	if (enabled) then
+	if enabled then
 		self.shine:Show()
 		AutoCastShine_AutoCastStart(self.shine)
 		self.autocastable:Hide()
@@ -151,7 +151,7 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 		self.shine:Hide()
 		AutoCastShine_AutoCastStop(self.shine)
 
-		if (allowed) then
+		if allowed then
 			self.autocastable:Show()
 		end
 
@@ -177,9 +177,9 @@ function PETBTN:PET_UpdateTexture()
 
 	local actionID = self.actionID
 
-	if (not self:GetSkinned()) then
+	if not self:GetSkinned() then
 
-		if (self.HasPetAction(actionID)) then
+		if self.HasPetAction(actionID) then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -195,12 +195,12 @@ function PETBTN:PET_UpdateOnEvent(state)
 
 	local spell, texture, isToken, isActive, allowed, enabled = GetPetActionInfo(actionID)
 
-	if (not state) then
+	if not state then
 
 		self.actionSpell = spell
 
 
-		if (self.actionSpell and NeuronSpellCache[self.actionSpell:lower()]) then
+		if self.actionSpell and NeuronSpellCache[self.actionSpell:lower()] then
 			self.spellID = NeuronSpellCache[self.actionSpell:lower()].spellID
 		else
 			self.spellID = nil
@@ -213,9 +213,9 @@ function PETBTN:PET_UpdateOnEvent(state)
 	end
 
 
-	if (self.updateRightClick and not InCombatLockdown()) then
+	if self.updateRightClick and not InCombatLockdown() then
 
-		if (spell) then
+		if spell then
 			self:SetAttribute("*macrotext2", "/petautocasttoggle "..spell)
 			self.updateRightClick = nil
 		end
@@ -227,9 +227,9 @@ end
 
 function PETBTN:UpdateButton(actionID)
 
-	if (self.editmode) then
+	if self.editmode then
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
-	elseif (actionID and GetPetActionSlotUsable(actionID)) then
+	elseif actionID and GetPetActionSlotUsable(actionID) then
 		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 	else
 		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
@@ -246,7 +246,7 @@ PETBTN.PLAYER_CONTROL_GAINED = PETBTN.PET_BAR_UPDATE
 PETBTN.PLAYER_FARSIGHT_FOCUS_CHANGED = PETBTN.PET_BAR_UPDATE
 
 function PETBTN:UNIT_PET(event, ...)
-	if (select(1,...) ==  "player") then
+	if select(1,...) ==  "player" then
 		self.updateRightClick = true
 		self:PET_UpdateOnEvent()
 	end
@@ -303,7 +303,7 @@ function PETBTN:OnDragStart()
 		drag = false
 	end
 
-	if (drag) then
+	if drag then
 		self:SetChecked(0)
 
 		PickupPetAction(self.actionID)
@@ -331,7 +331,7 @@ function PETBTN:OnReceiveDrag()
 
 	local cursorType = GetCursorInfo()
 
-	if (cursorType == "petaction") then
+	if cursorType == "petaction" then
 		self:SetChecked(0)
 		PickupPetAction(self.actionID)
 		self:PET_UpdateOnEvent(true)
@@ -343,8 +343,8 @@ end
 function PETBTN:PET_SetTooltip(edit)
 	local actionID = self.actionID
 
-	if (self.HasPetAction(actionID)) then
-		if (self.bar:GetTooltipOption() == "enhanced") then
+	if self.HasPetAction(actionID) then
+		if self.bar:GetTooltipOption() == "enhanced" then
 			GameTooltip:SetPetAction(actionID)
 		else
 			GameTooltip:SetText(self.actionSpell)
@@ -355,11 +355,11 @@ end
 
 
 function PETBTN:OnEnter(...)
-	if (not self.bar:GetTooltipCombat() and InCombatLockdown()) then
+	if not self.bar:GetTooltipCombat() and InCombatLockdown() then
 		return
 	end
 
-	if (self.bar:GetTooltipOption()) then
+	if self.bar:GetTooltipOption() then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		self:PET_SetTooltip()
 		GameTooltip:Show()

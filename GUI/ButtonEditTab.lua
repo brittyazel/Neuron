@@ -108,7 +108,7 @@ function NeuronGUI:RefreshPlayerSpellIconInfo()
 	local function tContains(table, item)
 		local index = 1;
 		while table[index] do
-			if ( item == table[index] ) then
+			if item == table[index] then
 				return 1;
 			end
 			index = index + 1;

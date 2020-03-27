@@ -29,11 +29,11 @@ local RepWatch = {}
 
 REPBTN.sbStrings = {
 	[1] = { L["None"], function(sb) return "" end },
-	[2] = { L["Faction"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].name end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
-	[3] = { L["Current/Next"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].current end end },
-	[4] = { L["Percent"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].percent end end },
-	[5] = { L["Bubbles"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].bubbles end end },
-	[6] = { L["Current Level/Rank"], function(sb) if (RepWatch[sb.repID]) then return RepWatch[sb.repID].standing end end },
+	[2] = { L["Faction"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].name end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
+	[3] = { L["Current/Next"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].current end end },
+	[4] = { L["Percent"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].percent end end },
+	[5] = { L["Bubbles"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].bubbles end end },
+	[6] = { L["Current Level/Rank"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].standing end end },
 }
 
 
@@ -147,7 +147,7 @@ function REPBTN:repstrings_Update(repGainedString)
 			header = name
 		end
 
-		if (not isHeader or hasRep) and not IsFactionInactive(i) then
+		if not isHeader or hasRep and not IsFactionInactive(i) then
 
 			local fID, standing, isParagon
 			if not Neuron.isWoWClassic then --classic doesn't have Friendships or Paragon, carefull
@@ -214,7 +214,7 @@ function REPBTN:repbar_OnEvent(event,...)
 
 	self:repstrings_Update(...)
 
-	if (RepWatch[self.sb.repID]) then
+	if RepWatch[self.sb.repID] then
 		self.sb:SetStatusBarColor(RepWatch[self.sb.repID].r,  RepWatch[self.sb.repID].g, RepWatch[self.sb.repID].b)
 		self.sb:SetMinMaxValues(RepWatch[self.sb.repID].min, RepWatch[self.sb.repID].max)
 		self.sb:SetValue(RepWatch[self.sb.repID].value)
@@ -240,7 +240,7 @@ function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choo
 	local repDataTable = {}
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
-		if (k > 0) then --skip the "0" entry which is our autowatch
+		if k > 0 then --skip the "0" entry which is our autowatch
 			local header
 			if v.headerOverride then
 				header = v.headerOverride
@@ -380,7 +380,7 @@ end
 
 
 function REPBTN:OnClick(mousebutton)
-	if (mousebutton == "RightButton") then
+	if mousebutton == "RightButton" then
 			self:repDropDown_Initialize()
 	end
 end

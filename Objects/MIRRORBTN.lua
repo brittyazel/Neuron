@@ -31,8 +31,8 @@ local MirrorWatch, MirrorBars = {}, {}
 
 MIRRORBTN.sbStrings = {
 	[1] = { L["None"], function(sb) return "" end },
-	[2] = { L["Type"], function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].label end end },
-	[3] = { L["Timer"], function(sb) if (MirrorWatch[sb.mirror]) then return MirrorWatch[sb.mirror].timer end end },
+	[2] = { L["Type"], function(sb) if MirrorWatch[sb.mirror] then return MirrorWatch[sb.mirror].label end end },
+	[3] = { L["Timer"], function(sb) if MirrorWatch[sb.mirror] then return MirrorWatch[sb.mirror].timer end end },
 }
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -87,7 +87,7 @@ function MIRRORBTN: MirrorBar_OnEvent(event, ...)
 
 			type, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
 
-			if (type ~= "UNKNOWN") then
+			if type ~= "UNKNOWN" then
 				self:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 			end
 		end
@@ -98,15 +98,15 @@ end
 
 function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 
-	if (not MirrorWatch[type]) then
+	if not MirrorWatch[type] then
 		MirrorWatch[type] = { active = false, mbar = nil, label = "", timer = "" }
 	end
 
-	if (not MirrorWatch[type].active) then
+	if not MirrorWatch[type].active then
 
 		local mbar = table.remove(MirrorBars, 1)
 
-		if (mbar) then
+		if mbar then
 
 			MirrorWatch[type].active = true
 			MirrorWatch[type].mbar = mbar
@@ -116,7 +116,7 @@ function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 			mbar.sb.value = (value / 1000)
 			mbar.sb.maxvalue = (maxvalue / 1000)
 
-			if ( paused > 0 ) then
+			if  paused > 0 then
 				mbar.sb.paused = 1
 			else
 				mbar.sb.paused = nil
@@ -138,11 +138,11 @@ end
 function MIRRORBTN:mirrorbar_Stop(type)
 
 
-	if (MirrorWatch[type] and MirrorWatch[type].active) then
+	if MirrorWatch[type] and MirrorWatch[type].active then
 
 		local mbar = MirrorWatch[type].mbar
 
-		if (mbar) then
+		if mbar then
 
 			table.insert(MirrorBars, 1, mbar)
 
@@ -158,16 +158,16 @@ end
 
 function MIRRORBTN:MirrorBar_OnUpdate()
 
-	if (self.sb.mirror) then
+	if self.sb.mirror then
 
 		self.sb.value = GetMirrorTimerProgress(self.sb.mirror)/1000
 
 
-		if (self.sb.value > self.sb.maxvalue) then
+		if self.sb.value > self.sb.maxvalue then
 
 			self.sb.alpha = self.sb:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-			if (self.sb.alpha > 0) then
+			if self.sb.alpha > 0 then
 				self.sb:SetAlpha(self.sb.alpha)
 			else
 				self.sb:Hide()
@@ -177,7 +177,7 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 
 			self.sb:SetValue(self.sb.value)
 
-			if (self.sb.value >= 60) then
+			if self.sb.value >= 60 then
 				self.sb.value = string.format("%0.1f", self.sb.value/60)
 				self.sb.value = self.sb.value.."m"
 			else
@@ -189,11 +189,11 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 
 		end
 
-	elseif (not self.editmode) then
+	elseif not self.editmode then
 
 		self.sb.alpha = self.sb:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-		if (self.sb.alpha > 0) then
+		if self.sb.alpha > 0 then
 			self.sb:SetAlpha(self.sb.alpha)
 		else
 			self.sb:Hide()

@@ -227,7 +227,7 @@ end
 function NeuronGUI:updateBarName(editBox)
 	local bar = Neuron.CurrentBar
 
-	if (bar) then
+	if bar then
 		bar:SetBarName(editBox:GetText())
 		bar.text:SetText(bar:GetBarName())
 

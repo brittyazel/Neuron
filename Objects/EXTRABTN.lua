@@ -36,7 +36,7 @@ function EXTRABTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
 
-	if (defaults) then
+	if defaults then
 		newButton:SetDefaults(defaults)
 	end
 
@@ -157,17 +157,17 @@ end
 
 
 function EXTRABTN:OnEnter(...)
-	if (not self.bar:GetTooltipCombat() and InCombatLockdown()) then
+	if not self.bar:GetTooltipCombat() and InCombatLockdown() then
 		return
 	end
 
-	if (self.bar:GetTooltipOption()) then
+	if self.bar:GetTooltipOption() then
 
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-		if (self.bar:GetTooltipOption() == "enhanced" and self.spellID) then
+		if self.bar:GetTooltipOption() == "enhanced" and self.spellID then
 			GameTooltip:SetSpellByID(self.spellID)
-		elseif (self.spellName) then
+		elseif self.spellName then
 			GameTooltip:SetText(self.spellName)
 		end
 

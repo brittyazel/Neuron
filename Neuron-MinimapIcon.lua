@@ -57,7 +57,7 @@ end
 
 function Neuron:Minimap_OnClickHandler(frame, button)
 
-	if (InCombatLockdown()) then
+	if InCombatLockdown() then
 		return
 	end
 

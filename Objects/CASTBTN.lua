@@ -31,8 +31,8 @@ local CastWatch = {}
 
 CASTBTN.sbStrings = {
 	[1] = { L["None"], function(sb) return "" end },
-	[2] = { L["Spell"], function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].spell end end },
-	[3] = { L["Timer"], function(sb) if (CastWatch[sb.unit]) then return CastWatch[sb.unit].timer end end },
+	[2] = { L["Spell"], function(sb) if CastWatch[sb.unit] then return CastWatch[sb.unit].spell end end },
+	[3] = { L["Timer"], function(sb) if CastWatch[sb.unit] then return CastWatch[sb.unit].timer end end },
 }
 
 
@@ -93,7 +93,7 @@ function CASTBTN:SetType()
 
 	self:SetScript("OnUpdate", function(self, elapsed) self:CastBar_OnUpdate(elapsed) end)
 
-	if (not self.sb.cbtimer.castInfo) then
+	if not self.sb.cbtimer.castInfo then
 		self.sb.cbtimer.castInfo = {}
 	else
 		wipe(self.sb.cbtimer.castInfo)
@@ -132,7 +132,7 @@ function CASTBTN:CastBar_Reset()
 	self.sb.channeling = false
 	self.sb:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
 
-	if (not self.editmode) then
+	if not self.editmode then
 		self.sb:Hide()
 	end
 end
@@ -146,15 +146,15 @@ function CASTBTN:CastBar_OnEvent(event,...)
 	local unit = select(1, ...)
 	local eventCastID = select(2,...) --return payload is "unitTarget", "castGUID", spellID
 
-	if (unit ~= self.sb.unit) then
+	if unit ~= self.sb.unit then
 		return
 	end
 
-	if (not CastWatch[unit] ) then
+	if not CastWatch[unit] then
 		CastWatch[unit] = {}
 	end
 
-	if (event == "UNIT_SPELLCAST_START") then
+	if event == "UNIT_SPELLCAST_START" then
 
 		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible
 
@@ -164,14 +164,14 @@ function CASTBTN:CastBar_OnEvent(event,...)
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo() --classic doesn't have UnitCastingInfo()
 		end
 
-		if (not name) then
+		if not name then
 			self:CastBar_Reset()
 			return
 		end
 
 		self.sb:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
 
-		if (self.sb.spark) then
+		if self.sb.spark then
 			self.sb.spark:SetTexture("Interface\\AddOns\\Neuron\\Images\\CastingBar_Spark_"..self.sb.orientation)
 			self.sb.spark:Show()
 		end
@@ -185,12 +185,12 @@ function CASTBTN:CastBar_OnEvent(event,...)
 
 		CastWatch[unit].spell = text
 
-		if (self.sb.showIcon) then
+		if self.sb.showIcon then
 
 			self.sb.icon:SetTexture(texture)
 			self.sb.icon:Show()
 
-			if (notInterruptible) then
+			if notInterruptible then
 				self.sb.shield:Show()
 			else
 				self.sb.shield:Hide()
@@ -211,18 +211,18 @@ function CASTBTN:CastBar_OnEvent(event,...)
 		self.sb:Show()
 
 		--update castbar text
-		if (not self.sb.cbtimer.castInfo[unit]) then
+		if not self.sb.cbtimer.castInfo[unit] then
 			self.sb.cbtimer.castInfo[unit] = {}
 		end
 
 		self.sb.cbtimer.castInfo[unit][1] = text
 		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
 
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
+	elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
 
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 
-		if (not name) then
+		if not name then
 			self:CastBar_Reset()
 			return
 		end
@@ -236,12 +236,12 @@ function CASTBTN:CastBar_OnEvent(event,...)
 
 		CastWatch[unit].spell = text
 
-		if (self.sb.showIcon) then
+		if self.sb.showIcon then
 
 			self.sb.icon:SetTexture(texture)
 			self.sb.icon:Show()
 
-			if (notInterruptible) then
+			if notInterruptible then
 				self.sb.shield:Show()
 			else
 				self.sb.shield:Hide()
@@ -252,7 +252,7 @@ function CASTBTN:CastBar_OnEvent(event,...)
 			self.sb.shield:Hide()
 		end
 
-		if (self.sb.spark) then
+		if self.sb.spark then
 			self.sb.spark:Hide()
 		end
 
@@ -265,34 +265,34 @@ function CASTBTN:CastBar_OnEvent(event,...)
 		self.sb:Show()
 
 		--update text on castbar
-		if (not self.sb.cbtimer.castInfo[unit]) then
+		if not self.sb.cbtimer.castInfo[unit] then
 			self.sb.cbtimer.castInfo[unit] = {}
 		end
 
 		self.sb.cbtimer.castInfo[unit][1] = text
 		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
 
-	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling) then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
+	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
 
 		self.sb:SetStatusBarColor(self.config.successColor[1], self.config.successColor[2], self.config.successColor[3], self.config.successColor[4])
 
-	elseif (event == "UNIT_SPELLCAST_SUCCEEDED" and self.sb.channeling) then
+	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.sb.channeling then
 
 		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
 
-	elseif ((event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") and self.sb.castID == eventCastID) or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
+	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") and self.sb.castID == eventCastID or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
 
-		if (self.sb:IsShown() and (self.sb.casting or self.sb.channeling) and not self.sb.fadeOut) then
+		if self.sb:IsShown() and (self.sb.casting or self.sb.channeling) and not self.sb.fadeOut then
 
 			self.sb:SetValue(self.sb.maxValue)
 
 			self.sb:SetStatusBarColor(self.config.failColor[1], self.config.failColor[2], self.config.failColor[3], self.config.failColor[4])
 
-			if (self.sb.spark) then
+			if self.sb.spark then
 				self.sb.spark:Hide()
 			end
 
-			if (event == "UNIT_SPELLCAST_FAILED") then
+			if event == "UNIT_SPELLCAST_FAILED" then
 				CastWatch[unit].spell = FAILED
 			else
 				CastWatch[unit].spell = INTERRUPTED
@@ -304,13 +304,13 @@ function CASTBTN:CastBar_OnEvent(event,...)
 			self.sb.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
 		end
 
-	elseif (event == "UNIT_SPELLCAST_DELAYED") then
+	elseif event == "UNIT_SPELLCAST_DELAYED" then
 
-		if (self.sb:IsShown()) then
+		if self.sb:IsShown() then
 
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
 
-			if (not name) then
+			if not name then
 				self:CastBar_Reset()
 				return
 			end
@@ -319,7 +319,7 @@ function CASTBTN:CastBar_OnEvent(event,...)
 			self.sb.maxValue = (endTime-startTime)/1000
 			self.sb:SetMinMaxValues(0, self.sb.maxValue)
 
-			if (not self.sb.casting) then
+			if not self.sb.casting then
 
 				self.sb:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
 
@@ -334,13 +334,13 @@ function CASTBTN:CastBar_OnEvent(event,...)
 			end
 		end
 
-	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
+	elseif event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
 
-		if (self.sb:IsShown()) then
+		if self.sb:IsShown() then
 
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
 
-			if (not name) then
+			if not name then
 				self:CastBar_Reset()
 				return
 			end
@@ -351,11 +351,11 @@ function CASTBTN:CastBar_OnEvent(event,...)
 			self.sb:SetValue(self.sb.value)
 		end
 
-	elseif (self.sb.showShield and event == "UNIT_SPELLCAST_INTERRUPTIBLE" ) then
+	elseif self.sb.showShield and event == "UNIT_SPELLCAST_INTERRUPTIBLE"  then
 
 		self.sb.shield:Hide()
 
-	elseif (self.sb.showShield and event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE" ) then
+	elseif self.sb.showShield and event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE"  then
 
 		self.sb.shield:Show()
 
@@ -377,24 +377,24 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 	local unit = self.sb.unit
 	local sparkPosition, alpha
 
-	if (unit) then
+	if unit then
 
-		if (self.sb.cbtimer.castInfo[unit]) then
+		if self.sb.cbtimer.castInfo[unit] then
 
 			local displayName, numFormat = self.sb.cbtimer.castInfo[unit][1], self.sb.cbtimer.castInfo[unit][2]
 
-			if (self.sb.maxValue) then
+			if self.sb.maxValue then
 				CastWatch[self.sb.unit].timer = string.format(numFormat, self.sb.value).."/"..format(numFormat, self.sb.maxValue)
 			else
 				CastWatch[self.sb.unit].timer = string.format(numFormat, self.sb.value)
 			end
 		end
 
-		if (self.sb.casting) then
+		if self.sb.casting then
 
 			self.sb.value = self.sb.value + elapsed
 
-			if (self.sb.value >= self.sb.maxValue) then
+			if self.sb.value >= self.sb.maxValue then
 				self.sb:SetValue(self.sb.maxValue)
 				self:CastBar_FinishSpell()
 				return
@@ -404,11 +404,11 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 
 			self.sb.barflash:Hide()
 
-			if (self.sb.orientation == 1) then
+			if self.sb.orientation == 1 then
 
 				sparkPosition = (self.sb.value/self.sb.maxValue)*self.sb:GetWidth()
 
-				if (sparkPosition < 0) then
+				if sparkPosition < 0 then
 					sparkPosition = 0
 				end
 
@@ -417,18 +417,18 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 			else
 				sparkPosition = (self.sb.value / self.sb.maxValue) * self.sb:GetHeight()
 
-				if ( sparkPosition < 0 ) then
+				if  sparkPosition < 0 then
 					sparkPosition = 0
 				end
 
 				self.sb.spark:SetPoint("CENTER", self.sb, "BOTTOM", 0, sparkPosition)
 			end
 
-		elseif (self.sb.channeling) then
+		elseif self.sb.channeling then
 
 			self.sb.value = self.sb.value - elapsed
 
-			if (self.sb.value <= 0) then
+			if self.sb.value <= 0 then
 				self:CastBar_FinishSpell()
 				return
 			end
@@ -437,26 +437,26 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 
 			self.sb.barflash:Hide()
 
-		elseif (GetTime() < self.sb.holdTime) then
+		elseif GetTime() < self.sb.holdTime then
 
 			return
 
-		elseif (self.sb.flash) then
+		elseif self.sb.flash then
 
 			alpha = self.sb.barflash:GetAlpha() + CASTING_BAR_FLASH_STEP or 0
 
-			if (alpha < 1) then
+			if alpha < 1 then
 				self.sb.barflash:SetAlpha(alpha)
 			else
 				self.sb.barflash:SetAlpha(1.0)
 				self.sb.flash = nil
 			end
 
-		elseif (self.sb.fadeOut and not self.sb.editmode) then
+		elseif self.sb.fadeOut and not self.sb.editmode then
 
 			alpha = self.sb:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-			if (alpha > 0) then
+			if alpha > 0 then
 				self.sb:SetAlpha(alpha)
 			else
 				self:CastBar_Reset()
@@ -472,13 +472,13 @@ end
 
 function CASTBTN:UpdateUnit(command, gui, query)
 
-	if (query) then
+	if query then
 		return BarUnits[self.config.unit]
 	end
 
 	local index = tonumber(command)
 
-	if (index) then
+	if index then
 
 		self.config.unit = index
 
@@ -492,7 +492,7 @@ end
 
 function CASTBTN:UpdateCastIcon(frame, checked)
 
-	if (checked) then
+	if checked then
 		self.config.showIcon = true
 	else
 		self.config.showIcon = false
