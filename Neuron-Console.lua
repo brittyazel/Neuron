@@ -77,7 +77,7 @@ local slashFunctions = {
 --New Slash functionality
 function Neuron:slashHandler(input)
 
-	if (string.len(input)==0 or input:lower() == "help") then
+	if string.len(input)==0 or input:lower() == "help" then
 		Neuron:printSlashHelp()
 		return
 	end
@@ -104,13 +104,13 @@ function Neuron:slashHandler(input)
 
 	for i = 1,#slashFunctions do
 
-		if (command == slashFunctions[i][1]:lower()) then
+		if command == slashFunctions[i][1]:lower() then
 			local func = slashFunctions[i][3]
 			local bar = Neuron.CurrentBar
 
-			if (Neuron[func]) then
+			if Neuron[func] then
 				Neuron[func](Neuron, args[1])
-			elseif (bar and bar[func]) then
+			elseif bar and bar[func] then
 				--because we're calling a variable func name, we can't use the ":" notation, so we have to explicitly state the parent object as the first param
 				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
 			else
@@ -144,14 +144,14 @@ function Neuron:PrintStateList()
 	local list
 
 	for k,v in pairs(Neuron.MANAGED_ACTION_STATES) do
-		if (Neuron.STATEINDEX[k]) then
+		if Neuron.STATEINDEX[k] then
 			data[v.order] = Neuron.STATEINDEX[k]
 		end
 	end
 
 	for k,v in ipairs(data) do
 
-		if (not list) then
+		if not list then
 			list = L["Valid States"]..":"..v
 		else
 			list = list..", "..v

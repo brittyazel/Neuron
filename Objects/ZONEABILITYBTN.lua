@@ -36,7 +36,7 @@ function ZONEABILITYBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
 
-	if (defaults) then
+	if defaults then
 		newButton:SetDefaults(defaults)
 	end
 
@@ -150,18 +150,18 @@ end
 
 function ZONEABILITYBTN:OnEnter(...)
 
-	if (self.bar) then
-		if (self.tooltipsCombat and InCombatLockdown()) then
+	if self.bar then
+		if self.tooltipsCombat and InCombatLockdown() then
 			return
 		end
 
-		if (self.tooltips) then
+		if self.tooltips then
 
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-			if (self.tooltipsEnhanced and self.spellID) then
+			if self.tooltipsEnhanced and self.spellID then
 				GameTooltip:SetSpellByID(self.spellID)
-			elseif (self.spellName) then
+			elseif self.spellName then
 				GameTooltip:SetText(self.spellName)
 			end
 
