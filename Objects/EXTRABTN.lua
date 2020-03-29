@@ -101,7 +101,11 @@ function EXTRABTN:UpdateButton()
 	end
 
 	-----------------------
-	_, self.spellID = GetActionInfo(self.actionID)
+	if HasExtraActionBar() then
+		_, self.spellID = GetActionInfo(self.actionID)
+	else
+		self.spellID = ""
+	end
 
 	if self.spellID then
 		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
