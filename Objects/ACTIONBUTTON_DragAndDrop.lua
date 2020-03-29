@@ -90,7 +90,6 @@ function ACTIONBUTTON:OnReceiveDrag()
 		wipe(macroCache)
 	end
 
-
 	if macroDrag[1] then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
 		self:PlaceMacro()
 	elseif cursorType == "spell" then
@@ -237,28 +236,26 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	end
 
 
-	local spellInfoName, icon
+	local spellName, icon
 
 	if NeuronSpellCache[spell] then
-		spellInfoName = NeuronSpellCache[spell].spellName
+		spellName = NeuronSpellCache[spell].spellName
 		icon = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
 		if not icon then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
 			icon = NeuronSpellCache[spell].icon
 		end
 	else
-		spellInfoName , _, icon = GetSpellInfo(spellID)
+		spellName , _, icon = GetSpellInfo(spellID)
 	end
 
 
 	self.data.macro_Text = self:AutoWriteMacro(spell)
-
 	self.data.macro_Icon = icon  --also set later in SetSpellIcon
-	self.data.macro_Name = spellInfoName
+	self.data.macro_Name = spellName
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 	self.data.macro_BlizzMacro = false
 	self.data.macro_EquipmentSet = false
-
 end
 
 function ACTIONBUTTON:PlacePetAbility(action1, action2)
@@ -270,7 +267,6 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		local spellInfoName , _, icon = GetSpellInfo(spellID)
 
 		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
-
 		self.data.macro_Icon = icon --also set later in SetSpellIcon
 		self.data.macro_Name = spellInfoName
 		self.data.macro_Note = ""

@@ -657,7 +657,7 @@ end
 
 function BUTTON:UpdateCooldown()
 	if self.actionID then
-		self:ACTION_SetCooldown(self.actionID)
+		self:SetActionCooldown(self.actionID)
 
 	elseif self.override and #self.override>0 then
 
@@ -717,7 +717,7 @@ function BUTTON:SetItemCooldown(item)
 	end
 end
 
-function BUTTON:ACTION_SetCooldown(action)
+function BUTTON:SetActionCooldown(action)
 	if action then
 		local actionID = tonumber(action)
 
