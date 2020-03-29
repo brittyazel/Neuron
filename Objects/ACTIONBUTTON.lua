@@ -222,10 +222,10 @@ function ACTIONBUTTON:SetType()
 		self:SetUpEvents()
 	end
 
-	self:UpdateParse()
+	self:ParseAndSanitizeMacro()
 
 	self:SetAttribute("type", "macro")
-	self:SetAttribute("*macrotext*", self.macroparse)
+	self:SetAttribute("*macrotext*", self.macro)
 
 	self:SetScript("PostClick", function(self, mousebutton) self:PostClick(mousebutton) end)
 	self:SetScript("OnReceiveDrag", function(self, preclick) self:OnReceiveDrag(preclick) end)
@@ -371,117 +371,106 @@ function ACTIONBUTTON:UpdateData(...)
 
 	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_item, ud_target
 
+	if not self.macro then
+		return
+	end
 
-	if self.macroparse then
-		ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_item, ud_target = nil, nil, nil, nil, nil, nil, nil, nil
+	for cmd, options in gmatch(self.macro, "(%c%p%a+)(%C+)") do
 
-		for cmd, options in gmatch(self.macroparse, "(%c%p%a+)(%C+)") do
+		--cmd is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
+		--options is everything else, like "Chi Torpedo()"
 
-			--cmd is "/cast" or "/use" etc
-			--options is everything else, like "Chi Torpedo()"
+		--after gmatch, remove unneeded characters
+		if cmd then
+			cmd = cmd:gsub("^%c+", "")
+		end
 
-			--after gmatch, remove unneeded characters
-			if cmd then
-				cmd = cmd:gsub("^%c+", "")
-			end
+		if options then
+			options = options:gsub("^%s+", "")
+		end
 
-			if options then
-				options = options:gsub("^%s+", "")
-			end
+		--find #ud_show option!
+		if (not ud_show or #ud_show < 1) and cmd:find("^#show") then
+			ud_show = SecureCmdOptionParse(options)
+			ud_showcmd = cmd
+		elseif (not ud_spell or #ud_spell < 1) and cmdSlash[cmd] then
+			ud_spell, ud_target = SecureCmdOptionParse(options)
+			ud_spellcmd = cmd
+		end
+	end
 
-			--find #ud_show option!
-			if not ud_show and cmd:find("^#show") then
-				ud_show = SecureCmdOptionParse(options)
-				ud_showcmd = cmd
-				--sometimes SecureCmdOptionParse will return "" since that is not what we want, keep looking
-			elseif ud_show and #ud_show < 1 and cmd:find("^#show") then
-				ud_show = SecureCmdOptionParse(options)
-				ud_showcmd = cmd
-			end
+	if ud_spell and ud_spellcmd:find("/castsequence") then
 
-			--find the ud_spell!
-			if not ud_spell and cmdSlash[cmd] then
-				ud_spell, ud_target = SecureCmdOptionParse(options)
-				ud_spellcmd = cmd
-			elseif ud_spell and #ud_spell < 1 then
-				ud_spell, ud_target = SecureCmdOptionParse(options)
-				ud_spellcmd = cmd
+		_, ud_item, ud_spell = QueryCastSequence(ud_spell)
+
+	elseif ud_spell then
+
+		if #ud_spell < 1 then
+			ud_spell = nil
+
+		elseif NeuronItemCache[ud_spell] then
+
+			ud_item = ud_spell
+			ud_spell = nil
+
+
+		elseif tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell) then
+			ud_item = GetInventoryItemLink("player", ud_spell)
+			ud_spell = nil
+		end
+	end
+
+	self.unit = ud_target or "target"
+
+	if ud_spell then
+		self.macroitem = nil
+
+		if ud_spell ~= self.macrospell then
+
+			ud_spell = ud_spell:gsub("!", "")
+			self.macrospell = ud_spell
+
+			if NeuronSpellCache[ud_spell:lower()] then
+				self.spellID = NeuronSpellCache[ud_spell:lower()].spellID
+			else
+				self.spellID = nil
 			end
 		end
 
-		if ud_spell and ud_spellcmd:find("/castsequence") then
+	else
+		self.macrospell = nil
+		self.spellID = nil
+	end
 
-			_, ud_item, ud_spell = QueryCastSequence(ud_spell)
-
-		elseif ud_spell then
-
-			if #ud_spell < 1 then
-				ud_spell = nil
-
-			elseif NeuronItemCache[ud_spell] then
-
-				ud_item = ud_spell
-				ud_spell = nil
-
-
-			elseif tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell) then
-				ud_item = GetInventoryItemLink("player", ud_spell)
-				ud_spell = nil
+	if ud_show and ud_showcmd:find("#showicon") then
+		if ud_show ~= self.macroicon then
+			if tonumber(ud_show) and GetInventoryItemLink("player", ud_show) then
+				ud_show = GetInventoryItemLink("player", ud_show)
 			end
-		end
-
-		self.unit = ud_target or "target"
-
-		if ud_spell then
-			self.macroitem = nil
-
-			if ud_spell ~= self.macrospell then
-
-				ud_spell = ud_spell:gsub("!", "")
-				self.macrospell = ud_spell
-
-				if NeuronSpellCache[ud_spell:lower()] then
-					self.spellID = NeuronSpellCache[ud_spell:lower()].spellID
-				else
-					self.spellID = nil
-				end
-			end
-
-		else
-			self.macrospell = nil
-			self.spellID = nil
-		end
-
-		if ud_show and ud_showcmd:find("#showicon") then
-			if ud_show ~= self.macroicon then
-				if tonumber(ud_show) and GetInventoryItemLink("player", ud_show) then
-					ud_show = GetInventoryItemLink("player", ud_show)
-				end
-				self.macroicon = ud_show
-				self.macroshow = nil
-			end
-		elseif ud_show then
-			if ud_show ~= self.macroshow then
-				if tonumber(ud_show) and GetInventoryItemLink("player", ud_show) then
-					ud_show = GetInventoryItemLink("player", ud_show)
-				end
-				self.macroshow = ud_show
-				self.macroicon = nil
-			end
-		else
+			self.macroicon = ud_show
 			self.macroshow = nil
+		end
+	elseif ud_show then
+		if ud_show ~= self.macroshow then
+			if tonumber(ud_show) and GetInventoryItemLink("player", ud_show) then
+				ud_show = GetInventoryItemLink("player", ud_show)
+			end
+			self.macroshow = ud_show
 			self.macroicon = nil
 		end
+	else
+		self.macroshow = nil
+		self.macroicon = nil
+	end
 
-		if ud_item then
-			self.macrospell = nil;
-			self.spellID = nil
-			if ud_item ~= self.macroitem then
-				self.macroitem = ud_item
-			end
-		else
-			self.macroitem = nil
+	if ud_item then
+		self.macrospell = nil;
+		self.spellID = nil
+		if ud_item ~= self.macroitem then
+			self.macroitem = ud_item
 		end
+	else
+		self.macroitem = nil
 	end
 end
 
@@ -516,11 +505,8 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 
 	else
 		if self.data.macro_Watch then
-
 			_, texture = GetMacroInfo(self.data.macro_Watch)
-
 			self.data.macro_Icon = texture
-
 		end
 
 		if texture then
@@ -1082,7 +1068,7 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 
 				self.data = self.statedata[value]
 
-				self:UpdateParse()
+				self:ParseAndSanitizeMacro()
 
 				self:MACRO_Reset()
 
@@ -1120,14 +1106,16 @@ function ACTIONBUTTON:MACRO_Reset()
 end
 
 
-function ACTIONBUTTON:UpdateParse()
-	self.macroparse = self.data.macro_Text
+function ACTIONBUTTON:ParseAndSanitizeMacro()
+	local uncleanMacro = self.data.macro_Text
 
-	if #self.macroparse > 0 then
-		self.macroparse = "\n"..self.macroparse.."\n"
-		self.macroparse = (self.macroparse):gsub("(%c+)", " %1")
+	if #uncleanMacro > 0 then
+		--adds an empty line above and below the macro
+		uncleanMacro = "\n"..uncleanMacro.."\n"
+		--I'm not sure what this line does, but it appears to just strip off any control characters
+		self.macro = uncleanMacro:gsub("(%c+)", " %1")
 	else
-		self.macroparse = nil
+		self.macro = nil
 	end
 end
 
@@ -1533,58 +1521,42 @@ function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
 end
 
 function ACTIONBUTTON:UpdateButton(...)
-
 	if self.editmode then
-
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
-
 	elseif self.actionID then
-
 		self:ACTION_UpdateUsable(self.actionID)
-
 	elseif self.macroshow and #self.macroshow>0 then
-
 		if NeuronItemCache[self.macroshow] then
 			self:UpdateUsableItem(self.macroshow)
 		else
 			self:UpdateUsableSpell(self.macroshow)
 		end
-
 	elseif self.macrospell and #self.macrospell>0 then
-
 		self:UpdateUsableSpell(self.macrospell)
-
 	elseif self.macroitem and #self.macroitem>0 then
-
 		self:UpdateUsableItem(self.macroitem)
-
 	else
 		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 	end
 end
 
 function ACTIONBUTTON:UpdateIcon()
-	self.updateMacroIcon = nil
-
-	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
-
-	if self.actionID then
-		texture = self:ACTION_SetIcon(self.actionID)
-	elseif show and #show>0 then
-		if NeuronItemCache[show] then
-			texture = self:SetItemIcon(show)
+	if self.macroshow and #self.macroshow>0 then
+		if NeuronItemCache[self.macroshow] then
+			self:SetItemIcon(self.macroshow)
 		else
-			texture = self:SetSpellIcon(show)
-			self:SetSpellState(show)
+			self:SetSpellIcon(self.macroshow)
+			self:SetSpellState(self.macroshow)
 		end
-	elseif spell and #spell>0 then
-		texture = self:SetSpellIcon(spell)
-		self:SetSpellState(spell)
-	elseif item and #item>0 then
-		texture = self:SetItemIcon(item)
 	elseif self.data.macro_Icon then
 		self.iconframeicon:SetTexture(self.data.macro_Icon)
-		self.iconframeicon:Show()
+	elseif self.actionID then
+		self:ACTION_SetIcon(self.actionID)
+	elseif self.macrospell and #self.macrospell>0 then
+		self:SetSpellIcon(self.macrospell)
+		self:SetSpellState(self.macrospell)
+	elseif self.macroitem and #self.macroitem>0 then
+		self:SetItemIcon(self.macroitem)
 	else
 		self.macroname:SetText("")
 		self.iconframeicon:SetTexture("")

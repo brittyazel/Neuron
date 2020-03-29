@@ -630,17 +630,13 @@ end
 
 ---Updates the buttons "count", i.e. the spell charges
 function BUTTON:UpdateSpellCount(spell)
-	if spell then
-		local charges, maxCharges = GetSpellCharges(spell)
-		local count = GetSpellCount(spell)
+	local charges, maxCharges = GetSpellCharges(spell)
+	local count = GetSpellCount(spell)
 
-		if maxCharges and maxCharges > 1 then
-			self.count:SetText(charges)
-		elseif count and count > 0 then
-			self.count:SetText(count)
-		else
-			self.count:SetText("")
-		end
+	if maxCharges and maxCharges > 1 then
+		self.count:SetText(charges)
+	elseif count and count > 0 then
+		self.count:SetText(count)
 	else
 		self.count:SetText("")
 	end
@@ -649,7 +645,6 @@ end
 
 ---Updates the buttons "count", i.e. the item stack size
 function BUTTON:UpdateItemCount(item)
-
 	local count = GetItemCount(item,nil,true)
 
 	if count and count > 1 then
@@ -661,7 +656,6 @@ end
 
 
 function BUTTON:UpdateCooldown()
-
 	if self.actionID then
 		self:ACTION_SetCooldown(self.actionID)
 

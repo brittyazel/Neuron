@@ -579,7 +579,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
-				button:UpdateParse()
+				button:ParseAndSanitizeMacro()
 				button:MACRO_Reset()
 				button:UpdateAll()
 
@@ -831,7 +831,7 @@ function ACTIONBUTTON:Flyout_PostClick()
 	button.data.macro_Icon = self:GetAttribute("macro_Icon") or false
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
-	button:UpdateParse()
+	button:ParseAndSanitizeMacro()
 	button:MACRO_Reset()
 	button:UpdateAll()
 
