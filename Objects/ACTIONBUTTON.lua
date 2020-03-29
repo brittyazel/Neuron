@@ -367,111 +367,97 @@ function ACTIONBUTTON:GetDragAction()
 end
 
 
-function ACTIONBUTTON:UpdateData(...)
+--the purpose of this function is to parse the macro text and assign values to things like the icon, tooltip, etc that will be used for
+--controlling the gui elements of the actionbutton
+function ACTIONBUTTON:UpdateData()
 
-	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_item, ud_target
-
+	--if we have no macro content then bail immediately
 	if not self.macro then
 		return
 	end
 
-	for cmd, options in gmatch(self.macro, "(%c%p%a+)(%C+)") do
+	local spell, spellPrefix
+	local override, overridePrefix
+	local item
+	local target
 
-		--cmd is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
-		--options is everything else, like "Chi Torpedo()"
+	--the parsed contents of a macro and assign them for further processing
+	for prefix, content in gmatch(self.macro, "(%c%p%a+)(%C+)") do
 
-		--after gmatch, remove unneeded characters
-		if cmd then
-			cmd = cmd:gsub("^%c+", "")
+		--"prefix" is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
+		--"content" is everything else, like "Chi Torpedo()"
+
+		if prefix then
+			prefix = prefix:gsub("^%c+", "") --remove unneeded characters
 		end
 
-		if options then
-			options = options:gsub("^%s+", "")
+		if content then
+			content = content:gsub("^%s+", "") --remove unneeded characters
 		end
 
-		--find #ud_show option!
-		if (not ud_show or #ud_show < 1) and cmd:find("^#show") then
-			ud_show = SecureCmdOptionParse(options)
-			ud_showcmd = cmd
-		elseif (not ud_spell or #ud_spell < 1) and cmdSlash[cmd] then
-			ud_spell, ud_target = SecureCmdOptionParse(options)
-			ud_spellcmd = cmd
-		end
-	end
-
-	if ud_spell and ud_spellcmd:find("/castsequence") then
-
-		_, ud_item, ud_spell = QueryCastSequence(ud_spell)
-
-	elseif ud_spell then
-
-		if #ud_spell < 1 then
-			ud_spell = nil
-
-		elseif NeuronItemCache[ud_spell] then
-
-			ud_item = ud_spell
-			ud_spell = nil
-
-
-		elseif tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell) then
-			ud_item = GetInventoryItemLink("player", ud_spell)
-			ud_spell = nil
+		--if the cmd contains the string "#show" it means we want to overwrite some part of the macro graphics, either the tooltip or the icon
+		if (not override or #override == 0) and prefix:find("^#show") then
+			override = SecureCmdOptionParse(content)
+			overridePrefix = prefix
+		elseif (not spell or #spell == 0) and cmdSlash[prefix] then
+			spell, target = SecureCmdOptionParse(content)
+			spellPrefix = prefix
 		end
 	end
 
-	self.unit = ud_target or "target"
+	if spell and spellPrefix:find("/castsequence") then
+		_, item, spell = QueryCastSequence(spell)
+	elseif spell then
+		if #spell == 0 then
+			spell = nil
+		elseif NeuronItemCache[spell] then --if our spell is actually an item in our cache, amend it as such
+			item = spell
+			spell = nil
+		elseif tonumber(spell) and GetInventoryItemLink("player", spell) then --in case spell is a number and corresponds to a valid inventory item
+			item = GetInventoryItemLink("player", spell)
+			spell = nil
+		end
+	end
 
-	if ud_spell then
-		self.macroitem = nil
+	if spell then
+		if spell ~= self.spell then --only if the new spell is different than a currently assigned spell on the button
+			self.spell = spell
 
-		if ud_spell ~= self.macrospell then
-
-			ud_spell = ud_spell:gsub("!", "")
-			self.macrospell = ud_spell
-
-			if NeuronSpellCache[ud_spell:lower()] then
-				self.spellID = NeuronSpellCache[ud_spell:lower()].spellID
+			if NeuronSpellCache[spell:lower()] then --if the spell is found in the spell cache, grab the spellID
+				self.spellID = NeuronSpellCache[spell:lower()].spellID
 			else
-				self.spellID = nil
+				_,_,_,_,_,_,self.spellID = GetSpellInfo(spell)
 			end
 		end
-
+		self.item = nil --remove any reference to this button being for an item
 	else
-		self.macrospell = nil
+		self.spell = nil
 		self.spellID = nil
 	end
 
-	if ud_show and ud_showcmd:find("#showicon") then
-		if ud_show ~= self.macroicon then
-			if tonumber(ud_show) and GetInventoryItemLink("player", ud_show) then
-				ud_show = GetInventoryItemLink("player", ud_show)
-			end
-			self.macroicon = ud_show
-			self.macroshow = nil
+	if override and overridePrefix:find("#showicon") then
+		--if we are just overriding the icon only, assign the override icon to self.overrideIcon
+		if tonumber(override) and GetInventoryItemLink("player", override) then
+			self.overrideIcon = GetInventoryItemLink("player", override)
 		end
-	elseif ud_show then
-		if ud_show ~= self.macroshow then
-			if tonumber(ud_show) and GetInventoryItemLink("player", ud_show) then
-				ud_show = GetInventoryItemLink("player", ud_show)
-			end
-			self.macroshow = ud_show
-			self.macroicon = nil
-		end
+		self.override = nil
+	elseif override then
+		--if we are to override the full tooltip and icon
+		self.override = override
 	else
-		self.macroshow = nil
-		self.macroicon = nil
+		self.override = nil
 	end
 
-	if ud_item then
-		self.macrospell = nil;
+	if item then
+		self.item = item
+		self.spell = nil;
 		self.spellID = nil
-		if ud_item ~= self.macroitem then
-			self.macroitem = ud_item
-		end
 	else
-		self.macroitem = nil
+		self.item = nil
 	end
+
+	self.unit = target or "target"
+
 end
 
 
@@ -572,9 +558,9 @@ function ACTIONBUTTON:UpdateGlow()
 		--Swipe(Cat): 106785
 		--Swipe(NoForm): 213764
 
-		if self.macrospell and self.macrospell:lower() == "thrash()" and IsSpellOverlayed(106830) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+		if self.spell and self.spell:lower() == "thrash()" and IsSpellOverlayed(106830) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
 			self:StartGlow()
-		elseif self.macrospell and self.macrospell:lower() == "swipe()" and IsSpellOverlayed(106785) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+		elseif self.spell and self.spell:lower() == "swipe()" and IsSpellOverlayed(106785) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
 			self:StartGlow()
 		elseif IsSpellOverlayed(self.spellID) then --this is the default "true" condition
 			self:StartGlow()
@@ -733,7 +719,7 @@ ACTIONBUTTON.PLAYER_STOPPED_MOVING = ACTIONBUTTON.PLAYER_STARTED_MOVING
 
 function ACTIONBUTTON:BAG_UPDATE_COOLDOWN()
 
-	if self.macroitem then
+	if self.item then
 		self:UpdateState()
 	end
 end
@@ -746,7 +732,7 @@ function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(...)
 
 	local unit = select(1, ...)
 
-	if (unit == "player" or unit == "pet") and self.macrospell then
+	if (unit == "player" or unit == "pet") and self.spell then
 
 		self:UpdateTimers()
 	end
@@ -871,7 +857,7 @@ ACTIONBUTTON.UPDATE_BONUS_ACTIONBAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
 
 function ACTIONBUTTON:SPELL_UPDATE_CHARGES(...)
 
-	local spell = self.macrospell
+	local spell = self.spell
 
 	self:UpdateSpellCount(spell)
 
@@ -959,7 +945,7 @@ end
 function ACTIONBUTTON:SetTooltip()
 	self.UpdateTooltip = nil
 
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
+	local spell, item, show = self.spell, self.item, self.override
 
 	if self.actionID then
 		self:ACTION_SetTooltip(self.actionID)
@@ -1098,11 +1084,10 @@ end
 
 
 function ACTIONBUTTON:MACRO_Reset()
-	self.macrospell = nil
+	self.spell = nil
 	self.spellID = nil
-	self.macroitem = nil
-	self.macroshow = nil
-	self.macroicon = nil
+	self.item = nil
+	self.override = nil
 end
 
 
@@ -1525,38 +1510,38 @@ function ACTIONBUTTON:UpdateButton(...)
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID then
 		self:ACTION_UpdateUsable(self.actionID)
-	elseif self.macroshow and #self.macroshow>0 then
-		if NeuronItemCache[self.macroshow] then
-			self:UpdateUsableItem(self.macroshow)
+	elseif self.override and #self.override>0 then
+		if NeuronItemCache[self.override] then
+			self:UpdateUsableItem(self.override)
 		else
-			self:UpdateUsableSpell(self.macroshow)
+			self:UpdateUsableSpell(self.override)
 		end
-	elseif self.macrospell and #self.macrospell>0 then
-		self:UpdateUsableSpell(self.macrospell)
-	elseif self.macroitem and #self.macroitem>0 then
-		self:UpdateUsableItem(self.macroitem)
+	elseif self.spell and #self.spell>0 then
+		self:UpdateUsableSpell(self.spell)
+	elseif self.item and #self.item>0 then
+		self:UpdateUsableItem(self.item)
 	else
 		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 	end
 end
 
 function ACTIONBUTTON:UpdateIcon()
-	if self.macroshow and #self.macroshow>0 then
-		if NeuronItemCache[self.macroshow] then
-			self:SetItemIcon(self.macroshow)
+	if self.override and #self.override>0 then
+		if NeuronItemCache[self.override] then
+			self:SetItemIcon(self.override)
 		else
-			self:SetSpellIcon(self.macroshow)
-			self:SetSpellState(self.macroshow)
+			self:SetSpellIcon(self.override)
+			self:SetSpellState(self.override)
 		end
 	elseif self.data.macro_Icon then
 		self.iconframeicon:SetTexture(self.data.macro_Icon)
 	elseif self.actionID then
 		self:ACTION_SetIcon(self.actionID)
-	elseif self.macrospell and #self.macrospell>0 then
-		self:SetSpellIcon(self.macrospell)
-		self:SetSpellState(self.macrospell)
-	elseif self.macroitem and #self.macroitem>0 then
-		self:SetItemIcon(self.macroitem)
+	elseif self.spell and #self.spell>0 then
+		self:SetSpellIcon(self.spell)
+		self:SetSpellState(self.spell)
+	elseif self.item and #self.item>0 then
+		self:SetItemIcon(self.item)
 	else
 		self.macroname:SetText("")
 		self.iconframeicon:SetTexture("")
@@ -1567,7 +1552,7 @@ end
 
 function ACTIONBUTTON:UpdateState()
 
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
+	local spell, item, show = self.spell, self.item, self.override
 
 	if self.actionID then
 		self:ACTION_UpdateState(self.actionID)

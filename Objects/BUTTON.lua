@@ -659,19 +659,19 @@ function BUTTON:UpdateCooldown()
 	if self.actionID then
 		self:ACTION_SetCooldown(self.actionID)
 
-	elseif self.macroshow and #self.macroshow>0 then
+	elseif self.override and #self.override>0 then
 
-		if NeuronItemCache[self.macroshow] then
-			self:SetItemCooldown(self.macroshow)
+		if NeuronItemCache[self.override] then
+			self:SetItemCooldown(self.override)
 		else
-			self:SetSpellCooldown(self.macroshow)
+			self:SetSpellCooldown(self.override)
 		end
 
-	elseif self.macrospell and #self.macrospell>0 then
-		self:SetSpellCooldown(self.macrospell)
+	elseif self.spell and #self.spell>0 then
+		self:SetSpellCooldown(self.spell)
 
-	elseif self.macroitem and #self.macroitem>0 then
-		self:SetItemCooldown(self.macroitem)
+	elseif self.item and #self.item>0 then
+		self:SetItemCooldown(self.item)
 
 	else
 		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
@@ -883,7 +883,7 @@ end
 function BUTTON:UpdateTimers()
 	self:UpdateCooldown()
 	for k in pairs(Neuron.unitAuras) do
-		self:UpdateAuraWatch(k, self.macrospell)
+		self:UpdateAuraWatch(k, self.spell)
 	end
 end
 

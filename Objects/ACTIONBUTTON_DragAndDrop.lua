@@ -201,11 +201,10 @@ function ACTIONBUTTON:PickUpMacro()
 			self.data.macro_Note = ""
 			self.data.macro_UseNote = false
 
-			self.macrospell = nil
+			self.spell = nil
 			self.spellID = nil
-			self.macroitem = nil
-			self.macroshow = nil
-			self.macroicon = nil
+			self.item = nil
+			self.override = nil
 
 			self:SetType()
 		end
@@ -528,9 +527,9 @@ end
 
 function ACTIONBUTTON:SetMouseCursor()
 
-	if self.macroshow then
+	if self.override then
 		local spellID
-		_,_,_,_,_,_,spellID = GetSpellInfo(self.macroshow)
+		_,_,_,_,_,_,spellID = GetSpellInfo(self.override)
 		if spellID then
 			PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
 		end
@@ -539,9 +538,9 @@ function ACTIONBUTTON:SetMouseCursor()
 		end
 	end
 
-	if self.macrospell then
+	if self.spell then
 		local spellID
-		_,_,_,_,_,_,spellID = GetSpellInfo(self.macrospell)
+		_,_,_,_,_,_,spellID = GetSpellInfo(self.spell)
 		if spellID then
 			PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
 		end
@@ -550,8 +549,8 @@ function ACTIONBUTTON:SetMouseCursor()
 		end
 	end
 
-	if self.macroitem then
-		PickupItem(self.macroitem) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
+	if self.item then
+		PickupItem(self.item) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
 
 		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
 			return

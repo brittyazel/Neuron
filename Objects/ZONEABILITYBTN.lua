@@ -148,7 +148,11 @@ function ZONEABILITYBTN:UpdateIcon()
 end
 
 
-function ZONEABILITYBTN:OnEnter(...)
+function ZONEABILITYBTN:OnEnter()
+
+	if not self.isShown then
+		return
+	end
 
 	if self.bar then
 		if self.tooltipsCombat and InCombatLockdown() then
