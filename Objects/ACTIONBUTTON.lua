@@ -356,8 +356,6 @@ function ACTIONBUTTON:SetType()
 
 end
 
-
-
 ------------------------------------------------------------
 --------------General Button Methods------------------------
 ------------------------------------------------------------
@@ -464,7 +462,7 @@ end
 function ACTIONBUTTON:SetSpellIcon(spell)
 	local _, texture
 
-	if not self.data.macro_Watch and not self.data.macro_Equip then
+	if not self.data.macro_BlizzMacro and not self.data.macro_EquipmentSet then
 
 		spell = (spell):lower()
 
@@ -490,8 +488,8 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 		end
 
 	else
-		if self.data.macro_Watch then
-			_, texture = GetMacroInfo(self.data.macro_Watch)
+		if self.data.macro_BlizzMacro then
+			_, texture = GetMacroInfo(self.data.macro_BlizzMacro)
 			self.data.macro_Icon = texture
 		end
 
@@ -512,10 +510,10 @@ function ACTIONBUTTON:SetItemIcon(item)
 	local name,texture, link, itemID
 
 	if IsEquippedItem(item) then --makes the border green when item is equipped and dragged to a button
-		self.border:SetVertexColor(0, 1.0, 0, 0.2)
-		self.border:Show()
+		self.button_border:SetVertexColor(0, 1.0, 0, 0.2)
+		self.button_border:Show()
 	else
-		self.border:Hide()
+		self.button_border:Hide()
 	end
 
 	--There is stored icon and dont want to update icon on fly
@@ -607,7 +605,7 @@ function ACTIONBUTTON:SetSpellState(spell)
 	end
 
 
-	self.macroname:SetText(self.data.macro_Name)
+	self.button_name:SetText(self.data.macro_Name)
 
 	self:UpdateSpellCount(spell)
 
@@ -624,7 +622,7 @@ function ACTIONBUTTON:SetItemState(item)
 		self:SetChecked(nil)
 	end
 
-	self.macroname:SetText(self.data.macro_Name)
+	self.button_name:SetText(self.data.macro_Name)
 
 	self:UpdateItemCount(item)
 end
@@ -804,7 +802,7 @@ ACTIONBUTTON.MODIFIER_STATE_CHANGED = ACTIONBUTTON.SPELLS_CHANGED
 
 
 function ACTIONBUTTON:ACTIONBAR_SLOT_CHANGED(...)
-	if self.data.macro_Watch or self.data.macro_Equip then
+	if self.data.macro_BlizzMacro or self.data.macro_EquipmentSet then
 		self:UpdateIcon()
 	end
 end
@@ -821,21 +819,21 @@ end
 
 
 function ACTIONBUTTON:UPDATE_MACROS(...)
-	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_Watch then
-		self:PlaceBlizzMacro(self.data.macro_Watch)
+	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_BlizzMacro then
+		self:PlaceBlizzMacro(self.data.macro_BlizzMacro)
 	end
 end
 
 
 function ACTIONBUTTON:EQUIPMENT_SETS_CHANGED(...)
-	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_Equip then
-		self:PlaceBlizzEquipSet(self.data.macro_Equip)
+	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_EquipmentSet then
+		self:PlaceBlizzEquipSet(self.data.macro_EquipmentSet)
 	end
 end
 
 
 function ACTIONBUTTON:PLAYER_EQUIPMENT_CHANGED(...)
-	if self.data.macro_Equip then
+	if self.data.macro_EquipmentSet then
 		self:UpdateIcon()
 	end
 end
@@ -1370,7 +1368,7 @@ function ACTIONBUTTON:ACTION_SetIcon(action)
 
 	if actionID then
 
-		self.macroname:SetText(GetActionText(actionID))
+		self.button_name:SetText(GetActionText(actionID))
 		if HasAction(actionID) then
 			self.iconframeicon:SetTexture(GetActionTexture(actionID))
 		else
@@ -1393,7 +1391,7 @@ function ACTIONBUTTON:ACTION_UpdateState(action)
 	self.count:SetText("")
 
 	if actionID then
-		self.macroname:SetText("")
+		self.button_name:SetText("")
 
 		if IsCurrentAction(actionID) or IsAutoRepeatAction(actionID) then
 			self:SetChecked(1)
@@ -1543,10 +1541,10 @@ function ACTIONBUTTON:UpdateIcon()
 	elseif self.item and #self.item>0 then
 		self:SetItemIcon(self.item)
 	else
-		self.macroname:SetText("")
+		self.button_name:SetText("")
 		self.iconframeicon:SetTexture("")
 		self.iconframeicon:Hide()
-		self.border:Hide()
+		self.button_border:Hide()
 	end
 end
 
@@ -1575,6 +1573,6 @@ function ACTIONBUTTON:UpdateState()
 
 	else
 		self:SetChecked(nil)
-		self.count:SetText("")
+		self.button_count:SetText("")
 	end
 end

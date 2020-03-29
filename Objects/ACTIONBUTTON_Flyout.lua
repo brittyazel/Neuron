@@ -546,7 +546,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 				elseif source:find("equipset") then
 					button.macroshow = spell
-					button.data.macro_Equip = spell
+					button.data.macro_EquipmentSet = spell
 					button:SetAttribute("prefix", "/equipset ")
 					button:SetAttribute("showtooltip", "")
 
@@ -775,7 +775,7 @@ function ACTIONBUTTON:Flyout_ReleaseButton(button)
 	button.stored = true
 
 	button.data.macro_Text = ""
-	button.data.macro_Equip = false
+	button.data.macro_EquipmentSet = false
 	button.data.macro_Icon = false
 
 	button.macrospell = nil
@@ -805,8 +805,8 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 		--self:SetScale(bar.data.scale)
 	end
 
-	self.hotkey:Hide()
-	self.macroname:Hide()
+	self.button_hotkey:Hide()
+	self.button_name:Hide()
 	self:RegisterForClicks("AnyUp")
 
 	self.equipcolor = { 0.1, 1, 0.1, 1 }

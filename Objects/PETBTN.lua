@@ -101,8 +101,8 @@ end
 
 function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 
-	self.macroname:SetText("")
-	self.count:SetText("")
+	self.button_name:SetText("")
+	self.button_count:SetText("")
 
 	if texture then
 		if isToken then
