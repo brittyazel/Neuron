@@ -381,7 +381,7 @@ function BUTTON:SetData(bar)
 		self.macroColor = bar.data.macroColor
 		self.countColor = bar.data.countColor
 
-		self.macroname:SetText(self.data.macro_Name) --custom macro's weren't showing the name
+		self.button_name:SetText(self.data.macro_Name) --custom macro's weren't showing the name
 
 		if not self.cdcolor1 then
 			self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
@@ -431,30 +431,30 @@ function BUTTON:SetData(bar)
 	end
 
 	if self.bindText then
-		self.hotkey:Show()
+		self.button_hotkey:Show()
 		if self.bindColor then
-			self.hotkey:SetTextColor((";"):split(self.bindColor))
+			self.button_hotkey:SetTextColor((";"):split(self.bindColor))
 		end
 	else
-		self.hotkey:Hide()
+		self.button_hotkey:Hide()
 	end
 
 	if self.macroText then
-		self.macroname:Show()
+		self.button_name:Show()
 		if self.macroColor then
-			self.macroname:SetTextColor((";"):split(self.macroColor))
+			self.button_name:SetTextColor((";"):split(self.macroColor))
 		end
 	else
-		self.macroname:Hide()
+		self.button_name:Hide()
 	end
 
 	if self.countText then
-		self.count:Show()
+		self.button_count:Show()
 		if self.countColor then
-			self.count:SetTextColor((";"):split(self.countColor))
+			self.button_count:SetTextColor((";"):split(self.countColor))
 		end
 	else
-		self.count:Hide()
+		self.button_count:Hide()
 	end
 
 	local down, up = "", ""
@@ -557,10 +557,10 @@ function BUTTON:SetSkinned(flyout)
 			local btnData = {
 				Normal = self.normaltexture,
 				Icon = self.iconframeicon,
-				HotKey = self.hotkey,
-				Count = self.count,
-				Name = self.name,
-				Border = self.border,
+				HotKey = self.button_hotkey,
+				Count = self.button_count,
+				Name = self.button_name,
+				Border = self.button_border,
 				Shine = self.shine,
 				Cooldown = self.iconframecooldown,
 				AutoCastable = self.autocastable,
@@ -630,54 +630,48 @@ end
 
 ---Updates the buttons "count", i.e. the spell charges
 function BUTTON:UpdateSpellCount(spell)
-	if spell then
-		local charges, maxCharges = GetSpellCharges(spell)
-		local count = GetSpellCount(spell)
+	local charges, maxCharges = GetSpellCharges(spell)
+	local count = GetSpellCount(spell)
 
-		if maxCharges and maxCharges > 1 then
-			self.count:SetText(charges)
-		elseif count and count > 0 then
-			self.count:SetText(count)
-		else
-			self.count:SetText("")
-		end
+	if maxCharges and maxCharges > 1 then
+		self.button_count:SetText(charges)
+	elseif count and count > 0 then
+		self.button_count:SetText(count)
 	else
-		self.count:SetText("")
+		self.button_count:SetText("")
 	end
 end
 
 
 ---Updates the buttons "count", i.e. the item stack size
 function BUTTON:UpdateItemCount(item)
-
 	local count = GetItemCount(item,nil,true)
 
 	if count and count > 1 then
-		self.count:SetText(count)
+		self.button_count:SetText(count)
 	else
-		self.count:SetText("")
+		self.button_count:SetText("")
 	end
 end
 
 
 function BUTTON:UpdateCooldown()
-
 	if self.actionID then
-		self:ACTION_SetCooldown(self.actionID)
+		self:SetActionCooldown(self.actionID)
 
-	elseif self.macroshow and #self.macroshow>0 then
+	elseif self.override and #self.override>0 then
 
-		if NeuronItemCache[self.macroshow] then
-			self:SetItemCooldown(self.macroshow)
+		if NeuronItemCache[self.override] then
+			self:SetItemCooldown(self.override)
 		else
-			self:SetSpellCooldown(self.macroshow)
+			self:SetSpellCooldown(self.override)
 		end
 
-	elseif self.macrospell and #self.macrospell>0 then
-		self:SetSpellCooldown(self.macrospell)
+	elseif self.spell and #self.spell>0 then
+		self:SetSpellCooldown(self.spell)
 
-	elseif self.macroitem and #self.macroitem>0 then
-		self:SetItemCooldown(self.macroitem)
+	elseif self.item and #self.item>0 then
+		self:SetItemCooldown(self.item)
 
 	else
 		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
@@ -723,7 +717,7 @@ function BUTTON:SetItemCooldown(item)
 	end
 end
 
-function BUTTON:ACTION_SetCooldown(action)
+function BUTTON:SetActionCooldown(action)
 	if action then
 		local actionID = tonumber(action)
 
@@ -793,7 +787,7 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 
 			self:CancelTimer(self.iconframecooldown.auraUpdateTimer)
 			--self.iconframecooldown.timer:SetText("")
-			self.border:Hide()
+			self.button_border:Hide()
 
 			--self.iconframecooldown.showAuraCountdown = false
 			self.iconframecooldown.showAuraBorder = false
@@ -838,18 +832,18 @@ function BUTTON:AuraCounterUpdate()
 	if self.iconframecooldown.showAuraBorder then
 		if coolDown > 0 then
 			if self.iconframecooldown.auraType == "buff" then
-				self.border:SetVertexColor(self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], 1.0)
+				self.button_border:SetVertexColor(self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], 1.0)
 			elseif self.iconframecooldown.auraType == "debuff" and self.iconframecooldown.unit == "target" then
-				self.border:SetVertexColor(self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], 1.0)
+				self.button_border:SetVertexColor(self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], 1.0)
 			end
 
-			self.border:Show()
+			self.button_border:Show()
 
 		else
-			self.border:Hide()
+			self.button_border:Hide()
 		end
 	else
-		self.border:Hide()
+		self.button_border:Hide()
 	end
 
 end
@@ -861,7 +855,7 @@ end
 
 function BUTTON:UpdateAll()
 	self:UpdateData()
-	self:UpdateButton()
+	self:UpdateUsable()
 	self:UpdateIcon()
 	self:UpdateState()
 	self:UpdateTimers()
@@ -873,7 +867,7 @@ function BUTTON:UpdateData()
 	-- empty --
 end
 
-function BUTTON:UpdateButton()
+function BUTTON:UpdateUsable()
 	-- empty --
 end
 
@@ -889,7 +883,7 @@ end
 function BUTTON:UpdateTimers()
 	self:UpdateCooldown()
 	for k in pairs(Neuron.unitAuras) do
-		self:UpdateAuraWatch(k, self.macrospell)
+		self:UpdateAuraWatch(k, self.spell)
 	end
 end
 

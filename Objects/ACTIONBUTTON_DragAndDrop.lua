@@ -82,15 +82,13 @@ function ACTIONBUTTON:OnReceiveDrag()
 		macroCache[2] = self.data.macro_Text
 		macroCache[3] = self.data.macro_Icon
 		macroCache[4] = self.data.macro_Name
-		macroCache[5] = self.data.macro_Auto
-		macroCache[6] = self.data.macro_Watch
-		macroCache[7] = self.data.macro_Equip
-		macroCache[8] = self.data.macro_Note
-		macroCache[9] = self.data.macro_UseNote
+		macroCache[5] = self.data.macro_Note
+		macroCache[6] = self.data.macro_UseNote
+		macroCache[7] = self.data.macro_BlizzMacro
+		macroCache[8] = self.data.macro_EquipmentSet
 	else
 		wipe(macroCache)
 	end
-
 
 	if macroDrag[1] then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
 		self:PlaceMacro()
@@ -186,26 +184,23 @@ function ACTIONBUTTON:PickUpMacro()
 			macroDrag[2] = self.data.macro_Text
 			macroDrag[3] = self.data.macro_Icon
 			macroDrag[4] = self.data.macro_Name
-			macroDrag[5] = self.data.macro_Auto
-			macroDrag[6] = self.data.macro_Watch
-			macroDrag[7] = self.data.macro_Equip
-			macroDrag[8] = self.data.macro_Note
-			macroDrag[9] = self.data.macro_UseNote
+			macroDrag[5] = self.data.macro_Note
+			macroDrag[6] = self.data.macro_UseNote
+			macroDrag[7] = self.data.macro_BlizzMacro
+			macroDrag[8] = self.data.macro_EquipmentSet
 
 			self.data.macro_Text = ""
 			self.data.macro_Icon = false
 			self.data.macro_Name = ""
-			self.data.macro_Auto = false
-			self.data.macro_Watch = false
-			self.data.macro_Equip = false
 			self.data.macro_Note = ""
 			self.data.macro_UseNote = false
+			self.data.macro_BlizzMacro = false
+			self.data.macro_EquipmentSet = false
 
-			self.macrospell = nil
+			self.spell = nil
 			self.spellID = nil
-			self.macroitem = nil
-			self.macroshow = nil
-			self.macroicon = nil
+			self.item = nil
+			self.override = nil
 
 			self:SetType()
 		end
@@ -218,11 +213,10 @@ function ACTIONBUTTON:PlaceMacro()
 	self.data.macro_Text = macroDrag[2]
 	self.data.macro_Icon = macroDrag[3]
 	self.data.macro_Name = macroDrag[4]
-	self.data.macro_Auto = macroDrag[5]
-	self.data.macro_Watch = macroDrag[6]
-	self.data.macro_Equip = macroDrag[7]
-	self.data.macro_Note = macroDrag[8]
-	self.data.macro_UseNote = macroDrag[9]
+	self.data.macro_Note = macroDrag[5]
+	self.data.macro_UseNote = macroDrag[6]
+	self.data.macro_BlizzMacro = macroDrag[7]
+	self.data.macro_EquipmentSet = macroDrag[8]
 
 end
 
@@ -242,29 +236,26 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	end
 
 
-	local spellInfoName, icon
+	local spellName, icon
 
 	if NeuronSpellCache[spell] then
-		spellInfoName = NeuronSpellCache[spell].spellName
+		spellName = NeuronSpellCache[spell].spellName
 		icon = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
 		if not icon then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
 			icon = NeuronSpellCache[spell].icon
 		end
 	else
-		spellInfoName , _, icon = GetSpellInfo(spellID)
+		spellName , _, icon = GetSpellInfo(spellID)
 	end
 
 
 	self.data.macro_Text = self:AutoWriteMacro(spell)
-	self.data.macro_Auto = spell
-
 	self.data.macro_Icon = icon  --also set later in SetSpellIcon
-	self.data.macro_Name = spellInfoName
-	self.data.macro_Watch = false
-	self.data.macro_Equip = false
+	self.data.macro_Name = spellName
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
-
+	self.data.macro_BlizzMacro = false
+	self.data.macro_EquipmentSet = false
 end
 
 function ACTIONBUTTON:PlacePetAbility(action1, action2)
@@ -276,22 +267,17 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		local spellInfoName , _, icon = GetSpellInfo(spellID)
 
 		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
-
-		self.data.macro_Auto = spellInfoName
-
-
 		self.data.macro_Icon = icon --also set later in SetSpellIcon
 		self.data.macro_Name = spellInfoName
-		self.data.macro_Watch = false
-		self.data.macro_Equip = false
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
+		self.data.macro_BlizzMacro = false
+		self.data.macro_EquipmentSet = false
 		self.data.macro_isPetSpell = true
 
 	else
 		Neuron:Print("Sorry, you cannot place that ability at this time.")
 	end
-
 end
 
 
@@ -311,11 +297,10 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 
 	self.data.macro_Icon = false
 	self.data.macro_Name = item
-	self.data.macro_Auto = false
-	self.data.macro_Watch = false
-	self.data.macro_Equip = false
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
+	self.data.macro_BlizzMacro = false
+	self.data.macro_EquipmentSet = false
 
 end
 
@@ -323,66 +308,63 @@ end
 function ACTIONBUTTON:PlaceBlizzMacro(action1)
 	if action1 == 0 then
 		return
-	else
-
-		local name, icon, body = GetMacroInfo(action1)
-
-		if body then
-
-			self.data.macro_Text = body
-			self.data.macro_Name = name
-			self.data.macro_Watch = name
-			self.data.macro_Icon = icon
-		else
-			self.data.macro_Text = ""
-			self.data.macro_Name = ""
-			self.data.macro_Watch = false
-			self.data.macro_Icon = false
-		end
-
-		self.data.macro_Equip = false
-		self.data.macro_Auto = false
-		self.data.macro_Note = ""
-		self.data.macro_UseNote = false
-
 	end
+
+	local name, texture, body = GetMacroInfo(action1)
+
+	if body then
+		self.data.macro_Text = body
+		self.data.macro_Name = name
+		self.data.macro_Icon = texture
+		self.data.macro_BlizzMacro = name
+	else
+		self.data.macro_Text = ""
+		self.data.macro_Name = ""
+		self.data.macro_Icon = false
+		self.data.macro_BlizzMacro = false
+	end
+
+	self.data.macro_Note = ""
+	self.data.macro_UseNote = false
+	self.data.macro_EquipmentSet = false
 end
 
 
 function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 	if equipmentSetName == 0 then
 		return
-	else
-
-		local equipsetNameIndex = 0 --cycle through the equipment sets to find the index of the one with the right name
-
-		for i = 1,C_EquipmentSet.GetNumEquipmentSets() do
-			if equipmentSetName == C_EquipmentSet.GetEquipmentSetInfo(i) then
-				equipsetNameIndex = i
-			end
-		end
-
-
-		local name, icon = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
-		if texture then
-			self.data.macro_Text = "/equipset "..equipmentSetName
-			self.data.macro_Equip = equipmentSetName
-			self.data.macro_Name = name
-			self.data.macro_Icon = icon
-		else
-			self.data.macro_Text = ""
-			self.data.macro_Equip = false
-			self.data.macro_Name = ""
-			self.data.macro_Icon = false
-		end
-
-		self.data.macro_Name = ""
-		self.data.macro_Watch = false
-		self.data.macro_Auto = false
-		self.data.macro_Note = ""
-		self.data.macro_UseNote = false
-
 	end
+
+	local equipsetNameIndex --cycle through the equipment sets to find the index of the one with the right name
+
+	for i = 0,C_EquipmentSet.GetNumEquipmentSets()-1 do
+		if equipmentSetName == C_EquipmentSet.GetEquipmentSetInfo(i) then
+			equipsetNameIndex = i
+			break
+		end
+	end
+
+	if not equipsetNameIndex then --bail out of we don't find an equipset index (should never happen but just in case
+		return
+	end
+
+	local name, texture = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
+	if texture then
+		self.data.macro_Text = "/equipset "..equipmentSetName
+		self.data.macro_Name = name
+		self.data.macro_Icon = texture
+		self.data.macro_EquipmentSet = equipmentSetName
+	else
+		self.data.macro_Text = ""
+		self.data.macro_Name = ""
+		self.data.macro_Icon = false
+		self.data.macro_EquipmentSet = false
+	end
+
+	self.data.macro_Name = ""
+	self.data.macro_Note = ""
+	self.data.macro_UseNote = false
+	self.data.macro_BlizzMacro = false
 end
 
 
@@ -390,147 +372,127 @@ end
 --Based on discussion thread http://www.wowinterface.com/forums/showthread.php?t=49599&page=2
 --More dynamic than the manual list that was originally implement
 
-
-
-
 function ACTIONBUTTON:PlaceMount(action1, action2)
-
-
 	local mountName, mountSpellID, mountIcon = C_MountJournal.GetMountInfoByID(action1)
 
 	if action1 == 0 then
 		return
-	else
-		--The Summon Random Mount from the Mount Journal
-		if action1 == 268435455 then
-			self.data.macro_Text = "#autowrite\n/run C_MountJournal.SummonByID(0);"
-			self.data.macro_Auto = "Random Mount;"
-			self.data.macro_Icon = "Interface\\ICONS\\ACHIEVEMENT_GUILDPERK_MOUNTUP"
-			self.data.macro_Name = "Random Mount"
-			--Any other mount from the Journal
-		else
-
-			self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
-			self.data.macro_Auto = mountName..";"
-			self.data.macro_Icon = mountIcon
-			self.data.macro_Name = mountName
-		end
-
-		self.data.macro_Watch = false
-		self.data.macro_Equip = false
-		self.data.macro_Note = ""
-		self.data.macro_UseNote = false
-
 	end
+
+	--The Summon Random Mount from the Mount Journal
+	if action1 == 268435455 then
+		self.data.macro_Text = "#autowrite\n/run C_MountJournal.SummonByID(0);"
+		self.data.macro_Icon = "Interface\\ICONS\\ACHIEVEMENT_GUILDPERK_MOUNTUP"
+		self.data.macro_Name = "Random Mount"
+		--Any other mount from the Journal
+	else
+		self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
+		self.data.macro_Icon = mountIcon
+		self.data.macro_Name = mountName
+	end
+	self.data.macro_Note = ""
+	self.data.macro_UseNote = false
+	self.data.macro_BlizzMacro = false
+	self.data.macro_EquipmentSet = false
+
 end
 
 
 function ACTIONBUTTON:PlaceCompanion(action1, action2)
-
 	if action1 == 0 then
 		return
-
-	else
-		local _, _, spellID, icon = GetCompanionInfo(action2, action1)
-		local name = GetSpellInfo(spellID)
-
-		if name then
-			self.data.macro_Name = name
-			self.data.macro_Text = self:AutoWriteMacro(name)
-			self.data.macro_Auto = name
-		else
-			self.data.macro_Name = ""
-			self.data.macro_Text = ""
-			self.data.macro_Auto = false
-		end
-
-		self.data.macro_Icon = icon
-		self.data.macro_Watch = false
-		self.data.macro_Equip = false
-		self.data.macro_Note = ""
-		self.data.macro_UseNote = false
-
 	end
+
+	local _, _, spellID, icon = GetCompanionInfo(action2, action1)
+	local name = GetSpellInfo(spellID)
+
+	if name then
+		self.data.macro_Name = name
+		self.data.macro_Text = self:AutoWriteMacro(name)
+	else
+		self.data.macro_Name = ""
+		self.data.macro_Text = ""
+	end
+
+	self.data.macro_Icon = icon
+	self.data.macro_Note = ""
+	self.data.macro_UseNote = false
+	self.data.macro_BlizzMacro = false
+	self.data.macro_EquipmentSet = false
 end
 
 function ACTIONBUTTON:PlaceBattlePet(action1, action2)
-	local petName, petIcon
-
 	if action1 == 0 then
 		return
-	else
-		_, _, _, _, _, _, _,petName, petIcon= C_PetJournal.GetPetInfoByPetID(action1)
-
-		self.data.macro_Text = "#autowrite\n/summonpet "..petName
-		self.data.macro_Auto = petName..";"
-		self.data.macro_Icon = petIcon
-		self.data.macro_Name = petName
-		self.data.macro_Watch = false
-		self.data.macro_Equip = false
-		self.data.macro_Note = ""
-		self.data.macro_UseNote = false
-
 	end
+
+	local _, _, _, _, _, _, _,petName, petIcon= C_PetJournal.GetPetInfoByPetID(action1)
+
+	self.data.macro_Text = "#autowrite\n/summonpet "..petName
+	self.data.macro_Icon = petIcon
+	self.data.macro_Name = petName
+	self.data.macro_Note = ""
+	self.data.macro_UseNote = false
+	self.data.macro_BlizzMacro = false
+	self.data.macro_EquipmentSet = false
 end
 
 
 function ACTIONBUTTON:PlaceFlyout(action1, action2)
 	if action1 == 0 then
 		return
-	else
-		local count = #self.bar.buttons
-		local columns = self.bar.data.columns or count
-		local rows = count/columns
-
-		local point = self:GetPosition(UIParent)
-
-		if columns/rows > 1 then
-
-			if point:find("BOTTOM") then
-				point = "b:t:1"
-			elseif point:find("TOP") then
-				point = "t:b:1"
-			elseif point:find("RIGHT") then
-				point = "r:l:12"
-			elseif point:find("LEFT") then
-				point = "l:r:12"
-			else
-				point = "r:l:12"
-			end
-		else
-			if point:find("RIGHT") then
-				point = "r:l:12"
-			elseif point:find("LEFT") then
-				point = "l:r:12"
-			elseif point:find("BOTTOM") then
-				point = "b:t:1"
-			elseif point:find("TOP") then
-				point = "t:b:1"
-			else
-				point = "r:l:12"
-			end
-		end
-
-		self.data.macro_Text = "/flyout blizz:"..action1..":l:"..point..":c"
-		self.data.macro_Icon = false
-		self.data.macro_Name = ""
-		self.data.macro_Auto = false
-		self.data.macro_Watch = false
-		self.data.macro_Equip = false
-		self.data.macro_Note = ""
-		self.data.macro_UseNote = false
-
-		self:UpdateFlyout(true)
-
 	end
+
+	local count = #self.bar.buttons
+	local columns = self.bar.data.columns or count
+	local rows = count/columns
+
+	local point = self:GetPosition(UIParent)
+
+	if columns/rows > 1 then
+
+		if point:find("BOTTOM") then
+			point = "b:t:1"
+		elseif point:find("TOP") then
+			point = "t:b:1"
+		elseif point:find("RIGHT") then
+			point = "r:l:12"
+		elseif point:find("LEFT") then
+			point = "l:r:12"
+		else
+			point = "r:l:12"
+		end
+	else
+		if point:find("RIGHT") then
+			point = "r:l:12"
+		elseif point:find("LEFT") then
+			point = "l:r:12"
+		elseif point:find("BOTTOM") then
+			point = "b:t:1"
+		elseif point:find("TOP") then
+			point = "t:b:1"
+		else
+			point = "r:l:12"
+		end
+	end
+
+	self.data.macro_Text = "/flyout blizz:"..action1..":l:"..point..":c"
+	self.data.macro_Icon = false
+	self.data.macro_Name = ""
+	self.data.macro_Note = ""
+	self.data.macro_UseNote = false
+	self.data.macro_BlizzMacro = false
+	self.data.macro_EquipmentSet = false
+
+	self:UpdateFlyout(true)
 end
 
 
 function ACTIONBUTTON:SetMouseCursor()
 
-	if self.macroshow then
+	if self.override then
 		local spellID
-		_,_,_,_,_,_,spellID = GetSpellInfo(self.macroshow)
+		_,_,_,_,_,_,spellID = GetSpellInfo(self.override)
 		if spellID then
 			PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
 		end
@@ -539,9 +501,9 @@ function ACTIONBUTTON:SetMouseCursor()
 		end
 	end
 
-	if self.macrospell then
+	if self.spell then
 		local spellID
-		_,_,_,_,_,_,spellID = GetSpellInfo(self.macrospell)
+		_,_,_,_,_,_,spellID = GetSpellInfo(self.spell)
 		if spellID then
 			PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
 		end
@@ -550,8 +512,8 @@ function ACTIONBUTTON:SetMouseCursor()
 		end
 	end
 
-	if self.macroitem then
-		PickupItem(self.macroitem) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
+	if self.item then
+		PickupItem(self.item) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
 
 		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
 			return
@@ -560,5 +522,4 @@ function ACTIONBUTTON:SetMouseCursor()
 
 	--failsafe so there is 'something' on the mouse cursor
 	PickupItem(1217) --questionmark symbol
-
 end

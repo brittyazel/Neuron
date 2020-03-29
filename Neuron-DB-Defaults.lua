@@ -79,11 +79,10 @@ local genericSpecData = {
 	macro_Text = "",
 	macro_Icon = false,
 	macro_Name = "",
-	macro_Auto = false,
-	macro_Watch = false,
-	macro_Equip = false,
 	macro_Note = "",
 	macro_UseNote = false,
+	macro_BlizzMacro = false,
+	macro_EquipmentSet = false,
 }
 
 local genericStatusBtnData= {

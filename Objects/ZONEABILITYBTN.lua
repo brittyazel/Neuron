@@ -62,8 +62,8 @@ function ZONEABILITYBTN:SetType()
 
 	self:SetAttribute("type1", "macro")
 
-	--macro content gets set in UpdateButton
-	self:UpdateButton()
+	--macro content gets set in UpdateData
+	self:UpdateData()
 
 	self:SetScript("OnDragStart", function(self)
 		if self.spellID then
@@ -79,7 +79,7 @@ end
 
 function ZONEABILITYBTN:OnEvent(event, ...)
 
-	self:UpdateButton();
+	self:UpdateData();
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
@@ -88,7 +88,7 @@ function ZONEABILITYBTN:OnEvent(event, ...)
 end
 
 ---overwrite function in parent class BUTTON
-function ZONEABILITYBTN:UpdateButton()
+function ZONEABILITYBTN:UpdateData()
 
 	--update the ZoneAbility spell ID
 	self.spellID = GetZoneAbilitySpellInfo();
@@ -148,7 +148,11 @@ function ZONEABILITYBTN:UpdateIcon()
 end
 
 
-function ZONEABILITYBTN:OnEnter(...)
+function ZONEABILITYBTN:OnEnter()
+
+	if not self.isShown then
+		return
+	end
 
 	if self.bar then
 		if self.tooltipsCombat and InCombatLockdown() then

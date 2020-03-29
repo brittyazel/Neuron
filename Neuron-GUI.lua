@@ -2702,7 +2702,7 @@ function NeuronGUI:macroText_OnTextChanged(frame)
 			if (button and buttonSpec and state) then
 				if button.DB[buttonSpec][state] then
 					button.DB[buttonSpec][state].macro_Text = frame:GetText()
-					button.DB[buttonSpec][state].macro_Watch = false
+					button.DB[buttonSpec][state].macro_BlizzMacro = false
 				else
 					--Neuron:Print("nothinghere")
 					--button.DB[buttonSpec][state] = button:build()
@@ -3026,10 +3026,9 @@ function NeuronGUI:ResetButtonFields()
 	data.macro_Text = ""
 	data.macro_Icon = false
 	data.macro_Name = ""
-	data.macro_Auto = false
-	data.macro_Watch = false
-	data.macro_Equip = false
 	data.macro_Note = ""
+	data.macro_BlizzMacro = false
+	data.macro_EquipmentSet = false
 
 	NBTNE.nameedit:SetText("")
 	NBTNE.noteedit:SetFocus()

@@ -1724,7 +1724,7 @@ end
 function BAR:UpdateObjects()
 	for _, object in pairs(self.buttons) do
 		if object then
-			object:UpdateButton()
+			object:UpdateUsable()
 		end
 	end
 end

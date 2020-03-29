@@ -63,8 +63,8 @@ function EXTRABTN:SetType()
 
 	self:SetAttribute("type1", "action")
 
-	--action content gets set in UpdateButton
-	self:UpdateButton()
+	--action content gets set in UpdateData
+	self:UpdateData()
 
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
@@ -75,7 +75,7 @@ end
 
 function EXTRABTN:OnEvent(event, ...)
 
-	self:UpdateButton()
+	self:UpdateData()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
@@ -85,7 +85,7 @@ function EXTRABTN:OnEvent(event, ...)
 end
 
 ---overwrite function in parent class BUTTON
-function EXTRABTN:UpdateButton()
+function EXTRABTN:UpdateData()
 
 	--default to 169 as is the most of then the case as of 8.1
 	self.actionID = 169
@@ -104,7 +104,7 @@ function EXTRABTN:UpdateButton()
 	if HasExtraActionBar() then
 		_, self.spellID = GetActionInfo(self.actionID)
 	else
-		self.spellID = ""
+		self.spellID = nil
 	end
 
 	if self.spellID then
@@ -160,7 +160,11 @@ function EXTRABTN:UpdateIcon()
 end
 
 
-function EXTRABTN:OnEnter(...)
+function EXTRABTN:OnEnter()
+
+	if not self.isShown then
+		return
+	end
 
 	if self.bar then
 		if self.tooltipsCombat and InCombatLockdown() then
@@ -171,7 +175,7 @@ function EXTRABTN:OnEnter(...)
 
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-			if self.tooltipsEnhanced and self.spellID then
+			if self.tooltipsEnhanced then
 				GameTooltip:SetSpellByID(self.spellID)
 			elseif self.spellName then
 				GameTooltip:SetText(self.spellName)
