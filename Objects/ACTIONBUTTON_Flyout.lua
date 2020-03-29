@@ -460,7 +460,7 @@ end
 
 
 
-function ACTIONBUTTON:Flyout_UpdateButtons(init)
+function ACTIONBUTTON:Flyout_UpdateData(init)
 	local slot
 	local pet = false
 
@@ -752,7 +752,7 @@ function ACTIONBUTTON:UpdateFlyout(init)
 		self.flyout.mode = select(7, (":"):split(options))
 		self.flyout.hideArrow = select(8, (":"):split(options))
 
-		self:Flyout_UpdateButtons(init)
+		self:Flyout_UpdateData(init)
 		self:Flyout_UpdateBar()
 
 		if not self.bar.watchframes then
@@ -890,8 +890,8 @@ function ACTIONBUTTON:Flyout_GetButton()
 	button:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	button:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
-	button:SetScript("OnShow", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
-	button:SetScript("OnHide", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
+	button:SetScript("OnShow", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
+	button:SetScript("OnHide", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
 
 	button:WrapScript(button, "OnClick", [[
 			local button = self:GetParent():GetParent()
@@ -907,7 +907,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 	button:SetData(self.flyout.bar)
 
-	button:Flyout_UpdateButtons(true)
+	button:Flyout_UpdateData(true)
 	button:SetSkinned(true)
 	button:Show()
 

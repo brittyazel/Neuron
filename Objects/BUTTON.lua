@@ -855,7 +855,7 @@ end
 
 function BUTTON:UpdateAll()
 	self:UpdateData()
-	self:UpdateButton()
+	self:UpdateUsable()
 	self:UpdateIcon()
 	self:UpdateState()
 	self:UpdateTimers()
@@ -867,7 +867,7 @@ function BUTTON:UpdateData()
 	-- empty --
 end
 
-function BUTTON:UpdateButton()
+function BUTTON:UpdateUsable()
 	-- empty --
 end
 

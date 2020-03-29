@@ -63,8 +63,8 @@ function EXTRABTN:SetType()
 
 	self:SetAttribute("type1", "action")
 
-	--action content gets set in UpdateButton
-	self:UpdateButton()
+	--action content gets set in UpdateData
+	self:UpdateData()
 
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
@@ -75,7 +75,7 @@ end
 
 function EXTRABTN:OnEvent(event, ...)
 
-	self:UpdateButton()
+	self:UpdateData()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
@@ -85,7 +85,7 @@ function EXTRABTN:OnEvent(event, ...)
 end
 
 ---overwrite function in parent class BUTTON
-function EXTRABTN:UpdateButton()
+function EXTRABTN:UpdateData()
 
 	--default to 169 as is the most of then the case as of 8.1
 	self.actionID = 169
