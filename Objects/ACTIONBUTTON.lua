@@ -394,10 +394,10 @@ function ACTIONBUTTON:UpdateData()
 		end
 
 		--if the cmd contains the string "#show" it means we want to overwrite some part of the macro graphics, either the tooltip or the icon
-		if (not override or #override == 0) and prefix:find("^#show") then
+		if (not override or #override == 0) and prefix:find("^#show") then --we only want the first in the list if there is a list
 			override = SecureCmdOptionParse(content)
 			overridePrefix = prefix
-		elseif (not spell or #spell == 0) and cmdSlash[prefix] then
+		elseif (not spell or #spell == 0) and cmdSlash[prefix] then --we only want the first in the list if there is a list
 			spell, target = SecureCmdOptionParse(content)
 			spellPrefix = prefix
 		end
@@ -443,7 +443,6 @@ function ACTIONBUTTON:UpdateData()
 		end
 	end
 
-
 	if item and #item > 0 then
 		self.item = item
 		self.spell = nil;
@@ -453,7 +452,6 @@ function ACTIONBUTTON:UpdateData()
 	end
 
 	self.unit = target or "target"
-
 end
 
 
@@ -485,7 +483,6 @@ end
 
 
 function ACTIONBUTTON:StartGlow()
-
 	if self.spellGlow then
 		if self.spellGlowDef then
 			ActionButton_ShowOverlayGlow(self)
@@ -497,7 +494,6 @@ function ACTIONBUTTON:StartGlow()
 end
 
 function ACTIONBUTTON:StopGlow()
-
 	if self.spellGlow then
 		if self.spellGlowDef then
 			ActionButton_HideOverlayGlow(self)
@@ -766,7 +762,6 @@ function ACTIONBUTTON:UpdateIcon()
 		self.iconframeicon:Hide()
 		self.button_border:Hide()
 	end
-
 end
 
 function ACTIONBUTTON:SetSpellIcon(spell)
@@ -800,7 +795,7 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 end
 
 function ACTIONBUTTON:SetItemIcon(item)
-	local name,texture
+	local texture
 
 	if IsEquippedItem(item) then --makes the border green when item is equipped and dragged to a button
 		self.button_border:SetVertexColor(0, 1.0, 0, 0.2)
@@ -809,11 +804,10 @@ function ACTIONBUTTON:SetItemIcon(item)
 		self.button_border:Hide()
 	end
 
-
 	if NeuronItemCache[item] then
 		texture = GetItemIcon("item:"..NeuronItemCache[item]..":0:0:0:0:0:0:0")
 	else
-		name,_,_,_,_,_,_,_,_,texture = GetItemInfo(item)
+		_,_,_,_,_,_,_,_,_,texture = GetItemInfo(item)
 	end
 
 	if texture then
@@ -826,23 +820,20 @@ function ACTIONBUTTON:SetItemIcon(item)
 end
 
 function ACTIONBUTTON:SetActionIcon(action)
+	local texture
 	local actionID = tonumber(action)
 
-	if actionID then
+	if actionID and HasAction(actionID)then
+		texture = GetActionTexture(actionID)
+	end
 
-		self.button_name:SetText(GetActionText(actionID))
-		if HasAction(actionID) then
-			self.iconframeicon:SetTexture(GetActionTexture(actionID))
-		else
-			self.iconframeicon:SetTexture(0,0,0)
-		end
-
-		self.iconframeicon:Show()
+	if texture then
+		self.iconframeicon:SetTexture(texture)
 	else
 		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
 
-	return self.iconframeicon:GetTexture()
+	self.iconframeicon:Show()
 end
 
 -----------------------------------------------------------------------------------------
@@ -862,6 +853,7 @@ function ACTIONBUTTON:UpdateState()
 		self:SetItemState(self.item)
 	else
 		self:SetChecked(nil)
+		self.button_name:SetText("")
 		self.button_count:SetText("")
 	end
 end
@@ -889,18 +881,14 @@ function ACTIONBUTTON:SetItemState(item)
 	end
 
 	self.button_name:SetText(self.data.macro_Name)
-
 	self:UpdateItemCount(item)
+	self:UpdateUsable()
 end
 
 function ACTIONBUTTON:SetActionState(action)
 	local actionID = tonumber(action)
 
-	self.count:SetText("")
-
 	if actionID then
-		self.button_name:SetText("")
-
 		if IsCurrentAction(actionID) or IsAutoRepeatAction(actionID) then
 			self:SetChecked(1)
 		else
@@ -909,6 +897,10 @@ function ACTIONBUTTON:SetActionState(action)
 	else
 		self:SetChecked(nil)
 	end
+
+	self.button_name:SetText(self.data.macro_Name)
+	self.count:SetText("")
+	self:UpdateUsable()
 end
 
 -----------------------------------------------------------------------------------------
@@ -962,7 +954,9 @@ end
 function ACTIONBUTTON:SetUsableItem(item)
 	local isUsable, notEnoughMana = IsUsableItem(item)
 
-	if NeuronToyCache[item:lower()] then isUsable = true end
+	if NeuronToyCache[item:lower()] then
+		isUsable = true
+	end
 
 	if notEnoughMana and self.manacolor then
 		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
@@ -972,7 +966,6 @@ function ACTIONBUTTON:SetUsableItem(item)
 		else
 			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
 		end
-
 	else
 		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
 	end

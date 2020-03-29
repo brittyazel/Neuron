@@ -175,7 +175,7 @@ function EXTRABTN:OnEnter()
 
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
-			if self.tooltipsEnhanced then
+			if self.tooltipsEnhanced and self.spellID then
 				GameTooltip:SetSpellByID(self.spellID)
 			elseif self.spellName then
 				GameTooltip:SetText(self.spellName)
