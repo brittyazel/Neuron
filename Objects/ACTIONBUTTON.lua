@@ -899,7 +899,7 @@ function ACTIONBUTTON:SetActionState(action)
 	end
 
 	self.button_name:SetText(self.data.macro_Name)
-	self.count:SetText("")
+	self.button_count:SetText("")
 	self:UpdateUsable()
 end
 
