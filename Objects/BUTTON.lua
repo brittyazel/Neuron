@@ -646,7 +646,7 @@ end
 ---Updates the buttons "count", i.e. the item stack size
 function BUTTON:UpdateItemCount(item)
 	local count = GetItemCount(item,nil,true)
-
+	
 	if count and count > 1 then
 		self.button_count:SetText(count)
 	else
@@ -658,28 +658,19 @@ end
 function BUTTON:UpdateCooldown()
 	if self.actionID then
 		self:SetActionCooldown(self.actionID)
-
-	elseif self.override and #self.override>0 then
-
-		if NeuronItemCache[self.override] then
-			self:SetItemCooldown(self.override)
-		else
-			self:SetSpellCooldown(self.override)
-		end
-
-	elseif self.spell and #self.spell>0 then
+	elseif self.overrideSpell and not self.overrideIconOnly then
+		self:SetSpellCooldown(self.overrideSpell)
+	elseif self.overrideItem and not self.overrideIconOnly then
+		self:SetItemCooldown(self.overrideIconOnly)
+	elseif self.spell then
 		self:SetSpellCooldown(self.spell)
-
-	elseif self.item and #self.item>0 then
+	elseif self.item then
 		self:SetItemCooldown(self.item)
-
 	else
 		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
-		self:SetCooldownTimer()
+		self:CancelCooldownTimer(true)
 	end
-
 end
-
 
 function BUTTON:SetSpellCooldown(spell)
 	if spell then
@@ -700,16 +691,11 @@ function BUTTON:SetSpellCooldown(spell)
 	end
 end
 
-
-
 function BUTTON:SetItemCooldown(item)
 	if item then
 		local id = NeuronItemCache[item]
-
 		if id then
-
 			local start, duration, enable, modrate = GetItemCooldown(id)
-
 			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 		end
 	else
@@ -720,13 +706,9 @@ end
 function BUTTON:SetActionCooldown(action)
 	if action then
 		local actionID = tonumber(action)
-
 		if actionID then
-
 			if HasAction(actionID) then
-
 				local start, duration, enable, modrate = GetActionCooldown(actionID)
-
 				self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
 			end
 		end

@@ -640,8 +640,11 @@ ACTIONBUTTON.UPDATE_BONUS_ACTIONBAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
 
 
 function ACTIONBUTTON:SPELL_UPDATE_CHARGES(...)
-	local spell = self.spell
-	self:UpdateSpellCount(spell)
+	if self.overrideSpell then
+		self:UpdateSpellCount(self.overrideSpell)
+	else
+		self:UpdateSpellCount(self.spell)
+	end
 end
 
 
