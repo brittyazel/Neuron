@@ -646,7 +646,7 @@ end
 ---Updates the buttons "count", i.e. the item stack size
 function BUTTON:UpdateItemCount(item)
 	local count = GetItemCount(item,nil,true)
-	
+
 	if count and count > 1 then
 		self.button_count:SetText(count)
 	else
@@ -658,10 +658,6 @@ end
 function BUTTON:UpdateCooldown()
 	if self.actionID then
 		self:SetActionCooldown(self.actionID)
-	elseif self.overrideSpell and not self.overrideIconOnly then
-		self:SetSpellCooldown(self.overrideSpell)
-	elseif self.overrideItem and not self.overrideIconOnly then
-		self:SetItemCooldown(self.overrideIconOnly)
 	elseif self.spell then
 		self:SetSpellCooldown(self.spell)
 	elseif self.item then

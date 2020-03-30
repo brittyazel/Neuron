@@ -1721,7 +1721,7 @@ function BAR:UpdateObjectVisibility(show)
 	end
 end
 
-function BAR:UpdateObjects()
+function BAR:UpdateObjectUsability()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:UpdateUsable()
@@ -1729,7 +1729,7 @@ function BAR:UpdateObjects()
 	end
 end
 
-function BAR:UpdateIcons()
+function BAR:UpdateObjectIcons()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:UpdateIcon()
@@ -2988,7 +2988,7 @@ function BAR:SetBorderStyle(msg, gui, checked, query)
 		end
 	end
 
-	self:UpdateIcons()
+	self:UpdateObjectIcons()
 end
 
 

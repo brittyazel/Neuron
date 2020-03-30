@@ -2870,7 +2870,7 @@ function NeuronGUI:updateIconList()
 				local _, _, numSlots, isKnown = GetFlyoutInfo(ID);
 				if (isKnown and numSlots > 0) then
 					for k = 1, numSlots do
-						local spellID, overrideSpellID, isKnown = GetFlyoutSlotInfo(ID, k)
+						local spellID, _, isKnown = GetFlyoutSlotInfo(ID, k)
 						if (isKnown) then
 							local fileID = GetSpellTexture(spellID);
 							if (fileID) then

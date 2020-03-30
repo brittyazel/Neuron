@@ -374,84 +374,61 @@ function ACTIONBUTTON:UpdateData()
 		return
 	end
 
+	local command, abilityOrItem
 	local spell, spellPrefix
-	local override, overridePrefix
 	local item
 	local target
 
 	--the parsed contents of a macro and assign them for further processing
-	for prefix, content in gmatch(self.macro, "(%c%p%a+)(%C+)") do
+	for cmd, content in gmatch(self.macro, "(%c%p%a+)(%C+)") do
 
-		--"prefix" is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
+		--"cmd" is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
 		--"content" is everything else, like "Chi Torpedo()"
 
-		if prefix then
-			prefix = prefix:gsub("^%c+", "") --remove unneeded characters
+		if cmd then
+			cmd = cmd:gsub("^%c+", "") --remove unneeded characters
 		end
 
 		if content then
 			content = content:gsub("^%s+", "") --remove unneeded characters
 		end
 
-		--if the cmd contains the string "#show" it means we want to overwrite some part of the macro graphics, either the tooltip or the icon
-		if (not override or #override == 0) and prefix:find("^#show") then --we only want the first in the list if there is a list
-			override = SecureCmdOptionParse(content)
-			overridePrefix = prefix
-		elseif (not spell or #spell == 0) and cmdSlash[prefix] then --we only want the first in the list if there is a list
-			spell, target = SecureCmdOptionParse(content)
-			spellPrefix = prefix
+		--we only want the first in the list if there is a list, so if the first thing is a "#showtooltip" <ability> then we want to capture the ability
+		--if the first line is #showtootltip and it is blank after, we want to ignore this particular loop and jump to the next
+		if not abilityOrItem or #abilityOrItem < 1 then
+			abilityOrItem, target = SecureCmdOptionParse(content)
+			command = cmd
 		end
-	end
-
-	if spell and spellPrefix:find("/castsequence") then
-		_, item, spell = QueryCastSequence(spell)
-	elseif spell and #spell > 0 then
-		if spell ~= self.spell then --only if the new spell is different than a currently assigned spell on the button
-			if NeuronItemCache[spell] then --if our spell is actually an item in our cache, amend it as such
-				item = spell
-				spell = nil
-			elseif tonumber(spell) and GetInventoryItemLink("player", spell) then --in case spell is a number and corresponds to a valid inventory item
-				item = GetInventoryItemLink("player", spell)
-				spell = nil
-			elseif NeuronSpellCache[spell:lower()] then
-				self.spell = spell
-				self.spellID = NeuronSpellCache[spell:lower()].spellID
-			else
-				self.spell = spell
-				_,_,_,_,_,_,self.spellID = GetSpellInfo(spell)
-			end
-
-		end
-	else
-		self.spell = nil
-		self.spellID = nil
-	end
-
-	if override and #override > 0 then
-		if overridePrefix:find("#showicon") then
-			self.overrideIconOnly = true
-		end
-
-		if tonumber(override) and GetInventoryItemLink("player", override) then
-			self.overrideItem = GetInventoryItemLink("player", override)
-		elseif GetSpellInfo(override) then
-			self.overrideSpell = override
-		else
-			self.overrideSpell = nil
-			self.overrideItem = nil
-			self.overrideIconOnly = nil
-		end
-	end
-
-	if item and #item > 0 then
-		self.item = item
-		self.spell = nil;
-		self.spellID = nil
-	else
-		self.item = nil
 	end
 
 	self.unit = target or "target"
+
+	if abilityOrItem and #abilityOrItem > 0 and command:find("/castsequence") then --this always will set the button info the next ability or item in the sequence
+		_, self.item, self.spell = QueryCastSequence(abilityOrItem) --it will only ever return as either self.item or self.spell, never both
+	elseif abilityOrItem and #abilityOrItem > 0 then
+		if NeuronItemCache[abilityOrItem] then --if our abilityOrItem is actually an item in our cache, amend it as such
+			self.item = abilityOrItem
+			self.spell = nil
+			self.spellID = nil
+		elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
+			self.item = GetInventoryItemLink("player", abilityOrItem)
+			self.spell = nil
+			self.spellID = nil
+		elseif NeuronSpellCache[abilityOrItem:lower()] then
+			self.item = nil
+			self.spell = abilityOrItem
+			self.spellID = NeuronSpellCache[abilityOrItem:lower()].spellID
+		else
+			self.item = nil
+			self.spell = abilityOrItem
+			self.spell = abilityOrItem
+			_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
+		end
+	else
+		self.item = nil
+		self.spell = nil
+		self.spellID = nil
+	end
 end
 
 
@@ -640,11 +617,7 @@ ACTIONBUTTON.UPDATE_BONUS_ACTIONBAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
 
 
 function ACTIONBUTTON:SPELL_UPDATE_CHARGES(...)
-	if self.overrideSpell then
-		self:UpdateSpellCount(self.overrideSpell)
-	else
-		self:UpdateSpellCount(self.spell)
-	end
+	self:UpdateSpellCount(self.spell)
 end
 
 
@@ -655,10 +628,6 @@ end
 function ACTIONBUTTON:UpdateTooltip()
 	if self.actionID then
 		self:SetActionTooltip(self.actionID)
-	elseif self.overrideSpell and not self.overrideIconOnly then
-		self:SetSpellTooltip(self.overrideSpell:lower())
-	elseif self.overrideItem and not self.overrideIconOnly then
-		self:SetItemTooltip(self.overrideItem:lower())
 	elseif self.data.macro_BlizzMacro then
 		GameTooltip:SetText(self.data.macro_Name)
 	elseif self.data.macro_EquipmentSet then
@@ -746,11 +715,7 @@ end
 -----------------------------------------------------------------------------------------
 
 function ACTIONBUTTON:UpdateIcon()
-	if self.overrideSpell then
-		self:SetSpellIcon(self.overrideSpell)
-	elseif self.overrideItem then
-		self:SetItemIcon(self.overrideItem)
-	elseif self.data.macro_Icon then
+	if self.data.macro_Icon then
 		self.iconframeicon:SetTexture(self.data.macro_Icon)
 		self.iconframeicon:Show()
 	elseif self.actionID then
@@ -846,10 +811,6 @@ end
 function ACTIONBUTTON:UpdateState()
 	if self.actionID then
 		self:SetActionState(self.actionID)
-	elseif self.overrideSpell and not self.overrideIconOnly then
-		self:SetSpellState(self.overrideSpell)
-	elseif self.overrideItem and not self.overrideIconOnly then
-		self:SetSpellState(self.overrideItem)
 	elseif self.spell then
 		self:SetSpellState(self.spell)
 	elseif self.item then
@@ -862,7 +823,6 @@ function ACTIONBUTTON:UpdateState()
 end
 
 function ACTIONBUTTON:SetSpellState(spell)
-
 	if IsCurrentSpell(spell) or IsAutoRepeatSpell(spell) then
 		self:SetChecked(1)
 	else
@@ -876,7 +836,6 @@ function ACTIONBUTTON:SetSpellState(spell)
 end
 
 function ACTIONBUTTON:SetItemState(item)
-
 	if IsCurrentItem(item) then
 		self:SetChecked(1)
 	else
@@ -915,10 +874,6 @@ function ACTIONBUTTON:UpdateUsable()
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID then
 		self:SetUsableAction(self.actionID)
-	elseif self.overrideSpell and not self.overrideIconOnly then
-		self:SetUsableSpell(self.overrideSpell)
-	elseif self.overrideItem and not self.overrideIconOnly then
-		self:SetUsableItem(self.overrideItem)
 	elseif self.spell then
 		self:SetUsableSpell(self.spell)
 	elseif self.item then
@@ -1115,9 +1070,6 @@ function ACTIONBUTTON:MACRO_Reset()
 	self.spell = nil
 	self.spellID = nil
 	self.item = nil
-	self.overrideSpell = nil
-	self.overrideIconOnly = nil
-	self.overrideIconOnly = nil
 end
 
 
