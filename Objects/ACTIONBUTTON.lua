@@ -718,11 +718,11 @@ end
 -----------------------------------------------------------------------------------------
 
 function ACTIONBUTTON:UpdateIcon()
-	if self.data.macro_Icon then
+	if self.actionID then
+		self:SetActionIcon(self.actionID)
+	elseif self.data.macro_Icon then
 		self.iconframeicon:SetTexture(self.data.macro_Icon)
 		self.iconframeicon:Show()
-	elseif self.actionID then
-		self:SetActionIcon(self.actionID)
 	elseif self.spell then
 		self:SetSpellIcon(self.spell)
 	elseif self.item then
@@ -801,7 +801,8 @@ function ACTIONBUTTON:SetActionIcon(action)
 	if texture then
 		self.iconframeicon:SetTexture(texture)
 	else
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		--self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		self.iconframeicon:SetTexture("")
 	end
 
 	self.iconframeicon:Show()
@@ -863,7 +864,7 @@ function ACTIONBUTTON:SetActionState(action)
 		self:SetChecked(nil)
 	end
 
-	self.button_name:SetText(self.data.macro_Name)
+	self.button_name:SetText("")
 	self.button_count:SetText("")
 	self:UpdateUsable()
 end
