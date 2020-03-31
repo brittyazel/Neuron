@@ -285,7 +285,6 @@ function ACTIONBUTTON:SetType()
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
 
-						self:SetAttribute("SpecialAction", "vehicle")
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
@@ -296,7 +295,6 @@ function ACTIONBUTTON:SetType()
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
 
-						self:SetAttribute("SpecialAction", "possess")
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
@@ -308,7 +306,6 @@ function ACTIONBUTTON:SetType()
 							self:SetAttribute("HasActionID", true)
 						end
 
-						self:SetAttribute("SpecialAction", "override")
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
@@ -329,8 +326,6 @@ function ACTIONBUTTON:SetType()
 						else
 							self:SetAttribute("HasActionID", true)
 						end
-
-						self:SetAttribute("SpecialAction", nil)
 					end
 
 					self:SetAttribute("activestate", msg)
@@ -369,14 +364,17 @@ end
 --controlling the gui elements of the actionbutton
 function ACTIONBUTTON:UpdateData()
 
+	--clear any lingering values before we reparse and reassign
+	self:MACRO_Reset()
+
 	--if we have no macro content then bail immediately
-	if not self.macro then
+	--if we have an actionID on this button bail immediately
+	if not self.macro or self.actionID then
+		--clear any values that were set as they'll get in the way later
 		return
 	end
 
 	local command, abilityOrItem
-	local spell, spellPrefix
-	local item
 	local target
 
 	--the parsed contents of a macro and assign them for further processing
@@ -408,29 +406,15 @@ function ACTIONBUTTON:UpdateData()
 	elseif abilityOrItem and #abilityOrItem > 0 then
 		if NeuronItemCache[abilityOrItem] then --if our abilityOrItem is actually an item in our cache, amend it as such
 			self.item = abilityOrItem
-			self.spell = nil
-			self.spellID = nil
 		elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
 			self.item = GetInventoryItemLink("player", abilityOrItem)
-			self.spell = nil
-			self.spellID = nil
 		elseif NeuronSpellCache[abilityOrItem:lower()] then
-			self.item = nil
 			self.spell = abilityOrItem
 			self.spellID = NeuronSpellCache[abilityOrItem:lower()].spellID
 		elseif GetSpellInfo(abilityOrItem) then
-			self.item = nil
 			self.spell = abilityOrItem
 			_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
-		else --whatever is in abilityOrItem isn't an inventory item nor a known spell, so nil these values
-			self.item = nil
-			self.spell = nil
-			self.spellID = nil
 		end
-	else
-		self.item = nil
-		self.spell = nil
-		self.spellID = nil
 	end
 end
 
@@ -559,7 +543,6 @@ function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
 end
 
 function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
-	self:MACRO_Reset()
 	self:UpdateAll()
 	self.binder:ApplyBindings()
 
@@ -1007,7 +990,7 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 	if value and self.data then
 		if name == "activestate" then
 
-			--Part 1 of Druid Prowl overwrite fix
+			--Part 2 of Druid Prowl overwrite fix (part 1 below)
 			-----------------------------------------------------
 			--breaks out of the loop due to flag set below
 			if Neuron.class == "DRUID" and self.ignoreNextOverrideStance == true and value == "homestate" then
@@ -1023,12 +1006,16 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 			if self:GetAttribute("HasActionID") then
 				self.actionID = self:GetAttribute("*action*")
 			else
+				--clear any actionID that has been set
+				self.actionID = nil
 
+				--this is a safety check in case the state we're switching into doesn't have table set up for it yet
+				-- i.e. stealth1 or stance2
 				if not self.statedata[value] then
 					self.statedata[value] = {}
 				end
 
-				--Part 2 of Druid Prowl overwrite fix
+				--Part 1 of Druid Prowl overwrite fix
 				---------------------------------------------------
 				--druids have an issue where once stance will get immediately overwritten by another. I.E. stealth immediately getting overwritten by homestate if they go immediately into prowl from caster form
 				--this conditional sets a flag to ignore the next most stance flag, as that one is most likely in error and should be ignored
@@ -1038,18 +1025,13 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 				------------------------------------------------------
 				------------------------------------------------------
 
-
+				--swap out our data with the data stored for the particular state
 				self.data = self.statedata[value]
-
 				self:ParseAndSanitizeMacro()
-
 				self:MACRO_Reset()
-
-				self.actionID = false
 			end
 
-			--This will remove any old button state data from the saved varabiels/memory
-			--for id,data in pairs(self.bar.data) do
+			--This will remove any old button state data from the saved variable's memory
 			for id,data in pairs(self.statedata) do
 				if (self.bar.data[id:match("%a+")] or id == "") and self.bar.data["custom"] then
 				elseif not self.bar.data[id:match("%a+")] then
@@ -1057,7 +1039,6 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 				end
 			end
 
-			self.specAction = self:GetAttribute("SpecialAction") --?
 			self:UpdateAll()
 		end
 
@@ -1065,17 +1046,13 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 			self:UpdateAll()
 		end
 	end
-
-
 end
-
 
 function ACTIONBUTTON:MACRO_Reset()
 	self.spell = nil
 	self.spellID = nil
 	self.item = nil
 end
-
 
 function ACTIONBUTTON:ParseAndSanitizeMacro()
 	local uncleanMacro = self.data.macro_Text
@@ -1161,7 +1138,6 @@ function ACTIONBUTTON:SetFauxState(state)
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 			end
 
-			self:SetAttribute("SpecialAction", "vehicle")
 			self:SetAttribute("HasActionID", true)
 			self:Show()
 
@@ -1172,7 +1148,6 @@ function ACTIONBUTTON:SetFauxState(state)
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 			end
 
-			self:SetAttribute("SpecialAction", "possess")
 			self:SetAttribute("HasActionID", true)
 			self:Show()
 
@@ -1184,7 +1159,6 @@ function ACTIONBUTTON:SetFauxState(state)
 				self:SetAttribute("HasActionID", true)
 			end
 
-			self:SetAttribute("SpecialAction", "override")
 			self:SetAttribute("HasActionID", true)
 			self:Show()
 
@@ -1205,7 +1179,6 @@ function ACTIONBUTTON:SetFauxState(state)
 				self:SetAttribute("HasActionID", true)
 			end
 
-			self:SetAttribute("SpecialAction", nil)
 		end
 
 		self:SetAttribute("activestate", msg)
