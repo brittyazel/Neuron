@@ -203,12 +203,12 @@ function KEYBINDER:ApplyBindings()
 	end
 
 
-	self.button.hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
+	self.button.button_hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
 
 	if self.bar:GetShowBindText() then
-		self.button.hotkey:Show()
+		self.button.button_hotkey:Show()
 	else
-		self.button.hotkey:Hide()
+		self.button.button_hotkey:Hide()
 	end
 end
 

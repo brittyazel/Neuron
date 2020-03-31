@@ -460,7 +460,7 @@ end
 
 
 
-function ACTIONBUTTON:Flyout_UpdateButtons(init)
+function ACTIONBUTTON:Flyout_UpdateData(init)
 	local slot
 	local pet = false
 
@@ -546,7 +546,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 				elseif source:find("equipset") then
 					button.macroshow = spell
-					button.data.macro_Equip = spell
+					button.data.macro_EquipmentSet = spell
 					button:SetAttribute("prefix", "/equipset ")
 					button:SetAttribute("showtooltip", "")
 
@@ -579,7 +579,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
-				button:UpdateParse()
+				button:ParseAndSanitizeMacro()
 				button:MACRO_Reset()
 				button:UpdateAll()
 
@@ -752,7 +752,7 @@ function ACTIONBUTTON:UpdateFlyout(init)
 		self.flyout.mode = select(7, (":"):split(options))
 		self.flyout.hideArrow = select(8, (":"):split(options))
 
-		self:Flyout_UpdateButtons(init)
+		self:Flyout_UpdateData(init)
 		self:Flyout_UpdateBar()
 
 		if not self.bar.watchframes then
@@ -775,7 +775,7 @@ function ACTIONBUTTON:Flyout_ReleaseButton(button)
 	button.stored = true
 
 	button.data.macro_Text = ""
-	button.data.macro_Equip = false
+	button.data.macro_EquipmentSet = false
 	button.data.macro_Icon = false
 
 	button.macrospell = nil
@@ -802,8 +802,8 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 
 	end
 
-	self.hotkey:Hide()
-	self.macroname:Hide()
+	self.button_hotkey:Hide()
+	self.button_name:Hide()
 	self:RegisterForClicks("AnyUp")
 
 	self:GetSkinned()
@@ -818,7 +818,7 @@ function ACTIONBUTTON:Flyout_PostClick()
 	button.data.macro_Icon = self:GetAttribute("macro_Icon") or false
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
-	button:UpdateParse()
+	button:ParseAndSanitizeMacro()
 	button:MACRO_Reset()
 	button:UpdateAll()
 
@@ -875,8 +875,8 @@ function ACTIONBUTTON:Flyout_GetButton()
 	button:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	button:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
-	button:SetScript("OnShow", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
-	button:SetScript("OnHide", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
+	button:SetScript("OnShow", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
+	button:SetScript("OnHide", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
 
 	button:WrapScript(button, "OnClick", [[
 			local button = self:GetParent():GetParent()
@@ -892,7 +892,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 	button:SetData(self.flyout.bar)
 
-	button:Flyout_UpdateButtons(true)
+	button:Flyout_UpdateData(true)
 	button:SetSkinned(true)
 	button:Show()
 

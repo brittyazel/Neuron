@@ -1589,9 +1589,7 @@ end
 
 
 function BAR:LoadData()
-
 	self.data = self.DB
-
 	if not self:GetBarName() or self:GetBarName() == ":" then
 		self:SetBarName(self.barLabel.." "..self.DB.id)
 	end
@@ -1600,7 +1598,6 @@ end
 
 function BAR:UpdateObjectData()
 	for _, object in pairs(self.buttons) do
-
 		if object then
 			object:SetData(self)
 		end
@@ -1616,15 +1613,15 @@ function BAR:UpdateObjectVisibility(show)
 	end
 end
 
-function BAR:UpdateObjects()
+function BAR:UpdateObjectUsability()
 	for _, object in pairs(self.buttons) do
 		if object then
-			object:UpdateButton()
+			object:UpdateUsable()
 		end
 	end
 end
 
-function BAR:UpdateIcons()
+function BAR:UpdateObjectIcons()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:UpdateIcon()
@@ -2598,7 +2595,7 @@ function BAR:SetShowBorderStyle(checked)
 		self.data.showBorderStyle = false
 	end
 
-	self:UpdateIcons()
+	self:UpdateObjectIcons()
 end
 
 function BAR:GetShowBorderStyle()

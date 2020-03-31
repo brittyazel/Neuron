@@ -101,8 +101,8 @@ end
 
 function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 
-	self.macroname:SetText("")
-	self.count:SetText("")
+	self.button_name:SetText("")
+	self.button_count:SetText("")
 
 	if texture then
 		if isToken then
@@ -157,7 +157,7 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 
 	end
 
-	self:UpdateButton(self.actionID)
+	self:UpdateUsable(self.actionID)
 end
 
 
@@ -225,7 +225,7 @@ function PETBTN:PET_UpdateOnEvent(state)
 
 end
 
-function PETBTN:UpdateButton(actionID)
+function PETBTN:UpdateUsable(actionID)
 
 	if self.editmode then
 		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
@@ -340,7 +340,7 @@ function PETBTN:OnReceiveDrag()
 end
 
 
-function PETBTN:PET_SetTooltip(edit)
+function PETBTN:PET_SetTooltip()
 	local actionID = self.actionID
 
 	if self.HasPetAction(actionID) then

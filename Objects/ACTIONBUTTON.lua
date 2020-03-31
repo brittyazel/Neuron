@@ -227,10 +227,10 @@ function ACTIONBUTTON:SetType()
 		self:SetUpEvents()
 	end
 
-	self:UpdateParse()
+	self:ParseAndSanitizeMacro()
 
 	self:SetAttribute("type", "macro")
-	self:SetAttribute("*macrotext*", self.macroparse)
+	self:SetAttribute("*macrotext*", self.macro)
 
 	self:SetScript("PostClick", function(self, mousebutton) self:PostClick(mousebutton) end)
 	self:SetScript("OnReceiveDrag", function(self, preclick) self:OnReceiveDrag(preclick) end)
@@ -350,18 +350,16 @@ function ACTIONBUTTON:SetType()
 	--this is a direct replacement to the old "onUpdate" code that did this job
 
 	if self:TimeLeft(self.rangeTimer) == 0 then
-		self.rangeTimer = self:ScheduleRepeatingTimer("UpdateButton", 0.5)
+		self.rangeTimer = self:ScheduleRepeatingTimer("UpdateUsable", 0.5)
 	end
 
 	self:UpdateAll()
 
-	self:UpdateFlyout(true)
+	--self:UpdateFlyout(true)
 
 	self:SetSkinned()
 
 end
-
-
 
 ------------------------------------------------------------
 --------------General Button Methods------------------------
@@ -372,210 +370,71 @@ function ACTIONBUTTON:GetDragAction()
 end
 
 
-function ACTIONBUTTON:UpdateData(...)
+--the purpose of this function is to parse the macro text and assign values to things like the icon, tooltip, etc that will be used for
+--controlling the gui elements of the actionbutton
+function ACTIONBUTTON:UpdateData()
 
-	local ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_item, ud_target
+	--if we have no macro content then bail immediately
+	if not self.macro then
+		return
+	end
 
+	local command, abilityOrItem
+	local target
 
-	if self.macroparse then
-		ud_spell, ud_spellcmd, ud_show, ud_showcmd, ud_item, ud_target = nil, nil, nil, nil, nil, nil, nil, nil
+	--the parsed contents of a macro and assign them for further processing
+	for cmd, content in gmatch(self.macro, "(%c%p%a+)(%C+)") do
 
-		for cmd, options in gmatch(self.macroparse, "(%c%p%a+)(%C+)") do
+		--"cmd" is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
+		--"content" is everything else, like "Chi Torpedo()"
 
-			--cmd is "/cast" or "/use" etc
-			--options is everything else, like "Chi Torpedo()"
-
-			--after gmatch, remove unneeded characters
-			if cmd then
-				cmd = cmd:gsub("^%c+", "")
-			end
-
-			if options then
-				options = options:gsub("^%s+", "")
-			end
-
-			--find #ud_show option!
-			if not ud_show and cmd:find("^#show") then
-				ud_show = SecureCmdOptionParse(options)
-				ud_showcmd = cmd
-				--sometimes SecureCmdOptionParse will return "" since that is not what we want, keep looking
-			elseif ud_show and #ud_show < 1 and cmd:find("^#show") then
-				ud_show = SecureCmdOptionParse(options)
-				ud_showcmd = cmd
-			end
-
-			--find the ud_spell!
-			if not ud_spell and cmdSlash[cmd] then
-				ud_spell, ud_target = SecureCmdOptionParse(options)
-				ud_spellcmd = cmd
-			elseif ud_spell and #ud_spell < 1 then
-				ud_spell, ud_target = SecureCmdOptionParse(options)
-				ud_spellcmd = cmd
-			end
+		if cmd then
+			cmd = cmd:gsub("^%c+", "") --remove unneeded characters
 		end
 
-		if ud_spell and ud_spellcmd:find("/castsequence") then
-
-			_, ud_item, ud_spell = QueryCastSequence(ud_spell)
-
-		elseif ud_spell then
-
-			if #ud_spell < 1 then
-				ud_spell = nil
-
-			elseif NeuronItemCache[ud_spell] then
-
-				ud_item = ud_spell
-				ud_spell = nil
-
-
-			elseif tonumber(ud_spell) and GetInventoryItemLink("player", ud_spell) then
-				ud_item = GetInventoryItemLink("player", ud_spell)
-				ud_spell = nil
-			end
+		if content then
+			content = content:gsub("^%s+", "") --remove unneeded characters
 		end
 
-		self.unit = ud_target or "target"
+		--we only want the first in the list if there is a list, so if the first thing is a "#showtooltip" <ability> then we want to capture the ability
+		--if the first line is #showtootltip and it is blank after, we want to ignore this particular loop and jump to the next
+		if not abilityOrItem or #abilityOrItem < 1 then
+			abilityOrItem, target = SecureCmdOptionParse(content)
+			command = cmd
+		end
+	end
 
-		if ud_spell then
-			self.macroitem = nil
+	self.unit = target or "target"
 
-			if ud_spell ~= self.macrospell then
-
-				ud_spell = ud_spell:gsub("!", "")
-				self.macrospell = ud_spell
-
-				if NeuronSpellCache[ud_spell:lower()] then
-					self.spellID = NeuronSpellCache[ud_spell:lower()].spellID
-				else
-					self.spellID = nil
-				end
-			end
-
-		else
-			self.macrospell = nil
+	if abilityOrItem and #abilityOrItem > 0 and command:find("/castsequence") then --this always will set the button info the next ability or item in the sequence
+		_, self.item, self.spell = QueryCastSequence(abilityOrItem) --it will only ever return as either self.item or self.spell, never both
+	elseif abilityOrItem and #abilityOrItem > 0 then
+		if NeuronItemCache[abilityOrItem] then --if our abilityOrItem is actually an item in our cache, amend it as such
+			self.item = abilityOrItem
+			self.spell = nil
+			self.spellID = nil
+		elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
+			self.item = GetInventoryItemLink("player", abilityOrItem)
+			self.spell = nil
+			self.spellID = nil
+		elseif NeuronSpellCache[abilityOrItem:lower()] then
+			self.item = nil
+			self.spell = abilityOrItem
+			self.spellID = NeuronSpellCache[abilityOrItem:lower()].spellID
+		elseif GetSpellInfo(abilityOrItem) then
+			self.item = nil
+			self.spell = abilityOrItem
+			_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
+		else --whatever is in abilityOrItem isn't an inventory item nor a known spell, so nil these values
+			self.item = nil
+			self.spell = nil
 			self.spellID = nil
 		end
-
-		if ud_show and ud_showcmd:find("#showicon") then
-			if ud_show ~= self.macroicon then
-				if tonumber(ud_show) and GetInventoryItemLink("player", ud_show) then
-					ud_show = GetInventoryItemLink("player", ud_show)
-				end
-				self.macroicon = ud_show
-				self.macroshow = nil
-			end
-		elseif ud_show then
-			if ud_show ~= self.macroshow then
-				if tonumber(ud_show) and GetInventoryItemLink("player", ud_show) then
-					ud_show = GetInventoryItemLink("player", ud_show)
-				end
-				self.macroshow = ud_show
-				self.macroicon = nil
-			end
-		else
-			self.macroshow = nil
-			self.macroicon = nil
-		end
-
-		if ud_item then
-			self.macrospell = nil;
-			self.spellID = nil
-			if ud_item ~= self.macroitem then
-				self.macroitem = ud_item
-			end
-		else
-			self.macroitem = nil
-		end
-	end
-end
-
-
-function ACTIONBUTTON:SetSpellIcon(spell)
-	local _, texture
-
-	if not self.data.macro_Watch and not self.data.macro_Equip then
-
-		spell = (spell):lower()
-
-		if NeuronSpellCache[spell] then
-			texture = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
-
-			if not texture then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
-				texture = NeuronSpellCache[spell].icon
-			end
-
-		elseif NeuronCollectionCache[spell] then
-			texture = NeuronCollectionCache[spell].icon
-
-		elseif spell then
-			texture = GetSpellTexture(spell)
-		end
-
-		if texture then
-			self.iconframeicon:SetTexture(texture)
-			self.iconframeicon:Show()
-		else
-			self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK") --show questionmark instead of empty button to avoid confusion
-		end
-
 	else
-		if self.data.macro_Watch then
-
-			_, texture = GetMacroInfo(self.data.macro_Watch)
-
-			self.data.macro_Icon = texture
-
-		end
-
-		if texture then
-			self.iconframeicon:SetTexture(texture)
-			self.iconframeicon:Show()
-		else
-			self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-		end
+		self.item = nil
+		self.spell = nil
+		self.spellID = nil
 	end
-
-	return texture
-end
-
-
-
-function ACTIONBUTTON:SetItemIcon(item)
-	local name,texture, link, itemID
-
-	if IsEquippedItem(item) then --makes the border green when item is equipped and dragged to a button
-		self.border:SetVertexColor(0, 1.0, 0, 0.2)
-		self.border:Show()
-	else
-		self.border:Hide()
-	end
-
-	--There is stored icon and dont want to update icon on fly
-	if (type(self.data.macro_Icon) == "string" and #self.data.macro_Icon > 0) or type(self.data.macro_Icon) == "number" then
-		if self.data.macro_Icon == "BLANK" then
-			self.iconframeicon:SetTexture("")
-		else
-			self.iconframeicon:SetTexture(self.data.macro_Icon)
-		end
-
-	else
-		if NeuronItemCache[item] then
-			texture = GetItemIcon("item:"..NeuronItemCache[item]..":0:0:0:0:0:0:0")
-		else
-			name,_,_,_,_,_,_,_,_,texture = GetItemInfo(item)
-		end
-
-		if texture then
-			self.iconframeicon:SetTexture(texture)
-		else
-			self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-		end
-	end
-
-	self.iconframeicon:Show()
-
-	return self.iconframeicon:GetTexture()
 end
 
 
@@ -590,9 +449,9 @@ function ACTIONBUTTON:UpdateGlow()
 		--Swipe(Cat): 106785
 		--Swipe(NoForm): 213764
 
-		if self.macrospell and self.macrospell:lower() == "thrash()" and IsSpellOverlayed(106830) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+		if self.spell and self.spell:lower() == "thrash()" and IsSpellOverlayed(106830) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
 			self:StartGlow()
-		elseif self.macrospell and self.macrospell:lower() == "swipe()" and IsSpellOverlayed(106785) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
+		elseif self.spell and self.spell:lower() == "swipe()" and IsSpellOverlayed(106785) then --this is a hack for feral druids (Legion patch 7.3.0. Bug reported)
 			self:StartGlow()
 		elseif IsSpellOverlayed(self.spellID) then --this is the default "true" condition
 			self:StartGlow()
@@ -627,91 +486,6 @@ function ACTIONBUTTON:StopGlow()
 	end
 end
 
-
-function ACTIONBUTTON:SetSpellState(spell)
-
-	if IsCurrentSpell(spell) or IsAutoRepeatSpell(spell) then
-		self:SetChecked(1)
-	else
-		self:SetChecked(nil)
-	end
-
-
-	self.macroname:SetText(self.data.macro_Name)
-
-	self:UpdateSpellCount(spell)
-
-	self:UpdateButton()
-
-end
-
-
-function ACTIONBUTTON:SetItemState(item)
-
-	if IsCurrentItem(item) then
-		self:SetChecked(1)
-	else
-		self:SetChecked(nil)
-	end
-
-	self.macroname:SetText(self.data.macro_Name)
-
-	self:UpdateItemCount(item)
-end
-
-
------------------------
-
-
-function ACTIONBUTTON:UpdateUsableSpell(spell)
-	local isUsable, notEnoughMana
-	local spellName = spell:lower()
-
-	isUsable, notEnoughMana = IsUsableSpell(spellName)
-
-	if notEnoughMana then
-		self.iconframeicon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
-	elseif isUsable then
-		if self.bar:GetShowRangeIndicator() and IsSpellInRange(spellName, self.unit) == 0 then
-			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
-		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and (self.bar:GetShowRangeIndicator() and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
-			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
-		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-		end
-
-	else
-		if NeuronSpellCache[(spell):lower()] then
-			self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
-		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-		end
-	end
-end
-
-
-function ACTIONBUTTON:UpdateUsableItem(item)
-	local isUsable, notEnoughMana = IsUsableItem(item)
-
-	if NeuronToyCache[item:lower()] then
-		isUsable = true
-	end
-
-	if notEnoughMana then
-		self.iconframeicon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2],self.bar:GetManaColor()[3])
-	elseif isUsable then
-		if self.bar:GetShowRangeIndicator() and IsItemInRange(item, self.unit) == 0 then
-			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
-		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-		end
-
-	else
-		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
-	end
-end
-
-
 ------------------------------------------------------------------------------
 ---------------------Event Functions------------------------------------------
 ------------------------------------------------------------------------------
@@ -726,7 +500,6 @@ function ACTIONBUTTON:ACTIONBAR_UPDATE_STATE(...)
 		self:UpdateAll()
 	end
 end
-
 ACTIONBUTTON.ACTIONBAR_UPDATE_USABLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 ACTIONBUTTON.COMPANION_UPDATE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 
@@ -744,65 +517,43 @@ ACTIONBUTTON.PLAYER_FOCUS_CHANGED = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
 
 --this is mostly for range checking to get super accurate info when starting or stopping if an ability is in range
 function ACTIONBUTTON:PLAYER_STARTED_MOVING()
-	self:UpdateButton()
+	self:UpdateUsable()
 end
 ACTIONBUTTON.PLAYER_STOPPED_MOVING = ACTIONBUTTON.PLAYER_STARTED_MOVING
 
-
 function ACTIONBUTTON:BAG_UPDATE_COOLDOWN()
-
-	if self.macroitem then
+	if self.item then
 		self:UpdateState()
 	end
 end
-
-
 ACTIONBUTTON.BAG_UPDATE = ACTIONBUTTON.BAG_UPDATE_COOLDOWN
 
-
 function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(...)
-
 	local unit = select(1, ...)
-
-	if (unit == "player" or unit == "pet") and self.macrospell then
-
+	if (unit == "player" or unit == "pet") and self.spell then
 		self:UpdateTimers()
 	end
-
 end
-
-
 ACTIONBUTTON.UNIT_SPELLCAST_FAILED = ACTIONBUTTON.UNIT_SPELLCAST_INTERRUPTED
-
 
 function ACTIONBUTTON:SPELL_ACTIVATION_OVERLAY_GLOW_SHOW()
 	self:UpdateGlow()
 end
-
 ACTIONBUTTON.SPELL_ACTIVATION_OVERLAY_GLOW_HIDE = ACTIONBUTTON.SPELL_ACTIVATION_OVERLAY_GLOW_SHOW
-
 
 function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
 	self:UpdateButtonSpec()
 end
 
-
 function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
-
 	self:MACRO_Reset()
 	self:UpdateAll()
-
-	self:SetObjectVisibility()
-
 	self.binder:ApplyBindings()
-
 
 	if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
 		self:ScheduleTimer(function() self:SetType() end, 1)
 	end
-
 end
-
 
 function ACTIONBUTTON:SPELLS_CHANGED(...)
 	self:UpdateAll()
@@ -811,120 +562,105 @@ function ACTIONBUTTON:SPELLS_CHANGED(...)
 		self:UpdateGlow()
 	end
 end
-
 ACTIONBUTTON.MODIFIER_STATE_CHANGED = ACTIONBUTTON.SPELLS_CHANGED
 
-
-
 function ACTIONBUTTON:ACTIONBAR_SLOT_CHANGED(...)
-	if self.data.macro_Watch or self.data.macro_Equip then
+	if self.data.macro_BlizzMacro or self.data.macro_EquipmentSet then
 		self:UpdateIcon()
 	end
 end
-
 
 function ACTIONBUTTON:ACTIONBAR_SHOWGRID(...)
 	Neuron:ToggleButtonGrid(true)
 end
 
-
 function ACTIONBUTTON:ACTIONBAR_HIDEGRID(...)
 	Neuron:ToggleButtonGrid()
 end
 
-
 function ACTIONBUTTON:UPDATE_MACROS(...)
-	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_Watch then
-		self:PlaceBlizzMacro(self.data.macro_Watch)
+	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_BlizzMacro then
+		self:PlaceBlizzMacro(self.data.macro_BlizzMacro)
 	end
 end
-
 
 function ACTIONBUTTON:EQUIPMENT_SETS_CHANGED(...)
-	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_Equip then
-		self:PlaceBlizzEquipSet(self.data.macro_Equip)
+	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_EquipmentSet then
+		self:PlaceBlizzEquipSet(self.data.macro_EquipmentSet)
 	end
 end
 
-
 function ACTIONBUTTON:PLAYER_EQUIPMENT_CHANGED(...)
-	if self.data.macro_Equip then
+	if self.data.macro_EquipmentSet then
 		self:UpdateIcon()
 	end
 end
 
-
 function ACTIONBUTTON:UPDATE_VEHICLE_ACTIONBAR(...)
-
 	if self.actionID then
 		self:UpdateAll()
 	end
 end
-
 ACTIONBUTTON.UPDATE_POSSESS_BAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
 ACTIONBUTTON.UPDATE_OVERRIDE_ACTIONBAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
-
---for 4.x compatibility
 ACTIONBUTTON.UPDATE_BONUS_ACTIONBAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
 
 
 function ACTIONBUTTON:SPELL_UPDATE_CHARGES(...)
-
-	local spell = self.macrospell
-
-	self:UpdateSpellCount(spell)
-
+	self:UpdateSpellCount(self.spell)
 end
 
 
 -----------------------------------------------------------------------------------------
+------------------------------------- Set Tooltip ---------------------------------------
 -----------------------------------------------------------------------------------------
 
-
-
-
+function ACTIONBUTTON:UpdateTooltip()
+	if self.actionID then
+		self:SetActionTooltip(self.actionID)
+	elseif self.data.macro_BlizzMacro then
+		GameTooltip:SetText(self.data.macro_Name)
+	elseif self.data.macro_EquipmentSet then
+		GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
+	elseif self.spell then
+		self:SetSpellTooltip(self.spell:lower())
+	elseif self.item then
+		self:SetItemTooltip(self.item:lower())
+	elseif self.data.macro_Text and #self.data.macro_Text > 0 then
+		GameTooltip:SetText(self.data.macro_Name)
+	end
+end
 
 function ACTIONBUTTON:SetSpellTooltip(spell)
-
 	if NeuronSpellCache[spell] then
-
 		local spell_id = NeuronSpellCache[spell].spellID
-
 		if self.bar:GetTooltipOption() == "enhanced" then
 			GameTooltip:SetSpellByID(spell_id)
 		else
 			GameTooltip:SetText(NeuronSpellCache[spell:lower()].spellName, 1, 1, 1)
 		end
 
-
 	elseif NeuronCollectionCache[spell] then
-
 		if self.bar:GetTooltipOption() == "enhanced" and NeuronCollectionCache[spell].creatureType =="MOUNT" then
 			GameTooltip:SetHyperlink("spell:"..NeuronCollectionCache[spell].spellID)
 		else
 			GameTooltip:SetText(NeuronCollectionCache[spell].creatureName, 1, 1, 1)
 		end
 
-		self.UpdateTooltip = nil
 	else
 		local spell_id, spellName
-
 		spellName,_,_,_,_,_,spell_id = GetSpellInfo(spell)
-
 		if spellName and spell_id then --add safety check in case spellName and spell_id come back as nil
 			if self.bar:GetTooltipOption() == "enhanced" then
 				GameTooltip:SetSpellByID(spell_id)
 			else
 				GameTooltip:SetText(spellName, 1, 1, 1)
 			end
-
 		else
 			GameTooltip:SetText(UNKNOWN, 1, 1, 1)
 		end
-
 	end
 end
-
 
 function ACTIONBUTTON:SetItemTooltip(item)
 	local name, link = GetItemInfo(item)
@@ -954,39 +690,265 @@ function ACTIONBUTTON:SetItemTooltip(item)
 	end
 end
 
+function ACTIONBUTTON:SetActionTooltip(action)
+	local actionID = tonumber(action)
 
-function ACTIONBUTTON:SetTooltip()
-	self.UpdateTooltip = nil
-
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
-
-	if self.actionID then
-		self:ACTION_SetTooltip(self.actionID)
-
-	elseif show and #show>0 then
-		if NeuronItemCache[show] then
-			self:SetItemTooltip(show:lower())
-		else
-			self:SetSpellTooltip(show:lower())
-		end
-
-	elseif spell and #spell>0 then
-		self:SetSpellTooltip(spell:lower())
-
-	elseif item and #item>0 then
-		self:SetItemTooltip(item:lower())
-
-	elseif self.data.macro_Text and #self.data.macro_Text > 0 then --condition in case the item is an equipment set. Should probably make this cleaner
-		local equipset = self.data.macro_Text:match("/equipset%s+(%C+)")
-
-		if equipset then
-			equipset = equipset:gsub("%pnobtn:2%p ", "")
-			GameTooltip:SetEquipmentSet(equipset)
-		elseif self.data.macro_Name and #self.data.macro_Name>0 then
-			GameTooltip:SetText(self.data.macro_Name)
+	if actionID then
+		if HasAction(actionID) then
+			GameTooltip:SetAction(actionID)
 		end
 	end
 end
+
+-----------------------------------------------------------------------------------------
+-------------------------------------- Set Icon -----------------------------------------
+-----------------------------------------------------------------------------------------
+
+function ACTIONBUTTON:UpdateIcon()
+	if self.data.macro_Icon then
+		self.iconframeicon:SetTexture(self.data.macro_Icon)
+		self.iconframeicon:Show()
+	elseif self.actionID then
+		self:SetActionIcon(self.actionID)
+	elseif self.spell then
+		self:SetSpellIcon(self.spell)
+	elseif self.item then
+		self:SetItemIcon(self.item)
+	else
+		self.button_name:SetText("")
+		self.iconframeicon:SetTexture("")
+		self.iconframeicon:Hide()
+		self.button_border:Hide()
+	end
+end
+
+function ACTIONBUTTON:SetSpellIcon(spell)
+	local texture
+
+	if not self.data.macro_BlizzMacro and not self.data.macro_EquipmentSet then
+		spell = spell:lower()
+
+		if NeuronSpellCache[spell] then
+			texture = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
+			if not texture then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
+				texture = NeuronSpellCache[spell].icon
+			end
+		elseif NeuronCollectionCache[spell] then
+			texture = NeuronCollectionCache[spell].icon
+		elseif spell then
+			texture = GetSpellTexture(spell)
+		end
+	else
+		if self.data.macro_BlizzMacro then
+			_, texture = GetMacroInfo(self.data.macro_BlizzMacro)
+		end
+	end
+
+	if texture then
+		self.iconframeicon:SetTexture(texture)
+	else
+		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+	end
+	self.iconframeicon:Show()
+end
+
+function ACTIONBUTTON:SetItemIcon(item)
+	local texture
+
+	if IsEquippedItem(item) then --makes the border green when item is equipped and dragged to a button
+		self.button_border:SetVertexColor(0, 1.0, 0, 0.2)
+		self.button_border:Show()
+	else
+		self.button_border:Hide()
+	end
+
+	if NeuronItemCache[item] then
+		texture = GetItemIcon("item:"..NeuronItemCache[item]..":0:0:0:0:0:0:0")
+	else
+		_,_,_,_,_,_,_,_,_,texture = GetItemInfo(item)
+	end
+
+	if texture then
+		self.iconframeicon:SetTexture(texture)
+	else
+		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+	end
+
+	self.iconframeicon:Show()
+end
+
+function ACTIONBUTTON:SetActionIcon(action)
+	local texture
+	local actionID = tonumber(action)
+
+	if actionID and HasAction(actionID)then
+		texture = GetActionTexture(actionID)
+	end
+
+	if texture then
+		self.iconframeicon:SetTexture(texture)
+	else
+		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+	end
+
+	self.iconframeicon:Show()
+end
+
+-----------------------------------------------------------------------------------------
+-------------------------------------- Set State ----------------------------------------
+-----------------------------------------------------------------------------------------
+
+function ACTIONBUTTON:UpdateState()
+	if self.actionID then
+		self:SetActionState(self.actionID)
+	elseif self.spell then
+		self:SetSpellState(self.spell)
+	elseif self.item then
+		self:SetItemState(self.item)
+	else
+		self:SetChecked(nil)
+		self.button_name:SetText("")
+		self.button_count:SetText("")
+	end
+end
+
+function ACTIONBUTTON:SetSpellState(spell)
+	if IsCurrentSpell(spell) or IsAutoRepeatSpell(spell) then
+		self:SetChecked(1)
+	else
+		self:SetChecked(nil)
+	end
+
+	self.button_name:SetText(self.data.macro_Name)
+	self:UpdateSpellCount(spell)
+	self:UpdateUsable()
+
+end
+
+function ACTIONBUTTON:SetItemState(item)
+	if IsCurrentItem(item) then
+		self:SetChecked(1)
+	else
+		self:SetChecked(nil)
+	end
+
+	self.button_name:SetText(self.data.macro_Name)
+	self:UpdateItemCount(item)
+	self:UpdateUsable()
+end
+
+function ACTIONBUTTON:SetActionState(action)
+	local actionID = tonumber(action)
+
+	if actionID then
+		if IsCurrentAction(actionID) or IsAutoRepeatAction(actionID) then
+			self:SetChecked(1)
+		else
+			self:SetChecked(nil)
+		end
+	else
+		self:SetChecked(nil)
+	end
+
+	self.button_name:SetText(self.data.macro_Name)
+	self.button_count:SetText("")
+	self:UpdateUsable()
+end
+
+-----------------------------------------------------------------------------------------
+------------------------------------- Set Usable ----------------------------------------
+-----------------------------------------------------------------------------------------
+
+function ACTIONBUTTON:UpdateUsable()
+	if self.editmode then
+		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+	elseif self.actionID then
+		self:SetUsableAction(self.actionID)
+	elseif self.spell then
+		self:SetUsableSpell(self.spell)
+	elseif self.item then
+		self:SetUsableItem(self.item)
+	else
+		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+	end
+end
+
+function ACTIONBUTTON:SetUsableSpell(spell)
+	local isUsable, notEnoughMana
+	local spellName = spell:lower()
+
+	isUsable, notEnoughMana = IsUsableSpell(spellName)
+
+	if notEnoughMana then
+		self.iconframeicon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
+	elseif isUsable then
+		if self.bar:GetShowRangeIndicator() and IsSpellInRange(spellName, self.unit) == 0 then
+			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
+		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and (self.bar:GetShowRangeIndicator() and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
+			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
+		else
+			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		end
+
+	else
+		if NeuronSpellCache[(spell):lower()] then
+			self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+		else
+			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		end
+	end
+end
+
+function ACTIONBUTTON:SetUsableItem(item)
+	local isUsable, notEnoughMana = IsUsableItem(item)
+
+	if NeuronToyCache[item:lower()] then
+		isUsable = true
+	end
+
+	if notEnoughMana and self.manacolor then
+		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	elseif isUsable then
+		if self.rangeInd and IsItemInRange(spell, self.unit) == 0 then
+			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		else
+			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		end
+	else
+		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+	end
+end
+
+function ACTIONBUTTON:SetUsableAction(action)
+	local actionID = tonumber(action)
+
+	if actionID then
+		if actionID == 0 then
+			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		else
+			local isUsable, notEnoughMana = IsUsableAction(actionID)
+
+			if isUsable then
+				if IsActionInRange(action, self.unit) == 0 then
+					self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+				else
+					self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+				end
+
+			elseif notEnoughMana and self.manacolor then
+				self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+			else
+				self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+			end
+		end
+
+	else
+		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+	end
+end
+
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 
 
 function ACTIONBUTTON:OnEnter(...)
@@ -996,7 +958,7 @@ function ACTIONBUTTON:OnEnter(...)
 
 	if self.bar:GetTooltipOption() then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		self:SetTooltip()
+		self:UpdateTooltip()
 	end
 
 	if self.flyout and self.flyout.arrow then
@@ -1006,8 +968,6 @@ end
 
 
 function ACTIONBUTTON:OnLeave(...)
-	self.UpdateTooltip = nil
-
 	GameTooltip:Hide()
 
 	if self.flyout and self.flyout.arrow then
@@ -1055,7 +1015,7 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 
 				self.data = self.statedata[value]
 
-				self:UpdateParse()
+				self:ParseAndSanitizeMacro()
 
 				self:MACRO_Reset()
 
@@ -1085,22 +1045,22 @@ end
 
 
 function ACTIONBUTTON:MACRO_Reset()
-	self.macrospell = nil
+	self.spell = nil
 	self.spellID = nil
-	self.macroitem = nil
-	self.macroshow = nil
-	self.macroicon = nil
+	self.item = nil
 end
 
 
-function ACTIONBUTTON:UpdateParse()
-	self.macroparse = self.data.macro_Text
+function ACTIONBUTTON:ParseAndSanitizeMacro()
+	local uncleanMacro = self.data.macro_Text
 
-	if #self.macroparse > 0 then
-		self.macroparse = "\n"..self.macroparse.."\n"
-		self.macroparse = (self.macroparse):gsub("(%c+)", " %1")
+	if #uncleanMacro > 0 then
+		--adds an empty line above and below the macro
+		uncleanMacro = "\n"..uncleanMacro.."\n"
+		--I'm not sure what this line does, but it appears to just strip off any control characters
+		self.macro = uncleanMacro:gsub("(%c+)", " %1")
 	else
-		self.macroparse = nil
+		self.macro = nil
 	end
 end
 
@@ -1117,10 +1077,8 @@ function ACTIONBUTTON:UpdateButtonSpec()
 
 	self:SetData(self.bar)
 	self:LoadData(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
-	self:UpdateFlyout()
-	self:SetType()
-	self:SetObjectVisibility()
-
+	--self:UpdateFlyout()
+	self:UpdateAll()
 end
 
 
@@ -1360,180 +1318,58 @@ function ACTIONBUTTON:GetPosition(oFrame)
 end
 
 
+--- This will itterate through a set of buttons. For any buttons that have the #autowrite flag in its macro, that
+-- macro will then be updated to via AutoWriteMacro to include selected target macro option, or via AutoUpdateMacro
+-- to update a current target macro's toggle mofifier.
+-- @param global(boolean): if true will go though all buttons, else it will just update the button set for the current bar
+function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
 
-----ACTION functions
---this is used in things like the possess/vehicle/override bars
+	local button_list = {}
 
-function ACTIONBUTTON:ACTION_SetIcon(action)
-	local actionID = tonumber(action)
+	if global_update then
 
-	if actionID then
-
-		self.macroname:SetText(GetActionText(actionID))
-		if HasAction(actionID) then
-			self.iconframeicon:SetTexture(GetActionTexture(actionID))
-		else
-			self.iconframeicon:SetTexture(0,0,0)
-		end
-
-		self.iconframeicon:Show()
-	else
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-	end
-
-	return self.iconframeicon:GetTexture()
-end
-
-
-
-function ACTIONBUTTON:ACTION_UpdateState(action)
-	local actionID = tonumber(action)
-
-	self.count:SetText("")
-
-	if actionID then
-		self.macroname:SetText("")
-
-		if IsCurrentAction(actionID) or IsAutoRepeatAction(actionID) then
-			self:SetChecked(1)
-		else
-			self:SetChecked(nil)
-		end
-	else
-		self:SetChecked(nil)
-	end
-end
-
-
-function ACTIONBUTTON:ACTION_UpdateUsable(action)
-	local actionID = tonumber(action)
-
-	if actionID then
-		if actionID == 0 then
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-		else
-			local isUsable, notEnoughMana = IsUsableAction(actionID)
-
-			if isUsable then
-				if IsActionInRange(action, self.unit) == 0 then
-					self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
-				else
-					self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-				end
-
-			elseif notEnoughMana then
-				self.iconframeicon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
-			else
-				self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+		for _,bar in ipairs(Neuron.BARIndex) do
+			for _, object in ipairs(bar.buttons) do
+				table.insert(button_list, object)
 			end
 		end
 
 	else
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-	end
-end
-
-
-function ACTIONBUTTON:ACTION_SetTooltip(action)
-	local actionID = tonumber(action)
-
-	if actionID then
-
-		self.UpdateTooltip = nil
-
-		if HasAction(actionID) then
-			GameTooltip:SetAction(actionID)
+		local bar = Neuron.CurrentBar
+		for i, object in ipairs(bar.buttons) do
+			table.insert(button_list, object)
 		end
 	end
-end
 
+	for index, button in pairs(button_list) do
+		local cur_button = button.DB
+		local macro_update = false
 
-function ACTIONBUTTON:UpdateButton(...)
+		for i = 1,2 do
+			for state, info in pairs(cur_button[i]) do
+				if info.macro_Text and info.macro_Text:find("#autowrite\n/cast") then
+					local spell = ""
 
-	if self.editmode then
+					spell = info.macro_Text:gsub("%[.*%]", "")
+					spell = spell:match("#autowrite\n/cast%s*(.+)%((.*)%)")
 
-		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+					if spell then
+						if global_update then
+							info.macro_Text = button:AutoUpdateMacro(info.macro_Text)
+						else
+							info.macro_Text = button:AutoWriteMacro(spell)
+						end
 
-	elseif self.actionID then
-
-		self:ACTION_UpdateUsable(self.actionID)
-
-	elseif self.macroshow and #self.macroshow>0 then
-
-		if NeuronItemCache[self.macroshow] then
-			self:UpdateUsableItem(self.macroshow)
-		else
-			self:UpdateUsableSpell(self.macroshow)
+					end
+					macro_update = true
+				end
+			end
 		end
 
-	elseif self.macrospell and #self.macrospell>0 then
-
-		self:UpdateUsableSpell(self.macrospell)
-
-	elseif self.macroitem and #self.macroitem>0 then
-
-		self:UpdateUsableItem(self.macroitem)
-
-	else
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
-	end
-end
-
-function ACTIONBUTTON:UpdateIcon()
-	self.updateMacroIcon = nil
-
-	local spell, item, show, texture = self.macrospell, self.macroitem, self.macroshow, self.macroicon
-
-	if self.actionID then
-		texture = self:ACTION_SetIcon(self.actionID)
-	elseif show and #show>0 then
-		if NeuronItemCache[show] then
-			texture = self:SetItemIcon(show)
-		else
-			texture = self:SetSpellIcon(show)
-			self:SetSpellState(show)
+		if macro_update then
+			--button:UpdateFlyout()
+			button:BuildStateData(button)
+			button:SetType()
 		end
-	elseif spell and #spell>0 then
-		texture = self:SetSpellIcon(spell)
-		self:SetSpellState(spell)
-	elseif item and #item>0 then
-		texture = self:SetItemIcon(item)
-	elseif self.data.macro_Icon then
-		self.iconframeicon:SetTexture(self.data.macro_Icon)
-		self.iconframeicon:Show()
-	else
-		self.macroname:SetText("")
-		self.iconframeicon:SetTexture("")
-		self.iconframeicon:Hide()
-		self.border:Hide()
-	end
-end
-
-function ACTIONBUTTON:UpdateState()
-
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
-
-	if self.actionID then
-		self:ACTION_UpdateState(self.actionID)
-
-	elseif show and #show>0 then
-
-		if NeuronItemCache[show] then
-			self:SetItemState(show)
-		else
-			self:SetSpellState(show)
-		end
-
-	elseif spell and #spell>0 then
-
-		self:SetSpellState(spell)
-
-	elseif item and #item>0 then
-
-		self:SetItemState(item)
-
-	else
-		self:SetChecked(nil)
-		self.count:SetText("")
 	end
 end

@@ -110,7 +110,12 @@ end
 
 
 function EXITBTN:OnEnter()
-	if  UnitOnTaxi("player") then
+
+	if not self.isShown then
+		return
+	end
+
+	if UnitOnTaxi("player") then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:ClearLines()
 		GameTooltip:SetText(TAXI_CANCEL, 1, 1, 1);
