@@ -418,11 +418,14 @@ function ACTIONBUTTON:UpdateData()
 			self.item = nil
 			self.spell = abilityOrItem
 			self.spellID = NeuronSpellCache[abilityOrItem:lower()].spellID
-		else
+		elseif GetSpellInfo(abilityOrItem) then
 			self.item = nil
 			self.spell = abilityOrItem
-			self.spell = abilityOrItem
 			_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
+		else --whatever is in abilityOrItem isn't an inventory item nor a known spell, so nil these values
+			self.item = nil
+			self.spell = nil
+			self.spellID = nil
 		end
 	else
 		self.item = nil
