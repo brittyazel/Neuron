@@ -134,7 +134,7 @@ end
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
 
-	self.iconframeicon:SetTexture(self.spellIcon);
+	self.elements.IconFrameIcon:SetTexture(self.spellIcon);
 
 	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[self.spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
 	self.style:SetTexture(texture)

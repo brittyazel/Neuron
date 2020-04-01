@@ -61,11 +61,11 @@ function MIRRORBTN:SetType()
 
 	table.insert(MirrorBars, self)
 
-	self.sb:Hide()
+	self.elements.SB:Hide()
 
 	local typeString = L["Mirror Bar"]
 
-	self.fbframe.feedback.text:SetText(typeString)
+	self.elements.FBFrame.feedback.text:SetText(typeString)
 
 	self:SetData(self.bar)
 
@@ -112,24 +112,24 @@ function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 			MirrorWatch[type].mbar = mbar
 			MirrorWatch[type].label = label
 
-			mbar.sb.mirror = type
-			mbar.sb.value = (value / 1000)
-			mbar.sb.maxvalue = (maxvalue / 1000)
+			mbar.elements.SB.mirror = type
+			mbar.elements.SB.value = (value / 1000)
+			mbar.elements.SB.maxvalue = (maxvalue / 1000)
 
 			if  paused > 0 then
-				mbar.sb.paused = 1
+				mbar.elements.SB.paused = 1
 			else
-				mbar.sb.paused = nil
+				mbar.elements.SB.paused = nil
 			end
 
 			local color = MirrorTimerColors[type]
 
-			mbar.sb:SetMinMaxValues(0, (maxvalue / 1000))
-			mbar.sb:SetValue(mbar.sb.value)
-			mbar.sb:SetStatusBarColor(color.r, color.g, color.b)
+			mbar.elements.SB:SetMinMaxValues(0, (maxvalue / 1000))
+			mbar.elements.SB:SetValue(mbar.elements.SB.value)
+			mbar.elements.SB:SetStatusBarColor(color.r, color.g, color.b)
 
-			mbar.sb:SetAlpha(1)
-			mbar.sb:Show()
+			mbar.elements.SB:SetAlpha(1)
+			mbar.elements.SB:Show()
 		end
 	end
 end
@@ -151,58 +151,58 @@ function MIRRORBTN:mirrorbar_Stop(type)
 			MirrorWatch[type].label = ""
 			MirrorWatch[type].timer = ""
 
-			mbar.sb.mirror = nil
+			mbar.elements.SB.mirror = nil
 		end
 	end
 end
 
 function MIRRORBTN:MirrorBar_OnUpdate()
 
-	if self.sb.mirror then
+	if self.elements.SB.mirror then
 
-		self.sb.value = GetMirrorTimerProgress(self.sb.mirror)/1000
+		self.elements.SB.value = GetMirrorTimerProgress(self.elements.SB.mirror)/1000
 
 
-		if self.sb.value > self.sb.maxvalue then
+		if self.elements.SB.value > self.elements.SB.maxvalue then
 
-			self.sb.alpha = self.sb:GetAlpha() - CASTING_BAR_ALPHA_STEP
+			self.elements.SB.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-			if self.sb.alpha > 0 then
-				self.sb:SetAlpha(self.sb.alpha)
+			if self.elements.SB.alpha > 0 then
+				self.elements.SB:SetAlpha(self.elements.SB.alpha)
 			else
-				self.sb:Hide()
+				self.elements.SB:Hide()
 			end
 
 		else
 
-			self.sb:SetValue(self.sb.value)
+			self.elements.SB:SetValue(self.elements.SB.value)
 
-			if self.sb.value >= 60 then
-				self.sb.value = string.format("%0.1f", self.sb.value/60)
-				self.sb.value = self.sb.value.."m"
+			if self.elements.SB.value >= 60 then
+				self.elements.SB.value = string.format("%0.1f", self.elements.SB.value/60)
+				self.elements.SB.value = self.elements.SB.value.."m"
 			else
-				self.sb.value = string.format("%0.0f", self.sb.value)
-				self.sb.value = self.sb.value.."s"
+				self.elements.SB.value = string.format("%0.0f", self.elements.SB.value)
+				self.elements.SB.value = self.elements.SB.value.."s"
 			end
 
-			MirrorWatch[self.sb.mirror].timer = self.sb.value
+			MirrorWatch[self.elements.SB.mirror].timer = self.elements.SB.value
 
 		end
 
 	elseif not self.editmode then
 
-		self.sb.alpha = self.sb:GetAlpha() - CASTING_BAR_ALPHA_STEP
+		self.elements.SB.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-		if self.sb.alpha > 0 then
-			self.sb:SetAlpha(self.sb.alpha)
+		if self.elements.SB.alpha > 0 then
+			self.elements.SB:SetAlpha(self.elements.SB.alpha)
 		else
-			self.sb:Hide()
+			self.elements.SB:Hide()
 		end
 	end
 
-	self.sb.cText:SetText(self.sb.cFunc(self.sb))
-	self.sb.lText:SetText(self.sb.lFunc(self.sb))
-	self.sb.rText:SetText(self.sb.rFunc(self.sb))
-	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 end
 

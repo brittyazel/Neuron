@@ -74,11 +74,11 @@ function XPBTN:SetType()
 		self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
 	end
 
-	self.sb:Show()
+	self.elements.SB:Show()
 
 	local typeString = L["XP Bar"]
 
-	self.fbframe.feedback.text:SetText(typeString)
+	self.elements.FBFrame.feedback.text:SetText(typeString)
 
 	self:SetData(self.bar)
 
@@ -163,15 +163,15 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 
 	end
 
-	if (not self.sb.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
-		self.sb.XPWatch = {}
+	if (not self.elements.SB.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
+		self.elements.SB.XPWatch = {}
 	end
 
-	self.sb.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
-	self.sb.XPWatch.rested = restedXP
-	self.sb.XPWatch.percent = percentXP
-	self.sb.XPWatch.bubbles = bubbles
-	self.sb.XPWatch.rank = rank
+	self.elements.SB.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
+	self.elements.SB.XPWatch.rested = restedXP
+	self.elements.SB.XPWatch.percent = percentXP
+	self.elements.SB.XPWatch.bubbles = bubbles
+	self.elements.SB.XPWatch.rank = rank
 
 
 	local isRested
@@ -197,9 +197,9 @@ function XPBTN:XPBar_OnEvent(event, ...)
 		currXP, nextXP, isRested = self:xpstrings_Update()
 
 		if (isRested) then
-			self.sb:SetStatusBarColor(self.config.restColor[1], self.config.restColor[2], self.config.restColor[3], self.config.restColor[4])
+			self.elements.SB:SetStatusBarColor(self.config.restColor[1], self.config.restColor[2], self.config.restColor[3], self.config.restColor[4])
 		else
-			self.sb:SetStatusBarColor(self.config.norestColor[1], self.config.norestColor[2], self.config.norestColor[3], self.config.norestColor[4])
+			self.elements.SB:SetStatusBarColor(self.config.norestColor[1], self.config.norestColor[2], self.config.norestColor[3], self.config.norestColor[4])
 		end
 
 		hasChanged = true;
@@ -210,7 +210,7 @@ function XPBTN:XPBar_OnEvent(event, ...)
 
 		currXP, nextXP = self:xpstrings_Update()
 
-		self.sb:SetStatusBarColor(1, 1, 0); --set to yellow?
+		self.elements.SB:SetStatusBarColor(1, 1, 0); --set to yellow?
 
 		hasChanged = true;
 
@@ -220,19 +220,19 @@ function XPBTN:XPBar_OnEvent(event, ...)
 
 		currXP, nextXP = self:xpstrings_Update()
 
-		self.sb:SetStatusBarColor(1, .4, .4);
+		self.elements.SB:SetStatusBarColor(1, .4, .4);
 
 		hasChanged = true;
 	end
 
 	if (hasChanged == true) then
-		self.sb:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
-		self.sb:SetValue((currXP/nextXP)*100)
+		self.elements.SB:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
+		self.elements.SB:SetValue((currXP/nextXP)*100)
 
-		self.sb.cText:SetText(self.sb.cFunc(self.sb))
-		self.sb.lText:SetText(self.sb.lFunc(self.sb))
-		self.sb.rText:SetText(self.sb.rFunc(self.sb))
-		self.sb.mText:SetText(self.sb.mFunc(self.sb))
+		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 	end
 
 end

@@ -56,7 +56,7 @@ function REPBTN:SetType()
 
 	if InCombatLockdown() then return end
 
-	self.sb.repID = self.config.repID
+	self.elements.SB.repID = self.config.repID
 
 	self:SetAttribute("hasaction", true)
 
@@ -70,11 +70,11 @@ function REPBTN:SetType()
 	self:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE", "repbar_OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "repbar_OnEvent")
 
-	self.sb:Show()
+	self.elements.SB:Show()
 
 	local typeString = L["Rep Bar"]
 
-	self.fbframe.feedback.text:SetText(typeString)
+	self.elements.FBFrame.feedback.text:SetText(typeString)
 
 	self:SetData(self.bar)
 
@@ -214,26 +214,26 @@ function REPBTN:repbar_OnEvent(event,...)
 
 	self:repstrings_Update(...)
 
-	if RepWatch[self.sb.repID] then
-		self.sb:SetStatusBarColor(RepWatch[self.sb.repID].r,  RepWatch[self.sb.repID].g, RepWatch[self.sb.repID].b)
-		self.sb:SetMinMaxValues(RepWatch[self.sb.repID].min, RepWatch[self.sb.repID].max)
-		self.sb:SetValue(RepWatch[self.sb.repID].value)
+	if RepWatch[self.elements.SB.repID] then
+		self.elements.SB:SetStatusBarColor(RepWatch[self.elements.SB.repID].r,  RepWatch[self.elements.SB.repID].g, RepWatch[self.elements.SB.repID].b)
+		self.elements.SB:SetMinMaxValues(RepWatch[self.elements.SB.repID].min, RepWatch[self.elements.SB.repID].max)
+		self.elements.SB:SetValue(RepWatch[self.elements.SB.repID].value)
 	else
-		self.sb:SetStatusBarColor(0.5,  0.5, 0.5)
-		self.sb:SetMinMaxValues(0, 1)
-		self.sb:SetValue(1)
+		self.elements.SB:SetStatusBarColor(0.5,  0.5, 0.5)
+		self.elements.SB:SetMinMaxValues(0, 1)
+		self.elements.SB:SetValue(1)
 	end
 
-	self.sb.cText:SetText(self.sb.cFunc(self.sb))
-	self.sb.lText:SetText(self.sb.lFunc(self.sb))
-	self.sb.rText:SetText(self.sb.rFunc(self.sb))
-	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 end
 
 
 function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choosing a rep
 
-	if not self.sb then
+	if not self.elements.SB then
 		return
 	end
 
@@ -311,7 +311,7 @@ function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choo
 				text = v2.name .. " - " .. v2.percent .." - ".. v2.standing,
 				func = function(dropdown, self) --self is arg1
 					self.config.repID = dropdown.value
-					self.sb.repID = dropdown.value
+					self.elements.SB.repID = dropdown.value
 					self:repbar_OnEvent()
 					menuFrame:Hide()
 				end,

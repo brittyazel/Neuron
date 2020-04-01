@@ -127,11 +127,11 @@ end
 function STATUSBTN:OnEnter()
 
 	if self.config.mIndex > 1 then
-		self.sb.cText:Hide()
-		self.sb.lText:Hide()
-		self.sb.rText:Hide()
-		self.sb.mText:Show()
-		self.sb.mText:SetText(self.sb.mFunc(self.sb))
+		self.elements.SB.cText:Hide()
+		self.elements.SB.lText:Hide()
+		self.elements.SB.rText:Hide()
+		self.elements.SB.mText:Show()
+		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 	end
 
 	if self.config.tIndex > 1 then
@@ -141,7 +141,7 @@ function STATUSBTN:OnEnter()
 
 		if self.bar:GetTooltipOption() then
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetText(self.sb.tFunc(self.sb) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
+			GameTooltip:SetText(self.elements.SB.tFunc(self.elements.SB) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
 			GameTooltip:Show()
 		end
 	end
@@ -153,13 +153,13 @@ end
 function STATUSBTN:OnLeave()
 
 	if self.config.mIndex > 1 then
-		self.sb.cText:Show()
-		self.sb.lText:Show()
-		self.sb.rText:Show()
-		self.sb.mText:Hide()
-		self.sb.cText:SetText(self.sb.cFunc(self.sb))
-		self.sb.lText:SetText(self.sb.lFunc(self.sb))
-		self.sb.rText:SetText(self.sb.rFunc(self.sb))
+		self.elements.SB.cText:Show()
+		self.elements.SB.lText:Show()
+		self.elements.SB.rText:Show()
+		self.elements.SB.mText:Hide()
+		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
 	end
 
 	if self.config.tIndex > 1 then
@@ -240,8 +240,8 @@ function STATUSBTN:UpdateBarFill(command, gui, query, skipupdate)
 
 		self.config.texture = index
 
-		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-		self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 
 	end
 
@@ -262,8 +262,8 @@ function STATUSBTN:UpdateBorder(command, gui, query, skipupdate)
 
 		self.config.border = index
 
-		self:SetBorder(self.sb, self.config, self.bordercolor)
-		self:SetBorder(self.fbframe.feedback, self.config, self.bordercolor)
+		self:SetBorder(self.elements.SB, self.config, self.bordercolor)
+		self:SetBorder(self.elements.FBFrame.feedback, self.config, self.bordercolor)
 
 	end
 end
@@ -285,21 +285,21 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 		if self.config.orientation ~= orientationIndex then
 
 			self.config.orientation = orientationIndex
-			self.sb.orientation = self.config.orientation
+			self.elements.SB.orientation = self.config.orientation
 
-			self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
-			self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
+			self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
+			self.elements.FBFrame.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
 			if self.config.orientation == 2 then
-				self.sb.cText:SetAlpha(0)
-				self.sb.lText:SetAlpha(0)
-				self.sb.rText:SetAlpha(0)
-				self.sb.mText:SetAlpha(0)
+				self.elements.SB.cText:SetAlpha(0)
+				self.elements.SB.lText:SetAlpha(0)
+				self.elements.SB.rText:SetAlpha(0)
+				self.elements.SB.mText:SetAlpha(0)
 			else
-				self.sb.cText:SetAlpha(1)
-				self.sb.lText:SetAlpha(1)
-				self.sb.rText:SetAlpha(1)
-				self.sb.mText:SetAlpha(1)
+				self.elements.SB.cText:SetAlpha(1)
+				self.elements.SB.lText:SetAlpha(1)
+				self.elements.SB.rText:SetAlpha(1)
+				self.elements.SB.mText:SetAlpha(1)
 			end
 
 
@@ -342,9 +342,9 @@ function STATUSBTN:UpdateCenterText(command, gui, query)
 
 		self.config.cIndex = index
 
-		self.sb.cFunc = self.sbStrings[self.config.cIndex][2]
+		self.elements.SB.cFunc = self.sbStrings[self.config.cIndex][2]
 
-		self.sb.cText:SetText(self.sb.cFunc(self.sb))
+		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
 	end
 end
 
@@ -364,10 +364,10 @@ function STATUSBTN:UpdateLeftText(command, gui, query)
 		self.config.lIndex = index
 
 
-		self.sb.lFunc = self.sbStrings[self.config.lIndex][2]
+		self.elements.SB.lFunc = self.sbStrings[self.config.lIndex][2]
 
 
-		self.sb.lText:SetText(self.sb.lFunc(self.sb))
+		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
 
 	end
 end
@@ -391,9 +391,9 @@ function STATUSBTN:UpdateRightText(command, gui, query)
 
 		self.config.rIndex = index
 
-		self.sb.rFunc = self.sbStrings[self.config.rIndex][2]
+		self.elements.SB.rFunc = self.sbStrings[self.config.rIndex][2]
 
-		self.sb.rText:SetText(self.sb.rFunc(self.sb))
+		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
 
 	end
 end
@@ -417,9 +417,9 @@ function STATUSBTN:UpdateMouseover(command, gui, query)
 
 		self.config.mIndex = index
 
-		self.sb.mFunc = self.sbStrings[self.config.mIndex][2]
+		self.elements.SB.mFunc = self.sbStrings[self.config.mIndex][2]
 
-		self.sb.mText:SetText(self.sb.mFunc(self.sb))
+		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 	end
 end
 
@@ -442,7 +442,7 @@ function STATUSBTN:UpdateTooltip(command, gui, query)
 
 		self.config.tIndex = index
 
-		self.sb.tFunc = self.sbStrings[self.config.tIndex][2]
+		self.elements.SB.tFunc = self.sbStrings[self.config.tIndex][2]
 
 	end
 end
@@ -460,76 +460,76 @@ function STATUSBTN:SetData(bar)
 	self:SetWidth(self.config.width)
 	self:SetHeight(self.config.height)
 
-	self.sb.cText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
-	self.sb.lText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
-	self.sb.rText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
-	self.sb.mText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
+	self.elements.SB.cText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
+	self.elements.SB.lText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
+	self.elements.SB.rText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
+	self.elements.SB.mText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
 
 
 	if not self.sbStrings[self.config.cIndex] then
 		self.config.cIndex = 1
 	end
-	self.sb.cFunc = self.sbStrings[self.config.cIndex][2]
+	self.elements.SB.cFunc = self.sbStrings[self.config.cIndex][2]
 
 	if not self.sbStrings[self.config.lIndex] then
 		self.config.lIndex = 1
 	end
-	self.sb.lFunc = self.sbStrings[self.config.lIndex][2]
+	self.elements.SB.lFunc = self.sbStrings[self.config.lIndex][2]
 
 	if not self.sbStrings[self.config.rIndex] then
 		self.config.rIndex = 1
 	end
-	self.sb.rFunc = self.sbStrings[self.config.rIndex][2]
+	self.elements.SB.rFunc = self.sbStrings[self.config.rIndex][2]
 
 	if not self.sbStrings[self.config.mIndex] then
 		self.config.mIndex = 1
 	end
-	self.sb.mFunc = self.sbStrings[self.config.mIndex][2]
+	self.elements.SB.mFunc = self.sbStrings[self.config.mIndex][2]
 
 	if not self.sbStrings[self.config.tIndex] then
 		self.config.tIndex = 1
 	end
-	self.sb.tFunc = self.sbStrings[self.config.tIndex][2]
+	self.elements.SB.tFunc = self.sbStrings[self.config.tIndex][2]
 
 
-	self.sb.cText:SetText(self.sb.cFunc(self.sb))
-	self.sb.lText:SetText(self.sb.lFunc(self.sb))
-	self.sb.rText:SetText(self.sb.rFunc(self.sb))
-	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 
-	self.sb.orientation = self.config.orientation
-	self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
-	self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
+	self.elements.SB.orientation = self.config.orientation
+	self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
+	self.elements.FBFrame.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
 	if self.config.orientation == 2 then
-		self.sb.cText:SetAlpha(0)
-		self.sb.lText:SetAlpha(0)
-		self.sb.rText:SetAlpha(0)
-		self.sb.mText:SetAlpha(0)
+		self.elements.SB.cText:SetAlpha(0)
+		self.elements.SB.lText:SetAlpha(0)
+		self.elements.SB.rText:SetAlpha(0)
+		self.elements.SB.mText:SetAlpha(0)
 	else
-		self.sb.cText:SetAlpha(1)
-		self.sb.lText:SetAlpha(1)
-		self.sb.rText:SetAlpha(1)
-		self.sb.mText:SetAlpha(1)
+		self.elements.SB.cText:SetAlpha(1)
+		self.elements.SB.lText:SetAlpha(1)
+		self.elements.SB.rText:SetAlpha(1)
+		self.elements.SB.mText:SetAlpha(1)
 	end
 
 	if BarTextures[self.config.texture] then
-		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-		self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 	else
-		self.sb:SetStatusBarTexture(BarTextures[1][self.config.orientation])
-		self.fbframe.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
+		self.elements.SB:SetStatusBarTexture(BarTextures[1][self.config.orientation])
+		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
 	end
 
-	self:SetBorder(self.sb, self.config, self.config.bordercolor)
-	self:SetBorder(self.fbframe.feedback, self.config, self.config.bordercolor)
+	self:SetBorder(self.elements.SB, self.config, self.config.bordercolor)
+	self:SetBorder(self.elements.FBFrame.feedback, self.config, self.config.bordercolor)
 
 	self:SetFrameLevel(4)
 
-	self.fbframe:SetFrameLevel(self:GetFrameLevel()+10)
-	self.fbframe.feedback:SetFrameLevel(self.sb:GetFrameLevel()+10)
-	self.fbframe.feedback.bg:SetFrameLevel(self.sb.bg:GetFrameLevel()+10)
-	self.fbframe.feedback.border:SetFrameLevel(self.sb.border:GetFrameLevel()+10)
+	self.elements.FBFrame:SetFrameLevel(self:GetFrameLevel()+10)
+	self.elements.FBFrame.feedback:SetFrameLevel(self.elements.SB:GetFrameLevel()+10)
+	self.elements.FBFrame.feedback.bg:SetFrameLevel(self.elements.SB.bg:GetFrameLevel()+10)
+	self.elements.FBFrame.feedback.border:SetFrameLevel(self.elements.SB.border:GetFrameLevel()+10)
 
 end
 
@@ -541,12 +541,12 @@ function STATUSBTN:SetObjectVisibility(show)
 
 		self.editmode = true
 
-		self.fbframe:Show()
+		self.elements.FBFrame:Show()
 
 	else
 		self.editmode = nil
 
-		self.fbframe:Hide()
+		self.elements.FBFrame:Hide()
 	end
 
 end

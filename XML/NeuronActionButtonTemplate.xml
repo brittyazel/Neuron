@@ -28,7 +28,7 @@
 				<Texture name="$parentFlyoutArrow" parentKey="FlyoutArrow" hidden="true"/>
 				<Texture name="$parentFlyoutBorder" parentKey="FlyoutBorder" hidden="true"/>
 				<Texture name="$parentFlyoutBorderShadow" parentKey="FlyoutBorderShadow" hidden="true"/>
-				<FontString name="$parentButton_Name" inherits="GameFontHighlightSmallOutline">
+				<FontString name="$parentName" inherits="GameFontHighlightSmallOutline">
 					<Anchors>
 						<Anchor point="BOTTOMLEFT">
 							<Offset x="2" y="2"/>
@@ -40,7 +40,7 @@
 				</FontString>
 			</Layer>
 			<Layer level="OVERLAY" textureSubLevel="1">
-				<Texture name="$parentButton_Border" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
+				<Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
 					<Size x="64" y="64"/>
 					<Anchors>
 						<Anchor point="CENTER">
@@ -92,7 +92,7 @@
 					</Anchors>
 					<TexCoords left="0.71875" right="1" top="0" bottom="1"/>
 				</Texture>
-				<FontString name="$parentButton_HotKey" inherits="NumberFontNormal" justifyH="RIGHT">
+				<FontString name="$parentHotkey" inherits="NumberFontNormal" justifyH="RIGHT">
 					<Size x="43" y="10"/>
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -100,7 +100,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentButton_Count" inherits="NumberFontNormal" justifyH="RIGHT">
+				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT">
 							<Offset x="-2" y="2"/>

@@ -290,7 +290,6 @@ function ACTIONBUTTON:SetType()
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
 
-						self:SetAttribute("SpecialAction", "vehicle")
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
@@ -301,7 +300,6 @@ function ACTIONBUTTON:SetType()
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
 
-						self:SetAttribute("SpecialAction", "possess")
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
@@ -313,7 +311,6 @@ function ACTIONBUTTON:SetType()
 							self:SetAttribute("HasActionID", true)
 						end
 
-						self:SetAttribute("SpecialAction", "override")
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
@@ -334,8 +331,6 @@ function ACTIONBUTTON:SetType()
 						else
 							self:SetAttribute("HasActionID", true)
 						end
-
-						self:SetAttribute("SpecialAction", nil)
 					end
 
 					self:SetAttribute("activestate", msg)
@@ -374,8 +369,13 @@ end
 --controlling the gui elements of the actionbutton
 function ACTIONBUTTON:UpdateData()
 
+	--clear any lingering values before we reparse and reassign
+	self:MACRO_Reset()
+
 	--if we have no macro content then bail immediately
-	if not self.macro then
+	--if we have an actionID on this button bail immediately
+	if not self.macro or self.actionID then
+		--clear any values that were set as they'll get in the way later
 		return
 	end
 
@@ -411,29 +411,15 @@ function ACTIONBUTTON:UpdateData()
 	elseif abilityOrItem and #abilityOrItem > 0 then
 		if NeuronItemCache[abilityOrItem] then --if our abilityOrItem is actually an item in our cache, amend it as such
 			self.item = abilityOrItem
-			self.spell = nil
-			self.spellID = nil
 		elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
 			self.item = GetInventoryItemLink("player", abilityOrItem)
-			self.spell = nil
-			self.spellID = nil
 		elseif NeuronSpellCache[abilityOrItem:lower()] then
-			self.item = nil
 			self.spell = abilityOrItem
 			self.spellID = NeuronSpellCache[abilityOrItem:lower()].spellID
 		elseif GetSpellInfo(abilityOrItem) then
-			self.item = nil
 			self.spell = abilityOrItem
 			_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
-		else --whatever is in abilityOrItem isn't an inventory item nor a known spell, so nil these values
-			self.item = nil
-			self.spell = nil
-			self.spellID = nil
 		end
-	else
-		self.item = nil
-		self.spell = nil
-		self.spellID = nil
 	end
 end
 
@@ -469,8 +455,8 @@ function ACTIONBUTTON:StartGlow()
 		if self.bar:GetSpellGlow() == "default" then
 			ActionButton_ShowOverlayGlow(self)
 		else
-			self.shine:Show()
-			AutoCastShine_AutoCastStart(self.shine)
+			self.elements.Shine:Show()
+			AutoCastShine_AutoCastStart(self.elements.Shine);
 		end
 	end
 end
@@ -480,8 +466,8 @@ function ACTIONBUTTON:StopGlow()
 		if self.bar:GetSpellGlow() == "default" then
 			ActionButton_HideOverlayGlow(self)
 		else
-			self.shine:Hide()
-			AutoCastShine_AutoCastStop(self.shine);
+			self.elements.Shine:Hide()
+			AutoCastShine_AutoCastStop(self.elements.Shine);
 		end
 	end
 end
@@ -546,7 +532,6 @@ function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
 end
 
 function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
-	self:MACRO_Reset()
 	self:UpdateAll()
 	self.binder:ApplyBindings()
 
@@ -705,20 +690,20 @@ end
 -----------------------------------------------------------------------------------------
 
 function ACTIONBUTTON:UpdateIcon()
-	if self.data.macro_Icon then
-		self.iconframeicon:SetTexture(self.data.macro_Icon)
-		self.iconframeicon:Show()
-	elseif self.actionID then
+	if self.actionID then
 		self:SetActionIcon(self.actionID)
+	elseif self.data.macro_Icon then
+		self.elements.IconFrameIcon:SetTexture(self.data.macro_Icon)
+		self.elements.IconFrameIcon:Show()
 	elseif self.spell then
 		self:SetSpellIcon(self.spell)
 	elseif self.item then
 		self:SetItemIcon(self.item)
 	else
-		self.button_name:SetText("")
-		self.iconframeicon:SetTexture("")
-		self.iconframeicon:Hide()
-		self.button_border:Hide()
+		self.elements.Name:SetText("")
+		self.elements.IconFrameIcon:SetTexture("")
+		self.elements.IconFrameIcon:Hide()
+		self.elements.Border:Hide()
 	end
 end
 
@@ -745,21 +730,21 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 	end
 
 	if texture then
-		self.iconframeicon:SetTexture(texture)
+		self.elements.IconFrameIcon:SetTexture(texture)
 	else
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
-	self.iconframeicon:Show()
+	self.elements.IconFrameIcon:Show()
 end
 
 function ACTIONBUTTON:SetItemIcon(item)
 	local texture
 
 	if IsEquippedItem(item) then --makes the border green when item is equipped and dragged to a button
-		self.button_border:SetVertexColor(0, 1.0, 0, 0.2)
-		self.button_border:Show()
+		self.elements.Border:SetVertexColor(0, 1.0, 0, 0.2)
+		self.elements.Border:Show()
 	else
-		self.button_border:Hide()
+		self.elements.Border:Hide()
 	end
 
 	if NeuronItemCache[item] then
@@ -769,12 +754,12 @@ function ACTIONBUTTON:SetItemIcon(item)
 	end
 
 	if texture then
-		self.iconframeicon:SetTexture(texture)
+		self.elements.IconFrameIcon:SetTexture(texture)
 	else
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
 
-	self.iconframeicon:Show()
+	self.elements.IconFrameIcon:Show()
 end
 
 function ACTIONBUTTON:SetActionIcon(action)
@@ -786,12 +771,13 @@ function ACTIONBUTTON:SetActionIcon(action)
 	end
 
 	if texture then
-		self.iconframeicon:SetTexture(texture)
+		self.elements.IconFrameIcon:SetTexture(texture)
 	else
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		--self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		self.elements.IconFrameIcon:SetTexture("")
 	end
 
-	self.iconframeicon:Show()
+	self.elements.IconFrameIcon:Show()
 end
 
 -----------------------------------------------------------------------------------------
@@ -807,8 +793,8 @@ function ACTIONBUTTON:UpdateState()
 		self:SetItemState(self.item)
 	else
 		self:SetChecked(nil)
-		self.button_name:SetText("")
-		self.button_count:SetText("")
+		self.elements.Name:SetText("")
+		self.elements.Count:SetText("")
 	end
 end
 
@@ -819,7 +805,7 @@ function ACTIONBUTTON:SetSpellState(spell)
 		self:SetChecked(nil)
 	end
 
-	self.button_name:SetText(self.data.macro_Name)
+	self.elements.Name:SetText(self.data.macro_Name)
 	self:UpdateSpellCount(spell)
 	self:UpdateUsable()
 
@@ -832,7 +818,7 @@ function ACTIONBUTTON:SetItemState(item)
 		self:SetChecked(nil)
 	end
 
-	self.button_name:SetText(self.data.macro_Name)
+	self.elements.Name:SetText(self.data.macro_Name)
 	self:UpdateItemCount(item)
 	self:UpdateUsable()
 end
@@ -850,8 +836,8 @@ function ACTIONBUTTON:SetActionState(action)
 		self:SetChecked(nil)
 	end
 
-	self.button_name:SetText(self.data.macro_Name)
-	self.button_count:SetText("")
+	self.elements.Name:SetText("")
+	self.elements.Count:SetText("")
 	self:UpdateUsable()
 end
 
@@ -861,7 +847,7 @@ end
 
 function ACTIONBUTTON:UpdateUsable()
 	if self.editmode then
-		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID then
 		self:SetUsableAction(self.actionID)
 	elseif self.spell then
@@ -869,7 +855,7 @@ function ACTIONBUTTON:UpdateUsable()
 	elseif self.item then
 		self:SetUsableItem(self.item)
 	else
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 	end
 end
 
@@ -880,21 +866,21 @@ function ACTIONBUTTON:SetUsableSpell(spell)
 	isUsable, notEnoughMana = IsUsableSpell(spellName)
 
 	if notEnoughMana then
-		self.iconframeicon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
+		self.elements.IconFrameIcon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
 	elseif isUsable then
 		if self.bar:GetShowRangeIndicator() and IsSpellInRange(spellName, self.unit) == 0 then
-			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
+			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and (self.bar:GetShowRangeIndicator() and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0) then
-			self.iconframeicon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
+			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
 
 	else
 		if NeuronSpellCache[(spell):lower()] then
-			self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+			self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
 	end
 end
@@ -907,15 +893,15 @@ function ACTIONBUTTON:SetUsableItem(item)
 	end
 
 	if notEnoughMana and self.manacolor then
-		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif isUsable then
 		if self.rangeInd and IsItemInRange(spell, self.unit) == 0 then
-			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
 	else
-		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 
@@ -924,26 +910,26 @@ function ACTIONBUTTON:SetUsableAction(action)
 
 	if actionID then
 		if actionID == 0 then
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		else
 			local isUsable, notEnoughMana = IsUsableAction(actionID)
 
 			if isUsable then
 				if IsActionInRange(action, self.unit) == 0 then
-					self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+					self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 				else
-					self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+					self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 				end
 
 			elseif notEnoughMana and self.manacolor then
-				self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+				self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 			else
-				self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+				self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 			end
 		end
 
 	else
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 	end
 end
 
@@ -981,7 +967,7 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 	if value and self.data then
 		if name == "activestate" then
 
-			--Part 1 of Druid Prowl overwrite fix
+			--Part 2 of Druid Prowl overwrite fix (part 1 below)
 			-----------------------------------------------------
 			--breaks out of the loop due to flag set below
 			if Neuron.class == "DRUID" and self.ignoreNextOverrideStance == true and value == "homestate" then
@@ -997,12 +983,16 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 			if self:GetAttribute("HasActionID") then
 				self.actionID = self:GetAttribute("*action*")
 			else
+				--clear any actionID that has been set
+				self.actionID = nil
 
+				--this is a safety check in case the state we're switching into doesn't have table set up for it yet
+				-- i.e. stealth1 or stance2
 				if not self.statedata[value] then
 					self.statedata[value] = {}
 				end
 
-				--Part 2 of Druid Prowl overwrite fix
+				--Part 1 of Druid Prowl overwrite fix
 				---------------------------------------------------
 				--druids have an issue where once stance will get immediately overwritten by another. I.E. stealth immediately getting overwritten by homestate if they go immediately into prowl from caster form
 				--this conditional sets a flag to ignore the next most stance flag, as that one is most likely in error and should be ignored
@@ -1012,18 +1002,13 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 				------------------------------------------------------
 				------------------------------------------------------
 
-
+				--swap out our data with the data stored for the particular state
 				self.data = self.statedata[value]
-
 				self:ParseAndSanitizeMacro()
-
 				self:MACRO_Reset()
-
-				self.actionID = false
 			end
 
-			--This will remove any old button state data from the saved varabiels/memory
-			--for id,data in pairs(self.bar.data) do
+			--This will remove any old button state data from the saved variable's memory
 			for id,data in pairs(self.statedata) do
 				if (self.bar.data[id:match("%a+")] or id == "") and self.bar.data["custom"] then
 				elseif not self.bar.data[id:match("%a+")] then
@@ -1031,7 +1016,6 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 				end
 			end
 
-			self.specAction = self:GetAttribute("SpecialAction") --?
 			self:UpdateAll()
 		end
 
@@ -1039,17 +1023,13 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 			self:UpdateAll()
 		end
 	end
-
-
 end
-
 
 function ACTIONBUTTON:MACRO_Reset()
 	self.spell = nil
 	self.spellID = nil
 	self.item = nil
 end
-
 
 function ACTIONBUTTON:ParseAndSanitizeMacro()
 	local uncleanMacro = self.data.macro_Text
@@ -1135,7 +1115,6 @@ function ACTIONBUTTON:SetFauxState(state)
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 			end
 
-			self:SetAttribute("SpecialAction", "vehicle")
 			self:SetAttribute("HasActionID", true)
 			self:Show()
 
@@ -1146,7 +1125,6 @@ function ACTIONBUTTON:SetFauxState(state)
 				self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 			end
 
-			self:SetAttribute("SpecialAction", "possess")
 			self:SetAttribute("HasActionID", true)
 			self:Show()
 
@@ -1158,7 +1136,6 @@ function ACTIONBUTTON:SetFauxState(state)
 				self:SetAttribute("HasActionID", true)
 			end
 
-			self:SetAttribute("SpecialAction", "override")
 			self:SetAttribute("HasActionID", true)
 			self:Show()
 
@@ -1179,7 +1156,6 @@ function ACTIONBUTTON:SetFauxState(state)
 				self:SetAttribute("HasActionID", true)
 			end
 
-			self:SetAttribute("SpecialAction", nil)
 		end
 
 		self:SetAttribute("activestate", msg)

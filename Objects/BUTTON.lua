@@ -54,10 +54,13 @@ function BUTTON.new(bar, buttonID,baseObj, barClass, objType, template)
 	----------------------
 	--returns a table of the names of all the child objects for a given frame
 	local objects = Neuron:GetParentKeys(newButton)
+
+	--table to hold all of our captured frame element handles
+	newButton.elements = {}
 	--populates the button with all the Icon,Shine,Cooldown frame references
 	for k,v in pairs(objects) do
 		local name = (v):gsub(newButton:GetName(), "")
-		newButton[name:lower()] = _G[v]
+		newButton.elements[name] = _G[v]
 	end
 	-----------------------
 
@@ -142,22 +145,22 @@ end
 
 function BUTTON:CancelCooldownTimer(stopAnimation)
 	--cleanup so on state changes the cooldowns don't persist
-	if self:TimeLeft(self.iconframecooldown.cooldownTimer) ~= 0 then
-		self:CancelTimer(self.iconframecooldown.cooldownTimer)
+	if self:TimeLeft(self.elements.IconFrameCooldown.cooldownTimer) ~= 0 then
+		self:CancelTimer(self.elements.IconFrameCooldown.cooldownTimer)
 	end
 
-	if self:TimeLeft(self.iconframecooldown.cooldownUpdateTimer) ~= 0 then
-		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
+	if self:TimeLeft(self.elements.IconFrameCooldown.cooldownUpdateTimer) ~= 0 then
+		self:CancelTimer(self.elements.IconFrameCooldown.cooldownUpdateTimer)
 	end
 
-	self.iconframecooldown.timer:SetText("")
+	self.elements.IconFrameCooldown.timer:SetText("")
 
-	self.iconframecooldown.showCountdownTimer = false
-	self.iconframecooldown.showCountdownAlpha = false
+	self.elements.IconFrameCooldown.showCountdownTimer = false
+	self.elements.IconFrameCooldown.showCountdownAlpha = false
 
 	--clear previous sweeping cooldown animations
 	if stopAnimation then
-		CooldownFrame_Clear(self.iconframecooldown) --clear the cooldown frame
+		CooldownFrame_Clear(self.elements.IconFrameCooldown) --clear the cooldown frame
 	end
 
 	self:SetObjectVisibility()
@@ -177,15 +180,15 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 
 		if duration > 2 then --sets non GCD cooldowns
 			if charges and charges > 0 and maxCharges > 1 then
-				self.iconframecooldown:SetDrawSwipe(false);
-				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation. Show Draw Edge.
+				self.elements.IconFrameCooldown:SetDrawSwipe(false);
+				CooldownFrame_Set(self.elements.IconFrameCooldown, start, duration, enable, true, modrate) --set clock style cooldown animation. Show Draw Edge.
 			else
-				self.iconframecooldown:SetDrawSwipe(true);
-				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation for ability cooldown. Show Draw Edge.
+				self.elements.IconFrameCooldown:SetDrawSwipe(true);
+				CooldownFrame_Set(self.elements.IconFrameCooldown, start, duration, enable, true, modrate) --set clock style cooldown animation for ability cooldown. Show Draw Edge.
 			end
 		else --sets GCD cooldowns
-			self.iconframecooldown:SetDrawSwipe(true);
-			CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
+			self.elements.IconFrameCooldown:SetDrawSwipe(true);
+			CooldownFrame_Set(self.elements.IconFrameCooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
 		end
 
 		--this is only for abilities that have CD's >4 sec. Any less than that and we don't want to track the CD with text or alpha, just with the standard animation
@@ -194,15 +197,15 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 			if showCountdownTimer or showCountdownAlpha then --only set a timer if we explicitely want to (this saves CPU for a lot of people)
 
 				--set a local variable to the boolean state of either Timer or the Alpha
-				self.iconframecooldown.showCountdownTimer = showCountdownTimer
-				self.iconframecooldown.showCountdownAlpha = showCountdownAlpha
+				self.elements.IconFrameCooldown.showCountdownTimer = showCountdownTimer
+				self.elements.IconFrameCooldown.showCountdownAlpha = showCountdownAlpha
 
 
-				self.iconframecooldown.charges = charges or 0 --used to know if we should set alpha on the button (if cdAlpha is enabled) immediately, or if we need to wait for charges to run out
+				self.elements.IconFrameCooldown.charges = charges or 0 --used to know if we should set alpha on the button (if cdAlpha is enabled) immediately, or if we need to wait for charges to run out
 
 				--clear old timer before starting a new one
-				if self:TimeLeft(self.iconframecooldown.cooldownTimer) ~= 0 then
-					self:CancelTimer(self.iconframecooldown.cooldownTimer)
+				if self:TimeLeft(self.elements.IconFrameCooldown.cooldownTimer) ~= 0 then
+					self:CancelTimer(self.elements.IconFrameCooldown.cooldownTimer)
 				end
 
 				--Get the remaining time left so when we re-call the timer when switching back to a state it has the correct time left instead of the full time
@@ -214,21 +217,21 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 				end
 
 				--set timer that is both our cooldown counter, but also the cancels the repeating updating timer at the end
-				self.iconframecooldown.cooldownTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over (to fully finish the animations/alpha transition)
+				self.elements.IconFrameCooldown.cooldownTimer = self:ScheduleTimer(function() self:CancelTimer(self.elements.IconFrameCooldown.cooldownUpdateTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over (to fully finish the animations/alpha transition)
 
 
 				--clear old timer before starting a new one
-				if self:TimeLeft(self.iconframecooldown.cooldownUpdateTimer) ~= 0 then
-					self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
+				if self:TimeLeft(self.elements.IconFrameCooldown.cooldownUpdateTimer) ~= 0 then
+					self:CancelTimer(self.elements.IconFrameCooldown.cooldownUpdateTimer)
 				end
 
 				--schedule a repeating timer that is physically keeping track of the countdown and switching the alpha and count text
-				self.iconframecooldown.cooldownUpdateTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.20)
-				self.iconframecooldown.normalcolor = color1
-				self.iconframecooldown.expirecolor = color2
+				self.elements.IconFrameCooldown.cooldownUpdateTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.20)
+				self.elements.IconFrameCooldown.normalcolor = color1
+				self.elements.IconFrameCooldown.expirecolor = color2
 			else
-				self.iconframecooldown.showCountdownTimer = false
-				self.iconframecooldown.showCountdownAlpha = false
+				self.elements.IconFrameCooldown.showCountdownTimer = false
+				self.elements.IconFrameCooldown.showCountdownAlpha = false
 			end
 
 		else
@@ -247,22 +250,22 @@ function BUTTON:CooldownCounterUpdate()
 
 	local coolDown, formatted, size
 
-	local normalcolor = self.iconframecooldown.normalcolor
-	local expirecolor = self.iconframecooldown.expirecolor
+	local normalcolor = self.elements.IconFrameCooldown.normalcolor
+	local expirecolor = self.elements.IconFrameCooldown.expirecolor
 
-	coolDown = self:TimeLeft(self.iconframecooldown.cooldownTimer) - 1 --subtract 1 from the timer because we added 1 in SetCooldownTimer to keep the timer runing for 1 extra second after the spell
+	coolDown = self:TimeLeft(self.elements.IconFrameCooldown.cooldownTimer) - 1 --subtract 1 from the timer because we added 1 in SetCooldownTimer to keep the timer runing for 1 extra second after the spell
 
-	if self.iconframecooldown.showCountdownTimer then --check if flag is set, otherwise skip
+	if self.elements.IconFrameCooldown.showCountdownTimer then --check if flag is set, otherwise skip
 
 		if coolDown < 1 then
 			if coolDown <= 0 then
-				self.iconframecooldown.timer:SetText("")
-				self.iconframecooldown.expirecolor = nil
-				self.iconframecooldown.cdsize = nil
+				self.elements.IconFrameCooldown.timer:SetText("")
+				self.elements.IconFrameCooldown.expirecolor = nil
+				self.elements.IconFrameCooldown.cdsize = nil
 
 			elseif coolDown > 0 then
-				if self.iconframecooldown.alphafade then
-					self.iconframecooldown:SetAlpha(coolDown)
+				if self.elements.IconFrameCooldown.alphafade then
+					self.elements.IconFrameCooldown:SetAlpha(coolDown)
 				end
 			end
 
@@ -272,48 +275,48 @@ function BUTTON:CooldownCounterUpdate()
 				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
 				size = self:GetWidth()*0.3
-				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.elements.IconFrameCooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif coolDown >= 3600 then --append a "h" if the timer is longer than 1 hour
 				formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
 				size = self:GetWidth()*0.3
-				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.elements.IconFrameCooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif coolDown >= 60 then --append a "m" if the timer is longer than 1 min
 				formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
 				size = self:GetWidth()*0.3
-				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.elements.IconFrameCooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif coolDown >=6 then --this is the 'normal' countdown text state
 				formatted = string.format( "%.0f",coolDown)
 				size = self:GetWidth()*0.45
-				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.elements.IconFrameCooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif coolDown < 6 then --this is the countdown text state but with the text larger and set to the expire color (usually red)
 				formatted = string.format( "%.0f",coolDown)
 				size = self:GetWidth()*0.6
 				if expirecolor then
-					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
+					self.elements.IconFrameCooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
 					expirecolor = nil
 				end
 
 			end
 
-			if not self.iconframecooldown.cdsize or self.iconframecooldown.cdsize ~= size then
-				self.iconframecooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
-				self.iconframecooldown.cdsize = size
+			if not self.elements.IconFrameCooldown.cdsize or self.elements.IconFrameCooldown.cdsize ~= size then
+				self.elements.IconFrameCooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
+				self.elements.IconFrameCooldown.cdsize = size
 			end
 
-			self.iconframecooldown.timer:SetText(formatted)
+			self.elements.IconFrameCooldown.timer:SetText(formatted)
 
 		end
 
 	end
 
 
-	if self.iconframecooldown.showCountdownAlpha and self.iconframecooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
+	if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
 		if coolDown > 0 then
 			self.iconframecooldown.button:SetAlpha(0.2)
@@ -339,7 +342,7 @@ function BUTTON:SetData(bar)
 
 	self.bar = bar
 
-	self.button_name:SetText(self.data.macro_Name) --custom macro's weren't showing the name
+	self.elements.Name:SetText(self.data.macro_Name) --custom macro's weren't showing the name
 
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 
@@ -347,24 +350,24 @@ function BUTTON:SetData(bar)
 
 
 	if self.bar:GetShowBindText() then
-		self.button_hotkey:Show()
-		self.button_hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
+		self.elements.Hotkey:Show()
+		self.elements.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
 	else
-		self.button_hotkey:Hide()
+		self.elements.Hotkey:Hide()
 	end
 
 	if self.bar:GetShowMacroText() then
-		self.button_name:Show()
-		self.button_name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
+		self.elements.Name:Show()
+		self.elements.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
 	else
-		self.button_name:Hide()
+		self.elements.Name:Hide()
 	end
 
 	if self.bar:GetShowCountText() then
-		self.button_count:Show()
-		self.button_count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3],self.bar:GetCountColor()[4])
+		self.elements.Count:Show()
+		self.elements.Count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3],self.bar:GetCountColor()[4])
 	else
-		self.button_count:Hide()
+		self.elements.Count:Hide()
 	end
 
 	local down, up = "", ""
@@ -454,19 +457,19 @@ function BUTTON:SetSkinned(flyout)
 
 		if bar then
 			local btnData = {
-				Normal = self.normaltexture,
-				Icon = self.iconframeicon,
-				HotKey = self.button_hotkey,
-				Count = self.button_count,
-				Name = self.button_name,
-				Border = self.button_border,
-				Shine = self.shine,
-				Cooldown = self.iconframecooldown,
-				AutoCastable = self.autocastable,
-				Checked = self.checkedtexture,
+				Normal = self.elements.NormalTexture,
+				Icon = self.elements.IconFrameIcon,
+				HotKey = self.elements.Hotkey,
+				Count = self.elements.Count,
+				Name = self.elements.Name,
+				Border = self.elements.Border,
+				Shine = self.elements.Shine,
+				Cooldown = self.elements.IconFrameCooldown,
+				AutoCastable = self.elements.AutoCastable,
+				Checked = self.elements.CheckedTexture,
 				Pushed = self:GetPushedTexture(),
 				Disabled = self:GetDisabledTexture(),
-				Highlight = self.highlighttexture,
+				Highlight = self.elements.HighlightTexture,
 			}
 
 			if flyout then
@@ -526,11 +529,11 @@ function BUTTON:UpdateSpellCount(spell)
 	local count = GetSpellCount(spell)
 
 	if maxCharges and maxCharges > 1 then
-		self.button_count:SetText(charges)
+		self.elements.Count:SetText(charges)
 	elseif count and count > 0 then
-		self.button_count:SetText(count)
+		self.elements.Count:SetText(count)
 	else
-		self.button_count:SetText("")
+		self.elements.Count:SetText("")
 	end
 end
 
@@ -540,9 +543,9 @@ function BUTTON:UpdateItemCount(item)
 	local count = GetItemCount(item,nil,true)
 
 	if count and count > 1 then
-		self.button_count:SetText(count)
+		self.elements.Count:SetText(count)
 	else
-		self.button_count:SetText("")
+		self.elements.Count:SetText("")
 	end
 end
 
@@ -621,26 +624,26 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 
 			if self.bar:GetShowAuraIndicator() then
 
-				self.iconframecooldown.auraType = uaw_auraType
-				self.iconframecooldown.unit = unit
+				self.elements.IconFrameCooldown.auraType = uaw_auraType
+				self.elements.IconFrameCooldown.unit = unit
 
 
 				--clear old timer before starting a new one
-				if self:TimeLeft(self.iconframecooldown.auraTimer) ~= 0 then
-					self:CancelTimer(self.iconframecooldown.auraTimer)
+				if self:TimeLeft(self.elements.IconFrameCooldown.auraTimer) ~= 0 then
+					self:CancelTimer(self.elements.IconFrameCooldown.auraTimer)
 				end
 
 				local timeLeft = uaw_timeLeft - GetTime()
 
-				self.iconframecooldown.auraTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.auraUpdateTimer) end, timeLeft + 1)
+				self.elements.IconFrameCooldown.auraTimer = self:ScheduleTimer(function() self:CancelTimer(self.elements.IconFrameCooldown.auraUpdateTimer) end, timeLeft + 1)
 
 
 				--clear old timer before starting a new one
-				if self:TimeLeft(self.iconframecooldown.auraUpdateTimer) ~= 0 then
-					self:CancelTimer(self.iconframecooldown.auraUpdateTimer)
+				if self:TimeLeft(self.elements.IconFrameCooldown.auraUpdateTimer) ~= 0 then
+					self:CancelTimer(self.elements.IconFrameCooldown.auraUpdateTimer)
 				end
 
-				self.iconframecooldown.auraUpdateTimer = self:ScheduleRepeatingTimer("AuraCounterUpdate", 0.20)
+				self.elements.IconFrameCooldown.auraUpdateTimer = self:ScheduleRepeatingTimer("AuraCounterUpdate", 0.20)
 
 			end
 
@@ -649,7 +652,7 @@ function BUTTON:UpdateAuraWatch(unit, spell)
 		elseif self.auraWatchUnit == unit then
 
 			self:CancelTimer(self.iconframecooldown.auraUpdateTimer)
-			self.button_border:Hide()
+			self.elements.Border:Hide()
 
 			self.auraWatchUnit = nil
 		end
@@ -661,24 +664,24 @@ function BUTTON:AuraCounterUpdate()
 
 	local coolDown, formatted, size
 
-	coolDown = self:TimeLeft(self.iconframecooldown.auraTimer) - 1
+	coolDown = self:TimeLeft(self.elements.IconFrameCooldown.auraTimer) - 1
 
 
 	if self.bar:GetShowAuraIndicator() then
 		if coolDown > 0 then
-			if self.iconframecooldown.auraType == "buff" then
-				self.button_border:SetVertexColor(self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], 1.0)
-			elseif self.iconframecooldown.auraType == "debuff" and self.iconframecooldown.unit == "target" then
-				self.button_border:SetVertexColor(self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], 1.0)
+			if self.elements.IconFrameCooldown.auraType == "buff" then
+				self.elements.Border:SetVertexColor(self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], 1.0)
+			elseif self.elements.IconFrameCooldown.auraType == "debuff" and self.elements.IconFrameCooldown.unit == "target" then
+				self.elements.Border:SetVertexColor(self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], 1.0)
 			end
 
-			self.button_border:Show()
+			self.elements.Border:Show()
 
 		else
-			self.button_border:Hide()
+			self.elements.Border:Hide()
 		end
 	else
-		self.button_border:Hide()
+		self.elements.Border:Hide()
 	end
 
 end
