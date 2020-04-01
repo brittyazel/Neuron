@@ -282,7 +282,7 @@
 				</Frames>
 				<Scripts>
 					<OnShow>
-						self.feedback:SetStatusBarColor(self:GetParent().sb:GetStatusBarColor())
+						self.feedback:SetStatusBarColor(self:GetParent().elements.SB:GetStatusBarColor())
 					</OnShow>
 				</Scripts>
 			</CheckButton>

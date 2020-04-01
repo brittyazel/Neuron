@@ -717,25 +717,25 @@ function STATUSBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 			MirrorWatch[type].mbar = mbar
 			MirrorWatch[type].label = label
 
-			mbar.sb.mirror = type
-			mbar.sb.value = (value / 1000)
-			mbar.sb.maxvalue = (maxvalue / 1000)
-			mbar.sb.scale = scale
+			mbar.elements.SB.mirror = type
+			mbar.elements.SB.value = (value / 1000)
+			mbar.elements.SB.maxvalue = (maxvalue / 1000)
+			mbar.elements.SB.scale = scale
 
 			if  paused > 0  then
-				mbar.sb.paused = 1
+				mbar.elements.SB.paused = 1
 			else
-				mbar.sb.paused = nil
+				mbar.elements.SB.paused = nil
 			end
 
 			local color = MirrorTimerColors[type]
 
-			mbar.sb:SetMinMaxValues(0, (maxvalue / 1000))
-			mbar.sb:SetValue(mbar.sb.value)
-			mbar.sb:SetStatusBarColor(color.r, color.g, color.b)
+			mbar.elements.SB:SetMinMaxValues(0, (maxvalue / 1000))
+			mbar.elements.SB:SetValue(mbar.elements.SB.value)
+			mbar.elements.SB:SetStatusBarColor(color.r, color.g, color.b)
 
-			mbar.sb:SetAlpha(1)
-			mbar.sb:Show()
+			mbar.elements.SB:SetAlpha(1)
+			mbar.elements.SB:Show()
 		end
 	end
 end
@@ -760,7 +760,7 @@ function STATUSBTN:mirrorbar_Stop(type)
 			MirrorWatch[type].label = ""
 			MirrorWatch[type].timer = ""
 
-			mbar.sb.mirror = nil
+			mbar.elements.SB.mirror = nil
 		end
 	end
 end
