@@ -86,7 +86,7 @@ end
 ---overwrite function in parent class BUTTON
 function EXITBTN:UpdateIcon()
 
-	self.iconframeicon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
+	self.elements.IconFrameIcon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
 
 	if not self:GetSkinned() then
 		if self:HasAction() then

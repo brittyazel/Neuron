@@ -451,8 +451,8 @@ function ACTIONBUTTON:StartGlow()
 		if self.spellGlowDef then
 			ActionButton_ShowOverlayGlow(self)
 		elseif self.spellGlowAlt then
-			self.shine:Show()
-			AutoCastShine_AutoCastStart(self.shine);
+			self.elements.Shine:Show()
+			AutoCastShine_AutoCastStart(self.elements.Shine);
 		end
 	end
 end
@@ -462,8 +462,8 @@ function ACTIONBUTTON:StopGlow()
 		if self.spellGlowDef then
 			ActionButton_HideOverlayGlow(self)
 		elseif self.spellGlowAlt then
-			self.shine:Hide()
-			AutoCastShine_AutoCastStop(self.shine);
+			self.elements.Shine:Hide()
+			AutoCastShine_AutoCastStop(self.elements.Shine);
 		end
 	end
 end
@@ -704,17 +704,17 @@ function ACTIONBUTTON:UpdateIcon()
 	if self.actionID then
 		self:SetActionIcon(self.actionID)
 	elseif self.data.macro_Icon then
-		self.iconframeicon:SetTexture(self.data.macro_Icon)
-		self.iconframeicon:Show()
+		self.elements.IconFrameIcon:SetTexture(self.data.macro_Icon)
+		self.elements.IconFrameIcon:Show()
 	elseif self.spell then
 		self:SetSpellIcon(self.spell)
 	elseif self.item then
 		self:SetItemIcon(self.item)
 	else
-		self.button_name:SetText("")
-		self.iconframeicon:SetTexture("")
-		self.iconframeicon:Hide()
-		self.button_border:Hide()
+		self.elements.Name:SetText("")
+		self.elements.IconFrameIcon:SetTexture("")
+		self.elements.IconFrameIcon:Hide()
+		self.elements.Border:Hide()
 	end
 end
 
@@ -741,21 +741,21 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 	end
 
 	if texture then
-		self.iconframeicon:SetTexture(texture)
+		self.elements.IconFrameIcon:SetTexture(texture)
 	else
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
-	self.iconframeicon:Show()
+	self.elements.IconFrameIcon:Show()
 end
 
 function ACTIONBUTTON:SetItemIcon(item)
 	local texture
 
 	if IsEquippedItem(item) then --makes the border green when item is equipped and dragged to a button
-		self.button_border:SetVertexColor(0, 1.0, 0, 0.2)
-		self.button_border:Show()
+		self.elements.Border:SetVertexColor(0, 1.0, 0, 0.2)
+		self.elements.Border:Show()
 	else
-		self.button_border:Hide()
+		self.elements.Border:Hide()
 	end
 
 	if NeuronItemCache[item] then
@@ -765,12 +765,12 @@ function ACTIONBUTTON:SetItemIcon(item)
 	end
 
 	if texture then
-		self.iconframeicon:SetTexture(texture)
+		self.elements.IconFrameIcon:SetTexture(texture)
 	else
-		self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
 
-	self.iconframeicon:Show()
+	self.elements.IconFrameIcon:Show()
 end
 
 function ACTIONBUTTON:SetActionIcon(action)
@@ -782,13 +782,13 @@ function ACTIONBUTTON:SetActionIcon(action)
 	end
 
 	if texture then
-		self.iconframeicon:SetTexture(texture)
+		self.elements.IconFrameIcon:SetTexture(texture)
 	else
-		--self.iconframeicon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-		self.iconframeicon:SetTexture("")
+		--self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		self.elements.IconFrameIcon:SetTexture("")
 	end
 
-	self.iconframeicon:Show()
+	self.elements.IconFrameIcon:Show()
 end
 
 -----------------------------------------------------------------------------------------
@@ -804,8 +804,8 @@ function ACTIONBUTTON:UpdateState()
 		self:SetItemState(self.item)
 	else
 		self:SetChecked(nil)
-		self.button_name:SetText("")
-		self.button_count:SetText("")
+		self.elements.Name:SetText("")
+		self.elements.Count:SetText("")
 	end
 end
 
@@ -816,7 +816,7 @@ function ACTIONBUTTON:SetSpellState(spell)
 		self:SetChecked(nil)
 	end
 
-	self.button_name:SetText(self.data.macro_Name)
+	self.elements.Name:SetText(self.data.macro_Name)
 	self:UpdateSpellCount(spell)
 	self:UpdateUsable()
 
@@ -829,7 +829,7 @@ function ACTIONBUTTON:SetItemState(item)
 		self:SetChecked(nil)
 	end
 
-	self.button_name:SetText(self.data.macro_Name)
+	self.elements.Name:SetText(self.data.macro_Name)
 	self:UpdateItemCount(item)
 	self:UpdateUsable()
 end
@@ -847,8 +847,8 @@ function ACTIONBUTTON:SetActionState(action)
 		self:SetChecked(nil)
 	end
 
-	self.button_name:SetText("")
-	self.button_count:SetText("")
+	self.elements.Name:SetText("")
+	self.elements.Count:SetText("")
 	self:UpdateUsable()
 end
 
@@ -858,7 +858,7 @@ end
 
 function ACTIONBUTTON:UpdateUsable()
 	if self.editmode then
-		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID then
 		self:SetUsableAction(self.actionID)
 	elseif self.spell then
@@ -866,7 +866,7 @@ function ACTIONBUTTON:UpdateUsable()
 	elseif self.item then
 		self:SetUsableItem(self.item)
 	else
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 	end
 end
 
@@ -877,21 +877,21 @@ function ACTIONBUTTON:SetUsableSpell(spell)
 	isUsable, notEnoughMana = IsUsableSpell(spellName)
 
 	if notEnoughMana then
-		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif isUsable then
 		if self.rangeInd and IsSpellInRange(spellName, self.unit) == 0 then
-			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		elseif NeuronSpellCache[spellName] and NeuronSpellCache[spellName].index and self.rangeInd and IsSpellInRange(NeuronSpellCache[spellName].index,"spell", self.unit) == 0 then
-			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
 
 	else
 		if NeuronSpellCache[(spell):lower()] then
-			self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+			self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
 	end
 end
@@ -904,15 +904,15 @@ function ACTIONBUTTON:SetUsableItem(item)
 	end
 
 	if notEnoughMana and self.manacolor then
-		self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif isUsable then
 		if self.rangeInd and IsItemInRange(spell, self.unit) == 0 then
-			self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
 	else
-		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 
@@ -921,26 +921,26 @@ function ACTIONBUTTON:SetUsableAction(action)
 
 	if actionID then
 		if actionID == 0 then
-			self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		else
 			local isUsable, notEnoughMana = IsUsableAction(actionID)
 
 			if isUsable then
 				if IsActionInRange(action, self.unit) == 0 then
-					self.iconframeicon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+					self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 				else
-					self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+					self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 				end
 
 			elseif notEnoughMana and self.manacolor then
-				self.iconframeicon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+				self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 			else
-				self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+				self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 			end
 		end
 
 	else
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 	end
 end
 

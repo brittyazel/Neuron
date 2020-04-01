@@ -23,7 +23,7 @@
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
-local menuElements = {
+local blizzMenuButtons = {
 	CharacterMicroButton,
 	SpellbookMicroButton,
 	TalentMicroButton,
@@ -37,9 +37,9 @@ local menuElements = {
 	MainMenuMicroButton}
 
 if Neuron.isWoWClassic then
-	wipe(menuElements)
+	wipe(blizzMenuButtons)
 	for i=1, #MICRO_BUTTONS do
-		table.insert(menuElements, _G[MICRO_BUTTONS[i]])
+		table.insert(blizzMenuButtons, _G[MICRO_BUTTONS[i]])
 	end
 end
 ---------------------------------------------------------
@@ -74,20 +74,20 @@ function MENUBTN:SetType()
 		Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)
 	end
 
-	if menuElements[self.id] then
+	if blizzMenuButtons[self.id] then
 
-		self:SetWidth(menuElements[self.id]:GetWidth()-2)
-		self:SetHeight(menuElements[self.id]:GetHeight()-2)
+		self:SetWidth(blizzMenuButtons[self.id]:GetWidth()-2)
+		self:SetHeight(blizzMenuButtons[self.id]:GetHeight()-2)
 
 		self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
 
-		self.element = menuElements[self.id]
+		self.hookedButton = blizzMenuButtons[self.id]
 
-		self.element:ClearAllPoints()
-		self.element:SetParent(self)
-		self.element:Show()
-		self.element:SetPoint("CENTER", self, "CENTER")
-		self.element:SetScale(1)
+		self.hookedButton:ClearAllPoints()
+		self.hookedButton:SetParent(self)
+		self.hookedButton:Show()
+		self.hookedButton:SetPoint("CENTER", self, "CENTER")
+		self.hookedButton:SetScale(1)
 	end
 
 end
@@ -116,15 +116,15 @@ end
 ---This is necessary for petbattles, otherwise there's no menubar
 function MENUBTN.ModifiedMoveMicroButtons(anchor, anchorTo, relAnchor, x, y, isStacked)
 
-	menuElements[1]:ClearAllPoints();
-	menuElements[1]:SetPoint(anchor, anchorTo, relAnchor, x-5, y+4);
+	blizzMenuButtons[1]:ClearAllPoints();
+	blizzMenuButtons[1]:SetPoint(anchor, anchorTo, relAnchor, x-5, y+4);
 
-	for i=2,#menuElements do
-		menuElements[i]:ClearAllPoints();
-		menuElements[i]:SetPoint("BOTTOMLEFT", menuElements[i-1], "BOTTOMRIGHT", -2,0)
+	for i=2,#blizzMenuButtons do
+		blizzMenuButtons[i]:ClearAllPoints();
+		blizzMenuButtons[i]:SetPoint("BOTTOMLEFT", blizzMenuButtons[i-1], "BOTTOMRIGHT", -2,0)
 		if isStacked and i == 6 then
-			menuElements[6]:ClearAllPoints();
-			menuElements[6]:SetPoint("TOPLEFT", menuElements[1], "BOTTOMLEFT", 0,2)
+			blizzMenuButtons[6]:ClearAllPoints();
+			blizzMenuButtons[6]:SetPoint("TOPLEFT", blizzMenuButtons[1], "BOTTOMLEFT", 0,2)
 		end
 	end
 

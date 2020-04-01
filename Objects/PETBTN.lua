@@ -101,22 +101,22 @@ end
 
 function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 
-	self.button_name:SetText("")
-	self.button_count:SetText("")
+	self.elements.Name:SetText("")
+	self.elements.Count:SetText("")
 
 	if texture then
 		if isToken then
-			self.iconframeicon:SetTexture(_G[texture])
+			self.elements.IconFrameIcon:SetTexture(_G[texture])
 			self.tooltipName = _G[spell]
 		else
-			self.iconframeicon:SetTexture(texture)
+			self.elements.IconFrameIcon:SetTexture(texture)
 			self.tooltipName = spell
 		end
 
-		self.iconframeicon:Show()
+		self.elements.IconFrameIcon:Show()
 	else
-		self.iconframeicon:SetTexture("")
-		self.iconframeicon:Hide()
+		self.elements.IconFrameIcon:SetTexture("")
+		self.elements.IconFrameIcon:Hide()
 	end
 end
 
@@ -137,22 +137,22 @@ function PETBTN:PET_UpdateState(isActive, allowed, enabled)
 	end
 
 	if allowed then
-		self.autocastable:Show()
+		self.elements.AutoCastable:Show()
 	else
-		self.autocastable:Hide()
+		self.elements.AutoCastable:Hide()
 	end
 
 	if enabled then
-		self.shine:Show()
-		AutoCastShine_AutoCastStart(self.shine)
-		self.autocastable:Hide()
+		self.elements.Shine:Show()
+		AutoCastShine_AutoCastStart(self.elements.Shine)
+		self.elements.AutoCastable:Hide()
 
 	else
-		self.shine:Hide()
-		AutoCastShine_AutoCastStop(self.shine)
+		self.elements.Shine:Hide()
+		AutoCastShine_AutoCastStop(self.elements.Shine)
 
 		if allowed then
-			self.autocastable:Show()
+			self.elements.AutoCastable:Show()
 		end
 
 	end
@@ -228,11 +228,11 @@ end
 function PETBTN:UpdateUsable(actionID)
 
 	if self.editmode then
-		self.iconframeicon:SetVertexColor(0.2, 0.2, 0.2)
+		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif actionID and GetPetActionSlotUsable(actionID) then
-		self.iconframeicon:SetVertexColor(1.0, 1.0, 1.0)
+		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 	else
-		self.iconframeicon:SetVertexColor(0.4, 0.4, 0.4)
+		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 

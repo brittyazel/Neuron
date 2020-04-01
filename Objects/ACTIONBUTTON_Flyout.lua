@@ -602,10 +602,10 @@ end
 
 
 function ACTIONBUTTON:Flyout_UpdateBar()
-	self.flyouttop:Hide()
-	self.flyoutbottom:Hide()
-	self.flyoutleft:Hide()
-	self.flyoutright:Hide()
+	self.elements.FlyoutTop:Hide()
+	self.elements.FlyoutBottom:Hide()
+	self.elements.FlyoutLeft:Hide()
+	self.elements.FlyoutRight:Hide()
 
 	local flyout = self.flyout
 	local pointA, pointB, hideArrow, shape, columns, pad
@@ -675,25 +675,25 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 			self.flyout.arrowPoint = "TOP"
 			self.flyout.arrowX = 0
 			self.flyout.arrowY = 5
-			self.flyout.arrow = self.flyouttop
+			self.flyout.arrow = self.elements.FlyoutTop
 			self.flyout.arrow:Show()
 		elseif pointB == "BOTTOM" then
 			self.flyout.arrowPoint = "BOTTOM"
 			self.flyout.arrowX = 0
 			self.flyout.arrowY = -5
-			self.flyout.arrow = self.flyoutbottom
+			self.flyout.arrow = self.elements.FlyoutBottom
 			self.flyout.arrow:Show()
 		elseif pointB == "LEFT" then
 			self.flyout.arrowPoint = "LEFT"
 			self.flyout.arrowX = -5
 			self.flyout.arrowY = 0
-			self.flyout.arrow = self.flyoutleft
+			self.flyout.arrow = self.elements.FlyoutLeft
 			self.flyout.arrow:Show()
 		elseif pointB == "RIGHT" then
 			self.flyout.arrowPoint = "RIGHT"
 			self.flyout.arrowX = 5
 			self.flyout.arrowY = 0
-			self.flyout.arrow = self.flyoutright
+			self.flyout.arrow = self.elements.FlyoutRight
 			self.flyout.arrow:Show()
 		end
 	end
@@ -713,10 +713,10 @@ function ACTIONBUTTON:Flyout_RemoveButtons()
 end
 
 function ACTIONBUTTON:Flyout_RemoveBar()
-	self.flyouttop:Hide()
-	self.flyoutbottom:Hide()
-	self.flyoutleft:Hide()
-	self.flyoutright:Hide()
+	self.elements.FlyoutTop:Hide()
+	self.elements.FlyoutBottom:Hide()
+	self.elements.FlyoutLeft:Hide()
+	self.elements.FlyoutRight:Hide()
 
 	self:Anchor_Update(true)
 
@@ -805,8 +805,8 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 		--self:SetScale(bar.data.scale)
 	end
 
-	self.button_hotkey:Hide()
-	self.button_name:Hide()
+	self.elements.Hotkey:Hide()
+	self.elements.Name:Hide()
 	self:RegisterForClicks("AnyUp")
 
 	self.equipcolor = { 0.1, 1, 0.1, 1 }
@@ -857,43 +857,46 @@ function ACTIONBUTTON:Flyout_GetButton()
 		id = id + 1
 	end
 
-	local button = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate") --create the new button frame using the desired parameters
-	setmetatable(button, {__index = ACTIONBUTTON})
+	local newButton = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate") --create the new button frame using the desired parameters
+	setmetatable(newButton, {__index = ACTIONBUTTON})
 
-	button.elapsed = 0
+	newButton.elapsed = 0
 
-	local objects = Neuron:GetParentKeys(button)
+	local objects = Neuron:GetParentKeys(newButton)
 
+	--table to hold all of our captured frame element handles
+	newButton.elements = {}
+	--populates the button with all the Icon,Shine,Cooldown frame references
 	for k,v in pairs(objects) do
-		local name = (v):gsub(button:GetName(), "")
-		button[name:lower()] = _G[v]
+		local name = (v):gsub(newButton:GetName(), "")
+		newButton.elements[name] = _G[v]
 	end
 
-	button.class = "flyout"
-	button.id = id
-	button:SetID(0)
-	button:SetToplevel(true)
-	button.objTIndex = id
-	button.objType = "FLYOUTBUTTON"
-	button.data = { macro_Text = "" }
+	newButton.class = "flyout"
+	newButton.id = id
+	newButton:SetID(0)
+	newButton:SetToplevel(true)
+	newButton.objTIndex = id
+	newButton.objType = "FLYOUTBUTTON"
+	newButton.data = { macro_Text = "" }
 
-	button.anchor = self
-	button.bar = self.flyout.bar
-	button.stored = false
+	newButton.anchor = self
+	newButton.bar = self.flyout.bar
+	newButton.stored = false
 
-	SecureHandler_OnLoad(button)
+	SecureHandler_OnLoad(newButton)
 
-	button:SetAttribute("type1", "macro")
-	button:SetAttribute("*macrotext1", "")
+	newButton:SetAttribute("type1", "macro")
+	newButton:SetAttribute("*macrotext1", "")
 
-	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
-	button:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-	button:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
+	newButton:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
+	newButton:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	newButton:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
-	button:SetScript("OnShow", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
-	button:SetScript("OnHide", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
+	newButton:SetScript("OnShow", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
+	newButton:SetScript("OnHide", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
 
-	button:WrapScript(button, "OnClick", [[
+	newButton:WrapScript(newButton, "OnClick", [[
 			local button = self:GetParent():GetParent()
 			button:SetAttribute("macroUpdate", true)
 			button:SetAttribute("*macrotext*", self:GetAttribute("flyoutMacro"))
@@ -902,20 +905,20 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 
 	--link objects to their associated functions
-	button.SetData = ACTIONBUTTON.Flyout_SetData
+	newButton.SetData = ACTIONBUTTON.Flyout_SetData
 
 
-	button:SetData(self.flyout.bar)
+	newButton:SetData(self.flyout.bar)
 
-	button:Flyout_UpdateData(true)
-	button:SetSkinned(true)
-	button:Show()
+	newButton:Flyout_UpdateData(true)
+	newButton:SetSkinned(true)
+	newButton:Show()
 
-	self.flyout.buttons[id] = button
+	self.flyout.buttons[id] = newButton
 
-	FOBTNIndex[id] = button
+	FOBTNIndex[id] = newButton
 
-	return button
+	return newButton
 end
 
 

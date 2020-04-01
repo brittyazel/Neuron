@@ -134,7 +134,7 @@ function STATUSBTN:xpstrings_Update() --handles updating all the strings for the
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
 
 	--player xp option
-	if self.sb.curXPType == "player_xp" then
+	if self.elements.SB.curXPType == "player_xp" then
 
 		currXP, nextXP, restedXP = UnitXP("player"), UnitXPMax("player"), GetXPExhaustion()
 
@@ -159,7 +159,7 @@ function STATUSBTN:xpstrings_Update() --handles updating all the strings for the
 		rank = L["Level"].." "..tostring(playerLevel)
 
 		--heart of azeroth option
-	elseif self.sb.curXPType == "azerite_xp" then
+	elseif self.elements.SB.curXPType == "azerite_xp" then
 
 		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
 
@@ -185,7 +185,7 @@ function STATUSBTN:xpstrings_Update() --handles updating all the strings for the
 
 
 		--honor points option
-	elseif self.sb.curXPType == "honor_points" then
+	elseif self.elements.SB.curXPType == "honor_points" then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
 		restedXP = tostring(0).." "..L["Levels"]
@@ -203,15 +203,15 @@ function STATUSBTN:xpstrings_Update() --handles updating all the strings for the
 
 	end
 
-	if not self.sb.XPWatch then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
-		self.sb.XPWatch = {}
+	if not self.elements.SB.XPWatch then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
+		self.elements.SB.XPWatch = {}
 	end
 
-	self.sb.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
-	self.sb.XPWatch.rested = restedXP
-	self.sb.XPWatch.percent = percentXP
-	self.sb.XPWatch.bubbles = bubbles
-	self.sb.XPWatch.rank = rank
+	self.elements.SB.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
+	self.elements.SB.XPWatch.rested = restedXP
+	self.elements.SB.XPWatch.percent = percentXP
+	self.elements.SB.XPWatch.bubbles = bubbles
+	self.elements.SB.XPWatch.rank = rank
 
 
 	local isRested
@@ -232,53 +232,53 @@ function STATUSBTN:XPBar_OnEvent(event, ...)
 		self.DB.curXPType = "player_xp" --sets the default state of the XP bar to be player_xp
 	end
 
-	self.sb.curXPType = self.DB.curXPType
+	self.elements.SB.curXPType = self.DB.curXPType
 
 	local currXP, nextXP, isRested
 	local hasChanged = false;
 
 
-	if self.sb.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType") then
+	if self.elements.SB.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType") then
 
 		currXP, nextXP, isRested = self:xpstrings_Update()
 
 		if isRested then
-			self.sb:SetStatusBarColor(self.sb.restColor[1], self.sb.restColor[2], self.sb.restColor[3], self.sb.restColor[4])
+			self.elements.SB:SetStatusBarColor(self.elements.SB.restColor[1], self.elements.SB.restColor[2], self.elements.SB.restColor[3], self.elements.SB.restColor[4])
 		else
-			self.sb:SetStatusBarColor(self.sb.norestColor[1], self.sb.norestColor[2], self.sb.norestColor[3], self.sb.norestColor[4])
+			self.elements.SB:SetStatusBarColor(self.elements.SB.norestColor[1], self.elements.SB.norestColor[2], self.elements.SB.norestColor[3], self.elements.SB.norestColor[4])
 		end
 
 		hasChanged = true;
 	end
 
 
-	if self.sb.curXPType == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType") then
+	if self.elements.SB.curXPType == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType") then
 
 		currXP, nextXP = self:xpstrings_Update()
 
-		self.sb:SetStatusBarColor(1, 1, 0); --set to yellow?
+		self.elements.SB:SetStatusBarColor(1, 1, 0); --set to yellow?
 
 		hasChanged = true;
 
 	end
 
-	if self.sb.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType") then
+	if self.elements.SB.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType") then
 
 		currXP, nextXP = self:xpstrings_Update()
 
-		self.sb:SetStatusBarColor(1, .4, .4);
+		self.elements.SB:SetStatusBarColor(1, .4, .4);
 
 		hasChanged = true;
 	end
 
 	if hasChanged == true then
-		self.sb:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
-		self.sb:SetValue((currXP/nextXP)*100)
+		self.elements.SB:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
+		self.elements.SB:SetValue((currXP/nextXP)*100)
 
-		self.sb.cText:SetText(self.sb.cFunc(self.sb))
-		self.sb.lText:SetText(self.sb.lFunc(self.sb))
-		self.sb.rText:SetText(self.sb.rFunc(self.sb))
-		self.sb.mText:SetText(self.sb.mFunc(self.sb))
+		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 	end
 
 end
@@ -314,7 +314,7 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 		arg2 = "player_xp",
 		text = L["Track Character XP"],
 		func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
-		checked = self.sb.curXPType == "player_xp",
+		checked = self.elements.SB.curXPType == "player_xp",
 	})
 
 	--wow classic doesn't have Honor points nor Azerite, carefull
@@ -327,7 +327,7 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 				arg2 = "azerite_xp",
 				text = L["Track Azerite Power"],
 				func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
-				checked = self.sb.curXPType == "azerite_xp",
+				checked = self.elements.SB.curXPType == "azerite_xp",
 			})
 		end
 
@@ -337,7 +337,7 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 			arg2 = "honor_points",
 			text = L["Track Honor Points"],
 			func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
-			checked = self.sb.curXPType == "honor_points",
+			checked = self.elements.SB.curXPType == "honor_points",
 		})
 	end
 
@@ -507,26 +507,26 @@ function STATUSBTN:repbar_OnEvent(event,...)
 
 	self:repstrings_Update(...)
 
-	if RepWatch[self.sb.repID] then
-		self.sb:SetStatusBarColor(RepWatch[self.sb.repID].r,  RepWatch[self.sb.repID].g, RepWatch[self.sb.repID].b)
-		self.sb:SetMinMaxValues(RepWatch[self.sb.repID].min, RepWatch[self.sb.repID].max)
-		self.sb:SetValue(RepWatch[self.sb.repID].value)
+	if RepWatch[self.elements.SB.repID] then
+		self.elements.SB:SetStatusBarColor(RepWatch[self.elements.SB.repID].r,  RepWatch[self.elements.SB.repID].g, RepWatch[self.elements.SB.repID].b)
+		self.elements.SB:SetMinMaxValues(RepWatch[self.elements.SB.repID].min, RepWatch[self.elements.SB.repID].max)
+		self.elements.SB:SetValue(RepWatch[self.elements.SB.repID].value)
 	else
-		self.sb:SetStatusBarColor(0.5,  0.5, 0.5)
-		self.sb:SetMinMaxValues(0, 1)
-		self.sb:SetValue(1)
+		self.elements.SB:SetStatusBarColor(0.5,  0.5, 0.5)
+		self.elements.SB:SetMinMaxValues(0, 1)
+		self.elements.SB:SetValue(1)
 	end
 
-	self.sb.cText:SetText(self.sb.cFunc(self.sb))
-	self.sb.lText:SetText(self.sb.lFunc(self.sb))
-	self.sb.rText:SetText(self.sb.rFunc(self.sb))
-	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 end
 
 
 function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for choosing a rep
 
-	if not self.sb then
+	if not self.elements.SB then
 		return
 	end
 
@@ -571,7 +571,7 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 		text=L["Auto Select"],
 		func= function(dropdown, self) --self is arg1
 			self.data.repID = dropdown.value
-			self.sb.repID = dropdown.value
+			self.elements.SB.repID = dropdown.value
 			self:repbar_OnEvent()
 		end,
 		value=0,
@@ -604,7 +604,7 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 				text = v2.name .. " - " .. v2.percent .." - ".. v2.standing,
 				func = function(dropdown, self) --self is arg1
 					self.data.repID = dropdown.value
-					self.sb.repID = dropdown.value
+					self.elements.SB.repID = dropdown.value
 					self:repbar_OnEvent()
 					menuFrame:Hide()
 				end,
@@ -771,13 +771,13 @@ end
 
 function STATUSBTN:CastBar_FinishSpell()
 
-	self.sb.spark:Hide()
-	self.sb.barflash:SetAlpha(0.0)
-	self.sb.barflash:Show()
-	self.sb.flash = 1
-	self.sb.fadeOut = 1
-	self.sb.casting = false
-	self.sb.channeling = false
+	self.elements.SB.spark:Hide()
+	self.elements.SB.barflash:SetAlpha(0.0)
+	self.elements.SB.barflash:Show()
+	self.elements.SB.flash = 1
+	self.elements.SB.fadeOut = 1
+	self.elements.SB.casting = false
+	self.elements.SB.channeling = false
 end
 
 
@@ -786,13 +786,13 @@ end
 
 function STATUSBTN:CastBar_Reset()
 
-	self.sb.fadeOut = 1
-	self.sb.casting = false
-	self.sb.channeling = false
-	self.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
+	self.elements.SB.fadeOut = 1
+	self.elements.SB.casting = false
+	self.elements.SB.channeling = false
+	self.elements.SB:SetStatusBarColor(self.elements.SB.castColor[1], self.elements.SB.castColor[2], self.elements.SB.castColor[3], self.elements.SB.castColor[4])
 
 	if not self.editmode then
-		self.sb:Hide()
+		self.elements.SB:Hide()
 	end
 end
 
@@ -805,7 +805,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 	local unit = select(1, ...)
 	local eventCastID = select(2,...)--return payload is "unitTarget", "castGUID", spellID
 
-	if unit ~= self.sb.unit then
+	if unit ~= self.elements.SB.unit then
 		return
 	end
 
@@ -828,54 +828,54 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 			return
 		end
 
-		self.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
+		self.elements.SB:SetStatusBarColor(self.elements.SB.castColor[1], self.elements.SB.castColor[2], self.elements.SB.castColor[3], self.elements.SB.castColor[4])
 
-		if self.sb.spark then
-			self.sb.spark:SetTexture("Interface\\AddOns\\Neuron\\Images\\CastingBar_Spark_"..self.sb.orientation)
-			self.sb.spark:Show()
+		if self.elements.SB.spark then
+			self.elements.SB.spark:SetTexture("Interface\\AddOns\\Neuron\\Images\\CastingBar_Spark_"..self.elements.SB.orientation)
+			self.elements.SB.spark:Show()
 		end
 
-		self.sb.value = (GetTime()-(startTime/1000))
-		self.sb.maxValue = (endTime-startTime)/1000
-		self.sb:SetMinMaxValues(0, self.sb.maxValue)
-		self.sb:SetValue(self.sb.value)
+		self.elements.SB.value = (GetTime()-(startTime/1000))
+		self.elements.SB.maxValue = (endTime-startTime)/1000
+		self.elements.SB:SetMinMaxValues(0, self.elements.SB.maxValue)
+		self.elements.SB:SetValue(self.elements.SB.value)
 
-		self.sb.totalTime = self.sb.maxValue - self.sb:GetValue()
+		self.elements.SB.totalTime = self.elements.SB.maxValue - self.elements.SB:GetValue()
 
 		CastWatch[unit].spell = text
 
-		if self.sb.showIcon then
+		if self.elements.SB.showIcon then
 
-			self.sb.icon:SetTexture(texture)
-			self.sb.icon:Show()
+			self.elements.SB.icon:SetTexture(texture)
+			self.elements.SB.icon:Show()
 
 			if notInterruptible then
-				self.sb.shield:Show()
+				self.elements.SB.shield:Show()
 			else
-				self.sb.shield:Hide()
+				self.elements.SB.shield:Hide()
 			end
 
 		else
-			self.sb.icon:Hide()
-			self.sb.shield:Hide()
+			self.elements.SB.icon:Hide()
+			self.elements.SB.shield:Hide()
 		end
 
-		self.sb:SetAlpha(1.0)
-		self.sb.holdTime = 0
-		self.sb.casting = true
-		self.sb.castID = castID
-		self.sb.channeling = false
-		self.sb.fadeOut = nil
+		self.elements.SB:SetAlpha(1.0)
+		self.elements.SB.holdTime = 0
+		self.elements.SB.casting = true
+		self.elements.SB.castID = castID
+		self.elements.SB.channeling = false
+		self.elements.SB.fadeOut = nil
 
-		self.sb:Show()
+		self.elements.SB:Show()
 
 		--update castbar text
-		if not self.sb.cbtimer.castInfo[unit] then
-			self.sb.cbtimer.castInfo[unit] = {}
+		if not self.elements.SB.cbtimer.castInfo[unit] then
+			self.elements.SB.cbtimer.castInfo[unit] = {}
 		end
 
-		self.sb.cbtimer.castInfo[unit][1] = text
-		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
+		self.elements.SB.cbtimer.castInfo[unit][1] = text
+		self.elements.SB.cbtimer.castInfo[unit][2] = "%0.1f"
 
 	elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
 
@@ -886,70 +886,70 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 			return
 		end
 
-		self.sb:SetStatusBarColor(self.sb.channelColor[1], self.sb.channelColor[2], self.sb.channelColor[3], self.sb.channelColor[4])
+		self.elements.SB:SetStatusBarColor(self.elements.SB.channelColor[1], self.elements.SB.channelColor[2], self.elements.SB.channelColor[3], self.elements.SB.channelColor[4])
 
-		self.sb.value = ((endTime/1000)-GetTime())
-		self.sb.maxValue = (endTime - startTime) / 1000;
-		self.sb:SetMinMaxValues(0, self.sb.maxValue);
-		self.sb:SetValue(self.sb.value)
+		self.elements.SB.value = ((endTime/1000)-GetTime())
+		self.elements.SB.maxValue = (endTime - startTime) / 1000;
+		self.elements.SB:SetMinMaxValues(0, self.elements.SB.maxValue);
+		self.elements.SB:SetValue(self.elements.SB.value)
 
 		CastWatch[unit].spell = text
 
-		if self.sb.showIcon then
+		if self.elements.SB.showIcon then
 
-			self.sb.icon:SetTexture(texture)
-			self.sb.icon:Show()
+			self.elements.SB.icon:SetTexture(texture)
+			self.elements.SB.icon:Show()
 
 			if notInterruptible then
-				self.sb.shield:Show()
+				self.elements.SB.shield:Show()
 			else
-				self.sb.shield:Hide()
+				self.elements.SB.shield:Hide()
 			end
 
 		else
-			self.sb.icon:Hide()
-			self.sb.shield:Hide()
+			self.elements.SB.icon:Hide()
+			self.elements.SB.shield:Hide()
 		end
 
-		if self.sb.spark then
-			self.sb.spark:Hide()
+		if self.elements.SB.spark then
+			self.elements.SB.spark:Hide()
 		end
 
-		self.sb:SetAlpha(1.0)
-		self.sb.holdTime = 0
-		self.sb.casting = false
-		self.sb.channeling = true
-		self.sb.fadeOut = nil
+		self.elements.SB:SetAlpha(1.0)
+		self.elements.SB.holdTime = 0
+		self.elements.SB.casting = false
+		self.elements.SB.channeling = true
+		self.elements.SB.fadeOut = nil
 
-		self.sb:Show()
+		self.elements.SB:Show()
 
 		--update text on castbar
-		if not self.sb.cbtimer.castInfo[unit] then
-			self.sb.cbtimer.castInfo[unit] = {}
+		if not self.elements.SB.cbtimer.castInfo[unit] then
+			self.elements.SB.cbtimer.castInfo[unit] = {}
 		end
 
-		self.sb.cbtimer.castInfo[unit][1] = text
-		self.sb.cbtimer.castInfo[unit][2] = "%0.1f"
+		self.elements.SB.cbtimer.castInfo[unit][1] = text
+		self.elements.SB.cbtimer.castInfo[unit][2] = "%0.1f"
 
 
-	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and not self.sb.channeling then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
+	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and not self.elements.SB.channeling then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
 
-		self.sb:SetStatusBarColor(self.sb.successColor[1], self.sb.successColor[2], self.sb.successColor[3], self.sb.successColor[4])
+		self.elements.SB:SetStatusBarColor(self.elements.SB.successColor[1], self.elements.SB.successColor[2], self.elements.SB.successColor[3], self.elements.SB.successColor[4])
 
-	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.sb.channeling then
+	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.elements.SB.channeling then
 
 		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
 
-	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") and self.sb.castID == eventCastID or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
+	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") and self.elements.SB.castID == eventCastID or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
 
-		if self.sb:IsShown() and (self.sb.casting or self.sb.channeling) and not self.sb.fadeOut then
+		if self.elements.SB:IsShown() and (self.elements.SB.casting or self.elements.SB.channeling) and not self.elements.SB.fadeOut then
 
-			self.sb:SetValue(self.sb.maxValue)
+			self.elements.SB:SetValue(self.elements.SB.maxValue)
 
-			self.sb:SetStatusBarColor(self.sb.failColor[1], self.sb.failColor[2], self.sb.failColor[3], self.sb.failColor[4])
+			self.elements.SB:SetStatusBarColor(self.elements.SB.failColor[1], self.elements.SB.failColor[2], self.elements.SB.failColor[3], self.elements.SB.failColor[4])
 
-			if self.sb.spark then
-				self.sb.spark:Hide()
+			if self.elements.SB.spark then
+				self.elements.SB.spark:Hide()
 			end
 
 			if event == "UNIT_SPELLCAST_FAILED" then
@@ -958,15 +958,15 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 				CastWatch[unit].spell = INTERRUPTED
 			end
 
-			self.sb.casting = false
-			self.sb.channeling = false
-			self.sb.fadeOut = 1
-			self.sb.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
+			self.elements.SB.casting = false
+			self.elements.SB.channeling = false
+			self.elements.SB.fadeOut = 1
+			self.elements.SB.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
 		end
 
 	elseif event == "UNIT_SPELLCAST_DELAYED" then
 
-		if self.sb:IsShown() then
+		if self.elements.SB:IsShown() then
 
 			local name, text, texture, startTime, endTime, isTradeSkill
 
@@ -981,28 +981,28 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 				return
 			end
 
-			self.sb.value = (GetTime()-(startTime/1000))
-			self.sb.maxValue = (endTime-startTime)/1000
-			self.sb:SetMinMaxValues(0, self.sb.maxValue)
+			self.elements.SB.value = (GetTime()-(startTime/1000))
+			self.elements.SB.maxValue = (endTime-startTime)/1000
+			self.elements.SB:SetMinMaxValues(0, self.elements.SB.maxValue)
 
-			if not self.sb.casting then
+			if not self.elements.SB.casting then
 
-				self.sb:SetStatusBarColor(self.sb.castColor[1], self.sb.castColor[2], self.sb.castColor[3], self.sb.castColor[4])
+				self.elements.SB:SetStatusBarColor(self.elements.SB.castColor[1], self.elements.SB.castColor[2], self.elements.SB.castColor[3], self.elements.SB.castColor[4])
 
-				self.sb.spark:Show()
-				self.sb.barflash:SetAlpha(0.0)
-				self.sb.barflash:Hide()
+				self.elements.SB.spark:Show()
+				self.elements.SB.barflash:SetAlpha(0.0)
+				self.elements.SB.barflash:Hide()
 
-				self.sb.casting = true
-				self.sb.channeling = false
-				self.sb.flash = 0
-				self.sb.fadeOut = 0
+				self.elements.SB.casting = true
+				self.elements.SB.channeling = false
+				self.elements.SB.flash = 0
+				self.elements.SB.fadeOut = 0
 			end
 		end
 
 	elseif event == "UNIT_SPELLCAST_CHANNEL_UPDATE" then
 
-		if self.sb:IsShown() then
+		if self.elements.SB:IsShown() then
 
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
 
@@ -1011,26 +1011,26 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 				return
 			end
 
-			self.sb.value = ((endTime/1000)-GetTime())
-			self.sb.maxValue = (endTime-startTime)/1000
-			self.sb:SetMinMaxValues(0, self.sb.maxValue)
-			self.sb:SetValue(self.sb.value)
+			self.elements.SB.value = ((endTime/1000)-GetTime())
+			self.elements.SB.maxValue = (endTime-startTime)/1000
+			self.elements.SB:SetMinMaxValues(0, self.elements.SB.maxValue)
+			self.elements.SB:SetValue(self.elements.SB.value)
 		end
 
-	elseif self.sb.showShield and event == "UNIT_SPELLCAST_INTERRUPTIBLE"  then
+	elseif self.elements.SB.showShield and event == "UNIT_SPELLCAST_INTERRUPTIBLE"  then
 
-		self.sb.shield:Hide()
+		self.elements.SB.shield:Hide()
 
-	elseif self.sb.showShield and event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE"  then
+	elseif self.elements.SB.showShield and event == "UNIT_SPELLCAST_NOT_INTERRUPTIBLE"  then
 
-		self.sb.shield:Show()
+		self.elements.SB.shield:Show()
 
 	end
 
-	self.sb.cText:SetText(self.sb.cFunc(self.sb))
-	self.sb.lText:SetText(self.sb.lFunc(self.sb))
-	self.sb.rText:SetText(self.sb.rFunc(self.sb))
-	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 
 end
 
@@ -1040,152 +1040,152 @@ end
 
 function STATUSBTN:CastBar_OnUpdate(elapsed)
 
-	local unit = self.sb.unit
+	local unit = self.elements.SB.unit
 	local sparkPosition, alpha
 
 	if unit then
 
-		if self.sb.cbtimer.castInfo[unit] then
+		if self.elements.SB.cbtimer.castInfo[unit] then
 
-			local displayName, numFormat = self.sb.cbtimer.castInfo[unit][1], self.sb.cbtimer.castInfo[unit][2]
+			local displayName, numFormat = self.elements.SB.cbtimer.castInfo[unit][1], self.elements.SB.cbtimer.castInfo[unit][2]
 
-			if self.sb.maxValue then
-				CastWatch[self.sb.unit].timer = string.format(numFormat, self.sb.value).."/"..format(numFormat, self.sb.maxValue)
+			if self.elements.SB.maxValue then
+				CastWatch[self.elements.SB.unit].timer = string.format(numFormat, self.elements.SB.value).."/"..format(numFormat, self.elements.SB.maxValue)
 			else
-				CastWatch[self.sb.unit].timer = string.format(numFormat, self.sb.value)
+				CastWatch[self.elements.SB.unit].timer = string.format(numFormat, self.elements.SB.value)
 			end
 		end
 
-		if self.sb.casting then
+		if self.elements.SB.casting then
 
-			self.sb.value = self.sb.value + elapsed
+			self.elements.SB.value = self.elements.SB.value + elapsed
 
-			if self.sb.value >= self.sb.maxValue then
-				self.sb:SetValue(self.sb.maxValue)
+			if self.elements.SB.value >= self.elements.SB.maxValue then
+				self.elements.SB:SetValue(self.elements.SB.maxValue)
 				self:CastBar_FinishSpell()
 				return
 			end
 
-			self.sb:SetValue(self.sb.value)
+			self.elements.SB:SetValue(self.elements.SB.value)
 
-			self.sb.barflash:Hide()
+			self.elements.SB.barflash:Hide()
 
-			if self.sb.orientation == 1 then
+			if self.elements.SB.orientation == 1 then
 
-				sparkPosition = (self.sb.value/self.sb.maxValue)*self.sb:GetWidth()
+				sparkPosition = (self.elements.SB.value/self.elements.SB.maxValue)*self.elements.SB:GetWidth()
 
 				if sparkPosition < 0 then
 					sparkPosition = 0
 				end
 
-				self.sb.spark:SetPoint("CENTER", self.sb, "LEFT", sparkPosition, 0)
+				self.elements.SB.spark:SetPoint("CENTER", self.elements.SB, "LEFT", sparkPosition, 0)
 
 			else
-				sparkPosition = (self.sb.value / self.sb.maxValue) * self.sb:GetHeight()
+				sparkPosition = (self.elements.SB.value / self.elements.SB.maxValue) * self.elements.SB:GetHeight()
 
 				if  sparkPosition < 0  then
 					sparkPosition = 0
 				end
 
-				self.sb.spark:SetPoint("CENTER", self.sb, "BOTTOM", 0, sparkPosition)
+				self.elements.SB.spark:SetPoint("CENTER", self.elements.SB, "BOTTOM", 0, sparkPosition)
 			end
 
-		elseif self.sb.channeling then
+		elseif self.elements.SB.channeling then
 
-			self.sb.value = self.sb.value - elapsed
+			self.elements.SB.value = self.elements.SB.value - elapsed
 
-			if self.sb.value <= 0 then
+			if self.elements.SB.value <= 0 then
 				self:CastBar_FinishSpell()
 				return
 			end
 
-			self.sb:SetValue(self.sb.value)
+			self.elements.SB:SetValue(self.elements.SB.value)
 
-			self.sb.barflash:Hide()
+			self.elements.SB.barflash:Hide()
 
-		elseif GetTime() < self.sb.holdTime then
+		elseif GetTime() < self.elements.SB.holdTime then
 
 			return
 
-		elseif self.sb.flash then
+		elseif self.elements.SB.flash then
 
-			alpha = self.sb.barflash:GetAlpha() + CASTING_BAR_FLASH_STEP or 0
+			alpha = self.elements.SB.barflash:GetAlpha() + CASTING_BAR_FLASH_STEP or 0
 
 			if alpha < 1 then
-				self.sb.barflash:SetAlpha(alpha)
+				self.elements.SB.barflash:SetAlpha(alpha)
 			else
-				self.sb.barflash:SetAlpha(1.0)
-				self.sb.flash = nil
+				self.elements.SB.barflash:SetAlpha(1.0)
+				self.elements.SB.flash = nil
 			end
 
-		elseif self.sb.fadeOut and not self.sb.editmode then
+		elseif self.elements.SB.fadeOut and not self.elements.SB.editmode then
 
-			alpha = self.sb:GetAlpha() - CASTING_BAR_ALPHA_STEP
+			alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
 			if alpha > 0 then
-				self.sb:SetAlpha(alpha)
+				self.elements.SB:SetAlpha(alpha)
 			else
 				self:CastBar_Reset()
 			end
 		end
 	end
 
-	self.sb.cText:SetText(self.sb.cFunc(self.sb))
-	self.sb.lText:SetText(self.sb.lFunc(self.sb))
-	self.sb.rText:SetText(self.sb.rFunc(self.sb))
-	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 end
 
 
 
 function STATUSBTN:MirrorBar_OnUpdate(elapsed)
 
-	if self.sb.mirror then
+	if self.elements.SB.mirror then
 
-		self.sb.value = GetMirrorTimerProgress(self.sb.mirror)/1000
+		self.elements.SB.value = GetMirrorTimerProgress(self.elements.SB.mirror)/1000
 
 
-		if self.sb.value > self.sb.maxvalue then
+		if self.elements.SB.value > self.elements.SB.maxvalue then
 
-			self.sb.alpha = self.sb:GetAlpha() - CASTING_BAR_ALPHA_STEP
+			self.elements.SB.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-			if self.sb.alpha > 0 then
-				self.sb:SetAlpha(self.sb.alpha)
+			if self.elements.SB.alpha > 0 then
+				self.elements.SB:SetAlpha(self.elements.SB.alpha)
 			else
-				self.sb:Hide()
+				self.elements.SB:Hide()
 			end
 
 		else
 
-			self.sb:SetValue(self.sb.value)
+			self.elements.SB:SetValue(self.elements.SB.value)
 
-			if self.sb.value >= 60 then
-				self.sb.value = string.format("%0.1f", self.sb.value/60)
-				self.sb.value = self.sb.value.."m"
+			if self.elements.SB.value >= 60 then
+				self.elements.SB.value = string.format("%0.1f", self.elements.SB.value/60)
+				self.elements.SB.value = self.elements.SB.value.."m"
 			else
-				self.sb.value = string.format("%0.0f", self.sb.value)
-				self.sb.value = self.sb.value.."s"
+				self.elements.SB.value = string.format("%0.0f", self.elements.SB.value)
+				self.elements.SB.value = self.elements.SB.value.."s"
 			end
 
-			MirrorWatch[self.sb.mirror].timer = self.sb.value
+			MirrorWatch[self.elements.SB.mirror].timer = self.elements.SB.value
 
 		end
 
 	elseif not self.editmode then
 
-		self.sb.alpha = self.sb:GetAlpha() - CASTING_BAR_ALPHA_STEP
+		self.elements.SB.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
-		if self.sb.alpha > 0 then
-			self.sb:SetAlpha(self.sb.alpha)
+		if self.elements.SB.alpha > 0 then
+			self.elements.SB:SetAlpha(self.elements.SB.alpha)
 		else
-			self.sb:Hide()
+			self.elements.SB:Hide()
 		end
 	end
 
-	self.sb.cText:SetText(self.sb.cFunc(self.sb))
-	self.sb.lText:SetText(self.sb.lFunc(self.sb))
-	self.sb.rText:SetText(self.sb.rFunc(self.sb))
-	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 end
 
 
@@ -1250,11 +1250,11 @@ end
 function STATUSBTN:OnEnter()
 
 	if self.config.mIndex > 1 then
-		self.sb.cText:Hide()
-		self.sb.lText:Hide()
-		self.sb.rText:Hide()
-		self.sb.mText:Show()
-		self.sb.mText:SetText(self.sb.mFunc(self.sb))
+		self.elements.SB.cText:Hide()
+		self.elements.SB.lText:Hide()
+		self.elements.SB.rText:Hide()
+		self.elements.SB.mText:Show()
+		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 	end
 
 	if self.config.tIndex > 1 then
@@ -1273,7 +1273,7 @@ function STATUSBTN:OnEnter()
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				end
 
-				GameTooltip:SetText(self.sb.tFunc(self.sb) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
+				GameTooltip:SetText(self.elements.SB.tFunc(self.elements.SB) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
 				GameTooltip:Show()
 			end
 		end
@@ -1286,13 +1286,13 @@ end
 function STATUSBTN:OnLeave()
 
 	if self.config.mIndex > 1 then
-		self.sb.cText:Show()
-		self.sb.lText:Show()
-		self.sb.rText:Show()
-		self.sb.mText:Hide()
-		self.sb.cText:SetText(self.sb.cFunc(self.sb))
-		self.sb.lText:SetText(self.sb.lFunc(self.sb))
-		self.sb.rText:SetText(self.sb.rFunc(self.sb))
+		self.elements.SB.cText:Show()
+		self.elements.SB.lText:Show()
+		self.elements.SB.rText:Show()
+		self.elements.SB.mText:Hide()
+		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
 	end
 
 	if self.config.tIndex > 1 then
@@ -1375,8 +1375,8 @@ function STATUSBTN:UpdateBarFill(command, gui, query, skipupdate)
 
 		self.config.texture = index
 
-		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-		self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 
 		if not skipupdate then
 			Neuron.NeuronGUI:Status_UpdateEditor()
@@ -1401,8 +1401,8 @@ function STATUSBTN:UpdateBorder(command, gui, query, skipupdate)
 
 		self.config.border = index
 
-		self:SetBorder(self.sb, self.config, self.bordercolor)
-		self:SetBorder(self.fbframe.feedback, self.config, self.bordercolor)
+		self:SetBorder(self.elements.SB, self.config, self.bordercolor)
+		self:SetBorder(self.elements.FBFrame.feedback, self.config, self.bordercolor)
 
 		if not skipupdate then
 			Neuron.NeuronGUI:Status_UpdateEditor()
@@ -1427,21 +1427,21 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 		if self.config.orientation ~= orientationIndex then
 
 			self.config.orientation = orientationIndex
-			self.sb.orientation = self.config.orientation
+			self.elements.SB.orientation = self.config.orientation
 
-			self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
-			self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
+			self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
+			self.elements.FBFrame.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
 			if self.config.orientation == 2 then
-				self.sb.cText:SetAlpha(0)
-				self.sb.lText:SetAlpha(0)
-				self.sb.rText:SetAlpha(0)
-				self.sb.mText:SetAlpha(0)
+				self.elements.SB.cText:SetAlpha(0)
+				self.elements.SB.lText:SetAlpha(0)
+				self.elements.SB.rText:SetAlpha(0)
+				self.elements.SB.mText:SetAlpha(0)
 			else
-				self.sb.cText:SetAlpha(1)
-				self.sb.lText:SetAlpha(1)
-				self.sb.rText:SetAlpha(1)
-				self.sb.mText:SetAlpha(1)
+				self.elements.SB.cText:SetAlpha(1)
+				self.elements.SB.lText:SetAlpha(1)
+				self.elements.SB.rText:SetAlpha(1)
+				self.elements.SB.mText:SetAlpha(1)
 			end
 
 
@@ -1490,12 +1490,12 @@ function STATUSBTN:UpdateCenterText(command, gui, query)
 		self.config.cIndex = index
 
 		if sbStrings[self.config.sbType] then
-			self.sb.cFunc = sbStrings[self.config.sbType][self.config.cIndex][2]
+			self.elements.SB.cFunc = sbStrings[self.config.sbType][self.config.cIndex][2]
 		else
-			self.sb.cFunc = function() return "" end
+			self.elements.SB.cFunc = function() return "" end
 		end
 
-		self.sb.cText:SetText(self.sb.cFunc(self.sb))
+		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
 	end
 end
 
@@ -1519,12 +1519,12 @@ function STATUSBTN:UpdateLeftText(command, gui, query)
 		self.config.lIndex = index
 
 		if sbStrings[self.config.sbType] then
-			self.sb.lFunc = sbStrings[self.config.sbType][self.config.lIndex][2]
+			self.elements.SB.lFunc = sbStrings[self.config.sbType][self.config.lIndex][2]
 		else
-			self.sb.lFunc = function() return "" end
+			self.elements.SB.lFunc = function() return "" end
 		end
 
-		self.sb.lText:SetText(self.sb.lFunc(self.sb))
+		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
 
 	end
 end
@@ -1549,12 +1549,12 @@ function STATUSBTN:UpdateRightText(command, gui, query)
 		self.config.rIndex = index
 
 		if sbStrings[self.config.sbType] and self.config.rIndex then
-			self.sb.rFunc = sbStrings[self.config.sbType][self.config.rIndex][2]
+			self.elements.SB.rFunc = sbStrings[self.config.sbType][self.config.rIndex][2]
 		else
-			self.sb.rFunc = function() return "" end
+			self.elements.SB.rFunc = function() return "" end
 		end
 
-		self.sb.rText:SetText(self.sb.rFunc(self.sb))
+		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
 
 	end
 end
@@ -1579,12 +1579,12 @@ function STATUSBTN:UpdateMouseover(command, gui, query)
 		self.config.mIndex = index
 
 		if sbStrings[self.config.sbType] then
-			self.sb.mFunc = sbStrings[self.config.sbType][self.config.mIndex][2]
+			self.elements.SB.mFunc = sbStrings[self.config.sbType][self.config.mIndex][2]
 		else
-			self.sb.mFunc = function() return "" end
+			self.elements.SB.mFunc = function() return "" end
 		end
 
-		self.sb.mText:SetText(self.sb.mFunc(self.sb))
+		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 	end
 end
 
@@ -1608,9 +1608,9 @@ function STATUSBTN:UpdateTooltip(command, gui, query)
 		self.config.tIndex = index
 
 		if sbStrings[self.config.sbType] then
-			self.sb.tFunc = sbStrings[self.config.sbType][self.config.tIndex][2]
+			self.elements.SB.tFunc = sbStrings[self.config.sbType][self.config.tIndex][2]
 		else
-			self.sb.tFunc = function() return "" end
+			self.elements.SB.tFunc = function() return "" end
 		end
 	end
 end
@@ -1630,7 +1630,7 @@ function STATUSBTN:UpdateUnit(command, gui, query)
 
 		self.data.unit = index
 
-		self.sb.unit = BarUnits[self.data.unit]
+		self.elements.SB.unit = BarUnits[self.data.unit]
 
 	end
 end
@@ -1646,7 +1646,7 @@ function STATUSBTN:UpdateCastIcon(frame, checked)
 		self.config.showIcon = false
 	end
 
-	self.sb.showIcon = self.config.showIcon
+	self.elements.SB.showIcon = self.config.showIcon
 
 end
 
@@ -1706,94 +1706,94 @@ function STATUSBTN:SetData(bar)
 	self.mColor = { (";"):split(self.config.mColor) }
 	self.tColor = { (";"):split(self.config.tColor) }
 
-	self.sb.parent = self
+	self.elements.SB.parent = self
 
-	self.sb.cText:SetTextColor(self.cColor[1], self.cColor[2], self.cColor[3], self.cColor[4])
-	self.sb.lText:SetTextColor(self.lColor[1], self.lColor[2], self.lColor[3], self.lColor[4])
-	self.sb.rText:SetTextColor(self.rColor[1], self.rColor[2], self.rColor[3], self.rColor[4])
-	self.sb.mText:SetTextColor(self.mColor[1], self.mColor[2], self.mColor[3], self.mColor[4])
+	self.elements.SB.cText:SetTextColor(self.cColor[1], self.cColor[2], self.cColor[3], self.cColor[4])
+	self.elements.SB.lText:SetTextColor(self.lColor[1], self.lColor[2], self.lColor[3], self.lColor[4])
+	self.elements.SB.rText:SetTextColor(self.rColor[1], self.rColor[2], self.rColor[3], self.rColor[4])
+	self.elements.SB.mText:SetTextColor(self.mColor[1], self.mColor[2], self.mColor[3], self.mColor[4])
 
 	if sbStrings[self.config.sbType] then
 
 		if not sbStrings[self.config.sbType][self.config.cIndex] then
 			self.config.cIndex = 1
 		end
-		self.sb.cFunc = sbStrings[self.config.sbType][self.config.cIndex][2]
+		self.elements.SB.cFunc = sbStrings[self.config.sbType][self.config.cIndex][2]
 
 		if not sbStrings[self.config.sbType][self.config.lIndex] then
 			self.config.lIndex = 1
 		end
-		self.sb.lFunc = sbStrings[self.config.sbType][self.config.lIndex][2]
+		self.elements.SB.lFunc = sbStrings[self.config.sbType][self.config.lIndex][2]
 
 		if not sbStrings[self.config.sbType][self.config.rIndex] then
 			self.config.rIndex = 1
 		end
-		self.sb.rFunc = sbStrings[self.config.sbType][self.config.rIndex][2]
+		self.elements.SB.rFunc = sbStrings[self.config.sbType][self.config.rIndex][2]
 
 		if not sbStrings[self.config.sbType][self.config.mIndex] then
 			self.config.mIndex = 1
 		end
-		self.sb.mFunc = sbStrings[self.config.sbType][self.config.mIndex][2]
+		self.elements.SB.mFunc = sbStrings[self.config.sbType][self.config.mIndex][2]
 
 		if not sbStrings[self.config.sbType][self.config.tIndex] then
 			self.config.tIndex = 1
 		end
-		self.sb.tFunc = sbStrings[self.config.sbType][self.config.tIndex][2]
+		self.elements.SB.tFunc = sbStrings[self.config.sbType][self.config.tIndex][2]
 
 	else
-		self.sb.cFunc = function() return "" end
-		self.sb.lFunc = function() return "" end
-		self.sb.rFunc = function() return "" end
-		self.sb.mFunc = function() return "" end
-		self.sb.tFunc = function() return "" end
+		self.elements.SB.cFunc = function() return "" end
+		self.elements.SB.lFunc = function() return "" end
+		self.elements.SB.rFunc = function() return "" end
+		self.elements.SB.mFunc = function() return "" end
+		self.elements.SB.tFunc = function() return "" end
 	end
 
-	self.sb.cText:SetText(self.sb.cFunc(self.sb))
-	self.sb.lText:SetText(self.sb.lFunc(self.sb))
-	self.sb.rText:SetText(self.sb.rFunc(self.sb))
-	self.sb.mText:SetText(self.sb.mFunc(self.sb))
+	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 
-	self.sb.norestColor = { (";"):split(self.config.norestColor) }
-	self.sb.restColor = { (";"):split(self.config.restColor) }
+	self.elements.SB.norestColor = { (";"):split(self.config.norestColor) }
+	self.elements.SB.restColor = { (";"):split(self.config.restColor) }
 
-	self.sb.castColor = { (";"):split(self.config.castColor) }
-	self.sb.channelColor = { (";"):split(self.config.channelColor) }
-	self.sb.successColor = { (";"):split(self.config.successColor) }
-	self.sb.failColor = { (";"):split(self.config.failColor) }
+	self.elements.SB.castColor = { (";"):split(self.config.castColor) }
+	self.elements.SB.channelColor = { (";"):split(self.config.channelColor) }
+	self.elements.SB.successColor = { (";"):split(self.config.successColor) }
+	self.elements.SB.failColor = { (";"):split(self.config.failColor) }
 
-	self.sb.orientation = self.config.orientation
-	self.sb:SetOrientation(BarOrientations[self.config.orientation]:lower())
-	self.fbframe.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
+	self.elements.SB.orientation = self.config.orientation
+	self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
+	self.elements.FBFrame.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
 	if self.config.orientation == 2 then
-		self.sb.cText:SetAlpha(0)
-		self.sb.lText:SetAlpha(0)
-		self.sb.rText:SetAlpha(0)
-		self.sb.mText:SetAlpha(0)
+		self.elements.SB.cText:SetAlpha(0)
+		self.elements.SB.lText:SetAlpha(0)
+		self.elements.SB.rText:SetAlpha(0)
+		self.elements.SB.mText:SetAlpha(0)
 	else
-		self.sb.cText:SetAlpha(1)
-		self.sb.lText:SetAlpha(1)
-		self.sb.rText:SetAlpha(1)
-		self.sb.mText:SetAlpha(1)
+		self.elements.SB.cText:SetAlpha(1)
+		self.elements.SB.lText:SetAlpha(1)
+		self.elements.SB.rText:SetAlpha(1)
+		self.elements.SB.mText:SetAlpha(1)
 	end
 
 	if BarTextures[self.config.texture] then
-		self.sb:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-		self.fbframe.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 	else
-		self.sb:SetStatusBarTexture(BarTextures[1][self.config.orientation])
-		self.fbframe.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
+		self.elements.SB:SetStatusBarTexture(BarTextures[1][self.config.orientation])
+		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
 	end
 
-	self:SetBorder(self.sb, self.config, self.bordercolor)
-	self:SetBorder(self.fbframe.feedback, self.config, self.bordercolor)
+	self:SetBorder(self.elements.SB, self.config, self.bordercolor)
+	self:SetBorder(self.elements.FBFrame.feedback, self.config, self.bordercolor)
 
 	self:SetFrameLevel(4)
 
-	self.fbframe:SetFrameLevel(self:GetFrameLevel()+10)
-	self.fbframe.feedback:SetFrameLevel(self.sb:GetFrameLevel()+10)
-	self.fbframe.feedback.bg:SetFrameLevel(self.sb.bg:GetFrameLevel()+10)
-	self.fbframe.feedback.border:SetFrameLevel(self.sb.border:GetFrameLevel()+10)
+	self.elements.FBFrame:SetFrameLevel(self:GetFrameLevel()+10)
+	self.elements.FBFrame.feedback:SetFrameLevel(self.elements.SB:GetFrameLevel()+10)
+	self.elements.FBFrame.feedback.bg:SetFrameLevel(self.elements.SB.bg:GetFrameLevel()+10)
+	self.elements.FBFrame.feedback.border:SetFrameLevel(self.elements.SB.border:GetFrameLevel()+10)
 
 end
 
@@ -1806,12 +1806,12 @@ function STATUSBTN:SetObjectVisibility(show)
 
 		self.editmode = true
 
-		self.fbframe:Show()
+		self.elements.FBFrame:Show()
 
 	else
 		self.editmode = nil
 
-		self.fbframe:Hide()
+		self.elements.FBFrame:Hide()
 	end
 
 end
@@ -1826,19 +1826,19 @@ function STATUSBTN:StatusBar_Reset()
 	self:SetScript("OnLeave", function() end)
 	self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
 
-	self.sb:UnregisterAllEvents()
-	self.sb:SetScript("OnUpdate", function() end)
-	self.sb:SetScript("OnShow", function() end)
-	self.sb:SetScript("OnHide", function() end)
+	self.elements.SB:UnregisterAllEvents()
+	self.elements.SB:SetScript("OnUpdate", function() end)
+	self.elements.SB:SetScript("OnShow", function() end)
+	self.elements.SB:SetScript("OnHide", function() end)
 
-	self.sb.unit = nil
-	self.sb.rep = nil
-	self.sb.showIcon = nil
+	self.elements.SB.unit = nil
+	self.elements.SB.rep = nil
+	self.elements.SB.showIcon = nil
 
-	self.sb.cbtimer:UnregisterAllEvents()
+	self.elements.SB.cbtimer:UnregisterAllEvents()
 
 	for index, sb in ipairs(MirrorBars) do
-		if sb == self.sb then
+		if sb == self.elements.SB then
 			table.remove(MirrorBars, index)
 		end
 	end
@@ -1870,22 +1870,22 @@ function STATUSBTN:SetType()
 			self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
 		end
 
-		self.sb.unit = BarUnits[self.data.unit]
-		self.sb.showIcon = self.config.showIcon
+		self.elements.SB.unit = BarUnits[self.data.unit]
+		self.elements.SB.showIcon = self.config.showIcon
 
-		self.sb.casting = false
-		self.sb.channeling = false
-		self.sb.holdTime = 0
+		self.elements.SB.casting = false
+		self.elements.SB.channeling = false
+		self.elements.SB.holdTime = 0
 
 		self:SetScript("OnUpdate", function(self, elapsed) self:CastBar_OnUpdate(elapsed) end)
 
-		if not self.sb.cbtimer.castInfo then
-			self.sb.cbtimer.castInfo = {}
+		if not self.elements.SB.cbtimer.castInfo then
+			self.elements.SB.cbtimer.castInfo = {}
 		else
-			wipe(self.sb.cbtimer.castInfo)
+			wipe(self.elements.SB.cbtimer.castInfo)
 		end
 
-		self.sb:Hide()
+		self.elements.SB:Hide()
 
 	elseif self.config.sbType == "xp" then
 
@@ -1908,11 +1908,11 @@ function STATUSBTN:SetType()
 			self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
 		end
 
-		self.sb:Show()
+		self.elements.SB:Show()
 
 	elseif self.config.sbType == "rep" then
 
-		self.sb.repID = self.data.repID
+		self.elements.SB.repID = self.data.repID
 
 		self:SetAttribute("hasaction", true)
 
@@ -1926,7 +1926,7 @@ function STATUSBTN:SetType()
 		self:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE", "repbar_OnEvent")
 		self:RegisterEvent("PLAYER_ENTERING_WORLD", "repbar_OnEvent")
 
-		self.sb:Show()
+		self.elements.SB:Show()
 
 	elseif self.config.sbType == "mirror" then
 
@@ -1938,7 +1938,7 @@ function STATUSBTN:SetType()
 
 		table.insert(MirrorBars, self)
 
-		self.sb:Hide()
+		self.elements.SB:Hide()
 
 	end
 
@@ -1955,7 +1955,7 @@ function STATUSBTN:SetType()
 		typeString = L["Mirror Bar"]
 	end
 
-	self.fbframe.feedback.text:SetText(typeString)
+	self.elements.FBFrame.feedback.text:SetText(typeString)
 
 
 

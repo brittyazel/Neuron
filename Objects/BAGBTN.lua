@@ -29,10 +29,10 @@ else
 	Neuron.NUM_BAG_BUTTONS = 5
 end
 
-local bagElements
+local blizzBagButtons
 
 if Neuron.isWoWClassic then
-	bagElements = {
+	blizzBagButtons = {
 		KeyRingButton, --wow classic has a keyring button
 		CharacterBag3Slot,
 		CharacterBag2Slot,
@@ -40,7 +40,7 @@ if Neuron.isWoWClassic then
 		CharacterBag0Slot,
 		MainMenuBarBackpackButton}
 else
-	bagElements = {
+	blizzBagButtons = {
 		CharacterBag3Slot,
 		CharacterBag2Slot,
 		CharacterBag1Slot,
@@ -72,15 +72,15 @@ end
 
 function BAGBTN:SetType()
 
-	if bagElements[self.id] then
-		self.element = bagElements[self.id]
-		self.element:ClearAllPoints()
-		self.element:SetParent(self)
-		self.element:Show()
+	if blizzBagButtons[self.id] then
+		self.hookedButton = blizzBagButtons[self.id]
+		self.hookedButton:ClearAllPoints()
+		self.hookedButton:SetParent(self)
+		self.hookedButton:Show()
 		if Neuron.isWoWClassic and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
-			self.element:SetPoint("RIGHT", self, "RIGHT")
+			self.hookedButton:SetPoint("RIGHT", self, "RIGHT")
 		else
-			self.element:SetPoint("CENTER", self, "CENTER")
+			self.hookedButton:SetPoint("CENTER", self, "CENTER")
 		end
 	end
 
@@ -109,13 +109,13 @@ function BAGBTN:SetSkinned()
 
 		if bar then
 			local btnData = {
-				Normal = self.element:GetNormalTexture(),
-				Icon = self.element.icon,
-				Count = self.element.Count,
-				Pushed = self.element:GetPushedTexture(),
-				Disabled = self.element:GetDisabledTexture(),
-				Checked = self.element.SlotHighlightTexture, --blizzard in 8.1.5 took away GetCheckedTexture from the bag buttons for ~some~ reason. This is now the explicit location the element we want
-				Highlight = self.element:GetHighlightTexture(),
+				Normal = self.hookedButton:GetNormalTexture(),
+				Icon = self.hookedButton.icon,
+				Count = self.hookedButton.Count,
+				Pushed = self.hookedButton:GetPushedTexture(),
+				Disabled = self.hookedButton:GetDisabledTexture(),
+				Checked = self.hookedButton.SlotHighlightTexture, --blizzard in 8.1.5 took away GetCheckedTexture from the bag buttons for ~some~ reason. This is now the explicit location the element we want
+				Highlight = self.hookedButton:GetHighlightTexture(),
 			}
 
 			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData, "Item")
