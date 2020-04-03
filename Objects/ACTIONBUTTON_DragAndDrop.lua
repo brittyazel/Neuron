@@ -348,6 +348,7 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 	end
 
 	local name, texture = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
+
 	if texture then
 		self.data.macro_Text = "/equipset "..equipmentSetName
 		self.data.macro_Name = name
@@ -360,7 +361,6 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 		self.data.macro_EquipmentSet = false
 	end
 
-	self.data.macro_Name = ""
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 	self.data.macro_BlizzMacro = false

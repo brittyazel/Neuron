@@ -399,6 +399,8 @@ function ACTIONBUTTON:UpdateData()
 		end
 	end
 
+
+
 	self.unit = target or "target"
 
 	if abilityOrItem and #abilityOrItem > 0 and command:find("/castsequence") then --this always will set the button info the next ability or item in the sequence
@@ -505,7 +507,7 @@ ACTIONBUTTON.PLAYER_STOPPED_MOVING = ACTIONBUTTON.PLAYER_STARTED_MOVING
 
 function ACTIONBUTTON:BAG_UPDATE_COOLDOWN()
 	if self.item then
-		self:UpdateState()
+		self:UpdateStatus()
 	end
 end
 ACTIONBUTTON.BAG_UPDATE = ACTIONBUTTON.BAG_UPDATE_COOLDOWN
@@ -721,24 +723,19 @@ end
 function ACTIONBUTTON:SetSpellIcon(spell)
 	local texture
 
-	if not self.data.macro_BlizzMacro and not self.data.macro_EquipmentSet then
-		spell = spell:lower()
+	spell = spell:lower()
 
-		if NeuronSpellCache[spell] then
-			texture = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
-			if not texture then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
-				texture = NeuronSpellCache[spell].icon
-			end
-		elseif NeuronCollectionCache[spell] then
-			texture = NeuronCollectionCache[spell].icon
-		elseif spell then
-			texture = GetSpellTexture(spell)
+	if NeuronSpellCache[spell] then
+		texture = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
+		if not texture then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
+			texture = NeuronSpellCache[spell].icon
 		end
-	else
-		if self.data.macro_BlizzMacro then
-			_, texture = GetMacroInfo(self.data.macro_BlizzMacro)
-		end
+	elseif NeuronCollectionCache[spell] then
+		texture = NeuronCollectionCache[spell].icon
+	elseif spell then
+		texture = GetSpellTexture(spell)
 	end
+
 
 	if texture then
 		self.elements.IconFrameIcon:SetTexture(texture)
@@ -777,7 +774,7 @@ function ACTIONBUTTON:SetActionIcon(action)
 	local texture
 	local actionID = tonumber(action)
 
-	if actionID and HasAction(actionID)then
+	if actionID and HasAction(actionID) then
 		texture = GetActionTexture(actionID)
 	end
 
@@ -792,16 +789,20 @@ function ACTIONBUTTON:SetActionIcon(action)
 end
 
 -----------------------------------------------------------------------------------------
--------------------------------------- Set State ----------------------------------------
+-------------------------------------- Set Status ---------------------------------------
 -----------------------------------------------------------------------------------------
 
-function ACTIONBUTTON:UpdateState()
+function ACTIONBUTTON:UpdateStatus()
 	if self.actionID then
-		self:SetActionState(self.actionID)
+		self:SetActionStatus(self.actionID)
+	elseif self.data.macro_BlizzMacro then
+		self.elements.Name:SetText(self.data.macro_Name)
+	elseif self.data.macro_EquipmentSet then
+		self.elements.Name:SetText(self.data.macro_Name)
 	elseif self.spell then
-		self:SetSpellState(self.spell)
+		self:SetSpellStatus(self.spell)
 	elseif self.item then
-		self:SetItemState(self.item)
+		self:SetItemStatus(self.item)
 	else
 		self:SetChecked(nil)
 		self.elements.Name:SetText("")
@@ -809,7 +810,7 @@ function ACTIONBUTTON:UpdateState()
 	end
 end
 
-function ACTIONBUTTON:SetSpellState(spell)
+function ACTIONBUTTON:SetSpellStatus(spell)
 	if IsCurrentSpell(spell) or IsAutoRepeatSpell(spell) then
 		self:SetChecked(1)
 	else
@@ -819,10 +820,9 @@ function ACTIONBUTTON:SetSpellState(spell)
 	self.elements.Name:SetText(self.data.macro_Name)
 	self:UpdateSpellCount(spell)
 	self:UpdateUsable()
-
 end
 
-function ACTIONBUTTON:SetItemState(item)
+function ACTIONBUTTON:SetItemStatus(item)
 	if IsCurrentItem(item) then
 		self:SetChecked(1)
 	else
@@ -834,8 +834,9 @@ function ACTIONBUTTON:SetItemState(item)
 	self:UpdateUsable()
 end
 
-function ACTIONBUTTON:SetActionState(action)
+function ACTIONBUTTON:SetActionStatus(action)
 	local actionID = tonumber(action)
+	local name
 
 	if actionID then
 		if IsCurrentAction(actionID) or IsAutoRepeatAction(actionID) then
@@ -843,11 +844,24 @@ function ACTIONBUTTON:SetActionState(action)
 		else
 			self:SetChecked(nil)
 		end
+
+		--find out the action name
+		local type, id, _ = GetActionInfo(self.actionID)
+		if type == "spell" then
+			name = GetSpellInfo(id)
+		elseif type == "item" then
+			name = GetItemInfo(id)
+		end
+
 	else
 		self:SetChecked(nil)
 	end
 
-	self.elements.Name:SetText("")
+	if name then
+		self.elements.Name:SetText(name)
+	else
+		self.elements.Name:SetText("")
+	end
 	self.elements.Count:SetText("")
 	self:UpdateUsable()
 end

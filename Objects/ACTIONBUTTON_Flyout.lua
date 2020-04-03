@@ -835,7 +835,7 @@ function ACTIONBUTTON:Flyout_PostClick()
 	button:MACRO_Reset()
 	button:UpdateAll()
 
-	self:UpdateState()
+	self:UpdateStatus()
 end
 
 function ACTIONBUTTON:Flyout_GetButton()
@@ -893,8 +893,8 @@ function ACTIONBUTTON:Flyout_GetButton()
 	newButton:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	newButton:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
-	newButton:SetScript("OnShow", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
-	newButton:SetScript("OnHide", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateState() end)
+	newButton:SetScript("OnShow", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateStatus() end)
+	newButton:SetScript("OnHide", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateStatus() end)
 
 	newButton:WrapScript(newButton, "OnClick", [[
 			local button = self:GetParent():GetParent()

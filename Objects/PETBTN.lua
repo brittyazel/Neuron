@@ -120,7 +120,7 @@ function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 	end
 end
 
-function PETBTN:PET_UpdateState(isActive, allowed, enabled)
+function PETBTN:PET_UpdateStatus(isActive, allowed, enabled)
 
 	if isActive then
 
@@ -221,7 +221,7 @@ function PETBTN:PET_UpdateOnEvent(state)
 		end
 	end
 
-	self:PET_UpdateState(isActive, allowed, enabled)
+	self:PET_UpdateStatus(isActive, allowed, enabled)
 
 end
 
