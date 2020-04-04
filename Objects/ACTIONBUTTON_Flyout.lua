@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
@@ -580,7 +580,7 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
 				button:ParseAndSanitizeMacro()
-				button:MACRO_Reset()
+				button:ClearButton()
 				button:UpdateAll()
 
 				list[#list+1] = button.id--table.insert(list, button.id)
@@ -832,7 +832,7 @@ function ACTIONBUTTON:Flyout_PostClick()
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
 	button:ParseAndSanitizeMacro()
-	button:MACRO_Reset()
+	button:ClearButton()
 	button:UpdateAll()
 
 	self:UpdateStatus()

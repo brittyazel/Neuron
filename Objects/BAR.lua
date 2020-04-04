@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class BAR : CheckButton @This is our bar object that serves as the container for all of our button objects
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
@@ -1180,11 +1180,11 @@ end
 
 
 --Fakes a state change for a given bar, calls up the counterpart function in NeuronButton
-function BAR:SetFauxState(state)
+function BAR:FakeStateChange(state)
 	self.handler:SetAttribute("fauxstate", state)
 
 	for i, object in ipairs(self.buttons) do
-		object:SetFauxState(state)
+		object:FakeStateChange(state)
 	end
 
 	if NeuronObjectEditor and NeuronObjectEditor:IsVisible() then

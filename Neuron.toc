@@ -1,14 +1,14 @@
 ## Interface: 80300
 ## Title: Neuron
 ## Notes: A macro-based action bar and object manager add-on
-## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (aka Maul)
+## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (Maul)
 ## X-Credits-Maintainer: Soyier
 ## Version: @project-version@
 ## DefaultState: enabled
 ## OptionalDeps: Masque
 ## SavedVariables: NeuronProfilesDB
 ## SavedVariablesPerCharacter:
-## X-Copyright: Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
+## X-Copyright: Copyright© 2006-2014 Connor H. Chenoweth (Maul); Copyright© 2017-2020 Britt W. Yazel (Soyier)
 ## X-Permissions: Fork of Ion Action Bars with express permission from Connor H. Chenoweth, aka Maul
 ## X-Email: bwyazel@gmail.com
 
