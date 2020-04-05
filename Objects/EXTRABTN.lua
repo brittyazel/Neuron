@@ -88,29 +88,25 @@ end
 function EXTRABTN:UpdateData()
 
 	--default to 169 as is the most of then the case as of 8.1
-	self.actionID = 169
+	self.extraActionID = 169
 
 	--get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
 		local extraPage = GetExtraBarIndex()
-		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
+		self.extraActionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
 	end
 
 	if not InCombatLockdown() then
-		self:SetAttribute("action1", self.actionID)
+		self:SetAttribute("action1", self.extraActionID)
 	end
 
 	-----------------------
-	if HasExtraActionBar() then
-		_, self.spellID = GetActionInfo(self.actionID)
-	else
-		self.spellID = nil
-	end
-
+	_, self.spellID = GetActionInfo(self.extraActionID)
+	
 	if self.spellID then
-		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
+		self.spell, _, self.spellIcon = GetSpellInfo(self.spellID);
 	else
-		self.spellName = ""
+		self.spell = ""
 		self.spellIcon = ""
 	end
 
@@ -126,7 +122,7 @@ end
 
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateCooldown()
-	self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
+	self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spell. The cooldown will be nil
 end
 
 
@@ -177,8 +173,8 @@ function EXTRABTN:OnEnter()
 
 			if self.tooltipsEnhanced and self.spellID then
 				GameTooltip:SetSpellByID(self.spellID)
-			elseif self.spellName then
-				GameTooltip:SetText(self.spellName)
+			elseif self.spell then
+				GameTooltip:SetText(self.spell)
 			end
 
 			GameTooltip:Show()
