@@ -43,7 +43,6 @@ Neuron.registeredGUIData = {}
 --these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 NeuronSpellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
-NeuronToyCache = {} --Stores a cache of all toys that have been seen by a Neuron button
 
 
 Neuron.STRATAS = {"BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "TOOLTIP"}
@@ -152,7 +151,6 @@ function Neuron:OnInitialize()
 	--load saved variables into working variable containers
 	NeuronItemCache = DB.NeuronItemCache
 	NeuronSpellCache = DB.NeuronSpellCache
-	NeuronToyCache = DB.NeuronToyCache
 
 	--these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
 	Neuron.MAS = Neuron.MANAGED_ACTION_STATES
@@ -193,10 +191,6 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("SPELLS_CHANGED")
 	Neuron:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	Neuron:RegisterEvent("LEARNED_SPELL_IN_TAB")
-
-	if not Neuron.isWoWClassic then
-		Neuron:RegisterEvent("TOYS_UPDATED")
-	end
 
 	Neuron:UpdateStanceStrings()
 
@@ -276,10 +270,6 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
 
-	if not Neuron.isWoWClassic then
-		Neuron:UpdateToyCache()
-	end
-
 	--Fix for Titan causing the Main Bar to not be hidden
 	if IsAddOnLoaded("Titan") then
 		TitanUtils_AddonAdjust("MainMenuBar", true)
@@ -314,10 +304,6 @@ end
 function Neuron:SPELLS_CHANGED()
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
-end
-
-function Neuron:TOYS_UPDATED(...)
-	Neuron:UpdateToyCache()
 end
 
 -------------------------------------------------------------------------
@@ -546,27 +532,6 @@ function Neuron:SetCompanionData(creatureType, index, creatureID, creatureName, 
 	curComp.spellID = spellID
 	curComp.icon = icon
 	return curComp
-end
-
-
---- Compiles a list of toys a player has.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
--- toy cache is backwards due to bugs with secure action buttons' inability to
--- cast a toy by item:id (and inability to SetMacroItem from a name /sigh)
--- cache is indexed by the toyName and equals the itemID
--- the attribValue for toys will be the toyName, and unsecure stuff can pull
--- the itemID from toyCache where needed
-function Neuron:UpdateToyCache()
-
-	-- fill cache with itemIDs = name
-	for i=1,C_ToyBox.GetNumToys() do
-		local itemID = C_ToyBox.GetToyFromIndex(i)
-		local name = GetItemInfo(itemID) or "UNKNOWN"
-		local known = PlayerHasToy(itemID)
-		if known then
-			NeuronToyCache[name:lower()] = itemID
-		end
-	end
-
 end
 
 function Neuron:UpdateStanceStrings()

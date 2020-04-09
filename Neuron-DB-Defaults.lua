@@ -267,7 +267,6 @@ NeuronDefaults = {
 
 		NeuronItemCache = {},
 		NeuronSpellCache = {},
-		NeuronToyCache = {},
 
 		NeuronIcon = {hide = false,},
 

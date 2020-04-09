@@ -753,12 +753,6 @@ function ACTIONBUTTON:SetItemTooltip(item)
 		else
 			GameTooltip:SetText(NeuronItemCache[item:lower()], 1, 1, 1)
 		end
-	elseif NeuronToyCache[item:lower()] then
-		if self.UberTooltips then
-			GameTooltip:SetToyByItemID(NeuronToyCache[item:lower()])
-		else
-			GameTooltip:SetText(name, 1, 1, 1)
-		end
 	end
 end
 
@@ -818,8 +812,6 @@ function ACTIONBUTTON:SetItemIcon(item)
 	if not texture then
 		if NeuronItemCache[item:lower()] then
 			texture = GetItemIcon("item:"..NeuronItemCache[item:lower()]..":0:0:0:0:0:0:0")
-		elseif NeuronToyCache[item:lower()] then
-			texture = GetItemIcon("item:"..NeuronToyCache[item:lower()]..":0:0:0:0:0:0:0")
 		end
 	end
 
@@ -982,8 +974,12 @@ function ACTIONBUTTON:SetUsableItem(item)
 
 	local isUsable, notEnoughMana = IsUsableItem(item)
 
-	if NeuronToyCache[item:lower()] then
-		isUsable = true
+	--for some reason toys don't show as usable items, so this is a workaround for that
+	if not isUsable then
+		local itemID = GetItemInfoInstant(item)
+		if itemID and PlayerHasToy(itemID) then
+			isUsable = true
+		end
 	end
 
 	if notEnoughMana and self.manacolor then
