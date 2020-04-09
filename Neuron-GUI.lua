@@ -2978,7 +2978,7 @@ function NeuronGUI:customPathOnShow(frame)
 
 		if (button.data.macro_Icon) then
 			--Needs fixing
-			local text = button.data.macro_Icon:gsub("INTERFACE\\", "")
+			local text = button.data.macro_Icon
 
 			frame:SetText(text)
 

@@ -235,21 +235,18 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	end
 
 
-	local spellName, icon
+	local spellName , _, icon = GetSpellInfo(spellID)
 
-	if NeuronSpellCache[spell] then
-		spellName = NeuronSpellCache[spell].spellName
-		icon = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
-		if not icon then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
-			icon = NeuronSpellCache[spell].icon
+	if not spellName then
+		if NeuronSpellCache[spell:lower()] then
+			spellName = NeuronSpellCache[spell:lower()].spellName
+			icon = NeuronSpellCache[spell:lower()].icon
 		end
-	else
-		spellName , _, icon = GetSpellInfo(spellID)
 	end
 
 
 	self.data.macro_Text = self:AutoWriteMacro(spell)
-	self.data.macro_Icon = icon  --also set later in SetSpellIcon
+	self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 	self.data.macro_Name = spellName
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
@@ -266,7 +263,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		local spellInfoName , _, icon = GetSpellInfo(spellID)
 
 		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
-		self.data.macro_Icon = icon --also set later in SetSpellIcon
+		self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 		self.data.macro_Name = spellInfoName
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
@@ -294,7 +291,7 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 		self.data.macro_Text = "/use "..item
 	end
 
-	self.data.macro_Icon = false
+	self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 	self.data.macro_Name = item
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
@@ -383,10 +380,9 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 		self.data.macro_Text = "#autowrite\n/run C_MountJournal.SummonByID(0);"
 		self.data.macro_Icon = "Interface\\ICONS\\ACHIEVEMENT_GUILDPERK_MOUNTUP"
 		self.data.macro_Name = "Random Mount"
-		--Any other mount from the Journal
 	else
 		self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
-		self.data.macro_Icon = mountIcon
+		self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 		self.data.macro_Name = mountName
 	end
 	self.data.macro_Note = ""
@@ -413,7 +409,7 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 		self.data.macro_Text = ""
 	end
 
-	self.data.macro_Icon = icon
+	self.data.macro_Icon = icon --need to set icon here, it won't pull it automatically
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 	self.data.macro_BlizzMacro = false
@@ -428,7 +424,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 	local _, _, _, _, _, _, _,petName, petIcon= C_PetJournal.GetPetInfoByPetID(action1)
 
 	self.data.macro_Text = "#autowrite\n/summonpet "..petName
-	self.data.macro_Icon = petIcon
+	self.data.macro_Icon = petIcon --need to set icon here, it won't pull it automatically
 	self.data.macro_Name = petName
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
