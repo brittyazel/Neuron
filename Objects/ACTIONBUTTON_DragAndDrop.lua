@@ -283,9 +283,9 @@ end
 function ACTIONBUTTON:PlaceItem(action1, action2)
 	local item, link = GetItemInfo(action2)
 
-	if link and not NeuronItemCache[item] then --add the item to the itemcache if it isn't otherwise in it
+	if link and not NeuronItemCache[item:lower()] then --add the item to the itemcache if it isn't otherwise in it
 		local _, itemID = link:match("(item:)(%d+)")
-		NeuronItemCache[item] = itemID
+		NeuronItemCache[item:lower()] = itemID
 	end
 
 	if IsEquippableItem(item) then
