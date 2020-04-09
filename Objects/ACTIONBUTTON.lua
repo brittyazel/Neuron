@@ -719,7 +719,17 @@ function ACTIONBUTTON:UpdateTooltip()
 end
 
 function ACTIONBUTTON:SetSpellTooltip(spell)
-	if NeuronSpellCache[spell] then
+
+	if GetSpellInfo(spell) then --try to get the correct spell from the spellbook first
+		local spellName,_,_,_,_,_,spell_id = GetSpellInfo(spell)
+		if spellName and spell_id then --add safety check in case spellName and spell_id come back as nil
+			if self.UberTooltips  then
+				GameTooltip:SetSpellByID(spell_id)
+			else
+				GameTooltip:SetText(spellName, 1, 1, 1)
+			end
+		end
+	elseif NeuronSpellCache[spell] then --if the spell isn't in the spellbook, check our spell cache
 		local spell_id = NeuronSpellCache[spell].spellID
 		if self.UberTooltips then
 			GameTooltip:SetSpellByID(spell_id)
@@ -735,18 +745,9 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 		end
 
 	else
-		local spell_id, spellName
-		spellName,_,_,_,_,_,spell_id = GetSpellInfo(spell)
-		if spellName and spell_id then --add safety check in case spellName and spell_id come back as nil
-			if self.UberTooltips  then
-				GameTooltip:SetSpellByID(spell_id)
-			else
-				GameTooltip:SetText(spellName, 1, 1, 1)
-			end
-		else
-			GameTooltip:SetText(UNKNOWN, 1, 1, 1)
-		end
+		GameTooltip:SetText(UNKNOWN, 1, 1, 1)
 	end
+
 end
 
 function ACTIONBUTTON:SetItemTooltip(item)
