@@ -733,12 +733,6 @@ function ACTIONBUTTON:SetSpellTooltip(spell)
 		else
 			GameTooltip:SetText(NeuronSpellCache[spell:lower()].spellName, 1, 1, 1)
 		end
-	elseif NeuronCollectionCache[spell:lower()] then
-		if self.UberTooltips and NeuronCollectionCache[spell:lower()].creatureType =="MOUNT" then
-			GameTooltip:SetHyperlink("spell:"..NeuronCollectionCache[spell:lower()].spellID)
-		else
-			GameTooltip:SetText(NeuronCollectionCache[spell:lower()].creatureName, 1, 1, 1)
-		end
 	else
 		GameTooltip:SetText(UNKNOWN, 1, 1, 1)
 	end
@@ -806,8 +800,6 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 	if not texture then
 		if NeuronSpellCache[spell:lower()] then
 			texture = NeuronSpellCache[spell:lower()].icon
-		elseif NeuronCollectionCache[spell:lower()] then
-			texture = NeuronCollectionCache[spell:lower()].icon
 		end
 	end
 

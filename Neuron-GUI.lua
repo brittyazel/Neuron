@@ -2535,8 +2535,6 @@ function NeuronGUI:specUpdateIcon(button,state)
 			if (NeuronSpellCache[spell]) then
 				local spell_id = NeuronSpellCache[spell].spellID
 				texture = GetSpellTexture(spell_id)
-			elseif (NeuronCollectionCache[spell]) then
-				texture = NeuronCollectionCache[spell].icon
 			elseif (spell) then
 				texture = GetSpellTexture(spell)
 			end

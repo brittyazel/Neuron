@@ -43,7 +43,6 @@ Neuron.registeredGUIData = {}
 --these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 NeuronSpellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
-NeuronCollectionCache = {} --Stores a cache of all Mounts and Battle Pets that have been seen by a Neuron button
 NeuronToyCache = {} --Stores a cache of all toys that have been seen by a Neuron button
 
 
@@ -153,7 +152,6 @@ function Neuron:OnInitialize()
 	--load saved variables into working variable containers
 	NeuronItemCache = DB.NeuronItemCache
 	NeuronSpellCache = DB.NeuronSpellCache
-	NeuronCollectionCache = DB.NeuronCollectionCache
 	NeuronToyCache = DB.NeuronToyCache
 
 	--these are the working pointers to our global database tables. Each class has a local GDB and CDB table that is a pointer to the root of their associated database
@@ -197,9 +195,7 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("LEARNED_SPELL_IN_TAB")
 
 	if not Neuron.isWoWClassic then
-		Neuron:RegisterEvent("COMPANION_LEARNED")
 		Neuron:RegisterEvent("TOYS_UPDATED")
-		Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
 	end
 
 	Neuron:UpdateStanceStrings()
@@ -281,7 +277,6 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	Neuron:UpdateStanceStrings()
 
 	if not Neuron.isWoWClassic then
-		Neuron:UpdateCollectionCache()
 		Neuron:UpdateToyCache()
 	end
 
@@ -319,14 +314,6 @@ end
 function Neuron:SPELLS_CHANGED()
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
-end
-
-function Neuron:COMPANION_LEARNED()
-	Neuron:UpdateCollectionCache()
-end
-
-function Neuron:PET_JOURNAL_LIST_UPDATE()
-	Neuron:UpdateCollectionCache()
 end
 
 function Neuron:TOYS_UPDATED(...)
@@ -581,44 +568,6 @@ function Neuron:UpdateToyCache()
 	end
 
 end
-
-
---- Compiles a list of battle pets & mounts a player has.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
----	If a companion is not displaying its tooltip or cooldown, then the item in the macro probably is not in the database
-function Neuron:UpdateCollectionCache()
-
-	local _, numpet = C_PetJournal.GetNumPets()
-
-	for i=1,numpet do
-
-		local petID, speciesID, owned, _, _, _, _, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i)
-
-		if petID and owned then
-			local spell = speciesName
-			if spell then
-				local companionData = Neuron:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
-				NeuronCollectionCache[spell:lower()] = companionData
-				NeuronCollectionCache[spell:lower().."()"] = companionData
-			end
-		end
-	end
-
-	local mountIDs = C_MountJournal.GetMountIDs()
-	for i,id in pairs(mountIDs) do
-		local creatureName , spellID, _, _, _, _, _, _, _, _, collected = C_MountJournal.GetMountInfoByID(id)
-
-		if spellID and collected then
-			local spell, _, icon = GetSpellInfo(spellID)
-			if spell then
-				local companionData = Neuron:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
-				NeuronCollectionCache[spell:lower()] = companionData
-				NeuronCollectionCache[spell:lower().."()"] = companionData
-			end
-		end
-	end
-end
-
-
 
 function Neuron:UpdateStanceStrings()
 	if Neuron.class == "DRUID" or Neuron.class == "ROGUE" then
