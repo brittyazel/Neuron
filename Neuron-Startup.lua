@@ -89,9 +89,7 @@ function Neuron:RegisterGUI()
 		COUNTTEXT = true,
 		RANGEIND = true,
 		CDTEXT = true,
-		CDALPHA = true,
-		AURATEXT = true,
-		AURAIND = true },
+		CDALPHA = true, },
 			true, 115)
 
 	--Neuron Bag Bar

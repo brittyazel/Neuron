@@ -1096,26 +1096,10 @@ function BAR:Update(show, hide)
 		Neuron.NeuronGUI:UpdateBarGUI()
 	end
 
-	if self.data.auraInd == true then
-		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	else
-		self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	end
-
 end
 
 -------------------------------------------------------
 
-function BAR:UNIT_SPELLCAST_SUCCEEDED(_, ...)
-	local unit = select(1,...)
-	if Neuron.unitAuras[unit] then
-		if ... == "player" then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
--------------------------------------------------------
 
 
 
@@ -2912,56 +2896,6 @@ function BAR:CDAlphaSet(msg, gui, checked, query)
 			self.data.cdAlpha = false
 		else
 			self.data.cdAlpha = true
-		end
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
-
-function BAR:AuraTextSet(msg, gui, checked, query)
-	if query then
-		return self.data.auraText, self.data.auracolor1, self.data.auracolor2
-	end
-
-	if gui then
-		if checked then
-			self.data.auraText = true
-		else
-			self.data.auraText = false
-		end
-
-	else
-		if self.data.auraText then
-			self.data.auraText = false
-		else
-			self.data.auraText = true
-		end
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
-
-function BAR:AuraIndSet(msg, gui, checked, query)
-	if query then
-		return self.data.auraInd, self.data.buffcolor, self.data.debuffcolor
-	end
-
-	if gui then
-		if checked then
-			self.data.auraInd = true
-		else
-			self.data.auraInd = false
-		end
-
-	else
-		if self.data.auraInd then
-			self.data.auraInd = false
-		else
-			self.data.auraInd = true
 		end
 	end
 

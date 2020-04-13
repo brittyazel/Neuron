@@ -220,7 +220,6 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 				--set timer that is both our cooldown counter, but also the cancels the repeating updating timer at the end
 				self.elements.IconFrameCooldown.cooldownTimer = self:ScheduleTimer(function() self:CancelTimer(self.elements.IconFrameCooldown.cooldownUpdateTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over (to fully finish the animations/alpha transition)
 
-
 				--clear old timer before starting a new one
 				if self:TimeLeft(self.elements.IconFrameCooldown.cooldownUpdateTimer) ~= 0 then
 					self:CancelTimer(self.elements.IconFrameCooldown.cooldownUpdateTimer)
@@ -269,9 +268,7 @@ function BUTTON:CooldownCounterUpdate()
 					self.elements.IconFrameCooldown:SetAlpha(coolDown)
 				end
 			end
-
 		else
-
 			if coolDown >= 86400 then --append a "d" if the timer is longer than 1 day
 				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
@@ -311,11 +308,8 @@ function BUTTON:CooldownCounterUpdate()
 			end
 
 			self.elements.IconFrameCooldown.timer:SetText(formatted)
-
 		end
-
 	end
-
 
 	if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
@@ -335,7 +329,6 @@ function BUTTON:CooldownCounterUpdate()
 			self:SetAlpha(1)
 		end
 	end
-
 end
 
 
@@ -369,9 +362,6 @@ function BUTTON:SetData(bar)
 			self.cdAlpha = 1
 		end
 
-		self.auraText = bar.data.auraText
-		self.auraInd = bar.data.auraInd
-
 		self.rangeInd = bar.data.rangeInd
 
 		self.upClicks = bar.data.upClicks
@@ -396,18 +386,6 @@ function BUTTON:SetData(bar)
 			self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
 		else
 			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
-		end
-
-		if not self.auracolor1 then
-			self.auracolor1 = { (";"):split(bar.data.auracolor1) }
-		else
-			self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], self.auracolor1[4] = (";"):split(bar.data.auracolor1)
-		end
-
-		if not self.auracolor2 then
-			self.auracolor2 = { (";"):split(bar.data.auracolor2) }
-		else
-			self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], self.auracolor2[4] = (";"):split(bar.data.auracolor2)
 		end
 
 		if not self.buffcolor then
@@ -716,120 +694,6 @@ function BUTTON:SetActionCooldown(action)
 	end
 end
 
-
-function BUTTON:UpdateAuraWatch(unit, spell)
-
-	local uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count, auraColor
-
-	if spell and (unit == self.unit or unit == "player") then
-		spell = spell:gsub("%s*%(.+%)", ""):lower()
-
-		if Neuron.unitAuras[unit][spell] then
-			uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count = (":"):split(Neuron.unitAuras[unit][spell])
-
-			uaw_duration = tonumber(uaw_duration)
-			uaw_timeLeft = tonumber(uaw_timeLeft)
-
-			--if self.auraText or self.auraInd then
-			if self.auraInd then
-
-				--self.elements.IconFrameCooldown.showAuraCountdown = self.auraText
-				self.elements.IconFrameCooldown.showAuraBorder = self.auraInd
-
-				self.elements.IconFrameCooldown.auraType = uaw_auraType
-				self.elements.IconFrameCooldown.unit = unit
-
-
-				--clear old timer before starting a new one
-				if self:TimeLeft(self.elements.IconFrameCooldown.auraTimer) ~= 0 then
-					self:CancelTimer(self.elements.IconFrameCooldown.auraTimer)
-				end
-
-				local timeLeft = uaw_timeLeft - GetTime()
-
-				self.elements.IconFrameCooldown.auraTimer = self:ScheduleTimer(function() self:CancelTimer(self.elements.IconFrameCooldown.auraUpdateTimer) end, timeLeft + 1)
-
-
-				--clear old timer before starting a new one
-				if self:TimeLeft(self.elements.IconFrameCooldown.auraUpdateTimer) ~= 0 then
-					self:CancelTimer(self.elements.IconFrameCooldown.auraUpdateTimer)
-				end
-
-				self.elements.IconFrameCooldown.auraUpdateTimer = self:ScheduleRepeatingTimer("AuraCounterUpdate", 0.20)
-
-			else
-				--self.elements.IconFrameCooldown.showAuraCountdown = false
-				self.elements.IconFrameCooldown.showAuraBorder = false
-			end
-
-			self.auraWatchUnit = unit
-
-		elseif self.auraWatchUnit == unit then
-
-			self:CancelTimer(self.elements.IconFrameCooldown.auraUpdateTimer)
-			--self.elements.IconFrameCooldown.timer:SetText("")
-			self.elements.Border:Hide()
-
-			--self.elements.IconFrameCooldown.showAuraCountdown = false
-			self.elements.IconFrameCooldown.showAuraBorder = false
-
-			self.auraWatchUnit = nil
-		end
-	end
-end
-
-
-function BUTTON:AuraCounterUpdate()
-
-	local coolDown, formatted, size
-
-	coolDown = self:TimeLeft(self.elements.IconFrameCooldown.auraTimer) - 1
-
-	--[[if self.elements.IconFrameCooldown.showAuraCountdown and not self.elements.IconFrameCooldown.showCountdownTimer then
-
-		if coolDown < 1 then
-			self.elements.IconFrameCooldown.timer:SetText("")
-		else
-
-			formatted = string.format( "%.0f",coolDown)
-
-			size = self:GetWidth()*0.45
-
-			if self.elements.IconFrameCooldown.auraType == "buff" then
-				self.border:SetVertexColor(self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], 1.0)
-			elseif self.elements.IconFrameCooldown.auraType == "debuff" and self.elements.IconFrameCooldown.unit == "target" then
-				self.border:SetVertexColor(self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], 1.0)
-			end
-
-			self.elements.IconFrameCooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
-
-			self.elements.IconFrameCooldown.timer:SetText(formatted)
-
-		end
-
-	end]]
-
-
-	if self.elements.IconFrameCooldown.showAuraBorder then
-		if coolDown > 0 then
-			if self.elements.IconFrameCooldown.auraType == "buff" then
-				self.elements.Border:SetVertexColor(self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], 1.0)
-			elseif self.elements.IconFrameCooldown.auraType == "debuff" and self.elements.IconFrameCooldown.unit == "target" then
-				self.elements.Border:SetVertexColor(self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], 1.0)
-			end
-
-			self.elements.Border:Show()
-
-		else
-			self.elements.Border:Hide()
-		end
-	else
-		self.elements.Border:Hide()
-	end
-
-end
-
-
 -----------------------------------------------------
 --------------General Update Functions---------------
 -----------------------------------------------------
@@ -863,9 +727,6 @@ end
 
 function BUTTON:UpdateTimers()
 	self:UpdateCooldown()
-	for k in pairs(Neuron.unitAuras) do
-		self:UpdateAuraWatch(k, self.spell)
-	end
 end
 
 function BUTTON:UpdateNormalTexture()

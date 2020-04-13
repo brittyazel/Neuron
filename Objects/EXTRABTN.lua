@@ -88,20 +88,20 @@ end
 function EXTRABTN:UpdateData()
 
 	--default to 169 as is the most of then the case as of 8.1
-	self.extraActionID = 169
+	self.actionID = 169
 
 	--get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
 		local extraPage = GetExtraBarIndex()
-		self.extraActionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
+		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
 	end
 
 	if not InCombatLockdown() then
-		self:SetAttribute("action1", self.extraActionID)
+		self:SetAttribute("action1", self.actionID)
 	end
 
 	-----------------------
-	_, self.spellID = GetActionInfo(self.extraActionID)
+	_, self.spellID = GetActionInfo(self.actionID)
 	
 	if self.spellID then
 		self.spell, _, self.spellIcon = GetSpellInfo(self.spellID);

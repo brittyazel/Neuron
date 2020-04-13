@@ -83,8 +83,6 @@ local swatchOptions = {
 	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "RangeIndSet", true, nil, "rangecolor" },
 	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
 	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "CDAlphaSet", nil, nil },
-	--[7] = { "AURATEXT", L["Buff/Debuff Aura Countdown"], 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
-	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
 }
 
 local specoveride = Neuron.activeSpec

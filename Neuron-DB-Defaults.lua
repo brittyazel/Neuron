@@ -51,14 +51,6 @@ local genericButtonData = {
 	cdcolor1 = "1;0.82;0;1",
 	cdcolor2 = "1;0.1;0.1;1",
 
-	auraText = false,
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
-
-	auraInd = false,
-	buffcolor = "0;0.8;0;1",
-	debuffcolor = "0.8;0;0;1",
-
 	rangeInd = true,
 	rangecolor = "0.7;0.15;0.15;1",
 
@@ -182,8 +174,6 @@ local genericBarData = {
 	countColor = "1;1;1;1",
 	cdcolor1 = "1;0.82;0;1",
 	cdcolor2 = "1;0.1;0.1;1",
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
 	buffcolor = "0;0.8;0;1",
 	debuffcolor = "0.8;0;0;1",
 	rangecolor = "0.7;0.15;0.15;1",
@@ -216,8 +206,6 @@ local genericBarData = {
 
 	cdText = false,
 	cdAlpha = false,
-	auraText = false,
-	auraInd = false,
 
 	showBorderStyle = true,
 

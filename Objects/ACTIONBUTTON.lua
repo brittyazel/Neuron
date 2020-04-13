@@ -80,39 +80,6 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 	return newButton
 end
 
-function ACTIONBUTTON.updateAuraInfo(unit)
-	local spell, count, duration, timeLeft, caster, spellID
-	local index = 1
-
-	wipe(Neuron.unitAuras[unit])
-
-	repeat
-		spell, _, count, _, duration, timeLeft, caster, _, _, spellID = UnitAura(unit, index, "HELPFUL")
-
-		if duration and (caster == "player" or caster == "pet") then
-			Neuron.unitAuras[unit][spell:lower()] = "buff"..":"..duration..":"..timeLeft..":"..count
-			Neuron.unitAuras[unit][spell:lower().."()"] = "buff"..":"..duration..":"..timeLeft..":"..count
-		end
-
-		index = index + 1
-
-	until not spell
-
-	index = 1
-
-	repeat
-		spell, _, count, _, duration, timeLeft, caster = UnitAura(unit, index, "HARMFUL")
-
-		if duration and (caster == "player" or caster == "pet") then
-			Neuron.unitAuras[unit][spell:lower()] = "debuff"..":"..duration..":"..timeLeft..":"..count
-			Neuron.unitAuras[unit][spell:lower().."()"] = "debuff"..":"..duration..":"..timeLeft..":"..count
-		end
-
-		index = index + 1
-
-	until not spell
-end
-
 function ACTIONBUTTON:LoadData(spec, state)
 	self.config = self.DB.config
 	self.keys = self.DB.keys

@@ -113,8 +113,6 @@ Neuron.barEditMode = false
 Neuron.buttonEditMode = false
 Neuron.bindingMode = false
 
-Neuron.unitAuras = { player = {}, target = {}, focus = {} }
-
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLLERANCE = 28
 

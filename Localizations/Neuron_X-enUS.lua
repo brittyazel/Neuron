@@ -133,12 +133,6 @@ L["CDText_Description"] = "Toggle cooldown counts text on the current bar"
 L["CDAlpha"] = true
 L["CDAlpha_Description"] = "Toggle a button's transparancy while on cooldown"
 
-L["AuraText"] = true
-L["AuraText_Description"] = "Toggle aura watch text on the current bar"
-
-L["AuraInd"] = true
-L["AuraInd_Description"] = "Toggle aura button indicators on the current bar"
-
 L["UpClick"] = true
 L["UpClick_Description"] = "Toggle if buttons on the current bar respond to up clicks"
 
@@ -387,8 +381,6 @@ L["Stack/Charge Count Label"] = true
 L["Out-of-Range Indicator"] = true
 L["Cooldown Countdown"] = true
 L["Cooldown Transparency"] = true
-L["Buff/Debuff Aura Countdown"] = true
-L["Buff/Debuff Aura Border"] = true
 
 L["Point"] = true
 L["X Position"] = true
