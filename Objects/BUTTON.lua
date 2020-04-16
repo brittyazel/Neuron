@@ -164,7 +164,7 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 		CooldownFrame_Clear(self.elements.IconFrameCooldown) --clear the cooldown frame
 	end
 
-	self:SetObjectVisibility()
+	self:UpdateObjectVisibility()
 
 end
 
@@ -244,7 +244,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 end
 
 
----this function is called by a repeating timer set in SetCooldownTimer every 0.2sec, which is automatically is set to terminate 1sec after the cooldown timer ends
+---this function is called by a repeating timer set in SetCooldownTimer every 0.2sec, which is autoGmatically is set to terminate 1sec after the cooldown timer ends
 ---this function's job is to overlay the countdown text on a button and set the button's cooldown alpha
 function BUTTON:CooldownCounterUpdate()
 
@@ -460,7 +460,7 @@ function BUTTON:SetData(bar)
 
 	self:GetSkinned()
 
-	self:UpdateTimers()
+	self:UpdateCooldown()
 end
 
 
@@ -472,7 +472,7 @@ function BUTTON:LoadData()
 end
 
 
-function BUTTON:SetObjectVisibility()
+function BUTTON:UpdateObjectVisibility()
 
 	if self.bar.class ~= "ActionBar" then --TODO: I'd like to not have separate logic for ActionBars in the future
 		if self.isShown then
@@ -699,14 +699,8 @@ end
 -----------------------------------------------------
 
 function BUTTON:UpdateAll()
-	self:UpdateData()
-	self:UpdateUsable()
-	self:UpdateIcon()
-	self:UpdateStatus()
-	self:UpdateTimers()
-	self:UpdateNormalTexture()
+	-- empty --
 end
-
 
 function BUTTON:UpdateData()
 	-- empty --
@@ -722,11 +716,6 @@ end
 
 function BUTTON:UpdateStatus()
 	-- empty --
-end
-
-
-function BUTTON:UpdateTimers()
-	self:UpdateCooldown()
 end
 
 function BUTTON:UpdateNormalTexture()

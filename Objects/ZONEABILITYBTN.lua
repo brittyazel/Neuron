@@ -103,7 +103,7 @@ function ZONEABILITYBTN:UpdateData()
 		self.spellIcon = ""
 	end
 
-	self:SetObjectVisibility()
+	self:UpdateObjectVisibility()
 	self:UpdateIcon()
 	self:UpdateCooldown()
 	--zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
@@ -118,7 +118,7 @@ function ZONEABILITYBTN:UpdateCooldown()
 	self:SetSpellCooldown(self.spellName)
 end
 
-function ZONEABILITYBTN:SetObjectVisibility()
+function ZONEABILITYBTN:UpdateObjectVisibility()
 
 	if HasZoneAbility() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
@@ -126,7 +126,7 @@ function ZONEABILITYBTN:SetObjectVisibility()
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
+	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
 
 end
 

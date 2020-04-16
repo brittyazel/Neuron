@@ -1799,7 +1799,7 @@ end
 
 
 
-function STATUSBTN:SetObjectVisibility(show)
+function STATUSBTN:UpdateObjectVisibility(show)
 
 
 	if show then

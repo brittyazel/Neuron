@@ -282,7 +282,7 @@ function BAR:AddObjectsToBar(num) --called from NeuronGUI
 	self:SetPerimeter()
 	self:SetSize()
 	self:Update()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 
 end
 
@@ -1197,7 +1197,7 @@ function BAR:LoadObjects()
 			object.binder = Neuron.KEYBINDER.new(object)
 		end
 
-		object:SetObjectVisibility()
+		object:UpdateObjectVisibility()
 	end
 end
 
@@ -1627,7 +1627,7 @@ function BAR:OnShow()
 
 	self.handler:SetAttribute("editmode", true)
 	self.handler:Show()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:EnableKeyboard(false)
 end
 
@@ -1639,7 +1639,7 @@ function BAR:OnHide()
 		self.handler:Hide()
 	end
 
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:EnableKeyboard(false)
 end
 
@@ -1697,10 +1697,10 @@ function BAR:UpdateObjectData()
 end
 
 
-function BAR:UpdateObjectVisibility(show)
+function BAR:UpdateBarObjectVisibility(show)
 	for _, object in pairs(self.buttons) do
 		if object then
-			object:SetObjectVisibility(show)
+			object:UpdateObjectVisibility(show)
 		end
 	end
 end
@@ -2049,7 +2049,7 @@ function BAR:ShowGridSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:Update()
 end
 

@@ -90,76 +90,67 @@ function ACTIONBUTTON:LoadData(spec, state)
 	self:BuildStateData()
 end
 
-function ACTIONBUTTON:SetObjectVisibility(show)
+function ACTIONBUTTON:UpdateObjectVisibility(show)
 	if self:HasAction() or show or self.showGrid or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
+	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
 end
 
 function ACTIONBUTTON:SetupEvents()
-
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	self:RegisterEvent("ACTIONBAR_SHOWGRID")
 	self:RegisterEvent("ACTIONBAR_HIDEGRID")
 
 	self:RegisterEvent("UPDATE_MACROS")
-	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 
-	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
-	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
+	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED", "UpdateAll")
+	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", "UpdateCooldown")
 
-	self:RegisterEvent("ACTIONBAR_UPDATE_STATE")
-	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE")
+	self:RegisterEvent("SPELL_UPDATE_CHARGES", "UpdateSpellCount", self.spell)
 
-	self:RegisterEvent("SPELL_UPDATE_CHARGES")
-	self:RegisterEvent("SPELLS_CHANGED")
+	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "UpdateAll")
 
-
-	self:RegisterEvent("MODIFIER_STATE_CHANGED")
+	self:RegisterEvent("SPELLS_CHANGED", "UpdateAll")
+	self:RegisterEvent("MODIFIER_STATE_CHANGED", "UpdateAll")
 
 	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	self:RegisterEvent("UNIT_SPELLCAST_FAILED")
-	self:RegisterEvent("UNIT_PET")
+	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_INTERRUPTED")
 
+	self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateStatus")
+	self:RegisterEvent("BAG_UPDATE", "UpdateStatus")
 
-	self:RegisterEvent("PLAYER_TARGET_CHANGED")
-	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+	self:RegisterEvent("PLAYER_STARTED_MOVING", "UpdateUsable")
+	self:RegisterEvent("PLAYER_STOPPED_MOVING", "UpdateUsable")
 
-	self:RegisterEvent("BAG_UPDATE_COOLDOWN")
-	self:RegisterEvent("BAG_UPDATE")
-
-
-	self:RegisterEvent("PLAYER_STARTED_MOVING")
-	self:RegisterEvent("PLAYER_STOPPED_MOVING")
-
-
-	--Makes the action button get checked on and off when opening the trade skill UI widget
-	self:RegisterEvent("TRADE_SKILL_SHOW")
-	self:RegisterEvent("TRADE_SKILL_CLOSE")
+	self:RegisterEvent("ACTIONBAR_UPDATE_STATE", "UpdateAll")
+	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE", "UpdateAll")
+	self:RegisterEvent("TRADE_SKILL_SHOW", "UpdateAll")
+	self:RegisterEvent("TRADE_SKILL_CLOSE", "UpdateAll")
+	self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
+	self:RegisterEvent("UNIT_PET", "UpdateAll")
 
 	if not Neuron.isWoWClassic then
 		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-		self:RegisterEvent("UNIT_ENTERED_VEHICLE")
-		self:RegisterEvent("UNIT_ENTERING_VEHICLE")
-		self:RegisterEvent("UNIT_EXITED_VEHICLE")
-		self:RegisterEvent("PLAYER_FOCUS_CHANGED")
 
-		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW")
-		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE")
+		self:RegisterEvent("UNIT_ENTERED_VEHICLE", "UpdateAll")
+		self:RegisterEvent("UNIT_ENTERING_VEHICLE", "UpdateAll")
+		self:RegisterEvent("UNIT_EXITED_VEHICLE", "UpdateAll")
+		self:RegisterEvent("PLAYER_FOCUS_CHANGED", "UpdateAll")
+		self:RegisterEvent("COMPANION_UPDATE", "UpdateAll")
 
-		self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-		self:RegisterEvent("UPDATE_POSSESS_BAR")
-		self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR")
-		self:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW", "UpdateGlow")
+		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE", "UpdateGlow")
 
-		--Makes it so the mount icon gets checked on and off appropriately
-		self:RegisterEvent("COMPANION_UPDATE")
+		self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "UpdateAll")
+		self:RegisterEvent("UPDATE_POSSESS_BAR", "UpdateAll")
+		self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "UpdateAll")
+		self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "UpdateAll")
 	end
 end
 
@@ -480,6 +471,20 @@ function ACTIONBUTTON:UpdateData()
 end
 
 
+--overrides the parent function with the same name
+function ACTIONBUTTON:UpdateAll()
+	self:UpdateData()
+	self:UpdateUsable()
+	self:UpdateIcon()
+	self:UpdateStatus()
+	self:UpdateCooldown()
+	self:UpdateNormalTexture()
+	if not Neuron.isWoWClassic then
+		self:UpdateGlow()
+	end
+end
+
+
 function ACTIONBUTTON:UpdateGlow()
 	if self.spellGlow and self.spellID then
 
@@ -533,7 +538,7 @@ end
 ---------------------Event Functions------------------------------------------
 ------------------------------------------------------------------------------
 
-function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
+function ACTIONBUTTON:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
 	self.binder:ApplyBindings()
 
@@ -542,56 +547,13 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD(...)
 	end
 end
 
-function ACTIONBUTTON:ACTIONBAR_UPDATE_COOLDOWN()
-	self:UpdateTimers()
-end
-
-function ACTIONBUTTON:ACTIONBAR_UPDATE_STATE(...)
-	if not GetCursorInfo() then
-		self:UpdateAll()
-	end
-end
-ACTIONBUTTON.ACTIONBAR_UPDATE_USABLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.COMPANION_UPDATE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-
-ACTIONBUTTON.TRADE_SKILL_SHOW = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.TRADE_SKILL_CLOSE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-
-ACTIONBUTTON.UNIT_PET = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.UNIT_ENTERED_VEHICLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.UNIT_ENTERING_VEHICLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.UNIT_EXITED_VEHICLE = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-
-ACTIONBUTTON.PLAYER_TARGET_CHANGED = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-ACTIONBUTTON.PLAYER_FOCUS_CHANGED = ACTIONBUTTON.ACTIONBAR_UPDATE_STATE
-
---this is mostly for range checking to get super accurate info when starting or stopping if an ability is in range
-function ACTIONBUTTON:PLAYER_STARTED_MOVING()
-	self:UpdateUsable()
-end
-ACTIONBUTTON.PLAYER_STOPPED_MOVING = ACTIONBUTTON.PLAYER_STARTED_MOVING
-
-function ACTIONBUTTON:BAG_UPDATE_COOLDOWN()
-	if self.item then
-		self:UpdateStatus()
-	end
-end
-ACTIONBUTTON.BAG_UPDATE = ACTIONBUTTON.BAG_UPDATE_COOLDOWN
-
-function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(...)
-	local unit = select(1, ...)
+function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(unit)
 	if (unit == "player" or unit == "pet") and self.spell then
-		self:UpdateTimers()
+		self:UpdateCooldown()
 	end
 end
-ACTIONBUTTON.UNIT_SPELLCAST_FAILED = ACTIONBUTTON.UNIT_SPELLCAST_INTERRUPTED
 
-function ACTIONBUTTON:SPELL_ACTIVATION_OVERLAY_GLOW_SHOW()
-	self:UpdateGlow()
-end
-ACTIONBUTTON.SPELL_ACTIVATION_OVERLAY_GLOW_HIDE = ACTIONBUTTON.SPELL_ACTIVATION_OVERLAY_GLOW_SHOW
-
-function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
+function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED()
 	if InCombatLockdown() then
 		return
 	end
@@ -610,61 +572,25 @@ function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED(...)
 	self:UpdateAll()
 end
 
-function ACTIONBUTTON:SPELLS_CHANGED(...)
-	self:UpdateAll()
-
-	if not Neuron.isWoWClassic then
-		self:UpdateGlow()
-	end
-end
-ACTIONBUTTON.MODIFIER_STATE_CHANGED = ACTIONBUTTON.SPELLS_CHANGED
-
-function ACTIONBUTTON:ACTIONBAR_SLOT_CHANGED(...)
-	if self.data.macro_BlizzMacro or self.data.macro_EquipmentSet then
-		self:UpdateIcon()
-	end
-end
-
-function ACTIONBUTTON:ACTIONBAR_SHOWGRID(...)
+function ACTIONBUTTON:ACTIONBAR_SHOWGRID()
 	Neuron:ToggleButtonGrid(true)
 end
 
-function ACTIONBUTTON:ACTIONBAR_HIDEGRID(...)
+function ACTIONBUTTON:ACTIONBAR_HIDEGRID()
 	Neuron:ToggleButtonGrid()
 end
 
-function ACTIONBUTTON:UPDATE_MACROS(...)
+function ACTIONBUTTON:UPDATE_MACROS()
 	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_BlizzMacro then
 		self:PlaceBlizzMacro(self.data.macro_BlizzMacro)
 	end
 end
 
-function ACTIONBUTTON:EQUIPMENT_SETS_CHANGED(...)
+function ACTIONBUTTON:EQUIPMENT_SETS_CHANGED()
 	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_EquipmentSet then
 		self:PlaceBlizzEquipSet(self.data.macro_EquipmentSet)
 	end
 end
-
-function ACTIONBUTTON:PLAYER_EQUIPMENT_CHANGED(...)
-	if self.data.macro_EquipmentSet then
-		self:UpdateIcon()
-	end
-end
-
-function ACTIONBUTTON:UPDATE_VEHICLE_ACTIONBAR(...)
-	if self.actionID then
-		self:UpdateAll()
-	end
-end
-ACTIONBUTTON.UPDATE_POSSESS_BAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
-ACTIONBUTTON.UPDATE_OVERRIDE_ACTIONBAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
-ACTIONBUTTON.UPDATE_BONUS_ACTIONBAR = ACTIONBUTTON.UPDATE_VEHICLE_ACTIONBAR
-
-function ACTIONBUTTON:SPELL_UPDATE_CHARGES(...)
-	self:UpdateSpellCount(self.spell)
-end
-
-
 -----------------------------------------------------------------------------------------
 ------------------------------------- Set Tooltip ---------------------------------------
 -----------------------------------------------------------------------------------------

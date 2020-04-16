@@ -67,11 +67,11 @@ end
 
 function EXITBTN:OnEvent(event, ...)
 	self:UpdateIcon()
-	self:SetObjectVisibility()
+	self:UpdateObjectVisibility()
 end
 
 
-function EXITBTN:SetObjectVisibility(show)
+function EXITBTN:UpdateObjectVisibility(show)
 
 	if CanExitVehicle() or UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
@@ -79,7 +79,7 @@ function EXITBTN:SetObjectVisibility(show)
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
+	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
 
 end
 

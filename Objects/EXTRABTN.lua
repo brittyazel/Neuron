@@ -110,7 +110,7 @@ function EXTRABTN:UpdateData()
 		self.spellIcon = ""
 	end
 
-	self:SetObjectVisibility()
+	self:UpdateObjectVisibility()
 	self:UpdateIcon()
 	self:UpdateCooldown()
 	--extra button charges (some quests have ability charges)
@@ -126,7 +126,7 @@ function EXTRABTN:UpdateCooldown()
 end
 
 
-function EXTRABTN:SetObjectVisibility()
+function EXTRABTN:UpdateObjectVisibility()
 
 	if HasExtraActionBar() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
@@ -134,7 +134,7 @@ function EXTRABTN:SetObjectVisibility()
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
+	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
 
 end
 

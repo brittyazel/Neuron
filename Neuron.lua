@@ -584,7 +584,7 @@ function Neuron:ToggleButtonGrid(show)
 	for _,bar in pairs(Neuron.BARIndex) do
 		if bar.barType == "ActionBar" or bar.barType == "PetBar" then
 			for _, button in pairs(bar.buttons) do
-				button:SetObjectVisibility(show)
+				button:UpdateObjectVisibility(show)
 			end
 		end
 	end
@@ -610,7 +610,7 @@ function Neuron:ToggleBarEditMode(show)
 			bar:Show() --this shows the transparent overlay over a bar
 			bar:Update(true)
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility(true)
+			bar:UpdateBarObjectVisibility(true)
 		end
 
 	else
@@ -621,7 +621,7 @@ function Neuron:ToggleBarEditMode(show)
 			bar:Hide()
 			bar:Update(nil, true)
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility()
+			bar:UpdateBarObjectVisibility()
 		end
 
 		if NeuronBarEditor then
@@ -654,7 +654,7 @@ function Neuron:ToggleButtonEditMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility(true)
+			bar:UpdateBarObjectVisibility(true)
 		end
 
 
@@ -670,7 +670,7 @@ function Neuron:ToggleButtonEditMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility()
+			bar:UpdateBarObjectVisibility()
 
 			if bar.handler:GetAttribute("assertstate") then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
@@ -710,7 +710,7 @@ function Neuron:ToggleBindingMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility(true)
+			bar:UpdateBarObjectVisibility(true)
 		end
 
 	else
@@ -727,7 +727,7 @@ function Neuron:ToggleBindingMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility()
+			bar:UpdateBarObjectVisibility()
 		end
 	end
 end

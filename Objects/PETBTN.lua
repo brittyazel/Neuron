@@ -60,24 +60,21 @@ function PETBTN.HasPetAction(id)
 	end
 end
 
-
 -----
 
 
-
 function PETBTN:SetType()
-
-	self:RegisterEvent("PET_BAR_UPDATE")
-	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
-	self:RegisterEvent("PET_DISMISS_START")
-	self:RegisterEvent("PLAYER_CONTROL_LOST")
-	self:RegisterEvent("PLAYER_CONTROL_GAINED")
-	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("UNIT_PET")
+	self:RegisterEvent("PET_BAR_UPDATE", "UpdateOnEvent")
+	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN", "UpdateCooldown")
+	self:RegisterEvent("PET_DISMISS_START", "PLAYER_ENTERING_WORLD")
+	self:RegisterEvent("PLAYER_CONTROL_LOST", "UpdateOnEvent")
+	self:RegisterEvent("PLAYER_CONTROL_GAINED", "UpdateOnEvent")
+	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED", "UpdateOnEvent")
 
 	if not Neuron.isWoWClassic then
-		self:RegisterEvent("PET_SPECIALIZATION_CHANGED")
+		self:RegisterEvent("PET_SPECIALIZATION_CHANGED", "PLAYER_ENTERING_WORLD")
 	end
 
 	self.actionID = self.id
@@ -86,9 +83,8 @@ function PETBTN:SetType()
 	self:SetAttribute("type2", "macro")
 	self:SetAttribute("*action1", self.actionID)
 
-	self:SetScript("PostClick", function(self) self:PostClick() end)
+	self:SetScript("PostClick", function(self) self:UpdateOnEvent(true) end)
 	self:SetScript("OnDragStart", function(self) self:OnDragStart() end)
-	self:SetScript("OnDragStop", function(self) self:OnDragStop() end)
 	self:SetScript("OnReceiveDrag", function(self) self:OnReceiveDrag() end)
 	self:SetScript("OnEnter", function(self,...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self) self:OnLeave() end)
@@ -96,10 +92,9 @@ function PETBTN:SetType()
 	self:SetScript("OnAttributeChanged", nil)
 
 	self:SetSkinned()
-
 end
 
-function PETBTN:PET_UpdateIcon(spell, texture, isToken)
+function PETBTN:UpdateIcon(spell, texture, isToken)
 
 	self.elements.Name:SetText("")
 	self.elements.Count:SetText("")
@@ -120,7 +115,7 @@ function PETBTN:PET_UpdateIcon(spell, texture, isToken)
 	end
 end
 
-function PETBTN:PET_UpdateStatus(isActive, allowed, enabled)
+function PETBTN:UpdateStatus(isActive, allowed, enabled)
 
 	if isActive then
 
@@ -161,7 +156,7 @@ function PETBTN:PET_UpdateStatus(isActive, allowed, enabled)
 end
 
 
-function PETBTN:PET_UpdateCooldown()
+function PETBTN:UpdateCooldown()
 
 	local actionID = self.actionID
 
@@ -173,7 +168,7 @@ function PETBTN:PET_UpdateCooldown()
 	end
 end
 
-function PETBTN:PET_UpdateTexture()
+function PETBTN:UpdateTexture()
 
 	local actionID = self.actionID
 
@@ -189,7 +184,7 @@ function PETBTN:PET_UpdateTexture()
 	end
 end
 
-function PETBTN:PET_UpdateOnEvent(state)
+function PETBTN:UpdateOnEvent(state)
 
 	local actionID = self.actionID
 
@@ -206,9 +201,9 @@ function PETBTN:PET_UpdateOnEvent(state)
 			self.spellID = nil
 		end
 
-		self:PET_UpdateTexture()
-		self:PET_UpdateIcon(spell, texture, isToken)
-		self:PET_UpdateCooldown()
+		self:UpdateTexture()
+		self:UpdateIcon(spell, texture, isToken)
+		self:UpdateCooldown()
 
 	end
 
@@ -221,7 +216,7 @@ function PETBTN:PET_UpdateOnEvent(state)
 		end
 	end
 
-	self:PET_UpdateStatus(isActive, allowed, enabled)
+	self:UpdateStatus(isActive, allowed, enabled)
 
 end
 
@@ -237,53 +232,33 @@ function PETBTN:UpdateUsable(actionID)
 end
 
 
-function PETBTN:PET_BAR_UPDATE(...)
-	self:PET_UpdateOnEvent()
-end
-
-PETBTN.PLAYER_CONTROL_LOST = PETBTN.PET_BAR_UPDATE
-PETBTN.PLAYER_CONTROL_GAINED = PETBTN.PET_BAR_UPDATE
-PETBTN.PLAYER_FARSIGHT_FOCUS_CHANGED = PETBTN.PET_BAR_UPDATE
-
-function PETBTN:UNIT_PET(event, ...)
-	if select(1,...) ==  "player" then
-		self.updateRightClick = true
-		self:PET_UpdateOnEvent()
-	end
-end
-
-
-
-function PETBTN:PET_BAR_UPDATE_COOLDOWN(event, ...)
-	self:PET_UpdateCooldown()
-end
-
-
 function PETBTN:PLAYER_ENTERING_WORLD(event, ...)
 
 	self.updateRightClick = true
 
-	self:UpdateAll()
+	self:UpdateData()
+	self:UpdateUsable()
+	self:UpdateIcon()
+	self:UpdateStatus()
+	self:UpdateCooldown()
+	self:UpdateNormalTexture()
 
-	self:SetObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
+	self:UpdateObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
 
 	self.binder:ApplyBindings()
 
 	---This part is so that the grid get's set properly on login
-	self:ScheduleTimer(function() self.bar:UpdateObjectVisibility() end, 2)
+	self:ScheduleTimer(function() self.bar:UpdateBarObjectVisibility() end, 2)
 
 end
 
-PETBTN.PET_SPECIALIZATION_CHANGED = PETBTN.PLAYER_ENTERING_WORLD
-PETBTN.PET_DISMISS_START = PETBTN.PLAYER_ENTERING_WORLD
-
-
-
-
-function PETBTN:PostClick()
-	self:PET_UpdateOnEvent(true)
-
+function PETBTN:UNIT_PET(event, ...)
+	if select(1,...) ==  "player" then
+		self.updateRightClick = true
+		self:UpdateOnEvent()
+	end
 end
+
 
 function PETBTN:OnDragStart()
 
@@ -306,23 +281,18 @@ function PETBTN:OnDragStart()
 
 		PickupPetAction(self.actionID)
 
-		self:PET_UpdateOnEvent(true)
+		self:UpdateOnEvent(true)
 	end
 
 	for i,bar in pairs(Neuron.BARIndex) do
 		if bar.class == "pet" then
-			bar:UpdateObjectVisibility(true)
+			bar:UpdateBarObjectVisibility(true)
 		end
 	end
 end
 
 
-function PETBTN:OnDragStop()
-
-end
-
 function PETBTN:OnReceiveDrag()
-
 	if InCombatLockdown() then
 		return
 	end
@@ -332,13 +302,13 @@ function PETBTN:OnReceiveDrag()
 	if cursorType == "petaction" then
 		self:SetChecked(0)
 		PickupPetAction(self.actionID)
-		self:PET_UpdateOnEvent(true)
+		self:UpdateOnEvent(true)
 	end
 
 end
 
 
-function PETBTN:PET_SetTooltip()
+function PETBTN:UpdateTooltip()
 	local actionID = self.actionID
 
 	if self.HasPetAction(actionID) then
@@ -368,7 +338,7 @@ function PETBTN:OnEnter(...)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			end
 
-			self:PET_SetTooltip()
+			self:UpdateTooltip()
 
 			GameTooltip:Show()
 		end
@@ -381,7 +351,7 @@ function PETBTN:OnLeave()
 end
 
 
-function PETBTN:SetObjectVisibility(show)
+function PETBTN:UpdateObjectVisibility(show)
 
 	if show or self.showGrid or self.HasPetAction(self.actionID) or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
@@ -389,6 +359,5 @@ function PETBTN:SetObjectVisibility(show)
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
-
+	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
 end
