@@ -94,32 +94,25 @@ function ZONEABILITYBTN:UpdateData()
 	self.spellID = GetZoneAbilitySpellInfo();
 
 	if self.spellID then
-		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
-		if self.spellName and not InCombatLockdown() then
-			self:SetAttribute("macrotext1", "/cast " .. self.spellName .. "();")
+		self.spell = GetSpellInfo(self.spellID);
+		if self.spell and not InCombatLockdown() then
+			self:SetAttribute("macrotext1", "/cast " .. self.spell .. "();")
 		end
 	else
-		self.spellName = ""
-		self.spellIcon = ""
+		self.spell = ""
 	end
 
 	self:UpdateObjectVisibility()
 	self:UpdateIcon()
 	self:UpdateCooldown()
 	--zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
-	self:UpdateSpellCount(self.spellName)
+	self:UpdateCount()
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 
 end
 
---overwrite function in parent class BUTTON
-function ZONEABILITYBTN:UpdateCooldown()
-	self:SetSpellCooldown(self.spellName)
-end
-
 function ZONEABILITYBTN:UpdateObjectVisibility()
-
 	if HasZoneAbility() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
 	else
@@ -127,14 +120,13 @@ function ZONEABILITYBTN:UpdateObjectVisibility()
 	end
 
 	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
-
 end
 
 
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
-
-	self.elements.IconFrameIcon:SetTexture(self.spellIcon);
+	local spellTexture = GetSpellTexture(self.spellID)
+	self.elements.IconFrameIcon:SetTexture(spellTexture);
 
 	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[self.spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
 	self.style:SetTexture(texture)
@@ -144,12 +136,10 @@ function ZONEABILITYBTN:UpdateIcon()
 	else
 		self.style:Hide()
 	end
-
 end
 
 
 function ZONEABILITYBTN:OnEnter()
-
 	if not self.isShown then
 		return
 	end
@@ -165,8 +155,8 @@ function ZONEABILITYBTN:OnEnter()
 
 			if self.tooltipsEnhanced and self.spellID then
 				GameTooltip:SetSpellByID(self.spellID)
-			elseif self.spellName then
-				GameTooltip:SetText(self.spellName)
+			elseif self.spell then
+				GameTooltip:SetText(self.spell)
 			end
 
 			GameTooltip:Show()

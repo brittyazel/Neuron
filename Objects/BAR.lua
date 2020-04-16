@@ -1295,7 +1295,6 @@ function BAR:SetObjectLoc()
 			num = num + 1
 			object:SetAttribute("barPos", num)
 			object:SetData(self)
-			object:SetData(self)
 		end
 	end
 end

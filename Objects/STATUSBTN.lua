@@ -1800,20 +1800,13 @@ end
 
 
 function STATUSBTN:UpdateObjectVisibility(show)
-
-
 	if show then
-
 		self.editmode = true
-
 		self.elements.FBFrame:Show()
-
 	else
 		self.editmode = nil
-
 		self.elements.FBFrame:Hide()
 	end
-
 end
 
 
@@ -1942,7 +1935,6 @@ function STATUSBTN:SetType()
 
 	end
 
-
 	local typeString
 
 	if self.config.sbType == "xp" then
@@ -1957,8 +1949,34 @@ function STATUSBTN:SetType()
 
 	self.elements.FBFrame.feedback.text:SetText(typeString)
 
-
-
 	self:SetData(self.bar)
+end
 
+--------------------------------------------------------------
+---------------------- Overrides -----------------------------
+--------------------------------------------------------------
+
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateUsable()
+	-- empty --
+end
+
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateIcon()
+	-- empty --
+end
+
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateStatus()
+	-- empty --
+end
+
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateCount()
+	-- empty --
+end
+
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateCooldown()
+	-- empty --
 end

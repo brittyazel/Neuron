@@ -143,7 +143,7 @@ function PETBTN:UpdateCooldown()
 	end
 end
 
-function PETBTN:UpdateTexture()
+function PETBTN:UpdateNormalTexture()
 	if not self:GetSkinned() then
 		if GetPetActionInfo(self.actionID) then
 			self:SetNormalTexture(self.hasAction or "")
@@ -160,7 +160,7 @@ function PETBTN:UpdateData()
 
 	self.spell = spell
 
-	self:UpdateTexture()
+	self:UpdateNormalTexture()
 	self:UpdateIcon()
 	self:UpdateCooldown()
 

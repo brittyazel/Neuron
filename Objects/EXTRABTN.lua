@@ -104,30 +104,23 @@ function EXTRABTN:UpdateData()
 	_, self.spellID = GetActionInfo(self.actionID)
 	
 	if self.spellID then
-		self.spell, _, self.spellIcon = GetSpellInfo(self.spellID);
+		self.spell = GetSpellInfo(self.spellID);
 	else
 		self.spell = ""
-		self.spellIcon = ""
 	end
 
 	self:UpdateObjectVisibility()
 	self:UpdateIcon()
 	self:UpdateCooldown()
 	--extra button charges (some quests have ability charges)
-	self:UpdateSpellCount(self.spellID)
+	self:UpdateCount()
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 
 end
 
----overwrite function in parent class BUTTON
-function EXTRABTN:UpdateCooldown()
-	self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spell. The cooldown will be nil
-end
-
 
 function EXTRABTN:UpdateObjectVisibility()
-
 	if HasExtraActionBar() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
 	else
@@ -135,14 +128,13 @@ function EXTRABTN:UpdateObjectVisibility()
 	end
 
 	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
-
 end
 
 
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateIcon()
-
-	self.elements.IconFrameIcon:SetTexture(self.spellIcon)
+	local spellTexture = GetSpellTexture(self.spellID)
+	self.elements.IconFrameIcon:SetTexture(spellTexture)
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
 	self.style:SetTexture(texture)
@@ -157,7 +149,6 @@ end
 
 
 function EXTRABTN:OnEnter()
-
 	if not self.isShown then
 		return
 	end
