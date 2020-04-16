@@ -671,42 +671,40 @@ end
 
 function ACTIONBUTTON:UpdateTooltip()
 	if self.actionID then
-		self:SetActionTooltip(self.actionID)
+		self:UpdateActionTooltip()
 	elseif self.data.macro_BlizzMacro then
 		GameTooltip:SetText(self.data.macro_Name)
 	elseif self.data.macro_EquipmentSet then
 		GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
 	elseif self.spell then
-		self:SetSpellTooltip(self.spell)
+		self:UpdateSpellTooltip()
 	elseif self.item then
-		self:SetItemTooltip(self.item)
+		self:UpdateItemTooltip()
 	elseif self.data.macro_Text and #self.data.macro_Text > 0 then
 		GameTooltip:SetText(self.data.macro_Name)
 	end
 end
 
-function ACTIONBUTTON:SetSpellTooltip(spell)
-	local _,_,_,_,_,_,spellID = GetSpellInfo(spell)
-
-	if spell and spellID then --try to get the correct spell from the spellbook first
+function ACTIONBUTTON:UpdateSpellTooltip()
+	if self.spell and self.spellID then --try to get the correct spell from the spellbook first
 		if self.UberTooltips  then
-			GameTooltip:SetSpellByID(spellID)
+			GameTooltip:SetSpellByID(self.spellID)
 		else
-			GameTooltip:SetText(spell, 1, 1, 1)
+			GameTooltip:SetText(self.spell, 1, 1, 1)
 		end
-	elseif NeuronSpellCache[spell:lower()] then --if the spell isn't in the spellbook, check our spell cache
+	elseif NeuronSpellCache[self.spell:lower()] then --if the spell isn't in the spellbook, check our spell cache
 		if self.UberTooltips then
-			GameTooltip:SetSpellByID(NeuronSpellCache[spell:lower()].spellID)
+			GameTooltip:SetSpellByID(NeuronSpellCache[self.spell:lower()].spellID)
 		else
-			GameTooltip:SetText(NeuronSpellCache[spell:lower()].spellName, 1, 1, 1)
+			GameTooltip:SetText(NeuronSpellCache[self.spell:lower()].spellName, 1, 1, 1)
 		end
 	else
 		GameTooltip:SetText(UNKNOWN, 1, 1, 1)
 	end
 end
 
-function ACTIONBUTTON:SetItemTooltip(item)
-	local name, link = GetItemInfo(item)
+function ACTIONBUTTON:UpdateItemTooltip()
+	local name, link = GetItemInfo(self.item)
 
 	if name and link then
 		if self.UberTooltips then
@@ -714,22 +712,18 @@ function ACTIONBUTTON:SetItemTooltip(item)
 		else
 			GameTooltip:SetText(name, 1, 1, 1)
 		end
-	elseif NeuronItemCache[item:lower()] then
+	elseif NeuronItemCache[self.item:lower()] then
 		if self.UberTooltips then
-			GameTooltip:SetHyperlink("item:"..NeuronItemCache[item:lower()]..":0:0:0:0:0:0:0")
+			GameTooltip:SetHyperlink("item:"..NeuronItemCache[self.item:lower()]..":0:0:0:0:0:0:0")
 		else
-			GameTooltip:SetText(NeuronItemCache[item:lower()], 1, 1, 1)
+			GameTooltip:SetText(NeuronItemCache[self.item:lower()], 1, 1, 1)
 		end
 	end
 end
 
-function ACTIONBUTTON:SetActionTooltip(action)
-	local actionID = tonumber(action)
-
-	if actionID then
-		if HasAction(actionID) then
-			GameTooltip:SetAction(actionID)
-		end
+function ACTIONBUTTON:UpdateActionTooltip()
+	if HasAction(self.actionID) then
+		GameTooltip:SetAction(self.actionID)
 	end
 end
 
@@ -739,14 +733,14 @@ end
 
 function ACTIONBUTTON:UpdateIcon()
 	if self.actionID then
-		self:SetActionIcon(self.actionID)
+		self:UpdateActionIcon()
 	elseif self.data.macro_Icon then
 		self.elements.IconFrameIcon:SetTexture(self.data.macro_Icon)
 		self.elements.IconFrameIcon:Show()
 	elseif self.spell then
-		self:SetSpellIcon(self.spell)
+		self:UpdateSpellIcon()
 	elseif self.item then
-		self:SetItemIcon(self.item)
+		self:UpdateItemIcon()
 	else
 		self.elements.Name:SetText("")
 		self.elements.IconFrameIcon:SetTexture("")
@@ -755,12 +749,12 @@ function ACTIONBUTTON:UpdateIcon()
 	end
 end
 
-function ACTIONBUTTON:SetSpellIcon(spell)
-	local texture = GetSpellTexture(spell)
+function ACTIONBUTTON:UpdateSpellIcon()
+	local texture = GetSpellTexture(self.spell)
 
 	if not texture then
-		if NeuronSpellCache[spell:lower()] then
-			texture = NeuronSpellCache[spell:lower()].icon
+		if NeuronSpellCache[self.spell:lower()] then
+			texture = NeuronSpellCache[self.spell:lower()].icon
 		end
 	end
 
@@ -772,13 +766,12 @@ function ACTIONBUTTON:SetSpellIcon(spell)
 	self.elements.IconFrameIcon:Show()
 end
 
-function ACTIONBUTTON:SetItemIcon(item)
-
-	local texture = GetItemIcon(item)
+function ACTIONBUTTON:UpdateItemIcon()
+	local texture = GetItemIcon(self.item)
 
 	if not texture then
-		if NeuronItemCache[item:lower()] then
-			texture = GetItemIcon("item:"..NeuronItemCache[item:lower()]..":0:0:0:0:0:0:0")
+		if NeuronItemCache[self.item:lower()] then
+			texture = GetItemIcon("item:"..NeuronItemCache[self.item:lower()]..":0:0:0:0:0:0:0")
 		end
 	end
 
@@ -790,7 +783,7 @@ function ACTIONBUTTON:SetItemIcon(item)
 
 	self.elements.IconFrameIcon:Show()
 
-	if IsEquippedItem(item) then --makes the border green when item is equipped and dragged to a button
+	if IsEquippedItem(self.item) then --makes the border green when item is equipped and dragged to a button
 		self.elements.Border:SetVertexColor(0, 1.0, 0, 0.2)
 		self.elements.Border:Show()
 	else
@@ -798,12 +791,11 @@ function ACTIONBUTTON:SetItemIcon(item)
 	end
 end
 
-function ACTIONBUTTON:SetActionIcon(action)
+function ACTIONBUTTON:UpdateActionIcon()
 	local texture
-	local actionID = tonumber(action)
 
-	if actionID and HasAction(actionID) then
-		texture = GetActionTexture(actionID)
+	if HasAction(self.actionID) then
+		texture = GetActionTexture(self.actionID)
 	end
 
 	if texture then
@@ -822,15 +814,15 @@ end
 
 function ACTIONBUTTON:UpdateStatus()
 	if self.actionID then
-		self:SetActionStatus(self.actionID)
+		self:UpdateActionStatus()
 	elseif self.data.macro_BlizzMacro then
 		self.elements.Name:SetText(self.data.macro_Name)
 	elseif self.data.macro_EquipmentSet then
 		self.elements.Name:SetText(self.data.macro_Name)
 	elseif self.spell then
-		self:SetSpellStatus(self.spell)
+		self:UpdateSpellStatus()
 	elseif self.item then
-		self:SetItemStatus(self.item)
+		self:UpdateItemStatus()
 	else
 		self:SetChecked(nil)
 		self.elements.Name:SetText("")
@@ -838,36 +830,35 @@ function ACTIONBUTTON:UpdateStatus()
 	end
 end
 
-function ACTIONBUTTON:SetSpellStatus(spell)
-	if IsCurrentSpell(spell) or IsAutoRepeatSpell(spell) then
+function ACTIONBUTTON:UpdateSpellStatus()
+	if IsCurrentSpell(self.spell) or IsAutoRepeatSpell(self.spell) then
 		self:SetChecked(1)
 	else
 		self:SetChecked(nil)
 	end
 
 	self.elements.Name:SetText(self.data.macro_Name)
-	self:UpdateSpellCount(spell)
+	self:UpdateSpellCount(self.spell)
 	self:UpdateUsable()
 end
 
-function ACTIONBUTTON:SetItemStatus(item)
-	if IsCurrentItem(item) then
+function ACTIONBUTTON:UpdateItemStatus()
+	if IsCurrentItem(self.item) then
 		self:SetChecked(1)
 	else
 		self:SetChecked(nil)
 	end
 
 	self.elements.Name:SetText(self.data.macro_Name)
-	self:UpdateItemCount(item)
+	self:UpdateItemCount(self.item)
 	self:UpdateUsable()
 end
 
-function ACTIONBUTTON:SetActionStatus(action)
-	local actionID = tonumber(action)
+function ACTIONBUTTON:UpdateActionStatus()
 	local name
 
-	if actionID then
-		if IsCurrentAction(actionID) or IsAutoRepeatAction(actionID) then
+	if self.actionID then
+		if IsCurrentAction(self.actionID) or IsAutoRepeatAction(self.actionID) then
 			self:SetChecked(1)
 		else
 			self:SetChecked(nil)
@@ -902,34 +893,32 @@ function ACTIONBUTTON:UpdateUsable()
 	if self.editmode then
 		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID then
-		self:SetUsableAction(self.actionID)
+		self:UpdateUsableAction()
 	elseif self.spell then
-		self:SetUsableSpell(self.spell)
+		self:UpdateUsableSpell()
 	elseif self.item then
-		self:SetUsableItem(self.item)
+		self:UpdateUsableItem()
 	else
 		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 	end
 end
 
-function ACTIONBUTTON:SetUsableSpell(spell)
-	local isUsable, notEnoughMana
-
-	isUsable, notEnoughMana = IsUsableSpell(spell)
+function ACTIONBUTTON:UpdateUsableSpell()
+	local isUsable, notEnoughMana = IsUsableSpell(self.spell)
 
 	if notEnoughMana then
 		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif isUsable then
-		if self.rangeInd and IsSpellInRange(spell, self.unit) == 0 then
+		if self.rangeInd and IsSpellInRange(self.spell, self.unit) == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif NeuronSpellCache[spell:lower()] and NeuronSpellCache[spell:lower()].index and self.rangeInd and IsSpellInRange(NeuronSpellCache[spell:lower()].index,"spell", self.unit) == 0 then
+		elseif NeuronSpellCache[self.spell:lower()] and NeuronSpellCache[self.spell:lower()].index and self.rangeInd and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit) == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
 
 	else
-		if NeuronSpellCache[(spell):lower()] then
+		if NeuronSpellCache[(self.spell):lower()] then
 			self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
@@ -937,13 +926,13 @@ function ACTIONBUTTON:SetUsableSpell(spell)
 	end
 end
 
-function ACTIONBUTTON:SetUsableItem(item)
+function ACTIONBUTTON:UpdateUsableItem()
 
-	local isUsable, notEnoughMana = IsUsableItem(item)
+	local isUsable, notEnoughMana = IsUsableItem(self.item)
 
 	--for some reason toys don't show as usable items, so this is a workaround for that
 	if not isUsable then
-		local itemID = GetItemInfoInstant(item)
+		local itemID = GetItemInfoInstant(self.item)
 		if itemID and PlayerHasToy(itemID) then
 			isUsable = true
 		end
@@ -952,7 +941,7 @@ function ACTIONBUTTON:SetUsableItem(item)
 	if notEnoughMana and self.manacolor then
 		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif isUsable then
-		if self.rangeInd and IsItemInRange(item, self.unit) == 0 then
+		if self.rangeInd and IsItemInRange(self.item, self.unit) == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
@@ -962,17 +951,15 @@ function ACTIONBUTTON:SetUsableItem(item)
 	end
 end
 
-function ACTIONBUTTON:SetUsableAction(action)
-	local actionID = tonumber(action)
-
-	if actionID then
-		if actionID == 0 then
+function ACTIONBUTTON:UpdateUsableAction()
+	if self.actionID then
+		if self.actionID == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		else
-			local isUsable, notEnoughMana = IsUsableAction(actionID)
+			local isUsable, notEnoughMana = IsUsableAction(self.actionID)
 
 			if isUsable then
-				if IsActionInRange(action, self.unit) == 0 then
+				if IsActionInRange(self.actionID, self.unit) == 0 then
 					self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 				else
 					self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
