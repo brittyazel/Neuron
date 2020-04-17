@@ -473,33 +473,20 @@ end
 
 
 function BUTTON:UpdateObjectVisibility()
-
-	if self.bar.class ~= "ActionBar" then --TODO: I'd like to not have separate logic for ActionBars in the future
-		if self.isShown then
-			if self.data.alpha then
-				self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
-			else
-				self:SetAlpha(1)
-			end
-		else
-			self:SetAlpha(0)
-		end
-
+	if self.isShown or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+		self.isShown = true
 	else
+		self.isShown = false
+	end
 
-		if InCombatLockdown() then
-			return
-		end
-
-		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
-		self:SetAttribute("isshown", self.isShown)
-
-		if self.isShown then
-			self:Show()
+	if self.isShown then
+		if self.data.alpha then
+			self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
 		else
-			self:Hide()
+			self:SetAlpha(1)
 		end
-
+	else
+		self:SetAlpha(0)
 	end
 end
 

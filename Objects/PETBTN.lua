@@ -282,7 +282,7 @@ end
 
 
 function PETBTN:UpdateObjectVisibility(show)
-	if show or self.showGrid or GetPetActionInfo(self.actionID) or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if show or self.showGrid or GetPetActionInfo(self.actionID) then
 		self.isShown = true
 	else
 		self.isShown = false

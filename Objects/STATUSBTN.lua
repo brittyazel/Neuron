@@ -1797,8 +1797,6 @@ function STATUSBTN:SetData(bar)
 
 end
 
-
-
 function STATUSBTN:UpdateObjectVisibility(show)
 	if show then
 		self.editmode = true
@@ -1808,8 +1806,6 @@ function STATUSBTN:UpdateObjectVisibility(show)
 		self.elements.FBFrame:Hide()
 	end
 end
-
-
 
 function STATUSBTN:StatusBar_Reset()
 

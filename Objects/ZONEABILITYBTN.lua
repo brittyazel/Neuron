@@ -113,7 +113,7 @@ function ZONEABILITYBTN:UpdateData()
 end
 
 function ZONEABILITYBTN:UpdateObjectVisibility()
-	if HasZoneAbility() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if HasZoneAbility() then
 		self.isShown = true
 	else
 		self.isShown = false

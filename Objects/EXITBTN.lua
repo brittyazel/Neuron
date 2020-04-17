@@ -72,15 +72,13 @@ end
 
 
 function EXITBTN:UpdateObjectVisibility(show)
-
-	if CanExitVehicle() or UnitOnTaxi("player") or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+	if CanExitVehicle() or UnitOnTaxi("player") or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
 	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
-
 end
 
 ---overwrite function in parent class BUTTON
