@@ -879,7 +879,11 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 	elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
 
-		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
+		if not Neuron.isWoWClassic then
+			name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
+		else
+			name, text, texture, startTime, endTime, isTradeSkill = CastingInfo() --Classic doesn't have UnitCastingInfo()
+		end
 
 		if not name then
 			self:CastBar_Reset()
