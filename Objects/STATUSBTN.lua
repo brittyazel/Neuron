@@ -819,7 +819,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		if not Neuron.isWoWClassic then
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
-		else
+		elseif unit == "player" then
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo() --classic doesn't have UnitCastingInfo()
 		end
 
@@ -879,7 +879,13 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 	elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
 
-		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
+		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible
+
+		if not Neuron.isWoWClassic then
+			name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
+		elseif unit == "player" then
+			name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = ChannelInfo()
+		end
 
 		if not name then
 			self:CastBar_Reset()
@@ -972,7 +978,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 			if not Neuron.isWoWClassic then
 				name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
-			else
+			elseif unit == "player" then
 				name, text, texture, startTime, endTime, isTradeSkill = CastingInfo() --Classic doesn't have UnitCastingInfo()
 			end
 
@@ -1004,7 +1010,14 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		if self.elements.SB:IsShown() then
 
-			local name, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
+			local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible
+
+			if not Neuron.isWoWClassic then
+				name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
+			elseif unit == "player" then
+				name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = ChannelInfo()
+			end
+
 
 			if not name then
 				self:CastBar_Reset()
