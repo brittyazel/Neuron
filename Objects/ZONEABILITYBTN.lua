@@ -23,7 +23,6 @@
 local ZONEABILITYBTN = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
 Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 
-
 ----------------------------------------------------------
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -32,7 +31,6 @@ Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return ZONEABILITYBTN @ A newly created ZONEABILITYBTN object
 function ZONEABILITYBTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
 
@@ -40,19 +38,11 @@ function ZONEABILITYBTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton.style = newButton:CreateTexture(nil, "OVERLAY")
-	newButton.style:SetPoint("CENTER", -2, 1)
-	newButton.style:SetWidth(190)
-	newButton.style:SetHeight(95)
-
 	return newButton
 end
 
-
 ----------------------------------------------------------
-
 function ZONEABILITYBTN:SetType()
-
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
@@ -76,9 +66,7 @@ function ZONEABILITYBTN:SetType()
 	self:SetSkinned()
 end
 
-
 function ZONEABILITYBTN:OnEvent(event, ...)
-
 	self:UpdateData();
 
 	if event == "PLAYER_ENTERING_WORLD" then
@@ -89,7 +77,6 @@ end
 
 ---overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateData()
-
 	--update the ZoneAbility spell ID
 	self.spellID = GetZoneAbilitySpellInfo();
 
@@ -109,7 +96,6 @@ function ZONEABILITYBTN:UpdateData()
 	self:UpdateCount()
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
-
 end
 
 function ZONEABILITYBTN:UpdateObjectVisibility()
@@ -122,22 +108,20 @@ function ZONEABILITYBTN:UpdateObjectVisibility()
 	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
 end
 
-
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
 	self.elements.IconFrameIcon:SetTexture(spellTexture);
 
 	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[self.spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
-	self.style:SetTexture(texture)
+	self.elements.Flair:SetTexture(texture)
 
 	if self.bar.data.showBorderStyle then
-		self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+		self.elements.Flair:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 	else
-		self.style:Hide()
+		self.elements.Flair:Hide()
 	end
 end
-
 
 function ZONEABILITYBTN:OnEnter()
 	if not self.isShown then
@@ -150,15 +134,12 @@ function ZONEABILITYBTN:OnEnter()
 		end
 
 		if self.tooltips then
-
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-
 			if self.tooltipsEnhanced and self.spellID then
 				GameTooltip:SetSpellByID(self.spellID)
 			elseif self.spell then
 				GameTooltip:SetText(self.spell)
 			end
-
 			GameTooltip:Show()
 		end
 	end
