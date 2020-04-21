@@ -66,7 +66,9 @@ end
 function EXITBTN:OnEvent(event, ...)
 	--reset button back to normal in the case of setting a tint on prior taxi trip
 	self.elements.IconFrameIcon:SetDesaturated(false)
-	self:Enable()
+	if not InCombatLockdown() then
+		self:Enable()
+	end
 
 	self:UpdateIcon()
 	self:UpdateObjectVisibility()
