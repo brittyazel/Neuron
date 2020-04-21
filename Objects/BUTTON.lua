@@ -83,6 +83,8 @@ function BUTTON.new(bar, buttonID,baseObj, barClass, objType, template)
 		newButton.DB.config.date = date("%m/%d/%y %H:%M:%S")
 	end
 
+	newButton:SetScript("PostClick", function() print("test") end)
+
 	return newButton
 end
 
@@ -909,7 +911,7 @@ function BUTTON:UpdateStatus()
 	elseif self.item then
 		self:UpdateItemStatus()
 	else
-		self:SetChecked(nil)
+		self:SetChecked(false)
 		self.elements.Name:SetText("")
 		self.elements.Count:SetText("")
 	end
@@ -919,7 +921,7 @@ function BUTTON:UpdateSpellStatus()
 	if IsCurrentSpell(self.spell) or IsAutoRepeatSpell(self.spell) then
 		self:SetChecked(1)
 	else
-		self:SetChecked(nil)
+		self:SetChecked(false)
 	end
 
 	self.elements.Name:SetText(self.data.macro_Name)
@@ -931,7 +933,7 @@ function BUTTON:UpdateItemStatus()
 	if IsCurrentItem(self.item) then
 		self:SetChecked(1)
 	else
-		self:SetChecked(nil)
+		self:SetChecked(false)
 	end
 
 	self.elements.Name:SetText(self.data.macro_Name)
@@ -946,7 +948,7 @@ function BUTTON:UpdateActionStatus()
 		if IsCurrentAction(self.actionID) or IsAutoRepeatAction(self.actionID) then
 			self:SetChecked(1)
 		else
-			self:SetChecked(nil)
+			self:SetChecked(false)
 		end
 
 		--find out the action name
@@ -958,7 +960,7 @@ function BUTTON:UpdateActionStatus()
 		end
 
 	else
-		self:SetChecked(nil)
+		self:SetChecked(false)
 	end
 
 	if name then

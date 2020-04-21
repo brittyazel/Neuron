@@ -552,7 +552,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 								f.text:SetTextColor(1,0.82,0)
 								f.disabled = nil
 							else
-								f:SetChecked(nil)
+								f:SetChecked(false)
 								f:Disable()
 								f.text:SetTextColor(0.5,0.5,0.5)
 								f.disabled = true
@@ -751,7 +751,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 			--Sets bar primaary options
 			for i,f in ipairs(barOpt.pri) do
 				if (f.option == "stance" and ((GetNumShapeshiftForms() < 1 or Neuron.class == "DEATHKNIGHT" or Neuron.class == "PALADIN" or Neuron.class == "HUNTER"))) and not Neuron.class=="SHAMAN" then
-					f:SetChecked(nil)
+					f:SetChecked(false)
 					f:Disable()
 					f.text:SetTextColor(0.5,0.5,0.5)
 				else
@@ -770,7 +770,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 						f:Enable()
 						f.text:SetTextColor(1,0.82,0)
 					else
-						f:SetChecked(nil)
+						f:SetChecked(false)
 						f:Disable()
 						f.text:SetTextColor(0.5,0.5,0.5)
 					end
@@ -931,7 +931,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 
 				NeuronGUI:UpdateBarGUI()
 			else
-				tab:SetChecked(nil)
+				tab:SetChecked(false)
 				panel:Hide()
 			end
 
@@ -944,7 +944,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -28, -8.5)
 	--f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	--f.text:SetText(L["Spell Target Options"])
 	frame.tab3 = f; frame.tabs[f] = frame.targetoptions
 
@@ -954,7 +954,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText(L["Bar States"])
 	frame.tab2 = f; frame.tabs[f] = frame.barstates
 
@@ -1076,7 +1076,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 							end
 						else
-							button:SetChecked(nil)
+							button:SetChecked(false)
 						end
 
 					end
@@ -1167,7 +1167,7 @@ function NeuronGUI:BarListScrollFrameUpdate(frame, tableList, alt)
 	for i=1,numShown do
 
 		button = _G["NeuronBarEditorBarListScrollFrameButton"..i]
-		button:SetChecked(nil)
+		button:SetChecked(false)
 
 		count = dataOffset + i
 
@@ -2044,7 +2044,7 @@ function NeuronGUI:VisEditorScrollFrameUpdate(frame, tableList, alt)
 	for i=1,numVisShown do
 
 		button = _G["NeuronBarEditorBarStatesVisEditorScrollFrameButton"..i]
-		button:SetChecked(nil)
+		button:SetChecked(false)
 
 		count = dataOffset + i
 
@@ -2187,7 +2187,7 @@ function NeuronGUI:SecondaryPresetsScrollFrameUpdate(frame, stateList, alt)
 	for i=1,numStatesShown do
 
 		button = _G["PresetsScrollFrameButton"..i] --"NeuronBarEditorBarStatesSecondaryPresetsScrollFrameButton"..i]
-		button:SetChecked(nil)
+		button:SetChecked(false)
 
 		count = statesOffset + i
 
@@ -2350,7 +2350,7 @@ function NeuronGUI:ActionListScrollFrame_OnLoad(frame)
 							end
 
 						else
-							button:SetChecked(nil)
+							button:SetChecked(false)
 						end
 
 					end
@@ -2480,7 +2480,7 @@ function NeuronGUI:ActionListScrollFrameUpdate(frame)
 	for i=1,numShown do
 
 		button = _G["NeuronButtonEditorActionListScrollFrameButton"..i]
-		button:SetChecked(nil)
+		button:SetChecked(false)
 
 		count = dataOffset + i
 
@@ -2558,8 +2558,8 @@ function NeuronGUI:MacroEditorUpdate()
 			buttonSpec = specoveride
 
 			--Sets spec tab to current spec
-			NBTNE.spec1:SetChecked(nil)
-			NBTNE.spec2:SetChecked(nil)
+			NBTNE.spec1:SetChecked(false)
+			NBTNE.spec2:SetChecked(false)
 			NBTNE["spec"..buttonSpec]:SetChecked(true)
 
 			--Sets current spec marker to proper tab
@@ -2746,7 +2746,7 @@ function NeuronGUI:macroButton_Changed(frame, button, down)
 	frame.click = true
 	frame.elapsed = 0
 	frame:GetParent():Hide()
-	frame:SetChecked(nil)
+	frame:SetChecked(false)
 
 end
 
@@ -2833,7 +2833,7 @@ function NeuronGUI:macroIconOnClick(frame)
 	end
 
 	if frame.SetChecked then
-		frame:SetChecked(nil)
+		frame:SetChecked(false)
 	end
 
 
@@ -3048,7 +3048,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 					PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 				end
 			else
-				tab:SetChecked(nil)
+				tab:SetChecked(false)
 			end
 			tab:SetBackdropBorderColor(.5, .5, .5 , .5)
 
@@ -3066,7 +3066,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 				end
 				panel:Show()
 			else
-				tab:SetChecked(nil)
+				tab:SetChecked(false)
 				panel:Hide()
 			end
 
@@ -3163,7 +3163,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.reset_button, "RIGHT", -1, 1.25)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 1 ; NeuronGUI:ButtonEditorUpdate() end)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText("Spec1")
 	f.tooltipText = L["Display button for specialization 1"]
 	frame.spec1 = f; frame.specs[f] = frame.spec1
@@ -3184,7 +3184,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec1, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 2 ; NeuronGUI:ButtonEditorUpdate() end)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText("Spec2")
 	f.tooltipText = L["Display button for specialization 2"]
 	frame.spec2 = f; frame.specs[f] = frame.spec2
@@ -3194,7 +3194,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec2, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 3 ; NeuronGUI:ButtonEditorUpdate() end)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText("Spec3")
 	f.tooltipText = L["Display button for specialization 3"]
 	frame.spec3 = f; frame.specs[f] = frame.spec3
@@ -3204,7 +3204,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec3, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 4 ; NeuronGUI:ButtonEditorUpdate() end)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText("Spec4")
 	f.tooltipText = L["Display button for specialization 4"]
 	frame.spec4 = f; frame.specs[f] = frame.spec4
@@ -3471,7 +3471,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetPoint("RIGHT", frame.tab1, "RIGHT", 150, 0)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText(L["Flyout Options"])
 	frame.tab2 = f; frame.tabs[f] = frame.options
 
@@ -4170,7 +4170,7 @@ function NeuronGUI:StatusBarEditorUpdate(reset)
 				if (sb.config.sbType == f.sbType) then
 					f:SetChecked(1)
 				else
-					f:SetChecked(nil)
+					f:SetChecked(false)
 				end
 
 			end

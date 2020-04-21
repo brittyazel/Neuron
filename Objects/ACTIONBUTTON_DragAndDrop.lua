@@ -142,6 +142,7 @@ function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-c
 	if macroDrag[1] then
 		self:OnReceiveDrag()
 	end
+	self:UpdateStatus()
 end
 
 --we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar

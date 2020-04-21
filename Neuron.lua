@@ -246,7 +246,6 @@ end
 -------------------------------------------------
 
 function Neuron:PLAYER_REGEN_DISABLED()
-
 	if Neuron.buttonEditMode then
 		Neuron:ToggleButtonEditMode(false)
 	end
@@ -258,7 +257,6 @@ function Neuron:PLAYER_REGEN_DISABLED()
 	if Neuron.barEditMode then
 		Neuron:ToggleBarEditMode(false)
 	end
-
 end
 
 
@@ -278,11 +276,9 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	end
 
 	Neuron.enteredWorld = true
-
 end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()
-
 	Neuron.activeSpec = GetSpecialization()
 
 	Neuron:UpdateSpellCache()

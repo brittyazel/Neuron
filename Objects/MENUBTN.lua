@@ -39,7 +39,7 @@ local blizzMenuButtons = {
 if Neuron.isWoWClassic then
 	wipe(blizzMenuButtons)
 	for i=1, #MICRO_BUTTONS do
-		table.insert(blizzMenuButtons, _G[MICRO_BUTTONS[i]])
+		blizzMenuButtons[i] = _G[MICRO_BUTTONS[i]]
 	end
 end
 ---------------------------------------------------------
@@ -50,7 +50,6 @@ end
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return MENUBTN @ A newly created MENUBTN object
 function MENUBTN.new(bar, buttonID, defaults)
-
 	---call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, MENUBTN, "MenuBar", "MenuButton", "NeuronAnchorButtonTemplate")
 
@@ -61,17 +60,17 @@ function MENUBTN.new(bar, buttonID, defaults)
 	return newButton
 end
 
-
 ---------------------------------------------------------
 
 function MENUBTN:SetType()
+	if not Neuron.isWoWClassic then
+		if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic then --only run this code on the first SetType, not the reloads after pet battles and such
+			self:RegisterEvent("PET_BATTLE_CLOSE")
+		end
 
-	if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic then --only run this code on the first SetType, not the reloads after pet battles and such
-		self:RegisterEvent("PET_BATTLE_CLOSE")
-	end
-
-	if not Neuron:IsHooked("MoveMicroButtons") then --we need to intercept MoveMicroButtons for during pet battles
-		Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)
+		if not Neuron:IsHooked("MoveMicroButtons") then --we need to intercept MoveMicroButtons for during pet battles
+			Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)
+		end
 	end
 
 	if blizzMenuButtons[self.id] then
@@ -89,9 +88,7 @@ function MENUBTN:SetType()
 		self.hookedButton:SetPoint("CENTER", self, "CENTER")
 		self.hookedButton:SetScale(1)
 	end
-
 end
-
 
 function MENUBTN:SetData(bar)
 	if bar then
@@ -105,12 +102,10 @@ function MENUBTN:SetData(bar)
 	self:SetFrameLevel(4)
 end
 
-
 function MENUBTN:PET_BATTLE_CLOSE()
 	---we have to reload SetType to put the buttons back at the end of the pet battle
 	self:SetType()
 end
-
 
 ---this overwrites the default MoveMicroButtons and basically just extends it to reposition all the other buttons as well, not just the 1st and 6th.
 ---This is necessary for petbattles, otherwise there's no menubar

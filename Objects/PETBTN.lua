@@ -110,7 +110,7 @@ function PETBTN:UpdateStatus()
 		self:SetChecked(1)
 	else
 		self:GetCheckedTexture():SetAlpha(1.0)
-		self:SetChecked(nil)
+		self:SetChecked(false)
 	end
 
 	if allowed then

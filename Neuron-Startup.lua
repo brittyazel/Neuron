@@ -23,19 +23,11 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-
-
-
 function Neuron:Startup()
-
 	DB = Neuron.db.profile
-
 	Neuron:RegisterBars()
-
 	Neuron:RegisterGUI()
-
 	Neuron:CreateBarsAndButtons()
-
 end
 
 
@@ -194,7 +186,7 @@ function Neuron:CreateBarsAndButtons()
 
 	if DB.firstRun then
 
-		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
+		for barClass, barDefaults in pairs(Neuron.DefaultBarOptions) do
 			if Neuron.registeredBarData[barClass] then --only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
 				for i, defaults in ipairs(barDefaults) do --create the bar objects
 					local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor

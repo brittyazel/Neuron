@@ -17,7 +17,6 @@ Libs\embeds.xml
 Localizations\Neuron_Localizations.xml
 
 Neuron-DB-Defaults.lua
-Neuron-Defaults.lua
 Neuron.lua
 Neuron-States.lua
 
@@ -50,6 +49,7 @@ XML\NeuronBindFrameTemplate.xml
 XML\NeuronCheckButtonTextureTemplate.xml
 XML\NeuronStatusBarTemplate.xml
 
+Neuron-Defaults.lua
 Neuron-Startup.lua
 
 Neuron-GUI.lua
