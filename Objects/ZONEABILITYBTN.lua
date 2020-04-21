@@ -60,6 +60,7 @@ function ZONEABILITYBTN:SetType()
 			PickupSpell(self.spellID)
 		end
 	end)
+	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 

@@ -47,7 +47,6 @@ end
 ----------------------------------------------------------
 
 function EXITBTN:SetType()
-
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "OnEvent");
@@ -55,13 +54,12 @@ function EXITBTN:SetType()
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
 	self:RegisterEvent("VEHICLE_UPDATE", "OnEvent")
 
-
 	self:SetScript("OnClick", function(self) self:OnClick() end)
+	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
 	self:SetScript("OnEnter", function(self) self:OnEnter() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
-
 end
 
 

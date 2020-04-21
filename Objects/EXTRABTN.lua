@@ -57,6 +57,7 @@ function EXTRABTN:SetType()
 	--action content gets set in UpdateData
 	self:UpdateData()
 
+	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 

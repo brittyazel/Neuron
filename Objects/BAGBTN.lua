@@ -56,7 +56,6 @@ end
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return BAGBTN @ A newly created BAGBTN object
 function BAGBTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, BAGBTN, "BagBar", "BagButton", "NeuronAnchorButtonTemplate")
 
@@ -67,11 +66,9 @@ function BAGBTN.new(bar, buttonID, defaults)
 	return newButton
 end
 
-
 --------------------------------------------------------
 
 function BAGBTN:SetType()
-
 	if blizzBagButtons[self.id] then
 		self.hookedButton = blizzBagButtons[self.id]
 		self.hookedButton:ClearAllPoints()
@@ -88,7 +85,6 @@ function BAGBTN:SetType()
 end
 
 function BAGBTN:SetData(bar)
-
 	if bar then
 		self.bar = bar
 		self:SetFrameStrata(bar.data.objectStrata)
@@ -100,7 +96,6 @@ end
 
 ---simplified SetSkinned for the Bag Buttons. They're unique in that they contain buttons inside of the buttons
 function BAGBTN:SetSkinned()
-
 	local SKIN = LibStub("Masque", true)
 
 	if SKIN then

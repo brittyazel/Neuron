@@ -83,8 +83,6 @@ function BUTTON.new(bar, buttonID,baseObj, barClass, objType, template)
 		newButton.DB.config.date = date("%m/%d/%y %H:%M:%S")
 	end
 
-	newButton:SetScript("PostClick", function() print("test") end)
-
 	return newButton
 end
 

@@ -66,7 +66,7 @@ function PETBTN:SetType()
 	self:SetAttribute("type2", "macro")
 	self:SetAttribute("*action1", self.actionID)
 
-	self:SetScript("PostClick", function(self) self:UpdateData() end)
+	self:SetScript("PostClick", function(self) self:UpdateData() self:UpdateStatus() end)
 	self:SetScript("OnDragStart", function(self) self:OnDragStart() end)
 	self:SetScript("OnReceiveDrag", function(self) self:OnReceiveDrag() end)
 	self:SetScript("OnEnter", function(self,...) self:UpdateTooltip() end)
