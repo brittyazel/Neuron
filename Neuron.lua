@@ -514,19 +514,6 @@ function Neuron:UpdateSpellCache()
 
 end
 
---- Creates a table containing provided companion & mount data
--- @param index, creatureType, index, creatureID, creatureName, spellID, icon
--- @return curComp:  Table containing provided data
-function Neuron:SetCompanionData(creatureType, index, creatureID, creatureName, spellID, icon)
-	local curComp = {}
-	curComp.creatureType = creatureType
-	curComp.index = index
-	curComp.creatureID = creatureID
-	curComp.creatureName = creatureName
-	curComp.spellID = spellID
-	curComp.icon = icon
-	return curComp
-end
 
 function Neuron:UpdateStanceStrings()
 	if Neuron.class == "DRUID" or Neuron.class == "ROGUE" then

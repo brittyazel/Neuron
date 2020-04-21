@@ -751,18 +751,12 @@ function BUTTON:UpdateUsableSpell()
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
-
 	else
-		if NeuronSpellCache[(self.spell):lower()] then
-			self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
-		else
-			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
-		end
+		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 
 function BUTTON:UpdateUsableItem()
-
 	local isUsable, notEnoughMana = IsUsableItem(self.item)
 
 	--for some reason toys don't show as usable items, so this is a workaround for that
