@@ -61,7 +61,7 @@ function ZONEABILITYBTN:SetType()
 		end
 	end)
 	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
-	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	self:SetScript("OnEnter", function(self) self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
@@ -87,8 +87,10 @@ function ZONEABILITYBTN:UpdateData()
 			self:SetAttribute("macrotext1", "/cast " .. self.spell .. "();")
 		end
 	else
-		self.spell = ""
+		self.spell = nil
 	end
+
+	self.elements.Name:Hide()
 
 	self:UpdateObjectVisibility()
 	self:UpdateIcon()
@@ -124,7 +126,7 @@ function ZONEABILITYBTN:UpdateIcon()
 	end
 end
 
-function ZONEABILITYBTN:OnEnter()
+function ZONEABILITYBTN:UpdateTooltip()
 	if not self.isShown then
 		return
 	end

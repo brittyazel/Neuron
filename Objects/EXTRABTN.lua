@@ -54,11 +54,14 @@ function EXTRABTN:SetType()
 
 	self:SetAttribute("type1", "action")
 
+	self:SetAttribute("action1", 169) --baseline actionID for most zoneability actions
+
+
 	--action content gets set in UpdateData
 	self:UpdateData()
 
 	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
-	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	self:SetScript("OnEnter", function(self) self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
@@ -76,27 +79,34 @@ end
 
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateData()
-	--default to 169 as is the most of then the case as of 8.1
-	self.extraActionID = 169
 
-	--get specific extrabutton extraActionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
+	--get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
-		local extraPage = GetExtraBarIndex()
-		self.extraActionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
-	end
+		--default to 169 as is the most of then the case as of 8.1
+		self.actionID = 169
 
-	if not InCombatLockdown() then
-		self:SetAttribute("action1", self.extraActionID)
+		local extraPage = GetExtraBarIndex()
+		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
+
+		if not InCombatLockdown() then
+			self:SetAttribute("action1", self.actionID)
+		end
+
+		_, self.spellID = GetActionInfo(self.actionID)
+
+		if self.spellID then
+			self.spell = GetSpellInfo(self.spellID);
+		else
+			self.spell = nil
+		end
+	else
+		self.actionID = nil
+		self.spellID = nil
+		self.spell = nil
 	end
 
 	-----------------------
-	_, self.spellID = GetActionInfo(self.extraActionID)
-	
-	if self.spellID then
-		self.spell = GetSpellInfo(self.spellID);
-	else
-		self.spell = ""
-	end
+	self.elements.Name:Hide()
 
 	self:UpdateObjectVisibility()
 	self:UpdateIcon()
@@ -132,7 +142,7 @@ function EXTRABTN:UpdateIcon()
 	end
 end
 
-function EXTRABTN:OnEnter()
+function EXTRABTN:UpdateTooltip()
 	if not self.isShown then
 		return
 	end

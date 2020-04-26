@@ -228,11 +228,6 @@ function Neuron:OnEnable()
 
 	Neuron:Overrides()
 
-	--TODO: Get rid of this in the next version
-	for k,v in pairs(NeuronItemCache) do
-		NeuronItemCache[k:lower()] = v
-	end
-
 end
 
 --- **OnDisable**, which is only called when your addon is manually being disabled.

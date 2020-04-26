@@ -631,7 +631,9 @@ end
 -----------------------------------------------------------------------------------------
 
 function BUTTON:UpdateCount()
-	if self.spell then
+	if self.actionID then
+		self:UpdateActionCount()
+	elseif self.spell then
 		self:UpdateSpellCount()
 	elseif self.item then
 		self:UpdateItemCount()
@@ -667,6 +669,17 @@ function BUTTON:UpdateItemCount()
 	end
 end
 
+
+function BUTTON:UpdateActionCount()
+	local count = GetActionCount(self.actionID)
+
+	if count and count > 0 then
+		self.elements.Count:SetText(count)
+	else
+		self.elements.Count:SetText("")
+	end
+end
+
 -----------------------------------------------------------------------------------------
 ------------------------------------- Set Cooldown --------------------------------------
 -----------------------------------------------------------------------------------------
@@ -685,7 +698,7 @@ function BUTTON:UpdateCooldown()
 end
 
 function BUTTON:UpdateSpellCooldown()
-	if self.spell then
+	if self.spell and self.isShown then
 		local start, duration, enable, modrate = GetSpellCooldown(self.spell)
 		local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(self.spell)
 
@@ -700,7 +713,7 @@ function BUTTON:UpdateSpellCooldown()
 end
 
 function BUTTON:UpdateItemCooldown()
-	if self.item then
+	if self.item and self.isShown then
 		if NeuronItemCache[self.item] then
 			local start, duration, enable, modrate = GetItemCooldown(NeuronItemCache[self.item])
 			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
@@ -711,7 +724,7 @@ function BUTTON:UpdateItemCooldown()
 end
 
 function BUTTON:UpdateActionCooldown()
-	if self.actionID then
+	if self.actionID and self.isShown then
 		if HasAction(self.actionID) then
 			local start, duration, enable, modrate = GetActionCooldown(self.actionID)
 			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
@@ -951,7 +964,6 @@ function BUTTON:UpdateActionStatus()
 		elseif type == "item" then
 			name = GetItemInfo(id)
 		end
-
 	else
 		self:SetChecked(false)
 	end
@@ -961,7 +973,7 @@ function BUTTON:UpdateActionStatus()
 	else
 		self.elements.Name:SetText("")
 	end
-	self.elements.Count:SetText("")
+
 	self:UpdateUsable()
 end
 

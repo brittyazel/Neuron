@@ -485,14 +485,9 @@ end
 
 
 function ACTIONBUTTON:SetMouseCursor()
-
-	if self.spell then
-		local spellID
-		_,_,_,_,_,_,spellID = GetSpellInfo(self.spell)
-		if spellID then
-			PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
-		end
-		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+	if self.spell and self.spellID then
+		PickupSpell(self.spellID)
+		if GetCursorInfo() then
 			return
 		end
 	end
@@ -501,6 +496,18 @@ function ACTIONBUTTON:SetMouseCursor()
 		PickupItem(self.item) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
 		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
 			return
+		end
+
+		PickupItem(GetItemInfoInstant(self.item))
+		if GetCursorInfo() then
+			return
+		end
+
+		if NeuronItemCache[self.item:lower()] then --try to pull the spellID from our ItemCache as a last resort
+			PickupItem(NeuronItemCache[self.item:lower()])
+			if GetCursorInfo() then
+				return
+			end
 		end
 	end
 
