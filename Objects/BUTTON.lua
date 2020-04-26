@@ -715,8 +715,8 @@ end
 function BUTTON:UpdateItemCooldown()
 	if self.item and self.isShown then
 		local start, duration, enable, modrate
-		if NeuronItemCache[self.item] then
-			start, duration, enable, modrate = GetItemCooldown(NeuronItemCache[self.item])
+		if NeuronItemCache[self.item:lower()] then
+			start, duration, enable, modrate = GetItemCooldown(NeuronItemCache[self.item:lower()])
 		else
 			local itemID = GetItemInfoInstant(self.item)
 			start, duration, enable, modrate = GetItemCooldown(itemID)
