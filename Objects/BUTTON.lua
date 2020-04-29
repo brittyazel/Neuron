@@ -165,8 +165,6 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 	end
 
 	self:UpdateObjectVisibility()
-	self:UpdateUsable()
-
 end
 
 
@@ -602,11 +600,11 @@ end
 
 function BUTTON:UpdateAll()
 	self:UpdateData()
-	self:UpdateUsable()
 	self:UpdateIcon()
 	self:UpdateStatus()
 	self:UpdateCooldown()
 	self:UpdateNormalTexture()
+	self:UpdateUsable()
 end
 
 function BUTTON:UpdateData()
@@ -759,12 +757,12 @@ end
 function BUTTON:UpdateUsableSpell()
 	local isUsable, notEnoughMana = IsUsableSpell(self.spell)
 
-	if notEnoughMana then
+	if notEnoughMana  and self.manacolor then
 		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif isUsable then
 		if self.rangeInd and IsSpellInRange(self.spell, self.unit)==0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif NeuronSpellCache[self.spell:lower()] and NeuronSpellCache[self.spell:lower()].index and self.rangeInd and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit)==0 then
+		elseif NeuronSpellCache[self.spell:lower()] and self.rangeInd and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit)==0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
@@ -790,6 +788,8 @@ function BUTTON:UpdateUsableItem()
 	elseif isUsable then
 		if self.rangeInd and IsItemInRange(self.item, self.unit) == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		elseif NeuronItemCache[self.item:lower()] and self.rangeInd and IsItemInRange(NeuronItemCache[self.item:lower()], self.unit)==0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
@@ -799,28 +799,23 @@ function BUTTON:UpdateUsableItem()
 end
 
 function BUTTON:UpdateUsableAction()
-	if self.actionID then
-		if self.actionID == 0 then
-			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
-		else
-			local isUsable, notEnoughMana = IsUsableAction(self.actionID)
-
-			if isUsable then
-				if IsActionInRange(self.actionID, self.unit) == 0 then
-					self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-				else
-					self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
-				end
-
-			elseif notEnoughMana and self.manacolor then
-				self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
-			else
-				self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
-			end
-		end
-
-	else
+	if self.actionID == 0 then
 		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+		return
+	end
+
+	local isUsable, notEnoughMana = IsUsableAction(self.actionID)
+
+	if notEnoughMana and self.manacolor then
+		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	elseif isUsable then
+		if self.rangeInd and IsActionInRange(self.spell, self.unit)==0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		else
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+		end
+	else
+		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 

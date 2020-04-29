@@ -138,8 +138,9 @@ function ACTIONBUTTON:SetupEvents()
 	self:RegisterEvent("PLAYER_STARTED_MOVING", "UpdateUsable")
 	self:RegisterEvent("PLAYER_STOPPED_MOVING", "UpdateUsable")
 
+	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE", "UpdateUsable")
+
 	self:RegisterEvent("ACTIONBAR_UPDATE_STATE", "UpdateAll")
-	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE", "UpdateAll")
 	self:RegisterEvent("TRADE_SKILL_SHOW", "UpdateAll")
 	self:RegisterEvent("TRADE_SKILL_CLOSE", "UpdateAll")
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
@@ -482,14 +483,11 @@ function ACTIONBUTTON:UpdateData()
 end
 
 
---overrides the parent function with the same name
+--extends the parent function with the same name
 function ACTIONBUTTON:UpdateAll()
-	self:UpdateData()
-	self:UpdateUsable()
-	self:UpdateIcon()
-	self:UpdateStatus()
-	self:UpdateCooldown()
-	self:UpdateNormalTexture()
+	--pass to parent UpdateAll function
+	Neuron.BUTTON.UpdateAll(self)
+
 	if not Neuron.isWoWClassic then
 		self:UpdateGlow()
 	end
@@ -618,21 +616,6 @@ function ACTIONBUTTON:ParseAndSanitizeMacro()
 	else
 		self.macro = nil
 	end
-end
-
-function ACTIONBUTTON:UpdateUsableSpec(bar)
-	local spec
-	if bar.data.multiSpec then
-		spec = Neuron.activeSpec
-	else
-		spec = 1
-	end
-
-	self:SetType()
-	self:SetData(bar)
-	self:LoadData(spec, bar.handler:GetAttribute("activestate"))
-	self:UpdateFlyout()
-	self:UpdateAll()
 end
 
 function ACTIONBUTTON:BuildStateData()
