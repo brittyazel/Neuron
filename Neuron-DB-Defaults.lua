@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 
@@ -231,8 +231,6 @@ local genericBarData = {
 	countColor = {1,1,1,1},
 	cdcolor1 = {1,0.82,0,1},
 	cdcolor2 = {1,0.1,0.1,1},
-	buffcolor = {0,0.8,0,1},
-	debuffcolor = {0.8,0,0,1},
 	rangecolor = {0.7,0.15,0.15,1},
 	manacolor = {0.5,0.5,1.0,1},
 
@@ -259,7 +257,6 @@ local genericBarData = {
 
 	cdText = false,
 	cdAlpha = false,
-	auraInd = false,
 
 	showBorderStyle = true,
 
@@ -309,8 +306,6 @@ NeuronDefaults = {
 
 		NeuronItemCache = {},
 		NeuronSpellCache = {},
-		NeuronCollectionCache = {},
-		NeuronToyCache = {},
 
 		NeuronIcon = {hide = false,},
 

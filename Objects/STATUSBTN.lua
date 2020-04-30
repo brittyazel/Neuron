@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class STATUSBTN : BUTTON @define class STATUSBTN inherits from class BUTTON
 local STATUSBTN = setmetatable({}, { __index = Neuron.BUTTON })
@@ -535,26 +535,41 @@ end
 
 
 
-function STATUSBTN:SetObjectVisibility(show)
-
+function STATUSBTN:UpdateObjectVisibility(show)
 	if (show) then
-
 		self.editmode = true
-
 		self.elements.FBFrame:Show()
-
 	else
 		self.editmode = nil
-
 		self.elements.FBFrame:Hide()
 	end
-
 end
 
+--------------------------------------------------------------
+---------------------- Overrides -----------------------------
+--------------------------------------------------------------
 
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateUsable()
+	-- empty --
+end
 
-function STATUSBTN:SetType()
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateIcon()
+	-- empty --
+end
 
-	--empty--
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateStatus()
+	-- empty --
+end
 
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateCount()
+	-- empty --
+end
+
+--overrides the parent function so we don't error out
+function STATUSBTN:UpdateCooldown()
+	-- empty --
 end

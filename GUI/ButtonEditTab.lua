@@ -89,7 +89,6 @@ function NeuronGUI:CreateIconSelector()
 	--this is temporary. We need to populate a list of icons here
 
 	NeuronGUI:RefreshPlayerSpellIconInfo()
-	print(#iconList)
 
 	for i=1,#iconList do
 		local iconFrame=AceGUI:Create("Icon")
@@ -123,12 +122,6 @@ function NeuronGUI:RefreshPlayerSpellIconInfo()
 	end
 
 	for _,v in pairs(NeuronItemCache) do
-		if v.icon and not tContains(iconList, v.icon) then
-			table.insert(iconList, v.icon)
-		end
-	end
-
-	for _,v in pairs(NeuronCollectionCache) do
 		if v.icon and not tContains(iconList, v.icon) then
 			table.insert(iconList, v.icon)
 		end

@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class BAR : CheckButton @This is our bar object that serves as the container for all of our button objects
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
@@ -245,7 +245,7 @@ function BAR:AddObjectToBar() --called from NeuronGUI
 	self:SetPerimeter()
 	self:SetSize()
 	self:Update()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 end
 
 
@@ -1032,27 +1032,10 @@ function BAR:Update(show, hide)
 	self:LaunchAlphaUp()
 	self.text:SetText(self:GetBarName())
 	handler:SetAlpha(self:GetBarAlpha())
-
-	if  self:GetShowAuraIndicator() then
-		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	else
-		self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	end
-
 end
 
 -------------------------------------------------------
 
-function BAR:UNIT_SPELLCAST_SUCCEEDED(_, ...)
-	local unit = select(1,...)
-	if Neuron.unitAuras[unit] then
-		if ... == "player" then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
--------------------------------------------------------
 
 
 
@@ -1124,11 +1107,11 @@ end
 
 
 --Fakes a state change for a given bar, calls up the counterpart function in NeuronButton
-function BAR:SetFauxState(state)
+function BAR:FakeStateChange(state)
 	self.handler:SetAttribute("fauxstate", state)
 
 	for i, object in ipairs(self.buttons) do
-		object:SetFauxState(state)
+		object:FakeStateChange(state)
 	end
 
 end
@@ -1154,7 +1137,7 @@ function BAR:LoadObjects()
 			object.binder = Neuron.KEYBINDER.new(object)
 		end
 
-		object:SetObjectVisibility()
+		object:UpdateObjectVisibility()
 	end
 end
 
@@ -1252,7 +1235,6 @@ function BAR:SetObjectLoc()
 
 			num = num + 1
 			object:SetAttribute("barPos", num)
-			object:SetData(self)
 			object:SetData(self)
 		end
 	end
@@ -1540,7 +1522,7 @@ function BAR:OnShow()
 
 	self.handler:SetAttribute("editmode", true)
 	self.handler:Show()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:EnableKeyboard(false)
 end
 
@@ -1552,7 +1534,7 @@ function BAR:OnHide()
 		self.handler:Hide()
 	end
 
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:EnableKeyboard(false)
 end
 
@@ -1605,10 +1587,10 @@ function BAR:UpdateObjectData()
 end
 
 
-function BAR:UpdateObjectVisibility(show)
+function BAR:UpdateBarObjectVisibility(show)
 	for _, object in pairs(self.buttons) do
 		if object then
-			object:SetObjectVisibility(show)
+			object:UpdateObjectVisibility(show)
 		end
 	end
 end
@@ -1948,7 +1930,7 @@ function BAR:SetShowGrid(checked)
 	end
 
 	self:UpdateObjectData()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:Update()
 end
 
@@ -2542,53 +2524,7 @@ function BAR:GetShowCooldownAlpha()
 	return self.data.cdAlpha
 end
 
-function BAR:SetShowAuraIndicator(checked)
-	if checked then
-		self.data.auraInd = true
-	else
-		self.data.auraInd = false
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
-function BAR:GetShowAuraIndicator()
-	return self.data.auraInd
-end
-
-function BAR:SetBuffColor(option)
-	if option then
-		self.data.buffcolor = option
-	else
-		self.data.buffcolor = {0,0.8,0,1}
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
-function BAR:GetBuffColor()
-	return self.data.buffcolor
-end
-
-function BAR:SetDebuffColor(option)
-	if option then
-		self.data.debuffcolor = option
-	else
-		self.data.debuffcolor = {0.8,0,0,1}
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
-function BAR:GetDebuffColor()
-	return self.data.debuffcolor
-end
-
 function BAR:SetShowBorderStyle(checked)
-
 	if checked then
 		self.data.showBorderStyle = true
 	else

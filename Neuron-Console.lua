@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -54,18 +54,17 @@ local slashFunctions = {
 	{L["State"], L["State_Description"], "SetState"},
 	{L["StateList"], L["StateList_Description"], "PrintStateList"},
 	{L["Vis"], L["Vis_Description"], "SetVisibility"},
-	{L["ShowGrid"], L["ShowGrid_Description"], "SetShowGrid"},
-	{L["Lock"], L["Lock_Description"], "SetBarLock"},
-	{L["Tooltips"], L["Tooltips_Description"], "SetTooltipOption"},
-	{L["SpellGlow"], L["SpellGlow_Description"], "SetSpellGlow"},
-	{L["BindText"], L["BindText_Description"], "SetShowBindText"},
-	{L["MacroText"], L["MacroText_Description"], "SetShowMacroText"},
-	{L["CountText"], L["CountText_Description"], "SetShowCountText"},
-	{L["CDText"], L["CDText_Description"], "SetShowCooldownText"},
-	{L["CDAlpha"], L["CDAlpha_Description"], "SetShowCooldownAlpha"},
-	{L["AuraInd"], L["AuraInd_Description"], "SetShowAuraIndicator"},
-	{L["UpClick"], L["UpClick_Description"], "SetUpClicks"},
-	{L["DownClick"], L["DownClick_Description"], "SetDownClicks"},
+	{L["ShowGrid"], L["ShowGrid_Description"], "ShowGridSet"},
+	{L["Lock"], L["Lock_Description"], "LockSet"},
+	{L["Tooltips"], L["Tooltips_Description"], "ToolTipSet"},
+	{L["SpellGlow"], L["SpellGlow_Description"], "SpellGlowSet"},
+	{L["BindText"], L["BindText_Description"], "BindTextSet"},
+	{L["MacroText"], L["MacroText_Description"], "MacroTextSet"},
+	{L["CountText"], L["CountText_Description"], "CountTextSet"},
+	{L["CDText"], L["CDText_Description"], "CDTextSet"},
+	{L["CDAlpha"], L["CDAlpha_Description"], "CDAlphaSet"},
+	{L["UpClick"], L["UpClick_Description"], "UpClicksSet"},
+	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
 	{L["BlizzUI"], L["BlizzUI_Description"], "ToggleBlizzUI"},
 

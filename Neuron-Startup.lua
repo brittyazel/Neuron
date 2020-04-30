@@ -17,25 +17,17 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-
-
-
 function Neuron:Startup()
-
 	DB = Neuron.db.profile
-
 	Neuron:RegisterBars()
-
 	Neuron:RegisterGUI()
-
 	Neuron:CreateBarsAndButtons()
-
 end
 
 
@@ -99,8 +91,7 @@ function Neuron:RegisterGUI()
 			 COUNTTEXT = true,
 			 RANGEIND = true,
 			 CDTEXT = true,
-			 CDALPHA = true,
-			 AURAIND = true})
+			 CDALPHA = true,})
 
 
 	--Neuron Bag Bar
@@ -212,7 +203,7 @@ function Neuron:CreateBarsAndButtons()
 
 	if DB.firstRun then
 
-		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
+		for barClass, barDefaults in pairs(Neuron.DefaultBarOptions) do
 			if Neuron.registeredBarData[barClass] then --only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
 				for i, defaults in ipairs(barDefaults) do --create the bar objects
 					local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor

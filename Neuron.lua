@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 
 ---@class Neuron @define The main addon object for the Neuron Action Bar addon
@@ -43,8 +43,6 @@ Neuron.registeredGUIData = {}
 --these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 NeuronSpellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
-NeuronCollectionCache = {} --Stores a cache of all Mounts and Battle Pets that have been seen by a Neuron button
-NeuronToyCache = {} --Stores a cache of all toys that have been seen by a Neuron button
 
 
 Neuron.STRATAS = {
@@ -59,8 +57,6 @@ Neuron.STRATAS = {
 Neuron.barEditMode = false
 Neuron.buttonEditMode = false
 Neuron.bindingMode = false
-
-Neuron.unitAuras = { player = {}, target = {}, focus = {} }
 
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLLERANCE = 28
@@ -98,8 +94,6 @@ function Neuron:OnInitialize()
 	--load saved variables into working variable containers
 	NeuronItemCache = DB.NeuronItemCache
 	NeuronSpellCache = DB.NeuronSpellCache
-	NeuronCollectionCache = DB.NeuronCollectionCache
-	NeuronToyCache = DB.NeuronToyCache
 
 
 	Neuron.class = select(2, UnitClass("player"))
@@ -136,12 +130,6 @@ function Neuron:OnEnable()
 	Neuron:RegisterEvent("SPELLS_CHANGED")
 	Neuron:RegisterEvent("CHARACTER_POINTS_CHANGED")
 	Neuron:RegisterEvent("LEARNED_SPELL_IN_TAB")
-
-	if not Neuron.isWoWClassic then
-		Neuron:RegisterEvent("COMPANION_LEARNED")
-		Neuron:RegisterEvent("TOYS_UPDATED")
-		Neuron:RegisterEvent("PET_JOURNAL_LIST_UPDATE")
-	end
 
 	Neuron:UpdateStanceStrings()
 
@@ -195,7 +183,6 @@ end
 -------------------------------------------------
 
 function Neuron:PLAYER_REGEN_DISABLED()
-
 	if Neuron.buttonEditMode then
 		Neuron:ToggleButtonEditMode(false)
 	end
@@ -207,7 +194,6 @@ function Neuron:PLAYER_REGEN_DISABLED()
 	if Neuron.barEditMode then
 		Neuron:ToggleBarEditMode(false)
 	end
-
 end
 
 
@@ -216,11 +202,6 @@ function Neuron:PLAYER_ENTERING_WORLD()
 
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
-
-	if not Neuron.isWoWClassic then
-		Neuron:UpdateCollectionCache()
-		Neuron:UpdateToyCache()
-	end
 
 	--Fix for Titan causing the Main Bar to not be hidden
 	if IsAddOnLoaded("Titan") then
@@ -232,11 +213,9 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	end
 
 	Neuron.enteredWorld = true
-
 end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()
-
 	Neuron.activeSpec = GetSpecialization()
 
 	Neuron:UpdateSpellCache()
@@ -256,18 +235,6 @@ end
 function Neuron:SPELLS_CHANGED()
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
-end
-
-function Neuron:COMPANION_LEARNED()
-	Neuron:UpdateCollectionCache()
-end
-
-function Neuron:PET_JOURNAL_LIST_UPDATE()
-	Neuron:UpdateCollectionCache()
-end
-
-function Neuron:TOYS_UPDATED(...)
-	Neuron:UpdateToyCache()
 end
 
 -------------------------------------------------------------------------
@@ -484,78 +451,6 @@ function Neuron:UpdateSpellCache()
 
 end
 
---- Creates a table containing provided companion & mount data
--- @param index, creatureType, index, creatureID, creatureName, spellID, icon
--- @return curComp:  Table containing provided data
-function Neuron:SetCompanionData(creatureType, index, creatureID, creatureName, spellID, icon)
-	local curComp = {}
-	curComp.creatureType = creatureType
-	curComp.index = index
-	curComp.creatureID = creatureID
-	curComp.creatureName = creatureName
-	curComp.spellID = spellID
-	curComp.icon = icon
-	return curComp
-end
-
-
---- Compiles a list of toys a player has.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
--- toy cache is backwards due to bugs with secure action buttons' inability to
--- cast a toy by item:id (and inability to SetMacroItem from a name /sigh)
--- cache is indexed by the toyName and equals the itemID
--- the attribValue for toys will be the toyName, and unsecure stuff can pull
--- the itemID from toyCache where needed
-function Neuron:UpdateToyCache()
-
-	-- fill cache with itemIDs = name
-	for i=1,C_ToyBox.GetNumToys() do
-		local itemID = C_ToyBox.GetToyFromIndex(i)
-		local name = GetItemInfo(itemID) or "UNKNOWN"
-		local known = PlayerHasToy(itemID)
-		if known then
-			NeuronToyCache[name:lower()] = itemID
-		end
-	end
-
-end
-
-
---- Compiles a list of battle pets & mounts a player has.  This table is used to refrence macro spell info to generate tooltips and cooldowns.
----	If a companion is not displaying its tooltip or cooldown, then the item in the macro probably is not in the database
-function Neuron:UpdateCollectionCache()
-
-	local _, numpet = C_PetJournal.GetNumPets()
-
-	for i=1,numpet do
-
-		local petID, speciesID, owned, _, _, _, _, speciesName, icon = C_PetJournal.GetPetInfoByIndex(i)
-
-		if petID and owned then
-			local spell = speciesName
-			if spell then
-				local companionData = Neuron:SetCompanionData("CRITTER", i, speciesID, speciesName, petID, icon)
-				NeuronCollectionCache[spell:lower()] = companionData
-				NeuronCollectionCache[spell:lower().."()"] = companionData
-			end
-		end
-	end
-
-	local mountIDs = C_MountJournal.GetMountIDs()
-	for i,id in pairs(mountIDs) do
-		local creatureName , spellID, _, _, _, _, _, _, _, _, collected = C_MountJournal.GetMountInfoByID(id)
-
-		if spellID and collected then
-			local spell, _, icon = GetSpellInfo(spellID)
-			if spell then
-				local companionData = Neuron:SetCompanionData("MOUNT", i, spellID, creatureName, spellID, icon)
-				NeuronCollectionCache[spell:lower()] = companionData
-				NeuronCollectionCache[spell:lower().."()"] = companionData
-			end
-		end
-	end
-end
-
-
 
 function Neuron:UpdateStanceStrings()
 	if Neuron.class == "DRUID" or Neuron.class == "ROGUE" then
@@ -609,7 +504,7 @@ function Neuron:ToggleButtonGrid(show)
 	for _,bar in pairs(Neuron.BARIndex) do
 		if bar.barType == "ActionBar" or bar.barType == "PetBar" then
 			for _, button in pairs(bar.buttons) do
-				button:SetObjectVisibility(show)
+				button:UpdateObjectVisibility(show)
 			end
 		end
 	end
@@ -635,7 +530,7 @@ function Neuron:ToggleBarEditMode(show)
 			bar:Show() --this shows the transparent overlay over a bar
 			bar:Update(true)
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility(true)
+			bar:UpdateBarObjectVisibility(true)
 		end
 
 	else
@@ -645,7 +540,7 @@ function Neuron:ToggleBarEditMode(show)
 			bar:Hide()
 			bar:Update(nil, true)
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility()
+			bar:UpdateBarObjectVisibility()
 		end
 
 		if NeuronEditor:IsVisible() then
@@ -677,7 +572,7 @@ function Neuron:ToggleButtonEditMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility(true)
+			bar:UpdateBarObjectVisibility(true)
 		end
 
 	else
@@ -692,7 +587,7 @@ function Neuron:ToggleButtonEditMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility()
+			bar:UpdateBarObjectVisibility()
 
 			if bar.handler:GetAttribute("assertstate") then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
@@ -732,7 +627,7 @@ function Neuron:ToggleBindingMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility(true)
+			bar:UpdateBarObjectVisibility(true)
 		end
 
 	else
@@ -749,7 +644,7 @@ function Neuron:ToggleBindingMode(show)
 
 		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateObjectUsability()
-			bar:UpdateObjectVisibility()
+			bar:UpdateBarObjectVisibility()
 		end
 	end
 end

@@ -17,12 +17,11 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class ZONEABILITYBTN : BUTTON @define class ZONEABILITYBTN inherits from class BUTTON
 local ZONEABILITYBTN = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
 Neuron.ZONEABILITYBTN = ZONEABILITYBTN
-
 
 ----------------------------------------------------------
 
@@ -32,7 +31,6 @@ Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return ZONEABILITYBTN @ A newly created ZONEABILITYBTN object
 function ZONEABILITYBTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
 
@@ -40,19 +38,11 @@ function ZONEABILITYBTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton.style = newButton:CreateTexture(nil, "OVERLAY")
-	newButton.style:SetPoint("CENTER", -2, 1)
-	newButton.style:SetWidth(190)
-	newButton.style:SetHeight(95)
-
 	return newButton
 end
 
-
 ----------------------------------------------------------
-
 function ZONEABILITYBTN:SetType()
-
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
@@ -70,15 +60,14 @@ function ZONEABILITYBTN:SetType()
 			PickupSpell(self.spellID)
 		end
 	end)
-	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
+	self:SetScript("OnEnter", function(self) self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
 end
 
-
 function ZONEABILITYBTN:OnEvent(event, ...)
-
 	self:UpdateData();
 
 	if event == "PLAYER_ENTERING_WORLD" then
@@ -89,67 +78,55 @@ end
 
 ---overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateData()
-
 	--update the ZoneAbility spell ID
 	self.spellID = GetZoneAbilitySpellInfo();
 
 	if self.spellID then
-		self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
-		if self.spellName and not InCombatLockdown() then
-			self:SetAttribute("macrotext1", "/cast " .. self.spellName .. "();")
+		self.spell = GetSpellInfo(self.spellID);
+		if self.spell and not InCombatLockdown() then
+			self:SetAttribute("macrotext1", "/cast " .. self.spell .. "();")
 		end
 	else
-		self.spellName = ""
-		self.spellIcon = ""
+		self.spell = nil
 	end
 
-	self:SetObjectVisibility()
+	self.elements.Name:Hide()
+
+	self:UpdateObjectVisibility()
 	self:UpdateIcon()
 	self:UpdateCooldown()
 	--zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
-	self:UpdateSpellCount(self.spellName)
+	self:UpdateCount()
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
-
 end
 
---overwrite function in parent class BUTTON
-function ZONEABILITYBTN:UpdateCooldown()
-	self:SetSpellCooldown(self.spellName)
-end
-
-function ZONEABILITYBTN:SetObjectVisibility()
-
-	if HasZoneAbility() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+function ZONEABILITYBTN:UpdateObjectVisibility()
+	if HasZoneAbility() then
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
-
+	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
 end
-
 
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
-
-	self.elements.IconFrameIcon:SetTexture(self.spellIcon);
+	local spellTexture = GetSpellTexture(self.spellID)
+	self.elements.IconFrameIcon:SetTexture(spellTexture);
 
 	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[self.spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
-	self.style:SetTexture(texture)
+	self.elements.Flair:SetTexture(texture)
 
-	if self.bar.data.showBorderStyle then
-		self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+	if self.bar:GetShowBorderStyle() then
+		self.elements.Flair:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 	else
-		self.style:Hide()
+		self.elements.Flair:Hide()
 	end
-
 end
 
-
-function ZONEABILITYBTN:OnEnter()
-
+function ZONEABILITYBTN:UpdateTooltip()
 	if not self.isShown then
 		return
 	end
@@ -160,15 +137,12 @@ function ZONEABILITYBTN:OnEnter()
 		end
 
 		if self.bar:GetTooltipOption() then
-
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-
 			if self.bar:GetTooltipOption() == "enhanced" and self.spellID then
 				GameTooltip:SetSpellByID(self.spellID)
-			elseif self.spellName then
-				GameTooltip:SetText(self.spellName)
+			elseif self.spell then
+				GameTooltip:SetText(self.spell)
 			end
-
 			GameTooltip:Show()
 		end
 	end

@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 
 ---The functions in this file are part of the ACTIONBUTTON class.
@@ -141,6 +141,7 @@ function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-c
 	if macroDrag[1] then
 		self:OnReceiveDrag()
 	end
+	self:UpdateStatus()
 end
 
 --we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
@@ -220,21 +221,18 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	end
 
 
-	local spellName, icon
+	local spellName , _, icon = GetSpellInfo(spellID)
 
-	if NeuronSpellCache[spell] then
-		spellName = NeuronSpellCache[spell].spellName
-		icon = GetSpellTexture(spell) --try getting a new texture first (this is important for things like Wild Charge that has different icons per spec
-		if not icon then --if you don't find a new icon (meaning the spell isn't currently learned) default to icon in the database
-			icon = NeuronSpellCache[spell].icon
+	if not spellName then
+		if NeuronSpellCache[spell:lower()] then
+			spellName = NeuronSpellCache[spell:lower()].spellName
+			icon = NeuronSpellCache[spell:lower()].icon
 		end
-	else
-		spellName , _, icon = GetSpellInfo(spellID)
 	end
 
 
 	self.data.macro_Text = self:AutoWriteMacro(spell)
-	self.data.macro_Icon = icon  --also set later in SetSpellIcon
+	self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 	self.data.macro_Name = spellName
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
@@ -251,7 +249,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		local spellInfoName , _, icon = GetSpellInfo(spellID)
 
 		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
-		self.data.macro_Icon = icon --also set later in SetSpellIcon
+		self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 		self.data.macro_Name = spellInfoName
 		self.data.macro_Note = ""
 		self.data.macro_UseNote = false
@@ -268,9 +266,9 @@ end
 function ACTIONBUTTON:PlaceItem(action1, action2)
 	local item, link = GetItemInfo(action2)
 
-	if link and not NeuronItemCache[item] then --add the item to the itemcache if it isn't otherwise in it
+	if link and not NeuronItemCache[item:lower()] then --add the item to the itemcache if it isn't otherwise in it
 		local _, itemID = link:match("(item:)(%d+)")
-		NeuronItemCache[item] = itemID
+		NeuronItemCache[item:lower()] = itemID
 	end
 
 	if IsEquippableItem(item) then
@@ -279,7 +277,7 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 		self.data.macro_Text = "/use "..item
 	end
 
-	self.data.macro_Icon = false
+	self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 	self.data.macro_Name = item
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
@@ -333,6 +331,7 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 	end
 
 	local name, texture = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
+
 	if texture then
 		self.data.macro_Text = "/equipset "..equipmentSetName
 		self.data.macro_Name = name
@@ -345,7 +344,6 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 		self.data.macro_EquipmentSet = false
 	end
 
-	self.data.macro_Name = ""
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 	self.data.macro_BlizzMacro = false
@@ -368,10 +366,9 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 		self.data.macro_Text = "#autowrite\n/run C_MountJournal.SummonByID(0);"
 		self.data.macro_Icon = "Interface\\ICONS\\ACHIEVEMENT_GUILDPERK_MOUNTUP"
 		self.data.macro_Name = "Random Mount"
-		--Any other mount from the Journal
 	else
 		self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
-		self.data.macro_Icon = mountIcon
+		self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 		self.data.macro_Name = mountName
 	end
 	self.data.macro_Note = ""
@@ -398,7 +395,7 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 		self.data.macro_Text = ""
 	end
 
-	self.data.macro_Icon = icon
+	self.data.macro_Icon = icon --need to set icon here, it won't pull it automatically
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
 	self.data.macro_BlizzMacro = false
@@ -413,7 +410,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 	local _, _, _, _, _, _, _,petName, petIcon= C_PetJournal.GetPetInfoByPetID(action1)
 
 	self.data.macro_Text = "#autowrite\n/summonpet "..petName
-	self.data.macro_Icon = petIcon
+	self.data.macro_Icon = petIcon --need to set icon here, it won't pull it automatically
 	self.data.macro_Name = petName
 	self.data.macro_Note = ""
 	self.data.macro_UseNote = false
@@ -473,14 +470,9 @@ end
 
 
 function ACTIONBUTTON:SetMouseCursor()
-
-	if self.spell then
-		local spellID
-		_,_,_,_,_,_,spellID = GetSpellInfo(self.spell)
-		if spellID then
-			PickupSpell(spellID) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such
-		end
-		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+	if self.spell and self.spellID then
+		PickupSpell(self.spellID)
+		if GetCursorInfo() then
 			return
 		end
 	end
@@ -489,6 +481,18 @@ function ACTIONBUTTON:SetMouseCursor()
 		PickupItem(self.item) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
 		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
 			return
+		end
+
+		PickupItem(GetItemInfoInstant(self.item))
+		if GetCursorInfo() then
+			return
+		end
+
+		if NeuronItemCache[self.item:lower()] then --try to pull the spellID from our ItemCache as a last resort
+			PickupItem(NeuronItemCache[self.item:lower()])
+			if GetCursorInfo() then
+				return
+			end
 		end
 	end
 
