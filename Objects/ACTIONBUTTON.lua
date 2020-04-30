@@ -618,6 +618,21 @@ function ACTIONBUTTON:ParseAndSanitizeMacro()
 	end
 end
 
+function ACTIONBUTTON:UpdateButtonSpec(bar)
+	local spec
+	if bar.data.multiSpec then
+		spec = Neuron.activeSpec
+	else
+		spec = 1
+	end
+
+	self:SetType()
+	self:SetData(bar)
+	self:LoadData(spec, bar.handler:GetAttribute("activestate"))
+	self:UpdateFlyout()
+	self:UpdateAll()
+end
+
 function ACTIONBUTTON:BuildStateData()
 	for state, data in pairs(self.statedata) do
 		self:SetAttribute(state.."-macro_Text", data.macro_Text)
