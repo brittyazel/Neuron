@@ -253,17 +253,16 @@ end
 
 
 function PETBTN:UpdateTooltip()
-	if not self.bar:GetTooltipCombat() and InCombatLockdown() then
+	--if we are in combat and we don't have tooltips enable in-combat, don't go any further
+	if InCombatLockdown() and not self.bar:GetTooltipCombat() then
 		return
 	end
 
-	if self.bar:GetTooltipOption() and GetPetActionInfo(self.actionID) then
+	if self.bar:GetTooltipOption() ~= "off" and GetPetActionInfo(self.actionID) then
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 		if self.bar:GetTooltipOption() == "enhanced" then
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 			GameTooltip:SetPetAction(self.actionID)
-		else
-			self.UberTooltips = false
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(self.spell)
 		end
 		GameTooltip:Show()

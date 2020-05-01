@@ -146,13 +146,16 @@ function EXTRABTN:UpdateTooltip()
 		return
 	end
 
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+	--if we are in combat and we don't have tooltips enable in-combat, don't go any further
+	if InCombatLockdown() and not self.bar:GetTooltipCombat() then
+		return
+	end
 
-	if self.tooltips then
+	if self.bar:GetTooltipOption() ~= "off" then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		if self.tooltipsEnhanced and self.spellID then
+		if self.bar:GetTooltipOption() == "enhanced" and self.spellID then
 			GameTooltip:SetSpellByID(self.spellID)
-		elseif self.spell then
+		elseif self.bar:GetTooltipOption() == "minimal" and self.spell then
 			GameTooltip:SetText(self.spell)
 		end
 		GameTooltip:Show()

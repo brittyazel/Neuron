@@ -131,19 +131,19 @@ function ZONEABILITYBTN:UpdateTooltip()
 		return
 	end
 
-	if self.bar then
-		if not self.bar:GetTooltipCombat() and InCombatLockdown() then
-			return
-		end
-
-		if self.bar:GetTooltipOption() then
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			if self.bar:GetTooltipOption() == "enhanced" and self.spellID then
-				GameTooltip:SetSpellByID(self.spellID)
-			elseif self.spell then
-				GameTooltip:SetText(self.spell)
-			end
-			GameTooltip:Show()
-		end
+	--if we are in combat and we don't have tooltips enable in-combat, don't go any further
+	if InCombatLockdown() and not self.bar:GetTooltipCombat() then
+		return
 	end
+
+	if self.bar:GetTooltipOption() ~= "off" then
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		if self.bar:GetTooltipOption() == "enhanced" and self.spellID then
+			GameTooltip:SetSpellByID(self.spellID)
+		elseif self.bar:GetTooltipOption() == "minimal" and self.spell then
+			GameTooltip:SetText(self.spell)
+		end
+		GameTooltip:Show()
+	end
+
 end

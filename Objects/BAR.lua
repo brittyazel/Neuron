@@ -302,8 +302,6 @@ end
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
-
-
 function BAR.IsMouseOverSelfOrWatchFrame(frame)
 	if frame:IsMouseOver() then
 		return true
@@ -2025,10 +2023,10 @@ function BAR:SetTooltipOption(option)
 		elseif option == "enhanced" then
 			self.data.tooltips = "enhanced"
 		elseif option == "off" then
-			self.data.tooltips = false
+			self.data.tooltips = "off"
 		end
 	else
-		self.data.tooltips = false
+		self.data.tooltips = "off"
 	end
 
 	self:UpdateObjectData()

@@ -883,32 +883,45 @@ end
 -----------------------------------------------------------------------------------------
 
 function BUTTON:UpdateTooltip()
-	if self.actionID then
-		self:UpdateActionTooltip()
-	elseif self.data.macro_BlizzMacro then
-		GameTooltip:SetText(self.data.macro_Name)
-	elseif self.data.macro_EquipmentSet then
-		GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
-	elseif self.spell then
-		self:UpdateSpellTooltip()
-	elseif self.item then
-		self:UpdateItemTooltip()
-	elseif self.data.macro_Text and #self.data.macro_Text > 0 then
-		GameTooltip:SetText(self.data.macro_Name)
+	if self.bar:GetTooltipOption() ~= "off" then --if the bar isn't showing tooltips, don't proceed
+
+		--if we are in combat and we don't have tooltips enable in-combat, don't go any further
+		if InCombatLockdown() and not self.bar:GetTooltipCombat() then
+			return
+		end
+
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+
+		if self.actionID then
+			self:UpdateActionTooltip()
+		elseif self.data.macro_BlizzMacro then
+			GameTooltip:SetText(self.data.macro_Name)
+		elseif self.data.macro_EquipmentSet then
+			GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
+			GameTooltip:Show()
+		elseif self.spell then
+			self:UpdateSpellTooltip()
+		elseif self.item then
+			self:UpdateItemTooltip()
+		elseif self.data.macro_Text and #self.data.macro_Text > 0 then
+			GameTooltip:SetText(self.data.macro_Name)
+		end
+
+		GameTooltip:Show()
 	end
 end
 
 function BUTTON:UpdateSpellTooltip()
 	if self.spell and self.spellID then --try to get the correct spell from the spellbook first
-		if self.UberTooltips  then
+		if self.bar:GetTooltipOption() == "enhanced" then
 			GameTooltip:SetSpellByID(self.spellID)
-		else
+		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(self.spell, 1, 1, 1)
 		end
 	elseif NeuronSpellCache[self.spell:lower()] then --if the spell isn't in the spellbook, check our spell cache
-		if self.UberTooltips then
+		if self.bar:GetTooltipOption() == "enhanced" then
 			GameTooltip:SetSpellByID(NeuronSpellCache[self.spell:lower()].spellID)
-		else
+		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(NeuronSpellCache[self.spell:lower()].spellName, 1, 1, 1)
 		end
 	else
@@ -918,17 +931,16 @@ end
 
 function BUTTON:UpdateItemTooltip()
 	local name, link = GetItemInfo(self.item)
-
 	if name and link then
-		if self.UberTooltips then
+		if self.bar:GetTooltipOption() == "enhanced" then
 			GameTooltip:SetHyperlink(link)
-		else
+		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(name, 1, 1, 1)
 		end
 	elseif NeuronItemCache[self.item:lower()] then
-		if self.UberTooltips then
+		if self.bar:GetTooltipOption() == "enhanced" then
 			GameTooltip:SetHyperlink("item:"..NeuronItemCache[self.item:lower()]..":0:0:0:0:0:0:0")
-		else
+		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(NeuronItemCache[self.item:lower()], 1, 1, 1)
 		end
 	end
@@ -936,6 +948,8 @@ end
 
 function BUTTON:UpdateActionTooltip()
 	if HasAction(self.actionID) then
-		GameTooltip:SetAction(self.actionID)
+		if self.bar:GetTooltipOption() == "enhanced" or elf.bar:GetTooltipOption() == "minimal" then
+			GameTooltip:SetAction(self.actionID)
+		end
 	end
 end

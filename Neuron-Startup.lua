@@ -98,15 +98,13 @@ function Neuron:RegisterGUI()
 	Neuron:RegisterGUIOptions("BagBar",
 			{AUTOHIDE = true,
 			 SNAPTO = true,
-			 HIDDEN = true,
-			 TOOLTIPS = true})
+			 HIDDEN = true})
 
 	--Neuron Menu Bar
 	Neuron:RegisterGUIOptions("MenuBar",
 			{AUTOHIDE = true,
 			 SNAPTO = true,
-			 HIDDEN = true,
-			 TOOLTIPS = true})
+			 HIDDEN = true})
 
 	--Neuron Pet Bar
 	Neuron:RegisterGUIOptions("PetBar",

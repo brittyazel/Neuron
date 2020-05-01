@@ -193,8 +193,18 @@ function ACTIONBUTTON:SetType()
 	end
 
 	self:SetScript("OnAttributeChanged", function(self, name, value) self:OnAttributeChanged(name, value) end)
-	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-	self:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
+	self:SetScript("OnEnter", function(self)
+		self:UpdateTooltip()
+		if self.flyout and self.flyout.arrow then
+			self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX/0.625, self.flyout.arrowY/0.625)
+		end
+	end)
+	self:SetScript("OnLeave", function(self, ...)
+		GameTooltip:Hide()
+		if self.flyout and self.flyout.arrow then
+			self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX, self.flyout.arrowY)
+		end
+	end)
 
 	--This is so that hotkeypri works properly with priority/locked buttons
 	self:WrapScript(self, "OnShow", [[
@@ -356,32 +366,6 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 
 		if name == "update" then
 			self:UpdateAll()
-		end
-	end
-end
-
-function ACTIONBUTTON:OnEnter(...)
-	if self.bar then
-		if self.tooltipsCombat and InCombatLockdown() then
-			return
-		end
-
-		if self.tooltips then
-			if self.tooltipsEnhanced then
-				self.UberTooltips = true
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			else
-				self.UberTooltips = false
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			end
-
-			self:UpdateTooltip()
-
-			GameTooltip:Show()
-		end
-
-		if self.flyout and self.flyout.arrow then
-			self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX/0.625, self.flyout.arrowY/0.625)
 		end
 	end
 end
