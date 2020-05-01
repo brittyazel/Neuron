@@ -642,40 +642,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 			cooldownAlphaContainer:AddChild(cooldownAlphaCheckbox)
 
 		end
-
-		--Buff/Debuff Indicator
-		if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.AURAIND then
-			local auraIndicatorContainer = AceGUI:Create("SimpleGroup")
-			auraIndicatorContainer:SetWidth(WIDGET_GRID_WIDTH)
-			auraIndicatorContainer:SetHeight(WIDGET_GRID_HEIGHT)
-			auraIndicatorContainer:SetLayout("Flow")
-			tabFrame:AddChild(auraIndicatorContainer)
-
-			local auraIndicatorCheckbox = AceGUI:Create("CheckBox")
-			auraIndicatorCheckbox:SetLabel(L["Buff/Debuff"])
-			auraIndicatorCheckbox:SetRelativeWidth(.70)
-			auraIndicatorCheckbox:SetValue(Neuron.CurrentBar:GetShowAuraIndicator())
-			auraIndicatorCheckbox:SetCallback("OnValueChanged", function(self)
-				Neuron.CurrentBar:SetShowAuraIndicator(self:GetValue())
-			end)
-			auraIndicatorContainer:AddChild(auraIndicatorCheckbox)
-
-			local auraIndicatorColorPicker1 = AceGUI:Create("ColorPicker")
-			auraIndicatorColorPicker1:SetRelativeWidth(.15)
-			auraIndicatorColorPicker1:SetColor(Neuron.CurrentBar:GetBuffColor()[1],Neuron.CurrentBar:GetBuffColor()[2],Neuron.CurrentBar:GetBuffColor()[3],Neuron.CurrentBar:GetBuffColor()[4])
-			auraIndicatorColorPicker1:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
-				Neuron.CurrentBar:SetBuffColor({r,g,b,a})
-			end)
-			auraIndicatorContainer:AddChild(auraIndicatorColorPicker1)
-
-			local auraIndicatorColorPicker2 = AceGUI:Create("ColorPicker")
-			auraIndicatorColorPicker2:SetRelativeWidth(.15)
-			auraIndicatorColorPicker2:SetColor(Neuron.CurrentBar:GetDebuffColor()[1],Neuron.CurrentBar:GetDebuffColor()[2],Neuron.CurrentBar:GetDebuffColor()[3],Neuron.CurrentBar:GetDebuffColor()[4])
-			auraIndicatorColorPicker2:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
-				Neuron.CurrentBar:SetDebuffColor({r,g,b,a})
-			end)
-			auraIndicatorContainer:AddChild(auraIndicatorColorPicker2)
-		end
 		
 	end
 

@@ -64,7 +64,7 @@ function BUTTON.new(bar, buttonID,baseObj, barClass, objType, template)
 	end
 	-----------------------
 
-	--crosslink the bar and button for easy refrencing
+	--crosslink the bar and button for easy referencing
 	bar.buttons[buttonID] = newButton
 	newButton.bar = bar
 
@@ -318,18 +318,10 @@ function BUTTON:CooldownCounterUpdate()
 			if coolDown > 0 then
 				self.elements.iconframecooldown.button:SetAlpha(0.2)
 			else
-				if self.data.alpha then
-					self:SetAlpha(self.data.alpha) --try to restore the original alpha
-				else
-					self:SetAlpha(1)
-				end
+				self:SetAlpha(self.bar:GetBarAlpha()) --try to restore alpha value instead of default to 1
 			end
 		else
-			if self.data.alpha then
-				self:SetAlpha(self.data.alpha) --try to restore the original alpha
-			else
-				self:SetAlpha(1)
-			end
+			self:SetAlpha(self.bar:GetBarAlpha()) --try to restore alpha value instead of default to 1
 		end
 	end
 end
@@ -401,11 +393,7 @@ function BUTTON:UpdateObjectVisibility()
 	end
 
 	if self.isShown then
-		if self.data.alpha then
-			self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
-		else
-			self:SetAlpha(1)
-		end
+		self:SetAlpha(self.bar:GetBarAlpha()) --try to restore alpha value instead of default to 1
 	else
 		self:SetAlpha(0)
 	end

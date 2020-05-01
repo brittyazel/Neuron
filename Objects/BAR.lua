@@ -154,12 +154,10 @@ Neuron.CreateNewBar = BAR.CreateNewBar --this is so the slash function works cor
 
 
 function BAR:DeleteBar()
-	local handler = self.handler
-
-	handler:SetAttribute("state-current", "homestate")
-	handler:SetAttribute("state-last", "homestate")
-	handler:SetAttribute("showstates", "homestate")
-	self:ClearStates(handler, "homestate")
+	self.handler:SetAttribute("state-current", "homestate")
+	self.handler:SetAttribute("state-last", "homestate")
+	self.handler:SetAttribute("showstates", "homestate")
+	self:ClearStates(self.handler, "homestate")
 
 	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
 		if self.data[state] and self[state] and self[state].registered then
@@ -168,10 +166,10 @@ function BAR:DeleteBar()
 				local stop = tonumber(string.match(self.data.customRange, "%d+$"))
 
 				if start and stop then
-					self:ClearStates(handler, state)--, start, stop)
+					self:ClearStates(self.handler, state)--, start, stop)
 				end
 			else
-				self:ClearStates(handler, state)--, values.rangeStart, values.rangeStop)
+				self:ClearStates(self.handler, state)--, values.rangeStart, values.rangeStop)
 			end
 		end
 	end
@@ -224,7 +222,7 @@ function BAR:DeleteBar()
 	Neuron.CurrentBar = nil
 
 	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
-		v:Update()
+		v:UpdateBarStatus()
 	end
 
 end
@@ -244,7 +242,7 @@ function BAR:AddObjectToBar() --called from NeuronGUI
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 	self:UpdateBarObjectVisibility()
 end
 
@@ -272,7 +270,7 @@ function BAR:RemoveObjectFromBar() --called from NeuronGUI
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 
@@ -283,7 +281,7 @@ function BAR:Load()
 	self:SetPerimeter()
 	self:SetSize()
 	self:EnableKeyboard(false)
-	self:Update()
+	self:UpdateBarStatus()
 end
 -----------------------------------
 
@@ -321,7 +319,6 @@ end
 
 ---this function is set via a repeating scheduled timer in SetAutoHide()
 function BAR:AutoHideUpdate()
-
 	if self:GetAutoHide() and self.handler~=nil then
 
 		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
@@ -353,11 +350,10 @@ function BAR:AutoHideUpdate()
 			end
 		end
 	end
-
 end
 
 function BAR:AlphaUpUpdate()
-	if self:GetAlphaUp() and self.handler~=nil then
+	if self:GetAlphaUp()~="off" and self.handler~=nil then
 
 		if self:IsShown() then
 			self.handler:SetAlpha(1)
@@ -495,9 +491,9 @@ function BAR:LaunchAutoHide()
 end
 
 function BAR:LaunchAlphaUp()
-	if self:GetAlphaUp() then
+	if self:GetAlphaUp() ~= "off" then
 		if self:TimeLeft(self.alphaUpTimer) == 0 then --safety check to make sure we don't re-set an already active timer
-			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", .05)
+			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", 0.1)
 		end
 	else
 		self:CancelTimer(self.alphaUpTimer)
@@ -1003,35 +999,27 @@ function BAR:CreateWatcher()
 end
 
 
-function BAR:Update(show, hide)
-
+function BAR:UpdateBarStatus(show, hide)
 	if InCombatLockdown() then
 		return
 	end
 
-	local handler, driver = self.handler, self.driver
-
 	if self.stateschanged then
-
-		self:UpdateStates(handler)
-
+		self:UpdateStates(self.handler)
 		self.stateschanged = false
 	end
 
 	if self.vischanged then
-
-		handler:SetAttribute("hidestates", self.data.hidestates)
-
-		self:UpdateVisibility(driver)
-
+		self.handler:SetAttribute("hidestates", self.data.hidestates)
+		self:UpdateVisibility(self.driver)
 		self.vischanged = false
 	end
 
-	self:SetHidden(handler, show, hide)
+	self:SetHidden(self.handler, show, hide)
 	self:LaunchAutoHide()
 	self:LaunchAlphaUp()
 	self.text:SetText(self:GetBarName())
-	handler:SetAlpha(self:GetBarAlpha())
+	self.handler:SetAlpha(self:GetBarAlpha())
 end
 
 -------------------------------------------------------
@@ -1462,7 +1450,7 @@ function BAR:OnDragStop(...)
 		self:StickToEdge()
 	end
 
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:OnKeyDown(key)
@@ -1675,7 +1663,7 @@ function BAR:SetBarName(name)
 	if name and name ~= "" then
 		self.data.name = name
 	end
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetBarName()
@@ -1797,7 +1785,7 @@ function BAR:SetState(msg, gui, checked)
 		end
 
 		self.stateschanged = true
-		self:Update()
+		self:UpdateBarStatus()
 
 	elseif not gui then
 		wipe(statetable)
@@ -1900,7 +1888,7 @@ function BAR:SetVisibility(msg)
 
 
 		self.vischanged = true
-		self:Update()
+		self:UpdateBarStatus()
 	else
 		Neuron:PrintStateList()
 	end
@@ -1915,7 +1903,7 @@ function BAR:SetAutoHide(checked)
 		self.data.autoHide = false
 	end
 
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetAutoHide()
@@ -1931,7 +1919,7 @@ function BAR:SetShowGrid(checked)
 
 	self:UpdateObjectData()
 	self:UpdateBarObjectVisibility()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetShowGrid()
@@ -1952,7 +1940,7 @@ function BAR:SetSpellGlow(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetSpellGlow()
@@ -1979,7 +1967,7 @@ function BAR:SetSnapTo(checked)
 		self:SetPosition()
 	end
 
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetSnapTo()
@@ -1995,7 +1983,7 @@ function BAR:SetUpClicks(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetUpClicks()
@@ -2011,7 +1999,7 @@ function BAR:SetDownClicks(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetDownClicks()
@@ -2030,7 +2018,7 @@ function BAR:SetMultiSpec(checked)
 		object:UpdateButtonSpec()
 	end
 
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetMultiSpec()
@@ -2047,7 +2035,7 @@ function BAR:SetBarConceal(checked)
 		self:SetBackdropColor(0,0,0,0.4)
 	end
 
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetBarConceal()
@@ -2070,7 +2058,7 @@ function BAR:SetBarLock(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetBarLock()
@@ -2092,7 +2080,7 @@ function BAR:SetTooltipOption(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetTooltipOption()
@@ -2107,7 +2095,7 @@ function BAR:SetTooltipCombat(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetTooltipCombat()
@@ -2128,7 +2116,7 @@ function BAR:SetBarShape(option)
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetBarShape()
@@ -2149,7 +2137,7 @@ function BAR:SetColumns(option)
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetColumns()
@@ -2166,7 +2154,7 @@ function BAR:SetArcStart(option)
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetArcStart()
@@ -2183,7 +2171,7 @@ function BAR:SetArcLength(option)
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetArcLength()
@@ -2202,7 +2190,7 @@ function BAR:SetHorizontalPad(option)
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetHorizontalPad()
@@ -2219,7 +2207,7 @@ function BAR:SetVerticalPad(option)
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetVerticalPad()
@@ -2237,7 +2225,7 @@ function BAR:SetBarScale(option)
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetBarScale()
@@ -2254,7 +2242,7 @@ function BAR:SetStrata(option)
 
 	self:SetPosition()
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetStrata()
@@ -2268,8 +2256,8 @@ function BAR:SetBarAlpha(option)
 		self.data.alpha = 1
 	end
 
-	--self.handler:SetAlpha(self.data.alpha) --not sure if this should be here
-	self:Update()
+	self.handler:SetAlpha(self:GetBarAlpha()) --not sure if this should be here
+	self:UpdateBarStatus()
 end
 
 function BAR:GetBarAlpha()
@@ -2287,11 +2275,12 @@ function BAR:SetAlphaUp(option)
 		self.data.alphaUp = "off"
 	end
 
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetAlphaUp()
-	return self.data.alphaUp
+	--TODO: Get rid of :lower() in the future
+	return self.data.alphaUp:lower() --shouldn't have to set lower but older databases might have some capital letters
 end
 
 function BAR:SetAlphaUpSpeed(option)
@@ -2307,7 +2296,7 @@ function BAR:SetAlphaUpSpeed(option)
 		self.data.fadeSpeed = 0.5
 	end
 
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetAlphaUpSpeed()
@@ -2322,7 +2311,7 @@ function BAR:SetXAxis(option)
 	end
 
 	self:SetPosition()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetXAxis()
@@ -2337,7 +2326,7 @@ function BAR:SetYAxis(option)
 	end
 
 	self:SetPosition()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetYAxis()
@@ -2352,7 +2341,7 @@ function BAR:SetShowBindText(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetShowBindText()
@@ -2367,7 +2356,7 @@ function BAR:SetBindColor(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetBindColor()
@@ -2382,7 +2371,7 @@ function BAR:SetShowMacroText(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetShowMacroText()
@@ -2397,7 +2386,7 @@ function BAR:SetMacroColor(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetMacroColor()
@@ -2412,7 +2401,7 @@ function BAR:SetShowCountText(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetShowCountText()
@@ -2427,7 +2416,7 @@ function BAR:SetCountColor(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetCountColor()
@@ -2442,7 +2431,7 @@ function BAR:SetShowRangeIndicator(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetShowRangeIndicator()
@@ -2457,7 +2446,7 @@ function BAR:SetRangeColor(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetRangeColor()
@@ -2472,7 +2461,7 @@ function BAR:SetShowCooldownText(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetShowCooldownText()
@@ -2487,7 +2476,7 @@ function BAR:SetCooldownColor1(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetCooldownColor1()
@@ -2502,7 +2491,7 @@ function BAR:SetCooldownColor2(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetCooldownColor2()
@@ -2517,7 +2506,7 @@ function BAR:SetShowCooldownAlpha(checked)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetShowCooldownAlpha()
@@ -2546,7 +2535,7 @@ function BAR:SetManaColor(option)
 	end
 
 	self:UpdateObjectData()
-	self:Update()
+	self:UpdateBarStatus()
 end
 
 function BAR:GetManaColor()

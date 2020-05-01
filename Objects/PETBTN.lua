@@ -191,12 +191,9 @@ function PETBTN:PLAYER_ENTERING_WORLD()
 	self:UpdateStatus()
 	self:UpdateNormalTexture()
 
-	self:UpdateObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
+	self:UpdateObjectVisibility() --have to set true at login or the buttons on the bar don't show
 
 	self.binder:ApplyBindings()
-
-	--This part is so that the grid get's set properly on login
-	self:ScheduleTimer(function() self:UpdateObjectVisibility() end, 2)
 end
 
 function PETBTN:UNIT_PET(event, unit)
@@ -275,7 +272,7 @@ end
 
 
 function PETBTN:UpdateObjectVisibility(show)
-	if show or self.bar:GetShowGrid() or GetPetActionInfo(self.actionID) then
+	if show or IsPetActive() then
 		self.isShown = true
 	else
 		self.isShown = false

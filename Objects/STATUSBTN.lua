@@ -191,7 +191,7 @@ function STATUSBTN:UpdateWidth(command, gui, query, skipupdate)
 		self.bar:SetSize()
 
 		if not skipupdate then
-			self.bar:Update()
+			self.bar:UpdateBarStatus()
 		end
 	end
 end
@@ -220,7 +220,7 @@ function STATUSBTN:UpdateHeight(command, gui, query, skipupdate)
 		self.bar:SetSize()
 
 		if not skipupdate then
-			self.bar:Update()
+			self.bar:UpdateBarStatus()
 		end
 	end
 end
@@ -320,7 +320,7 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 			self.bar:SetSize()
 
 			if not skipupdate then
-				self.bar:Update()
+				self.bar:UpdateBarStatus()
 			end
 
 		end

@@ -528,7 +528,7 @@ function Neuron:ToggleBarEditMode(show)
 
 		for _, bar in pairs(Neuron.BARIndex) do
 			bar:Show() --this shows the transparent overlay over a bar
-			bar:Update(true)
+			bar:UpdateBarStatus(true)
 			bar:UpdateObjectUsability()
 			bar:UpdateBarObjectVisibility(true)
 		end
@@ -538,7 +538,7 @@ function Neuron:ToggleBarEditMode(show)
 
 		for _, bar in pairs(Neuron.BARIndex) do
 			bar:Hide()
-			bar:Update(nil, true)
+			bar:UpdateBarStatus(nil, true)
 			bar:UpdateObjectUsability()
 			bar:UpdateBarObjectVisibility()
 		end
