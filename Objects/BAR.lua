@@ -118,6 +118,10 @@ function BAR.new(class, barID)
 
 	newBar:LoadData()
 
+	--update these times when the bar is first being loaded in
+	newBar:UpdateAutoHideTimer()
+	newBar:UpdateAlphaUpTimer()
+
 	newBar:Hide() --hide the transparent blue overlay that we show in the edit mode
 
 	return newBar
@@ -353,107 +357,57 @@ function BAR:AutoHideUpdate()
 end
 
 function BAR:AlphaUpUpdate()
-	if self:GetAlphaUp()~="off" and self.handler~=nil then
-
-		if self:IsShown() then
-			self.handler:SetAlpha(1)
+	if self:GetAlphaUp() == "combat" then
+		if InCombatLockdown() then
+			if self.handler:GetAlpha() < 1 then
+				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
+				else
+					self.handler:SetAlpha(1)
+				end
+			end
 		else
-
-			if self:GetAlphaUp() == "combat" or self:GetAlphaUp() == "combat + mouseover" then
-
-				if InCombatLockdown() then
-
-					if self.handler:GetAlpha() < 1 then
-						if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
-						else
-							self.handler:SetAlpha(1)
-						end
-					end
-
+			if self.handler:GetAlpha() > self:GetBarAlpha() then
+				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 				else
-					if self:GetAlphaUp() == "combat + mouseover" then
-
-						if BAR.IsMouseOverSelfOrWatchFrame(self) then
-							if self.handler:GetAlpha() < 1 then
-								if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-									self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
-								else
-									self.handler:SetAlpha(1)
-								end
-							end
-						else
-							if self.handler:GetAlpha() > self:GetBarAlpha() then
-								if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-									self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
-								else
-									self.handler:SetAlpha(self:GetBarAlpha())
-								end
-							end
-						end
-					else
-						if self.handler:GetAlpha() > self:GetBarAlpha() then
-							if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-								self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
-							else
-								self.handler:SetAlpha(self:GetBarAlpha())
-							end
-						end
-					end
+					self.handler:SetAlpha(self:GetBarAlpha())
 				end
-
-			elseif self:GetAlphaUp() == "retreat" or self:GetAlphaUp() == "retreat + mouseover" then
-
-				if not InCombatLockdown() then
-
-					if self.handler:GetAlpha() < 1 then
-						if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
-						else
-							self.handler:SetAlpha(1)
-						end
-					end
-
+			end
+		end
+	elseif self:GetAlphaUp() == "combat + mouseover" then
+		if InCombatLockdown() and BAR.IsMouseOverSelfOrWatchFrame(self)  then
+			if self.handler:GetAlpha() < 1 then
+				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 				else
-					if self:GetAlphaUp() == "retreat + mouseover" then
-						if BAR.IsMouseOverSelfOrWatchFrame(self) then
-							if self.handler:GetAlpha() < 1 then
-								if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-									self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
-								else
-									self.handler:SetAlpha(1)
-								end
-							end
-						else
-							if self.handler:GetAlpha() > self:GetBarAlpha() then
-								if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-									self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
-								else
-									self.handler:SetAlpha(self:GetBarAlpha())
-								end
-							end
-						end
-					end
+					self.handler:SetAlpha(1)
 				end
-
-			elseif self:GetAlphaUp() == "mouseover" then
-
-				if BAR.IsMouseOverSelfOrWatchFrame(self) then
-					if self.handler:GetAlpha() < 1 then
-						if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
-						else
-							self.handler:SetAlpha(1)
-						end
-					end
+			end
+		else
+			if self.handler:GetAlpha() > self:GetBarAlpha() then
+				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 				else
-					if self.handler:GetAlpha() > self:GetBarAlpha() then
-						if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-							self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
-						else
-							self.handler:SetAlpha(self:GetBarAlpha())
-						end
-					end
+					self.handler:SetAlpha(self:GetBarAlpha())
+				end
+			end
+		end
+	elseif self:GetAlphaUp() == "mouseover" then
+		if BAR.IsMouseOverSelfOrWatchFrame(self) then
+			if self.handler:GetAlpha() < 1 then
+				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
+				else
+					self.handler:SetAlpha(1)
+				end
+			end
+		else
+			if self.handler:GetAlpha() > self:GetBarAlpha() then
+				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
+				else
+					self.handler:SetAlpha(self:GetBarAlpha())
 				end
 			end
 		end
@@ -470,7 +424,6 @@ function BAR:SetHidden(handler, show, hide)
 	end
 
 	if not hide and (show or self:IsVisible()) then
-
 		handler:Show()
 	else
 		if self:GetBarConceal() then
@@ -480,20 +433,20 @@ function BAR:SetHidden(handler, show, hide)
 	end
 end
 
-function BAR:LaunchAutoHide()
+function BAR:UpdateAutoHideTimer()
 	if self:GetAutoHide() then
 		if self:TimeLeft(self.autoHideTimer) == 0 then --safety check to make sure we don't re-set an already active timer
-			self.autoHideTimer = self:ScheduleRepeatingTimer("AutoHideUpdate", .05)
+			self.autoHideTimer = self:ScheduleRepeatingTimer("AutoHideUpdate", 0.05)
 		end
 	else
 		self:CancelTimer(self.autoHideTimer)
 	end
 end
 
-function BAR:LaunchAlphaUp()
+function BAR:UpdateAlphaUpTimer()
 	if self:GetAlphaUp() ~= "off" then
 		if self:TimeLeft(self.alphaUpTimer) == 0 then --safety check to make sure we don't re-set an already active timer
-			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", 0.1)
+			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", 0.05)
 		end
 	else
 		self:CancelTimer(self.alphaUpTimer)
@@ -1016,8 +969,6 @@ function BAR:UpdateBarStatus(show, hide)
 	end
 
 	self:SetHidden(self.handler, show, hide)
-	self:LaunchAutoHide()
-	self:LaunchAlphaUp()
 	self.text:SetText(self:GetBarName())
 	self.handler:SetAlpha(self:GetBarAlpha())
 end
@@ -1903,6 +1854,7 @@ function BAR:SetAutoHide(checked)
 		self.data.autoHide = false
 	end
 
+	self:UpdateAutoHideTimer()
 	self:UpdateBarStatus()
 end
 
@@ -2266,7 +2218,7 @@ end
 
 function BAR:SetAlphaUp(option)
 	if option then
-		if option == "off" or option == "mouseover" or option == "combat" or option =="combat + mouseover" or option == "retreat" or option == "retreat + mouseover" then
+		if option == "off" or option == "mouseover" or option == "combat" or option =="combat + mouseover" then
 			self.data.alphaUp = option
 		else
 			self.data.alphaUp = "off"
@@ -2275,6 +2227,7 @@ function BAR:SetAlphaUp(option)
 		self.data.alphaUp = "off"
 	end
 
+	self:UpdateAlphaUpTimer()
 	self:UpdateBarStatus()
 end
 

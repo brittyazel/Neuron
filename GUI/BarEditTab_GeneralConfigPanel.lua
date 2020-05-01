@@ -422,8 +422,8 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local alphaUpDropdown = AceGUI:Create("Dropdown")
 	alphaUpDropdown:SetLabel(L["AlphaUp"])
 	alphaUpDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
-	alphaUpDropdown:SetList({["off"] = L["Off"], ["mouseover"] = L["Mouseover"], ["combat"] = L["Combat"], ["combat + mouseover"] = L["Combat + Mouseover"], ["retreat"] = L["Retreat"], ["retreat + mouseover"] = L["Retreat + Mouseover"]},
-			{[1] = "off", [2] = "mouseover", [3] = "combat", [4] = "combat + mouseover", [5] = "retreat", [6] = "retreat + mouseover"})
+	alphaUpDropdown:SetList({["off"] = L["Off"], ["mouseover"] = L["Mouseover"], ["combat"] = L["Combat"], ["combat + mouseover"] = L["Combat + Mouseover"]},
+			{[1] = "off", [2] = "mouseover", [3] = "combat", [4] = "combat + mouseover"})
 	alphaUpDropdown:SetValue(Neuron.CurrentBar:GetAlphaUp())
 	alphaUpDropdown:SetCallback("OnValueChanged", function(_, _, key)
 		Neuron.CurrentBar:SetAlphaUp(key)

@@ -288,8 +288,6 @@ L["Off"] = true
 L["Combat"] = true
 L["Mouseover"] = true
 L["Combat + Mouseover"] = true
-L["Retreat"] = true
-L["Retreat + Mouseover"] = true
 
 L["Bar_Shapes_List"] = "\n1=Linear\n2=Circle\n3=Circle + One"
 L["Linear"] = true
