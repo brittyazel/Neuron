@@ -103,6 +103,7 @@ function ACTIONBUTTON:UpdateObjectVisibility(show)
 	self:SetAttribute("isshown", self.isShown)
 
 	if self.isShown then
+		self:SetAlpha(self.bar:GetBarAlpha()) --try to restore alpha value instead of default to 1
 		self:Show()
 	else
 		self:Hide()

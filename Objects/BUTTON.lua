@@ -167,7 +167,7 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 end
 
 
-function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
+function BUTTON:SetCooldownTimer(start, duration, enable, modrate, showCountdownTimer, color1, color2, showCountdownAlpha, charges, maxCharges)
 
 	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
 		--if there's currently a timer, cancel it
@@ -316,7 +316,7 @@ function BUTTON:CooldownCounterUpdate()
 		if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
 			if coolDown > 0 then
-				self.elements.iconframecooldown.button:SetAlpha(0.2)
+				self:SetAlpha(0.2)
 			else
 				self:SetAlpha(self.bar:GetBarAlpha()) --try to restore alpha value instead of default to 1
 			end
@@ -603,9 +603,9 @@ function BUTTON:UpdateSpellCooldown()
 		local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(self.spell)
 
 		if charges and maxCharges and maxCharges > 0 and charges < maxCharges then
-			self:SetCooldownTimer(chStart, chDuration, enable, self.bar:GetShowCooldownText(), chargemodrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+			self:SetCooldownTimer(chStart, chDuration, enable, chargemodrate, self.bar:GetShowCooldownText(), self.bar:GetCooldownColor1(), self.bar:GetCooldownColor2(), self.bar:GetShowCooldownAlpha(), charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
 		else
-			self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha(), charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+			self:SetCooldownTimer(start, duration, enable, modrate, self.bar:GetShowCooldownText(), self.bar:GetCooldownColor1(), self.bar:GetCooldownColor2(), self.bar:GetShowCooldownAlpha()) --call standard cooldown, handles both abilty cooldowns and GCD
 		end
 	else
 		self:CancelCooldownTimer(true)
@@ -621,7 +621,7 @@ function BUTTON:UpdateItemCooldown()
 			local itemID = GetItemInfoInstant(self.item)
 			start, duration, enable, modrate = GetItemCooldown(itemID)
 		end
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(start, duration, enable, modrate, self.bar:GetShowCooldownText(), self.bar:GetCooldownColor1(), self.bar:GetCooldownColor2(), self.bar:GetShowCooldownAlpha())
 	else
 		self:CancelCooldownTimer(true)
 	end
@@ -631,7 +631,7 @@ function BUTTON:UpdateActionCooldown()
 	if self.actionID and self.isShown then
 		if HasAction(self.actionID) then
 			local start, duration, enable, modrate = GetActionCooldown(self.actionID)
-			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			self:SetCooldownTimer(start, duration, enable, modrate, self.bar:GetShowCooldownText(), self.bar:GetCooldownColor1(), self.bar:GetCooldownColor2(), self.bar:GetShowCooldownAlpha())
 		end
 	else
 		self:CancelCooldownTimer(true)
@@ -659,13 +659,13 @@ end
 function BUTTON:UpdateUsableSpell()
 	local isUsable, notEnoughMana = IsUsableSpell(self.spell)
 
-	if notEnoughMana  and self.manacolor then
-		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	if notEnoughMana and self.bar:GetManaColor() then
+		self.elements.IconFrameIcon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
 	elseif isUsable then
-		if self.rangeInd and IsSpellInRange(self.spell, self.unit)==0 then
-			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif NeuronSpellCache[self.spell:lower()] and self.rangeInd and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit)==0 then
-			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		if self.bar:GetShowRangeIndicator() and IsSpellInRange(self.spell, self.unit) == 0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
+		elseif NeuronSpellCache[self.spell:lower()] and self.bar:GetShowRangeIndicator() and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit) == 0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
@@ -685,13 +685,13 @@ function BUTTON:UpdateUsableItem()
 		end
 	end
 
-	if notEnoughMana and self.manacolor then
-		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	if notEnoughMana and self.bar:GetManaColor() then
+		self.elements.IconFrameIcon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
 	elseif isUsable then
-		if self.rangeInd and IsItemInRange(self.item, self.unit) == 0 then
-			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif NeuronItemCache[self.item:lower()] and self.rangeInd and IsItemInRange(NeuronItemCache[self.item:lower()], self.unit)==0 then
-			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		if self.bar:GetShowRangeIndicator() and IsItemInRange(self.item, self.unit) == 0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
+		elseif NeuronItemCache[self.item:lower()] and self.bar:GetShowRangeIndicator() and IsItemInRange(NeuronItemCache[self.item:lower()], self.unit) == 0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end
@@ -708,11 +708,11 @@ function BUTTON:UpdateUsableAction()
 
 	local isUsable, notEnoughMana = IsUsableAction(self.actionID)
 
-	if notEnoughMana and self.manacolor then
-		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	if notEnoughMana and self.bar:GetManaColor() then
+		self.elements.IconFrameIcon:SetVertexColor(self.bar:GetManaColor()[1], self.bar:GetManaColor()[2], self.bar:GetManaColor()[3])
 	elseif isUsable then
-		if self.rangeInd and IsActionInRange(self.spell, self.unit)==0 then
-			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		if self.bar:GetShowRangeIndicator() and IsActionInRange(self.spell, self.unit) == 0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
 		end

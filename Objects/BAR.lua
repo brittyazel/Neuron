@@ -1548,6 +1548,15 @@ function BAR:UpdateObjectIcons()
 	end
 end
 
+function BAR:UpdateObjectCooldowns()
+	for _, object in pairs(self.buttons) do
+		if object then
+			object:CancelCooldownTimer(true) --this will reset the text/alpha on the button
+			object:UpdateCooldown()
+		end
+	end
+end
+
 function BAR:ChangeBar()
 	local newBar = false
 
@@ -2411,8 +2420,7 @@ function BAR:SetShowCooldownText(checked)
 		self.data.cdText = false
 	end
 
-	self:UpdateObjectData()
-	self:UpdateBarStatus()
+	self:UpdateObjectCooldowns()
 end
 
 function BAR:GetShowCooldownText()
@@ -2426,8 +2434,7 @@ function BAR:SetCooldownColor1(option)
 		self.data.cdcolor1 = {1,0.82,0,1}
 	end
 
-	self:UpdateObjectData()
-	self:UpdateBarStatus()
+	self:UpdateObjectCooldowns()
 end
 
 function BAR:GetCooldownColor1()
@@ -2441,8 +2448,7 @@ function BAR:SetCooldownColor2(option)
 		self.data.cdcolor2 = {1,0.1,0.1,1}
 	end
 
-	self:UpdateObjectData()
-	self:UpdateBarStatus()
+	self:UpdateObjectCooldowns()
 end
 
 function BAR:GetCooldownColor2()
@@ -2456,8 +2462,7 @@ function BAR:SetShowCooldownAlpha(checked)
 		self.data.cdAlpha = false
 	end
 
-	self:UpdateObjectData()
-	self:UpdateBarStatus()
+	self:UpdateObjectCooldowns()
 end
 
 function BAR:GetShowCooldownAlpha()

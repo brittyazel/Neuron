@@ -139,7 +139,7 @@ end
 function PETBTN:UpdateCooldown()
 	if self.actionID and GetPetActionInfo(self.actionID) then
 		local start, duration, enable, modrate = GetPetActionCooldown(self.actionID)
-		self:SetCooldownTimer(start, duration, enable, self.bar:GetShowCooldownText(), modrate, self.cdcolor1, self.cdcolor2, self.bar:GetShowCooldownAlpha())
+		self:SetCooldownTimer(start, duration, enable, modrate, self.bar:GetShowCooldownText(), self.bar:GetCooldownColor1(), self.bar:GetCooldownColor2(), self.bar:GetShowCooldownAlpha())
 	end
 end
 
