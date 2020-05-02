@@ -376,31 +376,56 @@ function BUTTON:SetData(bar)
 		self.elements.Name:SetText(self.data.macro_Name) --custom macro's weren't showing the name
 
 		if not self.cdcolor1 then
-			self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+			if type(bar.data.cdcolor1) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+			else
+				bar.data.cdcolor1 =  nil
+				self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+			end
 		else
 			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
 		end
 
 		if not self.cdcolor2 then
-			self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+			if type(bar.data.cdcolor2) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+			else
+				bar.data.cdcolor2 =  nil
+				self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+			end
 		else
 			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
 		end
 
 		if not self.buffcolor then
-			self.buffcolor = { (";"):split(bar.data.buffcolor) }
+			if type(bar.data.buffcolor) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.buffcolor = { (";"):split(bar.data.buffcolor) }
+			else
+				bar.data.buffcolor = nil
+				self.buffcolor = { (";"):split(bar.data.buffcolor) }
+			end
 		else
 			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.data.buffcolor)
 		end
 
 		if not self.debuffcolor then
-			self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
+			if type(bar.data.debuffcolor) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
+			else
+				bar.data.debuffcolor = nil
+				self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
+			end
 		else
 			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
 		end
 
 		if not self.rangecolor then
-			self.rangecolor = { (";"):split(bar.data.rangecolor) }
+			if type(bar.data.rangecolor) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.rangecolor = { (";"):split(bar.data.rangecolor) }
+			else
+				bar.data.rangecolor = nil
+				self.rangecolor = { (";"):split(bar.data.rangecolor) }
+			end
 		else
 			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.data.rangecolor)
 		end
