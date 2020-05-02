@@ -23,6 +23,11 @@ local L = LibStub("AceLocale-3.0"):NewLocale("Neuron", "enUS", true)
 
 if not L then return end
 
+L["General Options"] = true
+L["Size and Shape"] = true
+L["Visuals"] = true
+
+
 L["Command List"] = true
 
 L["Menu"] = true
@@ -358,7 +363,7 @@ L["Unlock on SHIFT"] = true
 L["Unlock on CTRL"] = true
 L["Unlock on ALT"] = true
 L["Enable Tooltips"] = true
-L["Enhanced"] = true
+L["Normal"] = true
 L["Minimal"] = true
 L["Tooltips in Combat"] = true
 L["Show Border Style"] = true

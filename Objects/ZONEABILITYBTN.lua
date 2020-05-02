@@ -138,7 +138,7 @@ function ZONEABILITYBTN:UpdateTooltip()
 
 	if self.bar:GetTooltipOption() ~= "off" then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		if self.bar:GetTooltipOption() == "enhanced" and self.spellID then
+		if self.bar:GetTooltipOption() == "normal" and self.spellID then
 			GameTooltip:SetSpellByID(self.spellID)
 		elseif self.bar:GetTooltipOption() == "minimal" and self.spell then
 			GameTooltip:SetText(self.spell)

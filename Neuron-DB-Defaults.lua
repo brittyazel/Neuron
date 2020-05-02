@@ -247,7 +247,7 @@ local genericBarData = {
 
 	barLock = false,
 
-	tooltips = "enhanced",
+	tooltips = "normal",
 	tooltipsCombat = true,
 
 	bindText = true,

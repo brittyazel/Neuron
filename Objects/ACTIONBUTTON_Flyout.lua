@@ -798,7 +798,7 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 
 		self.bar = bar
 
-		self.bar:SetTooltipOption("enhanced")
+		self.bar:SetTooltipOption("normal")
 
 	end
 

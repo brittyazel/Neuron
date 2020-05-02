@@ -913,13 +913,13 @@ end
 
 function BUTTON:UpdateSpellTooltip()
 	if self.spell and self.spellID then --try to get the correct spell from the spellbook first
-		if self.bar:GetTooltipOption() == "enhanced" then
+		if self.bar:GetTooltipOption() == "normal" then
 			GameTooltip:SetSpellByID(self.spellID)
 		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(self.spell, 1, 1, 1)
 		end
 	elseif NeuronSpellCache[self.spell:lower()] then --if the spell isn't in the spellbook, check our spell cache
-		if self.bar:GetTooltipOption() == "enhanced" then
+		if self.bar:GetTooltipOption() == "normal" then
 			GameTooltip:SetSpellByID(NeuronSpellCache[self.spell:lower()].spellID)
 		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(NeuronSpellCache[self.spell:lower()].spellName, 1, 1, 1)
@@ -932,13 +932,13 @@ end
 function BUTTON:UpdateItemTooltip()
 	local name, link = GetItemInfo(self.item)
 	if name and link then
-		if self.bar:GetTooltipOption() == "enhanced" then
+		if self.bar:GetTooltipOption() == "normal" then
 			GameTooltip:SetHyperlink(link)
 		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(name, 1, 1, 1)
 		end
 	elseif NeuronItemCache[self.item:lower()] then
-		if self.bar:GetTooltipOption() == "enhanced" then
+		if self.bar:GetTooltipOption() == "normal" then
 			GameTooltip:SetHyperlink("item:"..NeuronItemCache[self.item:lower()]..":0:0:0:0:0:0:0")
 		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(NeuronItemCache[self.item:lower()], 1, 1, 1)
@@ -948,7 +948,7 @@ end
 
 function BUTTON:UpdateActionTooltip()
 	if HasAction(self.actionID) then
-		if self.bar:GetTooltipOption() == "enhanced" or elf.bar:GetTooltipOption() == "minimal" then
+		if self.bar:GetTooltipOption() == "normal" or elf.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetAction(self.actionID)
 		end
 	end

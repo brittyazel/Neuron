@@ -260,7 +260,7 @@ function PETBTN:UpdateTooltip()
 
 	if self.bar:GetTooltipOption() ~= "off" and GetPetActionInfo(self.actionID) then
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		if self.bar:GetTooltipOption() == "enhanced" then
+		if self.bar:GetTooltipOption() == "normal" then
 			GameTooltip:SetPetAction(self.actionID)
 		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(self.spell)

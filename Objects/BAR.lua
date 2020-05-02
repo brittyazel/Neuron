@@ -2029,8 +2029,8 @@ function BAR:SetTooltipOption(option)
 	if option then
 		if option == "minimal" then
 			self.data.tooltips = "minimal"
-		elseif option == "enhanced" then
-			self.data.tooltips = "enhanced"
+		elseif option == "normal" then
+			self.data.tooltips = "normal"
 		elseif option == "off" then
 			self.data.tooltips = "off"
 		end
