@@ -45,105 +45,105 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	---------------------------------------------------------
 
 	--AutoHide
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].generalOptions.AUTOHIDE then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.AUTOHIDE then
 		local autoHideCheckbox = AceGUI:Create("CheckBox")
 		autoHideCheckbox:SetLabel(L["Auto Hide"])
 		autoHideCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		autoHideCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		autoHideCheckbox:SetValue(Neuron.CurrentBar:GetAutoHide())
+		autoHideCheckbox:SetValue(Neuron.currentBar:GetAutoHide())
 		autoHideCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetAutoHide(self:GetValue())
+			Neuron.currentBar:SetAutoHide(self:GetValue())
 		end)
 		tabFrame:AddChild(autoHideCheckbox)
 	end
 
 	--ShowGrid
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].generalOptions.SHOWGRID then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.SHOWGRID then
 		local showGridCheckbox = AceGUI:Create("CheckBox")
 		showGridCheckbox:SetLabel(L["Show Grid"])
 		showGridCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		showGridCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		showGridCheckbox:SetValue(Neuron.CurrentBar:GetShowGrid())
+		showGridCheckbox:SetValue(Neuron.currentBar:GetShowGrid())
 		showGridCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetShowGrid(self:GetValue())
+			Neuron.currentBar:SetShowGrid(self:GetValue())
 		end)
 		tabFrame:AddChild(showGridCheckbox)
 	end
 
 	--SnapTo
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].generalOptions.SNAPTO then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.SNAPTO then
 		local snapToCheckbox = AceGUI:Create("CheckBox")
 		snapToCheckbox:SetLabel(L["SnapTo"])
 		snapToCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		snapToCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		snapToCheckbox:SetValue(Neuron.CurrentBar:GetSnapTo())
+		snapToCheckbox:SetValue(Neuron.currentBar:GetSnapTo())
 		snapToCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetSnapTo(self:GetValue())
+			Neuron.currentBar:SetSnapTo(self:GetValue())
 		end)
 		tabFrame:AddChild(snapToCheckbox)
 	end
 
 	--UpClicks
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].generalOptions.UPCLICKS then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.UPCLICKS then
 		local upClicksCheckbox = AceGUI:Create("CheckBox")
 		upClicksCheckbox:SetLabel(L["Up Clicks"])
 		upClicksCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		upClicksCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		upClicksCheckbox:SetValue(Neuron.CurrentBar:GetUpClicks())
+		upClicksCheckbox:SetValue(Neuron.currentBar:GetUpClicks())
 		upClicksCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetUpClicks(self:GetValue())
+			Neuron.currentBar:SetUpClicks(self:GetValue())
 		end)
 		tabFrame:AddChild(upClicksCheckbox)
 	end
 
 	--DownClicks
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].generalOptions.DOWNCLICKS then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.DOWNCLICKS then
 		local downClicksCheckbox = AceGUI:Create("CheckBox")
 		downClicksCheckbox:SetLabel(L["Down Clicks"])
 		downClicksCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		downClicksCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		downClicksCheckbox:SetValue(Neuron.CurrentBar:GetDownClicks())
+		downClicksCheckbox:SetValue(Neuron.currentBar:GetDownClicks())
 		downClicksCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetDownClicks(self:GetValue())
+			Neuron.currentBar:SetDownClicks(self:GetValue())
 		end)
 		tabFrame:AddChild(downClicksCheckbox)
 	end
 
 	--MultiSpec
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].generalOptions.MULTISPEC then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.MULTISPEC then
 		local multiSpecCheckbox = AceGUI:Create("CheckBox")
 		multiSpecCheckbox:SetLabel(L["Multi Spec"])
 		multiSpecCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		multiSpecCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		multiSpecCheckbox:SetValue(Neuron.CurrentBar:GetMultiSpec())
+		multiSpecCheckbox:SetValue(Neuron.currentBar:GetMultiSpec())
 		multiSpecCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetMultiSpec(self:GetValue())
+			Neuron.currentBar:SetMultiSpec(self:GetValue())
 		end)
 		tabFrame:AddChild(multiSpecCheckbox)
 	end
 
 	--Hidden
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].generalOptions.HIDDEN then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.HIDDEN then
 		local barConcealCheckbox = AceGUI:Create("CheckBox")
 		barConcealCheckbox:SetLabel(L["Hidden"])
 		barConcealCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		barConcealCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		barConcealCheckbox:SetValue(Neuron.CurrentBar:GetBarConceal())
+		barConcealCheckbox:SetValue(Neuron.currentBar:GetBarConceal())
 		barConcealCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetBarConceal(self:GetValue())
+			Neuron.currentBar:SetBarConceal(self:GetValue())
 		end)
 		tabFrame:AddChild(barConcealCheckbox)
 	end
 
 	--BarLock
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].generalOptions.LOCKBAR then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.LOCKBAR then
 
 		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
 		spellAlertDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		spellAlertDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		tabFrame:AddChild(spellAlertDropdownContainer)
 
-		local currentLock = Neuron.CurrentBar:GetBarLock()
+		local currentLock = Neuron.currentBar:GetBarLock()
 		if not currentLock then
 			currentLock = "none"
 		end
@@ -155,7 +155,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 				{[1] = "none", [2] = "shift", [3] = "ctrl", [4] = "alt"})
 		spellAlertDropdown:SetValue(currentLock)
 		spellAlertDropdown:SetCallback("OnValueChanged", function(_, _, key)
-			Neuron.CurrentBar:SetBarLock(key)
+			Neuron.currentBar:SetBarLock(key)
 		end)
 		spellAlertDropdownContainer:AddChild(spellAlertDropdown)
 	end
@@ -192,12 +192,12 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	subtractObjectButton:SetRelativeWidth(.35)
 	subtractObjectButton:SetFullHeight(true)
 	subtractObjectButton:SetCallback("OnClick", function()
-		Neuron.CurrentBar:RemoveObjectFromBar()
+		Neuron.currentBar:RemoveObjectFromBar()
 		NeuronGUI:RefreshEditor()
 	end)
 	addOrRemoveButtonContainer:AddChild(subtractObjectButton)
 
-	local currentText = Neuron.CurrentBar:GetNumObjects() --hack to try to keep the number centered between the buttons
+	local currentText = Neuron.currentBar:GetNumObjects() --hack to try to keep the number centered between the buttons
 	if currentText > 9 then
 		currentText = " "..currentText --one space leading two-digit numbers
 	else
@@ -216,7 +216,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	addObjectButton:SetRelativeWidth(.35)
 	addObjectButton:SetFullHeight(true)
 	addObjectButton:SetCallback("OnClick", function()
-		Neuron.CurrentBar:AddObjectToBar()
+		Neuron.currentBar:AddObjectToBar()
 		NeuronGUI:RefreshEditor()
 	end)
 	addOrRemoveButtonContainer:AddChild(addObjectButton)
@@ -224,7 +224,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	--------------------------------
 
 	--Add or Remove Columns Widget
-	local currentNumColumns = Neuron.CurrentBar:GetColumns()
+	local currentNumColumns = Neuron.currentBar:GetColumns()
 
 	if not currentNumColumns then
 		currentNumColumns = 0
@@ -237,11 +237,11 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 
 	local columnSlider = AceGUI:Create("Slider")
 	columnSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
-	columnSlider:SetSliderValues(0,Neuron.CurrentBar:GetNumObjects(),1)
+	columnSlider:SetSliderValues(0,Neuron.currentBar:GetNumObjects(),1)
 	columnSlider:SetLabel(L["Columns"])
 	columnSlider:SetValue(currentNumColumns)
 	columnSlider:SetCallback("OnValueChanged", function(self)
-		Neuron.CurrentBar:SetColumns(self:GetValue())
+		Neuron.currentBar:SetColumns(self:GetValue())
 	end)
 	currentNumColumnsContainer:AddChild(columnSlider)
 
@@ -258,9 +258,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	scaleSlider:SetSliderValues(0.1,2,0.05)
 	scaleSlider:SetIsPercent(true)
 	scaleSlider:SetLabel(L["Scale"])
-	scaleSlider:SetValue(Neuron.CurrentBar:GetBarScale())
+	scaleSlider:SetValue(Neuron.currentBar:GetBarScale())
 	scaleSlider:SetCallback("OnValueChanged", function(self)
-		Neuron.CurrentBar:SetBarScale(self:GetValue())
+		Neuron.currentBar:SetBarScale(self:GetValue())
 	end)
 	setScaleContainer:AddChild(scaleSlider)
 
@@ -276,9 +276,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	barShapeDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
 	barShapeDropdown:SetList({["linear"] = L["Linear"], ["circle"] = L["Circle"], ["circle + one"] = L["Circle + One"]},
 			{[1] = "linear", [2] = "circle", [3] = "circle + one"})
-	barShapeDropdown:SetValue(Neuron.CurrentBar:GetBarShape())
+	barShapeDropdown:SetValue(Neuron.currentBar:GetBarShape())
 	barShapeDropdown:SetCallback("OnValueChanged", function(_, _, key)
-		Neuron.CurrentBar:SetBarShape(key)
+		Neuron.currentBar:SetBarShape(key)
 	end)
 	barShapeDropdownContainer:AddChild(barShapeDropdown)
 
@@ -293,9 +293,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	horizPadSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
 	horizPadSlider:SetSliderValues(-200,200,1)
 	horizPadSlider:SetLabel(L["Horizontal Padding"])
-	horizPadSlider:SetValue(Neuron.CurrentBar:GetHorizontalPad())
+	horizPadSlider:SetValue(Neuron.currentBar:GetHorizontalPad())
 	horizPadSlider:SetCallback("OnValueChanged", function(self)
-		Neuron.CurrentBar:SetHorizontalPad(self:GetValue())
+		Neuron.currentBar:SetHorizontalPad(self:GetValue())
 	end)
 	horizPadContainer:AddChild(horizPadSlider)
 
@@ -310,9 +310,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	vertPadSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
 	vertPadSlider:SetSliderValues(-200,200,1)
 	vertPadSlider:SetLabel(L["Vertical Padding"])
-	vertPadSlider:SetValue(Neuron.CurrentBar:GetVerticalPad())
+	vertPadSlider:SetValue(Neuron.currentBar:GetVerticalPad())
 	vertPadSlider:SetCallback("OnValueChanged", function(self)
-		Neuron.CurrentBar:SetVerticalPad(self:GetValue())
+		Neuron.currentBar:SetVerticalPad(self:GetValue())
 	end)
 	vertPadContainer:AddChild(vertPadSlider)
 
@@ -328,9 +328,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	alphaSlider:SetSliderValues(.01,1,.01)
 	alphaSlider:SetIsPercent(true)
 	alphaSlider:SetLabel(L["Alpha"])
-	alphaSlider:SetValue(Neuron.CurrentBar:GetBarAlpha())
+	alphaSlider:SetValue(Neuron.currentBar:GetBarAlpha())
 	alphaSlider:SetCallback("OnValueChanged", function(self)
-		Neuron.CurrentBar:SetBarAlpha(self:GetValue())
+		Neuron.currentBar:SetBarAlpha(self:GetValue())
 	end)
 	alphaContainer:AddChild(alphaSlider)
 
@@ -346,9 +346,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	alphaUpDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
 	alphaUpDropdown:SetList({["off"] = L["Off"], ["mouseover"] = L["Mouseover"], ["combat"] = L["Combat"], ["combat + mouseover"] = L["Combat + Mouseover"]},
 			{[1] = "off", [2] = "mouseover", [3] = "combat", [4] = "combat + mouseover"})
-	alphaUpDropdown:SetValue(Neuron.CurrentBar:GetAlphaUp())
+	alphaUpDropdown:SetValue(Neuron.currentBar:GetAlphaUp())
 	alphaUpDropdown:SetCallback("OnValueChanged", function(_, _, key)
-		Neuron.CurrentBar:SetAlphaUp(key)
+		Neuron.currentBar:SetAlphaUp(key)
 	end)
 	AlphaUpDropdownContainer:AddChild(alphaUpDropdown)
 
@@ -364,9 +364,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	alphaSpeedSlider:SetSliderValues(.01,1,.01)
 	alphaSpeedSlider:SetIsPercent(true)
 	alphaSpeedSlider:SetLabel(L["AlphaUp Speed"])
-	alphaSpeedSlider:SetValue(Neuron.CurrentBar:GetAlphaUpSpeed())
+	alphaSpeedSlider:SetValue(Neuron.currentBar:GetAlphaUpSpeed())
 	alphaSpeedSlider:SetCallback("OnValueChanged", function(self)
-		Neuron.CurrentBar:SetAlphaUpSpeed(self:GetValue())
+		Neuron.currentBar:SetAlphaUpSpeed(self:GetValue())
 	end)
 	alphaSpeedContainer:AddChild(alphaSpeedSlider)
 
@@ -382,9 +382,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	strataDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
 	strataDropdown:SetList({[2] = L["Low"], [3] = L["Medium"], [4] = L["High"], [5] = L["Dialog"], [6] = L["Tooltip"]},
 			{[1] = 2, [2] = 3, [3] = 4, [4] = 5, [5] = 6})
-	strataDropdown:SetValue(Neuron.CurrentBar:GetStrata())
+	strataDropdown:SetValue(Neuron.currentBar:GetStrata())
 	strataDropdown:SetCallback("OnValueChanged", function(_, _, key)
-		Neuron.CurrentBar:SetStrata(key)
+		Neuron.currentBar:SetStrata(key)
 	end)
 	strataDropdownContainer:AddChild(strataDropdown)
 
@@ -404,7 +404,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 
 
 	--Bind Text
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.BINDTEXT then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.BINDTEXT then
 		local bindTextContainer = AceGUI:Create("SimpleGroup")
 		bindTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		bindTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -414,17 +414,17 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local bindTextCheckbox = AceGUI:Create("CheckBox")
 		bindTextCheckbox:SetLabel(L["Keybind Label"])
 		bindTextCheckbox:SetRelativeWidth(.70)
-		bindTextCheckbox:SetValue(Neuron.CurrentBar:GetShowBindText())
+		bindTextCheckbox:SetValue(Neuron.currentBar:GetShowBindText())
 		bindTextCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetShowBindText(self:GetValue())
+			Neuron.currentBar:SetShowBindText(self:GetValue())
 		end)
 		bindTextContainer:AddChild(bindTextCheckbox)
 
 		local bindTextColorPicker = AceGUI:Create("ColorPicker")
 		bindTextColorPicker:SetRelativeWidth(.15)
-		bindTextColorPicker:SetColor(Neuron.CurrentBar:GetBindColor()[1],Neuron.CurrentBar:GetBindColor()[2],Neuron.CurrentBar:GetBindColor()[3],Neuron.CurrentBar:GetBindColor()[4])
+		bindTextColorPicker:SetColor(Neuron.currentBar:GetBindColor()[1],Neuron.currentBar:GetBindColor()[2],Neuron.currentBar:GetBindColor()[3],Neuron.currentBar:GetBindColor()[4])
 		bindTextColorPicker:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
-			Neuron.CurrentBar:SetBindColor({r,g,b,a})
+			Neuron.currentBar:SetBindColor({r,g,b,a})
 		end)
 		bindTextContainer:AddChild(bindTextColorPicker)
 	end
@@ -432,7 +432,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 
 
 	--Macro Text
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.MACROTEXT then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.MACROTEXT then
 		local macroTextContainer = AceGUI:Create("SimpleGroup")
 		macroTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		macroTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -442,24 +442,24 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local macroTextCheckbox = AceGUI:Create("CheckBox")
 		macroTextCheckbox:SetLabel(L["Macro Name"])
 		macroTextCheckbox:SetRelativeWidth(.70)
-		macroTextCheckbox:SetValue(Neuron.CurrentBar:GetShowMacroText())
+		macroTextCheckbox:SetValue(Neuron.currentBar:GetShowMacroText())
 		macroTextCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetShowMacroText(self:GetValue())
+			Neuron.currentBar:SetShowMacroText(self:GetValue())
 		end)
 		macroTextContainer:AddChild(macroTextCheckbox)
 
 		local macroTextColorPicker = AceGUI:Create("ColorPicker")
 		macroTextColorPicker:SetRelativeWidth(.15)
-		macroTextColorPicker:SetColor(Neuron.CurrentBar:GetMacroColor()[1],Neuron.CurrentBar:GetMacroColor()[2],Neuron.CurrentBar:GetMacroColor()[3],Neuron.CurrentBar:GetMacroColor()[4])
+		macroTextColorPicker:SetColor(Neuron.currentBar:GetMacroColor()[1],Neuron.currentBar:GetMacroColor()[2],Neuron.currentBar:GetMacroColor()[3],Neuron.currentBar:GetMacroColor()[4])
 		macroTextColorPicker:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
-			Neuron.CurrentBar:SetMacroColor({r,g,b,a})
+			Neuron.currentBar:SetMacroColor({r,g,b,a})
 		end)
 		macroTextContainer:AddChild(macroTextColorPicker)
 	end
 
 
 	--Count Text
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.COUNTTEXT then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.COUNTTEXT then
 		local countTextContainer = AceGUI:Create("SimpleGroup")
 		countTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		countTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -469,24 +469,24 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local countTextCheckbox = AceGUI:Create("CheckBox")
 		countTextCheckbox:SetLabel(L["Stack/Charge"])
 		countTextCheckbox:SetRelativeWidth(.70)
-		countTextCheckbox:SetValue(Neuron.CurrentBar:GetShowCountText())
+		countTextCheckbox:SetValue(Neuron.currentBar:GetShowCountText())
 		countTextCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetShowCountText(self:GetValue())
+			Neuron.currentBar:SetShowCountText(self:GetValue())
 		end)
 		countTextContainer:AddChild(countTextCheckbox)
 
 		local countTextColorPicker = AceGUI:Create("ColorPicker")
 		countTextColorPicker:SetRelativeWidth(.15)
-		countTextColorPicker:SetColor(Neuron.CurrentBar:GetCountColor()[1],Neuron.CurrentBar:GetCountColor()[2],Neuron.CurrentBar:GetCountColor()[3],Neuron.CurrentBar:GetCountColor()[4])
+		countTextColorPicker:SetColor(Neuron.currentBar:GetCountColor()[1],Neuron.currentBar:GetCountColor()[2],Neuron.currentBar:GetCountColor()[3],Neuron.currentBar:GetCountColor()[4])
 		countTextColorPicker:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
-			Neuron.CurrentBar:SetCountColor({r,g,b,a})
+			Neuron.currentBar:SetCountColor({r,g,b,a})
 		end)
 		countTextContainer:AddChild(countTextColorPicker)
 	end
 
 
 	--Range Indicator
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.RANGEIND then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.RANGEIND then
 		local rangeIndContainer = AceGUI:Create("SimpleGroup")
 		rangeIndContainer:SetWidth(WIDGET_GRID_WIDTH)
 		rangeIndContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -496,24 +496,24 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local rangeIndCheckbox = AceGUI:Create("CheckBox")
 		rangeIndCheckbox:SetLabel(L["Out-of-Range"])
 		rangeIndCheckbox:SetRelativeWidth(.70)
-		rangeIndCheckbox:SetValue(Neuron.CurrentBar:GetShowRangeIndicator())
+		rangeIndCheckbox:SetValue(Neuron.currentBar:GetShowRangeIndicator())
 		rangeIndCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetShowRangeIndicator(self:GetValue())
+			Neuron.currentBar:SetShowRangeIndicator(self:GetValue())
 		end)
 		rangeIndContainer:AddChild(rangeIndCheckbox)
 
 		local rangIndColorPicker = AceGUI:Create("ColorPicker")
 		rangIndColorPicker:SetRelativeWidth(.15)
-		rangIndColorPicker:SetColor(Neuron.CurrentBar:GetRangeColor()[1],Neuron.CurrentBar:GetRangeColor()[2],Neuron.CurrentBar:GetRangeColor()[3],Neuron.CurrentBar:GetRangeColor()[4])
+		rangIndColorPicker:SetColor(Neuron.currentBar:GetRangeColor()[1],Neuron.currentBar:GetRangeColor()[2],Neuron.currentBar:GetRangeColor()[3],Neuron.currentBar:GetRangeColor()[4])
 		rangIndColorPicker:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
-			Neuron.CurrentBar:SetRangeColor({r,g,b,a})
+			Neuron.currentBar:SetRangeColor({r,g,b,a})
 		end)
 		rangeIndContainer:AddChild(rangIndColorPicker)
 	end
 
 
 	--Cooldown Text
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.CDTEXT then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.CDTEXT then
 		local cooldownCounterContainer = AceGUI:Create("SimpleGroup")
 		cooldownCounterContainer:SetWidth(WIDGET_GRID_WIDTH)
 		cooldownCounterContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -523,31 +523,31 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local cooldownCounterCheckbox = AceGUI:Create("CheckBox")
 		cooldownCounterCheckbox:SetLabel(L["CD Counter"])
 		cooldownCounterCheckbox:SetRelativeWidth(.70)
-		cooldownCounterCheckbox:SetValue(Neuron.CurrentBar:GetShowCooldownText())
+		cooldownCounterCheckbox:SetValue(Neuron.currentBar:GetShowCooldownText())
 		cooldownCounterCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetShowCooldownText(self:GetValue())
+			Neuron.currentBar:SetShowCooldownText(self:GetValue())
 		end)
 		cooldownCounterContainer:AddChild(cooldownCounterCheckbox)
 
 		local cooldownCounterColorPicker1 = AceGUI:Create("ColorPicker")
 		cooldownCounterColorPicker1:SetRelativeWidth(.15)
-		cooldownCounterColorPicker1:SetColor(Neuron.CurrentBar:GetCooldownColor1()[1],Neuron.CurrentBar:GetCooldownColor1()[2],Neuron.CurrentBar:GetCooldownColor1()[3],Neuron.CurrentBar:GetCooldownColor1()[4])
+		cooldownCounterColorPicker1:SetColor(Neuron.currentBar:GetCooldownColor1()[1],Neuron.currentBar:GetCooldownColor1()[2],Neuron.currentBar:GetCooldownColor1()[3],Neuron.currentBar:GetCooldownColor1()[4])
 		cooldownCounterColorPicker1:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
-			Neuron.CurrentBar:SetCooldownColor1({r,g,b,a})
+			Neuron.currentBar:SetCooldownColor1({r,g,b,a})
 		end)
 		cooldownCounterContainer:AddChild(cooldownCounterColorPicker1)
 
 		local cooldownCounterColorPicker2 = AceGUI:Create("ColorPicker")
 		cooldownCounterColorPicker2:SetRelativeWidth(.15)
-		cooldownCounterColorPicker2:SetColor(Neuron.CurrentBar:GetCooldownColor2()[1],Neuron.CurrentBar:GetCooldownColor2()[2],Neuron.CurrentBar:GetCooldownColor2()[3],Neuron.CurrentBar:GetCooldownColor2()[4])
+		cooldownCounterColorPicker2:SetColor(Neuron.currentBar:GetCooldownColor2()[1],Neuron.currentBar:GetCooldownColor2()[2],Neuron.currentBar:GetCooldownColor2()[3],Neuron.currentBar:GetCooldownColor2()[4])
 		cooldownCounterColorPicker2:SetCallback("OnValueConfirmed", function(_,_, r,g,b,a)
-			Neuron.CurrentBar:SetCooldownColor2({r,g,b,a})
+			Neuron.currentBar:SetCooldownColor2({r,g,b,a})
 		end)
 		cooldownCounterContainer:AddChild(cooldownCounterColorPicker2)
 	end
 
 	--Cooldown Alpha
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.CDALPHA then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.CDALPHA then
 		local cooldownAlphaContainer = AceGUI:Create("SimpleGroup")
 		cooldownAlphaContainer:SetWidth(WIDGET_GRID_WIDTH)
 		cooldownAlphaContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -556,23 +556,23 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 
 		local cooldownAlphaCheckbox = AceGUI:Create("CheckBox")
 		cooldownAlphaCheckbox:SetLabel(L["Cooldown Alpha"])
-		cooldownAlphaCheckbox:SetValue(Neuron.CurrentBar:GetShowCooldownAlpha())
+		cooldownAlphaCheckbox:SetValue(Neuron.currentBar:GetShowCooldownAlpha())
 		cooldownAlphaCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetShowCooldownAlpha(self:GetValue())
+			Neuron.currentBar:SetShowCooldownAlpha(self:GetValue())
 		end)
 		cooldownAlphaContainer:AddChild(cooldownAlphaCheckbox)
 
 	end
 
 	--SpellGlow
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.SPELLGLOW then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.SPELLGLOW then
 
 		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
 		spellAlertDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		spellAlertDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		tabFrame:AddChild(spellAlertDropdownContainer)
 
-		local currentGlow = Neuron.CurrentBar:GetSpellGlow()
+		local currentGlow = Neuron.currentBar:GetSpellGlow()
 		if not currentGlow then
 			currentGlow = "none"
 		end
@@ -584,20 +584,20 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 				{[1] = "none", [3] = "alternate", [2] = "default"})
 		spellAlertDropdown:SetValue(currentGlow)
 		spellAlertDropdown:SetCallback("OnValueChanged", function(_, _, key)
-			Neuron.CurrentBar:SetSpellGlow(key)
+			Neuron.currentBar:SetSpellGlow(key)
 		end)
 		spellAlertDropdownContainer:AddChild(spellAlertDropdown)
 	end
 
 	--Tooltips
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.TOOLTIPS then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.TOOLTIPS then
 
 		local tooltipDropdownContainer = AceGUI:Create("SimpleGroup")
 		tooltipDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		tooltipDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		tabFrame:AddChild(tooltipDropdownContainer)
 
-		local currentTooltipOption = Neuron.CurrentBar:GetTooltipOption()
+		local currentTooltipOption = Neuron.currentBar:GetTooltipOption()
 		if not currentTooltipOption then
 			currentTooltipOption = "none"
 		end
@@ -609,39 +609,36 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 				{[1] = "off", [2] = "minimal", [3] = "normal"})
 		tooltipDropdown:SetValue(currentTooltipOption)
 		tooltipDropdown:SetCallback("OnValueChanged", function(_, _, key)
-			Neuron.CurrentBar:SetTooltipOption(key)
+			Neuron.currentBar:SetTooltipOption(key)
 		end)
 
 		tooltipDropdownContainer:AddChild(tooltipDropdown)
 	end
 
 	--Tooltips in Combat
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.TOOLTIPS then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.TOOLTIPS then
 		local combatTooltipsCheckbox = AceGUI:Create("CheckBox")
 		combatTooltipsCheckbox:SetLabel(L["Tooltips in Combat"])
 		combatTooltipsCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		combatTooltipsCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		combatTooltipsCheckbox:SetValue(Neuron.CurrentBar:GetTooltipCombat())
+		combatTooltipsCheckbox:SetValue(Neuron.currentBar:GetTooltipCombat())
 		combatTooltipsCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetTooltipCombat(self:GetValue())
+			Neuron.currentBar:SetTooltipCombat(self:GetValue())
 		end)
 		tabFrame:AddChild(combatTooltipsCheckbox)
 	end
 
 	--Border Style
-	if Neuron.registeredGUIData[Neuron.CurrentBar.class].styleOptions.BORDERSTYLE then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.BORDERSTYLE then
 		local borderStyleCheckbox = AceGUI:Create("CheckBox")
 		borderStyleCheckbox:SetLabel(L["Show Border Style"])
 		borderStyleCheckbox:SetWidth(WIDGET_GRID_WIDTH)
 		borderStyleCheckbox:SetHeight(WIDGET_GRID_HEIGHT)
-		borderStyleCheckbox:SetValue(Neuron.CurrentBar:GetShowBorderStyle())
+		borderStyleCheckbox:SetValue(Neuron.currentBar:GetShowBorderStyle())
 		borderStyleCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.CurrentBar:SetShowBorderStyle(self:GetValue())
+			Neuron.currentBar:SetShowBorderStyle(self:GetValue())
 		end)
 		tabFrame:AddChild(borderStyleCheckbox)
 	end
-
-
-
 
 end

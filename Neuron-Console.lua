@@ -103,7 +103,7 @@ function Neuron:slashHandler(input)
 
 		if command == slashFunctions[i][1]:lower() then
 			local func = slashFunctions[i][3]
-			local bar = Neuron.CurrentBar
+			local bar = Neuron.currentBar
 
 			if Neuron[func] then
 				Neuron[func](Neuron, args[1])

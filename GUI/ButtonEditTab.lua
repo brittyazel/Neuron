@@ -39,17 +39,23 @@ local iconList = {}
 
 
 function NeuronGUI:ButtonEditPanel(tabContainer)
-	local settingContainer = AceGUI:Create("SimpleGroup")
-	settingContainer:SetFullWidth(true)
-	settingContainer:SetLayout("Flow")
-	tabContainer:AddChild(settingContainer)
+	if Neuron.barEditMode then
+		Neuron:ToggleButtonEditMode(true)
+	end
 
-	local iconFrame=AceGUI:Create("Icon")
-	iconFrame:SetImage("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-	iconFrame:SetImageSize(40,40)
-	iconFrame:SetWidth(50)
-	iconFrame:SetCallback("OnClick", function() NeuronGUI:IconFrame_OnClick() end)
-	settingContainer:AddChild(iconFrame)
+	if Neuron.currentButton then
+		local settingContainer = AceGUI:Create("SimpleGroup")
+		settingContainer:SetFullWidth(true)
+		settingContainer:SetLayout("Flow")
+		tabContainer:AddChild(settingContainer)
+
+		local iconFrame=AceGUI:Create("Icon")
+		iconFrame:SetImage("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		iconFrame:SetImageSize(40,40)
+		iconFrame:SetWidth(50)
+		iconFrame:SetCallback("OnClick", function() NeuronGUI:IconFrame_OnClick() end)
+		settingContainer:AddChild(iconFrame)
+	end
 end
 
 

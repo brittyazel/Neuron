@@ -147,7 +147,7 @@ function BAR:CreateNewBar(class)
 	local newBar = BAR.new(class, barID) --create new bar
 
 	newBar.objTemplate.new(newBar, 1) --add at least 1 button to a new bar
-	newBar:ChangeBar()
+	BAR.ChangeSelectedBar(newBar)
 	newBar:Load() --load the bar
 
 	newBar:Show() --Show the transparent blue overlay that we show in the edit mode
@@ -223,7 +223,7 @@ function BAR:DeleteBar()
 		table.remove(Neuron.BARIndex, index)
 	end
 
-	Neuron.CurrentBar = nil
+	Neuron.currentBar = nil
 
 	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
 		v:UpdateBarStatus()
@@ -286,6 +286,51 @@ function BAR:Load()
 	self:SetSize()
 	self:EnableKeyboard(false)
 	self:UpdateBarStatus()
+end
+
+function BAR.ChangeSelectedBar(newBar)
+	if newBar and Neuron.currentBar ~= newBar then
+		Neuron.currentBar = newBar
+
+		if newBar.data.hidden then
+			newBar:SetBackdropColor(1,0,0,0.6)
+		else
+			newBar:SetBackdropColor(0,0,1,0.5)
+		end
+	end
+
+	if not newBar then
+		Neuron.currentBar = nil
+	elseif newBar.text then
+		newBar.text:Show()
+	end
+
+	for k,v in pairs(Neuron.BARIndex) do
+		if v ~= newBar then
+
+			if v:GetBarConceal() then
+				v:SetBackdropColor(1,0,0,0.4)
+			else
+				v:SetBackdropColor(0,0,0,0.4)
+			end
+
+			v.microAdjust = false
+			v:EnableKeyboard(false)
+			v.text:Hide()
+			v.message:Hide()
+			v.messagebg:Hide()
+			v.mousewheelfunc = nil
+			v.mousewheelfunc = nil
+		end
+	end
+
+	if Neuron.currentBar then
+		newBar:OnEnter(Neuron.currentBar)
+	end
+
+	if NeuronEditor then
+		Neuron.NeuronGUI:RefreshEditor()
+	end
 end
 -----------------------------------
 
@@ -1289,10 +1334,10 @@ end
 ----------------------------------------------------------------------
 
 function BAR:OnClick(...)
-	local click, down, newBar = select(1, ...), select(2, ...)
+	local click, down = select(1, ...), select(2, ...)
 
 	if not down then
-		newBar = self:ChangeBar()
+		BAR.ChangeSelectedBar(self)
 	end
 
 	if IsShiftKeyDown() and not down then
@@ -1313,11 +1358,11 @@ function BAR:OnClick(...)
 		end
 
 	elseif click == "MiddleButton" then
-		if GetMouseFocus() ~= Neuron.CurrentBar then
-			newBar = self:ChangeBar()
+		if GetMouseFocus() ~= Neuron.currentBar then
+			BAR.ChangeSelectedBar(self)
 		end
 
-	elseif click == "RightButton" and not self.action and not down then
+	elseif click == "RightButton" and not down then
 		self.mousewheelfunc = nil
 
 		Neuron.NeuronGUI:ToggleEditor()
@@ -1339,7 +1384,7 @@ end
 
 
 function BAR:OnLeave(...)
-	if self ~= Neuron.CurrentBar then
+	if self ~= Neuron.currentBar then
 		if self:GetBarConceal() then
 			self:SetBackdropColor(1,0,0,0.4)
 		else
@@ -1347,14 +1392,14 @@ function BAR:OnLeave(...)
 		end
 	end
 
-	if self ~= Neuron.CurrentBar then
+	if self ~= Neuron.currentBar then
 		self.text:Hide()
 	end
 end
 
 
 function BAR:OnDragStart(...)
-	self:ChangeBar()
+	BAR.ChangeSelectedBar(self)
 
 	self:SetFrameStrata(Neuron.STRATAS[self:GetStrata()])
 	self:EnableKeyboard(false)
@@ -1441,7 +1486,7 @@ end
 
 
 function BAR:OnShow()
-	if self == Neuron.CurrentBar then
+	if self == Neuron.currentBar then
 
 		if self:GetBarConceal() then
 			self:SetBackdropColor(1,0,0,0.6)
@@ -1556,61 +1601,6 @@ function BAR:UpdateObjectCooldowns()
 		end
 	end
 end
-
-function BAR:ChangeBar()
-	local newBar = false
-
-	if self and Neuron.CurrentBar ~= self then
-		Neuron.CurrentBar = self
-
-		self.action = nil
-
-		if self.data.hidden then
-			self:SetBackdropColor(1,0,0,0.6)
-		else
-			self:SetBackdropColor(0,0,1,0.5)
-		end
-
-		newBar = true
-	end
-
-	if not self then
-		Neuron.CurrentBar = nil
-	elseif self.text then
-		self.text:Show()
-	end
-
-	for k,v in pairs(Neuron.BARIndex) do
-		if v ~= self then
-
-			if v:GetBarConceal() then
-				v:SetBackdropColor(1,0,0,0.4)
-			else
-				v:SetBackdropColor(0,0,0,0.4)
-			end
-
-			v.microAdjust = false
-			v:EnableKeyboard(false)
-			v.text:Hide()
-			v.message:Hide()
-			v.messagebg:Hide()
-			v.mousewheelfunc = nil
-			v.action = nil
-		end
-	end
-
-	if Neuron.CurrentBar then
-		self:OnEnter(Neuron.CurrentBar)
-	end
-
-	if NeuronEditor then
-		Neuron.NeuronGUI:RefreshEditor()
-	end
-
-
-	return newBar
-end
-
 
 -----------------------------------------------------
 -------------------Sets and Gets---------------------

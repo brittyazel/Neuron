@@ -697,7 +697,7 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 	end
 
 	local modifier, modKey = " ", nil
-	local bar = Neuron.CurrentBar or self.bar
+	local bar = Neuron.currentBar or self.bar
 
 	if bar.data.mouseOverCast and DB.mouseOverMod ~= "NONE"  then
 		modKey = DB.mouseOverMod
@@ -805,7 +805,7 @@ function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
 		end
 
 	else
-		local bar = Neuron.CurrentBar
+		local bar = Neuron.currentBar
 		for i, object in ipairs(bar.buttons) do
 			table.insert(button_list, object)
 		end

@@ -40,7 +40,7 @@ LibStub("AceHook-3.0"):Embed(BUTTON)
 ---@param objType string @Type of object this button will be
 ---@param template string @The template name that this frame will derive from
 ---@return BUTTON @ A newly created BUTTON object
-function BUTTON.new(bar, buttonID,baseObj, barClass, objType, template)
+function BUTTON.new(bar, buttonID, baseObj, barClass, objType, template)
 	local newButton
 	local newButtonName = bar:GetName().."_"..objType..buttonID
 
@@ -92,55 +92,29 @@ end
 ------------------------------------------------
 
 
-function BUTTON:ChangeObject(object)
+function BUTTON.ChangeSelectedButton(newButton)
+	if newButton and newButton ~= Neuron.currentButton then
+		if Neuron.currentButton and Neuron.currentButton.bar ~= newButton.bar then
+			local bar = Neuron.currentButton.bar
 
-	if not Neuron.CurrentObject then
-		Neuron.CurrentObject = object
+			if bar.handler:GetAttribute("assertstate") then
+				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
+			end
+
+			newButton.bar.handler:SetAttribute("fauxstate", bar.handler:GetAttribute("activestate"))
+		end
+
+		Neuron.currentButton = newButton
+		newButton.editor.select:Show()
+	elseif not newButton then
+		Neuron.currentButton = nil
 	end
 
-	local newObj, newEditor = false, false
-
-	if Neuron.enteredWorld then
-
-		if object and object ~= Neuron.CurrentObject then
-
-			if Neuron.CurrentObject and Neuron.CurrentObject.editor.editType ~= object.editor.editType then
-				newEditor = true
-			end
-
-			if Neuron.CurrentObject and Neuron.CurrentObject.bar ~= object.bar then
-
-				local bar = Neuron.CurrentObject.bar
-
-				if bar.handler:GetAttribute("assertstate") then
-					bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
-				end
-
-				object.bar.handler:SetAttribute("fauxstate", bar.handler:GetAttribute("activestate"))
-
-			end
-
-			Neuron.CurrentObject = object
-
-			object.editor.select:Show()
-
-			object.action = nil
-
-			newObj = true
-		end
-
-		if not object then
-			Neuron.CurrentObject = nil
-		end
-
-		for k,v in pairs(Neuron.EDITIndex) do
-			if not object or v ~= object.editor then
-				v.select:Hide()
-			end
+	for k,v in pairs(Neuron.EDITIndex) do
+		if newButton and v ~= newButton.editor then
+			v.select:Hide()
 		end
 	end
-
-	return newObj, newEditor
 end
 
 function BUTTON:CancelCooldownTimer(stopAnimation)

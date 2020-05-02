@@ -33,7 +33,12 @@ local currentTab = "tab1" --remember which tab we were using between refreshes
 
 
 function NeuronGUI:BarEditPanel(tabFrame)
-	if Neuron.CurrentBar then
+
+	if Neuron.buttonEditMode then
+		Neuron:ToggleBarEditMode(true)
+	end
+
+	if Neuron.currentBar then
 		--Tab group that will contain all of our settings to configure
 		local innerTabFrame = AceGUI:Create("TabGroup")
 		innerTabFrame:SetLayout("Flow")

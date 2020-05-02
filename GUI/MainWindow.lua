@@ -63,8 +63,8 @@ function NeuronGUI:RefreshEditor()
 	NeuronEditor:ReleaseChildren()
 	NeuronGUI:PopulateEditorWindow()
 
-	if Neuron.CurrentBar then
-		NeuronEditor:SetStatusText("The currently selected bar is: " .. Neuron.CurrentBar:GetBarName())
+	if Neuron.currentBar then
+		NeuronEditor:SetStatusText("The currently selected bar is: " .. Neuron.currentBar:GetBarName())
 	else
 		NeuronEditor:SetStatusText("Please select a bar from the right to begin")
 	end
@@ -77,8 +77,8 @@ function NeuronGUI:CreateEditor()
 	NeuronEditor:SetWidth("1000")
 	NeuronEditor:SetHeight("700")
 	NeuronEditor:EnableResize(false)
-	if Neuron.CurrentBar then
-		NeuronEditor:SetStatusText("The Currently Selected Bar is: " .. Neuron.CurrentBar.data.name)
+	if Neuron.currentBar then
+		NeuronEditor:SetStatusText("The Currently Selected Bar is: " .. Neuron.currentBar.data.name)
 	else
 		NeuronEditor:SetStatusText("Welcome to the Neuron editor, please select a bar to begin")
 	end
@@ -152,8 +152,8 @@ function NeuronGUI:PopulateEditorWindow()
 	deleteBarButton = AceGUI:Create("Button")
 	deleteBarButton:SetText("Delete Current Bar")
 	deleteBarButton:SetFullWidth("true")
-	deleteBarButton:SetCallback("OnClick", function() if Neuron.CurrentBar then Neuron.CurrentBar:DeleteBar(); NeuronGUI:RefreshEditor() end end)
-	if not Neuron.CurrentBar then
+	deleteBarButton:SetCallback("OnClick", function() if Neuron.currentBar then Neuron.currentBar:DeleteBar(); NeuronGUI:RefreshEditor() end end)
+	if not Neuron.currentBar then
 		deleteBarButton:SetDisabled(true)
 	end
 	rightContainer:AddChild(deleteBarButton)
@@ -174,8 +174,8 @@ function NeuronGUI:PopulateEditorWindow()
 
 	--Bar Rename Box
 	local renameBox = AceGUI:Create("EditBox")
-	if Neuron.CurrentBar then
-		renameBox:SetText(Neuron.CurrentBar:GetBarName())
+	if Neuron.currentBar then
+		renameBox:SetText(Neuron.currentBar:GetBarName())
 	end
 	renameBox:SetFullWidth(true)
 	renameBox:SetCallback("OnEnterPressed", function(self) NeuronGUI:updateBarName(self) end)
@@ -206,14 +206,14 @@ function NeuronGUI:PopulateBarList(barListFrame)
 		barLabel:SetFont("Fonts\\FRIZQT__.TTF", 12)
 		barLabel:SetFullWidth(true)
 		barLabel:SetHighlight("Interface\\QuestFrame\\UI-QuestTitleHighlight")
-		if Neuron.CurrentBar == bar then
+		if Neuron.currentBar == bar then
 			barLabel:SetColor(1,.9,0)
 		end
 		barLabel.bar = bar
 		barLabel:SetCallback("OnEnter", function(self) self.bar:OnEnter() end)
 		barLabel:SetCallback("OnLeave", function(self) self.bar:OnLeave() end)
 		barLabel:SetCallback("OnClick", function(self)
-			self.bar:ChangeBar()
+			Neuron.BAR.ChangeSelectedBar(self.bar)
 			NeuronGUI:RefreshEditor()
 			self:SetColor(1,.9,0)
 		end)
@@ -225,7 +225,7 @@ end
 
 ---Bar Rename
 function NeuronGUI:updateBarName(editBox)
-	local bar = Neuron.CurrentBar
+	local bar = Neuron.currentBar
 
 	if bar then
 		bar:SetBarName(editBox:GetText())

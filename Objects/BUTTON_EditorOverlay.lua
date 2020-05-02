@@ -33,7 +33,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 ----------------------------------------------------------------------------
 
 function BUTTON:EditorOverlay_CreateEditFrame(button)
-
 	local editor = CreateFrame("Button", button:GetName().."EditFrame", button, "NeuronEditFrameTemplate")
 
 	setmetatable(editor, { __index = CreateFrame("Button") })
@@ -49,10 +48,8 @@ function BUTTON:EditorOverlay_CreateEditFrame(button)
 
 	if button.objType == "ACTIONBUTTON" then
 		editor.type:SetText(L["Edit"])
-		editor.editType = "button"
 	else
 		editor.type:SetText("")
-		editor.editType = "status"
 
 		editor.select.TL:ClearAllPoints()
 		editor.select.TL:SetPoint("RIGHT", editor.select, "LEFT", 4, 0)
@@ -73,16 +70,14 @@ function BUTTON:EditorOverlay_CreateEditFrame(button)
 	end
 
 	button.editor = editor
-	editor.object = button
+	editor.button = button
 	Neuron.EDITIndex[button.class..button.bar.DB.id.."_"..button.id] = editor
 
 	editor:Hide()
 end
 
 function BUTTON:EditorOverlay_OnShow(editor)
-
-	local object = editor.object
-
+	local object = editor.button
 	if object then
 		if object.bar then
 			editor:SetFrameLevel(object.bar:GetFrameLevel()+1)
@@ -91,31 +86,18 @@ function BUTTON:EditorOverlay_OnShow(editor)
 end
 
 function BUTTON:EditorOverlay_OnEnter(editor)
-
 	editor.select:Show()
-
 	GameTooltip:SetOwner(editor, "ANCHOR_RIGHT")
-
 	GameTooltip:Show()
-
 end
 
 function BUTTON:EditorOverlay_OnLeave(editor)
-
-	if editor.object ~= Neuron.CurrentObject then
+	if editor.button ~= Neuron.currentButton then
 		editor.select:Hide()
 	end
-
 	GameTooltip:Hide()
-
 end
 
 function BUTTON:EditorOverlay_OnClick(editor, button)
-
-	local newObj, newEditor = Neuron.BUTTON:ChangeObject(editor.object)
-
-	if button == "RightButton" then
-
-	end
-
+	Neuron.BUTTON.ChangeSelectedButton(editor.button)
 end

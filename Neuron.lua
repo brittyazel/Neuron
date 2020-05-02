@@ -543,30 +543,31 @@ function Neuron:ToggleBarEditMode(show)
 			bar:UpdateBarObjectVisibility()
 		end
 
-		if NeuronEditor:IsVisible() then
-			NeuronEditor:Hide()
-		end
-
 	end
 
 end
 
 function Neuron:ToggleButtonEditMode(show)
-
 	if show then
-
 		Neuron.buttonEditMode = true
-
 		Neuron:ToggleBarEditMode(false)
 		Neuron:ToggleBindingMode(false)
 		
 		for _, editor in pairs(Neuron.EDITIndex) do
 			editor:Show()
-			editor.object.editmode = true
+			editor.button.editmode = true
 
-			if editor.object.bar then
-				editor:SetFrameStrata(editor.object.bar:GetFrameStrata())
-				editor:SetFrameLevel(editor.object.bar:GetFrameLevel()+4)
+			if editor.button.bar then
+				editor:SetFrameStrata(editor.button.bar:GetFrameStrata())
+				editor:SetFrameLevel(editor.button.bar:GetFrameLevel()+4)
+			end
+
+			if not Neuron.currentButton then
+				if Neuron.currentBar then
+					Neuron.BUTTON.ChangeSelectedButton(Neuron.currentBar.buttons[1])
+				else
+					Neuron.BUTTON.ChangeSelectedButton(editor.button)
+				end
 			end
 		end
 
@@ -574,14 +575,12 @@ function Neuron:ToggleButtonEditMode(show)
 			bar:UpdateObjectUsability()
 			bar:UpdateBarObjectVisibility(true)
 		end
-
 	else
-
 		Neuron.buttonEditMode = false
 
 		for _, editor in pairs(Neuron.EDITIndex) do
 			editor:Hide()
-			editor.object.editmode = false
+			editor.button.editmode = false
 			editor:SetFrameStrata("LOW")
 		end
 
@@ -593,13 +592,7 @@ function Neuron:ToggleButtonEditMode(show)
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
 			end
 		end
-
-		Neuron.BUTTON:ChangeObject()
-
-		if NeuronEditor:IsVisible() then
-			NeuronEditor:Hide()
-		end
-
+		Neuron.BUTTON.ChangeSelectedButton()
 	end
 end
 
