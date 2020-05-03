@@ -169,7 +169,7 @@ function Neuron:OnEnable()
 
 	Neuron:Overrides()
 
-	Neuron.NeuronGUI:Initialize_GUI()
+	Neuron.NeuronGUI:LoadInterfaceOptions()
 end
 
 --- **OnDisable**, which is only called when your addon is manually being disabled.
@@ -448,9 +448,7 @@ function Neuron:UpdateSpellCache()
 			end
 		end
 	end
-
 end
-
 
 function Neuron:UpdateStanceStrings()
 	if Neuron.class == "DRUID" or Neuron.class == "ROGUE" then
@@ -518,38 +516,38 @@ function Neuron:ToggleMainMenu()
 end
 
 function Neuron:ToggleBarEditMode(show)
-
 	if show then
-
 		Neuron.barEditMode = true
-
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBindingMode(false)
 
 		for _, bar in pairs(Neuron.BARIndex) do
 			bar:Show() --this shows the transparent overlay over a bar
 			bar:UpdateBarStatus(true)
-			bar:UpdateObjectUsability()
 			bar:UpdateBarObjectVisibility(true)
+			bar:UpdateObjectUsability()
 		end
 
+		--if there is no bar selected, default to the first in the BARIndex
+		--TODO: This logic may be unintuitive. Should probably be fixed
+		if not Neuron.currentBar then
+			Neuron.BAR.ChangeSelectedBar(Neuron.BARIndex[1])
+		end
 	else
 		Neuron.barEditMode = false
-
 		for _, bar in pairs(Neuron.BARIndex) do
 			bar:Hide()
-			bar:UpdateBarStatus(nil, true)
-			bar:UpdateObjectUsability()
+			bar:UpdateBarStatus()
 			bar:UpdateBarObjectVisibility()
+			bar:UpdateObjectUsability()
 		end
-
 	end
-
 end
 
 function Neuron:ToggleButtonEditMode(show)
 	if show then
 		Neuron.buttonEditMode = true
+
 		Neuron:ToggleBarEditMode(false)
 		Neuron:ToggleBindingMode(false)
 		
@@ -562,18 +560,24 @@ function Neuron:ToggleButtonEditMode(show)
 				editor:SetFrameLevel(editor.button.bar:GetFrameLevel()+4)
 			end
 
+			--TODO: This code needs work. This logic is very rudimentary
 			if not Neuron.currentButton then
 				if Neuron.currentBar then
-					Neuron.BUTTON.ChangeSelectedButton(Neuron.currentBar.buttons[1])
+					if Neuron.currentBar.buttons[1].editor then --try to set the selected button to the first button on the selected bar, if it has an edit frame
+						Neuron.BUTTON.ChangeSelectedButton(Neuron.currentBar.buttons[1])
+					else
+						Neuron.BUTTON.ChangeSelectedButton(editor.button) --if there's no edit frame, then just default to the selected button to the first in the EDITIndex
+					end
 				else
-					Neuron.BUTTON.ChangeSelectedButton(editor.button)
+					Neuron.BUTTON.ChangeSelectedButton(editor.button) --set the selected button to the first in the EDITIndex
 				end
 			end
 		end
 
 		for _,bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectUsability()
 			bar:UpdateBarObjectVisibility(true)
+			bar:UpdateBarStatus(true)
+			bar:UpdateObjectUsability()
 		end
 	else
 		Neuron.buttonEditMode = false
@@ -585,27 +589,23 @@ function Neuron:ToggleButtonEditMode(show)
 		end
 
 		for _,bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectUsability()
 			bar:UpdateBarObjectVisibility()
+			bar:UpdateBarStatus()
+			bar:UpdateObjectUsability()
 
 			if bar.handler:GetAttribute("assertstate") then
 				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
 			end
 		end
-		Neuron.BUTTON.ChangeSelectedButton()
 	end
 end
 
 
 function Neuron:ToggleBindingMode(show)
-
 	if show then
-
 		Neuron.bindingMode = true
-
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBarEditMode(false)
-
 
 		for _, binder in pairs(Neuron.BINDIndex) do
 
@@ -619,25 +619,21 @@ function Neuron:ToggleBindingMode(show)
 		end
 
 		for _,bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectUsability()
 			bar:UpdateBarObjectVisibility(true)
+			bar:UpdateBarStatus(true)
 		end
 
 	else
-
 		Neuron.bindingMode = false
-
 		for _, binder in pairs(Neuron.BINDIndex) do
 			binder:Hide()
 			binder.button.editmode = false
-
 			binder:SetFrameStrata("LOW")
-
 		end
 
 		for _,bar in pairs(Neuron.BARIndex) do
-			bar:UpdateObjectUsability()
 			bar:UpdateBarObjectVisibility()
+			bar:UpdateBarStatus()
 		end
 	end
 end

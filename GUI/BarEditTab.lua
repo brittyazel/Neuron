@@ -34,9 +34,7 @@ local currentTab = "tab1" --remember which tab we were using between refreshes
 
 function NeuronGUI:BarEditPanel(tabFrame)
 
-	if Neuron.buttonEditMode then
-		Neuron:ToggleBarEditMode(true)
-	end
+	Neuron:ToggleBarEditMode(true)
 
 	if Neuron.currentBar then
 		--Tab group that will contain all of our settings to configure
@@ -56,7 +54,6 @@ function NeuronGUI:BarEditPanel(tabFrame)
 		selectBarMessage:SetFont("Fonts\\FRIZQT__.TTF", 30)
 		tabFrame:AddChild(selectBarMessage)
 	end
-
 end
 
 -----------------------------------------------------------------------------

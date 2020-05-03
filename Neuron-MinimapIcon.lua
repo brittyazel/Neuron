@@ -64,40 +64,50 @@ function Neuron:Minimap_OnClickHandler(frame, button)
 	PlaySound(SOUNDKIT.IG_CHAT_SCROLL_DOWN)
 
 	if button == "LeftButton" then
-
 		if IsShiftKeyDown() then
-			if Neuron.bindingMode == true then
-				Neuron:ToggleBindingMode(false)
-			else
+			if not Neuron.bindingMode then
 				Neuron:ToggleBindingMode(true)
+			else
+				Neuron:ToggleBindingMode(false)
 			end
 		else
-			if Neuron.barEditMode == true then
-				Neuron:ToggleBarEditMode(false)
-			else
+			if not Neuron.barEditMode then
 				Neuron:ToggleBarEditMode(true)
+				if not NeuronEditor then
+					Neuron.NeuronGUI:CreateEditor("tab1")
+				else
+					Neuron.NeuronGUI:RefreshEditor("tab1")
+				end
+			else
+				Neuron:ToggleBarEditMode(false)
+				if NeuronEditor then
+					Neuron.NeuronGUI:DestroyEditor()
+				end
 			end
 		end
-
 	elseif button == "RightButton" then
-
 		if IsShiftKeyDown() then
 			if InterfaceOptionsFrame:IsShown() then
 				InterfaceOptionsFrame:Hide();
 			else
 				Neuron:ToggleMainMenu()
 			end
-
 		else
-			if Neuron.buttonEditMode == true then
-				Neuron:ToggleButtonEditMode(false)
-			else
+			if not Neuron.buttonEditMode then
 				Neuron:ToggleButtonEditMode(true)
+				if not NeuronEditor then
+					Neuron.NeuronGUI:CreateEditor("tab2")
+				else
+					Neuron.NeuronGUI:RefreshEditor("tab2")
+				end
+			else
+				Neuron:ToggleButtonEditMode(false)
+				if NeuronEditor then
+					Neuron.NeuronGUI:DestroyEditor()
+				end
 			end
 		end
-
 	end
-
 end
 
 function Neuron:Minimap_TooltipHandler(tooltip)

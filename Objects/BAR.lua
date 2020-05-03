@@ -327,10 +327,6 @@ function BAR.ChangeSelectedBar(newBar)
 	if Neuron.currentBar then
 		newBar:OnEnter(Neuron.currentBar)
 	end
-
-	if NeuronEditor then
-		Neuron.NeuronGUI:RefreshEditor()
-	end
 end
 -----------------------------------
 
@@ -458,7 +454,7 @@ function BAR:AlphaUpUpdate()
 end
 
 
-function BAR:SetHidden(handler, show, hide)
+function BAR:SetHidden(handler, show)
 
 	for k,v in pairs(self.vis) do
 		if v.registered then
@@ -466,7 +462,7 @@ function BAR:SetHidden(handler, show, hide)
 		end
 	end
 
-	if not hide and (show or self:IsVisible()) then
+	if show or self:IsVisible() then
 		handler:Show()
 	else
 		if self:GetBarConceal() then
@@ -995,7 +991,7 @@ function BAR:CreateWatcher()
 end
 
 
-function BAR:UpdateBarStatus(show, hide)
+function BAR:UpdateBarStatus(show)
 	if InCombatLockdown() then
 		return
 	end
@@ -1011,7 +1007,7 @@ function BAR:UpdateBarStatus(show, hide)
 		self.vischanged = false
 	end
 
-	self:SetHidden(self.handler, show, hide)
+	self:SetHidden(self.handler, show)
 	self.text:SetText(self:GetBarName())
 	self.handler:SetAlpha(self:GetBarAlpha())
 end
@@ -1364,11 +1360,14 @@ function BAR:OnClick(...)
 
 	elseif click == "RightButton" and not down then
 		self.mousewheelfunc = nil
-
-		Neuron.NeuronGUI:ToggleEditor()
-
+		if not NeuronEditor then
+			Neuron.NeuronGUI:CreateEditor()
+		end
 	end
 
+	if NeuronEditor then
+		Neuron.NeuronGUI:RefreshEditor()
+	end
 end
 
 

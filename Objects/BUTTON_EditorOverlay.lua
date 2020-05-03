@@ -98,6 +98,9 @@ function BUTTON:EditorOverlay_OnLeave(editor)
 	GameTooltip:Hide()
 end
 
-function BUTTON:EditorOverlay_OnClick(editor, button)
+function BUTTON:EditorOverlay_OnClick(editor)
 	Neuron.BUTTON.ChangeSelectedButton(editor.button)
+	if NeuronEditor then
+		Neuron.NeuronGUI:RefreshEditor()
+	end
 end

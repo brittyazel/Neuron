@@ -25,42 +25,20 @@ Neuron.NeuronGUI = NeuronGUI
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
 
-NeuronEditor = {} --outer frame for our editor window
-
 local currentTab = "tab1" --remember which tab we were using between refreshes
 local selectedBarType --remember which bar type was selected for creating new bars between refreshes
-
-
------------------------------------------------------------------------------
---------------------------Initialize-----------------------------------------
------------------------------------------------------------------------------
-
-
-function NeuronGUI:Initialize_GUI()
-
-	NeuronGUI:LoadInterfaceOptions()
-
-	NeuronGUI:CreateEditor()
-	NeuronEditor:Hide()
-
-end
 
 -----------------------------------------------------------------------------
 --------------------------Main Window----------------------------------------
 -----------------------------------------------------------------------------
 
-
-function NeuronGUI:ToggleEditor()
-	if not NeuronEditor:IsVisible() then
-		NeuronGUI:RefreshEditor()
-		NeuronEditor:Show()
-	else
-		NeuronEditor:Hide()
-	end
-end
-
-function NeuronGUI:RefreshEditor()
+function NeuronGUI:RefreshEditor(tab)
 	NeuronEditor:ReleaseChildren()
+
+	if tab then
+		currentTab = tab
+	end
+
 	NeuronGUI:PopulateEditorWindow()
 
 	if Neuron.currentBar then
@@ -71,7 +49,7 @@ function NeuronGUI:RefreshEditor()
 end
 
 
-function NeuronGUI:CreateEditor()
+function NeuronGUI:CreateEditor(tab)
 	NeuronEditor = AceGUI:Create("Frame")
 	NeuronEditor:SetTitle("Neuron Editor")
 	NeuronEditor:SetWidth("1000")
@@ -82,10 +60,22 @@ function NeuronGUI:CreateEditor()
 	else
 		NeuronEditor:SetStatusText("Welcome to the Neuron editor, please select a bar to begin")
 	end
-	NeuronEditor:SetCallback("OnClose", function() NeuronEditor:Hide() end)
+	NeuronEditor:SetCallback("OnClose", function() NeuronGUI:DestroyEditor() end)
 	NeuronEditor:SetLayout("Flow")
 
+	if tab then
+		currentTab = tab
+	end
+
 	NeuronGUI:PopulateEditorWindow()
+end
+
+function NeuronGUI:DestroyEditor()
+	AceGUI:Release(NeuronEditor)
+	NeuronEditor = nil
+
+	Neuron:ToggleBarEditMode()
+	Neuron:ToggleButtonEditMode()
 end
 
 function NeuronGUI:PopulateEditorWindow()
@@ -238,9 +228,7 @@ end
 
 
 function NeuronGUI:SelectTab(tabFrame, _, tab)
-
 	tabFrame:ReleaseChildren()
-
 	if tab == "tab1" then
 		NeuronGUI:BarEditPanel(tabFrame)
 		currentTab = "tab1"

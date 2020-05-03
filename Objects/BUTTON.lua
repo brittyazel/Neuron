@@ -108,9 +108,12 @@ function BUTTON.ChangeSelectedButton(newButton)
 		newButton.editor.select:Show()
 	elseif not newButton then
 		Neuron.currentButton = nil
+		for _,v in pairs(Neuron.EDITIndex) do
+			v.select:Hide()
+		end
 	end
 
-	for k,v in pairs(Neuron.EDITIndex) do
+	for _,v in pairs(Neuron.EDITIndex) do
 		if newButton and v ~= newButton.editor then
 			v.select:Hide()
 		end

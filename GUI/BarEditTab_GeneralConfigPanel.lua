@@ -33,11 +33,10 @@ local INNER_WIDGET_RATIO = 0.95
 function NeuronGUI:GeneralConfigPanel(tabFrame)
 
 	--Heading spacer
-	local heading1 = AceGUI:Create("SimpleGroup")
-	heading1:SetHeight(WIDGET_GRID_HEIGHT/2)
+	local heading1 = AceGUI:Create("Heading")
+	heading1:SetHeight(WIDGET_GRID_HEIGHT)
 	heading1:SetFullWidth(true)
-	--heading1:SetText(L["General Options"])
-	heading1:SetLayout("Full")
+	heading1:SetText(L["General Options"])
 	tabFrame:AddChild(heading1)
 
 	---------------------------------------------------------
@@ -166,11 +165,10 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	---------------------------------------------------------
 
 	--Heading spacer
-	local heading2 = AceGUI:Create("SimpleGroup")
-	heading2:SetHeight(WIDGET_GRID_HEIGHT/2)
+	local heading2 = AceGUI:Create("Heading")
+	heading2:SetHeight(WIDGET_GRID_HEIGHT)
 	heading2:SetFullWidth(true)
-	--heading2:SetText(L["Size and Shape"])
-	heading2:SetLayout("Full")
+	heading2:SetText(L["Size and Shape"])
 	tabFrame:AddChild(heading2)
 
 
@@ -394,11 +392,10 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	---------------------------------------------------------
 
 	--Heading spacer
-	local heading3 = AceGUI:Create("SimpleGroup")
+	local heading3 = AceGUI:Create("Heading")
 	heading3:SetHeight(WIDGET_GRID_HEIGHT)
 	heading3:SetFullWidth(true)
-	--heading3:SetText(L["Visuals"])
-	heading3:SetLayout("Full")
+	heading3:SetText(L["Visuals"])
 	tabFrame:AddChild(heading3)
 
 

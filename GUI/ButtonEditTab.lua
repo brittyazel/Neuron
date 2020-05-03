@@ -39,9 +39,8 @@ local iconList = {}
 
 
 function NeuronGUI:ButtonEditPanel(tabContainer)
-	if Neuron.barEditMode then
-		Neuron:ToggleButtonEditMode(true)
-	end
+
+	Neuron:ToggleButtonEditMode(true)
 
 	if Neuron.currentButton then
 		local settingContainer = AceGUI:Create("SimpleGroup")
