@@ -37,20 +37,32 @@ function NeuronGUI:BarEditPanel(tabFrame)
 
 	Neuron:ToggleBarEditMode(true)
 
-	----------------------------------
-	----------- Left Column ----------
-	----------------------------------
+	--Container for the top Row
+	local topRow = AceGUI:Create("SimpleGroup")
+	topRow:SetFullWidth(true)
+	topRow:SetHeight(50)
+	topRow:SetAutoAdjustHeight(false)
+	topRow:SetLayout("Flow")
 
-	--Container for the left Column
-	--[[local leftContainer = AceGUI:Create("SimpleGroup")
-	leftContainer:SetRelativeWidth(0.22)
-	leftContainer:SetFullHeight(true)
-	leftContainer:SetLayout("List")
+	tabFrame:AddChild(topRow)
 
-	--Rename/Add/Delete Bar options
-	local barTypeDropdown
-	local newBarButton
-	local deleteBarButton
+
+	local spacer1 = AceGUI:Create("SimpleGroup")
+	spacer1:SetWidth(10)
+	spacer1:SetHeight(40)
+	spacer1:SetLayout("Fill")
+	topRow:AddChild(spacer1)
+
+	-------------------------------
+	--Bar Rename Box
+	local renameBox = AceGUI:Create("EditBox")
+	renameBox:SetWidth(200)
+	renameBox:SetLabel("Rename selected bar")
+	if Neuron.currentBar then
+		renameBox:SetText(Neuron.currentBar:GetBarName())
+	end
+	renameBox:SetCallback("OnEnterPressed", function(self) NeuronGUI:updateBarName(self) end)
+	topRow:AddChild(renameBox)
 
 	-------------------------------
 	--populate the dropdown menu with available bar types
@@ -59,69 +71,56 @@ function NeuronGUI:BarEditPanel(tabFrame)
 		barTypes[class] = info.barLabel
 	end
 
-	--bar type list dropdown menu
-	barTypeDropdown = AceGUI:Create("Dropdown")
-	barTypeDropdown:SetRelativeWidth(1)
-	barTypeDropdown:SetText("Select a Bar Type")
-	leftContainer:AddChild(barTypeDropdown)
+	local spacer2 = AceGUI:Create("SimpleGroup")
+	spacer2:SetWidth(15)
+	spacer2:SetHeight(40)
+	spacer2:SetLayout("Fill")
+	topRow:AddChild(spacer2)
 
+	local newBarButton
+	--bar type list dropdown menu
+	local barTypeDropdown = AceGUI:Create("Dropdown")
+	barTypeDropdown:SetWidth(180)
+	barTypeDropdown:SetText("Select a Bar Type")
 	barTypeDropdown:SetList(barTypes) --assign the bar type table to the dropdown menu
 	barTypeDropdown:SetCallback("OnValueChanged", function(self, callBackType, key) selectedBarType = key; newBarButton:SetDisabled(false) end)
+	topRow:AddChild(barTypeDropdown)
 
 	--Create New Bar button
 	newBarButton = AceGUI:Create("Button")
-	newBarButton:SetRelativeWidth(1)
+	newBarButton:SetWidth(140)
 	newBarButton:SetText("Create New Bar")
 	newBarButton:SetCallback("OnClick", function() if selectedBarType then Neuron.BAR:CreateNewBar(selectedBarType); NeuronGUI:RefreshEditor() end end)
 	newBarButton:SetDisabled(true) --we want to disable it until they chose a bar type in the dropdown
-	leftContainer:AddChild(newBarButton)
+	topRow:AddChild(newBarButton)
 
+	local spacer3 = AceGUI:Create("SimpleGroup")
+	spacer3:SetWidth(15)
+	spacer3:SetHeight(40)
+	spacer3:SetLayout("Fill")
+	topRow:AddChild(spacer3)
 
 	--Delete Current Bar button
-	deleteBarButton = AceGUI:Create("Button")
-	deleteBarButton:SetRelativeWidth(1)
+	local deleteBarButton = AceGUI:Create("Button")
+	deleteBarButton:SetWidth(140)
 	deleteBarButton:SetText("Delete Current Bar")
-	deleteBarButton:SetCallback("OnClick", function() if Neuron.currentBar then Neuron.currentBar:DeleteBar(); NeuronGUI:RefreshEditor() end end)
+	deleteBarButton:SetCallback("OnClick", function() if Neuron.currentBar then NeuronGUI:DeleteBarPopup() end end)
 	if not Neuron.currentBar then
 		deleteBarButton:SetDisabled(true)
 	end
-	leftContainer:AddChild(deleteBarButton)
+	topRow:AddChild(deleteBarButton)
 
-	----------------------------------
 
-	--Bar Rename Box
-	local renameBox = AceGUI:Create("EditBox")
-	renameBox:SetRelativeWidth(1)
-	renameBox:SetLabel("Rename selected bar")
-	if Neuron.currentBar then
-		renameBox:SetText(Neuron.currentBar:GetBarName())
-	end
-	renameBox:SetCallback("OnEnterPressed", function(self) NeuronGUI:updateBarName(self) end)
-	leftContainer:AddChild(renameBox)
-
-	--Container for the Bar List scroll frame
-	local barListContainer = AceGUI:Create("InlineGroup")
-	barListContainer:SetRelativeWidth(1)
-	barListContainer:SetLayout("Fill")
-	barListContainer:SetHeight(240)
-	barListContainer:SetTitle("Select an available bar")
-	leftContainer:AddChild(barListContainer)
-
-	--Scroll frame that will contain the Bar List
-	local barListFrame = AceGUI:Create("ScrollFrame")
-	barListFrame:SetLayout("List")
-	barListContainer:AddChild(barListFrame)
-	NeuronGUI:PopulateBarList(barListFrame) --fill the bar list frame with the actual list of the bars
-
-]]
-	----------------------------------
-	---------- Right Column ----------
-	----------------------------------
+	---------------------------------
+	------ Settings Tab Group -------
+	---------------------------------
 
 	if Neuron.currentBar then
 		--Tab group that will contain all of our settings to configure
 		local innerTabFrame = AceGUI:Create("TabGroup")
 		innerTabFrame:SetLayout("Fill")
+		innerTabFrame:SetFullHeight(true)
+		innerTabFrame:SetFullWidth(true)
 		innerTabFrame:SetTabs({{text="General Configuration", value="tab1"}, {text="Bar States", value="tab2"}, {text="Bar Visibility", value="tab3"}})
 		innerTabFrame:SetCallback("OnGroupSelected", function(self, _, tab) NeuronGUI:SelectInnerBarTab(self, _, tab) end)
 
@@ -137,32 +136,6 @@ function NeuronGUI:BarEditPanel(tabFrame)
 
 end
 
-
-
----Bar List Window
-function NeuronGUI:PopulateBarList(barListFrame)
-
-	for _, bar in pairs(Neuron.BARIndex) do
-		local barLabel = AceGUI:Create("InteractiveLabel")
-		barLabel:SetText(bar:GetBarName())
-		barLabel:SetFont("Fonts\\FRIZQT__.TTF", 12)
-		barLabel:SetHighlight("Interface\\QuestFrame\\UI-QuestTitleHighlight")
-		if Neuron.currentBar == bar then
-			barLabel:SetColor(1,.9,0)
-		end
-		barLabel.bar = bar
-		barLabel:SetCallback("OnEnter", function(self) self.bar:OnEnter() end)
-		barLabel:SetCallback("OnLeave", function(self) self.bar:OnLeave() end)
-		barLabel:SetCallback("OnClick", function(self)
-			Neuron.BAR.ChangeSelectedBar(self.bar)
-			NeuronGUI:RefreshEditor()
-			self:SetColor(1,.9,0)
-		end)
-		barListFrame:AddChild(barLabel)
-	end
-end
-
-
 ---Bar Rename
 function NeuronGUI:updateBarName(editBox)
 	local bar = Neuron.currentBar
@@ -174,6 +147,22 @@ function NeuronGUI:updateBarName(editBox)
 		editBox:ClearFocus()
 		NeuronGUI:RefreshEditor()
 	end
+end
+
+function NeuronGUI:DeleteBarPopup()
+
+	StaticPopupDialogs["Delete_Bar_Popup"] = {
+		text = "Do you really wish to delete "..Neuron.currentBar:GetBarName().."?",
+		button1 = ACCEPT,
+		button2 = CANCEL,
+		timeout = 0,
+		whileDead = true,
+		OnAccept = function() Neuron.currentBar:DeleteBar(); NeuronGUI:RefreshEditor() end,
+		OnCancel = function() NeuronGUI:RefreshEditor() end,
+	}
+
+	StaticPopup_Show("Delete_Bar_Popup")
+
 end
 
 

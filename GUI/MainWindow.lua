@@ -42,9 +42,9 @@ function NeuronGUI:RefreshEditor(tab)
 	NeuronGUI:PopulateEditorWindow()
 
 	if Neuron.currentBar then
-		NeuronEditor:SetStatusText("The currently selected bar is: " .. Neuron.currentBar:GetBarName())
+		NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
 	else
-		NeuronEditor:SetStatusText("Please select a bar from the right to begin")
+		NeuronEditor:SetStatusText("|cFFFFFFFFWelcome to the Neuron editor, please select a bar to begin")
 	end
 end
 
@@ -52,12 +52,14 @@ end
 function NeuronGUI:CreateEditor(tab)
 	NeuronEditor = AceGUI:Create("Frame")
 	NeuronEditor:SetTitle("Neuron Editor")
-	NeuronEditor:SetWidth("750")
-	NeuronEditor:SetHeight("700")
+	NeuronEditor:EnableResize(true)
+	NeuronEditor.frame:SetMinResize(800,600)
+	NeuronEditor:SetWidth("800")
+	NeuronEditor:SetHeight("750")
 	if Neuron.currentBar then
-		NeuronEditor:SetStatusText("The Currently Selected Bar is: " .. Neuron.currentBar.data.name)
+		NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
 	else
-		NeuronEditor:SetStatusText("Welcome to the Neuron editor, please select a bar to begin")
+		NeuronEditor:SetStatusText("|cFFFFFFFFWelcome to the Neuron editor, please select a bar to begin")
 	end
 	NeuronEditor:SetCallback("OnClose", function() NeuronGUI:DestroyEditor() end)
 	NeuronEditor:SetLayout("Fill")
@@ -80,13 +82,14 @@ end
 function NeuronGUI:PopulateEditorWindow()
 	--Tab group that will contain all of our settings to configure
 	local tabFrame = AceGUI:Create("TabGroup")
-	tabFrame:SetLayout("Fill")
+	tabFrame:SetLayout("Flow")
 	tabFrame:SetTabs({{text="Bar Settings", value="tab1"}, {text="Button Settings", value="tab2"}})
 	tabFrame:SetCallback("OnGroupSelected", function(self, event, tab) NeuronGUI:SelectTab(self, event, tab) end)
 
 	NeuronEditor:AddChild(tabFrame)
 
 	tabFrame:SelectTab(currentTab)
+
 end
 
 

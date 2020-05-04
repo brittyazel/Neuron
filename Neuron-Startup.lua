@@ -104,9 +104,6 @@ function Neuron:RegisterGUI()
 				AUTOHIDE = true,
 				SNAPTO = true,
 				HIDDEN = true,
-			},
-
-			{
 			})
 
 	--Neuron Menu Bar
@@ -115,9 +112,6 @@ function Neuron:RegisterGUI()
 				AUTOHIDE = true,
 				SNAPTO = true,
 				HIDDEN = true,
-			},
-
-			{
 			})
 
 	--Neuron Pet Bar
@@ -134,10 +128,6 @@ function Neuron:RegisterGUI()
 				RANGEIND = true,
 				CDTEXT = true,
 				CDALPHA = true,
-			},
-
-			{
-				TOOLTIPS = true,
 			})
 
 	--Neuron XP Bar
@@ -238,9 +228,6 @@ function Neuron:RegisterGUI()
 					DOWNCLICKS = true,
 					HIDDEN = true,
 					LOCKBAR = false,
-				},
-
-				{
 				})
 
 	end
