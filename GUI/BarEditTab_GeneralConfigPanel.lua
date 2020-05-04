@@ -32,12 +32,17 @@ local INNER_WIDGET_RATIO = 0.95
 
 function NeuronGUI:GeneralConfigPanel(tabFrame)
 
+	local scrollFrame = AceGUI:Create("ScrollFrame")
+	scrollFrame:SetLayout("Flow")
+	tabFrame:AddChild(scrollFrame)
+
+
 	--Heading spacer
 	local heading1 = AceGUI:Create("Heading")
 	heading1:SetHeight(WIDGET_GRID_HEIGHT)
 	heading1:SetFullWidth(true)
 	heading1:SetText(L["General Options"])
-	tabFrame:AddChild(heading1)
+	scrollFrame:AddChild(heading1)
 
 	---------------------------------------------------------
 	----------------------Bar Options------------------------
@@ -53,7 +58,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		autoHideCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetAutoHide(self:GetValue())
 		end)
-		tabFrame:AddChild(autoHideCheckbox)
+		scrollFrame:AddChild(autoHideCheckbox)
 	end
 
 	--ShowGrid
@@ -66,7 +71,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		showGridCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetShowGrid(self:GetValue())
 		end)
-		tabFrame:AddChild(showGridCheckbox)
+		scrollFrame:AddChild(showGridCheckbox)
 	end
 
 	--SnapTo
@@ -79,7 +84,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		snapToCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetSnapTo(self:GetValue())
 		end)
-		tabFrame:AddChild(snapToCheckbox)
+		scrollFrame:AddChild(snapToCheckbox)
 	end
 
 	--UpClicks
@@ -92,7 +97,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		upClicksCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetUpClicks(self:GetValue())
 		end)
-		tabFrame:AddChild(upClicksCheckbox)
+		scrollFrame:AddChild(upClicksCheckbox)
 	end
 
 	--DownClicks
@@ -105,7 +110,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		downClicksCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetDownClicks(self:GetValue())
 		end)
-		tabFrame:AddChild(downClicksCheckbox)
+		scrollFrame:AddChild(downClicksCheckbox)
 	end
 
 	--MultiSpec
@@ -118,7 +123,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		multiSpecCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetMultiSpec(self:GetValue())
 		end)
-		tabFrame:AddChild(multiSpecCheckbox)
+		scrollFrame:AddChild(multiSpecCheckbox)
 	end
 
 	--Hidden
@@ -131,7 +136,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		barConcealCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetBarConceal(self:GetValue())
 		end)
-		tabFrame:AddChild(barConcealCheckbox)
+		scrollFrame:AddChild(barConcealCheckbox)
 	end
 
 	--BarLock
@@ -140,7 +145,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
 		spellAlertDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		spellAlertDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
-		tabFrame:AddChild(spellAlertDropdownContainer)
+		scrollFrame:AddChild(spellAlertDropdownContainer)
 
 		local currentLock = Neuron.currentBar:GetBarLock()
 		if not currentLock then
@@ -169,7 +174,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading2:SetHeight(WIDGET_GRID_HEIGHT)
 	heading2:SetFullWidth(true)
 	heading2:SetText(L["Size and Shape"])
-	tabFrame:AddChild(heading2)
+	scrollFrame:AddChild(heading2)
 
 
 	--------------------------------
@@ -183,7 +188,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	addOrRemoveButtonContainer:SetLayout("Flow")
 	addOrRemoveButtonContainer:SetTitle(L["Buttons"])
 
-	tabFrame:AddChild(addOrRemoveButtonContainer)
+	scrollFrame:AddChild(addOrRemoveButtonContainer)
 
 	local subtractObjectButton = AceGUI:Create("Button")
 	subtractObjectButton:SetText("|TInterface\\Buttons\\Arrow-Down-Up:15:15:2:-5|t") --this is an escape sequence that gives us a down arrow centered on the button
@@ -231,7 +236,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local currentNumColumnsContainer = AceGUI:Create("SimpleGroup")
 	currentNumColumnsContainer:SetWidth(WIDGET_GRID_WIDTH)
 	currentNumColumnsContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(currentNumColumnsContainer)
+	scrollFrame:AddChild(currentNumColumnsContainer)
 
 	local columnSlider = AceGUI:Create("Slider")
 	columnSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
@@ -249,7 +254,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local setScaleContainer = AceGUI:Create("SimpleGroup")
 	setScaleContainer:SetWidth(WIDGET_GRID_WIDTH)
 	setScaleContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(setScaleContainer)
+	scrollFrame:AddChild(setScaleContainer)
 
 	local scaleSlider = AceGUI:Create("Slider")
 	scaleSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
@@ -267,7 +272,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local barShapeDropdownContainer = AceGUI:Create("SimpleGroup")
 	barShapeDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 	barShapeDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(barShapeDropdownContainer)
+	scrollFrame:AddChild(barShapeDropdownContainer)
 
 	local barShapeDropdown = AceGUI:Create("Dropdown")
 	barShapeDropdown:SetLabel(L["Shape"])
@@ -285,7 +290,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local horizPadContainer = AceGUI:Create("SimpleGroup")
 	horizPadContainer:SetWidth(WIDGET_GRID_WIDTH)
 	horizPadContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(horizPadContainer)
+	scrollFrame:AddChild(horizPadContainer)
 
 	local horizPadSlider = AceGUI:Create("Slider")
 	horizPadSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
@@ -302,7 +307,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local vertPadContainer = AceGUI:Create("SimpleGroup")
 	vertPadContainer:SetWidth(WIDGET_GRID_WIDTH)
 	vertPadContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(vertPadContainer)
+	scrollFrame:AddChild(vertPadContainer)
 
 	local vertPadSlider = AceGUI:Create("Slider")
 	vertPadSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
@@ -319,7 +324,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local alphaContainer = AceGUI:Create("SimpleGroup")
 	alphaContainer:SetWidth(WIDGET_GRID_WIDTH)
 	alphaContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(alphaContainer)
+	scrollFrame:AddChild(alphaContainer)
 
 	local alphaSlider = AceGUI:Create("Slider")
 	alphaSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
@@ -337,7 +342,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local AlphaUpDropdownContainer = AceGUI:Create("SimpleGroup")
 	AlphaUpDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 	AlphaUpDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(AlphaUpDropdownContainer)
+	scrollFrame:AddChild(AlphaUpDropdownContainer)
 
 	local alphaUpDropdown = AceGUI:Create("Dropdown")
 	alphaUpDropdown:SetLabel(L["AlphaUp"])
@@ -355,7 +360,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local alphaSpeedContainer = AceGUI:Create("SimpleGroup")
 	alphaSpeedContainer:SetWidth(WIDGET_GRID_WIDTH)
 	alphaSpeedContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(alphaSpeedContainer)
+	scrollFrame:AddChild(alphaSpeedContainer)
 
 	local alphaSpeedSlider = AceGUI:Create("Slider")
 	alphaSpeedSlider:SetRelativeWidth(INNER_WIDGET_RATIO)
@@ -373,7 +378,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	local strataDropdownContainer = AceGUI:Create("SimpleGroup")
 	strataDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 	strataDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
-	tabFrame:AddChild(strataDropdownContainer)
+	scrollFrame:AddChild(strataDropdownContainer)
 
 	local strataDropdown = AceGUI:Create("Dropdown")
 	strataDropdown:SetLabel(L["Strata"])
@@ -396,7 +401,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading3:SetHeight(WIDGET_GRID_HEIGHT)
 	heading3:SetFullWidth(true)
 	heading3:SetText(L["Visuals"])
-	tabFrame:AddChild(heading3)
+	scrollFrame:AddChild(heading3)
 
 
 
@@ -406,7 +411,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		bindTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		bindTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		bindTextContainer:SetLayout("Flow")
-		tabFrame:AddChild(bindTextContainer)
+		scrollFrame:AddChild(bindTextContainer)
 
 		local bindTextCheckbox = AceGUI:Create("CheckBox")
 		bindTextCheckbox:SetLabel(L["Keybind Label"])
@@ -434,7 +439,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		macroTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		macroTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		macroTextContainer:SetLayout("Flow")
-		tabFrame:AddChild(macroTextContainer)
+		scrollFrame:AddChild(macroTextContainer)
 
 		local macroTextCheckbox = AceGUI:Create("CheckBox")
 		macroTextCheckbox:SetLabel(L["Macro Name"])
@@ -461,7 +466,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		countTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		countTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		countTextContainer:SetLayout("Flow")
-		tabFrame:AddChild(countTextContainer)
+		scrollFrame:AddChild(countTextContainer)
 
 		local countTextCheckbox = AceGUI:Create("CheckBox")
 		countTextCheckbox:SetLabel(L["Stack/Charge"])
@@ -488,7 +493,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		rangeIndContainer:SetWidth(WIDGET_GRID_WIDTH)
 		rangeIndContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		rangeIndContainer:SetLayout("Flow")
-		tabFrame:AddChild(rangeIndContainer)
+		scrollFrame:AddChild(rangeIndContainer)
 
 		local rangeIndCheckbox = AceGUI:Create("CheckBox")
 		rangeIndCheckbox:SetLabel(L["Out-of-Range"])
@@ -515,7 +520,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		cooldownCounterContainer:SetWidth(WIDGET_GRID_WIDTH)
 		cooldownCounterContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		cooldownCounterContainer:SetLayout("Flow")
-		tabFrame:AddChild(cooldownCounterContainer)
+		scrollFrame:AddChild(cooldownCounterContainer)
 
 		local cooldownCounterCheckbox = AceGUI:Create("CheckBox")
 		cooldownCounterCheckbox:SetLabel(L["CD Counter"])
@@ -549,7 +554,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		cooldownAlphaContainer:SetWidth(WIDGET_GRID_WIDTH)
 		cooldownAlphaContainer:SetHeight(WIDGET_GRID_HEIGHT)
 		cooldownAlphaContainer:SetLayout("Flow")
-		tabFrame:AddChild(cooldownAlphaContainer)
+		scrollFrame:AddChild(cooldownAlphaContainer)
 
 		local cooldownAlphaCheckbox = AceGUI:Create("CheckBox")
 		cooldownAlphaCheckbox:SetLabel(L["Cooldown Alpha"])
@@ -567,7 +572,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
 		spellAlertDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		spellAlertDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
-		tabFrame:AddChild(spellAlertDropdownContainer)
+		scrollFrame:AddChild(spellAlertDropdownContainer)
 
 		local currentGlow = Neuron.currentBar:GetSpellGlow()
 		if not currentGlow then
@@ -592,7 +597,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		local tooltipDropdownContainer = AceGUI:Create("SimpleGroup")
 		tooltipDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		tooltipDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
-		tabFrame:AddChild(tooltipDropdownContainer)
+		scrollFrame:AddChild(tooltipDropdownContainer)
 
 		local currentTooltipOption = Neuron.currentBar:GetTooltipOption()
 		if not currentTooltipOption then
@@ -622,7 +627,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		combatTooltipsCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetTooltipCombat(self:GetValue())
 		end)
-		tabFrame:AddChild(combatTooltipsCheckbox)
+		scrollFrame:AddChild(combatTooltipsCheckbox)
 	end
 
 	--Border Style
@@ -635,7 +640,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		borderStyleCheckbox:SetCallback("OnValueChanged", function(self)
 			Neuron.currentBar:SetShowBorderStyle(self:GetValue())
 		end)
-		tabFrame:AddChild(borderStyleCheckbox)
+		scrollFrame:AddChild(borderStyleCheckbox)
 	end
 
 end
