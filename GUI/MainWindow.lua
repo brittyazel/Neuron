@@ -31,11 +31,11 @@ local currentTab = "tab1" --remember which tab we were using between refreshes
 --------------------------Main Window----------------------------------------
 -----------------------------------------------------------------------------
 
-function NeuronGUI:RefreshEditor(tab)
+function NeuronGUI:RefreshEditor(defaultTab)
 	NeuronEditor:ReleaseChildren()
 
-	if tab then
-		currentTab = tab
+	if defaultTab then
+		currentTab = defaultTab
 	end
 
 	--re-add all the stuff to the editor window
@@ -49,13 +49,13 @@ function NeuronGUI:RefreshEditor(tab)
 end
 
 
-function NeuronGUI:CreateEditor(tab)
+function NeuronGUI:CreateEditor(defaultTab)
 	NeuronEditor = AceGUI:Create("Frame")
 	NeuronEditor:SetTitle("Neuron Editor")
 	NeuronEditor:EnableResize(true)
 	NeuronEditor.frame:SetMinResize(800,600)
 	NeuronEditor:SetWidth("800")
-	NeuronEditor:SetHeight("750")
+	NeuronEditor:SetHeight("800")
 	if Neuron.currentBar then
 		NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
 	else
@@ -64,8 +64,8 @@ function NeuronGUI:CreateEditor(tab)
 	NeuronEditor:SetCallback("OnClose", function() NeuronGUI:DestroyEditor() end)
 	NeuronEditor:SetLayout("Fill")
 
-	if tab then
-		currentTab = tab
+	if defaultTab then
+		currentTab = defaultTab
 	end
 	--add all the stuff to the editor window
 	NeuronGUI:PopulateEditorWindow()
@@ -84,21 +84,18 @@ function NeuronGUI:PopulateEditorWindow()
 	local tabFrame = AceGUI:Create("TabGroup")
 	tabFrame:SetLayout("Flow")
 	tabFrame:SetTabs({{text="Bar Settings", value="tab1"}, {text="Button Settings", value="tab2"}})
-	tabFrame:SetCallback("OnGroupSelected", function(self, event, tab) NeuronGUI:SelectTab(self, event, tab) end)
-
+	tabFrame:SetCallback("OnGroupSelected", function(self, _, value) NeuronGUI:SelectTab(self, _, value) end)
 	NeuronEditor:AddChild(tabFrame)
-
 	tabFrame:SelectTab(currentTab)
-
 end
 
 
-function NeuronGUI:SelectTab(tabFrame, _, tab)
+function NeuronGUI:SelectTab(tabFrame, _, value)
 	tabFrame:ReleaseChildren()
-	if tab == "tab1" then
+	if value == "tab1" then
 		NeuronGUI:BarEditPanel(tabFrame)
 		currentTab = "tab1"
-	elseif tab == "tab2" then
+	elseif value == "tab2" then
 		NeuronGUI:ButtonEditPanel(tabFrame)
 		currentTab = "tab2"
 	end

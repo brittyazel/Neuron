@@ -36,6 +36,23 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	scrollFrame:SetLayout("Flow")
 	tabFrame:AddChild(scrollFrame)
 
+	------------------------------------------------
+	------------------------------------------------
+
+	--Bar Rename Box
+	local renameBox = AceGUI:Create("EditBox")
+	renameBox:SetWidth(WIDGET_GRID_WIDTH*1.5)
+	renameBox:SetHeight(WIDGET_GRID_HEIGHT)
+	renameBox:SetLabel("Rename selected bar:")
+	if Neuron.currentBar then
+		renameBox:SetText(Neuron.currentBar:GetBarName())
+	end
+	renameBox:SetCallback("OnEnterPressed", function(self) NeuronGUI:updateBarName(self) end)
+	scrollFrame:AddChild(renameBox)
+
+	---------------------------------------------------------
+	----------------------Bar Options------------------------
+	---------------------------------------------------------
 
 	--Heading spacer
 	local heading1 = AceGUI:Create("Heading")
@@ -43,10 +60,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading1:SetFullWidth(true)
 	heading1:SetText(L["General Options"])
 	scrollFrame:AddChild(heading1)
-
-	---------------------------------------------------------
-	----------------------Bar Options------------------------
-	---------------------------------------------------------
 
 	--AutoHide
 	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.AUTOHIDE then
@@ -164,7 +177,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		spellAlertDropdownContainer:AddChild(spellAlertDropdown)
 	end
 
-
 	---------------------------------------------------------
 	----------------------Layout Configuration---------------
 	---------------------------------------------------------
@@ -176,9 +188,9 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading2:SetText(L["Size and Shape"])
 	scrollFrame:AddChild(heading2)
 
+	--------------------------------
+	--------------------------------
 
-	--------------------------------
-	--------------------------------
 	--Add or Remove Button Widget
 	local currentNumObjectsLabel
 
@@ -223,6 +235,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		NeuronGUI:RefreshEditor()
 	end)
 	addOrRemoveButtonContainer:AddChild(addObjectButton)
+
 	--------------------------------
 	--------------------------------
 
@@ -248,8 +261,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end)
 	currentNumColumnsContainer:AddChild(columnSlider)
 
-
-
 	--Set Scale Widget
 	local setScaleContainer = AceGUI:Create("SimpleGroup")
 	setScaleContainer:SetWidth(WIDGET_GRID_WIDTH)
@@ -266,7 +277,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		Neuron.currentBar:SetBarScale(self:GetValue())
 	end)
 	setScaleContainer:AddChild(scaleSlider)
-
 
 	--BarShape
 	local barShapeDropdownContainer = AceGUI:Create("SimpleGroup")
@@ -285,7 +295,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end)
 	barShapeDropdownContainer:AddChild(barShapeDropdown)
 
-
 	--Set Horizontal Padding Widget
 	local horizPadContainer = AceGUI:Create("SimpleGroup")
 	horizPadContainer:SetWidth(WIDGET_GRID_WIDTH)
@@ -302,7 +311,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end)
 	horizPadContainer:AddChild(horizPadSlider)
 
-
 	--Set Vertical Padding Widget
 	local vertPadContainer = AceGUI:Create("SimpleGroup")
 	vertPadContainer:SetWidth(WIDGET_GRID_WIDTH)
@@ -318,7 +326,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		Neuron.currentBar:SetVerticalPad(self:GetValue())
 	end)
 	vertPadContainer:AddChild(vertPadSlider)
-
 
 	--Set Alpha Widget
 	local alphaContainer = AceGUI:Create("SimpleGroup")
@@ -337,7 +344,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end)
 	alphaContainer:AddChild(alphaSlider)
 
-
 	--Alpha Ups Widget
 	local AlphaUpDropdownContainer = AceGUI:Create("SimpleGroup")
 	AlphaUpDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
@@ -354,7 +360,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		Neuron.currentBar:SetAlphaUp(key)
 	end)
 	AlphaUpDropdownContainer:AddChild(alphaUpDropdown)
-
 
 	--Set Alpha Up Speed
 	local alphaSpeedContainer = AceGUI:Create("SimpleGroup")
@@ -373,7 +378,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end)
 	alphaSpeedContainer:AddChild(alphaSpeedSlider)
 
-
 	--Stratas Widget
 	local strataDropdownContainer = AceGUI:Create("SimpleGroup")
 	strataDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
@@ -391,21 +395,17 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	end)
 	strataDropdownContainer:AddChild(strataDropdown)
 
-
 	---------------------------------------------------------
 	----------------------Style Options----------------------
 	---------------------------------------------------------
 
 	if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions then
-
 		--Heading spacer
 		local heading3 = AceGUI:Create("Heading")
 		heading3:SetHeight(WIDGET_GRID_HEIGHT)
 		heading3:SetFullWidth(true)
 		heading3:SetText(L["Visuals"])
 		scrollFrame:AddChild(heading3)
-
-
 
 		--Bind Text
 		if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.BINDTEXT then
@@ -433,8 +433,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 			bindTextContainer:AddChild(bindTextColorPicker)
 		end
 
-
-
 		--Macro Text
 		if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.MACROTEXT then
 			local macroTextContainer = AceGUI:Create("SimpleGroup")
@@ -460,7 +458,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 			end)
 			macroTextContainer:AddChild(macroTextColorPicker)
 		end
-
 
 		--Count Text
 		if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.COUNTTEXT then
@@ -488,7 +485,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 			countTextContainer:AddChild(countTextColorPicker)
 		end
 
-
 		--Range Indicator
 		if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.RANGEIND then
 			local rangeIndContainer = AceGUI:Create("SimpleGroup")
@@ -514,7 +510,6 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 			end)
 			rangeIndContainer:AddChild(rangIndColorPicker)
 		end
-
 
 		--Cooldown Text
 		if Neuron.registeredGUIData[Neuron.currentBar.class].styleOptions.CDTEXT then
@@ -585,7 +580,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 			spellAlertDropdown:SetLabel(L["Spell Alerts"])
 			spellAlertDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
 			spellAlertDropdown:SetList({["none"] = L["None"], ["alternate"] = L["Subdued Alert"], ["default"] = L["Default Alert"]},
-					{[1] = "none", [3] = "alternate", [2] = "default"})
+					{[1] = "none", [2] = "alternate", [3] = "default"})
 			spellAlertDropdown:SetValue(currentGlow)
 			spellAlertDropdown:SetCallback("OnValueChanged", function(_, _, key)
 				Neuron.currentBar:SetSpellGlow(key)
@@ -645,5 +640,53 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 			scrollFrame:AddChild(borderStyleCheckbox)
 		end
 
+	end
+
+	--------------------------------------------------
+	--------------------------------------------------
+
+	--Heading spacer
+	local heading3 = AceGUI:Create("Heading")
+	heading3:SetHeight(WIDGET_GRID_HEIGHT)
+	heading3:SetFullWidth(true)
+	heading3:SetText("Dangerous")
+	scrollFrame:AddChild(heading3)
+
+	--Delete Current Bar button
+	local deleteBarButton = AceGUI:Create("Button")
+	deleteBarButton:SetWidth(WIDGET_GRID_WIDTH*1.5)
+	deleteBarButton:SetHeight(WIDGET_GRID_HEIGHT/1.5)
+	deleteBarButton:SetText("Delete Current Bar")
+	deleteBarButton:SetCallback("OnClick", function() if Neuron.currentBar then NeuronGUI:DeleteBarPopup() end end)
+	if not Neuron.currentBar then
+		deleteBarButton:SetDisabled(true)
+	end
+	scrollFrame:AddChild(deleteBarButton)
+end
+
+--Delete bar popup menu
+function NeuronGUI:DeleteBarPopup()
+	StaticPopupDialogs["Delete_Bar_Popup"] = {
+		text = "Do you really wish to delete "..Neuron.currentBar:GetBarName().."?",
+		button1 = ACCEPT,
+		button2 = CANCEL,
+		timeout = 0,
+		whileDead = true,
+		OnAccept = function() Neuron.currentBar:DeleteBar(); NeuronGUI:RefreshEditor() end,
+		OnCancel = function() NeuronGUI:RefreshEditor() end,
+	}
+	StaticPopup_Show("Delete_Bar_Popup")
+end
+
+--Bar Rename
+function NeuronGUI:updateBarName(editBox)
+	local bar = Neuron.currentBar
+
+	if bar then
+		bar:SetBarName(editBox:GetText())
+		bar.text:SetText(bar:GetBarName())
+
+		editBox:ClearFocus()
+		NeuronGUI:RefreshEditor()
 	end
 end

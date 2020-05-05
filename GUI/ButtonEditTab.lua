@@ -19,27 +19,20 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2019.
 
-
-local addonName = ...
-
-local DB
-
 local NeuronGUI = Neuron.NeuronGUI
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
 
 local iconSelector
-
 local iconList = {}
+
 
 -----------------------------------------------------------------------------
 --------------------------Button Editor--------------------------------------
 -----------------------------------------------------------------------------
 
-
 function NeuronGUI:ButtonEditPanel(tabContainer)
-
 	Neuron:ToggleButtonEditMode(true)
 
 	if Neuron.currentButton then
@@ -57,7 +50,6 @@ function NeuronGUI:ButtonEditPanel(tabContainer)
 	end
 end
 
-
 -----------------------------------------------------------------------------
 --------------------------Icon Selector--------------------------------------
 -----------------------------------------------------------------------------
@@ -69,9 +61,6 @@ function NeuronGUI:IconFrame_OnClick()
 		iconSelector:Show()
 	end
 end
-
-
-
 
 function NeuronGUI:CreateIconSelector()
 	iconSelector = AceGUI:Create("Frame")
@@ -131,5 +120,4 @@ function NeuronGUI:RefreshPlayerSpellIconInfo()
 			table.insert(iconList, v.icon)
 		end
 	end
-
 end
