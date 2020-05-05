@@ -33,8 +33,6 @@ local alphaDir, alphaTimer = 0, 0
 
 local statetable = {}
 
-local handlerMT = setmetatable({}, { __index = CreateFrame("Frame") })
-
 local TRASHCAN = CreateFrame("Frame", nil, UIParent)
 TRASHCAN:Hide()
 
@@ -363,30 +361,25 @@ end
 ---this function is set via a repeating scheduled timer in SetAutoHide()
 function BAR:AutoHideUpdate()
 	if self:GetAutoHide() and self.handler~=nil then
-
 		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
-
 			if self:IsShown() then
-				self.handler:SetAlpha(1)
+				self.driver:SetAlpha(1)
 			else
-
 				if BAR.IsMouseOverSelfOrWatchFrame(self) then
-					if self.handler:GetAlpha() < self:GetBarAlpha() then
-						if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
+					if self.driver:GetAlpha() < self:GetBarAlpha() then
+						if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+							self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
 						else
-							self.handler:SetAlpha(1)
+							self.driver:SetAlpha(1)
 						end
 					end
-
 				end
-
 				if not BAR.IsMouseOverSelfOrWatchFrame(self) then
-					if self.handler:GetAlpha() > 0 then
-						if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= 0 then
-							self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
+					if self.driver:GetAlpha() > 0 then
+						if self.driver:GetAlpha()-self:GetAlphaUpSpeed() >= 0 then
+							self.driver:SetAlpha(self.driver:GetAlpha()-self:GetAlphaUpSpeed())
 						else
-							self.handler:SetAlpha(0)
+							self.driver:SetAlpha(0)
 						end
 					end
 				end
@@ -398,64 +391,63 @@ end
 function BAR:AlphaUpUpdate()
 	if self:GetAlphaUp() == "combat" then
 		if InCombatLockdown() then
-			if self.handler:GetAlpha() < 1 then
-				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
+			if self.driver:GetAlpha() < 1 then
+				if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
 				else
-					self.handler:SetAlpha(1)
+					self.driver:SetAlpha(1)
 				end
 			end
 		else
-			if self.handler:GetAlpha() > self:GetBarAlpha() then
-				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
+			if self.driver:GetAlpha() > self:GetBarAlpha() then
+				if self.driver:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.driver:SetAlpha(self.driver:GetAlpha()-self:GetAlphaUpSpeed())
 				else
-					self.handler:SetAlpha(self:GetBarAlpha())
+					self.driver:SetAlpha(self:GetBarAlpha())
 				end
 			end
 		end
 	elseif self:GetAlphaUp() == "combat + mouseover" then
 		if InCombatLockdown() and BAR.IsMouseOverSelfOrWatchFrame(self)  then
-			if self.handler:GetAlpha() < 1 then
-				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
+			if self.driver:GetAlpha() < 1 then
+				if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
 				else
-					self.handler:SetAlpha(1)
+					self.driver:SetAlpha(1)
 				end
 			end
 		else
-			if self.handler:GetAlpha() > self:GetBarAlpha() then
-				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
+			if self.driver:GetAlpha() > self:GetBarAlpha() then
+				if self.driver:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.driver:SetAlpha(self.driver:GetAlpha()-self:GetAlphaUpSpeed())
 				else
-					self.handler:SetAlpha(self:GetBarAlpha())
+					self.driver:SetAlpha(self:GetBarAlpha())
 				end
 			end
 		end
 	elseif self:GetAlphaUp() == "mouseover" then
 		if BAR.IsMouseOverSelfOrWatchFrame(self) then
-			if self.handler:GetAlpha() < 1 then
-				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
+
+			if self.driver:GetAlpha() < 1 then
+				if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
 				else
-					self.handler:SetAlpha(1)
+					self.driver:SetAlpha(1)
 				end
 			end
 		else
-			if self.handler:GetAlpha() > self:GetBarAlpha() then
-				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
+			if self.driver:GetAlpha() > self:GetBarAlpha() then
+				if self.driver:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.driver:SetAlpha(self.driver:GetAlpha()-self:GetAlphaUpSpeed())
 				else
-					self.handler:SetAlpha(self:GetBarAlpha())
+					self.driver:SetAlpha(self:GetBarAlpha())
 				end
 			end
 		end
 	end
 end
 
-
 function BAR:SetHidden(handler, show)
-
 	for k,v in pairs(self.vis) do
 		if v.registered then
 			return
@@ -527,44 +519,31 @@ end
 
 
 function BAR:UpdateVisibility(driver)
-
 	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
-
 		if self.data.hidestates:find(":"..state) then
-
 			if not self.vis[state] or not self.vis[state].registered then
-
 				if not self.vis[state] then
 					self.vis[state] = {}
 				end
-
 				if state == "stance" and self.data.hidestates:find(":stance8") then
 					self:AddVisibilityDriver(driver,state, "[stance:2/3,stealth] stance8; "..values.states)
 				else
 					self:AddVisibilityDriver(driver, state, values.states)
 				end
 			end
-
 		elseif self.vis[state] and self.vis[state].registered then
-
 			self:ClearVisibilityDriver(driver, state)
-
 		end
 	end
 end
 
 function BAR:BuildStateMap(remapState)
-
 	local statemap, state, map, remap, homestate = "", remapState:gsub("paged", "bar")
-
 	for states in gmatch(self.data.remap, "[^;]+") do
-
 		map, remap = (":"):split(states)
-
 		if remapState == "stance" and Neuron.class == "ROGUE" and map == "1" then
 			--map = "2"
 		end
-
 		if not homestate then
 			statemap = statemap.."["..state..":"..map.."] homestate; "; homestate = true
 		else
@@ -579,45 +558,32 @@ function BAR:BuildStateMap(remapState)
 			end
 		end
 	end
-
 	statemap = gsub(statemap, "; $", "")
-
 	return statemap
 end
 
 
 function BAR:AddStates(handler, state, conditions)
-
 	if state then
-
 		if Neuron.MANAGED_BAR_STATES[state] then
 			RegisterStateDriver(handler, state, conditions);
 		end
-
 		if Neuron.MANAGED_BAR_STATES[state].homestate then
 			handler:SetAttribute("handler-homestate", Neuron.MANAGED_BAR_STATES[state].homestate)
 		end
-
 		self[state].registered = true
 	end
-
 end
 
 function BAR:ClearStates(handler, state)
-
 	if state ~= "homestate" then
-
 		if Neuron.MANAGED_BAR_STATES[state].homestate then
 			handler:SetAttribute("handler-homestate", nil)
 		end
-
 		handler:SetAttribute("state-"..state, nil)
-
 		UnregisterStateDriver(handler, state)
-
 		self[state].registered = false
 	end
-
 	handler:SetAttribute("state-current", "homestate")
 	handler:SetAttribute("state-last", "homestate")
 end
@@ -625,11 +591,8 @@ end
 
 function BAR:UpdateStates(handler)
 	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
-
 		if self.data[state] then
-
 			if not self[state] or not self[state].registered then
-
 				local statemap
 
 				if not self[state] then
@@ -640,32 +603,22 @@ function BAR:UpdateStates(handler)
 					statemap = self:BuildStateMap(state)
 				end
 
-
 				if state == "custom" and self.data.custom then
-
 					self:AddStates(handler, state, self.data.custom)
-
 				elseif statemap then
-
 					self:AddStates(handler, state, statemap)
-
 				else
 					self:AddStates(handler, state, values.states)
-
 				end
 			end
-
 		elseif self[state] and self[state].registered then
-
 			self:ClearStates(handler, state)
-
 		end
 	end
 end
 
 
 function BAR:CreateDriver()
-
 	--This is the macro base that will be used to set state
 	local DRIVER_BASE_ACTION = [[
 	local state = self:GetAttribute("state-<MODIFIER>"):match("%a+")
@@ -685,8 +638,6 @@ function BAR:CreateDriver()
 
 	local driver = CreateFrame("Frame", "NeuronBarDriver"..self.DB.id, UIParent, "SecureHandlerStateTemplate")
 
-	setmetatable(driver, { __index = handlerMT })
-
 	driver:SetID(self.DB.id)
 	--Dynamicly builds driver attributes based on stated in Neuron.MANAGED_BAR_STATES using localized attribute text from a above
 	for _, stateInfo in pairs(Neuron.MANAGED_BAR_STATES) do
@@ -695,18 +646,14 @@ function BAR:CreateDriver()
 	end
 
 	driver:SetAttribute("activestates", "")
-
 	driver:HookScript("OnAttributeChanged", function() end)
-
 	driver:SetAllPoints(self)
-
 	self.driver = driver
 	driver.bar = self
 end
 
 
 function BAR:CreateHandler()
-
 	local HANDLER_BASE_ACTION = [[
 	if self:GetAttribute("state-<MODIFIER>") == "laststate" then
 
@@ -761,8 +708,6 @@ function BAR:CreateHandler()
 	]]
 
 	local handler = CreateFrame("Frame", "NeuronBarHandler"..self.DB.id, self.driver, "SecureHandlerStateTemplate")
-
-	setmetatable(handler, { __index = handlerMT })
 
 	handler:SetID(self.DB.id)
 
@@ -952,17 +897,13 @@ function BAR:CreateHandler()
 			]] )
 
 	handler:SetAllPoints(self)
-
 	self.handler = handler;
 	handler.bar = self
-
 end
 
 
 function BAR:CreateWatcher()
 	local watcher = CreateFrame("Frame", "NeuronBarWatcher"..self.DB.id, self.handler, "SecureHandlerStateTemplate")
-
-	setmetatable(watcher, { __index = handlerMT })
 
 	watcher:SetID(self.DB.id)
 
@@ -1009,12 +950,10 @@ function BAR:UpdateBarStatus(show)
 
 	self:SetHidden(self.handler, show)
 	self.text:SetText(self:GetBarName())
-	self.handler:SetAlpha(self:GetBarAlpha())
+	self.driver:SetAlpha(self:GetBarAlpha())
 end
 
 -------------------------------------------------------
-
-
 
 
 function BAR:GetPosition(oFrame)
@@ -1083,7 +1022,6 @@ function BAR:SetPosition()
 	end
 end
 
-
 --Fakes a state change for a given bar, calls up the counterpart function in NeuronButton
 function BAR:FakeStateChange(state)
 	self.handler:SetAttribute("fauxstate", state)
@@ -1093,7 +1031,6 @@ function BAR:FakeStateChange(state)
 	end
 
 end
-
 
 --loads all the object stored for a given bar
 function BAR:LoadObjects()
@@ -1146,7 +1083,7 @@ function BAR:SetObjectLoc()
 	end
 	--------------------------------------------------------------------------
 
-	if not origCol then
+	if origCol == 0 then
 		origCol = count
 		rows = 1
 	else
@@ -1486,13 +1423,11 @@ end
 
 function BAR:OnShow()
 	if self == Neuron.currentBar then
-
 		if self:GetBarConceal() then
 			self:SetBackdropColor(1,0,0,0.6)
 		else
 			self:SetBackdropColor(0,0,1,0.5)
 		end
-
 	else
 		if self:GetBarConceal() then
 			self:SetBackdropColor(1,0,0,0.4)
@@ -1606,7 +1541,6 @@ end
 -----------------------------------------------------
 
 function BAR:SetBarName(name)
-
 	if name and name ~= "" then
 		self.data.name = name
 	end
@@ -1634,7 +1568,6 @@ function BAR:SetState(msg, gui, checked)
 			else
 				Neuron:Print("GUI option error")
 			end
-
 			return
 		end
 
@@ -1757,7 +1690,6 @@ end
 
 --TODO: Rewrite this and simplify it
 function BAR:SetVisibility(msg)
-
 	wipe(statetable)
 	local toggle, index, num = (" "):split(msg)
 	toggle = toggle:lower()
@@ -1922,36 +1854,20 @@ function BAR:GetSnapTo()
 	return self.data.snapTo
 end
 
-function BAR:SetUpClicks(checked)
 
-	if checked then
-		self.data.upClicks = true
+function BAR:SetClickMode(mode)
+	if mode then
+		self.data.clickMode = mode
 	else
-		self.data.upClicks = false
+		self.data.clickMode = "UpClick"
 	end
 
 	self:UpdateObjectData()
 	self:UpdateBarStatus()
 end
 
-function BAR:GetUpClicks()
-	return self.data.upClicks
-end
-
-
-function BAR:SetDownClicks(checked)
-	if checked then
-		self.data.downClicks = true
-	else
-		self.data.downClicks = false
-	end
-
-	self:UpdateObjectData()
-	self:UpdateBarStatus()
-end
-
-function BAR:GetDownClicks()
-	return self.data.downClicks
+function BAR:GetClickMode()
+	return self.data.clickMode
 end
 
 
@@ -2076,10 +1992,10 @@ function BAR:SetColumns(option)
 		if option > 0 then
 			self.data.columns = option
 		else
-			self.data.columns = false
+			self.data.columns = self:GetNumObjects()
 		end
 	else
-		self.data.columns = false
+		self.data.columns = 0
 	end
 
 	self:SetObjectLoc()
@@ -2204,7 +2120,7 @@ function BAR:SetBarAlpha(option)
 		self.data.alpha = 1
 	end
 
-	self.handler:SetAlpha(self:GetBarAlpha()) --not sure if this should be here
+	self.driver:SetAlpha(self:GetBarAlpha()) --not sure if this should be here
 	self:UpdateBarStatus()
 end
 

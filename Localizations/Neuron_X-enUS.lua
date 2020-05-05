@@ -191,7 +191,7 @@ L["Show"] = true
 L["Home State"] = true
 L["Last State"] = true
 
-L["Auto Hide"] = true
+L["Auto-Hide"] = true
 
 
 L["Paged"] = true
@@ -352,8 +352,9 @@ L["Path"] = true
 
 L["Show Grid"] = true
 L["Hidden"] = true
-L["Up Clicks"] = true
-L["Down Clicks"] = true
+L["Click Mode"] = true
+L["Activate On Click"] = true
+L["Activate On Release"] = true
 L["Multi Spec"] = true
 L["Spell Alerts"] = true
 L["Default Alert"] = true

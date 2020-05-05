@@ -79,8 +79,7 @@ function Neuron:RegisterGUI()
 				AUTOHIDE = true,
 				SHOWGRID = true,
 				SNAPTO = true,
-				UPCLICKS = true,
-				DOWNCLICKS = true,
+				CLICKMODE = true,
 				MULTISPEC = true,
 				HIDDEN = true,
 				LOCKBAR = true,
@@ -120,8 +119,7 @@ function Neuron:RegisterGUI()
 				AUTOHIDE = true,
 				SHOWGRID = true,
 				SNAPTO = true,
-				UPCLICKS = true,
-				DOWNCLICKS = true,
+				CLICKMODE = true,
 				HIDDEN = true,
 				LOCKBAR = true,
 				BINDTEXT = true,
@@ -184,8 +182,7 @@ function Neuron:RegisterGUI()
 				{
 					AUTOHIDE = true,
 					SNAPTO = true,
-					UPCLICKS = true,
-					DOWNCLICKS = true,
+					CLICKMODE = true,
 					HIDDEN = true,
 				},
 
@@ -204,8 +201,7 @@ function Neuron:RegisterGUI()
 				{
 					AUTOHIDE = true,
 					SNAPTO = true,
-					UPCLICKS = true,
-					DOWNCLICKS = true,
+					CLICKMODE = true,
 					HIDDEN = true,
 				},
 
@@ -224,8 +220,7 @@ function Neuron:RegisterGUI()
 					AUTOHIDE = true,
 					SHOWGRID = false,
 					SNAPTO = true,
-					UPCLICKS = true,
-					DOWNCLICKS = true,
+					CLICKMODE = true,
 					HIDDEN = true,
 					LOCKBAR = false,
 				})

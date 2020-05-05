@@ -47,7 +47,7 @@ function BUTTON.new(bar, buttonID, baseObj, barClass, objType, template)
 	if _G[newButtonName] then --try to reuse a current frame if it exists instead of making a new one
 		newButton = _G[newButtonName]
 	else
-		newButton = CreateFrame("CheckButton", newButtonName, UIParent, template) --create the new button frame using the desired parameters
+		newButton = CreateFrame("CheckButton", newButtonName, bar, template) --create the new button frame using the desired parameters
 		setmetatable(newButton, {__index = baseObj})
 	end
 
@@ -338,10 +338,10 @@ function BUTTON:SetData(bar)
 
 	local down, up = "", ""
 
-	if self.bar:GetUpClicks() then
+	if self.bar:GetClickMode() == "UpClick" then
 		up = up.."AnyUp"
 	end
-	if self.bar:GetDownClicks() then
+	if self.bar:GetClickMode() == "DownClick" then
 		down = down.."AnyDown"
 	end
 

@@ -204,7 +204,7 @@ local genericBarData = {
 
 	scale = 1,
 	shape = "linear",
-	columns = false,
+	columns = 0,
 
 	alpha = 1,
 	alphaUp = "off",
@@ -236,8 +236,7 @@ local genericBarData = {
 
 	border = true,
 
-	upClicks = true,
-	downClicks = false,
+	clickMode = "UpClick",
 
 	conceal = false,
 

@@ -53,9 +53,9 @@ function NeuronGUI:CreateEditor(defaultTab)
 	NeuronEditor = AceGUI:Create("Frame")
 	NeuronEditor:SetTitle("Neuron Editor")
 	NeuronEditor:EnableResize(true)
-	NeuronEditor.frame:SetMinResize(800,600)
-	NeuronEditor:SetWidth("800")
-	NeuronEditor:SetHeight("800")
+	NeuronEditor.frame:SetMinResize(780,600)
+	NeuronEditor:SetWidth("780")
+	NeuronEditor:SetHeight("840")
 	if Neuron.currentBar then
 		NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
 	else
