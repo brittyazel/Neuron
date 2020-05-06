@@ -477,7 +477,7 @@ end
 
 
 function ACTIONBUTTON:UpdateGlow()
-	if self.spellGlow and self.spellID then
+	if self.bar:GetSpellGlow() and self.spellID then
 		--druid fix for thrash glow not showing for feral druids.
 		--Thrash Guardian: 77758
 		--Thrash Feral: 106832
@@ -503,24 +503,20 @@ end
 
 
 function ACTIONBUTTON:StartGlow()
-	if self.bar:GetSpellGlow() then
-		if self.bar:GetSpellGlow() == "default" then
-			ActionButton_ShowOverlayGlow(self)
-		else
-			self.elements.Shine:Show()
-			AutoCastShine_AutoCastStart(self.elements.Shine);
-		end
+	if self.bar:GetSpellGlow() == "default" then
+		ActionButton_ShowOverlayGlow(self)
+	else
+		self.elements.Shine:Show()
+		AutoCastShine_AutoCastStart(self.elements.Shine);
 	end
 end
 
 function ACTIONBUTTON:StopGlow()
-	if self.bar:GetSpellGlow() then
-		if self.bar:GetSpellGlow() == "default" then
-			ActionButton_HideOverlayGlow(self)
-		else
-			self.elements.Shine:Hide()
-			AutoCastShine_AutoCastStop(self.elements.Shine);
-		end
+	if self.bar:GetSpellGlow() == "default" then
+		ActionButton_HideOverlayGlow(self)
+	else
+		self.elements.Shine:Hide()
+		AutoCastShine_AutoCastStop(self.elements.Shine);
 	end
 end
 
