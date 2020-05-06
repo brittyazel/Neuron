@@ -30,13 +30,10 @@ LibStub("AceEvent-3.0"):Embed(BAR)
 
 local alphaDir, alphaTimer = 0, 0
 
-
 local statetable = {}
 
 local TRASHCAN = CreateFrame("Frame", nil, UIParent)
 TRASHCAN:Hide()
-
-
 
 ----------------------------------------------------
 
@@ -363,23 +360,23 @@ function BAR:AutoHideUpdate()
 	if self:GetAutoHide() and self.handler~=nil then
 		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
 			if self:IsShown() then
-				self.driver:SetAlpha(1)
+				self.handler:SetAlpha(1)
 			else
 				if BAR.IsMouseOverSelfOrWatchFrame(self) then
-					if self.driver:GetAlpha() < self:GetBarAlpha() then
-						if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-							self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
+					if self.handler:GetAlpha() < self:GetBarAlpha() then
+						if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 						else
-							self.driver:SetAlpha(1)
+							self.handler:SetAlpha(1)
 						end
 					end
 				end
 				if not BAR.IsMouseOverSelfOrWatchFrame(self) then
-					if self.driver:GetAlpha() > 0 then
-						if self.driver:GetAlpha()-self:GetAlphaUpSpeed() >= 0 then
-							self.driver:SetAlpha(self.driver:GetAlpha()-self:GetAlphaUpSpeed())
+					if self.handler:GetAlpha() > 0 then
+						if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= 0 then
+							self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 						else
-							self.driver:SetAlpha(0)
+							self.handler:SetAlpha(0)
 						end
 					end
 				end
@@ -391,55 +388,55 @@ end
 function BAR:AlphaUpUpdate()
 	if self:GetAlphaUp() == "combat" then
 		if InCombatLockdown() then
-			if self.driver:GetAlpha() < 1 then
-				if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-					self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
+			if self.handler:GetAlpha() < 1 then
+				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 				else
-					self.driver:SetAlpha(1)
+					self.handler:SetAlpha(1)
 				end
 			end
 		else
-			if self.driver:GetAlpha() > self:GetBarAlpha() then
-				if self.driver:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-					self.driver:SetAlpha(self.driver:GetAlpha()-self:GetAlphaUpSpeed())
+			if self.handler:GetAlpha() > self:GetBarAlpha() then
+				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 				else
-					self.driver:SetAlpha(self:GetBarAlpha())
+					self.handler:SetAlpha(self:GetBarAlpha())
 				end
 			end
 		end
 	elseif self:GetAlphaUp() == "combat + mouseover" then
 		if InCombatLockdown() and BAR.IsMouseOverSelfOrWatchFrame(self)  then
-			if self.driver:GetAlpha() < 1 then
-				if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-					self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
+			if self.handler:GetAlpha() < 1 then
+				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 				else
-					self.driver:SetAlpha(1)
+					self.handler:SetAlpha(1)
 				end
 			end
 		else
-			if self.driver:GetAlpha() > self:GetBarAlpha() then
-				if self.driver:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-					self.driver:SetAlpha(self.driver:GetAlpha()-self:GetAlphaUpSpeed())
+			if self.handler:GetAlpha() > self:GetBarAlpha() then
+				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 				else
-					self.driver:SetAlpha(self:GetBarAlpha())
+					self.handler:SetAlpha(self:GetBarAlpha())
 				end
 			end
 		end
 	elseif self:GetAlphaUp() == "mouseover" then
 		if BAR.IsMouseOverSelfOrWatchFrame(self) then
-			if self.driver:GetAlpha() < 1 then
-				if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
-					self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
+			if self.handler:GetAlpha() < 1 then
+				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
+					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
 				else
-					self.driver:SetAlpha(1)
+					self.handler:SetAlpha(1)
 				end
 			end
 		else
-			if self.driver:GetAlpha() > self:GetBarAlpha() then
-				if self.driver:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
-					self.driver:SetAlpha(self.driver:GetAlpha()-self:GetAlphaUpSpeed())
+			if self.handler:GetAlpha() > self:GetBarAlpha() then
+				if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= self:GetBarAlpha() then
+					self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
 				else
-					self.driver:SetAlpha(self:GetBarAlpha())
+					self.handler:SetAlpha(self:GetBarAlpha())
 				end
 			end
 		end
@@ -454,11 +451,11 @@ function BAR:SetHidden(handler, show)
 	end
 
 	if show or self:IsVisible() then
-		handler:Show()
+		--handler:Show()
 	else
 		if self:GetBarConceal() then
-			handler:SetAttribute("concealed", true)
-			handler:Hide()
+			--handler:SetAttribute("concealed", true)
+			--handler:Hide()
 		end
 	end
 end
@@ -949,7 +946,7 @@ function BAR:UpdateBarStatus(show)
 
 	self:SetHidden(self.handler, show)
 	self.text:SetText(self:GetBarName())
-	self.driver:SetAlpha(self:GetBarAlpha())
+	self.handler:SetAlpha(self:GetBarAlpha())
 end
 
 -------------------------------------------------------
@@ -2119,7 +2116,7 @@ function BAR:SetBarAlpha(option)
 		self.data.alpha = 1
 	end
 
-	self.driver:SetAlpha(self:GetBarAlpha()) --not sure if this should be here
+	self.handler:SetAlpha(self:GetBarAlpha()) --not sure if this should be here
 	self:UpdateBarStatus()
 end
 

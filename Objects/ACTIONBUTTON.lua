@@ -95,17 +95,15 @@ function ACTIONBUTTON:UpdateObjectVisibility(show)
 		self.isShown = false
 	end
 
-	if InCombatLockdown() then
-		return
-	end
+	if not InCombatLockdown() then
+		self:SetAttribute("showGrid", self.bar:GetShowGrid()) --this is important because in our state switching code, we can't query self.showGrid directly
+		self:SetAttribute("isshown", self.isShown)
 
-	self:SetAttribute("showGrid", self.bar:GetShowGrid()) --this is important because in our state switching code, we can't query self.showGrid directly
-	self:SetAttribute("isshown", self.isShown)
-
-	if self.isShown then
-		self:Show()
-	else
-		self:Hide()
+		if self.isShown then
+			self:Show()
+		else
+			self:Hide()
+		end
 	end
 
 	Neuron.BUTTON.UpdateObjectVisibility(self)
