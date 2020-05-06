@@ -62,7 +62,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading1:SetText(L["General Options"])
 	scrollFrame:AddChild(heading1)
 
-	NeuronGUI:CreateGeneralBarOptions(scrollFrame)
+	NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 
 	------------------------------------------------
 	------------------------------------------------
@@ -73,7 +73,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading2:SetText(L["Size and Shape"])
 	scrollFrame:AddChild(heading2)
 
-	NeuronGUI:CreateLayoutBarOptions(scrollFrame)
+	NeuronGUI:PopulateLayoutBarOptions(scrollFrame)
 
 	------------------------------------------------
 	------------------------------------------------
@@ -85,7 +85,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		heading3:SetText(L["Visuals"])
 		scrollFrame:AddChild(heading3)
 
-		NeuronGUI:CreateVisualBarOptions(scrollFrame)
+		NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	end
 
 	--------------------------------------------------
@@ -119,7 +119,7 @@ end
 --------------------------------------------------
 --------------------------------------------------
 
-function NeuronGUI:CreateGeneralBarOptions(scrollFrame)
+function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- AutoHide --------------------
 	--------------------------------------------------
@@ -264,7 +264,7 @@ function NeuronGUI:CreateGeneralBarOptions(scrollFrame)
 end
 
 
-function NeuronGUI:CreateLayoutBarOptions(scrollFrame)
+function NeuronGUI:PopulateLayoutBarOptions(scrollFrame)
 	--------------------------------------------------
 	--------------- Add/Remove Button ----------------
 	--------------------------------------------------
@@ -476,7 +476,7 @@ function NeuronGUI:CreateLayoutBarOptions(scrollFrame)
 end
 
 
-function NeuronGUI:CreateVisualBarOptions(scrollFrame)
+function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- Bind Text -------------------
 	--------------------------------------------------
