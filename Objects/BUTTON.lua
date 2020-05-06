@@ -222,7 +222,6 @@ end
 ---this function is called by a repeating timer set in SetCooldownTimer every 0.2sec, which is autoGmatically is set to terminate 1sec after the cooldown timer ends
 ---this function's job is to overlay the countdown text on a button and set the button's cooldown alpha
 function BUTTON:CooldownCounterUpdate()
-
 	local coolDown, formatted, size
 
 	local normalcolor = self.elements.IconFrameCooldown.normalcolor
@@ -289,16 +288,15 @@ function BUTTON:CooldownCounterUpdate()
 
 
 	if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
-
 		if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
 			if coolDown > 0 then
 				self:SetAlpha(0.2)
 			else
-				self:SetAlpha(self.bar:GetBarAlpha()) --try to restore alpha value instead of default to 1
+				self:SetAlpha(1)
 			end
 		else
-			self:SetAlpha(self.bar:GetBarAlpha()) --try to restore alpha value instead of default to 1
+			self:SetAlpha(1)
 		end
 	end
 end
@@ -370,7 +368,7 @@ function BUTTON:UpdateObjectVisibility()
 	end
 
 	if self.isShown then
-		self:SetAlpha(self.bar:GetBarAlpha()) --try to restore alpha value instead of default to 1
+		self:SetAlpha(1)
 	else
 		self:SetAlpha(0)
 	end

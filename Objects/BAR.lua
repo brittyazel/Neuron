@@ -427,7 +427,6 @@ function BAR:AlphaUpUpdate()
 		end
 	elseif self:GetAlphaUp() == "mouseover" then
 		if BAR.IsMouseOverSelfOrWatchFrame(self) then
-
 			if self.driver:GetAlpha() < 1 then
 				if self.driver:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
 					self.driver:SetAlpha(self.driver:GetAlpha()+self:GetAlphaUpSpeed())
