@@ -97,18 +97,18 @@ function ACTIONBUTTON:UpdateObjectVisibility(show)
 		self.isShown = false
 	end
 
-	if InCombatLockdown() then
-		return
+	if not InCombatLockdown() then
+		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't query self.showGrid directly
+		self:SetAttribute("isshown", self.isShown)
+
+		if self.isShown then
+			self:Show()
+		else
+			self:Hide()
+		end
 	end
 
-	self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't query self.showGrid directly
-	self:SetAttribute("isshown", self.isShown)
-
-	if self.isShown then
-		self:Show()
-	else
-		self:Hide()
-	end
+	Neuron.BUTTON.UpdateObjectVisibility(self)
 end
 
 function ACTIONBUTTON:SetupEvents()
@@ -600,7 +600,6 @@ function ACTIONBUTTON:EQUIPMENT_SETS_CHANGED()
 		self:PlaceBlizzEquipSet(self.data.macro_EquipmentSet)
 	end
 end
-
 
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------

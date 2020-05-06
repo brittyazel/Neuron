@@ -239,7 +239,6 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 	else
 		self:CancelCooldownTimer(true)
 	end
-
 end
 
 
@@ -311,22 +310,13 @@ function BUTTON:CooldownCounterUpdate()
 	end
 
 	if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
-
 		if coolDown > 0 then
-			self:SetAlpha(self.cdAlpha)
-		else
-			if self.data.alpha then
-				self:SetAlpha(self.data.alpha) --try to restore the original alpha
-			else
-				self:SetAlpha(1)
-			end
-		end
-	else
-		if self.data.alpha then
-			self:SetAlpha(self.data.alpha) --try to restore the original alpha
+			self:SetAlpha(0.2)
 		else
 			self:SetAlpha(1)
 		end
+	else
+		self:SetAlpha(1)
 	end
 end
 
@@ -354,12 +344,6 @@ function BUTTON:SetData(bar)
 		self.countText = bar.data.countText
 
 		self.cdText = bar.data.cdText
-
-		if bar.data.cdAlpha then
-			self.cdAlpha = 0.2
-		else
-			self.cdAlpha = 1
-		end
 
 		self.rangeInd = bar.data.rangeInd
 
@@ -504,11 +488,7 @@ function BUTTON:UpdateObjectVisibility()
 	end
 
 	if self.isShown then
-		if self.data.alpha then
-			self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
-		else
-			self:SetAlpha(1)
-		end
+		self:SetAlpha(1)
 	else
 		self:SetAlpha(0)
 	end
@@ -726,9 +706,9 @@ function BUTTON:UpdateSpellCooldown()
 		local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(self.spell)
 
 		if charges and maxCharges and maxCharges > 0 and charges < maxCharges then
-			self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+			self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.bar.data.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
 		else
-			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2,  self.bar.data.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
 		end
 	else
 		self:CancelCooldownTimer(true)
@@ -744,7 +724,7 @@ function BUTTON:UpdateItemCooldown()
 			local itemID = GetItemInfoInstant(self.item)
 			start, duration, enable, modrate = GetItemCooldown(itemID)
 		end
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2,  self.bar.data.cdAlpha)
 	else
 		self:CancelCooldownTimer(true)
 	end
@@ -754,7 +734,7 @@ function BUTTON:UpdateActionCooldown()
 	if self.actionID and self.isShown then
 		if HasAction(self.actionID) then
 			local start, duration, enable, modrate = GetActionCooldown(self.actionID)
-			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2,  self.bar.data.cdAlpha)
 		end
 	else
 		self:CancelCooldownTimer(true)
