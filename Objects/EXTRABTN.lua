@@ -38,6 +38,8 @@ function EXTRABTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
+	newButton:KeybindOverlay_CreateEditFrame()
+
 	return newButton
 end
 
@@ -56,11 +58,14 @@ function EXTRABTN:SetType()
 
 	self:SetAttribute("action1", 169) --baseline actionID for most zoneability actions
 
+	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
+	self:SetAttribute("hotkeys", self.keys.hotKeys)
+
 	--action content gets set in UpdateData
 	self:UpdateData()
 
-	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
-	self:SetScript("OnEnter", function(self) self:UpdateTooltip() end)
+	self:SetScript("PostClick", function() self:UpdateStatus() end)
+	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
@@ -70,7 +75,7 @@ function EXTRABTN:OnEvent(event, ...)
 	self:UpdateData()
 
 	if event == "PLAYER_ENTERING_WORLD" then
-		self.binder:ApplyBindings()
+		self:KeybindOverlay_ApplyBindings()
 		self:UpdateIcon()
 	end
 

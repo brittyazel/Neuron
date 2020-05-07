@@ -22,9 +22,9 @@ Neuron-States.lua
 
 Utilities\DB-Fixer.lua
 
-
 Objects\BUTTON.lua
 Objects\BUTTON_EditorOverlay.lua
+Objects\BUTTON_KeybindOverlay.lua
 Objects\BAR.lua
 Objects\ACTIONBUTTON.lua
 Objects\ACTIONBUTTON_DragAndDrop.lua
@@ -36,13 +36,11 @@ Objects\MENUBTN.lua
 Objects\PETBTN.lua
 Objects\ZONEABILITYBTN.lua
 Objects\BAR_SnapTo.lua
-Objects\KEYBINDER.lua
 Objects\STATUSBTN.lua
 Objects\XPBTN.lua
 Objects\REPBTN.lua
 Objects\CASTBTN.lua
 Objects\MIRRORBTN.lua
-
 
 Neuron-DisableBlizzardUI.lua
 Neuron-Console.lua

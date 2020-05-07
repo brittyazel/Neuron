@@ -38,6 +38,8 @@ function ZONEABILITYBTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
+	newButton:KeybindOverlay_CreateEditFrame()
+
 	return newButton
 end
 
@@ -52,16 +54,19 @@ function ZONEABILITYBTN:SetType()
 
 	self:SetAttribute("type1", "macro")
 
+	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
+	self:SetAttribute("hotkeys", self.keys.hotKeys)
+
 	--macro content gets set in UpdateData
 	self:UpdateData()
 
-	self:SetScript("OnDragStart", function(self)
+	self:SetScript("OnDragStart", function()
 		if self.spellID then
 			PickupSpell(self.spellID)
 		end
 	end)
-	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
-	self:SetScript("OnEnter", function(self) self:UpdateTooltip() end)
+	self:SetScript("PostClick", function() self:UpdateStatus() end)
+	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
@@ -71,7 +76,7 @@ function ZONEABILITYBTN:OnEvent(event, ...)
 	self:UpdateData();
 
 	if event == "PLAYER_ENTERING_WORLD" then
-		self.binder:ApplyBindings()
+		self:KeybindOverlay_ApplyBindings()
 		self:UpdateIcon()
 	end
 end

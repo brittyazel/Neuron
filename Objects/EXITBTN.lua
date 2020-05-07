@@ -54,9 +54,9 @@ function EXITBTN:SetType()
 	self:RegisterEvent("UNIT_EXITED_VEHICLE", "OnEvent")
 	self:RegisterEvent("VEHICLE_UPDATE", "OnEvent")
 
-	self:SetScript("OnClick", function(self) self:OnClick() end)
-	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
-	self:SetScript("OnEnter", function(self) self:OnEnter() end)
+	self:SetScript("OnClick", function() self:OnClick() end)
+	self:SetScript("PostClick", function() self:UpdateStatus() end)
+	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
 	self:SetSkinned()
@@ -113,7 +113,7 @@ function EXITBTN:OnClick()
 end
 
 
-function EXITBTN:OnEnter()
+function EXITBTN:UpdateTooltip()
 	if not self.isShown then
 		return
 	end

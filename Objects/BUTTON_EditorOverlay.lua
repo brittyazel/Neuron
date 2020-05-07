@@ -32,20 +32,19 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 --------------------------Button Editor Overlay-----------------------------
 ----------------------------------------------------------------------------
 
-function BUTTON:EditorOverlay_CreateEditFrame(button)
-	local editFrame = CreateFrame("Button", button:GetName().."EditFrame", button, "NeuronEditFrameTemplate")
-
+function BUTTON:EditorOverlay_CreateEditFrame()
+	local editFrame = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
 	setmetatable(editFrame, { __index = CreateFrame("Button") })
 
 	editFrame:EnableMouseWheel(true)
 	editFrame:RegisterForClicks("AnyDown")
-	editFrame:SetAllPoints(button)
-	editFrame:SetScript("OnShow", function(self) BUTTON:EditorOverlay_OnShow(self) end)
-	editFrame:SetScript("OnEnter", function(self) BUTTON:EditorOverlay_OnEnter(self) end)
-	editFrame:SetScript("OnLeave", function(self) BUTTON:EditorOverlay_OnLeave(self) end)
-	editFrame:SetScript("OnClick", function(self, btn) BUTTON:EditorOverlay_OnClick(self, btn) end)
+	editFrame:SetAllPoints(self)
+	editFrame:SetScript("OnShow", function() self:EditorOverlay_OnShow() end)
+	editFrame:SetScript("OnEnter", function() self:EditorOverlay_OnEnter() end)
+	editFrame:SetScript("OnLeave", function() self:EditorOverlay_OnLeave() end)
+	editFrame:SetScript("OnClick", function(_, btn) self:EditorOverlay_OnClick(btn) end)
 
-	if button.objType == "ACTIONBUTTON" then
+	if self.objType == "ACTIONBUTTON" then
 		editFrame.type:SetText(L["Edit"])
 	else
 		editFrame.type:SetText("")
@@ -68,36 +67,30 @@ function BUTTON:EditorOverlay_CreateEditFrame(button)
 		editFrame.select.BR:SetTexture("")
 	end
 
-	button.editFrame = editFrame
-	editFrame.button = button
+	self.editFrame = editFrame
 
 	editFrame:Hide()
 end
 
-function BUTTON:EditorOverlay_OnShow(editFrame)
-	local object = editFrame.button
-	if object then
-		if object.bar then
-			editFrame:SetFrameLevel(object.bar:GetFrameLevel()+1)
-		end
-	end
+function BUTTON:EditorOverlay_OnShow()
+	self.editFrame:SetFrameLevel(self.bar:GetFrameLevel()+1)
 end
 
-function BUTTON:EditorOverlay_OnEnter(editFrame)
-	editFrame.select:Show()
-	GameTooltip:SetOwner(editFrame, "ANCHOR_RIGHT")
+function BUTTON:EditorOverlay_OnEnter()
+	self.editFrame.select:Show()
+	GameTooltip:SetOwner(self.editFrame, "ANCHOR_RIGHT")
 	GameTooltip:Show()
 end
 
-function BUTTON:EditorOverlay_OnLeave(editFrame)
-	if editFrame.button ~= Neuron.currentButton then
-		editFrame.select:Hide()
+function BUTTON:EditorOverlay_OnLeave()
+	if self ~= Neuron.currentButton then
+		self.editFrame.select:Hide()
 	end
 	GameTooltip:Hide()
 end
 
-function BUTTON:EditorOverlay_OnClick(editFrame)
-	Neuron.BUTTON.ChangeSelectedButton(editFrame.button)
+function BUTTON:EditorOverlay_OnClick()
+	Neuron.BUTTON.ChangeSelectedButton(self)
 	if NeuronEditor then
 		Neuron.NeuronGUI:RefreshEditor()
 	end

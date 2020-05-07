@@ -68,7 +68,7 @@ function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
 		newButton:SetDefaults(defaults)
 	end
 
-	Neuron.BUTTON:EditorOverlay_CreateEditFrame(newButton)
+	newButton:EditorOverlay_CreateEditFrame()
 
 	return newButton
 end

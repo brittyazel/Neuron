@@ -42,6 +42,8 @@ function PETBTN.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
+	newButton:KeybindOverlay_CreateEditFrame()
+
 	return newButton
 end
 
@@ -66,10 +68,13 @@ function PETBTN:SetType()
 	self:SetAttribute("type2", "macro")
 	self:SetAttribute("*action1", self.actionID)
 
-	self:SetScript("PostClick", function(self) self:UpdateData() self:UpdateStatus() end)
-	self:SetScript("OnDragStart", function(self) self:OnDragStart() end)
-	self:SetScript("OnReceiveDrag", function(self) self:OnReceiveDrag() end)
-	self:SetScript("OnEnter", function(self,...) self:UpdateTooltip() end)
+	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
+	self:SetAttribute("hotkeys", self.keys.hotKeys)
+
+	self:SetScript("PostClick", function() self:UpdateData() self:UpdateStatus() end)
+	self:SetScript("OnDragStart", function() self:OnDragStart() end)
+	self:SetScript("OnReceiveDrag", function() self:OnReceiveDrag() end)
+	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
 	self:SetScript("OnAttributeChanged", nil)
@@ -193,7 +198,7 @@ function PETBTN:PLAYER_ENTERING_WORLD()
 
 	self:UpdateObjectVisibility() --have to set true at login or the buttons on the bar don't show
 
-	self.binder:ApplyBindings()
+	self:KeybindOverlay_ApplyBindings()
 end
 
 function PETBTN:UNIT_PET(event, unit)
@@ -229,7 +234,7 @@ function PETBTN:OnDragStart()
 		self:UpdateData()
 	end
 
-	for i,bar in pairs(Neuron.BARIndex) do
+	for i,bar in pairs(Neuron.bars) do
 		if bar.class == "pet" then
 			bar:UpdateBarObjectVisibility(true)
 		end

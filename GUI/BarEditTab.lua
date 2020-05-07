@@ -52,7 +52,7 @@ function NeuronGUI:BarEditPanel(tabFrame)
 	-------------------------------
 
 	local barList = {}
-	for _, bar in pairs(Neuron.BARIndex) do
+	for _, bar in pairs(Neuron.bars) do
 		barList[bar] = bar:GetBarName()
 	end
 

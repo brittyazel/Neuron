@@ -32,8 +32,7 @@ local LATEST_VERSION_NUM = "1.2.3a" --this variable is set to popup a welcome me
 local LATEST_DB_VERSION = 1.3
 
 --prepare the Neuron table with some sub-tables that will be used down the road
-Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
-Neuron.BINDIndex = {}
+Neuron.bars = {} --this table will be our main handle for all of our bars.
 
 Neuron.registeredBarData = {}
 Neuron.registeredGUIData = {}
@@ -76,7 +75,6 @@ Neuron.activeSpec = 1
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
 function Neuron:OnInitialize()
-
 	Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
 
 	Neuron.db.RegisterCallback(Neuron, "OnProfileChanged", "RefreshConfig")
@@ -123,7 +121,6 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function Neuron:OnEnable()
-
 	Neuron:RegisterEvent("PLAYER_REGEN_DISABLED")
 	Neuron:RegisterEvent("PLAYER_ENTERING_WORLD")
 	Neuron:RegisterEvent("SPELLS_CHANGED")
@@ -162,7 +159,7 @@ function Neuron:OnEnable()
 	end
 
 	--Load all bars and buttons
-	for i,v in pairs(Neuron.BARIndex) do
+	for i,v in pairs(Neuron.bars) do
 		v:Load()
 	end
 
@@ -498,7 +495,7 @@ end
 
 
 function Neuron:ToggleButtonGrid(show)
-	for _,bar in pairs(Neuron.BARIndex) do
+	for _,bar in pairs(Neuron.bars) do
 		if bar.barType == "ActionBar" or bar.barType == "PetBar" then
 			for _, button in pairs(bar.buttons) do
 				button:UpdateObjectVisibility(show)
@@ -520,21 +517,21 @@ function Neuron:ToggleBarEditMode(show)
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBindingMode(false)
 
-		for _, bar in pairs(Neuron.BARIndex) do
+		for _, bar in pairs(Neuron.bars) do
 			bar:Show() --this shows the transparent overlay over a bar
 			bar:UpdateBarStatus(true)
 			bar:UpdateBarObjectVisibility(true)
 			bar:UpdateObjectUsability()
 		end
 
-		--if there is no bar selected, default to the first in the BARIndex
+		--if there is no bar selected, default to the first in the BarList
 		--TODO: This logic may be unintuitive. Should probably be fixed
 		if not Neuron.currentBar then
-			Neuron.BAR.ChangeSelectedBar(Neuron.BARIndex[1])
+			Neuron.BAR.ChangeSelectedBar(Neuron.bars[1])
 		end
 	else
 		Neuron.barEditMode = false
-		for _, bar in pairs(Neuron.BARIndex) do
+		for _, bar in pairs(Neuron.bars) do
 			bar:Hide()
 			bar:UpdateBarStatus()
 			bar:UpdateBarObjectVisibility()
@@ -550,11 +547,11 @@ function Neuron:ToggleButtonEditMode(show)
 		Neuron:ToggleBarEditMode(false)
 		Neuron:ToggleBindingMode(false)
 		
-		for _, bar in pairs(Neuron.BARIndex) do
+		for _, bar in pairs(Neuron.bars) do
 			for _, button in pairs(bar.buttons) do
 				if button.editFrame then
 					button.editFrame:Show()
-					button.editFrame.button.editmode = true
+					button.editmode = true
 
 					button.editFrame:SetFrameStrata(bar:GetFrameStrata())
 					button.editFrame:SetFrameLevel(bar:GetFrameLevel()+4)
@@ -565,10 +562,10 @@ function Neuron:ToggleButtonEditMode(show)
 							if Neuron.currentBar.buttons[1].editFrame then --try to set the selected button to the first button on the selected bar, if it has an edit frame
 								Neuron.BUTTON.ChangeSelectedButton(Neuron.currentBar.buttons[1])
 							else
-								Neuron.BUTTON.ChangeSelectedButton(button.editFrame.button) --if there's no edit frame, then just default to the selected button to the first bar in the list
+								Neuron.BUTTON.ChangeSelectedButton(button) --if there's no edit frame, then just default to the selected button to the first bar in the list
 							end
 						else
-							Neuron.BUTTON.ChangeSelectedButton(button.editFrame.button) --default to the selected button to the first bar in the list
+							Neuron.BUTTON.ChangeSelectedButton(button) --default to the selected button to the first bar in the list
 						end
 					end
 				end
@@ -582,11 +579,11 @@ function Neuron:ToggleButtonEditMode(show)
 	else
 		Neuron.buttonEditMode = false
 
-		for _, bar in pairs(Neuron.BARIndex) do
+		for _, bar in pairs(Neuron.bars) do
 			for _, button in pairs(bar.buttons) do
 				if button.editFrame then
 					button.editFrame:Hide()
-					button.editFrame.button.editmode = false
+					button.editmode = false
 					button.editFrame:SetFrameStrata("LOW")
 				end
 			end
@@ -609,31 +606,31 @@ function Neuron:ToggleBindingMode(show)
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBarEditMode(false)
 
-		for _, binder in pairs(Neuron.BINDIndex) do
+		for _, bar in pairs(Neuron.bars) do
+			for _, button in pairs(bar.buttons) do
+				if button.keybindFrame then
+					button.keybindFrame:Show()
+					button.editmode = true
 
-			binder:Show()
-			binder.button.editmode = true
-
-			if binder.button.bar then
-				binder:SetFrameStrata(binder.button.bar:GetFrameStrata())
-				binder:SetFrameLevel(binder.button.bar:GetFrameLevel()+4)
+					button.keybindFrame:SetFrameStrata(bar:GetFrameStrata())
+					button.keybindFrame:SetFrameLevel(bar:GetFrameLevel()+4)
+				end
 			end
-		end
-
-		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateBarObjectVisibility(true)
 			bar:UpdateBarStatus(true)
 		end
 
 	else
 		Neuron.bindingMode = false
-		for _, binder in pairs(Neuron.BINDIndex) do
-			binder:Hide()
-			binder.button.editmode = false
-			binder:SetFrameStrata("LOW")
-		end
+		for _, bar in pairs(Neuron.bars) do
+			for _, button in pairs(bar.buttons) do
+				if button.keybindFrame then
+					button.keybindFrame:Hide()
+					button.editmode = false
 
-		for _,bar in pairs(Neuron.BARIndex) do
+					button.keybindFrame:SetFrameStrata("LOW")
+				end
+			end
 			bar:UpdateBarObjectVisibility()
 			bar:UpdateBarStatus()
 		end
@@ -643,7 +640,6 @@ end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
 function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax, keybindable, btnEditable)
-
 	Neuron.registeredBarData[class] = {
 		class = class;
 		barType = barType,
@@ -652,10 +648,7 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		barDB = barDB,
 		objTemplate = objTemplate,
 		objMax = objMax,
-		keybindable = keybindable,
-		btnEditable = btnEditable,
 	}
-
 end
 
 

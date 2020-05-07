@@ -105,7 +105,7 @@ function BAR.new(class, barID)
 	newBar:SetScript("OnShow", function(self) self:OnShow() end)
 	newBar:SetScript("OnHide", function(self) self:OnHide() end)
 
-	table.insert(Neuron.BARIndex, newBar) --insert our new bar at the end of the table
+	table.insert(Neuron.bars, newBar) --insert our new bar at the end of the table
 
 	newBar:CreateDriver()
 	newBar:CreateHandler()
@@ -208,19 +208,19 @@ function BAR:DeleteBar()
 	end
 
 	local index --find the location of our bar in the bar table
-	for i,v in ipairs(Neuron.BARIndex) do
+	for i,v in ipairs(Neuron.bars) do
 		if v == self then
 			index = i
 		end
 	end
 
 	if index then --if our index was found (it should always be found) remove it from the array
-		table.remove(Neuron.BARIndex, index)
+		table.remove(Neuron.bars, index)
 	end
 
 	Neuron.currentBar = nil
 
-	for i,v in pairs(Neuron.BARIndex) do --update bars to reflect new names, if they have new names
+	for i,v in pairs(Neuron.bars) do --update bars to reflect new names, if they have new names
 		v:UpdateBarStatus()
 	end
 
@@ -260,7 +260,7 @@ function BAR:RemoveObjectFromBar() --called from NeuronGUI
 		table.remove(self.buttons, id)
 
 		if object.binder then
-			object.binder:ClearBindings()
+			object.binder:KeybindOverlay_ClearBindings()
 		end
 
 		object:SetParent(TRASHCAN)
@@ -300,7 +300,7 @@ function BAR.ChangeSelectedBar(newBar)
 		newBar.text:Show()
 	end
 
-	for k,v in pairs(Neuron.BARIndex) do
+	for k,v in pairs(Neuron.bars) do
 		if v ~= newBar then
 
 			if v:GetBarConceal() then
@@ -1044,10 +1044,6 @@ function BAR:LoadObjects()
 		object:SetData(self)
 		object:SetType()
 
-		if Neuron.registeredBarData[object.class] and Neuron.registeredBarData[object.class].keybindable then
-			object.binder = Neuron.KEYBINDER.new(object)
-		end
-
 		object:UpdateObjectVisibility()
 	end
 end
@@ -1348,7 +1344,7 @@ function BAR:OnDragStop(...)
 	local point
 	self:StopMovingOrSizing()
 
-	for _,v in pairs(Neuron.BARIndex) do
+	for _,v in pairs(Neuron.bars) do
 		if not point and self:GetSnapTo() and v:GetSnapTo() and self ~= v then
 			point = self:Stick(v, Neuron.SNAPTO_TOLLERANCE, self:GetHorizontalPad(), self:GetVerticalPad())
 

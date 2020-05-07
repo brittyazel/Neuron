@@ -41,9 +41,9 @@ local firstLogin
 local barsToUpdate = {}
 
 
-local FOBARIndex, FOBTNIndex, ANCHORIndex = {}, {}, {}
+local FOBarList, FOBTNIndex, ANCHORIndex = {}, {}, {}
 
-Neuron.FOBARIndex = FOBARIndex
+Neuron.FOBarList = FOBarList
 Neuron.FOBTNIndex = FOBTNIndex
 Neuron.ANCHORIndex = ANCHORIndex
 
@@ -930,7 +930,7 @@ end
 function ACTIONBUTTON:Flyout_GetBar()
 	local id = 1
 
-	for _,bar in ipairs(FOBARIndex) do
+	for _,bar in ipairs(FOBarList) do
 		if bar.stored then
 			bar.stored = false
 			bar:SetParent(UIParent)
@@ -982,7 +982,7 @@ function ACTIONBUTTON:Flyout_GetBar()
 
 	bar.handler:Hide()
 
-	FOBARIndex[id] = bar
+	FOBarList[id] = bar
 	return bar
 end
 

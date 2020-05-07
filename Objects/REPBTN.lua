@@ -61,9 +61,9 @@ function REPBTN:SetType()
 	self:SetAttribute("hasaction", true)
 
 	self:RegisterForClicks("RightButtonUp")
-	self:SetScript("OnClick", function(self, mousebutton, down) self:OnClick(mousebutton, down) end)
-	self:SetScript("OnEnter", function(self) self:OnEnter() end)
-	self:SetScript("OnLeave", function(self) self:OnLeave() end)
+	self:SetScript("OnClick", function(_, mousebutton, down) self:OnClick(mousebutton, down) end)
+	self:SetScript("OnEnter", function() self:OnEnter() end)
+	self:SetScript("OnLeave", function() self:OnLeave() end)
 	self:SetHitRectInsets(0, 0, 0, 0)
 
 	self:RegisterEvent("UPDATE_FACTION", "repbar_OnEvent")

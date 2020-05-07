@@ -73,7 +73,8 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	Neuron.BUTTON:EditorOverlay_CreateEditFrame(newButton)
+	newButton:EditorOverlay_CreateEditFrame()
+	newButton:KeybindOverlay_CreateEditFrame()
 
 	return newButton
 end
@@ -179,9 +180,12 @@ function ACTIONBUTTON:SetType()
 	self:SetAttribute("type", "macro")
 	self:SetAttribute("*macrotext*", self.macro)
 
-	self:SetScript("PostClick", function(self, mousebutton) self:PostClick(mousebutton) end)
-	self:SetScript("OnReceiveDrag", function(self, preclick) self:OnReceiveDrag(preclick) end)
-	self:SetScript("OnDragStart", function(self, mousebutton) self:OnDragStart(mousebutton) end)
+	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
+	self:SetAttribute("hotkeys", self.keys.hotKeys)
+
+	self:SetScript("PostClick", function(_, mousebutton) self:PostClick(mousebutton) end)
+	self:SetScript("OnReceiveDrag", function(_, preclick) self:OnReceiveDrag(preclick) end)
+	self:SetScript("OnDragStart", function(_, mousebutton) self:OnDragStart(mousebutton) end)
 
 	--this is to allow for the correct releasing of the button when dragging icons off of the bar
 	--we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
@@ -192,14 +196,14 @@ function ACTIONBUTTON:SetType()
 		Neuron:HookScript(WorldFrame, "OnMouseDown", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
 	end
 
-	self:SetScript("OnAttributeChanged", function(self, name, value) self:OnAttributeChanged(name, value) end)
-	self:SetScript("OnEnter", function(self)
+	self:SetScript("OnAttributeChanged", function(_, name, value) self:OnAttributeChanged(name, value) end)
+	self:SetScript("OnEnter", function()
 		self:UpdateTooltip()
 		if self.flyout and self.flyout.arrow then
 			self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX/0.625, self.flyout.arrowY/0.625)
 		end
 	end)
-	self:SetScript("OnLeave", function(self, ...)
+	self:SetScript("OnLeave", function()
 		GameTooltip:Hide()
 		if self.flyout and self.flyout.arrow then
 			self.flyout.arrow:SetPoint(self.flyout.arrowPoint, self.flyout.arrowX, self.flyout.arrowY)
@@ -526,7 +530,7 @@ end
 
 function ACTIONBUTTON:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
-	self.binder:ApplyBindings()
+	self:KeybindOverlay_ApplyBindings()
 
 	if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
 		self:ScheduleTimer(function() self:SetType() end, 1)
@@ -793,7 +797,7 @@ function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
 
 	if global_update then
 
-		for _,bar in ipairs(Neuron.BARIndex) do
+		for _,bar in ipairs(Neuron.bars) do
 			for _, object in ipairs(bar.buttons) do
 				table.insert(button_list, object)
 			end

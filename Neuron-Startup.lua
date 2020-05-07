@@ -30,43 +30,41 @@ function Neuron:Startup()
 	Neuron:CreateBarsAndButtons()
 end
 
-
-
 function Neuron:RegisterBars()
 
 	--Neuron Action Bar
-	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.ActionBar, Neuron.ACTIONBUTTON, 250, true, true)
+	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.ActionBar, Neuron.ACTIONBUTTON, 250)
 
 	--Neuron Bag Bar
-	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN, Neuron.NUM_BAG_BUTTONS, false, false) --Neuron.NUM_BAG_BUTTONS == 5 for retail and 6 for classic due to the keyring
+	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN, Neuron.NUM_BAG_BUTTONS) --Neuron.NUM_BAG_BUTTONS == 5 for retail and 6 for classic due to the keyring
 
 	--Neuron Menu Bar
-	Neuron:RegisterBarClass("MenuBar", "MenuBar", L["Menu Bar"], "Menu Button", DB.MenuBar, Neuron.MENUBTN, 11, false, false)
+	Neuron:RegisterBarClass("MenuBar", "MenuBar", L["Menu Bar"], "Menu Button", DB.MenuBar, Neuron.MENUBTN, 11)
 
 	--Neuron Pet Bar
-	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10, true, false)
+	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10)
 
 	--Neuron XP Bar
-	Neuron:RegisterBarClass("XPBar", "XPBar", L["XP Bar"], "XP Button", DB.XPBar, Neuron.XPBTN, 10, false, true)
+	Neuron:RegisterBarClass("XPBar", "XPBar", L["XP Bar"], "XP Button", DB.XPBar, Neuron.XPBTN, 10)
 
 	--Neuron Rep Bar
-	Neuron:RegisterBarClass("RepBar", "RepBar", L["Rep Bar"], "Rep Button", DB.RepBar, Neuron.REPBTN, 10, false, true)
+	Neuron:RegisterBarClass("RepBar", "RepBar", L["Rep Bar"], "Rep Button", DB.RepBar, Neuron.REPBTN, 10)
 
 	--Neuron Cast Bar
-	Neuron:RegisterBarClass("CastBar", "CastBar", L["Cast Bar"], "Cast Button", DB.CastBar, Neuron.CASTBTN, 10, false, true)
+	Neuron:RegisterBarClass("CastBar", "CastBar", L["Cast Bar"], "Cast Button", DB.CastBar, Neuron.CASTBTN, 10)
 
 	--Neuron Mirror Bar
-	Neuron:RegisterBarClass("MirrorBar", "MirrorBar", L["Mirror Bar"], "Mirror Button", DB.MirrorBar, Neuron.MIRRORBTN, 10, false, true)
+	Neuron:RegisterBarClass("MirrorBar", "MirrorBar", L["Mirror Bar"], "Mirror Button", DB.MirrorBar, Neuron.MIRRORBTN, 10)
 
 	if not Neuron.isWoWClassic then
 		--Neuron Zone Ability Bar
-		Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 1, true, false)
+		Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 1)
 
 		--Neuron Extra Bar
-		Neuron:RegisterBarClass("ExtraBar", "ExtraBar", L["Extra Action Bar"], "Extra Action Button", DB.ExtraBar, Neuron.EXTRABTN,1, true, false)
+		Neuron:RegisterBarClass("ExtraBar", "ExtraBar", L["Extra Action Bar"], "Extra Action Button", DB.ExtraBar, Neuron.EXTRABTN,1)
 
 		--Neuron Exit Bar
-		Neuron:RegisterBarClass("ExitBar", "ExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.ExitBar, Neuron.EXITBTN,1, false, false)
+		Neuron:RegisterBarClass("ExitBar", "ExitBar", L["Vehicle Exit Bar"], "Vehicle Exit Button", DB.ExitBar, Neuron.EXITBTN,1)
 	end
 
 end
@@ -95,7 +93,6 @@ function Neuron:RegisterGUI()
 				SPELLGLOW = true,
 				TOOLTIPS = true,
 			})
-
 
 	--Neuron Bag Bar
 	Neuron:RegisterGUIOptions("BagBar",
@@ -195,7 +192,6 @@ function Neuron:RegisterGUI()
 					BORDERSTYLE = true,
 				})
 
-
 		--Neuron Extra Bar
 		Neuron:RegisterGUIOptions("ExtraBar",
 				{
@@ -226,11 +222,9 @@ function Neuron:RegisterGUI()
 				})
 
 	end
-
 end
 
 function Neuron:CreateBarsAndButtons()
-
 	if DB.firstRun then
 
 		for barClass, barDefaults in pairs(Neuron.DefaultBarOptions) do
@@ -266,12 +260,10 @@ function Neuron:CreateBarsAndButtons()
 			end
 		end
 	end
-
 end
 
 
 function Neuron:Overrides()
-
 	--bag bar overrides
 	if DB.blizzbar == false then
 		--hide the weird color border around bag bars
@@ -295,13 +287,11 @@ function Neuron:Overrides()
 		end
 	end
 
-
-
 	--status bar overrides
 	local disableDefaultCast = false
 	local disableDefaultMirror = false
 
-	for _,v in ipairs(Neuron.BARIndex) do
+	for _,v in ipairs(Neuron.bars) do
 
 		if v.barType == "CastBar" then
 			for _, button in ipairs(v.buttons) do
@@ -336,6 +326,4 @@ function Neuron:Overrides()
 		MirrorTimer3:UnregisterAllEvents()
 		MirrorTimer3:SetParent(Neuron.hiddenFrame)
 	end
-
-
 end

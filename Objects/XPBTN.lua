@@ -59,9 +59,9 @@ function XPBTN:SetType()
 	self:SetAttribute("hasaction", true)
 
 	self:RegisterForClicks("RightButtonUp")
-	self:SetScript("OnClick", function(self, mousebutton) self:OnClick(mousebutton) end)
-	self:SetScript("OnEnter", function(self) self:OnEnter() end)
-	self:SetScript("OnLeave", function(self) self:OnLeave() end)
+	self:SetScript("OnClick", function(_, mousebutton) self:OnClick(mousebutton) end)
+	self:SetScript("OnEnter", function() self:OnEnter() end)
+	self:SetScript("OnLeave", function() self:OnLeave() end)
 	self:SetHitRectInsets(0, 0, 0, 0)
 
 	self:RegisterEvent("PLAYER_XP_UPDATE", "XPBar_OnEvent")

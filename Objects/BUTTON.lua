@@ -109,7 +109,7 @@ function BUTTON.ChangeSelectedButton(newButton)
 		newButton.editFrame.select:Show()
 	elseif not newButton then
 		Neuron.currentButton = nil
-		for _, bar in pairs(Neuron.BARIndex) do
+		for _, bar in pairs(Neuron.bars) do
 			for _, button in pairs(bar.buttons) do
 				if button.editFrame then
 					button.editFrame.select:Hide()
@@ -118,7 +118,7 @@ function BUTTON.ChangeSelectedButton(newButton)
 		end
 	end
 
-	for _, bar in pairs(Neuron.BARIndex) do
+	for _, bar in pairs(Neuron.bars) do
 		for _, button in pairs(bar.buttons) do
 			if button.editFrame then
 				if newButton and button.editFrame ~= newButton.editFrame then

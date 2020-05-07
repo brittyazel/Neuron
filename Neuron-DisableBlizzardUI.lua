@@ -169,7 +169,7 @@ function Neuron:Overrides()
 	local disableDefaultCast = false
 	local disableDefaultMirror = false
 
-	for _,v in ipairs(Neuron.BARIndex) do
+	for _,v in ipairs(Neuron.bars) do
 
 		if v.barType == "StatusBar" then
 			for _, button in ipairs(v.buttons) do

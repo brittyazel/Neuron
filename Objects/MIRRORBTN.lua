@@ -57,7 +57,7 @@ function MIRRORBTN:SetType()
 	self:RegisterEvent("MIRROR_TIMER_STOP", "MirrorBar_OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "MirrorBar_OnEvent")
 
-	self:SetScript("OnUpdate", function(self) self:MirrorBar_OnUpdate() end)
+	self:SetScript("OnUpdate", function() self:MirrorBar_OnUpdate() end)
 
 	table.insert(MirrorBars, self)
 
