@@ -60,7 +60,6 @@ Neuron.BarOrientations = BarOrientations
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return STATUSBTN @ A newly created STATUSBTN object
 function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
-
 	--call the parent object constructor with the provided information specific to this button type
 	--local newButton = Neuron.BUTTON.new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
 	local newButton = Neuron.BUTTON.new(bar, buttonID, barObj, barType, objType, "NeuronStatusBarTemplate")

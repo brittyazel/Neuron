@@ -33,7 +33,6 @@ local LATEST_DB_VERSION = 1.3
 
 --prepare the Neuron table with some sub-tables that will be used down the road
 Neuron.BARIndex = {} --this table will be our main handle for all of our bars.
-Neuron.EDITIndex = {}
 Neuron.BINDIndex = {}
 
 Neuron.registeredBarData = {}
@@ -551,44 +550,47 @@ function Neuron:ToggleButtonEditMode(show)
 		Neuron:ToggleBarEditMode(false)
 		Neuron:ToggleBindingMode(false)
 		
-		for _, editor in pairs(Neuron.EDITIndex) do
-			editor:Show()
-			editor.button.editmode = true
+		for _, bar in pairs(Neuron.BARIndex) do
+			for _, button in pairs(bar.buttons) do
+				if button.editFrame then
+					button.editFrame:Show()
+					button.editFrame.button.editmode = true
 
-			if editor.button.bar then
-				editor:SetFrameStrata(editor.button.bar:GetFrameStrata())
-				editor:SetFrameLevel(editor.button.bar:GetFrameLevel()+4)
-			end
+					button.editFrame:SetFrameStrata(bar:GetFrameStrata())
+					button.editFrame:SetFrameLevel(bar:GetFrameLevel()+4)
 
-			--TODO: This code needs work. This logic is very rudimentary
-			if not Neuron.currentButton then
-				if Neuron.currentBar then
-					if Neuron.currentBar.buttons[1].editor then --try to set the selected button to the first button on the selected bar, if it has an edit frame
-						Neuron.BUTTON.ChangeSelectedButton(Neuron.currentBar.buttons[1])
-					else
-						Neuron.BUTTON.ChangeSelectedButton(editor.button) --if there's no edit frame, then just default to the selected button to the first in the EDITIndex
+					--TODO: This code needs work. This logic is very rudimentary
+					if not Neuron.currentButton then
+						if Neuron.currentBar then
+							if Neuron.currentBar.buttons[1].editFrame then --try to set the selected button to the first button on the selected bar, if it has an edit frame
+								Neuron.BUTTON.ChangeSelectedButton(Neuron.currentBar.buttons[1])
+							else
+								Neuron.BUTTON.ChangeSelectedButton(button.editFrame.button) --if there's no edit frame, then just default to the selected button to the first bar in the list
+							end
+						else
+							Neuron.BUTTON.ChangeSelectedButton(button.editFrame.button) --default to the selected button to the first bar in the list
+						end
 					end
-				else
-					Neuron.BUTTON.ChangeSelectedButton(editor.button) --set the selected button to the first in the EDITIndex
 				end
 			end
-		end
 
-		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateBarObjectVisibility(true)
 			bar:UpdateBarStatus(true)
 			bar:UpdateObjectUsability()
 		end
+
 	else
 		Neuron.buttonEditMode = false
 
-		for _, editor in pairs(Neuron.EDITIndex) do
-			editor:Hide()
-			editor.button.editmode = false
-			editor:SetFrameStrata("LOW")
-		end
+		for _, bar in pairs(Neuron.BARIndex) do
+			for _, button in pairs(bar.buttons) do
+				if button.editFrame then
+					button.editFrame:Hide()
+					button.editFrame.button.editmode = false
+					button.editFrame:SetFrameStrata("LOW")
+				end
+			end
 
-		for _,bar in pairs(Neuron.BARIndex) do
 			bar:UpdateBarObjectVisibility()
 			bar:UpdateBarStatus()
 			bar:UpdateObjectUsability()
@@ -640,7 +642,7 @@ end
 
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax, keybindable)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax, keybindable, btnEditable)
 
 	Neuron.registeredBarData[class] = {
 		class = class;
@@ -651,6 +653,7 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		objTemplate = objTemplate,
 		objMax = objMax,
 		keybindable = keybindable,
+		btnEditable = btnEditable,
 	}
 
 end
