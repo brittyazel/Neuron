@@ -453,13 +453,15 @@ function ACTIONBUTTON:UpdateData()
 		if abilityOrItem and #abilityOrItem > 0 and command:find("/castsequence") then --this always will set the button info the next ability or item in the sequence
 			_, self.item, self.spell = QueryCastSequence(abilityOrItem) --it will only ever return as either self.item or self.spell, never both
 		elseif abilityOrItem and #abilityOrItem > 0 then
-			if NeuronItemCache[abilityOrItem:lower()] then --if our abilityOrItem is actually an item in our cache, amend it as such
+			if Neuron.itemCache[abilityOrItem:lower()] then --if our abilityOrItem is actually an item in our cache, amend it as such
+				self.item = abilityOrItem
+			elseif GetItemInfo(abilityOrItem) then
 				self.item = abilityOrItem
 			elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
 				self.item = GetInventoryItemLink("player", abilityOrItem)
-			elseif NeuronSpellCache[abilityOrItem:lower()] then
+			elseif Neuron.spellCache[abilityOrItem:lower()] then
 				self.spell = abilityOrItem
-				self.spellID = NeuronSpellCache[abilityOrItem:lower()].spellID
+				self.spellID = Neuron.spellCache[abilityOrItem:lower()].spellID
 			elseif GetSpellInfo(abilityOrItem) then
 				self.spell = abilityOrItem
 				_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
@@ -552,13 +554,13 @@ function ACTIONBUTTON:ACTIONBAR_HIDEGRID()
 end
 
 function ACTIONBUTTON:UPDATE_MACROS()
-	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_BlizzMacro then
+	if not InCombatLockdown() and self.data.macro_BlizzMacro then
 		self:PlaceBlizzMacro(self.data.macro_BlizzMacro)
 	end
 end
 
 function ACTIONBUTTON:EQUIPMENT_SETS_CHANGED()
-	if Neuron.enteredWorld and not InCombatLockdown() and self.data.macro_EquipmentSet then
+	if not InCombatLockdown() and self.data.macro_EquipmentSet then
 		self:PlaceBlizzEquipSet(self.data.macro_EquipmentSet)
 	end
 end
@@ -679,12 +681,12 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 
 	--if there is an alt name associated with a given ability, and the alt name is known (i.e. the base spell) use the alt name instead
 	--This is important because a macro written with the base name "/cast Roll()" will work for talented abilities, but "/cast Chi Torpedo" won't work for base abilities
-	if NeuronSpellCache[spell:lower()] then
-		spellName = NeuronSpellCache[spell:lower()].spellName
-		spellID = NeuronSpellCache[spell:lower()].spellID
+	if Neuron.spellCache[spell:lower()] then
+		spellName = Neuron.spellCache[spell:lower()].spellName
+		spellID = Neuron.spellCache[spell:lower()].spellID
 
-		altName = NeuronSpellCache[spell:lower()].altName
-		altSpellID = NeuronSpellCache[spell:lower()].altSpellID
+		altName = Neuron.spellCache[spell:lower()].altName
+		altSpellID = Neuron.spellCache[spell:lower()].altSpellID
 
 		if altSpellID and IsSpellKnown(altSpellID) then
 			spell = altName

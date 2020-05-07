@@ -27,7 +27,6 @@ local BAR = Neuron.BAR
 local petIcons = {}
 
 --[[ Item Cache ]]
-local itemCache = {}
 local bagsToCache = {[0]=true,[1]=true,[2]=true,[3]=true,[4]=true,["Worn"]=true }
 local timerTimes = {} -- indexed by arbitrary name, the duration to run the timer
 local timersRunning = {} -- indexed numerically, timers that are running
@@ -114,25 +113,24 @@ end
 
 local function timerFrame_OnUpdate(frame, elapsed)
 
-	if Neuron.enteredWorld then
-		local tick
-		local times = timerTimes
-		local timers = timersRunning
+	local tick
+	local times = timerTimes
+	local timers = timersRunning
 
-		for i=#timers,1,-1 do
-			local func = timers[i]
-			times[func] = times[func] - elapsed
-			if times[func] < 0 then
-				table.remove(timers,i)
-				func()
-			end
-			tick = true
+	for i=#timers,1,-1 do
+		local func = timers[i]
+		times[func] = times[func] - elapsed
+		if times[func] < 0 then
+			table.remove(timers,i)
+			func()
 		end
-
-		if not tick then
-			frame:Hide()
-		end
+		tick = true
 	end
+
+	if not tick then
+		frame:Hide()
+	end
+
 end
 
 
@@ -213,7 +211,7 @@ function ACTIONBUTTON:filter_type()
 			end
 		end
 		-- some quest items can be marked quest as an item type also
-		for itemID,name in pairs(itemCache) do
+		for itemID,name in pairs(Neuron.itemCache) do
 			if GetItemCount(name)>0 then
 				local _, _, _, _, _, itemType, itemSubType, _, itemSlot = GetItemInfo(itemID)
 				if itemType and (itemType:lower():match(arg) or itemSubType:lower():match(arg) or itemSlot:lower():match(arg)) then
@@ -443,7 +441,7 @@ end
 
 function ACTIONBUTTON:updateFlyoutBars()
 
-	if not InCombatLockdown() and Neuron.enteredWorld then  --Workarout for protected taint if UI reload in combat
+	if not InCombatLockdown() then  --Workarout for protected taint if UI reload in combat
 		local bar = table.remove(barsToUpdate) ---this does nothing. It makes bar empty
 
 		if bar then
@@ -1078,7 +1076,7 @@ end
 	if itemID then
 		local name = GetItemInfo(itemID)
 		if name then
-			itemCache[format("item:%d",itemID)] = name:lower()
+			Neuron.itemCache[format("item:%d",itemID)] = name:lower()
 		else
 			self:ScheduleTimer("CacheBags", 0.05)
 			return true

@@ -224,9 +224,9 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	local spellName , _, icon = GetSpellInfo(spellID)
 
 	if not spellName then
-		if NeuronSpellCache[spell:lower()] then
-			spellName = NeuronSpellCache[spell:lower()].spellName
-			icon = NeuronSpellCache[spell:lower()].icon
+		if Neuron.spellCache[spell:lower()] then
+			spellName = Neuron.spellCache[spell:lower()].spellName
+			icon = Neuron.spellCache[spell:lower()].icon
 		end
 	end
 
@@ -266,9 +266,9 @@ end
 function ACTIONBUTTON:PlaceItem(action1, action2)
 	local item, link = GetItemInfo(action2)
 
-	if link and not NeuronItemCache[item:lower()] then --add the item to the itemcache if it isn't otherwise in it
+	if link and not Neuron.itemCache[item:lower()] then --add the item to the itemcache if it isn't otherwise in it
 		local _, itemID = link:match("(item:)(%d+)")
-		NeuronItemCache[item:lower()] = itemID
+		Neuron.itemCache[item:lower()] = itemID
 	end
 
 	if IsEquippableItem(item) then
@@ -488,8 +488,8 @@ function ACTIONBUTTON:SetMouseCursor()
 			return
 		end
 
-		if NeuronItemCache[self.item:lower()] then --try to pull the spellID from our ItemCache as a last resort
-			PickupItem(NeuronItemCache[self.item:lower()])
+		if Neuron.itemCache[self.item:lower()] then --try to pull the spellID from our ItemCache as a last resort
+			PickupItem(Neuron.itemCache[self.item:lower()])
 			if GetCursorInfo() then
 				return
 			end

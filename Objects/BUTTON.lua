@@ -599,8 +599,8 @@ end
 function BUTTON:UpdateItemCooldown()
 	if self.item and self.isShown then
 		local start, duration, enable, modrate
-		if NeuronItemCache[self.item:lower()] then
-			start, duration, enable, modrate = GetItemCooldown(NeuronItemCache[self.item:lower()])
+		if Neuron.itemCache[self.item:lower()] then
+			start, duration, enable, modrate = GetItemCooldown(Neuron.itemCache[self.item:lower()])
 		else
 			local itemID = GetItemInfoInstant(self.item)
 			start, duration, enable, modrate = GetItemCooldown(itemID)
@@ -648,7 +648,7 @@ function BUTTON:UpdateUsableSpell()
 	elseif isUsable then
 		if self.bar:GetShowRangeIndicator() and IsSpellInRange(self.spell, self.unit) == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
-		elseif NeuronSpellCache[self.spell:lower()] and self.bar:GetShowRangeIndicator() and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit) == 0 then
+		elseif Neuron.spellCache[self.spell:lower()] and self.bar:GetShowRangeIndicator() and IsSpellInRange(Neuron.spellCache[self.spell:lower()].index,"spell", self.unit) == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
@@ -674,7 +674,7 @@ function BUTTON:UpdateUsableItem()
 	elseif isUsable then
 		if self.bar:GetShowRangeIndicator() and IsItemInRange(self.item, self.unit) == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
-		elseif NeuronItemCache[self.item:lower()] and self.bar:GetShowRangeIndicator() and IsItemInRange(NeuronItemCache[self.item:lower()], self.unit) == 0 then
+		elseif Neuron.itemCache[self.item:lower()] and self.bar:GetShowRangeIndicator() and IsItemInRange(Neuron.itemCache[self.item:lower()], self.unit) == 0 then
 			self.elements.IconFrameIcon:SetVertexColor(self.bar:GetRangeColor()[1], self.bar:GetRangeColor()[2], self.bar:GetRangeColor()[3])
 		else
 			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
@@ -731,8 +731,8 @@ function BUTTON:UpdateSpellIcon()
 	local texture = GetSpellTexture(self.spell)
 
 	if not texture then
-		if NeuronSpellCache[self.spell:lower()] then
-			texture = NeuronSpellCache[self.spell:lower()].icon
+		if Neuron.spellCache[self.spell:lower()] then
+			texture = Neuron.spellCache[self.spell:lower()].icon
 		end
 	end
 
@@ -748,8 +748,8 @@ function BUTTON:UpdateItemIcon()
 	local texture = GetItemIcon(self.item)
 
 	if not texture then
-		if NeuronItemCache[self.item:lower()] then
-			texture = GetItemIcon("item:"..NeuronItemCache[self.item:lower()]..":0:0:0:0:0:0:0")
+		if Neuron.itemCache[self.item:lower()] then
+			texture = GetItemIcon("item:"..Neuron.itemCache[self.item:lower()]..":0:0:0:0:0:0:0")
 		end
 	end
 
@@ -902,11 +902,11 @@ function BUTTON:UpdateSpellTooltip()
 		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(self.spell, 1, 1, 1)
 		end
-	elseif NeuronSpellCache[self.spell:lower()] then --if the spell isn't in the spellbook, check our spell cache
+	elseif Neuron.spellCache[self.spell:lower()] then --if the spell isn't in the spellbook, check our spell cache
 		if self.bar:GetTooltipOption() == "normal" then
-			GameTooltip:SetSpellByID(NeuronSpellCache[self.spell:lower()].spellID)
+			GameTooltip:SetSpellByID(Neuron.spellCache[self.spell:lower()].spellID)
 		elseif self.bar:GetTooltipOption() == "minimal" then
-			GameTooltip:SetText(NeuronSpellCache[self.spell:lower()].spellName, 1, 1, 1)
+			GameTooltip:SetText(Neuron.spellCache[self.spell:lower()].spellName, 1, 1, 1)
 		end
 	else
 		GameTooltip:SetText(UNKNOWN, 1, 1, 1)
@@ -921,11 +921,11 @@ function BUTTON:UpdateItemTooltip()
 		elseif self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetText(name, 1, 1, 1)
 		end
-	elseif NeuronItemCache[self.item:lower()] then
+	elseif Neuron.itemCache[self.item:lower()] then
 		if self.bar:GetTooltipOption() == "normal" then
-			GameTooltip:SetHyperlink("item:"..NeuronItemCache[self.item:lower()]..":0:0:0:0:0:0:0")
+			GameTooltip:SetHyperlink("item:"..Neuron.itemCache[self.item:lower()]..":0:0:0:0:0:0:0")
 		elseif self.bar:GetTooltipOption() == "minimal" then
-			GameTooltip:SetText(NeuronItemCache[self.item:lower()], 1, 1, 1)
+			GameTooltip:SetText(Neuron.itemCache[self.item:lower()], 1, 1, 1)
 		end
 	end
 end

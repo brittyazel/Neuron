@@ -109,13 +109,13 @@ function NeuronGUI:RefreshPlayerSpellIconInfo()
 		return nil;
 	end
 
-	for _,v in pairs(NeuronSpellCache) do
+	for _,v in pairs(Neuron.spellCache) do
 		if v.icon and not tContains(iconList, v.icon) then
 			table.insert(iconList, v.icon)
 		end
 	end
 
-	for _,v in pairs(NeuronItemCache) do
+	for _,v in pairs(Neuron.itemCache) do
 		if v.icon and not tContains(iconList, v.icon) then
 			table.insert(iconList, v.icon)
 		end

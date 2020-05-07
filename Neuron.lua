@@ -37,10 +37,19 @@ Neuron.bars = {} --this table will be our main handle for all of our bars.
 Neuron.registeredBarData = {}
 Neuron.registeredGUIData = {}
 
-
 --these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
-NeuronItemCache = {} --Stores a cache of all items that have been seen by a Neuron button
-NeuronSpellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
+Neuron.itemCache = {} --Stores a cache of all items that have been seen by a Neuron button
+Neuron.spellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
+
+Neuron.barEditMode = false
+Neuron.buttonEditMode = false
+Neuron.bindingMode = false
+
+if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then --boolean check to set a flag if the current session is WoW Classic. Retail == 1, Classic == 2
+	Neuron.isWoWClassic = true
+end
+
+Neuron.activeSpec = 1
 
 
 Neuron.STRATAS = {
@@ -52,20 +61,8 @@ Neuron.STRATAS = {
 	[6] = "TOOLTIP"
 }
 
-Neuron.barEditMode = false
-Neuron.buttonEditMode = false
-Neuron.bindingMode = false
-
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLLERANCE = 28
-
-Neuron.enteredWorld = false --flag that gets set when the player enters the world. It's used primarily for throttling events so that the player doesn't crash on logging with too many processes
-
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then --boolean check to set a flag if the current session is WoW Classic. Retail == 1, Classic == 2
-	Neuron.isWoWClassic = true
-end
-
-Neuron.activeSpec = 1
 
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
@@ -89,12 +86,10 @@ function Neuron:OnInitialize()
 
 
 	--load saved variables into working variable containers
-	NeuronItemCache = DB.NeuronItemCache
-	NeuronSpellCache = DB.NeuronSpellCache
-
+	Neuron.itemCache = DB.NeuronItemCache
+	Neuron.spellCache = DB.NeuronSpellCache
 
 	Neuron.class = select(2, UnitClass("player"))
-
 
 	StaticPopupDialogs["ReloadUI"] = {
 		text = "ReloadUI",
@@ -207,8 +202,6 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	if DB.blizzbar == false then
 		Neuron:HideBlizzardUI()
 	end
-
-	Neuron.enteredWorld = true
 end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()
@@ -403,16 +396,16 @@ function Neuron:UpdateSpellCache()
 
 			local spellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellType, spellName, spellID, icon, altName, altSpellID, altIcon)
 
-			NeuronSpellCache[(spellName):lower()] = spellData
-			NeuronSpellCache[(spellName):lower().."()"] = spellData
+			Neuron.spellCache[(spellName):lower()] = spellData
+			Neuron.spellCache[(spellName):lower().."()"] = spellData
 
 
 			--reverse main and alt so we can put both in the table accurately
 			local altSpellData = Neuron:SetSpellInfo(i, BOOKTYPE_SPELL, spellType, altName, altSpellID, altIcon, spellName, spellID, icon)
 
 			if altName and altName ~= spellName then
-				NeuronSpellCache[(altName):lower()] = altSpellData
-				NeuronSpellCache[(altName):lower().."()"] = altSpellData
+				Neuron.spellCache[(altName):lower()] = altSpellData
+				Neuron.spellCache[(altName):lower().."()"] = altSpellData
 			end
 
 		end
@@ -436,8 +429,8 @@ function Neuron:UpdateSpellCache()
 						icon = GetSpellTexture(spellID)
 						local spellData = Neuron:SetSpellInfo(offsetIndex, BOOKTYPE_PROFESSION, spellType, spellName, spellID, icon,nil,  nil, nil)
 
-						NeuronSpellCache[(spellName):lower()] = spellData
-						NeuronSpellCache[(spellName):lower().."()"] = spellData
+						Neuron.spellCache[(spellName):lower()] = spellData
+						Neuron.spellCache[(spellName):lower().."()"] = spellData
 
 					end
 				end
