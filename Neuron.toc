@@ -49,10 +49,9 @@ Neuron-MinimapIcon.lua
 XML\NeuronActionButtonTemplate.xml
 XML\NeuronAnchorButtonTemplate.xml
 XML\NeuronBarTemplate.xml
-XML\NeuronBindFrameTemplate.xml
+XML\NeuronOverlayFrameTemplate.xml
 XML\NeuronCheckButtonTextureTemplate.xml
 XML\NeuronStatusBarTemplate.xml
-XML\NeuronEditFrameTemplate.xml
 
 Neuron-Defaults.lua
 Neuron-Startup.lua

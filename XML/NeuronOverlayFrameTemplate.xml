@@ -21,22 +21,18 @@
 
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://github.com/Gethe/wow-ui-source/blob/live/FrameXML/UI.xsd">
 
-	<Button name="NeuronBindFrameTemplate" frameStrata="DIALOG" hidden="true" virtual="true">
+	<Button name="NeuronOverlayFrameTemplate" frameStrata="DIALOG" hidden="true" virtual="true">
 		<Layers>
 			<Layer>
-				<FontString name="$parentType" parentKey="label" inherits="ChatFontSmall" nonspacewrap="true" text="bind">
+				<FontString name="$parentLabel" parentKey="label" inherits="ChatFontSmall" nonspacewrap="true">
 					<Anchors>
 						<Anchor point="TOP">
-							<Offset x="0" y="-1"/>
+							<Offset x="0" y="0"/>
 						</Anchor>
 						<Anchor point="BOTTOM">
-							<Offset x="0" y="3"/>
+							<Offset x="0" y="0"/>
 						</Anchor>
 					</Anchors>
-					<Shadow>
-						<Offset x="1" y="-1"/>
-						<Color r="0" g="0" b="0"/>
-					</Shadow>
 					<Color r="1" g="1" b="1"/>
 				</FontString>
 			</Layer>
@@ -45,13 +41,36 @@
 			<Frame name="$parentSelect" parentKey="select" setAllPoints="true" hidden="true">
 				<Layers>
 					<Layer level="OVERLAY">
-						<Texture name="$parentReticle" file="Interface\Buttons\UI-AutoCastableOverlay">
+						<Texture name="$parentReticle" parentKey="Reticle" file="Interface\Buttons\UI-AutoCastableOverlay">
 							<TexCoords left="0.24" right="0.75" top="0.24" bottom="0.75"/>
+						</Texture>
+						<Texture name="$parentReticleLeft" parentKey="Left" file="Interface\Buttons\UI-AutoCastableOverlay">
+							<Size x="8" y="8"/>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset x="1" y="-1"/>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.234375" right="0.328125" top="0.234375" bottom="0.328125"/>
+						</Texture>
+						<Texture name="$parentReticleRight" parentKey="Right" file="Interface\Buttons\UI-AutoCastableOverlay">
+							<Size x="8" y="8"/>
+							<Anchors>
+								<Anchor point="TOPRIGHT">
+									<Offset x="-1" y="-1"/>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.640625" right="0.75" top="0.234375" bottom="0.328125"/>
 						</Texture>
 					</Layer>
 				</Layers>
 			</Frame>
 		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:SetFrameLevel(self:GetParent():GetFrameLevel()+1)
+			</OnLoad>
+		</Scripts>
 	</Button>
 
 </Ui>

@@ -31,7 +31,7 @@ local NEURON_VIRTUAL_KEY = "Hotkey"
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@return BUTTON @ A newly created BUTTON object
 function BUTTON:KeybindOverlay_CreateEditFrame()
-	local keybindFrame = CreateFrame("Button", self:GetName().."BindFrame", self, "NeuronBindFrameTemplate")
+	local keybindFrame = CreateFrame("Button", self:GetName().."BindFrame", self, "NeuronOverlayFrameTemplate")
 	setmetatable(keybindFrame, { __index = CreateFrame("Button") })
 
 	keybindFrame:EnableMouseWheel(true)
@@ -245,8 +245,6 @@ end
 
 --- OnShow Event handler
 function BUTTON:KeybindOverlay_OnShow()
-	self:SetFrameLevel(self.bar:GetFrameLevel()+1)
-
 	local priority = ""
 
 	if self.keys.hotKeyPri then

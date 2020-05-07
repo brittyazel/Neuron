@@ -43,18 +43,16 @@ REPBTN.sbStrings = {
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return REPBTN @ A newly created STATUSBTN object
 function REPBTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.STATUSBTN.new(bar, buttonID, defaults, REPBTN, "RepBar", "Rep Button")
 
 	return newButton
 end
 
-
-
 function REPBTN:SetType()
-
-	if InCombatLockdown() then return end
+	if InCombatLockdown() then
+		return
+	end
 
 	self.elements.SB.repID = self.config.repID
 
@@ -72,17 +70,12 @@ function REPBTN:SetType()
 
 	self.elements.SB:Show()
 
-	local typeString = L["Rep Bar"]
-
-	self.elements.FBFrame.feedback.text:SetText(typeString)
+	self.typeString = L["Rep Bar"]
 
 	self:SetData(self.bar)
 
 	self:repbar_OnEvent() --we need this here to load the bar when first creating it
-
 end
-
-
 
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
@@ -108,9 +101,7 @@ function REPBTN:SetRepWatch(ID, name, standing, header, minrep, maxrep, value, c
 	return reptable
 end
 
-
 function REPBTN:repstrings_Update(repGainedString)
-
 	local BAR_REP_DATA = {
 		[0] = { l="Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
 		[1] = { l="Hated", r=0.6, g=0.1, b=0.1, a=1.0 },
@@ -199,9 +190,7 @@ function REPBTN:repstrings_Update(repGainedString)
 			end
 
 			RepWatch[i] = repData --set current reptable into growing RepWatch table
-
 		end
-
 	end
 end
 

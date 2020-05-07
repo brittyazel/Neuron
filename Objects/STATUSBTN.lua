@@ -23,9 +23,7 @@
 local STATUSBTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.STATUSBTN = STATUSBTN
 
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
 
 local BarTextures = {
 	[1] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_2", L["Default"] },
@@ -73,9 +71,6 @@ function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
 	return newButton
 end
 
-
-
-
 function STATUSBTN:SetBorder(statusbutton, config, bordercolor)
 
 	statusbutton.border:SetBackdrop({
@@ -97,11 +92,9 @@ function STATUSBTN:SetBorder(statusbutton, config, bordercolor)
 
 	statusbutton.border:SetBackdropColor(0, 0, 0, 0)
 	statusbutton.border:SetBackdropBorderColor(bordercolor[1], bordercolor[2], bordercolor[3], 1)
-	statusbutton.border:SetFrameLevel(self:GetFrameLevel()+1)
 
 	statusbutton.bg:SetBackdropColor(0, 0, 0, 1)
 	statusbutton.bg:SetBackdropBorderColor(0, 0, 0, 0)
-	statusbutton.bg:SetFrameLevel(0)
 
 	if statusbutton.barflash then
 		statusbutton.barflash:SetBackdrop({
@@ -119,9 +112,6 @@ function STATUSBTN:SetBorder(statusbutton, config, bordercolor)
 		})
 	end
 end
-
-
-
 
 function STATUSBTN:OnEnter()
 
@@ -147,11 +137,7 @@ function STATUSBTN:OnEnter()
 	end
 end
 
-
-
-
 function STATUSBTN:OnLeave()
-
 	if self.config.mIndex > 1 then
 		self.elements.SB.cText:Show()
 		self.elements.SB.lText:Show()
@@ -167,27 +153,17 @@ function STATUSBTN:OnLeave()
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateWidth(command, gui, query, skipupdate)
-
 	if query then
 		return self.config.width
 	end
 
 	local width = tonumber(command)
-
 	if width and width >= 10 then
-
 		self.config.width = width
-
 		self:SetWidth(self.config.width)
-
 		self.bar:SetObjectLoc()
-
 		self.bar:SetPerimeter()
-
 		self.bar:SetSize()
 
 		if not skipupdate then
@@ -196,11 +172,7 @@ function STATUSBTN:UpdateWidth(command, gui, query, skipupdate)
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateHeight(command, gui, query, skipupdate)
-
 	if query then
 		return self.config.height
 	end
@@ -225,9 +197,6 @@ function STATUSBTN:UpdateHeight(command, gui, query, skipupdate)
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateBarFill(command, gui, query, skipupdate)
 
 	if query then
@@ -237,21 +206,13 @@ function STATUSBTN:UpdateBarFill(command, gui, query, skipupdate)
 	local index = tonumber(command)
 
 	if index and BarTextures[index] then
-
 		self.config.texture = index
-
 		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 
 	end
-
 end
 
-
-
-
 function STATUSBTN:UpdateBorder(command, gui, query, skipupdate)
-
 	if query then
 		return BarBorders[self.config.border][1]
 	end
@@ -259,20 +220,12 @@ function STATUSBTN:UpdateBorder(command, gui, query, skipupdate)
 	local index = tonumber(command)
 
 	if index and BarBorders[index] then
-
 		self.config.border = index
-
 		self:SetBorder(self.elements.SB, self.config, self.bordercolor)
-		self:SetBorder(self.elements.FBFrame.feedback, self.config, self.bordercolor)
-
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
-
 	if query then
 		return BarOrientations[self.config.orientation]
 	end
@@ -280,15 +233,12 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 	orientationIndex = tonumber(orientationIndex)
 
 	if orientationIndex then
-
 		--only update if we're changing, not staying the same
 		if self.config.orientation ~= orientationIndex then
-
 			self.config.orientation = orientationIndex
 			self.elements.SB.orientation = self.config.orientation
-
 			self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
-			self.elements.FBFrame.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
+
 
 			if self.config.orientation == 2 then
 				self.elements.SB.cText:SetAlpha(0)
@@ -310,13 +260,9 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 			self.config.width = newWidth
 
 			self:SetWidth(self.config.width)
-
 			self:SetHeight(self.config.height)
-
 			self.bar:SetObjectLoc()
-
 			self.bar:SetPerimeter()
-
 			self.bar:SetSize()
 
 			if not skipupdate then
@@ -327,11 +273,7 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateCenterText(command, gui, query)
-
 	if query then
 		return self.sbStrings[self.config.cIndex][1]
 	end
@@ -339,20 +281,13 @@ function STATUSBTN:UpdateCenterText(command, gui, query)
 	local index = tonumber(command)
 
 	if index then
-
 		self.config.cIndex = index
-
 		self.elements.SB.cFunc = self.sbStrings[self.config.cIndex][2]
-
 		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateLeftText(command, gui, query)
-
 	if query then
 		return self.sbStrings[self.config.lIndex][1]
 	end
@@ -360,23 +295,13 @@ function STATUSBTN:UpdateLeftText(command, gui, query)
 	local index = tonumber(command)
 
 	if index then
-
 		self.config.lIndex = index
-
-
 		self.elements.SB.lFunc = self.sbStrings[self.config.lIndex][2]
-
-
 		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
-
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateRightText(command, gui, query)
-
 	if not self.sbStrings then
 		return "---"
 	end
@@ -388,21 +313,13 @@ function STATUSBTN:UpdateRightText(command, gui, query)
 	local index = tonumber(command)
 
 	if index then
-
 		self.config.rIndex = index
-
 		self.elements.SB.rFunc = self.sbStrings[self.config.rIndex][2]
-
 		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
-
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateMouseover(command, gui, query)
-
 	if not self.sbStrings then
 		return "---"
 	end
@@ -414,20 +331,13 @@ function STATUSBTN:UpdateMouseover(command, gui, query)
 	local index = tonumber(command)
 
 	if index then
-
 		self.config.mIndex = index
-
 		self.elements.SB.mFunc = self.sbStrings[self.config.mIndex][2]
-
 		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 	end
 end
 
-
-
-
 function STATUSBTN:UpdateTooltip(command, gui, query)
-
 	if not self.sbStrings then
 		return "---"
 	end
@@ -439,23 +349,16 @@ function STATUSBTN:UpdateTooltip(command, gui, query)
 	local index = tonumber(command)
 
 	if index then
-
 		self.config.tIndex = index
-
 		self.elements.SB.tFunc = self.sbStrings[self.config.tIndex][2]
-
 	end
 end
 
-
-
 function STATUSBTN:SetData(bar)
-
 	self.bar = bar
 
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
-
 
 	self:SetWidth(self.config.width)
 	self:SetHeight(self.config.height)
@@ -464,7 +367,6 @@ function STATUSBTN:SetData(bar)
 	self.elements.SB.lText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
 	self.elements.SB.rText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
 	self.elements.SB.mText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
-
 
 	if not self.sbStrings[self.config.cIndex] then
 		self.config.cIndex = 1
@@ -491,7 +393,6 @@ function STATUSBTN:SetData(bar)
 	end
 	self.elements.SB.tFunc = self.sbStrings[self.config.tIndex][2]
 
-
 	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
 	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
 	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
@@ -499,7 +400,6 @@ function STATUSBTN:SetData(bar)
 
 	self.elements.SB.orientation = self.config.orientation
 	self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
-	self.elements.FBFrame.feedback:SetOrientation(BarOrientations[self.config.orientation]:lower())
 
 	if self.config.orientation == 2 then
 		self.elements.SB.cText:SetAlpha(0)
@@ -515,33 +415,20 @@ function STATUSBTN:SetData(bar)
 
 	if BarTextures[self.config.texture] then
 		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
 	else
 		self.elements.SB:SetStatusBarTexture(BarTextures[1][self.config.orientation])
-		self.elements.FBFrame.feedback:SetStatusBarTexture(BarTextures[1][self.config.orientation])
 	end
 
 	self:SetBorder(self.elements.SB, self.config, self.config.bordercolor)
-	self:SetBorder(self.elements.FBFrame.feedback, self.config, self.config.bordercolor)
-
-	self:SetFrameLevel(4)
-
-	self.elements.FBFrame:SetFrameLevel(self:GetFrameLevel()+10)
-	self.elements.FBFrame.feedback:SetFrameLevel(self.elements.SB:GetFrameLevel()+10)
-	self.elements.FBFrame.feedback.bg:SetFrameLevel(self.elements.SB.bg:GetFrameLevel()+10)
-	self.elements.FBFrame.feedback.border:SetFrameLevel(self.elements.SB.border:GetFrameLevel()+10)
-
 end
 
-
-
 function STATUSBTN:UpdateObjectVisibility(show)
-	if (show) then
+	if show and not Neuron.bindingMode then
 		self.editmode = true
-		self.elements.FBFrame:Show()
+		self.elements.SB:Show()
+		self.elements.SB:SetAlpha(1)
 	else
-		self.editmode = nil
-		self.elements.FBFrame:Hide()
+		self.editmode = false
 	end
 end
 
@@ -551,7 +438,17 @@ end
 
 --overrides the parent function so we don't error out
 function STATUSBTN:UpdateUsable()
-	-- empty --
+	if self.editmode then
+		self.elements.SB.cText:SetText("")
+		self.elements.SB.lText:SetText(self.typeString)
+		self.elements.SB.rText:SetText("")
+		self.elements.SB.mText:SetText("")
+	else
+		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+	end
 end
 
 --overrides the parent function so we don't error out

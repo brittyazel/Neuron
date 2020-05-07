@@ -23,9 +23,7 @@
 local CASTBTN = setmetatable({}, { __index = Neuron.STATUSBTN })
 Neuron.CASTBTN = CASTBTN
 
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
 
 local CastWatch = {}
 
@@ -57,7 +55,6 @@ Neuron.BarUnits = BarUnits
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return CASTBTN @ A newly created STATUSBTN object
 function CASTBTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.STATUSBTN.new(bar, buttonID, defaults, CASTBTN, "CastBar", "Cast Button")
 
@@ -66,8 +63,9 @@ end
 
 
 function CASTBTN:SetType()
-
-	if InCombatLockdown() then return end
+	if InCombatLockdown() then
+		return
+	end
 
 	self:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
@@ -101,17 +99,12 @@ function CASTBTN:SetType()
 
 	self.elements.SB:Hide()
 
-	local typeString = L["Cast Bar"]
-
-	self.elements.FBFrame.feedback.text:SetText(typeString)
+	self.typeString = L["Cast Bar"]
 
 	self:SetData(self.bar)
-
 end
 
-
 function CASTBTN:CastBar_FinishSpell()
-
 	self.elements.SB.spark:Hide()
 	self.elements.SB.barflash:SetAlpha(0.0)
 	self.elements.SB.barflash:Show()
@@ -121,12 +114,7 @@ function CASTBTN:CastBar_FinishSpell()
 	self.elements.SB.channeling = false
 end
 
-
-
-
-
 function CASTBTN:CastBar_Reset()
-
 	self.elements.SB.fadeOut = 1
 	self.elements.SB.casting = false
 	self.elements.SB.channeling = false
@@ -137,12 +125,7 @@ function CASTBTN:CastBar_Reset()
 	end
 end
 
-
-
-
-
 function CASTBTN:CastBar_OnEvent(event,...)
-
 	local unit = select(1, ...)
 	local eventCastID = select(2,...) --return payload is "unitTarget", "castGUID", spellID
 
@@ -365,12 +348,7 @@ function CASTBTN:CastBar_OnEvent(event,...)
 	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
 	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
 	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
-
 end
-
-
-
-
 
 function CASTBTN:CastBar_OnUpdate(elapsed)
 
@@ -452,7 +430,7 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 				self.elements.SB.flash = nil
 			end
 
-		elseif self.elements.SB.fadeOut and not self.elements.SB.editmode then
+		elseif self.elements.SB.fadeOut and not self.editmode then
 
 			alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
 
@@ -461,6 +439,8 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 			else
 				self:CastBar_Reset()
 			end
+		else
+			self:CastBar_Reset()
 		end
 	end
 
@@ -471,7 +451,6 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 end
 
 function CASTBTN:UpdateUnit(command, gui, query)
-
 	if query then
 		return BarUnits[self.config.unit]
 	end
@@ -479,25 +458,16 @@ function CASTBTN:UpdateUnit(command, gui, query)
 	local index = tonumber(command)
 
 	if index then
-
 		self.config.unit = index
-
 		self.elements.SB.unit = BarUnits[self.config.unit]
-
 	end
 end
 
-
-
-
 function CASTBTN:UpdateCastIcon(frame, checked)
-
 	if checked then
 		self.config.showIcon = true
 	else
 		self.config.showIcon = false
 	end
-
 	self.elements.SB.showIcon = self.config.showIcon
-
 end

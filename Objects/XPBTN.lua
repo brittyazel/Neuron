@@ -23,9 +23,7 @@
 local XPBTN = setmetatable({}, { __index = Neuron.STATUSBTN })
 Neuron.XPBTN = XPBTN
 
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
 
 XPBTN.sbStrings = {
 	[1] = { L["None"], function(sb) return "" end },
@@ -43,14 +41,11 @@ XPBTN.sbStrings = {
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return XPBTN @ A newly created STATUSBTN object
 function XPBTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.STATUSBTN.new(bar, buttonID, defaults, XPBTN, "XPBar", "XP Button")
 
 	return newButton
 end
-
-
 
 function XPBTN:SetType()
 
@@ -76,17 +71,13 @@ function XPBTN:SetType()
 
 	self.elements.SB:Show()
 
-	local typeString = L["XP Bar"]
-
-	self.elements.FBFrame.feedback.text:SetText(typeString)
+	self.typeString = L["XP Bar"]
 
 	self:SetData(self.bar)
 
 	self:XPBar_OnEvent("changed_curXPType") --we need to put this here to load the bar when first creating it
 
 end
-
-
 
 ---TODO: right now we are using DB.statusbtn to assign settings ot the status buttons, but I think our indexes are bar specific
 function XPBTN:xpstrings_Update() --handles updating all the strings for the play XP watch bar
@@ -184,44 +175,31 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 	return currXP, nextXP, isRested
 end
 
-
-
 function XPBTN:XPBar_OnEvent(event, ...)
-
 	local currXP, nextXP, isRested
 	local hasChanged = false;
 
 
 	if(self.config.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
-
 		currXP, nextXP, isRested = self:xpstrings_Update()
-
 		if (isRested) then
 			self.elements.SB:SetStatusBarColor(self.config.restColor[1], self.config.restColor[2], self.config.restColor[3], self.config.restColor[4])
 		else
 			self.elements.SB:SetStatusBarColor(self.config.norestColor[1], self.config.norestColor[2], self.config.norestColor[3], self.config.norestColor[4])
 		end
-
 		hasChanged = true;
 	end
 
 
 	if(self.config.curXPType == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
-
 		currXP, nextXP = self:xpstrings_Update()
-
 		self.elements.SB:SetStatusBarColor(1, 1, 0); --set to yellow?
-
 		hasChanged = true;
-
 	end
 
 	if(self.config.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
-
 		currXP, nextXP = self:xpstrings_Update()
-
 		self.elements.SB:SetStatusBarColor(1, .4, .4);
-
 		hasChanged = true;
 	end
 
@@ -234,20 +212,14 @@ function XPBTN:XPBar_OnEvent(event, ...)
 		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
 		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 	end
-
 end
 
-
-
 function XPBTN:switchCurXPType(newXPType)
-
 	self.config.curXPType = newXPType
 	self:XPBar_OnEvent("changed_curXPType")
 end
 
-
 function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
-
 	--this is the frame that will hold our dropdown menu
 	local menuFrame
 	if not NeuronXPDropdownMenu then --try to avoid re-creating this over again if we don't have to
@@ -325,11 +297,8 @@ function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosi
 
 end
 
-
 function XPBTN:OnClick(mousebutton)
-
 	if (mousebutton == "RightButton") then
 		self:xpDropDown_Initialize()
 	end
-
 end

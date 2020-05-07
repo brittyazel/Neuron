@@ -546,9 +546,6 @@ function Neuron:ToggleButtonEditMode(show)
 					button.editFrame:Show()
 					button.editmode = true
 
-					button.editFrame:SetFrameStrata(bar:GetFrameStrata())
-					button.editFrame:SetFrameLevel(bar:GetFrameLevel()+4)
-
 					--TODO: This code needs work. This logic is very rudimentary
 					if not Neuron.currentButton then
 						if Neuron.currentBar then
@@ -577,7 +574,6 @@ function Neuron:ToggleButtonEditMode(show)
 				if button.editFrame then
 					button.editFrame:Hide()
 					button.editmode = false
-					button.editFrame:SetFrameStrata("LOW")
 				end
 			end
 
@@ -604,13 +600,12 @@ function Neuron:ToggleBindingMode(show)
 				if button.keybindFrame then
 					button.keybindFrame:Show()
 					button.editmode = true
-
-					button.keybindFrame:SetFrameStrata(bar:GetFrameStrata())
-					button.keybindFrame:SetFrameLevel(bar:GetFrameLevel()+4)
 				end
 			end
+
 			bar:UpdateBarObjectVisibility(true)
 			bar:UpdateBarStatus(true)
+			bar:UpdateObjectUsability()
 		end
 
 	else
@@ -620,12 +615,11 @@ function Neuron:ToggleBindingMode(show)
 				if button.keybindFrame then
 					button.keybindFrame:Hide()
 					button.editmode = false
-
-					button.keybindFrame:SetFrameStrata("LOW")
 				end
 			end
 			bar:UpdateBarObjectVisibility()
 			bar:UpdateBarStatus()
+			bar:UpdateObjectUsability()
 		end
 	end
 end

@@ -23,9 +23,7 @@
 local MIRRORBTN = setmetatable({}, { __index = Neuron.STATUSBTN })
 Neuron.MIRRORBTN = MIRRORBTN
 
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
-
 
 local MirrorWatch, MirrorBars = {}, {}
 
@@ -41,7 +39,6 @@ MIRRORBTN.sbStrings = {
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return MIRRORBTN @ A newly created STATUSBTN object
 function MIRRORBTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.STATUSBTN.new(bar, buttonID, defaults, MIRRORBTN, "MirrorBar", "Mirror Button")
 
@@ -50,8 +47,9 @@ end
 
 
 function MIRRORBTN:SetType()
-
-	if InCombatLockdown() then return end
+	if InCombatLockdown() then
+		return
+	end
 
 	self:RegisterEvent("MIRROR_TIMER_START", "MirrorBar_OnEvent")
 	self:RegisterEvent("MIRROR_TIMER_STOP", "MirrorBar_OnEvent")
@@ -60,21 +58,12 @@ function MIRRORBTN:SetType()
 	self:SetScript("OnUpdate", function() self:MirrorBar_OnUpdate() end)
 
 	table.insert(MirrorBars, self)
-
 	self.elements.SB:Hide()
-
-	local typeString = L["Mirror Bar"]
-
-	self.elements.FBFrame.feedback.text:SetText(typeString)
-
+	self.typeString = L["Mirror Bar"]
 	self:SetData(self.bar)
-
 end
 
-
-
 function MIRRORBTN: MirrorBar_OnEvent(event, ...)
-
 	if event == "MIRROR_TIMER_START" then
 		self:mirrorbar_Start(...)
 	elseif event == "MIRROR_TIMER_STOP" then
@@ -92,9 +81,7 @@ function MIRRORBTN: MirrorBar_OnEvent(event, ...)
 			end
 		end
 	end
-
 end
-
 
 function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 
@@ -134,34 +121,25 @@ function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 	end
 end
 
-
 function MIRRORBTN:mirrorbar_Stop(type)
-
-
 	if MirrorWatch[type] and MirrorWatch[type].active then
 
 		local mbar = MirrorWatch[type].mbar
 
 		if mbar then
-
 			table.insert(MirrorBars, 1, mbar)
-
 			MirrorWatch[type].active = false
 			MirrorWatch[type].mbar = nil
 			MirrorWatch[type].label = ""
 			MirrorWatch[type].timer = ""
-
 			mbar.elements.SB.mirror = nil
 		end
 	end
 end
 
 function MIRRORBTN:MirrorBar_OnUpdate()
-
 	if self.elements.SB.mirror then
-
 		self.elements.SB.value = GetMirrorTimerProgress(self.elements.SB.mirror)/1000
-
 
 		if self.elements.SB.value > self.elements.SB.maxvalue then
 
@@ -174,7 +152,6 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 			end
 
 		else
-
 			self.elements.SB:SetValue(self.elements.SB.value)
 
 			if self.elements.SB.value >= 60 then
@@ -186,7 +163,6 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 			end
 
 			MirrorWatch[self.elements.SB.mirror].timer = self.elements.SB.value
-
 		end
 
 	elseif not self.editmode then
@@ -205,4 +181,3 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
 	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
 end
-

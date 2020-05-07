@@ -33,7 +33,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 ----------------------------------------------------------------------------
 
 function BUTTON:EditorOverlay_CreateEditFrame()
-	local editFrame = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronEditFrameTemplate")
+	local editFrame = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronOverlayFrameTemplate")
 	setmetatable(editFrame, { __index = CreateFrame("Button") })
 
 	editFrame:EnableMouseWheel(true)
@@ -44,27 +44,27 @@ function BUTTON:EditorOverlay_CreateEditFrame()
 	editFrame:SetScript("OnLeave", function() self:EditorOverlay_OnLeave() end)
 	editFrame:SetScript("OnClick", function(_, btn) self:EditorOverlay_OnClick(btn) end)
 
+	editFrame.label:SetText(L["Edit"])
+
 	if self.objType == "ACTIONBUTTON" then
-		editFrame.type:SetText(L["Edit"])
+		editFrame.select.Left:SetTexture("")
+		editFrame.select.Right:SetTexture("")
 	else
-		editFrame.type:SetText("")
+		editFrame.select.Left:ClearAllPoints()
+		editFrame.select.Left:SetPoint("RIGHT", editFrame.select, "LEFT", 4, 0)
+		editFrame.select.Left:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
+		editFrame.select.Left:SetTexCoord(0.71875, 1, 0, 1)
+		editFrame.select.Left:SetWidth(16)
+		editFrame.select.Left:SetHeight(55)
 
-		editFrame.select.TL:ClearAllPoints()
-		editFrame.select.TL:SetPoint("RIGHT", editFrame.select, "LEFT", 4, 0)
-		editFrame.select.TL:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
-		editFrame.select.TL:SetTexCoord(0.71875, 1, 0, 1)
-		editFrame.select.TL:SetWidth(16)
-		editFrame.select.TL:SetHeight(55)
+		editFrame.select.Right:ClearAllPoints()
+		editFrame.select.Right:SetPoint("LEFT", editFrame.select, "RIGHT", -4, 0)
+		editFrame.select.Right:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
+		editFrame.select.Right:SetTexCoord(0, 0.28125, 0, 1)
+		editFrame.select.Right:SetWidth(16)
+		editFrame.select.Right:SetHeight(55)
 
-		editFrame.select.TR:ClearAllPoints()
-		editFrame.select.TR:SetPoint("LEFT", editFrame.select, "RIGHT", -4, 0)
-		editFrame.select.TR:SetTexture("Interface\\AddOns\\Neuron\\Images\\flyout.tga")
-		editFrame.select.TR:SetTexCoord(0, 0.28125, 0, 1)
-		editFrame.select.TR:SetWidth(16)
-		editFrame.select.TR:SetHeight(55)
-
-		editFrame.select.BL:SetTexture("")
-		editFrame.select.BR:SetTexture("")
+		editFrame.select.Reticle:SetTexture("")
 	end
 
 	self.editFrame = editFrame
@@ -73,7 +73,6 @@ function BUTTON:EditorOverlay_CreateEditFrame()
 end
 
 function BUTTON:EditorOverlay_OnShow()
-	self.editFrame:SetFrameLevel(self.bar:GetFrameLevel()+1)
 end
 
 function BUTTON:EditorOverlay_OnEnter()

@@ -39,7 +39,7 @@
 					</Anchors>
 				</FontString>
 			</Layer>
-			<Layer level="OVERLAY" textureSubLevel="1">
+			<Layer level="OVERLAY">
 				<Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
 					<Size x="64" y="64"/>
 					<Anchors>
@@ -116,7 +116,6 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-
 				<Texture name="$parentAutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
 					<Anchors>
 						<Anchor point="TOPLEFT"/>
@@ -150,7 +149,7 @@
 							<Anchor point="BOTTOMRIGHT"/>
 						</Anchors>
 						<Layers>
-							<Layer level="OVERLAY" textureSubLevel="3">
+							<Layer level="OVERLAY">
 								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal">
 									<Anchors>
 										<Anchor point="CENTER">
@@ -158,12 +157,12 @@
 										</Anchor>
 									</Anchors>
 								</FontString>
+
 							</Layer>
 						</Layers>
 						<Scripts>
 							<OnLoad>
-								self:SetFrameLevel(3)
-								self.button = self:GetParent():GetParent()
+								self:SetFrameLevel(self:GetParent():GetFrameLevel()+2)
 							</OnLoad>
 						</Scripts>
 					</Cooldown>

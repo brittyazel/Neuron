@@ -23,11 +23,6 @@
 
 	<CheckButton name="NeuronAnchorButtonTemplate" inherits="SecureActionButtonTemplate" virtual="true" clampedToScreen="true">
 		<Size x="36" y="36"/>
-		<Scripts>
-			<OnLoad>
-				self:SetFrameLevel(2)
-			</OnLoad>
-		</Scripts>
 		<NormalTexture name="$parentIconFrameIcon" parentKey="icon">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="-12" y="12"/>

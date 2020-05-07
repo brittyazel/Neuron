@@ -91,14 +91,10 @@ function MENUBTN:SetType()
 end
 
 function MENUBTN:SetData(bar)
-	
     self.isShown = true
 	self.bar = bar
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
-
-
-	self:SetFrameLevel(4)
 end
 
 function MENUBTN:PET_BATTLE_CLOSE()
