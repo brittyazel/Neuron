@@ -469,6 +469,8 @@ function ACTIONBUTTON:UpdateData()
 		elseif abilityOrItem and #abilityOrItem > 0 then
 			if NeuronItemCache[abilityOrItem:lower()] then --if our abilityOrItem is actually an item in our cache, amend it as such
 				self.item = abilityOrItem
+			elseif GetItemInfo(abilityOrItem) then
+				self.item = abilityOrItem
 			elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
 				self.item = GetInventoryItemLink("player", abilityOrItem)
 			elseif NeuronSpellCache[abilityOrItem:lower()] then
