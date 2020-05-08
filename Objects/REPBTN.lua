@@ -80,7 +80,7 @@ end
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
 -- @return reptable:  Table containing provided data
-function REPBTN:SetRepWatch(ID, name, standing, header, minrep, maxrep, value, colors, headerOverride)
+local function SetRepWatch(ID, name, standing, header, minrep, maxrep, value, colors, headerOverride)
 	local reptable = {}
 	reptable.ID = ID
 	reptable.name = name
@@ -173,7 +173,7 @@ function REPBTN:repstrings_Update(repGainedString)
 				headerOverride = "Other"
 			end
 
-			local repData = self:SetRepWatch(i, name, standing, header, min, max, value, colors, headerOverride)
+			local repData = SetRepWatch(i, name, standing, header, min, max, value, colors, headerOverride)
 
 			--repGainedString is a phrase that reads like "Reputation with Zandalari Empire increased by 75.", except on login it's type boolean for some reason
 			if repGainedString and type(repGainedString) ~= "boolean" and repGainedString:find(name) or self.config.autoWatch == i then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
@@ -194,13 +194,7 @@ function REPBTN:repstrings_Update(repGainedString)
 	end
 end
 
-
-
-
-
-
 function REPBTN:repbar_OnEvent(event,...)
-
 	self:repstrings_Update(...)
 
 	if RepWatch[self.elements.SB.repID] then
@@ -221,11 +215,6 @@ end
 
 
 function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choosing a rep
-
-	if not self.elements.SB then
-		return
-	end
-
 	local repDataTable = {}
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
@@ -364,12 +353,11 @@ function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choo
 
 	--build the EasyMenu with the newly created menu table "menu"
 	EasyMenu(menu, menuFrame, "cursor", 0, 0, "MENU", 1)
-
 end
 
 
 function REPBTN:OnClick(mousebutton)
 	if mousebutton == "RightButton" then
-			self:repDropDown_Initialize()
+		self:repDropDown_Initialize()
 	end
 end

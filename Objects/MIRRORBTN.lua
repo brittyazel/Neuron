@@ -45,7 +45,6 @@ function MIRRORBTN.new(bar, buttonID, defaults)
 	return newButton
 end
 
-
 function MIRRORBTN:SetType()
 	if InCombatLockdown() then
 		return
@@ -66,16 +65,14 @@ end
 function MIRRORBTN: MirrorBar_OnEvent(event, ...)
 	if event == "MIRROR_TIMER_START" then
 		self:mirrorbar_Start(...)
+
 	elseif event == "MIRROR_TIMER_STOP" then
 		self:mirrorbar_Stop(...)
+
 	elseif event == "PLAYER_ENTERING_WORLD" then --this doesn't seem to be working as of 8.0, all report as UNKNOWN
-
 		local type, value, maxvalue, scale, paused, label
-
 		for i=1, MIRRORTIMER_NUMTIMERS do
-
 			type, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
-
 			if type ~= "UNKNOWN" then
 				self:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 			end
@@ -90,11 +87,9 @@ function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 	end
 
 	if not MirrorWatch[type].active then
-
 		local mbar = table.remove(MirrorBars, 1)
 
 		if mbar then
-
 			MirrorWatch[type].active = true
 			MirrorWatch[type].mbar = mbar
 			MirrorWatch[type].label = label
@@ -125,7 +120,6 @@ function MIRRORBTN:mirrorbar_Stop(type)
 	if MirrorWatch[type] and MirrorWatch[type].active then
 
 		local mbar = MirrorWatch[type].mbar
-
 		if mbar then
 			table.insert(MirrorBars, 1, mbar)
 			MirrorWatch[type].active = false
@@ -142,9 +136,7 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 		self.elements.SB.value = GetMirrorTimerProgress(self.elements.SB.mirror)/1000
 
 		if self.elements.SB.value > self.elements.SB.maxvalue then
-
 			self.elements.SB.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
-
 			if self.elements.SB.alpha > 0 then
 				self.elements.SB:SetAlpha(self.elements.SB.alpha)
 			else
@@ -153,7 +145,6 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 
 		else
 			self.elements.SB:SetValue(self.elements.SB.value)
-
 			if self.elements.SB.value >= 60 then
 				self.elements.SB.value = string.format("%0.1f", self.elements.SB.value/60)
 				self.elements.SB.value = self.elements.SB.value.."m"
@@ -165,10 +156,8 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 			MirrorWatch[self.elements.SB.mirror].timer = self.elements.SB.value
 		end
 
-	elseif not self.editmode then
-
+	elseif not Neuron.barEditMode and not Neuron.buttonEditMode then
 		self.elements.SB.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
-
 		if self.elements.SB.alpha > 0 then
 			self.elements.SB:SetAlpha(self.elements.SB.alpha)
 		else
@@ -176,8 +165,10 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 		end
 	end
 
-	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
-	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
-	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
-	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+	if not Neuron.barEditMode and not Neuron.buttonEditMode then
+		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+	end
 end

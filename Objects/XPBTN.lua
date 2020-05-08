@@ -48,8 +48,9 @@ function XPBTN.new(bar, buttonID, defaults)
 end
 
 function XPBTN:SetType()
-
-	if InCombatLockdown() then return end
+	if InCombatLockdown() then
+		return
+	end
 
 	self:SetAttribute("hasaction", true)
 
@@ -76,19 +77,15 @@ function XPBTN:SetType()
 	self:SetData(self.bar)
 
 	self:XPBar_OnEvent("changed_curXPType") --we need to put this here to load the bar when first creating it
-
 end
 
 ---TODO: right now we are using DB.statusbtn to assign settings ot the status buttons, but I think our indexes are bar specific
 function XPBTN:xpstrings_Update() --handles updating all the strings for the play XP watch bar
-
 	local currXP, nextXP, restedXP, percentXP, bubbles, rank
 
 	--player xp option
 	if (self.config.curXPType == "player_xp") then
-
 		currXP, nextXP, restedXP = UnitXP("player"), UnitXPMax("player"), GetXPExhaustion()
-
 		local playerLevel = UnitLevel("player")
 
 		if (playerLevel == MAX_PLAYER_LEVEL) then
@@ -96,10 +93,8 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 		end
 
 		percentXP = (currXP/nextXP)*100;
-
 		bubbles = tostring(math.floor(currXP/(nextXP/20))).." / 20 "..L["Bubbles"]
 		percentXP = string.format("%.2f", (percentXP)).."%"
-
 
 		if (restedXP) then
 			restedXP = string.format("%.2f", (tostring(restedXP/nextXP))).." "..L["Levels"]
@@ -111,15 +106,10 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 
 		--heart of azeroth option
 	elseif(self.config.curXPType == "azerite_xp") then
-
 		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-
 		if(azeriteItemLocation) then
-
 			currXP, nextXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-
 			restedXP = "0".." "..L["Levels"]
-
 			percentXP = (currXP/nextXP)*100
 			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"]
 			rank = L["Level"] .. " " .. tostring(C_AzeriteItem.GetPowerLevel(azeriteItemLocation))
@@ -131,9 +121,7 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 			bubbles = tostring(0).." / 20 "..L["Bubbles"]
 			rank = tostring(0).." "..L["Points"]
 		end
-
 		percentXP = string.format("%.2f", percentXP).."%"; --format
-
 
 		--honor points option
 	elseif(self.config.curXPType == "honor_points") then
@@ -142,16 +130,10 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 		restedXP = tostring(0).." "..L["Levels"]
 
 		local level = UnitHonorLevel("player");
-
 		percentXP = (currXP/nextXP)*100
-
-
 		bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
 		percentXP = string.format("%.2f", percentXP).."%"; --format
-
-
 		rank = L["Level"] .. " " .. tostring(level)
-
 	end
 
 	if (not self.elements.SB.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
@@ -164,7 +146,6 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 	self.elements.SB.XPWatch.bubbles = bubbles
 	self.elements.SB.XPWatch.rank = rank
 
-
 	local isRested
 	if(restedXP ~= "0") then
 		isRested = true
@@ -175,10 +156,9 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 	return currXP, nextXP, isRested
 end
 
-function XPBTN:XPBar_OnEvent(event, ...)
+function XPBTN:XPBar_OnEvent(event)
 	local currXP, nextXP, isRested
 	local hasChanged = false;
-
 
 	if(self.config.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
 		currXP, nextXP, isRested = self:xpstrings_Update()
@@ -189,7 +169,6 @@ function XPBTN:XPBar_OnEvent(event, ...)
 		end
 		hasChanged = true;
 	end
-
 
 	if(self.config.curXPType == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
 		currXP, nextXP = self:xpstrings_Update()
@@ -245,7 +224,6 @@ function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosi
 
 	--wow classic doesn't have Honor points nor Azerite, carefull
 	if not Neuron.isWoWClassic then
-
 		--add Heart of Azeroth option
 		if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
 			table.insert(menu, {
@@ -294,7 +272,6 @@ function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosi
 
 	--build the EasyMenu with the newly created menu table "menu"
 	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1)
-
 end
 
 function XPBTN:OnClick(mousebutton)

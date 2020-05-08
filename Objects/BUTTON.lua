@@ -370,7 +370,7 @@ end
 
 
 function BUTTON:UpdateObjectVisibility()
-	if self.isShown or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if self.isShown or Neuron.barEditMode or (Neuron.buttonEditMode and self.editFrame) or (Neuron.bindingMode and self.keybindFrame) then
 		self.isShown = true
 	else
 		self.isShown = false
@@ -627,7 +627,7 @@ end
 -----------------------------------------------------------------------------------------
 
 function BUTTON:UpdateUsable()
-	if self.editmode then
+	if Neuron.buttonEditMode or Neuron.bindingMode then
 		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID then
 		self:UpdateUsableAction()

@@ -75,8 +75,8 @@ function EXITBTN:OnEvent(event, ...)
 end
 
 
-function EXITBTN:UpdateObjectVisibility(show)
-	if CanExitVehicle() or UnitOnTaxi("player") or show then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+function EXITBTN:UpdateObjectVisibility()
+	if CanExitVehicle() or UnitOnTaxi("player") then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
 	else
 		self.isShown = false

@@ -180,7 +180,7 @@ function PETBTN:UpdateData()
 end
 
 function PETBTN:UpdateUsable()
-	if self.editmode then
+	if Neuron.buttonEditMode or Neuron.bindingMode then
 		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID and GetPetActionSlotUsable(self.actionID) then
 		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
@@ -275,8 +275,8 @@ function PETBTN:UpdateTooltip()
 end
 
 
-function PETBTN:UpdateObjectVisibility(show)
-	if show or IsPetActive() then
+function PETBTN:UpdateObjectVisibility()
+	if IsPetActive() then
 		self.isShown = true
 	else
 		self.isShown = false

@@ -489,7 +489,7 @@ end
 
 function Neuron:ToggleButtonGrid(show)
 	for _,bar in pairs(Neuron.bars) do
-		if bar.barType == "ActionBar" or bar.barType == "PetBar" then
+		if bar.barType == "ActionBar" then
 			for _, button in pairs(bar.buttons) do
 				button:UpdateObjectVisibility(show)
 			end
@@ -544,7 +544,6 @@ function Neuron:ToggleButtonEditMode(show)
 			for _, button in pairs(bar.buttons) do
 				if button.editFrame then
 					button.editFrame:Show()
-					button.editmode = true
 
 					--TODO: This code needs work. This logic is very rudimentary
 					if not Neuron.currentButton then
@@ -573,7 +572,6 @@ function Neuron:ToggleButtonEditMode(show)
 			for _, button in pairs(bar.buttons) do
 				if button.editFrame then
 					button.editFrame:Hide()
-					button.editmode = false
 				end
 			end
 
@@ -599,7 +597,6 @@ function Neuron:ToggleBindingMode(show)
 			for _, button in pairs(bar.buttons) do
 				if button.keybindFrame then
 					button.keybindFrame:Show()
-					button.editmode = true
 				end
 			end
 
@@ -614,7 +611,6 @@ function Neuron:ToggleBindingMode(show)
 			for _, button in pairs(bar.buttons) do
 				if button.keybindFrame then
 					button.keybindFrame:Hide()
-					button.editmode = false
 				end
 			end
 			bar:UpdateBarObjectVisibility()

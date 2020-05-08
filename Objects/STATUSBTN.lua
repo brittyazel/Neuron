@@ -71,50 +71,48 @@ function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
 	return newButton
 end
 
-function STATUSBTN:SetBorder(statusbutton, config, bordercolor)
-
-	statusbutton.border:SetBackdrop({
+function STATUSBTN:SetBorder()
+	self.elements.SB.border:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = BarBorders[config.border][2],
+		edgeFile = BarBorders[self.config.border][2],
 		tile = true,
-		tileSize = BarBorders[config.border][7],
-		edgeSize = BarBorders[config.border][8],
+		tileSize = BarBorders[self.config.border][7],
+		edgeSize = BarBorders[self.config.border][8],
 		insets = {
-			left = BarBorders[config.border][3],
-			right = BarBorders[config.border][4],
-			top = BarBorders[config.border][5],
-			bottom = BarBorders[config.border][6]
+			left = BarBorders[self.config.border][3],
+			right = BarBorders[self.config.border][4],
+			top = BarBorders[self.config.border][5],
+			bottom = BarBorders[self.config.border][6]
 		}
 	})
 
-	statusbutton.border:SetPoint("TOPLEFT", BarBorders[config.border][9], BarBorders[config.border][10])
-	statusbutton.border:SetPoint("BOTTOMRIGHT", BarBorders[config.border][11], BarBorders[config.border][12])
+	self.elements.SB.border:SetPoint("TOPLEFT", BarBorders[self.config.border][9], BarBorders[self.config.border][10])
+	self.elements.SB.border:SetPoint("BOTTOMRIGHT", BarBorders[self.config.border][11], BarBorders[self.config.border][12])
 
-	statusbutton.border:SetBackdropColor(0, 0, 0, 0)
-	statusbutton.border:SetBackdropBorderColor(bordercolor[1], bordercolor[2], bordercolor[3], 1)
+	self.elements.SB.border:SetBackdropColor(0, 0, 0, 0)
+	self.elements.SB.border:SetBackdropBorderColor(self.config.bordercolor[1], self.config.bordercolor[2], self.config.bordercolor[3], 1)
 
-	statusbutton.bg:SetBackdropColor(0, 0, 0, 1)
-	statusbutton.bg:SetBackdropBorderColor(0, 0, 0, 0)
+	self.elements.SB.bg:SetBackdropColor(0, 0, 0, 1)
+	self.elements.SB.bg:SetBackdropBorderColor(0, 0, 0, 0)
 
-	if statusbutton.barflash then
-		statusbutton.barflash:SetBackdrop({
+	if self.elements.SB.barflash then
+		self.elements.SB.barflash:SetBackdrop({
 			bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-			edgeFile = BarBorders[config.border][2],
+			edgeFile = BarBorders[self.config.border][2],
 			tile = true,
-			tileSize = BarBorders[config.border][7],
-			edgeSize = BarBorders[config.border][8],
+			tileSize = BarBorders[self.config.border][7],
+			edgeSize = BarBorders[self.config.border][8],
 			insets = {
-				left = BarBorders[config.border][3],
-				right = BarBorders[config.border][4],
-				top = BarBorders[config.border][5],
-				bottom = BarBorders[config.border][6]
+				left = BarBorders[self.config.border][3],
+				right = BarBorders[self.config.border][4],
+				top = BarBorders[self.config.border][5],
+				bottom = BarBorders[self.config.border][6]
 			}
 		})
 	end
 end
 
 function STATUSBTN:OnEnter()
-
 	if self.config.mIndex > 1 then
 		self.elements.SB.cText:Hide()
 		self.elements.SB.lText:Hide()
@@ -153,11 +151,7 @@ function STATUSBTN:OnLeave()
 	end
 end
 
-function STATUSBTN:UpdateWidth(command, gui, query, skipupdate)
-	if query then
-		return self.config.width
-	end
-
+function STATUSBTN:UpdateWidth(command)
 	local width = tonumber(command)
 	if width and width >= 10 then
 		self.config.width = width
@@ -165,80 +159,44 @@ function STATUSBTN:UpdateWidth(command, gui, query, skipupdate)
 		self.bar:SetObjectLoc()
 		self.bar:SetPerimeter()
 		self.bar:SetSize()
-
-		if not skipupdate then
-			self.bar:UpdateBarStatus()
-		end
 	end
 end
 
-function STATUSBTN:UpdateHeight(command, gui, query, skipupdate)
-	if query then
-		return self.config.height
-	end
-
+function STATUSBTN:UpdateHeight(command)
 	local height = tonumber(command)
-
 	if height and height >= 4 then
-
 		self.config.height = height
-
 		self:SetHeight(self.config.height)
-
 		self.bar:SetObjectLoc()
-
 		self.bar:SetPerimeter()
-
 		self.bar:SetSize()
-
-		if not skipupdate then
-			self.bar:UpdateBarStatus()
-		end
 	end
 end
 
-function STATUSBTN:UpdateBarFill(command, gui, query, skipupdate)
-
-	if query then
-		return BarTextures[self.config.texture][3]
-	end
-
+function STATUSBTN:UpdateBarFill(command)
 	local index = tonumber(command)
-
 	if index and BarTextures[index] then
 		self.config.texture = index
 		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-
 	end
 end
 
-function STATUSBTN:UpdateBorder(command, gui, query, skipupdate)
-	if query then
-		return BarBorders[self.config.border][1]
-	end
-
+function STATUSBTN:UpdateBorder(command)
 	local index = tonumber(command)
-
 	if index and BarBorders[index] then
 		self.config.border = index
-		self:SetBorder(self.elements.SB, self.config, self.bordercolor)
+		self:SetBorder()
 	end
 end
 
-function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
-	if query then
-		return BarOrientations[self.config.orientation]
-	end
-
-	orientationIndex = tonumber(orientationIndex)
-
-	if orientationIndex then
+function STATUSBTN:UpdateOrientation(command)
+	local index = tonumber(command)
+	if index then
 		--only update if we're changing, not staying the same
-		if self.config.orientation ~= orientationIndex then
-			self.config.orientation = orientationIndex
+		if self.config.orientation ~= index then
+			self.config.orientation = index
 			self.elements.SB.orientation = self.config.orientation
 			self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
-
 
 			if self.config.orientation == 2 then
 				self.elements.SB.cText:SetAlpha(0)
@@ -264,22 +222,12 @@ function STATUSBTN:UpdateOrientation(orientationIndex, gui, query, skipupdate)
 			self.bar:SetObjectLoc()
 			self.bar:SetPerimeter()
 			self.bar:SetSize()
-
-			if not skipupdate then
-				self.bar:UpdateBarStatus()
-			end
-
 		end
 	end
 end
 
-function STATUSBTN:UpdateCenterText(command, gui, query)
-	if query then
-		return self.sbStrings[self.config.cIndex][1]
-	end
-
+function STATUSBTN:UpdateCenterText(command)
 	local index = tonumber(command)
-
 	if index then
 		self.config.cIndex = index
 		self.elements.SB.cFunc = self.sbStrings[self.config.cIndex][2]
@@ -287,13 +235,8 @@ function STATUSBTN:UpdateCenterText(command, gui, query)
 	end
 end
 
-function STATUSBTN:UpdateLeftText(command, gui, query)
-	if query then
-		return self.sbStrings[self.config.lIndex][1]
-	end
-
+function STATUSBTN:UpdateLeftText(command)
 	local index = tonumber(command)
-
 	if index then
 		self.config.lIndex = index
 		self.elements.SB.lFunc = self.sbStrings[self.config.lIndex][2]
@@ -301,17 +244,12 @@ function STATUSBTN:UpdateLeftText(command, gui, query)
 	end
 end
 
-function STATUSBTN:UpdateRightText(command, gui, query)
+function STATUSBTN:UpdateRightText(command)
 	if not self.sbStrings then
 		return "---"
 	end
 
-	if query then
-		return self.sbStrings[self.config.rIndex][1]
-	end
-
 	local index = tonumber(command)
-
 	if index then
 		self.config.rIndex = index
 		self.elements.SB.rFunc = self.sbStrings[self.config.rIndex][2]
@@ -319,17 +257,12 @@ function STATUSBTN:UpdateRightText(command, gui, query)
 	end
 end
 
-function STATUSBTN:UpdateMouseover(command, gui, query)
+function STATUSBTN:UpdateMouseover(command)
 	if not self.sbStrings then
 		return "---"
 	end
 
-	if query then
-		return self.sbStrings[self.config.mIndex][1]
-	end
-
 	local index = tonumber(command)
-
 	if index then
 		self.config.mIndex = index
 		self.elements.SB.mFunc = self.sbStrings[self.config.mIndex][2]
@@ -337,17 +270,12 @@ function STATUSBTN:UpdateMouseover(command, gui, query)
 	end
 end
 
-function STATUSBTN:UpdateTooltip(command, gui, query)
+function STATUSBTN:UpdateTooltip(command)
 	if not self.sbStrings then
 		return "---"
 	end
 
-	if query then
-		return self.sbStrings[self.config.tIndex][1]
-	end
-
 	local index = tonumber(command)
-
 	if index then
 		self.config.tIndex = index
 		self.elements.SB.tFunc = self.sbStrings[self.config.tIndex][2]
@@ -419,16 +347,13 @@ function STATUSBTN:SetData(bar)
 		self.elements.SB:SetStatusBarTexture(BarTextures[1][self.config.orientation])
 	end
 
-	self:SetBorder(self.elements.SB, self.config, self.config.bordercolor)
+	self:SetBorder()
 end
 
-function STATUSBTN:UpdateObjectVisibility(show)
-	if show and not Neuron.bindingMode then
-		self.editmode = true
+function STATUSBTN:UpdateObjectVisibility()
+	if Neuron.barEditMode or Neuron.buttonEditMode then
 		self.elements.SB:Show()
 		self.elements.SB:SetAlpha(1)
-	else
-		self.editmode = false
 	end
 end
 
@@ -438,7 +363,7 @@ end
 
 --overrides the parent function so we don't error out
 function STATUSBTN:UpdateUsable()
-	if self.editmode then
+	if Neuron.barEditMode or Neuron.buttonEditMode then
 		self.elements.SB.cText:SetText("")
 		self.elements.SB.lText:SetText(self.typeString)
 		self.elements.SB.rText:SetText("")
