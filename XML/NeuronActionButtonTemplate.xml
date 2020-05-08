@@ -57,7 +57,7 @@
 					</Anchors>
 				</Texture>
 				<!--This is the fancy texture for ZoneAbility and ExtraAction buttons that surrounds the button-->
-				<Texture name="$parentFlair" hidden="true" alphaMode="BLEND">
+				<Texture name="$parentFlair" hidden="true">
 					<Size x="190" y="95"/>
 					<Anchors>
 						<Anchor point="CENTER">

@@ -146,7 +146,6 @@
 							</BackgroundInsets>
 						</Backdrop>
 					</Frame>
-					<Frame name="$parentCBTimer" parentKey="cbtimer"/>
 				</Frames>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 				<BarColor r="0.75" g="0" b="0.75"/>

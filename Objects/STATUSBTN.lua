@@ -25,7 +25,7 @@ Neuron.STATUSBTN = STATUSBTN
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BarTextures = {
+local BAR_TEXTURES = {
 	[1] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_2", L["Default"] },
 	[2] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_2", L["Contrast"] },
 	[3] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Carpaint_2", L["Carpaint"] },
@@ -34,23 +34,18 @@ local BarTextures = {
 	[6] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Soft_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Soft_2", L["Soft"] },
 	[7] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Velvet_3", L["Velvet"] },
 }
-Neuron.BarTextures = BarTextures
 
-
-local BarBorders = {
+local BAR_BORDERS = {
 	[1] = { L["Tooltip"], "Interface\\Tooltips\\UI-Tooltip-Border", 2, 2, 3, 3, 12, 12, -2, 3, 2, -3 },
 	[2] = { L["Slider"], "Interface\\Buttons\\UI-SliderBar-Border", 3, 3, 6, 6, 8, 8 , -1, 5, 1, -5 },
 	[3] = { L["Dialog"], "Interface\\AddOns\\Neuron\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
 	[4] = { L["None"], "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 }
-Neuron.BarBorders = BarBorders
 
-local BarOrientations = {
+local BAR_ORIENTATIONS = {
 	[1] = "Horizontal",
 	[2] = "Vertical",
 }
-Neuron.BarOrientations = BarOrientations
-
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param bar BAR @Bar Object this button will be a child of
@@ -71,23 +66,91 @@ function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
 	return newButton
 end
 
+function STATUSBTN:SetData(bar)
+	self.bar = bar
+
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
+	self:SetScale(self.bar:GetBarScale())
+
+	self:SetWidth(self.config.width)
+	self:SetHeight(self.config.height)
+
+	self.elements.SB.cText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
+	self.elements.SB.lText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
+	self.elements.SB.rText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
+	self.elements.SB.mText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
+
+	if not self.sbStrings[self.config.cIndex] then
+		self.config.cIndex = 1
+	end
+	self.cFunc = self.sbStrings[self.config.cIndex][2]
+
+	if not self.sbStrings[self.config.lIndex] then
+		self.config.lIndex = 1
+	end
+	self.lFunc = self.sbStrings[self.config.lIndex][2]
+
+	if not self.sbStrings[self.config.rIndex] then
+		self.config.rIndex = 1
+	end
+	self.rFunc = self.sbStrings[self.config.rIndex][2]
+
+	if not self.sbStrings[self.config.mIndex] then
+		self.config.mIndex = 1
+	end
+	self.mFunc = self.sbStrings[self.config.mIndex][2]
+
+	if not self.sbStrings[self.config.tIndex] then
+		self.config.tIndex = 1
+	end
+	self.tFunc = self.sbStrings[self.config.tIndex][2]
+
+	self.elements.SB.cText:SetText(self:cFunc())
+	self.elements.SB.lText:SetText(self:lFunc())
+	self.elements.SB.rText:SetText(self:rFunc())
+	self.elements.SB.mText:SetText(self:mFunc())
+
+	self.orientation = self.config.orientation
+	self.elements.SB:SetOrientation(BAR_ORIENTATIONS[self.config.orientation]:lower())
+
+	if self.config.orientation == 2 then
+		self.elements.SB.cText:SetAlpha(0)
+		self.elements.SB.lText:SetAlpha(0)
+		self.elements.SB.rText:SetAlpha(0)
+		self.elements.SB.mText:SetAlpha(0)
+	else
+		self.elements.SB.cText:SetAlpha(1)
+		self.elements.SB.lText:SetAlpha(1)
+		self.elements.SB.rText:SetAlpha(1)
+		self.elements.SB.mText:SetAlpha(1)
+	end
+
+	if BAR_TEXTURES[self.config.texture] then
+		self.elements.SB:SetStatusBarTexture(BAR_TEXTURES[self.config.texture][self.config.orientation])
+	else
+		self.elements.SB:SetStatusBarTexture(BAR_TEXTURES[1][self.config.orientation])
+	end
+
+	self:SetBorder()
+end
+
 function STATUSBTN:SetBorder()
 	self.elements.SB.border:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = BarBorders[self.config.border][2],
+		edgeFile = BAR_BORDERS[self.config.border][2],
 		tile = true,
-		tileSize = BarBorders[self.config.border][7],
-		edgeSize = BarBorders[self.config.border][8],
+		tileSize = BAR_BORDERS[self.config.border][7],
+		edgeSize = BAR_BORDERS[self.config.border][8],
 		insets = {
-			left = BarBorders[self.config.border][3],
-			right = BarBorders[self.config.border][4],
-			top = BarBorders[self.config.border][5],
-			bottom = BarBorders[self.config.border][6]
+			left = BAR_BORDERS[self.config.border][3],
+			right = BAR_BORDERS[self.config.border][4],
+			top = BAR_BORDERS[self.config.border][5],
+			bottom = BAR_BORDERS[self.config.border][6]
 		}
 	})
 
-	self.elements.SB.border:SetPoint("TOPLEFT", BarBorders[self.config.border][9], BarBorders[self.config.border][10])
-	self.elements.SB.border:SetPoint("BOTTOMRIGHT", BarBorders[self.config.border][11], BarBorders[self.config.border][12])
+	self.elements.SB.border:SetPoint("TOPLEFT", BAR_BORDERS[self.config.border][9], BAR_BORDERS[self.config.border][10])
+	self.elements.SB.border:SetPoint("BOTTOMRIGHT", BAR_BORDERS[self.config.border][11], BAR_BORDERS[self.config.border][12])
 
 	self.elements.SB.border:SetBackdropColor(0, 0, 0, 0)
 	self.elements.SB.border:SetBackdropBorderColor(self.config.bordercolor[1], self.config.bordercolor[2], self.config.bordercolor[3], 1)
@@ -95,21 +158,19 @@ function STATUSBTN:SetBorder()
 	self.elements.SB.bg:SetBackdropColor(0, 0, 0, 1)
 	self.elements.SB.bg:SetBackdropBorderColor(0, 0, 0, 0)
 
-	if self.elements.SB.barflash then
-		self.elements.SB.barflash:SetBackdrop({
-			bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-			edgeFile = BarBorders[self.config.border][2],
-			tile = true,
-			tileSize = BarBorders[self.config.border][7],
-			edgeSize = BarBorders[self.config.border][8],
-			insets = {
-				left = BarBorders[self.config.border][3],
-				right = BarBorders[self.config.border][4],
-				top = BarBorders[self.config.border][5],
-				bottom = BarBorders[self.config.border][6]
-			}
-		})
-	end
+	self.elements.SB.barflash:SetBackdrop({
+		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+		edgeFile = BAR_BORDERS[self.config.border][2],
+		tile = true,
+		tileSize = BAR_BORDERS[self.config.border][7],
+		edgeSize = BAR_BORDERS[self.config.border][8],
+		insets = {
+			left = BAR_BORDERS[self.config.border][3],
+			right = BAR_BORDERS[self.config.border][4],
+			top = BAR_BORDERS[self.config.border][5],
+			bottom = BAR_BORDERS[self.config.border][6]
+		}
+	})
 end
 
 function STATUSBTN:OnEnter()
@@ -118,7 +179,7 @@ function STATUSBTN:OnEnter()
 		self.elements.SB.lText:Hide()
 		self.elements.SB.rText:Hide()
 		self.elements.SB.mText:Show()
-		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+		self.elements.SB.mText:SetText(self:mFunc())
 	end
 
 	if self.config.tIndex > 1 then
@@ -129,7 +190,7 @@ function STATUSBTN:OnEnter()
 
 		if self.bar:GetTooltipOption() ~= "off" then
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetText(self.elements.SB.tFunc(self.elements.SB) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
+			GameTooltip:SetText(self:tFunc() or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
 			GameTooltip:Show()
 		end
 	end
@@ -141,9 +202,9 @@ function STATUSBTN:OnLeave()
 		self.elements.SB.lText:Show()
 		self.elements.SB.rText:Show()
 		self.elements.SB.mText:Hide()
-		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
-		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
-		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+		self.elements.SB.cText:SetText(self:cFunc())
+		self.elements.SB.lText:SetText(self:lFunc())
+		self.elements.SB.rText:SetText(self:rFunc())
 	end
 
 	if self.config.tIndex > 1 then
@@ -175,15 +236,15 @@ end
 
 function STATUSBTN:UpdateBarFill(command)
 	local index = tonumber(command)
-	if index and BarTextures[index] then
+	if index and BAR_TEXTURES[index] then
 		self.config.texture = index
-		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
+		self.elements.SB:SetStatusBarTexture(BAR_TEXTURES[self.config.texture][self.config.orientation])
 	end
 end
 
 function STATUSBTN:UpdateBorder(command)
 	local index = tonumber(command)
-	if index and BarBorders[index] then
+	if index and BAR_BORDERS[index] then
 		self.config.border = index
 		self:SetBorder()
 	end
@@ -195,8 +256,8 @@ function STATUSBTN:UpdateOrientation(command)
 		--only update if we're changing, not staying the same
 		if self.config.orientation ~= index then
 			self.config.orientation = index
-			self.elements.SB.orientation = self.config.orientation
-			self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
+			self.orientation = self.config.orientation
+			self.elements.SB:SetOrientation(BAR_ORIENTATIONS[self.config.orientation]:lower())
 
 			if self.config.orientation == 2 then
 				self.elements.SB.cText:SetAlpha(0)
@@ -209,7 +270,6 @@ function STATUSBTN:UpdateOrientation(command)
 				self.elements.SB.rText:SetAlpha(1)
 				self.elements.SB.mText:SetAlpha(1)
 			end
-
 
 			local newWidth = self.config.height
 			local newHeight = self.config.width
@@ -230,8 +290,8 @@ function STATUSBTN:UpdateCenterText(command)
 	local index = tonumber(command)
 	if index then
 		self.config.cIndex = index
-		self.elements.SB.cFunc = self.sbStrings[self.config.cIndex][2]
-		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
+		self.cFunc = self.sbStrings[self.config.cIndex][2]
+		self.elements.SB.cText:SetText(self:cFunc())
 	end
 end
 
@@ -239,8 +299,8 @@ function STATUSBTN:UpdateLeftText(command)
 	local index = tonumber(command)
 	if index then
 		self.config.lIndex = index
-		self.elements.SB.lFunc = self.sbStrings[self.config.lIndex][2]
-		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
+		self.lFunc = self.sbStrings[self.config.lIndex][2]
+		self.elements.SB.lText:SetText(self:lFunc())
 	end
 end
 
@@ -252,8 +312,8 @@ function STATUSBTN:UpdateRightText(command)
 	local index = tonumber(command)
 	if index then
 		self.config.rIndex = index
-		self.elements.SB.rFunc = self.sbStrings[self.config.rIndex][2]
-		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
+		self.rFunc = self.sbStrings[self.config.rIndex][2]
+		self.elements.SB.rText:SetText(self:rFunc())
 	end
 end
 
@@ -265,8 +325,8 @@ function STATUSBTN:UpdateMouseover(command)
 	local index = tonumber(command)
 	if index then
 		self.config.mIndex = index
-		self.elements.SB.mFunc = self.sbStrings[self.config.mIndex][2]
-		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+		self.mFunc = self.sbStrings[self.config.mIndex][2]
+		self.elements.SB.mText:SetText(self:mFunc())
 	end
 end
 
@@ -278,76 +338,8 @@ function STATUSBTN:UpdateTooltip(command)
 	local index = tonumber(command)
 	if index then
 		self.config.tIndex = index
-		self.elements.SB.tFunc = self.sbStrings[self.config.tIndex][2]
+		self.tFunc = self.sbStrings[self.config.tIndex][2]
 	end
-end
-
-function STATUSBTN:SetData(bar)
-	self.bar = bar
-
-	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
-	self:SetScale(self.bar:GetBarScale())
-
-	self:SetWidth(self.config.width)
-	self:SetHeight(self.config.height)
-
-	self.elements.SB.cText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
-	self.elements.SB.lText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
-	self.elements.SB.rText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
-	self.elements.SB.mText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
-
-	if not self.sbStrings[self.config.cIndex] then
-		self.config.cIndex = 1
-	end
-	self.elements.SB.cFunc = self.sbStrings[self.config.cIndex][2]
-
-	if not self.sbStrings[self.config.lIndex] then
-		self.config.lIndex = 1
-	end
-	self.elements.SB.lFunc = self.sbStrings[self.config.lIndex][2]
-
-	if not self.sbStrings[self.config.rIndex] then
-		self.config.rIndex = 1
-	end
-	self.elements.SB.rFunc = self.sbStrings[self.config.rIndex][2]
-
-	if not self.sbStrings[self.config.mIndex] then
-		self.config.mIndex = 1
-	end
-	self.elements.SB.mFunc = self.sbStrings[self.config.mIndex][2]
-
-	if not self.sbStrings[self.config.tIndex] then
-		self.config.tIndex = 1
-	end
-	self.elements.SB.tFunc = self.sbStrings[self.config.tIndex][2]
-
-	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
-	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
-	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
-	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
-
-	self.elements.SB.orientation = self.config.orientation
-	self.elements.SB:SetOrientation(BarOrientations[self.config.orientation]:lower())
-
-	if self.config.orientation == 2 then
-		self.elements.SB.cText:SetAlpha(0)
-		self.elements.SB.lText:SetAlpha(0)
-		self.elements.SB.rText:SetAlpha(0)
-		self.elements.SB.mText:SetAlpha(0)
-	else
-		self.elements.SB.cText:SetAlpha(1)
-		self.elements.SB.lText:SetAlpha(1)
-		self.elements.SB.rText:SetAlpha(1)
-		self.elements.SB.mText:SetAlpha(1)
-	end
-
-	if BarTextures[self.config.texture] then
-		self.elements.SB:SetStatusBarTexture(BarTextures[self.config.texture][self.config.orientation])
-	else
-		self.elements.SB:SetStatusBarTexture(BarTextures[1][self.config.orientation])
-	end
-
-	self:SetBorder()
 end
 
 function STATUSBTN:UpdateObjectVisibility()
@@ -369,10 +361,10 @@ function STATUSBTN:UpdateUsable()
 		self.elements.SB.rText:SetText("")
 		self.elements.SB.mText:SetText("")
 	else
-		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
-		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
-		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
-		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+		self.elements.SB.cText:SetText(self:cFunc())
+		self.elements.SB.lText:SetText(self:lFunc())
+		self.elements.SB.rText:SetText(self:rFunc())
+		self.elements.SB.mText:SetText(self:mFunc())
 	end
 end
 

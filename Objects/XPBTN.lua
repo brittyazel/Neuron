@@ -26,12 +26,12 @@ Neuron.XPBTN = XPBTN
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 XPBTN.sbStrings = {
-	[1] = { L["None"], function(sb) return "" end },
-	[2] = { L["Current/Next"], function(sb) if (sb.XPWatch) then return sb.XPWatch.current end end },
-	[3] = { L["Rested Levels"], function(sb) if (sb.XPWatch) then return sb.XPWatch.rested end end },
-	[4] = { L["Percent"], function(sb) if (sb.XPWatch) then return sb.XPWatch.percent end end },
-	[5] = { L["Bubbles"], function(sb) if (sb.XPWatch) then return sb.XPWatch.bubbles end end },
-	[6] = { L["Current Level/Rank"], function(sb) if (sb.XPWatch) then return sb.XPWatch.rank end end },
+	[1] = { L["None"], function(self) return "" end },
+	[2] = { L["Current/Next"], function(self) if (self.XPWatch) then return self.XPWatch.current end end },
+	[3] = { L["Rested Levels"], function(self) if (self.XPWatch) then return self.XPWatch.rested end end },
+	[4] = { L["Percent"], function(self) if (self.XPWatch) then return self.XPWatch.percent end end },
+	[5] = { L["Bubbles"], function(self) if (self.XPWatch) then return self.XPWatch.bubbles end end },
+	[6] = { L["Current Level/Rank"], function(self) if (self.XPWatch) then return self.XPWatch.rank end end },
 }
 
 
@@ -136,15 +136,15 @@ function XPBTN:xpstrings_Update() --handles updating all the strings for the pla
 		rank = L["Level"] .. " " .. tostring(level)
 	end
 
-	if (not self.elements.SB.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
-		self.elements.SB.XPWatch = {}
+	if (not self.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
+		self.XPWatch = {}
 	end
 
-	self.elements.SB.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
-	self.elements.SB.XPWatch.rested = restedXP
-	self.elements.SB.XPWatch.percent = percentXP
-	self.elements.SB.XPWatch.bubbles = bubbles
-	self.elements.SB.XPWatch.rank = rank
+	self.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
+	self.XPWatch.rested = restedXP
+	self.XPWatch.percent = percentXP
+	self.XPWatch.bubbles = bubbles
+	self.XPWatch.rank = rank
 
 	local isRested
 	if(restedXP ~= "0") then
@@ -186,10 +186,10 @@ function XPBTN:XPBar_OnEvent(event)
 		self.elements.SB:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
 		self.elements.SB:SetValue((currXP/nextXP)*100)
 
-		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
-		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
-		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
-		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+		self.elements.SB.cText:SetText(self:cFunc())
+		self.elements.SB.lText:SetText(self:lFunc())
+		self.elements.SB.rText:SetText(self:rFunc())
+		self.elements.SB.mText:SetText(self:mFunc())
 	end
 end
 

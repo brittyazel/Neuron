@@ -28,12 +28,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local RepWatch = {}
 
 REPBTN.sbStrings = {
-	[1] = { L["None"], function(sb) return "" end },
-	[2] = { L["Faction"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].name end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
-	[3] = { L["Current/Next"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].current end end },
-	[4] = { L["Percent"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].percent end end },
-	[5] = { L["Bubbles"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].bubbles end end },
-	[6] = { L["Current Level/Rank"], function(sb) if RepWatch[sb.repID] then return RepWatch[sb.repID].standing end end },
+	[1] = { L["None"], function(self) return "" end },
+	[2] = { L["Faction"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].name end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
+	[3] = { L["Current/Next"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].current end end },
+	[4] = { L["Percent"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].percent end end },
+	[5] = { L["Bubbles"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].bubbles end end },
+	[6] = { L["Current Level/Rank"], function(self) if RepWatch[selfrepID] then return RepWatch[self.repID].standing end end },
 }
 
 
@@ -54,7 +54,7 @@ function REPBTN:SetType()
 		return
 	end
 
-	self.elements.SB.repID = self.config.repID
+	self.repID = self.config.repID
 
 	self:SetAttribute("hasaction", true)
 
@@ -197,20 +197,20 @@ end
 function REPBTN:repbar_OnEvent(event,...)
 	self:repstrings_Update(...)
 
-	if RepWatch[self.elements.SB.repID] then
-		self.elements.SB:SetStatusBarColor(RepWatch[self.elements.SB.repID].r,  RepWatch[self.elements.SB.repID].g, RepWatch[self.elements.SB.repID].b)
-		self.elements.SB:SetMinMaxValues(RepWatch[self.elements.SB.repID].min, RepWatch[self.elements.SB.repID].max)
-		self.elements.SB:SetValue(RepWatch[self.elements.SB.repID].value)
+	if RepWatch[self.repID] then
+		self.elements.SB:SetStatusBarColor(RepWatch[self.repID].r,  RepWatch[self.repID].g, RepWatch[self.repID].b)
+		self.elements.SB:SetMinMaxValues(RepWatch[self.repID].min, RepWatch[self.repID].max)
+		self.elements.SB:SetValue(RepWatch[self.repID].value)
 	else
 		self.elements.SB:SetStatusBarColor(0.5,  0.5, 0.5)
 		self.elements.SB:SetMinMaxValues(0, 1)
 		self.elements.SB:SetValue(1)
 	end
 
-	self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
-	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
-	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
-	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+	self.elements.SB.cText:SetText(self:cFunc())
+	self.elements.SB.lText:SetText(self:lFunc())
+	self.elements.SB.rText:SetText(self:rFunc())
+	self.elements.SB.mText:SetText(self:mFunc())
 end
 
 
@@ -289,7 +289,7 @@ function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choo
 				text = v2.name .. " - " .. v2.percent .." - ".. v2.standing,
 				func = function(dropdown, self) --self is arg1
 					self.config.repID = dropdown.value
-					self.elements.SB.repID = dropdown.value
+					self.repID = dropdown.value
 					self:repbar_OnEvent()
 					menuFrame:Hide()
 				end,

@@ -28,9 +28,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local MirrorWatch, MirrorBars = {}, {}
 
 MIRRORBTN.sbStrings = {
-	[1] = { L["None"], function(sb) return "" end },
-	[2] = { L["Type"], function(sb) if MirrorWatch[sb.mirror] then return MirrorWatch[sb.mirror].label end end },
-	[3] = { L["Timer"], function(sb) if MirrorWatch[sb.mirror] then return MirrorWatch[sb.mirror].timer end end },
+	[1] = { L["None"], function(self) return "" end },
+	[2] = { L["Type"], function(self) if MirrorWatch[self.mirror] then return MirrorWatch[self.mirror].label end end },
+	[3] = { L["Timer"], function(self) if MirrorWatch[self.mirror] then return MirrorWatch[self.mirror].timer end end },
 }
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -94,20 +94,14 @@ function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 			MirrorWatch[type].mbar = mbar
 			MirrorWatch[type].label = label
 
-			mbar.elements.SB.mirror = type
-			mbar.elements.SB.value = (value / 1000)
-			mbar.elements.SB.maxvalue = (maxvalue / 1000)
-
-			if  paused > 0 then
-				mbar.elements.SB.paused = 1
-			else
-				mbar.elements.SB.paused = nil
-			end
+			mbar.mirror = type
+			mbar.value = (value / 1000)
+			mbar.maxvalue = (maxvalue / 1000)
 
 			local color = MirrorTimerColors[type]
 
 			mbar.elements.SB:SetMinMaxValues(0, (maxvalue / 1000))
-			mbar.elements.SB:SetValue(mbar.elements.SB.value)
+			mbar.elements.SB:SetValue(mbar.value)
 			mbar.elements.SB:SetStatusBarColor(color.r, color.g, color.b)
 
 			mbar.elements.SB:SetAlpha(1)
@@ -126,49 +120,49 @@ function MIRRORBTN:mirrorbar_Stop(type)
 			MirrorWatch[type].mbar = nil
 			MirrorWatch[type].label = ""
 			MirrorWatch[type].timer = ""
-			mbar.elements.SB.mirror = nil
+			mbar.mirror = nil
 		end
 	end
 end
 
 function MIRRORBTN:MirrorBar_OnUpdate()
-	if self.elements.SB.mirror then
-		self.elements.SB.value = GetMirrorTimerProgress(self.elements.SB.mirror)/1000
+	if self.mirror then
+		self.value = GetMirrorTimerProgress(self.mirror)/1000
 
-		if self.elements.SB.value > self.elements.SB.maxvalue then
-			self.elements.SB.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
-			if self.elements.SB.alpha > 0 then
-				self.elements.SB:SetAlpha(self.elements.SB.alpha)
+		if self.value > self.maxvalue then
+			self.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
+			if self.alpha > 0 then
+				self.elements.SB:SetAlpha(self.alpha)
 			else
 				self.elements.SB:Hide()
 			end
 
 		else
-			self.elements.SB:SetValue(self.elements.SB.value)
-			if self.elements.SB.value >= 60 then
-				self.elements.SB.value = string.format("%0.1f", self.elements.SB.value/60)
-				self.elements.SB.value = self.elements.SB.value.."m"
+			self.elements.SB:SetValue(self.value)
+			if self.value >= 60 then
+				self.value = string.format("%0.1f", self.value/60)
+				self.value = self.value.."m"
 			else
-				self.elements.SB.value = string.format("%0.0f", self.elements.SB.value)
-				self.elements.SB.value = self.elements.SB.value.."s"
+				self.value = string.format("%0.0f", self.value)
+				self.value = self.value.."s"
 			end
 
-			MirrorWatch[self.elements.SB.mirror].timer = self.elements.SB.value
+			MirrorWatch[self.mirror].timer = self.value
 		end
 
 	elseif not Neuron.barEditMode and not Neuron.buttonEditMode then
-		self.elements.SB.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
-		if self.elements.SB.alpha > 0 then
-			self.elements.SB:SetAlpha(self.elements.SB.alpha)
+		self.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
+		if self.alpha > 0 then
+			self.elements.SB:SetAlpha(self.alpha)
 		else
 			self.elements.SB:Hide()
 		end
 	end
 
 	if not Neuron.barEditMode and not Neuron.buttonEditMode then
-		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
-		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
-		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
-		self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
+		self.elements.SB.cText:SetText(self:cFunc())
+		self.elements.SB.lText:SetText(self:lFunc())
+		self.elements.SB.rText:SetText(self:rFunc())
+		self.elements.SB.mText:SetText(self:mFunc())
 	end
 end
