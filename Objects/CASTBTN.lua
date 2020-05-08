@@ -96,9 +96,7 @@ function CASTBTN:SetType()
 	end
 
 	self.elements.SB:Hide()
-
 	self.typeString = L["Cast Bar"]
-
 	self:SetData(self.bar)
 end
 

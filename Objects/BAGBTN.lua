@@ -118,3 +118,33 @@ function BAGBTN:SetSkinned()
 		end
 	end
 end
+
+
+-----------------------------------------------------
+--------------------- Overrides ---------------------
+-----------------------------------------------------
+
+--overwrite function in parent class BUTTON
+function BAGBTN:UpdateStatus()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function BAGBTN:UpdateIcon()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function BAGBTN:UpdateUsable()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function BAGBTN:UpdateCount()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function BAGBTN:UpdateCooldown()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function BAGBTN:UpdateTooltip()
+	-- empty --
+end

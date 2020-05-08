@@ -491,7 +491,7 @@ function Neuron:ToggleButtonGrid(show)
 	for _,bar in pairs(Neuron.bars) do
 		if bar.barType == "ActionBar" then
 			for _, button in pairs(bar.buttons) do
-				button:UpdateObjectVisibility(show)
+				button:UpdateVisibility(show)
 			end
 		end
 	end
@@ -512,9 +512,9 @@ function Neuron:ToggleBarEditMode(show)
 
 		for _, bar in pairs(Neuron.bars) do
 			bar:Show() --this shows the transparent overlay over a bar
+			bar:UpdateObjectVisibility(true)
 			bar:UpdateBarStatus(true)
-			bar:UpdateBarObjectVisibility(true)
-			bar:UpdateObjectUsability()
+			bar:UpdateObjectStatus()
 		end
 
 		--if there is no bar selected, default to the first in the BarList
@@ -526,9 +526,9 @@ function Neuron:ToggleBarEditMode(show)
 		Neuron.barEditMode = false
 		for _, bar in pairs(Neuron.bars) do
 			bar:Hide()
+			bar:UpdateObjectVisibility()
 			bar:UpdateBarStatus()
-			bar:UpdateBarObjectVisibility()
-			bar:UpdateObjectUsability()
+			bar:UpdateObjectStatus()
 		end
 	end
 end
@@ -560,8 +560,9 @@ function Neuron:ToggleButtonEditMode(show)
 				end
 			end
 
-			bar:UpdateBarObjectVisibility(true)
+			bar:UpdateObjectVisibility(true)
 			bar:UpdateBarStatus(true)
+			bar:UpdateObjectStatus()
 			bar:UpdateObjectUsability()
 		end
 
@@ -575,8 +576,9 @@ function Neuron:ToggleButtonEditMode(show)
 				end
 			end
 
-			bar:UpdateBarObjectVisibility()
+			bar:UpdateObjectVisibility()
 			bar:UpdateBarStatus()
+			bar:UpdateObjectStatus()
 			bar:UpdateObjectUsability()
 
 			if bar.handler:GetAttribute("assertstate") then
@@ -585,7 +587,6 @@ function Neuron:ToggleButtonEditMode(show)
 		end
 	end
 end
-
 
 function Neuron:ToggleBindingMode(show)
 	if show then
@@ -600,8 +601,9 @@ function Neuron:ToggleBindingMode(show)
 				end
 			end
 
-			bar:UpdateBarObjectVisibility(true)
+			bar:UpdateObjectVisibility(true)
 			bar:UpdateBarStatus(true)
+			bar:UpdateObjectStatus()
 			bar:UpdateObjectUsability()
 		end
 
@@ -613,13 +615,13 @@ function Neuron:ToggleBindingMode(show)
 					button.keybindFrame:Hide()
 				end
 			end
-			bar:UpdateBarObjectVisibility()
+			bar:UpdateObjectVisibility()
 			bar:UpdateBarStatus()
+			bar:UpdateObjectStatus()
 			bar:UpdateObjectUsability()
 		end
 	end
 end
-
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
 function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax, keybindable, btnEditable)
@@ -633,7 +635,6 @@ function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTe
 		objMax = objMax,
 	}
 end
-
 
 function Neuron:RegisterGUIOptions(class, generalOptions, visualOptions)
 	Neuron.registeredGUIData[class] = {

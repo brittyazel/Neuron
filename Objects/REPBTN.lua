@@ -69,11 +69,8 @@ function REPBTN:SetType()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "repbar_OnEvent")
 
 	self.elements.SB:Show()
-
 	self.typeString = L["Rep Bar"]
-
 	self:SetData(self.bar)
-
 	self:repbar_OnEvent() --we need this here to load the bar when first creating it
 end
 

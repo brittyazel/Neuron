@@ -105,7 +105,6 @@ end
 ---this overwrites the default MoveMicroButtons and basically just extends it to reposition all the other buttons as well, not just the 1st and 6th.
 ---This is necessary for petbattles, otherwise there's no menubar
 function MENUBTN.ModifiedMoveMicroButtons(anchor, anchorTo, relAnchor, x, y, isStacked)
-
 	blizzMenuButtons[1]:ClearAllPoints();
 	blizzMenuButtons[1]:SetPoint(anchor, anchorTo, relAnchor, x-5, y+4);
 
@@ -120,4 +119,34 @@ function MENUBTN.ModifiedMoveMicroButtons(anchor, anchorTo, relAnchor, x, y, isS
 
 	MainMenuMicroButton_RepositionAlerts();
 	UpdateMicroButtons();
+end
+
+
+-----------------------------------------------------
+--------------------- Overrides ---------------------
+-----------------------------------------------------
+
+--overwrite function in parent class BUTTON
+function MENUBTN:UpdateStatus()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function MENUBTN:UpdateIcon()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function MENUBTN:UpdateUsable()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function MENUBTN:UpdateCount()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function MENUBTN:UpdateCooldown()
+	-- empty --
+end
+--overwrite function in parent class BUTTON
+function MENUBTN:UpdateTooltip()
+	-- empty --
 end

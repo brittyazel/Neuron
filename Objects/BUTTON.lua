@@ -91,7 +91,6 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
-
 function BUTTON.ChangeSelectedButton(newButton)
 	if newButton and newButton ~= Neuron.currentButton then
 		if Neuron.currentButton and Neuron.currentButton.bar ~= newButton.bar then
@@ -149,12 +148,10 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 		CooldownFrame_Clear(self.elements.IconFrameCooldown) --clear the cooldown frame
 	end
 
-	self:UpdateObjectVisibility()
+	self:UpdateVisibility()
 end
 
-
 function BUTTON:SetCooldownTimer(start, duration, enable, modrate, showCountdownTimer, color1, color2, showCountdownAlpha, charges, maxCharges)
-
 	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
 		--if there's currently a timer, cancel it
 		self:CancelCooldownTimer(true)
@@ -224,9 +221,7 @@ function BUTTON:SetCooldownTimer(start, duration, enable, modrate, showCountdown
 	else
 		self:CancelCooldownTimer(true)
 	end
-
 end
-
 
 ---this function is called by a repeating timer set in SetCooldownTimer every 0.2sec, which is autoGmatically is set to terminate 1sec after the cooldown timer ends
 ---this function's job is to overlay the countdown text on a button and set the button's cooldown alpha
@@ -295,7 +290,6 @@ function BUTTON:CooldownCounterUpdate()
 		end
 	end
 
-
 	if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 		if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 
@@ -310,15 +304,10 @@ function BUTTON:CooldownCounterUpdate()
 	end
 end
 
-
 function BUTTON:SetData(bar)
-
 	self.bar = bar
-
 	self.elements.Name:SetText(self.data.macro_Name) --custom macro's weren't showing the name
-
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
-
 	self:SetScale(self.bar:GetBarScale())
 
 
@@ -354,12 +343,9 @@ function BUTTON:SetData(bar)
 
 	self:RegisterForClicks(down, up)
 	self:RegisterForDrag("LeftButton", "RightButton")
-
 	self:GetSkinned()
-
 	self:UpdateCooldown()
 end
-
 
 --TODO: This should be consolodated as each child has a VERY similar function
 function BUTTON:LoadData()
@@ -367,22 +353,6 @@ function BUTTON:LoadData()
 	self.keys = self.DB.keys
 	self.data = self.DB.data
 end
-
-
-function BUTTON:UpdateObjectVisibility()
-	if self.isShown or Neuron.barEditMode or (Neuron.buttonEditMode and self.editFrame) or (Neuron.bindingMode and self.keybindFrame) then
-		self.isShown = true
-	else
-		self.isShown = false
-	end
-
-	if self.isShown then
-		self:SetAlpha(1)
-	else
-		self:SetAlpha(0)
-	end
-end
-
 
 function BUTTON:SetDefaults(defaults)
 	if not defaults then
@@ -400,8 +370,6 @@ function BUTTON:SetDefaults(defaults)
 			self.DB.keys[k] = v
 		end
 	end
-
-
 end
 
 function BUTTON:SetType()
@@ -452,12 +420,10 @@ function BUTTON:GetSkinned()
 			self.hasAction = false
 			self.noAction = false
 		end
-
 		return true
 	else
 		self.hasAction = "Interface\\Buttons\\UI-Quickslot2"
 		self.noAction = "Interface\\Buttons\\UI-Quickslot"
-
 		return false
 	end
 end
@@ -479,6 +445,7 @@ function BUTTON:HasAction()
 		return false
 	end
 end
+
 
 -----------------------------------------------------------------------------------------
 ------------------------------------- Update Functions ----------------------------------
@@ -509,6 +476,19 @@ function BUTTON:UpdateNormalTexture()
 	end
 end
 
+function BUTTON:UpdateVisibility()
+	if self.isShown or Neuron.barEditMode or (Neuron.buttonEditMode and self.editFrame) or (Neuron.bindingMode and self.keybindFrame) then
+		self.isShown = true
+	else
+		self.isShown = false
+	end
+
+	if self.isShown then
+		self:SetAlpha(1)
+	else
+		self:SetAlpha(0)
+	end
+end
 
 -----------------------------------------------------------------------------------------
 ------------------------------------- Set Count/Charge ----------------------------------

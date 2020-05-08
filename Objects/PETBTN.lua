@@ -196,7 +196,7 @@ function PETBTN:PLAYER_ENTERING_WORLD()
 	self:UpdateStatus()
 	self:UpdateNormalTexture()
 
-	self:UpdateObjectVisibility() --have to set true at login or the buttons on the bar don't show
+	self:UpdateVisibility() --have to set true at login or the buttons on the bar don't show
 
 	self:KeybindOverlay_ApplyBindings()
 end
@@ -236,7 +236,7 @@ function PETBTN:OnDragStart()
 
 	for i,bar in pairs(Neuron.bars) do
 		if bar.class == "pet" then
-			bar:UpdateBarObjectVisibility(true)
+			bar:UpdateObjectVisibility(true)
 		end
 	end
 end
@@ -275,12 +275,12 @@ function PETBTN:UpdateTooltip()
 end
 
 
-function PETBTN:UpdateObjectVisibility()
+function PETBTN:UpdateVisibility()
 	if IsPetActive() then
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
+	Neuron.BUTTON.UpdateVisibility(self) --call parent function
 end

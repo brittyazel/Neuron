@@ -71,11 +71,8 @@ function XPBTN:SetType()
 	end
 
 	self.elements.SB:Show()
-
 	self.typeString = L["XP Bar"]
-
 	self:SetData(self.bar)
-
 	self:XPBar_OnEvent("changed_curXPType") --we need to put this here to load the bar when first creating it
 end
 

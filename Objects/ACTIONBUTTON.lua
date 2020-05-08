@@ -89,27 +89,6 @@ function ACTIONBUTTON:LoadData(spec, state)
 	self:BuildStateData()
 end
 
-function ACTIONBUTTON:UpdateObjectVisibility(show)
-	if self:HasAction() or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
-		self.isShown = true
-	else
-		self.isShown = false
-	end
-
-	if not InCombatLockdown() then
-		self:SetAttribute("showGrid", self.bar:GetShowGrid()) --this is important because in our state switching code, we can't query self.showGrid directly
-		self:SetAttribute("isshown", self.isShown)
-
-		if self.isShown then
-			self:Show()
-		else
-			self:Hide()
-		end
-	end
-
-	Neuron.BUTTON.UpdateObjectVisibility(self)
-end
-
 function ACTIONBUTTON:SetupEvents()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
@@ -408,80 +387,6 @@ function ACTIONBUTTON:ClearButton(clearAttributes)
 	end
 end
 
---the purpose of this function is to parse the macro text and assign values to things like the icon, tooltip, etc that will be used for
---controlling the gui elements of the actionbutton
-function ACTIONBUTTON:UpdateData()
-
-	--clear any lingering values before we re-parse and reassign
-	self:ClearButton()
-
-	--if we have no macro content then bail immediately
-	--if we have an actionID on this button bail immediately
-	if not self.macro or self.actionID then
-		--clear any values that were set as they'll get in the way later
-		return
-	end
-
-	local command, abilityOrItem
-	local target
-
-	--the parsed contents of a macro and assign them for further processing
-	for cmd, content in gmatch(self.macro, "(%c%p%a+)(%C+)") do
-
-		--"cmd" is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
-		--"content" is everything else, like "Chi Torpedo()"
-
-		if cmd then
-			cmd = cmd:gsub("^%c+", "") --remove unneeded characters
-		end
-
-		if content then
-			content = content:gsub("^%s+", "") --remove unneeded characters
-		end
-
-		--we only want the first in the list if there is a list, so if the first thing is a "#showtooltip" <ability> then we want to capture the ability
-		--if the first line is #showtootltip and it is blank after, we want to ignore this particular loop and jump to the next
-		if not abilityOrItem or #abilityOrItem < 1 then
-			abilityOrItem, target = SecureCmdOptionParse(content)
-			command = cmd
-		end
-	end
-
-	self.unit = target or "target"
-
-	if COMMAND_LIST[command] then
-		if abilityOrItem and #abilityOrItem > 0 and command:find("/castsequence") then --this always will set the button info the next ability or item in the sequence
-			_, self.item, self.spell = QueryCastSequence(abilityOrItem) --it will only ever return as either self.item or self.spell, never both
-		elseif abilityOrItem and #abilityOrItem > 0 then
-			if Neuron.itemCache[abilityOrItem:lower()] then --if our abilityOrItem is actually an item in our cache, amend it as such
-				self.item = abilityOrItem
-			elseif GetItemInfo(abilityOrItem) then
-				self.item = abilityOrItem
-			elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
-				self.item = GetInventoryItemLink("player", abilityOrItem)
-			elseif Neuron.spellCache[abilityOrItem:lower()] then
-				self.spell = abilityOrItem
-				self.spellID = Neuron.spellCache[abilityOrItem:lower()].spellID
-			elseif GetSpellInfo(abilityOrItem) then
-				self.spell = abilityOrItem
-				_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
-			end
-		end
-	end
-end
-
-
---extends the parent function with the same name
-function ACTIONBUTTON:UpdateAll()
-	--pass to parent UpdateAll function
-	Neuron.BUTTON.UpdateAll(self)
-
-	if not Neuron.isWoWClassic then
-		self:UpdateGlow()
-	end
-end
-
-
 function ACTIONBUTTON:UpdateGlow()
 	if self.bar:GetSpellGlow() and self.spellID then
 		--druid fix for thrash glow not showing for feral druids.
@@ -571,7 +476,6 @@ end
 
 function ACTIONBUTTON:ParseAndSanitizeMacro()
 	local uncleanMacro = self.data.macro_Text
-
 	if #uncleanMacro > 0 then
 		--adds an empty line above and below the macro
 		uncleanMacro = "\n"..uncleanMacro.."\n"
@@ -661,7 +565,6 @@ function ACTIONBUTTON:FakeStateChange(state)
 		end
 
 		self:SetAttribute("activestate", msg)
-
 	end
 end
 
@@ -670,7 +573,6 @@ end
 --subname: subname of spell to use (optional)
 --return: macro text
 function ACTIONBUTTON:AutoWriteMacro(spell)
-
 	local DB = Neuron.db.profile
 
 	local spellName
@@ -729,10 +631,40 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 	return "#autowrite\n/cast"..modifier..spell.."()"
 end
 
+function ACTIONBUTTON:GetPosition(relFrame)
+	local point
+
+	if not relFrame then
+		relFrame = self:GetParent()
+	end
+
+	local s = self:GetScale()
+	local w, h = relFrame:GetWidth()/s, relFrame:GetHeight()/s
+	local x, y = self:GetCenter()
+	local vert = (y>h/1.5) and "TOP" or (y>h/3) and "CENTER" or "BOTTOM"
+	local horz = (x>w/1.5) and "RIGHT" or (x>w/3) and "CENTER" or "LEFT"
+
+	if vert == "CENTER" then
+		point = horz
+	elseif horz == "CENTER" then
+		point = vert
+	else
+		point = vert..horz
+	end
+
+	if vert:find("CENTER") then y = y - h/2 end
+	if horz:find("CENTER") then x = x - w/2 end
+	if point:find("RIGHT") then x = x - w end
+	if point:find("TOP") then y = y - h end
+
+	return point, x, y
+end
+
+
 --This will update the modifier value in a macro when a bar is set with a target conditional
 --@spell:  this is hte macro text to be updated
 --return: updated macro text
-function ACTIONBUTTON:AutoUpdateMacro(macro)
+--[[function ACTIONBUTTON:AutoUpdateMacro(macro)
 
 	local DB = Neuron.db.profile
 
@@ -758,36 +690,6 @@ function ACTIONBUTTON:AutoUpdateMacro(macro)
 	return macro
 end
 
-function ACTIONBUTTON:GetPosition(oFrame)
-	local relFrame, point
-
-	if oFrame then
-		relFrame = oFrame
-	else
-		relFrame = self:GetParent()
-	end
-
-	local s = self:GetScale()
-	local w, h = relFrame:GetWidth()/s, relFrame:GetHeight()/s
-	local x, y = self:GetCenter()
-	local vert = (y>h/1.5) and "TOP" or (y>h/3) and "CENTER" or "BOTTOM"
-	local horz = (x>w/1.5) and "RIGHT" or (x>w/3) and "CENTER" or "LEFT"
-
-	if vert == "CENTER" then
-		point = horz
-	elseif horz == "CENTER" then
-		point = vert
-	else
-		point = vert..horz
-	end
-
-	if vert:find("CENTER") then y = y - h/2 end
-	if horz:find("CENTER") then x = x - w/2 end
-	if point:find("RIGHT") then x = x - w end
-	if point:find("TOP") then y = y - h end
-
-	return point, x, y
-end
 
 -- This will iterate through a set of buttons. For any buttons that have the #autowrite flag in its macro, that
 -- macro will then be updated to via AutoWriteMacro to include selected target macro option, or via AutoUpdateMacro
@@ -843,4 +745,102 @@ function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
 			button:SetType()
 		end
 	end
+end]]
+
+
+-----------------------------------------------------
+--------------------- Overrides ---------------------
+-----------------------------------------------------
+
+--overwrite function in parent class BUTTON
+function ACTIONBUTTON:UpdateAll()
+	--pass to parent UpdateAll function
+	Neuron.BUTTON.UpdateAll(self)
+
+	if not Neuron.isWoWClassic then
+		self:UpdateGlow()
+	end
+end
+
+--overwrite function in parent class BUTTON
+function ACTIONBUTTON:UpdateData()
+
+	--clear any lingering values before we re-parse and reassign
+	self:ClearButton()
+
+	--if we have no macro content then bail immediately
+	--if we have an actionID on this button bail immediately
+	if not self.macro or self.actionID then
+		--clear any values that were set as they'll get in the way later
+		return
+	end
+
+	local command, abilityOrItem
+	local target
+
+	--the parsed contents of a macro and assign them for further processing
+	for cmd, content in gmatch(self.macro, "(%c%p%a+)(%C+)") do
+
+		--"cmd" is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
+		--"content" is everything else, like "Chi Torpedo()"
+
+		if cmd then
+			cmd = cmd:gsub("^%c+", "") --remove unneeded characters
+		end
+
+		if content then
+			content = content:gsub("^%s+", "") --remove unneeded characters
+		end
+
+		--we only want the first in the list if there is a list, so if the first thing is a "#showtooltip" <ability> then we want to capture the ability
+		--if the first line is #showtootltip and it is blank after, we want to ignore this particular loop and jump to the next
+		if not abilityOrItem or #abilityOrItem < 1 then
+			abilityOrItem, target = SecureCmdOptionParse(content)
+			command = cmd
+		end
+	end
+
+	self.unit = target or "target"
+
+	if COMMAND_LIST[command] then
+		if abilityOrItem and #abilityOrItem > 0 and command:find("/castsequence") then --this always will set the button info the next ability or item in the sequence
+			_, self.item, self.spell = QueryCastSequence(abilityOrItem) --it will only ever return as either self.item or self.spell, never both
+		elseif abilityOrItem and #abilityOrItem > 0 then
+			if Neuron.itemCache[abilityOrItem:lower()] then --if our abilityOrItem is actually an item in our cache, amend it as such
+				self.item = abilityOrItem
+			elseif GetItemInfo(abilityOrItem) then
+				self.item = abilityOrItem
+			elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
+				self.item = GetInventoryItemLink("player", abilityOrItem)
+			elseif Neuron.spellCache[abilityOrItem:lower()] then
+				self.spell = abilityOrItem
+				self.spellID = Neuron.spellCache[abilityOrItem:lower()].spellID
+			elseif GetSpellInfo(abilityOrItem) then
+				self.spell = abilityOrItem
+				_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
+			end
+		end
+	end
+end
+
+--overwrite function in parent class BUTTON
+function ACTIONBUTTON:UpdateVisibility(show)
+	if self:HasAction() or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+		self.isShown = true
+	else
+		self.isShown = false
+	end
+
+	if not InCombatLockdown() then
+		self:SetAttribute("showGrid", self.bar:GetShowGrid()) --this is important because in our state switching code, we can't query self.showGrid directly
+		self:SetAttribute("isshown", self.isShown)
+
+		if self.isShown then
+			self:Show()
+		else
+			self:Hide()
+		end
+	end
+
+	Neuron.BUTTON.UpdateVisibility(self)
 end

@@ -42,7 +42,6 @@ TRASHCAN:Hide()
 ---@param barID number @The ID of the new bar object
 ---@return BAR @ A newly created BUTTON object
 function BAR.new(class, barID)
-
 	local data = Neuron.registeredBarData[class]
 
 	local newBar
@@ -122,12 +121,9 @@ function BAR.new(class, barID)
 	return newBar
 end
 
----------------------------------------------------
-
 -----------------------------------
 -----Bar Add/Remove Functions------
 -----------------------------------
-
 
 ---This function is used for creating brand new bars, and it is really just a wrapper for the BAR constructor with a couple of assumptions and checks
 function BAR:CreateNewBar(class)
@@ -147,8 +143,6 @@ function BAR:CreateNewBar(class)
 
 	newBar:Show() --Show the transparent blue overlay that we show in the edit mode
 end
-
-
 Neuron.CreateNewBar = BAR.CreateNewBar --this is so the slash function works correctly
 
 
@@ -172,7 +166,6 @@ function BAR:DeleteBar()
 			end
 		end
 	end
-
 
 	for i = 1,#self.buttons do
 		self:RemoveObjectFromBar()
@@ -223,13 +216,9 @@ function BAR:DeleteBar()
 	for i,v in pairs(Neuron.bars) do --update bars to reflect new names, if they have new names
 		v:UpdateBarStatus()
 	end
-
 end
 
-
-
 function BAR:AddObjectToBar() --called from NeuronGUI
-
 	local id = #self.buttons + 1
 
 	if #self.buttons < self.objMax then
@@ -242,9 +231,8 @@ function BAR:AddObjectToBar() --called from NeuronGUI
 	self:SetPerimeter()
 	self:SetSize()
 	self:UpdateBarStatus()
-	self:UpdateBarObjectVisibility()
+	self:UpdateObjectVisibility()
 end
-
 
 function BAR:RemoveObjectFromBar() --called from NeuronGUI
 
@@ -443,23 +431,6 @@ function BAR:AlphaUpUpdate()
 	end
 end
 
-function BAR:SetHidden(handler, show)
-	for k,v in pairs(self.vis) do
-		if v.registered then
-			return
-		end
-	end
-
-	if show or self:IsVisible() then
-		--handler:Show()
-	else
-		if self:GetBarConceal() then
-			--handler:SetAttribute("concealed", true)
-			--handler:Hide()
-		end
-	end
-end
-
 function BAR:UpdateAutoHideTimer()
 	if self:GetAutoHide() then
 		if self:TimeLeft(self.autoHideTimer) == 0 then --safety check to make sure we don't re-set an already active timer
@@ -482,9 +453,7 @@ end
 
 
 function BAR:AddVisibilityDriver(handler, state, conditions)
-
 	if Neuron.MANAGED_BAR_STATES[state] then
-
 		RegisterStateDriver(handler, state, conditions);
 
 		if handler:GetAttribute("activestates"):find(state) then
@@ -503,18 +472,15 @@ end
 
 
 function BAR:ClearVisibilityDriver(handler, state)
-
 	UnregisterStateDriver(handler, state)
-
 	handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", ""))
 	handler:SetAttribute("state-current", "homestate")
 	handler:SetAttribute("state-last", "homestate")
-
 	self.vis[state].registered = false
 end
 
 
-function BAR:UpdateVisibility(driver)
+function BAR:UpdateBarVisibility(driver)
 	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
 		if self.data.hidestates:find(":"..state) then
 			if not self.vis[state] or not self.vis[state].registered then
@@ -715,7 +681,6 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_onstate-paged",
 			[[
-
 			if self:GetAttribute("statestack") then
 
 				if self:GetAttribute("statestack"):find("paged") then
@@ -752,12 +717,10 @@ function BAR:CreateHandler()
 				end
 
 			end
-
 			]])
 
 	handler:SetAttribute("_onstate-stance",
 			[[
-
 			if self:GetAttribute("statestack") then
 
 				if self:GetAttribute("statestack"):find("stance") then
@@ -794,12 +757,10 @@ function BAR:CreateHandler()
 				end
 
 			end
-
 			]])
 
 	handler:SetAttribute("_onstate-pet",
 			[[
-
 			if self:GetAttribute("statestack") then
 
 				if self:GetAttribute("statestack"):find("pet") then
@@ -836,24 +797,19 @@ function BAR:CreateHandler()
 				end
 
 			end
-
 			]])
 
 	handler:SetAttribute("_onstate-custom",
 			[[
-
 			self:SetAttribute("assertstate", "custom")
 			self:SetAttribute("state-last", self:GetAttribute("state-custom"))
 			self:SetAttribute("state-current", self:GetAttribute("state-custom"))
 			control:ChildUpdate("alt", self:GetAttribute("state-custom"))
-
 			]])
 
 	handler:SetAttribute("_onstate-current",
 			[[
-
 			self:SetAttribute("activestate", self:GetAttribute("state-current") or "homestate")
-
 			]])
 
 	handler:SetAttribute("statestack", "homestate")
@@ -867,7 +823,6 @@ function BAR:CreateHandler()
 
 	handler:SetAttribute("_childupdate",
 			[[
-
 			if not self:GetAttribute("editmode") then
 				self:SetAttribute("vishide", false)
 
@@ -889,9 +844,7 @@ function BAR:CreateHandler()
 					self:Show()
 				end
 			end
-
 			]] )
-
 	handler:SetAllPoints(self)
 	self.handler = handler;
 	handler.bar = self
@@ -908,7 +861,6 @@ function BAR:CreateWatcher()
 
 	watcher:SetAttribute("_onstate-petbattle",
 			[[
-
             if self:GetAttribute("state-petbattle") == "hide" then
                 self:GetParent():Hide()
             else
@@ -920,13 +872,9 @@ function BAR:CreateWatcher()
                 end
 
             end
-
             ]])
-
 	RegisterAttributeDriver(watcher, "state-petbattle", "[petbattle] hide; [nopetbattle] show");
-
 end
-
 
 function BAR:UpdateBarStatus(show)
 	if InCombatLockdown() then
@@ -940,11 +888,10 @@ function BAR:UpdateBarStatus(show)
 
 	if self.vischanged then
 		self.handler:SetAttribute("hidestates", self.data.hidestates)
-		self:UpdateVisibility(self.driver)
+		self:UpdateBarVisibility(self.driver)
 		self.vischanged = false
 	end
 
-	self:SetHidden(self.handler, show)
 	self.text:SetText(self:GetBarName())
 	self.handler:SetAlpha(self:GetBarAlpha())
 end
@@ -1044,7 +991,7 @@ function BAR:LoadObjects()
 		object:SetData(self)
 		object:SetType()
 
-		object:UpdateObjectVisibility()
+		object:UpdateVisibility()
 	end
 end
 
@@ -1430,7 +1377,7 @@ function BAR:OnShow()
 
 	self.handler:SetAttribute("editmode", true)
 	self.handler:Show()
-	self:UpdateBarObjectVisibility()
+	self:UpdateObjectVisibility()
 	self:EnableKeyboard(false)
 end
 
@@ -1442,7 +1389,7 @@ function BAR:OnHide()
 		self.handler:Hide()
 	end
 
-	self:UpdateBarObjectVisibility()
+	self:UpdateObjectVisibility()
 	self:EnableKeyboard(false)
 end
 
@@ -1495,10 +1442,10 @@ function BAR:UpdateObjectData()
 end
 
 
-function BAR:UpdateBarObjectVisibility(show)
+function BAR:UpdateObjectVisibility(show)
 	for _, object in pairs(self.buttons) do
 		if object then
-			object:UpdateObjectVisibility(show)
+			object:UpdateVisibility(show)
 		end
 	end
 end
@@ -1524,6 +1471,23 @@ function BAR:UpdateObjectCooldowns()
 		if object then
 			object:CancelCooldownTimer(true) --this will reset the text/alpha on the button
 			object:UpdateCooldown()
+		end
+	end
+end
+
+function BAR:UpdateObjectCooldowns()
+	for _, object in pairs(self.buttons) do
+		if object then
+			object:CancelCooldownTimer(true) --this will reset the text/alpha on the button
+			object:UpdateCooldown()
+		end
+	end
+end
+
+function BAR:UpdateObjectStatus()
+	for _, object in pairs(self.buttons) do
+		if object then
+			object:UpdateStatus()
 		end
 	end
 end
@@ -1790,7 +1754,7 @@ function BAR:SetShowGrid(checked)
 	end
 
 	self:UpdateObjectData()
-	self:UpdateBarObjectVisibility()
+	self:UpdateObjectVisibility()
 	self:UpdateBarStatus()
 end
 

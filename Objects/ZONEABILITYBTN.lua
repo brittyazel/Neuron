@@ -81,7 +81,12 @@ function ZONEABILITYBTN:OnEvent(event, ...)
 	end
 end
 
----overwrite function in parent class BUTTON
+
+-----------------------------------------------------
+--------------------- Overrides ---------------------
+-----------------------------------------------------
+
+--overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateData()
 	--update the ZoneAbility spell ID
 	self.spellID = GetZoneAbilitySpellInfo();
@@ -97,7 +102,7 @@ function ZONEABILITYBTN:UpdateData()
 
 	self.elements.Name:Hide()
 
-	self:UpdateObjectVisibility()
+	self:UpdateVisibility()
 	self:UpdateIcon()
 	self:UpdateCooldown()
 	--zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
@@ -106,14 +111,15 @@ function ZONEABILITYBTN:UpdateData()
 	self:UpdateNormalTexture()
 end
 
-function ZONEABILITYBTN:UpdateObjectVisibility()
+--overwrite function in parent class BUTTON
+function ZONEABILITYBTN:UpdateVisibility()
 	if HasZoneAbility() then
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
+	Neuron.BUTTON.UpdateVisibility(self) --call parent function
 end
 
 --overwrite function in parent class BUTTON
@@ -131,6 +137,7 @@ function ZONEABILITYBTN:UpdateIcon()
 	end
 end
 
+--overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateTooltip()
 	if not self.isShown then
 		return
@@ -150,5 +157,4 @@ function ZONEABILITYBTN:UpdateTooltip()
 		end
 		GameTooltip:Show()
 	end
-
 end

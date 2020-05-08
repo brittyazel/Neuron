@@ -330,31 +330,21 @@ function STATUSBTN:UpdateMouseover(command)
 	end
 end
 
-function STATUSBTN:UpdateTooltip(command)
-	if not self.sbStrings then
-		return "---"
-	end
 
-	local index = tonumber(command)
-	if index then
-		self.config.tIndex = index
-		self.tFunc = self.sbStrings[self.config.tIndex][2]
-	end
-end
+-----------------------------------------------------
+--------------------- Overrides ---------------------
+-----------------------------------------------------
 
-function STATUSBTN:UpdateObjectVisibility()
+--overwrite function in parent class BUTTON
+function STATUSBTN:UpdateVisibility()
 	if Neuron.barEditMode or Neuron.buttonEditMode then
 		self.elements.SB:Show()
 		self.elements.SB:SetAlpha(1)
 	end
 end
 
---------------------------------------------------------------
----------------------- Overrides -----------------------------
---------------------------------------------------------------
-
---overrides the parent function so we don't error out
-function STATUSBTN:UpdateUsable()
+--overwrite function in parent class BUTTON
+function STATUSBTN:UpdateStatus()
 	if Neuron.barEditMode or Neuron.buttonEditMode then
 		self.elements.SB.cText:SetText("")
 		self.elements.SB.lText:SetText(self.typeString)
@@ -368,22 +358,32 @@ function STATUSBTN:UpdateUsable()
 	end
 end
 
---overrides the parent function so we don't error out
+--overwrite function in parent class BUTTON
+function STATUSBTN:UpdateTooltip(command)
+	if not self.sbStrings then
+		return "---"
+	end
+
+	local index = tonumber(command)
+	if index then
+		self.config.tIndex = index
+		self.tFunc = self.sbStrings[self.config.tIndex][2]
+	end
+end
+
+--overwrite function in parent class BUTTON
 function STATUSBTN:UpdateIcon()
 	-- empty --
 end
-
---overrides the parent function so we don't error out
-function STATUSBTN:UpdateStatus()
+--overwrite function in parent class BUTTON
+function STATUSBTN:UpdateUsable()
 	-- empty --
 end
-
---overrides the parent function so we don't error out
+--overwrite function in parent class BUTTON
 function STATUSBTN:UpdateCount()
 	-- empty --
 end
-
---overrides the parent function so we don't error out
+--overwrite function in parent class BUTTON
 function STATUSBTN:UpdateCooldown()
 	-- empty --
 end

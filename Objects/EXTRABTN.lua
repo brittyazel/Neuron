@@ -81,9 +81,13 @@ function EXTRABTN:OnEvent(event, ...)
 
 end
 
----overwrite function in parent class BUTTON
-function EXTRABTN:UpdateData()
 
+-----------------------------------------------------
+--------------------- Overrides ---------------------
+-----------------------------------------------------
+
+--overwrite function in parent class BUTTON
+function EXTRABTN:UpdateData()
 	--get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
 		--default to 169 as is the most of then the case as of 8.1
@@ -112,7 +116,7 @@ function EXTRABTN:UpdateData()
 	-----------------------
 	self.elements.Name:Hide()
 
-	self:UpdateObjectVisibility()
+	self:UpdateVisibility()
 	self:UpdateIcon()
 	self:UpdateCooldown()
 	--extra button charges (some quests have ability charges)
@@ -121,17 +125,18 @@ function EXTRABTN:UpdateData()
 	self:UpdateNormalTexture()
 end
 
-function EXTRABTN:UpdateObjectVisibility()
+--overwrite function in parent class BUTTON
+function EXTRABTN:UpdateVisibility()
 	if HasExtraActionBar() then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
+	Neuron.BUTTON.UpdateVisibility(self) --call parent function
 end
 
----overwrite function in parent class BUTTON
+--overwrite function in parent class BUTTON
 function EXTRABTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
 	self.elements.IconFrameIcon:SetTexture(spellTexture)
@@ -146,6 +151,7 @@ function EXTRABTN:UpdateIcon()
 	end
 end
 
+--overwrite function in parent class BUTTON
 function EXTRABTN:UpdateTooltip()
 	if not self.isShown then
 		return

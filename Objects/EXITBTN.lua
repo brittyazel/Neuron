@@ -32,7 +32,6 @@ Neuron.EXITBTN = EXITBTN
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return EXITBTN @ A newly created EXITBTN object
 function EXITBTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, EXITBTN, "ExitBar", "VehicleExitButton", "NeuronActionButtonTemplate")
 
@@ -42,7 +41,6 @@ function EXITBTN.new(bar, buttonID, defaults)
 
 	return newButton
 end
-
 
 ----------------------------------------------------------
 
@@ -71,21 +69,37 @@ function EXITBTN:OnEvent(event, ...)
 	end
 
 	self:UpdateIcon()
-	self:UpdateObjectVisibility()
+	self:UpdateVisibility()
+end
+
+function EXITBTN:OnClick()
+	if UnitOnTaxi("player") then
+		TaxiRequestEarlyLanding()
+		--desaturate the button if early landing is requested and disable it
+		self.elements.IconFrameIcon:SetDesaturated(true);
+		self:Disable()
+	else
+		VehicleExit()
+	end
 end
 
 
-function EXITBTN:UpdateObjectVisibility()
+-----------------------------------------------------
+--------------------- Overrides ---------------------
+-----------------------------------------------------
+
+--overwrite function in parent class BUTTON
+function EXITBTN:UpdateVisibility()
 	if CanExitVehicle() or UnitOnTaxi("player") then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
+	Neuron.BUTTON.UpdateVisibility(self) --call parent function
 end
 
----overwrite function in parent class BUTTON
+--overwrite function in parent class BUTTON
 function EXITBTN:UpdateIcon()
 	self.elements.IconFrameIcon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
 
@@ -100,19 +114,7 @@ function EXITBTN:UpdateIcon()
 	end
 end
 
-
-function EXITBTN:OnClick()
-	if UnitOnTaxi("player") then
-		TaxiRequestEarlyLanding()
-		--desaturate the button if early landing is requested and disable it
-		self.elements.IconFrameIcon:SetDesaturated(true);
-		self:Disable()
-	else
-		VehicleExit()
-	end
-end
-
-
+--overwrite function in parent class BUTTON
 function EXITBTN:UpdateTooltip()
 	if not self.isShown then
 		return
