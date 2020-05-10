@@ -231,6 +231,10 @@ function XPBTN:OnClick(mousebutton)
 	end
 end
 
+-----------------------------------------------------
+-------------------Sets and Gets---------------------
+-----------------------------------------------------
+
 function XPBTN:SetXPType(newXPType)
 	self.config.curXPType = newXPType
 	self:OnEvent("changed_curXPType")

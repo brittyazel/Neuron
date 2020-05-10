@@ -39,14 +39,10 @@ local genericSpecData = {
 }
 
 local genericXPBtnData= {
-
 	curXPType = "player_xp",
 
 	width = 450,
 	height = 18,
-	scale = 1,
-	XOffset = 0,
-	YOffset = 0,
 	texture = 7,
 	border = 1,
 
@@ -74,15 +70,11 @@ local genericXPBtnData= {
 }
 
 local genericRepBtnData= {
-
 	repID = 2,
 	autoWatch = 2,
 
 	width = 450,
 	height = 18,
-	scale = 1,
-	XOffset = 0,
-	YOffset = 0,
 	texture = 7,
 	border = 1,
 
@@ -107,12 +99,8 @@ local genericRepBtnData= {
 }
 
 local genericCastBtnData= {
-
 	width = 250,
 	height = 18,
-	scale = 1,
-	XOffset = 0,
-	YOffset = 0,
 	texture = 7,
 	border = 1,
 
@@ -140,18 +128,13 @@ local genericCastBtnData= {
 	successColor = {0,1,0,1},
 	failColor = {1,0,0,1},
 
-	unit = 2,
-
+	unit = "player",
 	showIcon = true,
 }
 
 local genericMirrorBtnData= {
-
 	width = 250,
 	height = 18,
-	scale = 1,
-	XOffset = 0,
-	YOffset = 0,
 	texture = 7,
 	border = 1,
 
@@ -173,7 +156,6 @@ local genericMirrorBtnData= {
 	tColor = {1,1,1,1},
 
 	bordercolor = {1,1,1,1},
-
 }
 
 

@@ -29,22 +29,8 @@ local castWatch = {}
 
 CASTBTN.sbStrings = {
 	[1] = { L["None"], function(self) return "" end },
-	[2] = { L["Spell"], function(self) if castWatch[self.unit] then return castWatch[self.unit].spell end end },
-	[3] = { L["Timer"], function(self) if castWatch[self.unit] then return castWatch[self.unit].timer end end },
-}
-
-local BAR_UNITS = {
-	[1] = "-none-",
-	[2] = "player",
-	[3] = "pet",
-	[4] = "target",
-	[5] = "targettarget",
-	[6] = "focus",
-	[7] = "mouseover",
-	[8] = "party1",
-	[9] = "party2",
-	[10] = "party3",
-	[11] = "party4",
+	[2] = { L["Spell"], function(self) if castWatch[self:GetUnit()] then return castWatch[self:GetUnit()].spell end end },
+	[3] = { L["Timer"], function(self) if castWatch[self:GetUnit()] then return castWatch[self:GetUnit()].timer end end },
 }
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -75,21 +61,9 @@ function CASTBTN:InitializeButton()
 		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "OnEvent")
 	end
 
-	self.unit = BAR_UNITS[self.config.unit]
-
-	self.showIcon = self.config.showIcon
-
-	self.casting = nil
-	self.channeling = nil
 	self.holdTime = 0
 
 	self:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
-
-	if not self.castInfo then
-		self.castInfo = {}
-	else
-		wipe(self.castInfo)
-	end
 
 	self.elements.SB:Hide()
 	self.typeString = L["Cast Bar"]
@@ -101,7 +75,7 @@ function CASTBTN:OnEvent(event,...)
 	local unit = select(1, ...)
 	local eventCastID = select(2,...) --return payload is "unitTarget", "castGUID", spellID
 
-	if unit ~= self.unit then
+	if unit ~= self:GetUnit() then
 		return
 	end
 
@@ -137,7 +111,7 @@ function CASTBTN:OnEvent(event,...)
 
 		castWatch[unit].spell = text
 
-		if self.showIcon then
+		if self:GetShowIcon() then
 			self.elements.SB.icon:SetTexture(texture)
 			self.elements.SB.icon:Show()
 
@@ -160,14 +134,6 @@ function CASTBTN:OnEvent(event,...)
 
 		self.elements.SB:Show()
 
-		--update castbar text
-		if not self.castInfo[unit] then
-			self.castInfo[unit] = {}
-		end
-
-		self.castInfo[unit][1] = text
-		self.castInfo[unit][2] = "%0.1f"
-
 	elseif event == "UNIT_SPELLCAST_CHANNEL_START" then
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 
@@ -185,7 +151,7 @@ function CASTBTN:OnEvent(event,...)
 
 		castWatch[unit].spell = text
 
-		if self.showIcon then
+		if self:GetShowIcon() then
 
 			self.elements.SB.icon:SetTexture(texture)
 			self.elements.SB.icon:Show()
@@ -201,8 +167,7 @@ function CASTBTN:OnEvent(event,...)
 		end
 
 		self.elements.SB.spark:Hide()
-
-
+		
 		self.elements.SB:SetAlpha(1.0)
 		self.holdTime = 0
 		self.casting = nil
@@ -210,14 +175,6 @@ function CASTBTN:OnEvent(event,...)
 		self.fadeout = nil
 
 		self.elements.SB:Show()
-
-		--update text on castbar
-		if not self.castInfo[unit] then
-			self.castInfo[unit] = {}
-		end
-
-		self.castInfo[unit][1] = text
-		self.castInfo[unit][2] = "%0.1f"
 
 	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and not self.channeling then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
 		self.elements.SB:SetStatusBarColor(self.config.successColor[1], self.config.successColor[2], self.config.successColor[3], self.config.successColor[4])
@@ -290,84 +247,83 @@ function CASTBTN:OnEvent(event,...)
 		self.elements.SB.shield:Show()
 	end
 
-	self.elements.SB.cText:SetText(self:cFunc())
-	self.elements.SB.lText:SetText(self:lFunc())
-	self.elements.SB.rText:SetText(self:rFunc())
-	self.elements.SB.mText:SetText(self:mFunc())
+	if not Neuron.barEditMode and not Neuron.buttonEditMode then
+		self.elements.SB.cText:SetText(self:cFunc())
+		self.elements.SB.lText:SetText(self:lFunc())
+		self.elements.SB.rText:SetText(self:rFunc())
+		self.elements.SB.mText:SetText(self:mFunc())
+
+	end
 end
 
 function CASTBTN:OnUpdate(elapsed)
-	local unit = self.unit
-	local sparkPosition, alpha
+	--bail out if these values don't exist. Otherwise we will error later on
+	if not self.value and not self.maxValue then
+		return
+	end
 
-	if unit then
-		if self.castInfo[unit] then
-			local displayName, numFormat = self.castInfo[unit][1], self.castInfo[unit][2]
+	if self.maxValue then
+		castWatch[self:GetUnit()].timer = string.format("%0.1f", self.value).."/"..format("%0.1f", self.maxValue)
+	else
+		castWatch[self:GetUnit()].timer = string.format("%0.1f", self.value)
+	end
 
-			if self.maxValue then
-				castWatch[self.unit].timer = string.format(numFormat, self.value).."/"..format(numFormat, self.maxValue)
-			else
-				castWatch[self.unit].timer = string.format(numFormat, self.value)
-			end
+	if self.casting then
+		self.value = self.value + elapsed
+		if self.value >= self.maxValue then
+			self.elements.SB:SetValue(self.maxValue)
+			self:FinishCast()
+			return
 		end
 
-		if self.casting then
-			self.value = self.value + elapsed
-			if self.value >= self.maxValue then
-				self.elements.SB:SetValue(self.maxValue)
-				self:FinishCast()
-				return
+		self.elements.SB:SetValue(self.value)
+		self.elements.SB.barflash:Hide()
+
+		if self.orientation == 1 then
+			local sparkPosition = (self.value/self.maxValue)*self.elements.SB:GetWidth()
+			if sparkPosition < 0 then
+				sparkPosition = 0
 			end
-
-			self.elements.SB:SetValue(self.value)
-			self.elements.SB.barflash:Hide()
-
-			if self.orientation == 1 then
-				sparkPosition = (self.value/self.maxValue)*self.elements.SB:GetWidth()
-				if sparkPosition < 0 then
-					sparkPosition = 0
-				end
-				self.elements.SB.spark:SetPoint("CENTER", self.elements.SB, "LEFT", sparkPosition, 0)
-			else
-				sparkPosition = (self.value / self.maxValue) * self.elements.SB:GetHeight()
-				if  sparkPosition < 0 then
-					sparkPosition = 0
-				end
-				self.elements.SB.spark:SetPoint("CENTER", self.elements.SB, "BOTTOM", 0, sparkPosition)
+			self.elements.SB.spark:SetPoint("CENTER", self.elements.SB, "LEFT", sparkPosition, 0)
+		else
+			local sparkPosition = (self.value/self.maxValue) * self.elements.SB:GetHeight()
+			if  sparkPosition < 0 then
+				sparkPosition = 0
 			end
+			self.elements.SB.spark:SetPoint("CENTER", self.elements.SB, "BOTTOM", 0, sparkPosition)
+		end
 
-		elseif self.channeling then
-			self.value = self.value - elapsed
-			if self.value <= 0 then
-				self:FinishCast()
-				return
-			end
-
-			self.elements.SB:SetValue(self.value)
-			self.elements.SB.barflash:Hide()
-
-		elseif GetTime() < self.holdTime then
+	elseif self.channeling then
+		self.value = self.value - elapsed
+		if self.value <= 0 then
+			self:FinishCast()
 			return
+		end
 
-		elseif self.flash then
-			alpha = self.elements.SB.barflash:GetAlpha() + CASTING_BAR_FLASH_STEP or 0
-			if alpha < 1 then
-				self.elements.SB.barflash:SetAlpha(alpha)
-			else
-				self.elements.SB.barflash:SetAlpha(1.0)
-				self.flash = nil
-			end
+		self.elements.SB:SetValue(self.value)
+		self.elements.SB.barflash:Hide()
 
-		elseif self.fadeout and (not Neuron.barEditMode and not Neuron.buttonEditMode) then
-			alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
-			if alpha > 0 then
-				self.elements.SB:SetAlpha(alpha)
-			else
-				self:Reset()
-			end
+	elseif GetTime() < self.holdTime then
+		return
+
+	elseif self.flash then
+		local alpha = self.elements.SB.barflash:GetAlpha() + CASTING_BAR_FLASH_STEP or 0
+		if alpha < 1 then
+			self.elements.SB.barflash:SetAlpha(alpha)
+		else
+			self.elements.SB.barflash:SetAlpha(1.0)
+			self.flash = nil
+		end
+
+	elseif self.fadeout and (not Neuron.barEditMode and not Neuron.buttonEditMode) then
+		local alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
+		if alpha > 0 then
+			self.elements.SB:SetAlpha(alpha)
 		else
 			self:Reset()
 		end
+	else
+		self:Reset()
 	end
 
 	if not Neuron.barEditMode and not Neuron.buttonEditMode then
@@ -376,23 +332,6 @@ function CASTBTN:OnUpdate(elapsed)
 		self.elements.SB.rText:SetText(self:rFunc())
 		self.elements.SB.mText:SetText(self:mFunc())
 	end
-end
-
-function CASTBTN:UpdateUnit(command)
-	local index = tonumber(command)
-	if index then
-		self.config.unit = index
-		self.unit = BAR_UNITS[self.config.unit]
-	end
-end
-
-function CASTBTN:UpdateCastIcon(checked)
-	if checked then
-		self.config.showIcon = true
-	else
-		self.config.showIcon = nil
-	end
-	self.showIcon = self.config.showIcon
 end
 
 function CASTBTN:FinishCast()
@@ -414,4 +353,29 @@ function CASTBTN:Reset()
 	if not Neuron.barEditMode and not Neuron.buttonEditMode then
 		self.elements.SB:Hide()
 	end
+end
+
+-----------------------------------------------------
+-------------------Sets and Gets---------------------
+-----------------------------------------------------
+
+function CASTBTN:SetUnit(unit)
+	--possible types are "player", "pet", "target", "targettarget", "focus", "mouseover", "party1", "party2", "party3", or "party4"
+	if unit then
+		self.config.unit = unit
+	else
+		unit = "player"
+	end
+end
+
+function CASTBTN:GetUnit()
+	return self.config.unit
+end
+
+function CASTBTN:SetShowIcon(show)
+	self.config.showIcon = show
+end
+
+function CASTBTN:GetShowIcon()
+	return self.config.showIcon
 end

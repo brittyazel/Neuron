@@ -126,12 +126,11 @@ function BAR.new(class, barID)
 end
 
 function BAR:InitializeBar()
-	self:RegisterEvent("ACTIONBAR_SHOWGRID", "ACTIONBAR_SHOWHIDEGRID", true)
-	self:RegisterEvent("ACTIONBAR_HIDEGRID", "ACTIONBAR_SHOWHIDEGRID")
-
 	if not Neuron.isWoWClassic then
 		if self.class == "ActionBar" then
 			self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+			self:RegisterEvent("ACTIONBAR_SHOWGRID", "ACTIONBAR_SHOWHIDEGRID", true)
+			self:RegisterEvent("ACTIONBAR_HIDEGRID", "ACTIONBAR_SHOWHIDEGRID")
 		end
 	end
 end
