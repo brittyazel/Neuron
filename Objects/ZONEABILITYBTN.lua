@@ -44,7 +44,7 @@ function ZONEABILITYBTN.new(bar, buttonID, defaults)
 end
 
 ----------------------------------------------------------
-function ZONEABILITYBTN:SetType()
+function ZONEABILITYBTN:InitializeButton()
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")

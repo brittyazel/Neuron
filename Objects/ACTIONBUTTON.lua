@@ -79,73 +79,7 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 	return newButton
 end
 
-function ACTIONBUTTON:LoadData(spec, state)
-	self.config = self.DB.config
-	self.keys = self.DB.keys
-
-	self.statedata = self.DB[spec] --all of the states for a given spec
-	self.data = self.statedata[state] --loads a single state of a single spec into self.data
-
-	self:BuildStateData()
-end
-
-function ACTIONBUTTON:SetupEvents()
-	self:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-	self:RegisterEvent("ACTIONBAR_SHOWGRID")
-	self:RegisterEvent("ACTIONBAR_HIDEGRID")
-
-	self:RegisterEvent("UPDATE_MACROS")
-
-	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED", "UpdateAll")
-	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", "UpdateCooldown")
-
-	self:RegisterEvent("SPELL_UPDATE_CHARGES", "UpdateCount")
-
-	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "UpdateAll")
-
-	self:RegisterEvent("SPELLS_CHANGED", "UpdateAll")
-	self:RegisterEvent("MODIFIER_STATE_CHANGED", "UpdateAll")
-
-	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_INTERRUPTED")
-
-	self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateStatus")
-	self:RegisterEvent("BAG_UPDATE", "UpdateStatus")
-
-	self:RegisterEvent("PLAYER_STARTED_MOVING", "UpdateUsable")
-	self:RegisterEvent("PLAYER_STOPPED_MOVING", "UpdateUsable")
-
-	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE", "UpdateUsable")
-
-	self:RegisterEvent("ACTIONBAR_UPDATE_STATE", "UpdateAll")
-	self:RegisterEvent("TRADE_SKILL_SHOW", "UpdateAll")
-	self:RegisterEvent("TRADE_SKILL_CLOSE", "UpdateAll")
-	self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
-	self:RegisterEvent("UNIT_PET", "UpdateAll")
-
-	if not Neuron.isWoWClassic then
-		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED", "UpdateButtonSpec")
-		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-
-		self:RegisterEvent("UNIT_ENTERED_VEHICLE", "UpdateAll")
-		self:RegisterEvent("UNIT_ENTERING_VEHICLE", "UpdateAll")
-		self:RegisterEvent("UNIT_EXITED_VEHICLE", "UpdateAll")
-		self:RegisterEvent("PLAYER_FOCUS_CHANGED", "UpdateAll")
-		self:RegisterEvent("COMPANION_UPDATE", "UpdateAll")
-
-		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW", "UpdateGlow")
-		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE", "UpdateGlow")
-
-		self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "UpdateAll")
-		self:RegisterEvent("UPDATE_POSSESS_BAR", "UpdateAll")
-		self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "UpdateAll")
-		self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "UpdateAll")
-	end
-end
-
-function ACTIONBUTTON:SetType()
-
+function ACTIONBUTTON:InitializeButton()
 	self:ClearButton(true)
 
 	SecureHandler_OnLoad(self)
@@ -289,6 +223,57 @@ function ACTIONBUTTON:SetType()
 	self:UpdateAll()
 	--self:UpdateFlyout(true)
 	self:SetSkinned()
+end
+
+function ACTIONBUTTON:SetupEvents()
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+	self:RegisterEvent("UPDATE_MACROS")
+
+	self:RegisterEvent("ACTIONBAR_SLOT_CHANGED", "UpdateAll")
+	self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN", "UpdateCooldown")
+
+	self:RegisterEvent("SPELL_UPDATE_CHARGES", "UpdateCount")
+
+	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "UpdateAll")
+
+	self:RegisterEvent("SPELLS_CHANGED", "UpdateAll")
+	self:RegisterEvent("MODIFIER_STATE_CHANGED", "UpdateAll")
+
+	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_INTERRUPTED")
+
+	self:RegisterEvent("BAG_UPDATE_COOLDOWN", "UpdateStatus")
+	self:RegisterEvent("BAG_UPDATE", "UpdateStatus")
+
+	self:RegisterEvent("PLAYER_STARTED_MOVING", "UpdateUsable")
+	self:RegisterEvent("PLAYER_STOPPED_MOVING", "UpdateUsable")
+
+	self:RegisterEvent("ACTIONBAR_UPDATE_USABLE", "UpdateUsable")
+
+	self:RegisterEvent("ACTIONBAR_UPDATE_STATE", "UpdateAll")
+	self:RegisterEvent("TRADE_SKILL_SHOW", "UpdateAll")
+	self:RegisterEvent("TRADE_SKILL_CLOSE", "UpdateAll")
+	self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
+	self:RegisterEvent("UNIT_PET", "UpdateAll")
+
+	if not Neuron.isWoWClassic then
+		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
+
+		self:RegisterEvent("UNIT_ENTERED_VEHICLE", "UpdateAll")
+		self:RegisterEvent("UNIT_ENTERING_VEHICLE", "UpdateAll")
+		self:RegisterEvent("UNIT_EXITED_VEHICLE", "UpdateAll")
+		self:RegisterEvent("PLAYER_FOCUS_CHANGED", "UpdateAll")
+		self:RegisterEvent("COMPANION_UPDATE", "UpdateAll")
+
+		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_SHOW", "UpdateGlow")
+		self:RegisterEvent("SPELL_ACTIVATION_OVERLAY_GLOW_HIDE", "UpdateGlow")
+
+		self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "UpdateAll")
+		self:RegisterEvent("UPDATE_POSSESS_BAR", "UpdateAll")
+		self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "UpdateAll")
+		self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "UpdateAll")
+	end
 end
 
 function ACTIONBUTTON:OnAttributeChanged(name, value)
@@ -440,7 +425,7 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD()
 	self:KeybindOverlay_ApplyBindings()
 
 	if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
-		self:ScheduleTimer(function() self:SetType() end, 1)
+		self:ScheduleTimer(function() self:InitializeButton() end, 1)
 	end
 end
 
@@ -450,13 +435,6 @@ function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(unit)
 	end
 end
 
-function ACTIONBUTTON:ACTIONBAR_SHOWGRID()
-	Neuron:ToggleButtonGrid(true)
-end
-
-function ACTIONBUTTON:ACTIONBAR_HIDEGRID()
-	Neuron:ToggleButtonGrid()
-end
 
 function ACTIONBUTTON:UPDATE_MACROS()
 	if not InCombatLockdown() and self.data.macro_BlizzMacro then
@@ -495,17 +473,10 @@ function ACTIONBUTTON:UpdateButtonSpec()
 		spec = 1
 	end
 
-	self:SetData(self.bar)
-	self:LoadData(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
+	self:LoadDataFromDatabase(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
+	self:SetData()
 	--self:UpdateFlyout()
 	self:UpdateAll()
-end
-
-function ACTIONBUTTON:BuildStateData()
-	for state, data in pairs(self.statedata) do
-		self:SetAttribute(state.."-macro_Text", data.macro_Text)
-		self:SetAttribute(state.."-actionID", data.actionID)
-	end
 end
 
 --this function is used to "fake" a state change in the button editor so you can see what each state will look like
@@ -741,8 +712,7 @@ function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
 
 		if macro_update then
 			--button:UpdateFlyout()
-			button:BuildStateData(button)
-			button:SetType()
+			button:InitializeButton()
 		end
 	end
 end]]
@@ -764,7 +734,6 @@ end
 
 --overwrite function in parent class BUTTON
 function ACTIONBUTTON:UpdateData()
-
 	--clear any lingering values before we re-parse and reassign
 	self:ClearButton()
 

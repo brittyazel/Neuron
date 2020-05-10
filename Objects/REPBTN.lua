@@ -49,7 +49,7 @@ function REPBTN.new(bar, buttonID, defaults)
 	return newButton
 end
 
-function REPBTN:SetType()
+function REPBTN:InitializeButton()
 	if InCombatLockdown() then
 		return
 	end
@@ -70,7 +70,7 @@ function REPBTN:SetType()
 
 	self.elements.SB:Show()
 	self.typeString = L["Rep Bar"]
-	self:SetData(self.bar)
+	self:SetData()
 	self:repbar_OnEvent() --we need this here to load the bar when first creating it
 end
 

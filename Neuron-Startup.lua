@@ -253,7 +253,7 @@ function Neuron:CreateBarsAndButtons()
 					local newBar = Neuron.BAR.new(barClass, id) --this calls the bar constructor
 
 					--create all the saved button objects for a given bar
-					for buttonID=1,#newBar.DB.buttons do
+					for buttonID=1,#newBar.data.buttons do
 						newBar.objTemplate.new(newBar, buttonID) --newBar.objTemplate is something like ACTIONBUTTON or EXTRABTN, we just need to code it agnostic
 					end
 				end

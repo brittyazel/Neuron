@@ -45,7 +45,7 @@ end
 
 ----------------------------------------------------------
 
-function EXTRABTN:SetType()
+function EXTRABTN:InitializeButton()
 	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")

@@ -66,9 +66,7 @@ function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
 	return newButton
 end
 
-function STATUSBTN:SetData(bar)
-	self.bar = bar
-
+function STATUSBTN:SetData()
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
 

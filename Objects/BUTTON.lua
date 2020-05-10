@@ -72,11 +72,10 @@ function BUTTON.new(bar, buttonID, baseObj, barClass, objType, template)
 	newButton.id = buttonID
 	newButton.objType = objType:upper()
 
-
-	if not bar.DB.buttons[buttonID] then --if the database for a bar doesn't exist (because it's a new bar) make a new table
-		bar.DB.buttons[buttonID] = {}
+	if not bar.data.buttons[buttonID] then --if the database for a bar doesn't exist (because it's a new bar) make a new table
+		bar.data.buttons[buttonID] = {}
 	end
-	newButton.DB = bar.DB.buttons[buttonID] --set our button database table as the DB for our object
+	newButton.DB = bar.data.buttons[buttonID] --set our button database table as the DB for our object
 
 	--this is a hack to add some unique information to an object so it doesn't get wiped from the database
 	if newButton.DB.config then
@@ -304,9 +303,7 @@ function BUTTON:CooldownCounterUpdate()
 	end
 end
 
-function BUTTON:SetData(bar)
-	self.bar = bar
-	self.elements.Name:SetText(self.data.macro_Name) --custom macro's weren't showing the name
+function BUTTON:SetData()
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
 
@@ -344,14 +341,23 @@ function BUTTON:SetData(bar)
 	self:RegisterForClicks(down, up)
 	self:RegisterForDrag("LeftButton", "RightButton")
 	self:GetSkinned()
-	self:UpdateCooldown()
 end
 
---TODO: This should be consolodated as each child has a VERY similar function
-function BUTTON:LoadData()
+function BUTTON:LoadDataFromDatabase(curSpec, curState)
 	self.config = self.DB.config
 	self.keys = self.DB.keys
-	self.data = self.DB.data
+
+	if self.class ~= "ActionBar" then
+		self.data = self.DB.data
+	else
+		self.statedata = self.DB[curSpec] --all of the states for a given spec
+		self.data = self.statedata[curState] --loads a single state of a single spec into self.data
+
+		for state, data in pairs(self.statedata) do
+			self:SetAttribute(state.."-macro_Text", data.macro_Text)
+			self:SetAttribute(state.."-actionID", data.actionID)
+		end
+	end
 end
 
 function BUTTON:SetDefaults(defaults)
@@ -372,7 +378,7 @@ function BUTTON:SetDefaults(defaults)
 	end
 end
 
-function BUTTON:SetType()
+function BUTTON:InitializeButton()
 	--empty--
 end
 

@@ -49,9 +49,6 @@ if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then --boolean check to set a flag if t
 	Neuron.isWoWClassic = true
 end
 
-Neuron.activeSpec = 1
-
-
 Neuron.STRATAS = {
 	[1] = "BACKGROUND",
 	[2] = "LOW",
@@ -149,10 +146,6 @@ function Neuron:OnEnable()
 
 	Neuron:LoginMessage()
 
-	if not Neuron.isWoWClassic then
-		Neuron.activeSpec = GetSpecialization()
-	end
-
 	--Load all bars and buttons
 	for i,v in pairs(Neuron.bars) do
 		v:Load()
@@ -205,8 +198,6 @@ function Neuron:PLAYER_ENTERING_WORLD()
 end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()
-	Neuron.activeSpec = GetSpecialization()
-
 	Neuron:UpdateSpellCache()
 	Neuron:UpdateStanceStrings()
 end
@@ -233,7 +224,6 @@ end
 
 function Neuron:DatabaseMigration()
 	----DATABASE VERSION CHECKING AND MIGRATING----------
-
 	if not DB.DBVersion then
 		--we need to know if a profile doesn't have a DBVersion because it is brand new, or because it pre-dates DB versioning
 		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
@@ -249,7 +239,6 @@ function Neuron:DatabaseMigration()
 		local success = pcall(Neuron.DBFixer, Neuron, DB, DB.DBVersion)
 
 		if not success then
-
 			StaticPopupDialogs["Profile_Migration_Failed"] = {
 				text = "We are sorry, but your Neuron profile migration has failed. By clicking accept you agree to reset your current profile to the its default values.",
 				button1 = ACCEPT,
@@ -259,9 +248,7 @@ function Neuron:DatabaseMigration()
 				OnAccept = function() Neuron.db:ResetProfile() end,
 				OnCancel = function() DisableAddOn("Neuron"); ReloadUI() end,
 			}
-
 			StaticPopup_Show("Profile_Migration_Failed")
-
 		else
 			DB.DBVersion = LATEST_DB_VERSION
 			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
@@ -473,7 +460,7 @@ function Neuron:UpdateStanceStrings()
 			Neuron.STATES["stance2"] = L["Vanish"]
 			states = states.."[stance:2] stance2; "
 
-			if Neuron.activeSpec == 3 then
+			if not Neuron.isWoWClassic and GetSpecialization() == 3 then
 				Neuron.STATES["stance3"] = L["Shadow Dance"]
 				states = states.."[stance:3] stance3; "
 			end
@@ -484,19 +471,6 @@ function Neuron:UpdateStanceStrings()
 		Neuron.MANAGED_BAR_STATES.stance.states = states
 	end
 end
-
-
-
-function Neuron:ToggleButtonGrid(show)
-	for _,bar in pairs(Neuron.bars) do
-		if bar.barType == "ActionBar" then
-			for _, button in pairs(bar.buttons) do
-				button:UpdateVisibility(show)
-			end
-		end
-	end
-end
-
 
 function Neuron:ToggleMainMenu()
 	---need to run the command twice for some reason. The first one only seems to open the Interface panel
@@ -580,10 +554,6 @@ function Neuron:ToggleButtonEditMode(show)
 			bar:UpdateBarStatus()
 			bar:UpdateObjectStatus()
 			bar:UpdateObjectUsability()
-
-			if bar.handler:GetAttribute("assertstate") then
-				bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
-			end
 		end
 	end
 end

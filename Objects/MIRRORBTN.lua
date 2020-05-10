@@ -45,11 +45,7 @@ function MIRRORBTN.new(bar, buttonID, defaults)
 	return newButton
 end
 
-function MIRRORBTN:SetType()
-	if InCombatLockdown() then
-		return
-	end
-
+function MIRRORBTN:InitializeButton()
 	self:RegisterEvent("MIRROR_TIMER_START", "MirrorBar_OnEvent")
 	self:RegisterEvent("MIRROR_TIMER_STOP", "MirrorBar_OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "MirrorBar_OnEvent")
@@ -59,7 +55,7 @@ function MIRRORBTN:SetType()
 	table.insert(MirrorBars, self)
 	self.elements.SB:Hide()
 	self.typeString = L["Mirror Bar"]
-	self:SetData(self.bar)
+	self:SetData()
 end
 
 function MIRRORBTN: MirrorBar_OnEvent(event, ...)

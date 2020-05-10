@@ -48,7 +48,7 @@ function PETBTN.new(bar, buttonID, defaults)
 end
 
 
-function PETBTN:SetType()
+function PETBTN:InitializeButton()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("UNIT_PET")
 	self:RegisterEvent("PET_BAR_UPDATE", "UpdateData")

@@ -60,11 +60,7 @@ function CASTBTN.new(bar, buttonID, defaults)
 end
 
 
-function CASTBTN:SetType()
-	if InCombatLockdown() then
-		return
-	end
-
+function CASTBTN:InitializeButton()
 	self:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "CastBar_OnEvent")
@@ -97,7 +93,7 @@ function CASTBTN:SetType()
 
 	self.elements.SB:Hide()
 	self.typeString = L["Cast Bar"]
-	self:SetData(self.bar)
+	self:SetData()
 end
 
 function CASTBTN:CastBar_FinishSpell()

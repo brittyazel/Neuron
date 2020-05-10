@@ -47,11 +47,7 @@ function XPBTN.new(bar, buttonID, defaults)
 	return newButton
 end
 
-function XPBTN:SetType()
-	if InCombatLockdown() then
-		return
-	end
-
+function XPBTN:InitializeButton()
 	self:SetAttribute("hasaction", true)
 
 	self:RegisterForClicks("RightButtonUp")
@@ -72,7 +68,7 @@ function XPBTN:SetType()
 
 	self.elements.SB:Show()
 	self.typeString = L["XP Bar"]
-	self:SetData(self.bar)
+	self:SetData()
 	self:XPBar_OnEvent("changed_curXPType") --we need to put this here to load the bar when first creating it
 end
 

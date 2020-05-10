@@ -68,7 +68,7 @@ end
 
 --------------------------------------------------------
 
-function BAGBTN:SetType()
+function BAGBTN:InitializeButton()
 	if blizzBagButtons[self.id] then
 		self.hookedButton = blizzBagButtons[self.id]
 		self.hookedButton:ClearAllPoints()
@@ -81,16 +81,11 @@ function BAGBTN:SetType()
 		end
 	end
 
-	self:SetSkinned()
-end
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
+	self:SetScale(self.bar:GetBarScale())
+	self.isShown = true
 
-function BAGBTN:SetData(bar)
-	if bar then
-		self.bar = bar
-		self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
-		self:SetScale(self.bar:GetBarScale())
-		self.isShown = true
-	end
+	self:SetSkinned()
 end
 
 ---simplified SetSkinned for the Bag Buttons. They're unique in that they contain buttons inside of the buttons
@@ -123,6 +118,11 @@ end
 -----------------------------------------------------
 --------------------- Overrides ---------------------
 -----------------------------------------------------
+
+--overwrite function in parent class BUTTON
+function BAGBTN:SetData()
+	-- empty --
+end
 
 --overwrite function in parent class BUTTON
 function BAGBTN:UpdateStatus()

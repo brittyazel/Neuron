@@ -65,12 +65,12 @@ function BAR.new(class, barID)
 		data.barDB[barID] = {}
 	end
 
-	newBar.DB = data.barDB[barID]
+	newBar.data = data.barDB[barID]
 
 	--create empty buttons table that will hold onto all of our button object handles
 	newBar.buttons = {}
 
-	newBar.DB.id = barID
+	newBar.id = barID
 	newBar.class = class
 	newBar.stateschanged = true
 	newBar.vischanged =true
@@ -110,15 +110,60 @@ function BAR.new(class, barID)
 	newBar:CreateHandler()
 	newBar:CreateWatcher()
 
-	newBar:LoadData()
-
 	--update these times when the bar is first being loaded in
 	newBar:UpdateAutoHideTimer()
 	newBar:UpdateAlphaUpTimer()
 
+	if not newBar:GetBarName() or newBar:GetBarName() == ":" then
+		newBar:SetBarName(newBar.barLabel.." "..newBar.id)
+	end
+
+	newBar:InitializeBar()
+
 	newBar:Hide() --hide the transparent blue overlay that we show in the edit mode
 
 	return newBar
+end
+
+function BAR:InitializeBar()
+	self:RegisterEvent("ACTIONBAR_SHOWGRID")
+	self:RegisterEvent("ACTIONBAR_HIDEGRID")
+
+	if not Neuron.isWoWClassic then
+		if self.class == "ActionBar" then
+			self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+		end
+	end
+end
+
+-----------------------------------
+--------- Event Handlers ----------
+-----------------------------------
+
+function BAR:ACTIVE_TALENT_GROUP_CHANGED()
+	if self.handler:GetAttribute("assertstate") then
+		self.handler:SetAttribute("state-"..self.handler:GetAttribute("assertstate"), self.handler:GetAttribute("activestate") or "homestate")
+	end
+
+	for _,button in pairs(self.buttons) do
+		button:UpdateButtonSpec()
+	end
+end
+
+function BAR:ACTIONBAR_SHOWGRID()
+	if self.class == "ActionBar" then
+		for _, button in pairs(self.buttons) do
+			button:UpdateVisibility(true)
+		end
+	end
+end
+
+function BAR:ACTIONBAR_HIDEGRID()
+	if self.class == "ActionBar" then
+		for _, button in pairs(self.buttons) do
+			button:UpdateVisibility()
+		end
+	end
 end
 
 -----------------------------------
@@ -187,7 +232,7 @@ function BAR:DeleteBar()
 	self:SetPoint("CENTER")
 	self:Hide()
 
-	table.remove(self.barDB, self.DB.id) --removes the bar from the database, along with all of its buttons
+	table.remove(self.barDB, self.id) --removes the bar from the database, along with all of its buttons
 
 	for k,v in pairs(self.barDB) do
 
@@ -244,7 +289,7 @@ function BAR:RemoveObjectFromBar() --called from NeuronGUI
 
 		object:ClearAllPoints()
 
-		table.remove(self.DB.buttons, id) --this is somewhat redundant if deleting a bar, but it doesn't hurt and is important for individual button deletions
+		table.remove(self.data.buttons, id) --this is somewhat redundant if deleting a bar, but it doesn't hurt and is important for individual button deletions
 		table.remove(self.buttons, id)
 
 		if object.binder then
@@ -598,9 +643,9 @@ function BAR:CreateDriver()
 	end
 	]]
 
-	local driver = CreateFrame("Frame", "NeuronBarDriver"..self.DB.id, UIParent, "SecureHandlerStateTemplate")
+	local driver = CreateFrame("Frame", "NeuronBarDriver"..self.id, UIParent, "SecureHandlerStateTemplate")
 
-	driver:SetID(self.DB.id)
+	driver:SetID(self.id)
 	--Dynamicly builds driver attributes based on stated in Neuron.MANAGED_BAR_STATES using localized attribute text from a above
 	for _, stateInfo in pairs(Neuron.MANAGED_BAR_STATES) do
 		local action = DRIVER_BASE_ACTION:gsub("<MODIFIER>", stateInfo.modifier)
@@ -669,9 +714,9 @@ function BAR:CreateHandler()
 	end
 	]]
 
-	local handler = CreateFrame("Frame", "NeuronBarHandler"..self.DB.id, self.driver, "SecureHandlerStateTemplate")
+	local handler = CreateFrame("Frame", "NeuronBarHandler"..self.id, self.driver, "SecureHandlerStateTemplate")
 
-	handler:SetID(self.DB.id)
+	handler:SetID(self.id)
 
 	--Dynamicly builds handler actions based on states in Neuron.MANAGED_BAR_STATES using Global text
 	for _, stateInfo in pairs(Neuron.MANAGED_BAR_STATES) do
@@ -852,9 +897,9 @@ end
 
 
 function BAR:CreateWatcher()
-	local watcher = CreateFrame("Frame", "NeuronBarWatcher"..self.DB.id, self.handler, "SecureHandlerStateTemplate")
+	local watcher = CreateFrame("Frame", "NeuronBarWatcher"..self.id, self.handler, "SecureHandlerStateTemplate")
 
-	watcher:SetID(self.DB.id)
+	watcher:SetID(self.id)
 
 	watcher:SetAttribute("_onattributechanged",
 			[[ ]])
@@ -979,18 +1024,17 @@ end
 function BAR:LoadObjects()
 	local spec
 
-	if self.data.multiSpec then
-		spec = Neuron.activeSpec
+	if self:GetMultiSpec() then
+		spec = GetSpecialization()
 	else
 		spec = 1
 	end
 
 	for i, object in ipairs(self.buttons) do
-		--all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
-		object:LoadData(spec, self.handler:GetAttribute("activestate"))
-		object:SetData(self)
-		object:SetType()
-
+		--all of these objects need to stay as "object:****" because which SetData/LoadDataFromDatabase/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
+		object:LoadDataFromDatabase(spec, self.handler:GetAttribute("activestate"))
+		object:SetData()
+		object:InitializeButton()
 		object:UpdateVisibility()
 	end
 end
@@ -1034,7 +1078,8 @@ function BAR:SetObjectLoc()
 		if num < count then
 			object:ClearAllPoints()
 			object:SetParent(self.handler)
-			width = object:GetWidth(); height = object:GetHeight()
+			width = object:GetWidth()
+			height = object:GetHeight()
 
 			if count > origCol and mod(count, origCol)~=0 and rAdjust == 1 then
 				columns = (mod(count, origCol))/2
@@ -1089,7 +1134,7 @@ function BAR:SetObjectLoc()
 
 			num = num + 1
 			object:SetAttribute("barPos", num)
-			object:SetData(self)
+			object:SetData()
 		end
 	end
 end
@@ -1424,19 +1469,10 @@ end
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 
-
-function BAR:LoadData()
-	self.data = self.DB
-	if not self:GetBarName() or self:GetBarName() == ":" then
-		self:SetBarName(self.barLabel.." "..self.DB.id)
-	end
-end
-
-
 function BAR:UpdateObjectData()
 	for _, object in pairs(self.buttons) do
 		if object then
-			object:SetData(self)
+			object:SetData()
 		end
 	end
 end

@@ -44,7 +44,7 @@ end
 
 ----------------------------------------------------------
 
-function EXITBTN:SetType()
+function EXITBTN:InitializeButton()
 	self:RegisterEvent("UPDATE_BONUS_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("UPDATE_VEHICLE_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("UPDATE_OVERRIDE_ACTIONBAR", "OnEvent");
