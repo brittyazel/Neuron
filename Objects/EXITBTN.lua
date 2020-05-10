@@ -57,9 +57,14 @@ function EXITBTN:InitializeButton()
 	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
-	self:SetSkinned()
+	self:InitializeButtonSettings()
 end
 
+function EXITBTN:InitializeButtonSettings()
+	self.bar:SetShowGrid(false)
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
+	self:SetSkinned()
+end
 
 function EXITBTN:OnEvent(event, ...)
 	--reset button back to normal in the case of setting a tint on prior taxi trip
@@ -102,16 +107,8 @@ end
 --overwrite function in parent class BUTTON
 function EXITBTN:UpdateIcon()
 	self.elements.IconFrameIcon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
-
-	if not self:GetSkinned() then
-		if self:HasAction() then
-			self:SetNormalTexture(self.hasAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,1)
-		else
-			self:SetNormalTexture(self.noAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
-		end
-	end
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:UpdateNormalTexture()
 end
 
 --overwrite function in parent class BUTTON

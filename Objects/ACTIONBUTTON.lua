@@ -125,21 +125,17 @@ function ACTIONBUTTON:InitializeButton()
 
 	--This is so that hotkeypri works properly with priority/locked buttons
 	self:WrapScript(self, "OnShow", [[
-
 			for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
 				self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
 			end
-
 			]])
 
 	self:WrapScript(self, "OnHide", [[
-
 			if not self:GetParent():GetAttribute("concealed") then
 				for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
 					self:ClearBinding(key)
 				end
 			end
-
 			]])
 
 	--new action ID's for vehicle 133-138
@@ -151,46 +147,36 @@ function ACTIONBUTTON:InitializeButton()
 
 	self:SetAttribute("_childupdate",
 			[[
-
 				if message then
-
 					local msg = (":"):split(message)
 
 					if msg:find("vehicle") then
-
 						if not self:GetAttribute(msg.."-actionID") then
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
-
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
 					elseif msg:find("possess") then
-
 						if not self:GetAttribute(msg.."-actionID") then
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
-
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
 					elseif msg:find("override") then
-
 						if not self:GetAttribute(msg.."-actionID") then
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("overrideID_Offset"))
 							self:SetAttribute("HasActionID", true)
 						end
-
 						self:SetAttribute("HasActionID", true)
 						self:Show()
 
 					else
-
 						if not self:GetAttribute(msg.."-actionID") then
-
 							self:SetAttribute("type", "macro")
 							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
 
@@ -199,17 +185,14 @@ function ACTIONBUTTON:InitializeButton()
 							elseif not self:GetAttribute("showGrid") then
 								self:Hide()
 							end
-
 							self:SetAttribute("HasActionID", false)
+
 						else
 							self:SetAttribute("HasActionID", true)
 						end
 					end
-
 					self:SetAttribute("activestate", msg)
-
 				end
-
 			]])
 
 	--this is our rangecheck timer for each button. Every 0.5 seconds it queries if the button is usable
@@ -222,8 +205,49 @@ function ACTIONBUTTON:InitializeButton()
 
 	self:UpdateAll()
 	--self:UpdateFlyout(true)
+
+	self:InitializeButtonSettings()
+end
+
+function ACTIONBUTTON:InitializeButtonSettings()
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
+	self:SetScale(self.bar:GetBarScale())
+
+	if self.bar:GetShowBindText() then
+		self.elements.Hotkey:Show()
+		self.elements.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
+	else
+		self.elements.Hotkey:Hide()
+	end
+
+	if self.bar:GetShowButtonText() then
+		self.elements.Name:Show()
+		self.elements.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
+	else
+		self.elements.Name:Hide()
+	end
+
+	if self.bar:GetShowCountText() then
+		self.elements.Count:Show()
+		self.elements.Count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3],self.bar:GetCountColor()[4])
+	else
+		self.elements.Count:Hide()
+	end
+
+	local down, up = "", ""
+
+	if self.bar:GetClickMode() == "UpClick" then
+		up = up.."AnyUp"
+	end
+	if self.bar:GetClickMode() == "DownClick" then
+		down = down.."AnyDown"
+	end
+
+	self:RegisterForClicks(down, up)
+	self:RegisterForDrag("LeftButton", "RightButton")
 	self:SetSkinned()
 end
+
 
 function ACTIONBUTTON:SetupEvents()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -474,7 +498,7 @@ function ACTIONBUTTON:UpdateButtonSpec()
 	end
 
 	self:LoadDataFromDatabase(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
-	self:SetData()
+	self:InitializeButtonSettings()
 	--self:UpdateFlyout()
 	self:UpdateAll()
 end

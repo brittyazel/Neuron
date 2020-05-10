@@ -250,7 +250,7 @@ local genericBarData = {
 	tooltipsCombat = true,
 
 	bindText = true,
-	macroText = true,
+	buttonText = true,
 	countText = true,
 	rangeInd = true,
 
@@ -313,7 +313,7 @@ NeuronDefaults = {
 		},
 
 		ExtraBar = {
-			['*'] = CopyTable(genericBarData)
+			['*'] = CopyTable(genericBarData),
 		},
 
 		ExitBar ={

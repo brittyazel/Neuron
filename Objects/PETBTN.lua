@@ -47,16 +47,16 @@ function PETBTN.new(bar, buttonID, defaults)
 	return newButton
 end
 
-
 function PETBTN:InitializeButton()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("UNIT_PET")
 	self:RegisterEvent("PET_BAR_UPDATE", "UpdateData")
 	self:RegisterEvent("PET_BAR_UPDATE_COOLDOWN", "UpdateCooldown")
-	self:RegisterEvent("PET_DISMISS_START", "PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("PLAYER_CONTROL_LOST", "UpdateData")
 	self:RegisterEvent("PLAYER_CONTROL_GAINED", "UpdateData")
 	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED", "UpdateData")
+	self:RegisterEvent("PET_BAR_HIDEGRID", "UpdateVisibility")
+	self:RegisterEvent("PET_BAR_SHOWGRID", "UpdateVisibility", true)
 
 	if not Neuron.isWoWClassic then
 		self:RegisterEvent("PET_SPECIALIZATION_CHANGED", "PLAYER_ENTERING_WORLD")
@@ -79,10 +79,138 @@ function PETBTN:InitializeButton()
 
 	self:SetScript("OnAttributeChanged", nil)
 
+	--force grid to show for now, show/hide grid on the Pet bar is glitchy
+	self.bar:SetShowGrid(true)
+
+	self:InitializeButtonSettings()
+end
+
+function PETBTN:InitializeButtonSettings()
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
+	self:SetScale(self.bar:GetBarScale())
+
+	if self.bar:GetShowBindText() then
+		self.elements.Hotkey:Show()
+		self.elements.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
+	else
+		self.elements.Hotkey:Hide()
+	end
+
+	if self.bar:GetShowButtonText() then
+		self.elements.Name:Show()
+		self.elements.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
+	else
+		self.elements.Name:Hide()
+	end
+
+	local down, up = "", ""
+
+	if self.bar:GetClickMode() == "UpClick" then
+		up = up.."AnyUp"
+	end
+	if self.bar:GetClickMode() == "DownClick" then
+		down = down.."AnyDown"
+	end
+
+	self:RegisterForClicks(down, up)
+	self:RegisterForDrag("LeftButton", "RightButton")
 	self:SetSkinned()
 end
 
+function PETBTN:PLAYER_ENTERING_WORLD()
+	self:UpdateAll()
+	self:KeybindOverlay_ApplyBindings()
+
+	self:ScheduleTimer(function() self:UpdateVisibility() end, 1)
+end
+
+function PETBTN:UNIT_PET(event, unit)
+	if unit ==  "player" then
+		self:UpdateData()
+	end
+end
+
+function PETBTN:OnDragStart()
+	if InCombatLockdown() then
+		return
+	end
+
+	local drag
+
+	if not self.bar:GetBarLock() then
+		drag = true
+	elseif self.bar:GetBarLock() == "alt" and IsAltKeyDown() then
+		drag = true
+	elseif self.bar:GetBarLock() == "ctrl" and IsControlKeyDown() then
+		drag = true
+	elseif self.bar:GetBarLock() == "shift" and IsShiftKeyDown() then
+		drag = true
+	else
+		drag = false
+	end
+
+	if drag then
+		self:SetChecked(0)
+		PickupPetAction(self.actionID)
+		self:UpdateData()
+	end
+
+	for i,bar in pairs(Neuron.bars) do
+		bar:ACTIONBAR_SHOWHIDEGRID(true)
+	end
+end
+
+
+function PETBTN:OnReceiveDrag()
+	if InCombatLockdown() then
+		return
+	end
+
+	if GetCursorInfo() == "petaction" then
+		self:SetChecked(0)
+		PickupPetAction(self.actionID)
+		self:UpdateData()
+	else
+		ClearCursor()
+		Neuron:Print(L["DragDrop_Error_Message"])
+	end
+
+	for i,bar in pairs(Neuron.bars) do
+		bar:ACTIONBAR_SHOWHIDEGRID()
+	end
+end
+
+-----------------------------------------------------
+--------------------- Overrides ---------------------
+-----------------------------------------------------
+
+--overwrite function in parent class BUTTON
+function PETBTN:UpdateData()
+	if not self.actionID then
+		return
+	end
+
+	local spell = GetPetActionInfo(self.actionID)
+
+	self.spell = spell
+
+	if not InCombatLockdown() then
+		if spell then
+			self:SetAttribute("*macrotext2", "/petautocasttoggle "..spell)
+		end
+	end
+
+	self:UpdateIcon()
+	self:UpdateCooldown()
+	self:UpdateStatus()
+end
+
+--overwrite function in parent class BUTTON
 function PETBTN:UpdateIcon()
+	if not self.actionID then
+		return
+	end
+
 	local _, texture, isToken = GetPetActionInfo(self.actionID)
 
 	self.elements.Name:SetText("")
@@ -100,9 +228,16 @@ function PETBTN:UpdateIcon()
 		self.elements.IconFrameIcon:SetTexture("")
 		self.elements.IconFrameIcon:Hide()
 	end
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:UpdateNormalTexture()
 end
 
+--overwrite function in parent class BUTTON
 function PETBTN:UpdateStatus()
+	if not self.actionID then
+		return
+	end
+
 	local _, _, _, isActive, allowed, enabled = GetPetActionInfo(self.actionID)
 
 	if isActive then
@@ -140,7 +275,7 @@ function PETBTN:UpdateStatus()
 	self:UpdateUsable()
 end
 
-
+--overwrite function in parent class BUTTON
 function PETBTN:UpdateCooldown()
 	if self.actionID and GetPetActionInfo(self.actionID) then
 		local start, duration, enable, modrate = GetPetActionCooldown(self.actionID)
@@ -148,37 +283,7 @@ function PETBTN:UpdateCooldown()
 	end
 end
 
-function PETBTN:UpdateNormalTexture()
-	if not self:GetSkinned() then
-		if GetPetActionInfo(self.actionID) then
-			self:SetNormalTexture(self.hasAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,1)
-		else
-			self:SetNormalTexture(self.noAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
-		end
-	end
-end
-
-function PETBTN:UpdateData()
-	local spell = GetPetActionInfo(self.actionID)
-
-	self.spell = spell
-
-	self:UpdateNormalTexture()
-	self:UpdateIcon()
-	self:UpdateCooldown()
-
-
-	if not InCombatLockdown() then
-		if spell then
-			self:SetAttribute("*macrotext2", "/petautocasttoggle "..spell)
-		end
-	end
-
-	self:UpdateStatus()
-end
-
+--overwrite function in parent class BUTTON
 function PETBTN:UpdateUsable()
 	if Neuron.buttonEditMode or Neuron.bindingMode then
 		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
@@ -189,74 +294,7 @@ function PETBTN:UpdateUsable()
 	end
 end
 
-function PETBTN:PLAYER_ENTERING_WORLD()
-	self:UpdateData()
-	self:UpdateUsable()
-	self:UpdateIcon()
-	self:UpdateStatus()
-	self:UpdateNormalTexture()
-
-	self:UpdateVisibility() --have to set true at login or the buttons on the bar don't show
-
-	self:KeybindOverlay_ApplyBindings()
-end
-
-function PETBTN:UNIT_PET(event, unit)
-	if unit ==  "player" then
-		self:UpdateData()
-	end
-end
-
-function PETBTN:OnDragStart()
-	if InCombatLockdown() then
-		return
-	end
-
-	local drag
-
-	if not self.bar:GetBarLock() then
-		drag = true
-	elseif self.bar:GetBarLock() == "alt" and IsAltKeyDown() then
-		drag = true
-	elseif self.bar:GetBarLock() == "ctrl" and IsControlKeyDown() then
-		drag = true
-	elseif self.bar:GetBarLock() == "shift" and IsShiftKeyDown() then
-		drag = true
-	else
-		drag = false
-	end
-
-	if drag then
-		self:SetChecked(0)
-
-		PickupPetAction(self.actionID)
-
-		self:UpdateData()
-	end
-
-	for i,bar in pairs(Neuron.bars) do
-		if bar.class == "pet" then
-			bar:UpdateObjectVisibility(true)
-		end
-	end
-end
-
-
-function PETBTN:OnReceiveDrag()
-	if InCombatLockdown() then
-		return
-	end
-
-	local cursorType = GetCursorInfo()
-
-	if cursorType == "petaction" then
-		self:SetChecked(0)
-		PickupPetAction(self.actionID)
-		self:UpdateData()
-	end
-end
-
-
+--overwrite function in parent class BUTTON
 function PETBTN:UpdateTooltip()
 	--if we are in combat and we don't have tooltips enable in-combat, don't go any further
 	if InCombatLockdown() and not self.bar:GetTooltipCombat() then
@@ -274,13 +312,12 @@ function PETBTN:UpdateTooltip()
 	end
 end
 
-
-function PETBTN:UpdateVisibility()
-	if IsPetActive() then
+--overwrite function in parent class BUTTON
+function PETBTN:UpdateVisibility(show)
+	if (self.bar:GetShowGrid() and IsPetActive()) or (self.actionID and GetPetActionInfo(self.actionID) and IsPetActive()) or show then
 		self.isShown = true
 	else
 		self.isShown = false
 	end
-
 	Neuron.BUTTON.UpdateVisibility(self) --call parent function
 end

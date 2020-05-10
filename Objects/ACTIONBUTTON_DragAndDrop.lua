@@ -26,8 +26,9 @@
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
 local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
-
 local macroCache = {} --this will hold onto any previous contents of our button
+
+local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 --------------------------------------
 --------------------------------------
@@ -69,7 +70,7 @@ function ACTIONBUTTON:OnDragStart()
 	end
 
 	for _,bar in pairs(Neuron.bars) do
-		bar:ACTIONBAR_SHOWGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
+		bar:ACTIONBAR_SHOWHIDEGRID(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
 	end
 end
 
@@ -131,11 +132,14 @@ function ACTIONBUTTON:OnReceiveDrag()
 	if macroCache[1] then
 		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
 		for _,bar in pairs(Neuron.bars) do
-			bar:ACTIONBAR_SHOWGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
+			bar:ACTIONBAR_SHOWHIDEGRID(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
 		end
 	else
 		SetCursor(nil)
 		ClearCursor() --if we did not pick up a new spell, clear the cursor
+		for _,bar in pairs(Neuron.bars) do
+			bar:ACTIONBAR_SHOWHIDEGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
+		end
 	end
 end
 
@@ -261,7 +265,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		self.data.macro_isPetSpell = true
 
 	else
-		Neuron:Print("Sorry, you cannot place that ability at this time.")
+		Neuron:Print(L["DragDrop_Error_Message"])
 	end
 end
 

@@ -27,11 +27,11 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 XPBTN.sbStrings = {
 	[1] = { L["None"], function(self) return "" end },
-	[2] = { L["Current/Next"], function(self) if (self.XPWatch) then return self.XPWatch.current end end },
-	[3] = { L["Rested Levels"], function(self) if (self.XPWatch) then return self.XPWatch.rested end end },
-	[4] = { L["Percent"], function(self) if (self.XPWatch) then return self.XPWatch.percent end end },
-	[5] = { L["Bubbles"], function(self) if (self.XPWatch) then return self.XPWatch.bubbles end end },
-	[6] = { L["Current Level/Rank"], function(self) if (self.XPWatch) then return self.XPWatch.rank end end },
+	[2] = { L["Current/Next"], function(self) if self.current and self.next then return BreakUpLargeNumbers(self.current).." / "..BreakUpLargeNumbers(self.next) end end },
+	[3] = { L["Rested Levels"], function(self) if self.rested then return string.format("%.2f", tostring(self.rested)).." "..L["Levels"] end end },
+	[4] = { L["Percent"], function(self) if self.percent then return string.format("%.2f", tostring(self.percent)).."%" end end },
+	[5] = { L["Bubbles"], function(self) if self.bubbles then return tostring(self.bubbles).." / 20 "..L["Bubbles"] end end},
+	[6] = { L["Current Level/Rank"], function(self) if self.rank then return L["Level"].." "..tostring(self.rank) end end },
 }
 
 
@@ -56,142 +56,100 @@ function XPBTN:InitializeButton()
 	self:SetScript("OnLeave", function() self:OnLeave() end)
 	self:SetHitRectInsets(0, 0, 0, 0)
 
-	self:RegisterEvent("PLAYER_XP_UPDATE", "XPBar_OnEvent")
-	self:RegisterEvent("UPDATE_EXHAUSTION", "XPBar_OnEvent")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD", "XPBar_OnEvent")
-	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "XPBar_OnEvent")
+	self:RegisterEvent("PLAYER_XP_UPDATE", "OnEvent")
+	self:RegisterEvent("UPDATE_EXHAUSTION", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "OnEvent")
 
 	if not Neuron.isWoWClassic then
-		self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
-		self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
+		self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "OnEvent")
+		self:RegisterEvent("HONOR_XP_UPDATE", "OnEvent")
 	end
 
 	self.elements.SB:Show()
 	self.typeString = L["XP Bar"]
-	self:SetData()
-	self:XPBar_OnEvent("changed_curXPType") --we need to put this here to load the bar when first creating it
+
+	self:InitializeButtonSettings()
 end
 
 ---TODO: right now we are using DB.statusbtn to assign settings ot the status buttons, but I think our indexes are bar specific
-function XPBTN:xpstrings_Update() --handles updating all the strings for the play XP watch bar
-	local currXP, nextXP, restedXP, percentXP, bubbles, rank
-
+function XPBTN:UpdateData() --handles updating all the strings for the play XP watch bar
 	--player xp option
-	if (self.config.curXPType == "player_xp") then
-		currXP, nextXP, restedXP = UnitXP("player"), UnitXPMax("player"), GetXPExhaustion()
-		local playerLevel = UnitLevel("player")
+	if self:GetXPType() == "player_xp" then
+		self.current, self.next, self.rested = UnitXP("player"), UnitXPMax("player"), GetXPExhaustion()
+		self.rank = UnitLevel("player")
 
-		if (playerLevel == MAX_PLAYER_LEVEL) then
-			currXP = nextXP
+		--at max level we want to show the bar as full, so just max out the current XP
+		if self.rank == MAX_PLAYER_LEVEL then
+			self.current = self.next
 		end
 
-		percentXP = (currXP/nextXP)*100;
-		bubbles = tostring(math.floor(currXP/(nextXP/20))).." / 20 "..L["Bubbles"]
-		percentXP = string.format("%.2f", (percentXP)).."%"
+		self.percent = (self.current/self.next)*100
+		self.bubbles = math.floor(self.percent/5)
 
-		if (restedXP) then
-			restedXP = string.format("%.2f", (tostring(restedXP/nextXP))).." "..L["Levels"]
+		if self.rested then
+			self.rested = self.rested/self.next
 		else
-			restedXP = "0".." "..L["Levels"]
+			self.rested = 0
 		end
 
-		rank = L["Level"].." "..tostring(playerLevel)
-
-		--heart of azeroth option
-	elseif(self.config.curXPType == "azerite_xp") then
+	--heart of azeroth option
+	elseif self:GetXPType() == "azerite_xp" then
 		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-		if(azeriteItemLocation) then
-			currXP, nextXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-			restedXP = "0".." "..L["Levels"]
-			percentXP = (currXP/nextXP)*100
-			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"]
-			rank = L["Level"] .. " " .. tostring(C_AzeriteItem.GetPowerLevel(azeriteItemLocation))
+		if azeriteItemLocation then
+			self.current, self.next = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+			self.rested = 0
+			self.percent = (self.current/self.next)*100
+			self.bubbles = math.floor(self.percent/5)
+			self.rank = C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
 		else
-			currXP = 0;
-			nextXP = 0;
-			percentXP = 0;
-			restedXP = "0".." "..L["Levels"]
-			bubbles = tostring(0).." / 20 "..L["Bubbles"]
-			rank = tostring(0).." "..L["Points"]
+			self.current = 0
+			self.next = 0
+			self.percent = 0
+			self.rested = 0
+			self.bubbles = 0
+			self.rank = 0
 		end
-		percentXP = string.format("%.2f", percentXP).."%"; --format
 
-		--honor points option
-	elseif(self.config.curXPType == "honor_points") then
-		currXP = UnitHonor("player"); -- current value for level
-		nextXP = UnitHonorMax("player"); -- max value for level
-		restedXP = tostring(0).." "..L["Levels"]
+	--honor points option
+	elseif self:GetXPType() == "honor_points" then
+		self.current = UnitHonor("player"); -- current value for level
+		self.next = UnitHonorMax("player"); -- max value for level
+		self.rested = 0
 
-		local level = UnitHonorLevel("player");
-		percentXP = (currXP/nextXP)*100
-		bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
-		percentXP = string.format("%.2f", percentXP).."%"; --format
-		rank = L["Level"] .. " " .. tostring(level)
+		self.rank = UnitHonorLevel("player");
+		self.percent = (self.current/self.next)*100
+		self.bubbles = math.floor(self.percent/5)
 	end
-
-	if (not self.XPWatch) then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
-		self.XPWatch = {}
-	end
-
-	self.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
-	self.XPWatch.rested = restedXP
-	self.XPWatch.percent = percentXP
-	self.XPWatch.bubbles = bubbles
-	self.XPWatch.rank = rank
-
-	local isRested
-	if(restedXP ~= "0") then
-		isRested = true
-	else
-		isRested = false
-	end
-
-	return currXP, nextXP, isRested
 end
 
-function XPBTN:XPBar_OnEvent(event)
-	local currXP, nextXP, isRested
-	local hasChanged = false;
+function XPBTN:OnEvent(event)
+	self:UpdateData()
 
-	if(self.config.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType")) then
-		currXP, nextXP, isRested = self:xpstrings_Update()
-		if (isRested) then
+	if self:GetXPType() == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType") then
+		if self.rested ~= 0 then
 			self.elements.SB:SetStatusBarColor(self.config.restColor[1], self.config.restColor[2], self.config.restColor[3], self.config.restColor[4])
 		else
 			self.elements.SB:SetStatusBarColor(self.config.norestColor[1], self.config.norestColor[2], self.config.norestColor[3], self.config.norestColor[4])
 		end
-		hasChanged = true;
-	end
 
-	if(self.config.curXPType == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType"))then
-		currXP, nextXP = self:xpstrings_Update()
+	elseif self:GetXPType() == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType") then
 		self.elements.SB:SetStatusBarColor(1, 1, 0); --set to yellow?
-		hasChanged = true;
-	end
 
-	if(self.config.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType")) then
-		currXP, nextXP = self:xpstrings_Update()
+	elseif self:GetXPType() == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType") then
 		self.elements.SB:SetStatusBarColor(1, .4, .4);
-		hasChanged = true;
 	end
 
-	if (hasChanged == true) then
-		self.elements.SB:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
-		self.elements.SB:SetValue((currXP/nextXP)*100)
+	self.elements.SB:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
+	self.elements.SB:SetValue((self.current/self.next)*100)
 
-		self.elements.SB.cText:SetText(self:cFunc())
-		self.elements.SB.lText:SetText(self:lFunc())
-		self.elements.SB.rText:SetText(self:rFunc())
-		self.elements.SB.mText:SetText(self:mFunc())
-	end
+	self.elements.SB.cText:SetText(self:cFunc())
+	self.elements.SB.lText:SetText(self:lFunc())
+	self.elements.SB.rText:SetText(self:rFunc())
+	self.elements.SB.mText:SetText(self:mFunc())
 end
 
-function XPBTN:switchCurXPType(newXPType)
-	self.config.curXPType = newXPType
-	self:XPBar_OnEvent("changed_curXPType")
-end
-
-function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
+function XPBTN:InitializeDropDown() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
 	--this is the frame that will hold our dropdown menu
 	local menuFrame
 	if not NeuronXPDropdownMenu then --try to avoid re-creating this over again if we don't have to
@@ -211,8 +169,8 @@ function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosi
 		arg1 = self,
 		arg2 = "player_xp",
 		text = L["Track Character XP"],
-		func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
-		checked = self.config.curXPType == "player_xp",
+		func = function(dropdown, self, newXPType) self:SetXPType(newXPType) end,
+		checked = self:GetXPType() == "player_xp",
 	})
 
 	--wow classic doesn't have Honor points nor Azerite, carefull
@@ -223,8 +181,8 @@ function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosi
 				arg1 = self,
 				arg2 = "azerite_xp",
 				text = L["Track Azerite Power"],
-				func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
-				checked = self.config.curXPType == "azerite_xp",
+				func = function(dropdown, self, newXPType) self:SetXPType(newXPType) end,
+				checked = self:GetXPType() == "azerite_xp",
 			})
 		end
 
@@ -233,8 +191,8 @@ function XPBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosi
 			arg1 = self,
 			arg2 = "honor_points",
 			text = L["Track Honor Points"],
-			func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
-			checked = self.config.curXPType == "honor_points",
+			func = function(dropdown, self, newXPType) self:SetXPType(newXPType) end,
+			checked = self:GetXPType() == "honor_points",
 		})
 	end
 
@@ -269,6 +227,15 @@ end
 
 function XPBTN:OnClick(mousebutton)
 	if (mousebutton == "RightButton") then
-		self:xpDropDown_Initialize()
+		self:InitializeDropDown()
 	end
+end
+
+function XPBTN:SetXPType(newXPType)
+	self.config.curXPType = newXPType
+	self:OnEvent("changed_curXPType")
+end
+
+function XPBTN:GetXPType()
+	return self.config.curXPType
 end

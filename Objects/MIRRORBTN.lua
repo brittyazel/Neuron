@@ -25,12 +25,12 @@ Neuron.MIRRORBTN = MIRRORBTN
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local MirrorWatch, MirrorBars = {}, {}
+local mirrorWatch, mirrorBars = {}, {}
 
 MIRRORBTN.sbStrings = {
 	[1] = { L["None"], function(self) return "" end },
-	[2] = { L["Type"], function(self) if MirrorWatch[self.mirror] then return MirrorWatch[self.mirror].label end end },
-	[3] = { L["Timer"], function(self) if MirrorWatch[self.mirror] then return MirrorWatch[self.mirror].timer end end },
+	[2] = { L["Type"], function(self) if mirrorWatch[self.mirror] then return mirrorWatch[self.mirror].label end end },
+	[3] = { L["Timer"], function(self) if mirrorWatch[self.mirror] then return mirrorWatch[self.mirror].timer end end },
 }
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -46,49 +46,50 @@ function MIRRORBTN.new(bar, buttonID, defaults)
 end
 
 function MIRRORBTN:InitializeButton()
-	self:RegisterEvent("MIRROR_TIMER_START", "MirrorBar_OnEvent")
-	self:RegisterEvent("MIRROR_TIMER_STOP", "MirrorBar_OnEvent")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD", "MirrorBar_OnEvent")
+	self:RegisterEvent("MIRROR_TIMER_START", "OnEvent")
+	self:RegisterEvent("MIRROR_TIMER_STOP", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 
-	self:SetScript("OnUpdate", function() self:MirrorBar_OnUpdate() end)
+	self:SetScript("OnUpdate", function() self:OnUpdate() end)
 
-	table.insert(MirrorBars, self)
+	table.insert(mirrorBars, self)
 	self.elements.SB:Hide()
 	self.typeString = L["Mirror Bar"]
-	self:SetData()
+	
+	self:InitializeButtonSettings()
 end
 
-function MIRRORBTN: MirrorBar_OnEvent(event, ...)
+function MIRRORBTN:OnEvent(event, ...)
 	if event == "MIRROR_TIMER_START" then
-		self:mirrorbar_Start(...)
+		self:Start(...)
 
 	elseif event == "MIRROR_TIMER_STOP" then
-		self:mirrorbar_Stop(...)
+		self:Stop(...)
 
 	elseif event == "PLAYER_ENTERING_WORLD" then --this doesn't seem to be working as of 8.0, all report as UNKNOWN
 		local type, value, maxvalue, scale, paused, label
 		for i=1, MIRRORTIMER_NUMTIMERS do
 			type, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
 			if type ~= "UNKNOWN" then
-				self:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
+				self:Start(type, value, maxvalue, scale, paused, label)
 			end
 		end
 	end
 end
 
-function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
+function MIRRORBTN:Start(type, value, maxvalue, scale, paused, label)
 
-	if not MirrorWatch[type] then
-		MirrorWatch[type] = { active = false, mbar = nil, label = "", timer = "" }
+	if not mirrorWatch[type] then
+		mirrorWatch[type] = { active = false, mbar = nil, label = "", timer = "" }
 	end
 
-	if not MirrorWatch[type].active then
-		local mbar = table.remove(MirrorBars, 1)
+	if not mirrorWatch[type].active then
+		local mbar = table.remove(mirrorBars, 1)
 
 		if mbar then
-			MirrorWatch[type].active = true
-			MirrorWatch[type].mbar = mbar
-			MirrorWatch[type].label = label
+			mirrorWatch[type].active = true
+			mirrorWatch[type].mbar = mbar
+			mirrorWatch[type].label = label
 
 			mbar.mirror = type
 			mbar.value = (value / 1000)
@@ -106,22 +107,22 @@ function MIRRORBTN:mirrorbar_Start(type, value, maxvalue, scale, paused, label)
 	end
 end
 
-function MIRRORBTN:mirrorbar_Stop(type)
-	if MirrorWatch[type] and MirrorWatch[type].active then
+function MIRRORBTN:Stop(type)
+	if mirrorWatch[type] and mirrorWatch[type].active then
 
-		local mbar = MirrorWatch[type].mbar
+		local mbar = mirrorWatch[type].mbar
 		if mbar then
-			table.insert(MirrorBars, 1, mbar)
-			MirrorWatch[type].active = false
-			MirrorWatch[type].mbar = nil
-			MirrorWatch[type].label = ""
-			MirrorWatch[type].timer = ""
+			table.insert(mirrorBars, 1, mbar)
+			mirrorWatch[type].active = false
+			mirrorWatch[type].mbar = nil
+			mirrorWatch[type].label = ""
+			mirrorWatch[type].timer = ""
 			mbar.mirror = nil
 		end
 	end
 end
 
-function MIRRORBTN:MirrorBar_OnUpdate()
+function MIRRORBTN:OnUpdate()
 	if self.mirror then
 		self.value = GetMirrorTimerProgress(self.mirror)/1000
 
@@ -143,7 +144,7 @@ function MIRRORBTN:MirrorBar_OnUpdate()
 				self.value = self.value.."s"
 			end
 
-			MirrorWatch[self.mirror].timer = self.value
+			mirrorWatch[self.mirror].timer = self.value
 		end
 
 	elseif not Neuron.barEditMode and not Neuron.buttonEditMode then

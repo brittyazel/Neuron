@@ -68,17 +68,21 @@ function EXTRABTN:InitializeButton()
 	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
+	self:InitializeButtonSettings()
+end
+
+function EXTRABTN:InitializeButtonSettings()
+	self.bar:SetShowGrid(false)
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetSkinned()
 end
 
 function EXTRABTN:OnEvent(event, ...)
 	self:UpdateData()
-
 	if event == "PLAYER_ENTERING_WORLD" then
 		self:KeybindOverlay_ApplyBindings()
 		self:UpdateIcon()
 	end
-
 end
 
 
@@ -121,8 +125,6 @@ function EXTRABTN:UpdateData()
 	self:UpdateCooldown()
 	--extra button charges (some quests have ability charges)
 	self:UpdateCount()
-	--make sure our button gets the correct Normal texture if we're not using a Masque skin
-	self:UpdateNormalTexture()
 end
 
 --overwrite function in parent class BUTTON
@@ -132,7 +134,6 @@ function EXTRABTN:UpdateVisibility()
 	else
 		self.isShown = false
 	end
-
 	Neuron.BUTTON.UpdateVisibility(self) --call parent function
 end
 
@@ -149,6 +150,8 @@ function EXTRABTN:UpdateIcon()
 	else
 		self.elements.Flair:Hide()
 	end
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:UpdateNormalTexture()
 end
 
 --overwrite function in parent class BUTTON

@@ -61,18 +61,18 @@ end
 
 
 function CASTBTN:InitializeButton()
-	self:RegisterEvent("UNIT_SPELLCAST_START", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "CastBar_OnEvent")
-	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBar_OnEvent")
+	self:RegisterEvent("UNIT_SPELLCAST_START", "OnEvent")
+	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "OnEvent")
+	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "OnEvent")
+	self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED", "OnEvent")
+	self:RegisterEvent("UNIT_SPELLCAST_DELAYED", "OnEvent")
+	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START", "OnEvent")
+	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "OnEvent")
+	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "OnEvent")
 
 	if not Neuron.isWoWClassic then
-		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
-		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "OnEvent")
+		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "OnEvent")
 	end
 
 	self.unit = BAR_UNITS[self.config.unit]
@@ -83,7 +83,7 @@ function CASTBTN:InitializeButton()
 	self.channeling = nil
 	self.holdTime = 0
 
-	self:SetScript("OnUpdate", function(self, elapsed) self:CastBar_OnUpdate(elapsed) end)
+	self:SetScript("OnUpdate", function(self, elapsed) self:OnUpdate(elapsed) end)
 
 	if not self.castInfo then
 		self.castInfo = {}
@@ -93,31 +93,11 @@ function CASTBTN:InitializeButton()
 
 	self.elements.SB:Hide()
 	self.typeString = L["Cast Bar"]
-	self:SetData()
+
+	self:InitializeButtonSettings()
 end
 
-function CASTBTN:CastBar_FinishSpell()
-	self.elements.SB.spark:Hide()
-	self.elements.SB.barflash:SetAlpha(1.0)
-	self.elements.SB.barflash:Show()
-	self.flash = true
-	self.fadeout = true
-	self.casting = nil
-	self.channeling = nil
-end
-
-function CASTBTN:CastBar_Reset()
-	self.fadeout = true
-	self.casting = nil
-	self.channeling = nil
-	self.elements.SB:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
-
-	if not Neuron.barEditMode and not Neuron.buttonEditMode then
-		self.elements.SB:Hide()
-	end
-end
-
-function CASTBTN:CastBar_OnEvent(event,...)
+function CASTBTN:OnEvent(event,...)
 	local unit = select(1, ...)
 	local eventCastID = select(2,...) --return payload is "unitTarget", "castGUID", spellID
 
@@ -138,7 +118,7 @@ function CASTBTN:CastBar_OnEvent(event,...)
 		end
 
 		if not name then
-			self:CastBar_Reset()
+			self:Reset()
 			return
 		end
 
@@ -192,7 +172,7 @@ function CASTBTN:CastBar_OnEvent(event,...)
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 
 		if not name then
-			self:CastBar_Reset()
+			self:Reset()
 			return
 		end
 
@@ -269,7 +249,7 @@ function CASTBTN:CastBar_OnEvent(event,...)
 		if self.elements.SB:IsShown() then
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
 			if not name then
-				self:CastBar_Reset()
+				self:Reset()
 				return
 			end
 
@@ -294,7 +274,7 @@ function CASTBTN:CastBar_OnEvent(event,...)
 		if self.elements.SB:IsShown() then
 			local name, text, texture, startTime, endTime, isTradeSkill = UnitChannelInfo(unit)
 			if not name then
-				self:CastBar_Reset()
+				self:Reset()
 				return
 			end
 			self.value = ((endTime/1000)-GetTime())
@@ -316,7 +296,7 @@ function CASTBTN:CastBar_OnEvent(event,...)
 	self.elements.SB.mText:SetText(self:mFunc())
 end
 
-function CASTBTN:CastBar_OnUpdate(elapsed)
+function CASTBTN:OnUpdate(elapsed)
 	local unit = self.unit
 	local sparkPosition, alpha
 
@@ -335,7 +315,7 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 			self.value = self.value + elapsed
 			if self.value >= self.maxValue then
 				self.elements.SB:SetValue(self.maxValue)
-				self:CastBar_FinishSpell()
+				self:FinishCast()
 				return
 			end
 
@@ -359,7 +339,7 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 		elseif self.channeling then
 			self.value = self.value - elapsed
 			if self.value <= 0 then
-				self:CastBar_FinishSpell()
+				self:FinishCast()
 				return
 			end
 
@@ -383,10 +363,10 @@ function CASTBTN:CastBar_OnUpdate(elapsed)
 			if alpha > 0 then
 				self.elements.SB:SetAlpha(alpha)
 			else
-				self:CastBar_Reset()
+				self:Reset()
 			end
 		else
-			self:CastBar_Reset()
+			self:Reset()
 		end
 	end
 
@@ -413,4 +393,25 @@ function CASTBTN:UpdateCastIcon(checked)
 		self.config.showIcon = nil
 	end
 	self.showIcon = self.config.showIcon
+end
+
+function CASTBTN:FinishCast()
+	self.elements.SB.spark:Hide()
+	self.elements.SB.barflash:SetAlpha(1.0)
+	self.elements.SB.barflash:Show()
+	self.flash = true
+	self.fadeout = true
+	self.casting = nil
+	self.channeling = nil
+end
+
+function CASTBTN:Reset()
+	self.fadeout = true
+	self.casting = nil
+	self.channeling = nil
+	self.elements.SB:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
+
+	if not Neuron.barEditMode and not Neuron.buttonEditMode then
+		self.elements.SB:Hide()
+	end
 end

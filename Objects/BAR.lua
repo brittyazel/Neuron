@@ -126,8 +126,8 @@ function BAR.new(class, barID)
 end
 
 function BAR:InitializeBar()
-	self:RegisterEvent("ACTIONBAR_SHOWGRID")
-	self:RegisterEvent("ACTIONBAR_HIDEGRID")
+	self:RegisterEvent("ACTIONBAR_SHOWGRID", "ACTIONBAR_SHOWHIDEGRID", true)
+	self:RegisterEvent("ACTIONBAR_HIDEGRID", "ACTIONBAR_SHOWHIDEGRID")
 
 	if not Neuron.isWoWClassic then
 		if self.class == "ActionBar" then
@@ -150,18 +150,10 @@ function BAR:ACTIVE_TALENT_GROUP_CHANGED()
 	end
 end
 
-function BAR:ACTIONBAR_SHOWGRID()
+function BAR:ACTIONBAR_SHOWHIDEGRID(show)
 	if self.class == "ActionBar" then
 		for _, button in pairs(self.buttons) do
-			button:UpdateVisibility(true)
-		end
-	end
-end
-
-function BAR:ACTIONBAR_HIDEGRID()
-	if self.class == "ActionBar" then
-		for _, button in pairs(self.buttons) do
-			button:UpdateVisibility()
+			button:UpdateVisibility(show)
 		end
 	end
 end
@@ -1031,9 +1023,8 @@ function BAR:LoadObjects()
 	end
 
 	for i, object in ipairs(self.buttons) do
-		--all of these objects need to stay as "object:****" because which SetData/LoadDataFromDatabase/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
+		--all of these objects need to stay as "object:****" because which InitializeButtonSettings/LoadDataFromDatabase/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
 		object:LoadDataFromDatabase(spec, self.handler:GetAttribute("activestate"))
-		object:SetData()
 		object:InitializeButton()
 		object:UpdateVisibility()
 	end
@@ -1134,7 +1125,7 @@ function BAR:SetObjectLoc()
 
 			num = num + 1
 			object:SetAttribute("barPos", num)
-			object:SetData()
+			object:InitializeButtonSettings()
 		end
 	end
 end
@@ -1469,10 +1460,10 @@ end
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 
-function BAR:UpdateObjectData()
+function BAR:UpdateButtonSettings()
 	for _, object in pairs(self.buttons) do
 		if object then
-			object:SetData()
+			object:InitializeButtonSettings()
 		end
 	end
 end
@@ -1789,7 +1780,6 @@ function BAR:SetShowGrid(checked)
 		self.data.showGrid = false
 	end
 
-	self:UpdateObjectData()
 	self:UpdateObjectVisibility()
 	self:UpdateBarStatus()
 end
@@ -1811,7 +1801,6 @@ function BAR:SetSpellGlow(option)
 		self.data.spellGlow = false
 	end
 
-	self:UpdateObjectData()
 	self:UpdateBarStatus()
 end
 
@@ -1854,7 +1843,7 @@ function BAR:SetClickMode(mode)
 		self.data.clickMode = "UpClick"
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -1913,7 +1902,6 @@ function BAR:SetBarLock(option)
 		self.data.barLock = false
 	end
 
-	self:UpdateObjectData()
 	self:UpdateBarStatus()
 end
 
@@ -1935,7 +1923,6 @@ function BAR:SetTooltipOption(option)
 		self.data.tooltips = "off"
 	end
 
-	self:UpdateObjectData()
 	self:UpdateBarStatus()
 end
 
@@ -1950,7 +1937,6 @@ function BAR:SetTooltipCombat(checked)
 		self.data.tooltipsCombat = false
 	end
 
-	self:UpdateObjectData()
 	self:UpdateBarStatus()
 end
 
@@ -2097,7 +2083,7 @@ function BAR:SetStrata(option)
 	end
 
 	self:SetPosition()
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -2197,7 +2183,7 @@ function BAR:SetShowBindText(checked)
 		self.data.bindText = false
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -2212,7 +2198,7 @@ function BAR:SetBindColor(option)
 		self.data.bindColor = {1,1,1,1}
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -2220,19 +2206,19 @@ function BAR:GetBindColor()
 	return self.data.bindColor
 end
 
-function BAR:SetShowMacroText(checked)
+function BAR:SetShowButtonText(checked)
 	if checked then
-		self.data.macroText = true
+		self.data.buttonText = true
 	else
-		self.data.macroText = false
+		self.data.buttonText = false
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
-function BAR:GetShowMacroText()
-	return self.data.macroText
+function BAR:GetShowButtonText()
+	return self.data.buttonText
 end
 
 function BAR:SetMacroColor(option)
@@ -2242,7 +2228,7 @@ function BAR:SetMacroColor(option)
 		self.data.macroColor = {1,1,1,1}
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -2257,7 +2243,7 @@ function BAR:SetShowCountText(checked)
 		self.data.countText = false
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -2272,7 +2258,7 @@ function BAR:SetCountColor(option)
 		self.data.countColor = {1,1,1,1}
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -2287,7 +2273,7 @@ function BAR:SetShowRangeIndicator(checked)
 		self.data.rangeInd = false
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -2302,7 +2288,7 @@ function BAR:SetRangeColor(option)
 		self.data.rangecolor = {0.7,0.15,0.15,1}
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 
@@ -2387,7 +2373,7 @@ function BAR:SetManaColor(option)
 		self.data.manacolor = {0.5,0.5,1,1}
 	end
 
-	self:UpdateObjectData()
+	self:UpdateButtonSettings()
 	self:UpdateBarStatus()
 end
 

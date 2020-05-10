@@ -135,6 +135,7 @@ Neuron.DefaultBarOptions.ExtraBar = {
 		snapToFrame = false,
 		snapToPoint = false,
 		point = "BOTTOM",
+		showGrid = false,
 		x = 0,
 		y = 205,
 

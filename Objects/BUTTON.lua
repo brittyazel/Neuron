@@ -303,46 +303,6 @@ function BUTTON:CooldownCounterUpdate()
 	end
 end
 
-function BUTTON:SetData()
-	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
-	self:SetScale(self.bar:GetBarScale())
-
-
-	if self.bar:GetShowBindText() then
-		self.elements.Hotkey:Show()
-		self.elements.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
-	else
-		self.elements.Hotkey:Hide()
-	end
-
-	if self.bar:GetShowMacroText() then
-		self.elements.Name:Show()
-		self.elements.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
-	else
-		self.elements.Name:Hide()
-	end
-
-	if self.bar:GetShowCountText() then
-		self.elements.Count:Show()
-		self.elements.Count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3],self.bar:GetCountColor()[4])
-	else
-		self.elements.Count:Hide()
-	end
-
-	local down, up = "", ""
-
-	if self.bar:GetClickMode() == "UpClick" then
-		up = up.."AnyUp"
-	end
-	if self.bar:GetClickMode() == "DownClick" then
-		down = down.."AnyDown"
-	end
-
-	self:RegisterForClicks(down, up)
-	self:RegisterForDrag("LeftButton", "RightButton")
-	self:GetSkinned()
-end
-
 function BUTTON:LoadDataFromDatabase(curSpec, curState)
 	self.config = self.DB.config
 	self.keys = self.DB.keys
@@ -378,74 +338,41 @@ function BUTTON:SetDefaults(defaults)
 	end
 end
 
-function BUTTON:InitializeButton()
-	--empty--
-end
-
 function BUTTON:SetSkinned(flyout)
-
 	if SKIN then
-		local bar = self.bar
-
-		if bar then
-			local btnData = {
-				Normal = self.elements.NormalTexture,
-				Icon = self.elements.IconFrameIcon,
-				HotKey = self.elements.Hotkey,
-				Count = self.elements.Count,
-				Name = self.elements.Name,
-				Border = self.elements.Border,
-				Shine = self.elements.Shine,
-				Cooldown = self.elements.IconFrameCooldown,
-				AutoCastable = self.elements.AutoCastable,
-				Checked = self.elements.CheckedTexture,
-				Pushed = self:GetPushedTexture(),
-				Disabled = self:GetDisabledTexture(),
-				Highlight = self.elements.HighlightTexture,
-			}
-
-			if flyout then
-				SKIN:Group("Neuron", self.anchor.bar.data.name):AddButton(self, btnData, "Action")
-			else
-				SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData, "Action")
-			end
-
-			self.skinned = true
-		end
-	end
-end
-
-function BUTTON:GetSkinned()
-	if self.__MSQ_NormalTexture then
-		local Skin = self.__MSQ_NormalSkin
-
-		if Skin then
-			self.hasAction = Skin.Texture or false
-			self.noAction = Skin.EmptyTexture or false
+		local btnData = {
+			Normal = self.elements.NormalTexture,
+			Icon = self.elements.IconFrameIcon,
+			HotKey = self.elements.Hotkey,
+			Count = self.elements.Count,
+			Name = self.elements.Name,
+			Border = self.elements.Border,
+			Shine = self.elements.Shine,
+			Cooldown = self.elements.IconFrameCooldown,
+			AutoCastable = self.elements.AutoCastable,
+			Checked = self.elements.CheckedTexture,
+			Pushed = self:GetPushedTexture(),
+			Disabled = self:GetDisabledTexture(),
+			Highlight = self.elements.HighlightTexture,
+		}
+		if flyout then
+			SKIN:Group("Neuron", self.anchor.bar.data.name):AddButton(self, btnData, "Action")
 		else
-			self.hasAction = false
-			self.noAction = false
+			SKIN:Group("Neuron", self.bar.data.name):AddButton(self, btnData, "Action")
 		end
-		return true
-	else
-		self.hasAction = "Interface\\Buttons\\UI-Quickslot2"
-		self.noAction = "Interface\\Buttons\\UI-Quickslot"
-		return false
 	end
 end
-
 
 function BUTTON:HasAction()
-	local hasAction = self.data.macro_Text
-
 	if self.actionID then
 		if self.actionID == 0 then
 			return true
-		else
-			return HasAction(self.actionID)
+		elseif HasAction(self.actionID) then
+			return true
+		elseif self.class == "PetBar" and GetPetActionInfo(self.actionID) then
+			return true
 		end
-
-	elseif hasAction and #hasAction>0 then
+	elseif self.spell or self.item then
 		return true
 	else
 		return false
@@ -462,7 +389,6 @@ function BUTTON:UpdateAll()
 	self:UpdateIcon()
 	self:UpdateStatus()
 	self:UpdateCooldown()
-	self:UpdateNormalTexture()
 	self:UpdateUsable()
 end
 
@@ -471,14 +397,24 @@ function BUTTON:UpdateData()
 end
 
 function BUTTON:UpdateNormalTexture()
-	if not self:GetSkinned() then
-		if self:HasAction() then
-			self:SetNormalTexture(self.hasAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,1)
-		else
-			self:SetNormalTexture(self.noAction or "")
-			self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
+	local actionTexture, noactionTexture
+
+	if self.__MSQ_NormalTexture then
+		if self.__MSQ_NormalSkin then
+			actionTexture = self.__MSQ_NormalSkin.Texture
+			noactionTexture = self.__MSQ_NormalSkin.Texture.EmptyTexture
 		end
+	else
+		actionTexture = "Interface\\Buttons\\UI-Quickslot2"
+		noactionTexture = "Interface\\Buttons\\UI-Quickslot"
+	end
+
+	if self:HasAction() then
+		self:SetNormalTexture(actionTexture or "")
+		self:GetNormalTexture():SetVertexColor(1,1,1,1)
+	else
+		self:SetNormalTexture(noactionTexture or "")
+		self:GetNormalTexture():SetVertexColor(1,1,1,0.5)
 	end
 end
 
@@ -711,6 +647,9 @@ function BUTTON:UpdateIcon()
 		self.elements.IconFrameIcon:Hide()
 		self.elements.Border:Hide()
 	end
+
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:UpdateNormalTexture()
 end
 
 function BUTTON:UpdateSpellIcon()

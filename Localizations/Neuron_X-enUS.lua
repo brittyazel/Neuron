@@ -316,6 +316,8 @@ L["Spellglow_Instructions"] = "Valid options:\n\ndefault: use Blizzard default s
 L["Timer_Limit_Set_Message"] = "Timer limit set to %d seconds"
 L["Timer_Limit_Invalid_Message"] = "Invalid timer limit"
 
+L["DragDrop_Error_Message"] = "Sorry, we were unable to place that ability or item."
+
 
 L["Attack"] = true
 L["Follow"] = true
@@ -341,7 +343,6 @@ L["Macro Data"] = true
 L["Action Data"] = true
 L["Options"] = true
 
-L["Macro Name"] = true
 L["Click here to edit macro note"] = true
 L["Use macro note as button tooltip"] = true
 
@@ -390,7 +391,7 @@ L["Arc Length"] = true
 
 L["Keybind Label"] = true
 L["Keybind Label Color"] = true
-L["Macro Name"] = true
+L["Button Name"] = true
 L["Stack/Charge"] = true
 L["Out-of-Range"] = true
 L["CD Counter"] = true

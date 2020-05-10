@@ -508,7 +508,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	------------------- Macro Text -------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.MACROTEXT then
+	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.BUTTONTEXT then
 		local macroTextContainer = AceGUI:Create("SimpleGroup")
 		macroTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		macroTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -516,11 +516,11 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 		scrollFrame:AddChild(macroTextContainer)
 
 		local macroTextCheckbox = AceGUI:Create("CheckBox")
-		macroTextCheckbox:SetLabel(L["Macro Name"])
+		macroTextCheckbox:SetLabel(L["Button Name"])
 		macroTextCheckbox:SetRelativeWidth(.70)
-		macroTextCheckbox:SetValue(Neuron.currentBar:GetShowMacroText())
+		macroTextCheckbox:SetValue(Neuron.currentBar:GetShowButtonText())
 		macroTextCheckbox:SetCallback("OnValueChanged", function(self)
-			Neuron.currentBar:SetShowMacroText(self:GetValue())
+			Neuron.currentBar:SetShowButtonText(self:GetValue())
 		end)
 		macroTextContainer:AddChild(macroTextCheckbox)
 

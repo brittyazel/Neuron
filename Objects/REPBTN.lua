@@ -50,12 +50,6 @@ function REPBTN.new(bar, buttonID, defaults)
 end
 
 function REPBTN:InitializeButton()
-	if InCombatLockdown() then
-		return
-	end
-
-	self.repID = self.config.repID
-
 	self:SetAttribute("hasaction", true)
 
 	self:RegisterForClicks("RightButtonUp")
@@ -64,14 +58,16 @@ function REPBTN:InitializeButton()
 	self:SetScript("OnLeave", function() self:OnLeave() end)
 	self:SetHitRectInsets(0, 0, 0, 0)
 
-	self:RegisterEvent("UPDATE_FACTION", "repbar_OnEvent")
-	self:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE", "repbar_OnEvent")
-	self:RegisterEvent("PLAYER_ENTERING_WORLD", "repbar_OnEvent")
+	self:RegisterEvent("UPDATE_FACTION", "OnEvent")
+	self:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE", "OnEvent")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
+
+	self.repID = self.config.repID
 
 	self.elements.SB:Show()
 	self.typeString = L["Rep Bar"]
-	self:SetData()
-	self:repbar_OnEvent() --we need this here to load the bar when first creating it
+
+	self:InitializeButtonSettings()
 end
 
 --- Creates a table containing provided data
@@ -98,7 +94,7 @@ local function SetRepWatch(ID, name, standing, header, minrep, maxrep, value, co
 	return reptable
 end
 
-function REPBTN:repstrings_Update(repGainedString)
+function REPBTN:UpdateData(repGainedString)
 	local BAR_REP_DATA = {
 		[0] = { l="Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
 		[1] = { l="Hated", r=0.6, g=0.1, b=0.1, a=1.0 },
@@ -191,8 +187,8 @@ function REPBTN:repstrings_Update(repGainedString)
 	end
 end
 
-function REPBTN:repbar_OnEvent(event,...)
-	self:repstrings_Update(...)
+function REPBTN:OnEvent(event,...)
+	self:UpdateData(...)
 
 	if RepWatch[self.repID] then
 		self.elements.SB:SetStatusBarColor(RepWatch[self.repID].r,  RepWatch[self.repID].g, RepWatch[self.repID].b)
@@ -211,7 +207,7 @@ function REPBTN:repbar_OnEvent(event,...)
 end
 
 
-function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choosing a rep
+function REPBTN:InitializeDropDown() --Initialize the dropdown menu for choosing a rep
 	local repDataTable = {}
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
@@ -254,7 +250,7 @@ function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choo
 		func= function(dropdown, self) --self is arg1
 			self.config.repID = dropdown.value
 			self.config.repID = dropdown.value
-			self:repbar_OnEvent()
+			self:OnEvent()
 		end,
 		value=0,
 		checked=self.config.repID == 0
@@ -287,7 +283,7 @@ function REPBTN:repDropDown_Initialize() --Initialize the dropdown menu for choo
 				func = function(dropdown, self) --self is arg1
 					self.config.repID = dropdown.value
 					self.repID = dropdown.value
-					self:repbar_OnEvent()
+					self:OnEvent()
 					menuFrame:Hide()
 				end,
 				value = v2.ID,
@@ -355,6 +351,6 @@ end
 
 function REPBTN:OnClick(mousebutton)
 	if mousebutton == "RightButton" then
-		self:repDropDown_Initialize()
+		self:InitializeDropDown()
 	end
 end

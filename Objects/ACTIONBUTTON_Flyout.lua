@@ -791,12 +791,12 @@ function ACTIONBUTTON:Flyout_ReleaseButton(button)
 end
 
 
-function ACTIONBUTTON:Flyout_SetData()
+function ACTIONBUTTON:Flyout_InitializeButtonSettings()
 	self.bar:SetTooltipOption("normal")
 	self.elements.Hotkey:Hide()
 	self.elements.Name:Hide()
 	self:RegisterForClicks("AnyUp")
-	self:GetSkinned()
+	self:SetSkinned()
 end
 
 
@@ -880,9 +880,9 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 
 	--link objects to their associated functions
-	newButton.SetData = ACTIONBUTTON.Flyout_SetData
+	newButton.InitializeButtonSettings = ACTIONBUTTON.Flyout_InitializeButtonSettings
 
-	newButton:SetData()
+	newButton:InitializeButtonSettings()
 
 	newButton:Flyout_UpdateData(true)
 	newButton:SetSkinned(true)

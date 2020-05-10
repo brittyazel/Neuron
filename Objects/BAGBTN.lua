@@ -81,36 +81,30 @@ function BAGBTN:InitializeButton()
 		end
 	end
 
+	self:InitializeButtonSettings()
+end
+
+function BAGBTN:InitializeButtonSettings()
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
-	self.isShown = true
-
 	self:SetSkinned()
+	self.isShown = true
 end
 
 ---simplified SetSkinned for the Bag Buttons. They're unique in that they contain buttons inside of the buttons
 function BAGBTN:SetSkinned()
 	local SKIN = LibStub("Masque", true)
-
 	if SKIN then
-
-		local bar = self.bar
-
-		if bar then
-			local btnData = {
-				Normal = self.hookedButton:GetNormalTexture(),
-				Icon = self.hookedButton.icon,
-				Count = self.hookedButton.Count,
-				Pushed = self.hookedButton:GetPushedTexture(),
-				Disabled = self.hookedButton:GetDisabledTexture(),
-				Checked = self.hookedButton.SlotHighlightTexture, --blizzard in 8.1.5 took away GetCheckedTexture from the bag buttons for ~some~ reason. This is now the explicit location the element we want
-				Highlight = self.hookedButton:GetHighlightTexture(),
-			}
-
-			SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData, "Item")
-
-			self.skinned = true
-		end
+		local btnData = {
+			Normal = self.hookedButton:GetNormalTexture(),
+			Icon = self.hookedButton.icon,
+			Count = self.hookedButton.Count,
+			Pushed = self.hookedButton:GetPushedTexture(),
+			Disabled = self.hookedButton:GetDisabledTexture(),
+			Checked = self.hookedButton.SlotHighlightTexture, --blizzard in 8.1.5 took away GetCheckedTexture from the bag buttons for ~some~ reason. This is now the explicit location the element we want
+			Highlight = self.hookedButton:GetHighlightTexture(),
+		}
+		SKIN:Group("Neuron", self.bar.data.name):AddButton(self, btnData, "Item")
 	end
 end
 
@@ -118,11 +112,6 @@ end
 -----------------------------------------------------
 --------------------- Overrides ---------------------
 -----------------------------------------------------
-
---overwrite function in parent class BUTTON
-function BAGBTN:SetData()
-	-- empty --
-end
 
 --overwrite function in parent class BUTTON
 function BAGBTN:UpdateStatus()

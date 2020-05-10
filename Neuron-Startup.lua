@@ -85,7 +85,7 @@ function Neuron:RegisterGUI()
 
 			{
 				BINDTEXT = true,
-				MACROTEXT = true,
+				BUTTONTEXT = true,
 				COUNTTEXT = true,
 				RANGEIND = true,
 				CDTEXT = true,
@@ -113,16 +113,21 @@ function Neuron:RegisterGUI()
 	--Neuron Pet Bar
 	Neuron:RegisterGUIOptions("PetBar",
 			{
-				AUTOHIDE = true,
-				SHOWGRID = true,
-				SNAPTO = true,
+				AUTOHIDE  = true,
+				--SHOWGRID  = true,
+				SNAPTO    = true,
 				CLICKMODE = true,
-				HIDDEN = true,
-				LOCKBAR = true,
+				HIDDEN    = true,
+				LOCKBAR   = true,
+			},
+
+			{
 				BINDTEXT = true,
+				BUTTONTEXT = true,
 				RANGEIND = true,
 				CDTEXT = true,
 				CDALPHA = true,
+				TOOLTIPS = true,
 			})
 
 	--Neuron XP Bar

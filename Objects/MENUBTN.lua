@@ -88,9 +88,13 @@ function MENUBTN:InitializeButton()
 		self.hookedButton:SetScale(1)
 	end
 
-	self.isShown = true
+	self:InitializeButtonSettings()
+end
+
+function MENUBTN:InitializeButtonSettings()
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
+	self.isShown = true
 end
 
 function MENUBTN:PET_BATTLE_CLOSE()
@@ -121,11 +125,6 @@ end
 -----------------------------------------------------
 --------------------- Overrides ---------------------
 -----------------------------------------------------
-
---overwrite function in parent class BUTTON
-function MENUBTN:SetData()
-	-- empty --
-end
 
 --overwrite function in parent class BUTTON
 function MENUBTN:UpdateStatus()

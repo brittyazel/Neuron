@@ -69,12 +69,17 @@ function ZONEABILITYBTN:InitializeButton()
 	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
 
+	self:InitializeButtonSettings()
+end
+
+function ZONEABILITYBTN:InitializeButtonSettings()
+	self.bar:SetShowGrid(false)
+	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetSkinned()
 end
 
 function ZONEABILITYBTN:OnEvent(event, ...)
 	self:UpdateData();
-
 	if event == "PLAYER_ENTERING_WORLD" then
 		self:KeybindOverlay_ApplyBindings()
 		self:UpdateIcon()
@@ -107,8 +112,6 @@ function ZONEABILITYBTN:UpdateData()
 	self:UpdateCooldown()
 	--zone ability button charges (I'm not sure if zone abilities have charges, but this is just in case)
 	self:UpdateCount()
-	--make sure our button gets the correct Normal texture if we're not using a Masque skin
-	self:UpdateNormalTexture()
 end
 
 --overwrite function in parent class BUTTON
@@ -135,6 +138,8 @@ function ZONEABILITYBTN:UpdateIcon()
 	else
 		self.elements.Flair:Hide()
 	end
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:UpdateNormalTexture()
 end
 
 --overwrite function in parent class BUTTON
