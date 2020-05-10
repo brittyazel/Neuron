@@ -151,10 +151,17 @@ function BAR:ACTIVE_TALENT_GROUP_CHANGED()
 end
 
 function BAR:ACTIONBAR_SHOWHIDEGRID(show)
-	if self.class == "ActionBar" then
-		for _, button in pairs(self.buttons) do
-			button:UpdateVisibility(show)
-		end
+	--don't show the grid if the bar is locked and the right key isn't pressed
+	if self:GetBarLock() == "alt" and not IsAltKeyDown() then
+		show = nil
+	elseif self:GetBarLock() == "ctrl" and not IsControlKeyDown() then
+		show = nil
+	elseif self:GetBarLock() == "shift" and not IsShiftKeyDown() then
+		show = nil
+	end
+
+	for _, button in pairs(self.buttons) do
+		button:UpdateVisibility(show)
 	end
 end
 
