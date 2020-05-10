@@ -66,7 +66,7 @@ function ACTIONBUTTON:OnDragStart()
 
 	end
 
-	Neuron:ToggleButtonGrid(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
+	self:ACTIONBAR_SHOWGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
 end
 
 --This is the function that fires when a button is receiving a dragged item
@@ -126,7 +126,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 
 	if macroCache[1] then
 		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
-		Neuron:ToggleButtonGrid(true)
+		self:ACTIONBAR_SHOWGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
 	else
 		SetCursor(nil)
 		ClearCursor() --if we did not pick up a new spell, clear the cursor

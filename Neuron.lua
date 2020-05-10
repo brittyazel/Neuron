@@ -556,19 +556,6 @@ function Neuron:UpdateStanceStrings()
 	end
 end
 
-
-
-function Neuron:ToggleButtonGrid(show)
-	for _,bar in pairs(Neuron.BARIndex) do
-		if bar.barType == "ActionBar" or bar.barType == "PetBar" then
-			for _, button in pairs(bar.buttons) do
-				button:UpdateObjectVisibility(show)
-			end
-		end
-	end
-end
-
-
 function Neuron:ToggleMainMenu()
 	---need to run the command twice for some reason. The first one only seems to open the Interface panel
 	InterfaceOptionsFrame_OpenToCategory("Neuron");

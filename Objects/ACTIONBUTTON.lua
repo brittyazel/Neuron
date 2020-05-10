@@ -584,11 +584,20 @@ function ACTIONBUTTON:ACTIVE_TALENT_GROUP_CHANGED()
 end
 
 function ACTIONBUTTON:ACTIONBAR_SHOWGRID()
-	Neuron:ToggleButtonGrid(true)
+	local show = true
+	if self.barLock and self.barLockAlt and not IsAltKeyDown() then
+		show = false
+	elseif self.barLock and self.barLockCtrl and not IsControlKeyDown() then
+		show = false
+	elseif self.barLock and self.barLockShift and not IsShiftKeyDown() then
+		show = false
+	end
+
+	self:UpdateObjectVisibility(show)
 end
 
 function ACTIONBUTTON:ACTIONBAR_HIDEGRID()
-	Neuron:ToggleButtonGrid()
+	self:UpdateObjectVisibility()
 end
 
 function ACTIONBUTTON:UPDATE_MACROS()
