@@ -70,7 +70,9 @@ function ACTIONBUTTON:OnDragStart()
 	end
 
 	for _,bar in pairs(Neuron.bars) do
-		bar:ACTIONBAR_SHOWHIDEGRID(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
+		if bar.class == "ActionBar" then
+			bar:ACTIONBAR_SHOWHIDEGRID(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
+		end
 	end
 end
 

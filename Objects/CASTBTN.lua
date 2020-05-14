@@ -259,6 +259,7 @@ end
 function CASTBTN:OnUpdate(elapsed)
 	--bail out if these values don't exist. Otherwise we will error later on
 	if not self.value and not self.maxValue then
+		self:Reset()
 		return
 	end
 
