@@ -19,6 +19,9 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
+
 local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -232,7 +235,7 @@ end
 function Neuron:CreateBarsAndButtons()
 	if DB.firstRun then
 
-		for barClass, barDefaults in pairs(Neuron.DefaultBarOptions) do
+		for barClass, barDefaults in pairs(addonTable.defaultBarOptions) do
 			if Neuron.registeredBarData[barClass] then --only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
 				for i, defaults in ipairs(barDefaults) do --create the bar objects
 					local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor

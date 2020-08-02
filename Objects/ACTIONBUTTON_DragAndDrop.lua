@@ -19,6 +19,8 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
 
 ---The functions in this file are part of the ACTIONBUTTON class.
 ---It was just easier to put them all in their own file for organization.

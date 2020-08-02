@@ -17,7 +17,10 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
+
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
 
 local NeuronGUI = {}
 Neuron.NeuronGUI = NeuronGUI
@@ -32,7 +35,7 @@ local currentTab = "tab1" --remember which tab we were using between refreshes
 -----------------------------------------------------------------------------
 
 function NeuronGUI:RefreshEditor(defaultTab)
-	NeuronEditor:ReleaseChildren()
+	addonTable.NeuronEditor:ReleaseChildren()
 
 	if defaultTab then
 		currentTab = defaultTab
@@ -42,27 +45,28 @@ function NeuronGUI:RefreshEditor(defaultTab)
 	NeuronGUI:PopulateEditorWindow()
 
 	if Neuron.currentBar then
-		NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
+		addonTable.NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
 	else
-		NeuronEditor:SetStatusText("|cFFFFFFFFWelcome to the Neuron editor, please select a bar to begin")
+		addonTable.NeuronEditor:SetStatusText("|cFFFFFFFFWelcome to the Neuron editor, please select a bar to begin")
 	end
 end
 
 
 function NeuronGUI:CreateEditor(defaultTab)
-	NeuronEditor = AceGUI:Create("Frame")
-	NeuronEditor:SetTitle("Neuron Editor")
-	NeuronEditor:EnableResize(true)
-	NeuronEditor.frame:SetMinResize(780,600)
-	NeuronEditor:SetWidth("780")
-	NeuronEditor:SetHeight("840")
+	addonTable.NeuronEditor = AceGUI:Create("Frame") --add it to our base addon table to reference later
+
+	addonTable.NeuronEditor:SetTitle("Neuron Editor")
+	addonTable.NeuronEditor:EnableResize(true)
+	addonTable.NeuronEditor.frame:SetMinResize(780,600)
+	addonTable.NeuronEditor:SetWidth("780")
+	addonTable.NeuronEditor:SetHeight("840")
 	if Neuron.currentBar then
-		NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
+		addonTable.NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
 	else
-		NeuronEditor:SetStatusText("|cFFFFFFFFWelcome to the Neuron editor, please select a bar to begin")
+		addonTable.NeuronEditor:SetStatusText("|cFFFFFFFFWelcome to the Neuron editor, please select a bar to begin")
 	end
-	NeuronEditor:SetCallback("OnClose", function() NeuronGUI:DestroyEditor() end)
-	NeuronEditor:SetLayout("Fill")
+	addonTable.NeuronEditor:SetCallback("OnClose", function() NeuronGUI:DestroyEditor() end)
+	addonTable.NeuronEditor:SetLayout("Fill")
 
 	if defaultTab then
 		currentTab = defaultTab
@@ -72,8 +76,10 @@ function NeuronGUI:CreateEditor(defaultTab)
 end
 
 function NeuronGUI:DestroyEditor()
-	AceGUI:Release(NeuronEditor)
-	NeuronEditor = nil
+	if addonTable.NeuronEditor then
+		AceGUI:Release(addonTable.NeuronEditor)
+		addonTable.NeuronEditor = nil
+	end
 
 	Neuron:ToggleBarEditMode()
 	Neuron:ToggleButtonEditMode()
@@ -85,7 +91,7 @@ function NeuronGUI:PopulateEditorWindow()
 	tabFrame:SetLayout("Flow")
 	tabFrame:SetTabs({{text="Bar Settings", value="tab1"}, {text="Button Settings", value="tab2"}})
 	tabFrame:SetCallback("OnGroupSelected", function(self, _, value) NeuronGUI:SelectTab(self, _, value) end)
-	NeuronEditor:AddChild(tabFrame)
+	addonTable.NeuronEditor:AddChild(tabFrame)
 	tabFrame:SelectTab(currentTab)
 end
 

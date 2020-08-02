@@ -19,6 +19,9 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
+
 ---@class BAR : CheckButton @This is our bar object that serves as the container for all of our button objects
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.BAR = BAR
@@ -1278,12 +1281,12 @@ function BAR:OnClick(...)
 
 	elseif click == "RightButton" and not down then
 		self.mousewheelfunc = nil
-		if not NeuronEditor then
+		if not addonTable.NeuronEditor then
 			Neuron.NeuronGUI:CreateEditor()
 		end
 	end
 
-	if NeuronEditor then
+	if addonTable.NeuronEditor then
 		Neuron.NeuronGUI:RefreshEditor()
 	end
 end

@@ -19,12 +19,15 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
-Neuron.DefaultBarOptions = {}
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
+
+addonTable.defaultBarOptions = {}
 
 -----------------------------------
 --------- Action Bar --------------
 -----------------------------------
-Neuron.DefaultBarOptions.ActionBar = {
+addonTable.defaultBarOptions.ActionBar = {
 	[1] = {
 		snapTo = false,
 		snapToFrame = false,
@@ -107,7 +110,7 @@ Neuron.DefaultBarOptions.ActionBar = {
 -----------------------------------
 --------- Zone Ability Bar --------
 -----------------------------------
-Neuron.DefaultBarOptions.ZoneAbilityBar = {
+addonTable.defaultBarOptions.ZoneAbilityBar = {
 	[1] = {
 		hidestates = ":",
 		snapTo = false,
@@ -128,7 +131,7 @@ Neuron.DefaultBarOptions.ZoneAbilityBar = {
 -----------------------------------
 --------- Extra Action Bar --------
 -----------------------------------
-Neuron.DefaultBarOptions.ExtraBar = {
+addonTable.defaultBarOptions.ExtraBar = {
 	[1] = {
 		hidestates = ":",
 		snapTo = false,
@@ -149,7 +152,7 @@ Neuron.DefaultBarOptions.ExtraBar = {
 ------------- XP Bar --------------
 -----------------------------------
 
-Neuron.DefaultBarOptions.XPBar = {
+addonTable.defaultBarOptions.XPBar = {
 	[1] = {
 		showGrid = true,
 		snapTo = false,
@@ -172,7 +175,7 @@ Neuron.DefaultBarOptions.XPBar = {
 ------------ Rep Bar --------------
 -----------------------------------
 
-Neuron.DefaultBarOptions.RepBar = {
+addonTable.defaultBarOptions.RepBar = {
 
 	[1] = {
 		showGrid = true,
@@ -196,7 +199,7 @@ Neuron.DefaultBarOptions.RepBar = {
 ----------- Cast Bar --------------
 -----------------------------------
 
-Neuron.DefaultBarOptions.CastBar = {
+addonTable.defaultBarOptions.CastBar = {
 	[1] = {
 		showGrid = true,
 		snapTo = false,
@@ -219,7 +222,7 @@ Neuron.DefaultBarOptions.CastBar = {
 --------- Mirror Bar --------------
 -----------------------------------
 
-Neuron.DefaultBarOptions.MirrorBar = {
+addonTable.defaultBarOptions.MirrorBar = {
 
 	[1] = {
 		showGrid = true,
@@ -250,7 +253,7 @@ Neuron.DefaultBarOptions.MirrorBar = {
 -----------------------------------
 ----------- Exit Bar --------------
 -----------------------------------
-Neuron.DefaultBarOptions.ExitBar = {
+addonTable.defaultBarOptions.ExitBar = {
 	[1] = {
 		snapTo = false,
 		snapToFrame = false,
@@ -268,7 +271,7 @@ Neuron.DefaultBarOptions.ExitBar = {
 -----------------------------------
 ------------ Pet Bar --------------
 -----------------------------------
-Neuron.DefaultBarOptions.PetBar = {
+addonTable.defaultBarOptions.PetBar = {
 	[1] = {
 		hidestates = ":pet0:",
 		showGrid = true,
@@ -301,7 +304,7 @@ Neuron.DefaultBarOptions.PetBar = {
 ----------- Menu Bar --------------
 -----------------------------------
 if not Neuron.isWoWClassic then
-	Neuron.DefaultBarOptions.MenuBar = {
+	addonTable.defaultBarOptions.MenuBar = {
 		[1] = {
 			snapTo = false,
 			snapToFrame = false,
@@ -326,7 +329,7 @@ if not Neuron.isWoWClassic then
 		}
 	}
 else
-	Neuron.DefaultBarOptions.MenuBar = {
+	addonTable.defaultBarOptions.MenuBar = {
 		[1] = {
 			snapTo = false,
 			snapToFrame = false,
@@ -339,7 +342,7 @@ else
 		}
 	}
 	for i = 1,#MICRO_BUTTONS do
-		Neuron.DefaultBarOptions.MenuBar[1].buttons[i] = {}
+		addonTable.defaultBarOptions.MenuBar[1].buttons[i] = {}
 	end
 end
 
@@ -347,7 +350,7 @@ end
 ------------ Bag Bar --------------
 -----------------------------------
 if not Neuron.isWoWClassic then
-	Neuron.DefaultBarOptions.BagBar = {
+	addonTable.defaultBarOptions.BagBar = {
 		[1] = {
 			padH = 1,
 			scale = 1.1,
@@ -362,7 +365,7 @@ if not Neuron.isWoWClassic then
 		}
 	}
 else
-	Neuron.DefaultBarOptions.BagBar = {
+	addonTable.defaultBarOptions.BagBar = {
 		[1] = {
 			padH = 4,
 			scale = 1.1,
@@ -378,5 +381,5 @@ else
 	}
 end
 for i = 1,Neuron.NUM_BAG_BUTTONS do
-	Neuron.DefaultBarOptions.BagBar[1].buttons[i] = {}
+	addonTable.defaultBarOptions.BagBar[1].buttons[i] = {}
 end

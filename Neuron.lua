@@ -19,9 +19,11 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
+local addonName, addonTable = ...
 
 ---@class Neuron @define The main addon object for the Neuron Action Bar addon
-Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
+addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
+local Neuron = addonTable.Neuron
 
 local DB
 
@@ -69,7 +71,7 @@ Neuron.SNAPTO_TOLLERANCE = 28
 --- do init tasks here, like loading the Saved Variables
 --- or setting up slash commands.
 function Neuron:OnInitialize()
-	Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults)
+	Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", addonTable.databaseDefaults)
 
 	Neuron.db.RegisterCallback(Neuron, "OnProfileChanged", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnProfileCopied", "RefreshConfig")
@@ -251,7 +253,7 @@ function Neuron:DatabaseMigration()
 			StaticPopup_Show("Profile_Migration_Failed")
 		else
 			DB.DBVersion = LATEST_DB_VERSION
-			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
+			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", addonTable.databaseDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
 		end
 	end
 	-----------------------------------------------------

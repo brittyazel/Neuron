@@ -19,6 +19,9 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
+
 ---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 
 local genericButtonData = {
@@ -277,7 +280,7 @@ local genericBarData = {
 ----------------------MAIN TABLE----------------------------------------
 ------------------------------------------------------------------------
 
-NeuronDefaults = {
+addonTable.databaseDefaults = {
 	profile = {
 		blizzbar = false,
 
@@ -339,7 +342,7 @@ NeuronDefaults = {
 ------------------------------------------------------------------------------
 
 
-NeuronDefaults.profile.ActionBar['*'].buttons = {
+addonTable.databaseDefaults.profile.ActionBar['*'].buttons = {
 	['*'] = {
 		['config'] = CopyTable(genericButtonData),
 		['keys'] = CopyTable(genericKeyData),
@@ -350,28 +353,28 @@ NeuronDefaults.profile.ActionBar['*'].buttons = {
 	}
 }
 
-NeuronDefaults.profile.RepBar['*'].buttons ={
+addonTable.databaseDefaults.profile.RepBar['*'].buttons ={
 	['*'] = {
 		['config'] = CopyTable(genericRepBtnData),
 		['keys'] = CopyTable(genericKeyData),
 	}
 }
 
-NeuronDefaults.profile.XPBar['*'].buttons ={
+addonTable.databaseDefaults.profile.XPBar['*'].buttons ={
 	['*'] = {
 		['config'] = CopyTable(genericXPBtnData),
 		['keys'] = CopyTable(genericKeyData),
 	}
 }
 
-NeuronDefaults.profile.CastBar['*'].buttons ={
+addonTable.databaseDefaults.profile.CastBar['*'].buttons ={
 	['*'] = {
 		['config'] = CopyTable(genericCastBtnData),
 		['keys'] = CopyTable(genericKeyData),
 	}
 }
 
-NeuronDefaults.profile.MirrorBar['*'].buttons ={
+addonTable.databaseDefaults.profile.MirrorBar['*'].buttons ={
 	['*'] = {
 		['config'] = CopyTable(genericMirrorBtnData),
 		['keys'] = CopyTable(genericKeyData),

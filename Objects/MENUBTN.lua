@@ -19,6 +19,9 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
+
 ---@class MENUBTN : BUTTON @define class MENUBTN inherits from class BUTTON
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN

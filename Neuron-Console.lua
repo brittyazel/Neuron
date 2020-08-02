@@ -19,6 +19,9 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
+
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 --------------------------------------------
@@ -67,13 +70,10 @@ local slashFunctions = {
 	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
 	{L["BlizzUI"], L["BlizzUI_Description"], "ToggleBlizzUI"},
-
 }
-
 
 --New Slash functionality
 function Neuron:slashHandler(input)
-
 	if string.len(input)==0 or input:lower() == "help" then
 		Neuron:printSlashHelp()
 		return
@@ -86,7 +86,6 @@ function Neuron:slashHandler(input)
 		args[i-1] = commandAndArgs[i]
 	end
 
-
 	--somewhat of a hack to insert a "true" as an arg if trying to toggle the edit modes
 	if command == "config" and Neuron.barEditMode == false then
 		args[1] = true
@@ -97,7 +96,6 @@ function Neuron:slashHandler(input)
 	if command == "bind" and Neuron.bindingMode == false then
 		args[1] = true
 	end
-
 
 	for i = 1,#slashFunctions do
 
@@ -116,9 +114,6 @@ function Neuron:slashHandler(input)
 			return
 		end
 	end
-
-
-
 end
 
 function Neuron:printSlashHelp()
@@ -134,7 +129,6 @@ function Neuron:printSlashHelp()
 	end
 
 end
-
 
 function Neuron:PrintStateList()
 	local data = {}
@@ -156,9 +150,7 @@ function Neuron:PrintStateList()
 	Neuron:Print(list..L["Custom_Option"])
 end
 
-
 function Neuron:PrintBarTypes()
-
 	Neuron:Print("---------------------------------------------------")
 	Neuron:Print("     "..L["How to use"]..":   ".."/neuron".." "..L["Create"]:lower().." <"..L["Option"]:lower()..">")
 	Neuron:Print("---------------------------------------------------")
@@ -166,5 +158,4 @@ function Neuron:PrintBarTypes()
 	for k,v in pairs(Neuron.registeredBarData) do
 		Neuron:Print("    |cff00ff00"..k..":|r "..v.barLabel)
 	end
-
 end

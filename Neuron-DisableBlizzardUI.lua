@@ -19,14 +19,15 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
+
 local hiddenFrame = CreateFrame('Frame', nil, UIParent, 'SecureFrameTemplate');
 Neuron.hiddenFrame = hiddenFrame
 hiddenFrame:Hide()
 
 
-
 local function disableFrame(frame, unregisterEvents)
-
 	if not frame then
 		Neuron:Print('Unknown Frame', frame:GetName())
 		return
@@ -40,7 +41,6 @@ local function disableFrame(frame, unregisterEvents)
 end
 
 local function disableFrameSlidingAnimation(frame)
-
 	if not frame then
 		Neuron:Print('Unknown Frame', frame:GetName())
 		return
@@ -51,11 +51,8 @@ local function disableFrameSlidingAnimation(frame)
 	animation:SetOffset(0, 0)
 end
 
-
 function Neuron:HideBlizzardUI()
-
 	---the idea for this code is inspired from Dominos. Thanks Tuller!
-
 	disableFrame(MainMenuBar, true)
 
 	-- disable override bar transition animations
@@ -81,9 +78,7 @@ function Neuron:HideBlizzardUI()
 		StatusTrackingBarManager:UnregisterAllEvents()
 	end
 
-
 	ActionBarController:UnregisterAllEvents()
-
 
 	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
 	if not Neuron:IsHooked('ActionButton_OnEvent') then
@@ -115,13 +110,9 @@ function Neuron:HideBlizzardUI()
 			Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
 		end
 	end
-
 end
 
-
-
 function Neuron:ToggleBlizzUI()
-
 	local DB = Neuron.db.profile
 
 	if InCombatLockdown() then
@@ -139,7 +130,6 @@ function Neuron:ToggleBlizzUI()
 end
 
 function Neuron:Overrides()
-
 	local DB = Neuron.db.profile
 
 	--bag bar overrides
@@ -196,5 +186,4 @@ function Neuron:Overrides()
 		MirrorTimer3:UnregisterAllEvents()
 		MirrorTimer3:SetParent(Neuron.hiddenFrame)
 	end
-
 end

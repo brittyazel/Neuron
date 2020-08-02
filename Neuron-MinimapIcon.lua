@@ -19,24 +19,21 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
-
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
 
 --Neuron MinimapIcon makes use of LibDBIcon and LibDataBroker to make sure we play
 --nicely with LDB addons and to simplify dramatically the minimap button
 
-local DB
-
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
+local DB
 local neuronIconLDB
-
 local icon
-
 
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 function Neuron:Minimap_IconInitialize()
-
 	DB = Neuron.db.profile
 
 	neuronIconLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Neuron", {
@@ -49,14 +46,12 @@ function Neuron:Minimap_IconInitialize()
 
 	icon = LibStub("LibDBIcon-1.0")
 	icon:Register("Neuron", neuronIconLDB, DB.NeuronIcon)
-
 end
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
 function Neuron:Minimap_OnClickHandler(frame, button)
-
 	if InCombatLockdown() then
 		return
 	end
@@ -73,14 +68,14 @@ function Neuron:Minimap_OnClickHandler(frame, button)
 		else
 			if not Neuron.barEditMode then
 				Neuron:ToggleBarEditMode(true)
-				if not NeuronEditor then
+				if not addonTable.NeuronEditor then
 					Neuron.NeuronGUI:CreateEditor("tab1")
 				else
 					Neuron.NeuronGUI:RefreshEditor("tab1")
 				end
 			else
 				Neuron:ToggleBarEditMode(false)
-				if NeuronEditor then
+				if addonTable.NeuronEditor then
 					Neuron.NeuronGUI:DestroyEditor()
 				end
 			end
@@ -95,14 +90,14 @@ function Neuron:Minimap_OnClickHandler(frame, button)
 		else
 			if not Neuron.buttonEditMode then
 				Neuron:ToggleButtonEditMode(true)
-				if not NeuronEditor then
+				if not addonTable.NeuronEditor then
 					Neuron.NeuronGUI:CreateEditor("tab2")
 				else
 					Neuron.NeuronGUI:RefreshEditor("tab2")
 				end
 			else
 				Neuron:ToggleButtonEditMode(false)
-				if NeuronEditor then
+				if addonTable.NeuronEditor then
 					Neuron.NeuronGUI:DestroyEditor()
 				end
 			end
@@ -111,7 +106,6 @@ function Neuron:Minimap_OnClickHandler(frame, button)
 end
 
 function Neuron:Minimap_TooltipHandler(tooltip)
-
 	tooltip:SetText("Neuron", 1, 1, 1)
 	--the formatting for the following strings is such that the key combo is in yellow, and the description is in white. This helps it be more readable at a glance
 	--another route would be to use AddDoubleLine, to have a left justified string and a right justified string on the same line
@@ -121,7 +115,6 @@ function Neuron:Minimap_TooltipHandler(tooltip)
 	tooltip:AddLine(L["Shift"] .. " + " .. L["Right-Click"] .. ":    " .. "|cFFFFFFFF"..L["Open the Interface Menu"])
 
 	tooltip:Show()
-
 end
 
 function Neuron:Minimap_ToggleIcon()
@@ -133,5 +126,4 @@ function Neuron:Minimap_ToggleIcon()
 		icon:Show("Neuron")
 		DB.NeuronIcon.hide = false
 	end
-
 end

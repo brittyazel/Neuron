@@ -19,6 +19,9 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2018.
 
+local _, addonTable = ...
+local Neuron = addonTable.Neuron
+
 ---@class MIRRORBTN : STATUSBTN @define class REPBTN inherits from class STATUSBTN
 local MIRRORBTN = setmetatable({}, { __index = Neuron.STATUSBTN })
 Neuron.MIRRORBTN = MIRRORBTN
