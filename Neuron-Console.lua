@@ -134,11 +134,11 @@ function Neuron:PrintStateList()
 	local data = {}
 	local list
 
-	for k,v in pairs(Neuron.MANAGED_BAR_STATES) do
+	for _,v in pairs(Neuron.MANAGED_BAR_STATES) do
 		data[v.order] = v.localizedName
 	end
 
-	for k,v in ipairs(data) do
+	for _,v in ipairs(data) do
 
 		if not list then
 			list = L["Valid States"]..":"..v

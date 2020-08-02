@@ -40,7 +40,7 @@ function Neuron:Minimap_IconInitialize()
 		type = "launcher",
 		text = "Neuron",
 		icon = "Interface\\AddOns\\Neuron\\Images\\static_icon",
-		OnClick = function(frame, button) Neuron:Minimap_OnClickHandler(frame, button) end,
+		OnClick = function(_, button) Neuron:Minimap_OnClickHandler(button) end,
 		OnTooltipShow = function(tooltip) Neuron:Minimap_TooltipHandler(tooltip) end,
 	})
 
@@ -51,7 +51,7 @@ end
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
-function Neuron:Minimap_OnClickHandler(frame, button)
+function Neuron:Minimap_OnClickHandler(button)
 	if InCombatLockdown() then
 		return
 	end
@@ -109,16 +109,15 @@ function Neuron:Minimap_TooltipHandler(tooltip)
 	tooltip:SetText("Neuron", 1, 1, 1)
 	--the formatting for the following strings is such that the key combo is in yellow, and the description is in white. This helps it be more readable at a glance
 	--another route would be to use AddDoubleLine, to have a left justified string and a right justified string on the same line
-	tooltip:AddLine(L["Left-Click"] .. ":    " .. "|cFFFFFFFF"..L["Configure Bars"])
-	tooltip:AddLine(L["Right-Click"] .. ":    " .. "|cFFFFFFFF"..L["Configure Buttons"])
-	tooltip:AddLine(L["Shift"] .. " + " .. L["Left-Click"] .. ":    " .. "|cFFFFFFFF"..L["Toggle Keybind Mode"])
-	tooltip:AddLine(L["Shift"] .. " + " .. L["Right-Click"] .. ":    " .. "|cFFFFFFFF"..L["Open the Interface Menu"])
+	tooltip:AddLine(L["Left-Click"] .. ": " .. "|cFFFFFFFF"..L["Configure Bars"])
+	tooltip:AddLine(L["Right-Click"] .. ": " .. "|cFFFFFFFF"..L["Configure Buttons"])
+	tooltip:AddLine(L["Shift"] .. " + " .. L["Left-Click"] .. ": " .. "|cFFFFFFFF"..L["Toggle Keybind Mode"])
+	tooltip:AddLine(L["Shift"] .. " + " .. L["Right-Click"] .. ": " .. "|cFFFFFFFF"..L["Open the Interface Menu"])
 
 	tooltip:Show()
 end
 
 function Neuron:Minimap_ToggleIcon()
-
 	if DB.NeuronIcon.hide == false then
 		icon:Hide("Neuron")
 		DB.NeuronIcon.hide = true

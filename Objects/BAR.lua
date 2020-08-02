@@ -1338,7 +1338,7 @@ function BAR:OnDragStop(...)
 
 	for _,v in pairs(Neuron.bars) do
 		if not point and self:GetSnapTo() and v:GetSnapTo() and self ~= v then
-			point = self:Stick(v, Neuron.SNAPTO_TOLLERANCE, self:GetHorizontalPad(), self:GetVerticalPad())
+			point = self:Stick(v, Neuron.SNAPTO_TOLERANCE, self:GetHorizontalPad(), self:GetVerticalPad())
 
 			if point then
 				self.data.snapToPoint = point

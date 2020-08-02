@@ -19,7 +19,7 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
-local addonName, addonTable = ...
+local _, addonTable = ...
 
 ---@class Neuron @define The main addon object for the Neuron Action Bar addon
 addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
@@ -61,7 +61,7 @@ Neuron.STRATAS = {
 }
 
 Neuron.TIMERLIMIT = 4
-Neuron.SNAPTO_TOLLERANCE = 28
+Neuron.SNAPTO_TOLERANCE = 28
 
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
@@ -149,7 +149,7 @@ function Neuron:OnEnable()
 	Neuron:LoginMessage()
 
 	--Load all bars and buttons
-	for i,v in pairs(Neuron.bars) do
+	for _,v in pairs(Neuron.bars) do
 		v:Load()
 	end
 
@@ -596,7 +596,7 @@ function Neuron:ToggleBindingMode(show)
 end
 
 ---This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax, keybindable, btnEditable)
+function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
 	Neuron.registeredBarData[class] = {
 		class = class;
 		barType = barType,
