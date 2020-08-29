@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class BAR : CheckButton @This is our bar object that serves as the container for all of our button objects
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
@@ -161,7 +161,7 @@ end
 ---This function is used for creating brand new bars, and it is really just a wrapper for the BAR constructor with a couple of assumptions and checks
 function BAR:CreateNewBar(class)
 
-	if not (class and Neuron.registeredBarData[class]) then --if the class isn't registered, go ahead and bail out.
+	if not class and Neuron.registeredBarData[class] then --if the class isn't registered, go ahead and bail out.
 		Neuron.PrintBarTypes()
 		return
 	end
@@ -190,12 +190,12 @@ function BAR:DeleteBar()
 	self:ClearStates(handler, "homestate")
 
 	for state, values in pairs(MAS) do
-		if (self.data[state] and self[state] and self[state].registered) then
-			if (state == "custom" and self.data.customRange) then
+		if self.data[state] and self[state] and self[state].registered then
+			if state == "custom" and self.data.customRange then
 				local start = tonumber(string.match(self.data.customRange, "^%d+"))
 				local stop = tonumber(string.match(self.data.customRange, "%d+$"))
 
-				if (start and stop) then
+				if start and stop then
 					self:ClearStates(handler, state)--, start, stop)
 				end
 			else
@@ -246,7 +246,7 @@ function BAR:DeleteBar()
 		table.remove(Neuron.BARIndex, index)
 	end
 
-	if (NeuronBarEditor and NeuronBarEditor:IsVisible()) then
+	if NeuronBarEditor and NeuronBarEditor:IsVisible() then
 		Neuron.NeuronGUI:UpdateBarGUI()
 	end
 
@@ -262,7 +262,7 @@ function BAR:AddObjectsToBar(num) --called from NeuronGUI
 
 	num = tonumber(num)
 
-	if (not num) then
+	if not num then
 		num = 1
 	end
 
@@ -270,7 +270,7 @@ function BAR:AddObjectsToBar(num) --called from NeuronGUI
 
 		local buttonID = #self.buttons + 1
 
-		if (#self.buttons < self.objMax) then
+		if #self.buttons < self.objMax then
 			local buttonBaseObject = Neuron.registeredBarData[self.class].objTemplate
 			buttonBaseObject.new(self, buttonID)
 		end
@@ -282,14 +282,14 @@ function BAR:AddObjectsToBar(num) --called from NeuronGUI
 	self:SetPerimeter()
 	self:SetSize()
 	self:Update()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 
 end
 
 
 function BAR:RemoveObjectsFromBar(num) --called from NeuronGUI
 
-	if (not num) then
+	if not num then
 		num = 1
 	end
 
@@ -300,7 +300,7 @@ function BAR:RemoveObjectsFromBar(num) --called from NeuronGUI
 
 		local object = self.buttons[id]
 
-		if (object) then
+		if object then
 
 			object:ClearAllPoints()
 
@@ -309,7 +309,7 @@ function BAR:RemoveObjectsFromBar(num) --called from NeuronGUI
 			table.remove(self.buttons, id)
 
 
-			if (object.binder) then
+			if object.binder then
 				object.binder:ClearBindings()
 			end
 
@@ -343,13 +343,13 @@ end
 
 
 function BAR.IsMouseOverSelfOrWatchFrame(frame)
-	if (frame:IsMouseOver()) then
+	if frame:IsMouseOver() then
 		return true
 	end
 
-	if (frame.watchframes) then
+	if frame.watchframes then
 		for handler in pairs(frame.watchframes) do
-			if (handler:IsMouseOver() and handler:IsVisible()) then
+			if handler:IsMouseOver() and handler:IsVisible() then
 				return true
 			end
 		end
@@ -362,17 +362,17 @@ end
 ---this function is set via a repeating scheduled timer in SetAutoHide()
 function BAR:AutoHideUpdate()
 
-	if (self.data.autoHide and self.handler~=nil) then
+	if self.data.autoHide and self.handler~=nil then
 
 		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
 
-			if (self:IsShown()) then
+			if self:IsShown() then
 				self.handler:SetAlpha(1)
 			else
 
-				if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
-					if (self.handler:GetAlpha() < self.data.alpha) then
-						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+				if BAR.IsMouseOverSelfOrWatchFrame(self) then
+					if self.handler:GetAlpha() < self.data.alpha then
+						if self.handler:GetAlpha()+self.data.fadeSpeed <= 1 then
 							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
 						else
 							self.handler:SetAlpha(1)
@@ -381,9 +381,9 @@ function BAR:AutoHideUpdate()
 
 				end
 
-				if (not BAR.IsMouseOverSelfOrWatchFrame(self)) then
-					if (self.handler:GetAlpha() > 0) then
-						if (self.handler:GetAlpha()-self.data.fadeSpeed >= 0) then
+				if not BAR.IsMouseOverSelfOrWatchFrame(self) then
+					if self.handler:GetAlpha() > 0 then
+						if self.handler:GetAlpha()-self.data.fadeSpeed >= 0 then
 							self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 						else
 							self.handler:SetAlpha(0)
@@ -397,18 +397,18 @@ function BAR:AutoHideUpdate()
 end
 
 function BAR:AlphaUpUpdate()
-	if (self.data.alphaUp and self.handler~=nil) then
+	if self.data.alphaUp and self.handler~=nil then
 
-		if (self:IsShown()) then
+		if self:IsShown() then
 			self.handler:SetAlpha(1)
 		else
 
-			if (self.data.alphaUp == alphaUps[3] or self.data.alphaUp == alphaUps[4]) then
+			if self.data.alphaUp == alphaUps[3] or self.data.alphaUp == alphaUps[4] then
 
-				if (InCombatLockdown()) then
+				if InCombatLockdown() then
 
-					if (self.handler:GetAlpha() < 1) then
-						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+					if self.handler:GetAlpha() < 1 then
+						if self.handler:GetAlpha()+self.data.fadeSpeed <= 1 then
 							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
 						else
 							self.handler:SetAlpha(1)
@@ -416,19 +416,19 @@ function BAR:AlphaUpUpdate()
 					end
 
 				else
-					if (self.data.alphaUp == alphaUps[4]) then
+					if self.data.alphaUp == alphaUps[4] then
 
-						if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
-							if (self.handler:GetAlpha() < 1) then
-								if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+						if BAR.IsMouseOverSelfOrWatchFrame(self) then
+							if self.handler:GetAlpha() < 1 then
+								if self.handler:GetAlpha()+self.data.fadeSpeed <= 1 then
 									self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
 								else
 									self.handler:SetAlpha(1)
 								end
 							end
 						else
-							if (self.handler:GetAlpha() > self.data.alpha) then
-								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
+							if self.handler:GetAlpha() > self.data.alpha then
+								if self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha then
 									self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 								else
 									self.handler:SetAlpha(self.data.alpha)
@@ -436,8 +436,8 @@ function BAR:AlphaUpUpdate()
 							end
 						end
 					else
-						if (self.handler:GetAlpha() > self.data.alpha) then
-							if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
+						if self.handler:GetAlpha() > self.data.alpha then
+							if self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha then
 								self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 							else
 								self.handler:SetAlpha(self.data.alpha)
@@ -446,12 +446,12 @@ function BAR:AlphaUpUpdate()
 					end
 				end
 
-			elseif (self.data.alphaUp == alphaUps[5] or self.data.alphaUp == alphaUps[6]) then
+			elseif self.data.alphaUp == alphaUps[5] or self.data.alphaUp == alphaUps[6] then
 
-				if (not InCombatLockdown()) then
+				if not InCombatLockdown() then
 
-					if (self.handler:GetAlpha() < 1) then
-						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+					if self.handler:GetAlpha() < 1 then
+						if self.handler:GetAlpha()+self.data.fadeSpeed <= 1 then
 							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
 						else
 							self.handler:SetAlpha(1)
@@ -459,19 +459,19 @@ function BAR:AlphaUpUpdate()
 					end
 
 				else
-					if (self.data.alphaUp == alphaUps[6]) then
+					if self.data.alphaUp == alphaUps[6] then
 
-						if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
-							if (self.handler:GetAlpha() < 1) then
-								if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+						if BAR.IsMouseOverSelfOrWatchFrame(self) then
+							if self.handler:GetAlpha() < 1 then
+								if self.handler:GetAlpha()+self.data.fadeSpeed <= 1 then
 									self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
 								else
 									self.handler:SetAlpha(1)
 								end
 							end
 						else
-							if (self.handler:GetAlpha() > self.data.alpha) then
-								if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
+							if self.handler:GetAlpha() > self.data.alpha then
+								if self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha then
 									self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 								else
 									self.handler:SetAlpha(self.data.alpha)
@@ -479,8 +479,8 @@ function BAR:AlphaUpUpdate()
 							end
 						end
 					else
-						if (self.handler:GetAlpha() > k.alpha) then
-							if (self.handler:GetAlpha()-self.data.fadeSpeed >= k.alpha) then
+						if self.handler:GetAlpha() > k.alpha then
+							if self.handler:GetAlpha()-self.data.fadeSpeed >= k.alpha then
 								self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 							else
 								self.handler:SetAlpha(k.alpha)
@@ -489,19 +489,19 @@ function BAR:AlphaUpUpdate()
 					end
 				end
 
-			elseif (self.data.alphaUp == alphaUps[2]) then
+			elseif self.data.alphaUp == alphaUps[2] then
 
-				if (BAR.IsMouseOverSelfOrWatchFrame(self)) then
-					if (self.handler:GetAlpha() < 1) then
-						if (self.handler:GetAlpha()+self.data.fadeSpeed <= 1) then
+				if BAR.IsMouseOverSelfOrWatchFrame(self) then
+					if self.handler:GetAlpha() < 1 then
+						if self.handler:GetAlpha()+self.data.fadeSpeed <= 1 then
 							self.handler:SetAlpha(self.handler:GetAlpha()+self.data.fadeSpeed)
 						else
 							self.handler:SetAlpha(1)
 						end
 					end
 				else
-					if (self.handler:GetAlpha() > self.data.alpha) then
-						if (self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha) then
+					if self.handler:GetAlpha() > self.data.alpha then
+						if self.handler:GetAlpha()-self.data.fadeSpeed >= self.data.alpha then
 							self.handler:SetAlpha(self.handler:GetAlpha()-self.data.fadeSpeed)
 						else
 							self.handler:SetAlpha(self.data.alpha)
@@ -517,21 +517,21 @@ end
 function BAR:SetHidden(handler, show, hide)
 
 	for k,v in pairs(self.vis) do
-		if (v.registered) then
+		if v.registered then
 			return
 		end
 	end
 
 	local isAnchorChild = handler:GetAttribute("isAnchorChild")
 
-	if (not hide and not isAnchorChild and (show or self:IsVisible())) then
+	if not hide and not isAnchorChild and (show or self:IsVisible()) then
 
 		handler:Show()
 	else
-		if (self.data.conceal) then
+		if self.data.conceal then
 			handler:SetAttribute("concealed", true)
 			handler:Hide()
-		elseif (not self.data.barLink and not isAnchorChild) then
+		elseif not self.data.barLink and not isAnchorChild then
 			handler:SetAttribute("concealed", nil)
 			handler:Show()
 		end
@@ -539,7 +539,7 @@ function BAR:SetHidden(handler, show, hide)
 end
 
 function BAR:SetAutoHide()
-	if (self.data.autoHide) then
+	if self.data.autoHide then
 		if self:TimeLeft(self.autoHideTimer) == 0 then --safety check to make sure we don't re-set an already active timer
 			self.autoHideTimer = self:ScheduleRepeatingTimer("AutoHideUpdate", .05)
 		end
@@ -549,7 +549,7 @@ function BAR:SetAutoHide()
 end
 
 function BAR:SetAlphaUp()
-	if (self.data.alphaUp) then
+	if self.data.alphaUp then
 		if self:TimeLeft(self.alphaUpTimer) == 0 then --safety check to make sure we don't re-set an already active timer
 			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", .05)
 		end
@@ -561,17 +561,17 @@ end
 
 function BAR:AddVisibilityDriver(handler, state, conditions)
 
-	if (MBS[state]) then
+	if MBS[state] then
 
-		RegisterAttributeDriver(handler, "state-"..state, conditions);
+		RegisterStateDriver(handler, state, conditions);
 
-		if (handler:GetAttribute("activestates"):find(state)) then
+		if handler:GetAttribute("activestates"):find(state) then
 			handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", handler:GetAttribute("state-"..state)..";"))
-		elseif (handler:GetAttribute("activestates") and handler:GetAttribute("state-"..state)) then
+		elseif handler:GetAttribute("activestates") and handler:GetAttribute("state-"..state) then
 			handler:SetAttribute("activestates", handler:GetAttribute("activestates")..handler:GetAttribute("state-"..state)..";")
 		end
 
-		if (handler:GetAttribute("state-"..state)) then
+		if handler:GetAttribute("state-"..state) then
 			handler:SetAttribute("state-"..state, handler:GetAttribute("state-"..state))
 		end
 
@@ -596,22 +596,22 @@ function BAR:UpdateVisibility(driver)
 
 	for state, values in pairs(MBS) do
 
-		if (self.data.hidestates:find(":"..state)) then
+		if self.data.hidestates:find(":"..state) then
 
-			if (not self.vis[state] or not self.vis[state].registered) then
+			if not self.vis[state] or not self.vis[state].registered then
 
-				if (not self.vis[state]) then
+				if not self.vis[state] then
 					self.vis[state] = {}
 				end
 
-				if (state == "stance" and self.data.hidestates:find(":stance8")) then
+				if state == "stance" and self.data.hidestates:find(":stance8") then
 					self:AddVisibilityDriver(driver,state, "[stance:2/3,stealth] stance8; "..values.states)
 				else
 					self:AddVisibilityDriver(driver, state, values.states)
 				end
 			end
 
-		elseif (self.vis[state] and self.vis[state].registered) then
+		elseif self.vis[state] and self.vis[state].registered then
 
 			self:ClearVisibilityDriver(driver, state)
 
@@ -627,18 +627,16 @@ function BAR:BuildStateMap(remapState)
 
 		map, remap = (":"):split(states)
 
-		if (remapState == "stance" and Neuron.class == "ROGUE" and map == "1") then
+		if remapState == "stance" and Neuron.class == "ROGUE" and map == "1" then
 			--map = "2"
 		end
 
-		if (not homestate) then
+		if not homestate then
 			statemap = statemap.."["..state..":"..map.."] homestate; "; homestate = true
 		else
 			local newstate = remapState..remap
 
-			if (MAS[remapState] and
-					MAS[remapState].homestate and
-					MAS[remapState].homestate == newstate) then
+			if MAS[remapState] and MAS[remapState].homestate and MAS[remapState].homestate == newstate then
 				statemap = statemap.."["..state..":"..map.."] homestate; "
 			else
 				statemap = statemap.."["..state..":"..map.."] "..newstate.."; "
@@ -654,26 +652,23 @@ end
 
 function BAR:AddStates(handler, state, conditions)
 
-	if (state) then
-
-		if (MAS[state]) then
-			RegisterAttributeDriver(handler, "state-"..state, conditions);
-		end
-
-		if (MAS[state].homestate) then
-			handler:SetAttribute("handler-homestate", MAS[state].homestate)
-		end
-
-		self[state].registered = true
+	if MAS[state] then
+		RegisterStateDriver(handler, state, conditions);
 	end
+
+	if MAS[state].homestate then
+		handler:SetAttribute("handler-homestate", MAS[state].homestate)
+	end
+
+	self[state].registered = true
 
 end
 
 function BAR:ClearStates(handler, state)
 
-	if (state ~= "homestate") then
+	if state ~= "homestate" then
 
-		if (MAS[state].homestate) then
+		if MAS[state].homestate then
 			handler:SetAttribute("handler-homestate", nil)
 		end
 
@@ -689,29 +684,29 @@ function BAR:ClearStates(handler, state)
 end
 
 
-function BAR:UpdateStates(handler)
+function BAR:UpdateStatuss(handler)
 	for state, values in pairs(MAS) do
 
-		if (self.data[state]) then
+		if self.data[state] then
 
-			if (not self[state] or not self[state].registered) then
+			if not self[state] or not self[state].registered then
 
 				local statemap
 
-				if (not self[state]) then
+				if not self[state] then
 					self[state] = {}
 				end
 
-				if (self.data.remap and (state == "paged" or state == "stance")) then
+				if self.data.remap and (state == "paged" or state == "stance") then
 					statemap = self:BuildStateMap(state)
 				end
 
 
-				if (state == "custom" and self.data.custom) then
+				if state == "custom" and self.data.custom then
 
 					self:AddStates(handler, state, self.data.custom)
 
-				elseif (statemap) then
+				elseif statemap then
 
 					self:AddStates(handler, state, statemap)
 
@@ -721,7 +716,7 @@ function BAR:UpdateStates(handler)
 				end
 			end
 
-		elseif (self[state] and self[state].registered) then
+		elseif self[state] and self[state].registered then
 
 			self:ClearStates(handler, state)
 
@@ -736,15 +731,16 @@ function BAR:CreateDriver()
 	local DRIVER_BASE_ACTION = [[
 	local state = self:GetAttribute("state-<MODIFIER>"):match("%a+")
 
-	if (state) then
+	if state then
 
-		if (self:GetAttribute("activestates"):find(state)) then
+		if self:GetAttribute("activestates"):find(state) then
 			self:SetAttribute("activestates", self:GetAttribute("activestates"):gsub(state.."%d+;", self:GetAttribute("state-<MODIFIER>")..";"))
 		else
 			self:SetAttribute("activestates", self:GetAttribute("activestates")..self:GetAttribute("state-<MODIFIER>")..";")
 		end
 
 		control:ChildUpdate("<MODIFIER>", self:GetAttribute("activestates"))
+
 	end
 	]]
 
@@ -773,55 +769,55 @@ end
 function BAR:CreateHandler()
 
 	local HANDLER_BASE_ACTION = [[
-	if (self:GetAttribute("state-<MODIFIER>") == "laststate") then
+	if self:GetAttribute("state-<MODIFIER>") == "laststate" then
 
-		if (self:GetAttribute("statestack")) then
+		if self:GetAttribute("statestack") then
 
-			if (self:GetAttribute("statestack"):find("<MODIFIER>")) then
+			if self:GetAttribute("statestack"):find("<MODIFIER>") then
 				self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("<MODIFIER>%d+;", ""))
 			end
 
 			local laststate = (";"):split(self:GetAttribute("statestack"))
-
 			self:SetAttribute("state-last", laststate)
-
 		end
 
 		self:SetAttribute("state-current", self:GetAttribute("state-last") or "homestate")
 
-		if (self:GetAttribute("state-last")) then
+		if self:GetAttribute("state-last") then
 			self:SetAttribute("assertstate", self:GetAttribute("state-last"):gsub("%d+", ""))
 		else
 			self:SetAttribute("assertstate", "homestate")
 		end
 
-		if (self:GetAttribute("state-priority")) then
+		if self:GetAttribute("state-priority") then
 			control:ChildUpdate("<MODIFIER>", self:GetAttribute("state-priority"))
 		else
 			control:ChildUpdate("<MODIFIER>", self:GetAttribute("state-last") or "homestate")
 		end
 
-	elseif (self:GetAttribute("state-<MODIFIER>")) then
+	elseif self:GetAttribute("state-<MODIFIER>") then
 
-		if (self:GetAttribute("statestack")) then
-			if (self:GetAttribute("statestack"):find("<MODIFIER>")) then
+		if self:GetAttribute("statestack") then
+
+			if self:GetAttribute("statestack"):find("<MODIFIER>") then
 				self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("<MODIFIER>%d+", self:GetAttribute("state-<MODIFIER>")))
 			else
 				self:SetAttribute("statestack", self:GetAttribute("state-<MODIFIER>")..";"..self:GetAttribute("statestack"))
 			end
+
 		else
 			self:SetAttribute("statestack", self:GetAttribute("state-<MODIFIER>"))
 		end
 
 		self:SetAttribute("state-current", self:GetAttribute("state-<MODIFIER>"))
-
 		self:SetAttribute("assertstate", "<MODIFIER>")
 
-		if (self:GetAttribute("state-priority")) then
+		if self:GetAttribute("state-priority") then
 			control:ChildUpdate("<MODIFIER>", self:GetAttribute("state-priority"))
 		else
 			control:ChildUpdate("<MODIFIER>", self:GetAttribute("state-<MODIFIER>"))
 		end
+
 	end
 	]]
 
@@ -837,136 +833,148 @@ function BAR:CreateHandler()
 		handler:SetAttribute("_onstate-"..modifier, action)
 	end
 
-	handler:SetAttribute("_onstate-paged", [[
+	handler:SetAttribute("_onstate-paged",
+			[[
 
-						if (self:GetAttribute("statestack")) then
-							if (self:GetAttribute("statestack"):find("paged")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("paged%d+", self:GetAttribute("state-paged") or "homestate"))
-							elseif (self:GetAttribute("statestack"):find("homestate")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-paged") or "homestate"))
-							elseif (self:GetAttribute("state-paged")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-paged"))
-							end
-						else
-							self:SetAttribute("statestack", self:GetAttribute("state-paged"))
-						end
+			if self:GetAttribute("statestack") then
 
-						if (self:GetAttribute("statestack"):find("^paged") or self:GetAttribute("statestack"):find("^homestate")) then
+				if self:GetAttribute("statestack"):find("paged") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("paged%d+", self:GetAttribute("state-paged") or "homestate"))
+				elseif self:GetAttribute("statestack"):find("homestate") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-paged") or "homestate"))
+				elseif self:GetAttribute("state-paged") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-paged"))
+				end
 
-							self:SetAttribute("assertstate", "paged")
+			else
+				self:SetAttribute("statestack", self:GetAttribute("state-paged"))
+			end
 
-							self:SetAttribute("state-last", self:GetAttribute("state-paged"))
+			if self:GetAttribute("statestack"):find("^paged") or self:GetAttribute("statestack"):find("^homestate") then
+				self:SetAttribute("assertstate", "paged")
+				self:SetAttribute("state-last", self:GetAttribute("state-paged"))
+				self:SetAttribute("state-current", self:GetAttribute("state-paged"))
 
-							self:SetAttribute("state-current", self:GetAttribute("state-paged"))
+				if self:GetAttribute("state-priority") then
+					control:ChildUpdate("paged", self:GetAttribute("state-priority"))
+				elseif self:GetAttribute("state-paged") and self:GetAttribute("state-paged") == self:GetAttribute("handler-homestate") then
+					control:ChildUpdate("paged", "homestate:"..self:GetAttribute("state-paged"))
+				else
+					control:ChildUpdate("paged", self:GetAttribute("state-paged"))
+				end
 
-							if (self:GetAttribute("state-priority")) then
-								control:ChildUpdate("paged", self:GetAttribute("state-priority"))
-							elseif (self:GetAttribute("state-paged") and self:GetAttribute("state-paged") == self:GetAttribute("handler-homestate")) then
-								control:ChildUpdate("paged", "homestate:"..self:GetAttribute("state-paged"))
-							else
-								control:ChildUpdate("paged", self:GetAttribute("state-paged"))
-							end
-						else
-							if (self:GetAttribute("state-priority")) then
-								control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
-							else
-								control:ChildUpdate("homestate", "homestate")
-							end
-						end
+			else
 
-						]])
+				if self:GetAttribute("state-priority") then
+					control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
+				else
+					control:ChildUpdate("homestate", "homestate")
+				end
 
-	handler:SetAttribute("_onstate-stance", [[
+			end
 
-						if (self:GetAttribute("statestack")) then
-							if (self:GetAttribute("statestack"):find("stance")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("stance%d+", self:GetAttribute("state-stance") or "homestate"))
-							elseif (self:GetAttribute("statestack"):find("homestate")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-stance") or "homestate"))
-							elseif (self:GetAttribute("state-stance")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-stance"))
-							end
-						else
-							self:SetAttribute("statestack", self:GetAttribute("state-stance"))
-						end
+			]])
 
-						if (self:GetAttribute("statestack"):find("^stance") or self:GetAttribute("statestack"):find("^homestate")) then
+	handler:SetAttribute("_onstate-stance",
+			[[
 
-							self:SetAttribute("assertstate", "stance")
+			if self:GetAttribute("statestack") then
 
-							self:SetAttribute("state-last", self:GetAttribute("state-stance"))
+				if self:GetAttribute("statestack"):find("stance") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("stance%d+", self:GetAttribute("state-stance") or "homestate"))
+				elseif self:GetAttribute("statestack"):find("homestate") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-stance") or "homestate"))
+				elseif self:GetAttribute("state-stance") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-stance"))
+				end
 
-							self:SetAttribute("state-current", self:GetAttribute("state-stance"))
+			else
+				self:SetAttribute("statestack", self:GetAttribute("state-stance"))
+			end
 
-							if (self:GetAttribute("state-priority")) then
-								control:ChildUpdate("stance", self:GetAttribute("state-priority"))
-							elseif (self:GetAttribute("state-stance") and self:GetAttribute("state-stance") == self:GetAttribute("handler-homestate")) then
-								control:ChildUpdate("stance", "homestate:"..self:GetAttribute("state-stance"))
-							else
-								control:ChildUpdate("stance", self:GetAttribute("state-stance"))
-							end
-						else
-							if (self:GetAttribute("state-priority")) then
-								control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
-							else
-								control:ChildUpdate("homestate", "homestate")
-							end
-						end
+			if self:GetAttribute("statestack"):find("^stance") or self:GetAttribute("statestack"):find("^homestate") then
+				self:SetAttribute("assertstate", "stance")
+				self:SetAttribute("state-last", self:GetAttribute("state-stance"))
+				self:SetAttribute("state-current", self:GetAttribute("state-stance"))
 
-						]])
+				if self:GetAttribute("state-priority") then
+					control:ChildUpdate("stance", self:GetAttribute("state-priority"))
+				elseif self:GetAttribute("state-stance") and self:GetAttribute("state-stance") == self:GetAttribute("handler-homestate") then
+					control:ChildUpdate("stance", "homestate:"..self:GetAttribute("state-stance"))
+				else
+					control:ChildUpdate("stance", self:GetAttribute("state-stance"))
+				end
 
-	handler:SetAttribute("_onstate-pet", [[
+			else
 
-						if (self:GetAttribute("statestack")) then
-							if (self:GetAttribute("statestack"):find("pet")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("pet%d+", self:GetAttribute("state-pet") or "homestate"))
-							elseif (self:GetAttribute("statestack"):find("homestate")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-pet" or "homestate")))
-							elseif (self:GetAttribute("state-pet")) then
-								self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-pet"))
-							end
-						else
-							self:SetAttribute("statestack", self:GetAttribute("state-pet"))
-						end
+				if self:GetAttribute("state-priority") then
+					control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
+				else
+					control:ChildUpdate("homestate", "homestate")
+				end
 
-						if (self:GetAttribute("statestack"):find("^pet") or self:GetAttribute("statestack"):find("^homestate")) then
+			end
 
-							self:SetAttribute("assertstate", "pet")
+			]])
 
-							self:SetAttribute("state-last", self:GetAttribute("state-pet"))
+	handler:SetAttribute("_onstate-pet",
+			[[
 
-							self:SetAttribute("state-current", self:GetAttribute("state-pet"))
+			if self:GetAttribute("statestack") then
 
-							if (self:GetAttribute("state-priority")) then
-								control:ChildUpdate("stance", self:GetAttribute("state-priority"))
-							elseif (self:GetAttribute("state-pet") and self:GetAttribute("state-pet") == self:GetAttribute("handler-homestate")) then
-								control:ChildUpdate("pet", "homestate:"..self:GetAttribute("state-pet"))
-							else
-								control:ChildUpdate("pet", self:GetAttribute("state-pet"))
-							end
-						else
-							if (self:GetAttribute("state-priority")) then
-								control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
-							else
-								control:ChildUpdate("homestate", "homestate")
-							end
-						end
+				if self:GetAttribute("statestack"):find("pet") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("pet%d+", self:GetAttribute("state-pet") or "homestate"))
+				elseif self:GetAttribute("statestack"):find("homestate") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack"):gsub("homestate", self:GetAttribute("state-pet" or "homestate")))
+				elseif self:GetAttribute("state-pet") then
+					self:SetAttribute("statestack", self:GetAttribute("statestack")..";"..self:GetAttribute("state-pet"))
+				end
 
-						]])
+			else
+				self:SetAttribute("statestack", self:GetAttribute("state-pet"))
+			end
 
-	handler:SetAttribute("_onstate-custom", [[
+			if self:GetAttribute("statestack"):find("^pet") or self:GetAttribute("statestack"):find("^homestate") then
+				self:SetAttribute("assertstate", "pet")
+				self:SetAttribute("state-last", self:GetAttribute("state-pet"))
+				self:SetAttribute("state-current", self:GetAttribute("state-pet"))
 
-						self:SetAttribute("assertstate", "custom")
+				if self:GetAttribute("state-priority") then
+					control:ChildUpdate("stance", self:GetAttribute("state-priority"))
+				elseif self:GetAttribute("state-pet") and self:GetAttribute("state-pet") == self:GetAttribute("handler-homestate") then
+					control:ChildUpdate("pet", "homestate:"..self:GetAttribute("state-pet"))
+				else
+					control:ChildUpdate("pet", self:GetAttribute("state-pet"))
+				end
 
-						self:SetAttribute("state-last", self:GetAttribute("state-custom"))
+			else
 
-						self:SetAttribute("state-current", self:GetAttribute("state-custom"))
+				if self:GetAttribute("state-priority") then
+					control:ChildUpdate("homestate", self:GetAttribute("state-priority"))
+				else
+					control:ChildUpdate("homestate", "homestate")
+				end
 
-						control:ChildUpdate("alt", self:GetAttribute("state-custom"))
+			end
 
-						]])
+			]])
 
-	handler:SetAttribute("_onstate-current", [[ self:SetAttribute("activestate", self:GetAttribute("state-current") or "homestate") ]])
+	handler:SetAttribute("_onstate-custom",
+			[[
+
+			self:SetAttribute("assertstate", "custom")
+			self:SetAttribute("state-last", self:GetAttribute("state-custom"))
+			self:SetAttribute("state-current", self:GetAttribute("state-custom"))
+			control:ChildUpdate("alt", self:GetAttribute("state-custom"))
+
+			]])
+
+	handler:SetAttribute("_onstate-current",
+			[[
+
+			self:SetAttribute("activestate", self:GetAttribute("state-current") or "homestate")
+
+			]])
 
 	handler:SetAttribute("statestack", "homestate")
 
@@ -977,29 +985,32 @@ function BAR:CreateHandler()
 	handler:HookScript("OnAttributeChanged", function() end)
 
 
-	handler:SetAttribute("_childupdate", [[
+	handler:SetAttribute("_childupdate",
+			[[
 
-			if (not self:GetAttribute("editmode")) then
-
+			if not self:GetAttribute("editmode") then
 				self:SetAttribute("vishide", false)
 
-				if (self:GetAttribute("hidestates")) then
+				if self:GetAttribute("hidestates") then
+
 					for state in gmatch(message, "[^;]+") do
 						for hidestate in gmatch(self:GetAttribute("hidestates"), "[^:]+") do
-							if (state == hidestate) then
+
+							if state == hidestate then
 								self:Hide()
 								self:SetAttribute("vishide", true)
 							end
+
 						end
 					end
 				end
 
-				if (not self:IsShown() and not self:GetAttribute("vishide")) then
+				if not self:IsShown() and not self:GetAttribute("vishide") then
 					self:Show()
 				end
 			end
 
-	]] )
+			]] )
 
 	handler:SetAllPoints(self)
 
@@ -1016,30 +1027,34 @@ function BAR:CreateWatcher()
 
 	watcher:SetID(self.DB.id)
 
-	watcher:SetAttribute("_onattributechanged", [[ ]])
+	watcher:SetAttribute("_onattributechanged",
+			[[ ]])
 
-	watcher:SetAttribute("_onstate-petbattle", [[
+	watcher:SetAttribute("_onstate-petbattle",
+			[[
 
-            if (self:GetAttribute("state-petbattle") == "hide") then
+            if self:GetAttribute("state-petbattle") == "hide" then
                 self:GetParent():Hide()
             else
-                if (not self:GetParent():IsShown()) then
-                    if (not self:GetParent():GetAttribute("vishide") and not self:GetParent():GetAttribute("concealed")) then
+
+                if not self:GetParent():IsShown() then
+                    if not self:GetParent():GetAttribute("vishide") and not self:GetParent():GetAttribute("concealed") then
                         self:GetParent():Show()
                     end
                 end
+
             end
-    ]])
 
-	RegisterAttributeDriver(watcher, "state-petbattle", "[petbattle] hide; [nopetbattle] show");
+            ]])
 
+	RegisterStateDriver(watcher, "petbattle", "[petbattle] hide; [nopetbattle] show");
 
 end
 
 
 function BAR:Update(show, hide)
 
-	if(InCombatLockdown()) then
+	if InCombatLockdown() then
 		return
 	end
 
@@ -1047,14 +1062,14 @@ function BAR:Update(show, hide)
 
 	self.elapsed = 0;
 
-	if (self.stateschanged) then
+	if self.stateschanged then
 
-		self:UpdateStates(handler)
+		self:UpdateStatuss(handler)
 
 		self.stateschanged = nil
 	end
 
-	if (self.vischanged) then
+	if self.vischanged then
 
 		handler:SetAttribute("hidestates", self.data.hidestates)
 
@@ -1063,7 +1078,7 @@ function BAR:Update(show, hide)
 		self.vischanged = nil
 	end
 
-	if (self.countChanged) then
+	if self.countChanged then
 
 		self:UpdateObjectData()
 
@@ -1077,37 +1092,21 @@ function BAR:Update(show, hide)
 	self.text:SetText(self.data.name)
 	handler:SetAlpha(self.data.alpha)
 
-	if (not hide and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
+	if not hide and NeuronBarEditor and NeuronBarEditor:IsVisible() then
 		Neuron.NeuronGUI:UpdateBarGUI()
 	end
 
-	if self.data.auraInd == true then
-		self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	else
-		self:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-	end
-
 end
 
 -------------------------------------------------------
 
-function BAR:UNIT_SPELLCAST_SUCCEEDED(_, ...)
-	local unit = select(1,...)
-	if (Neuron.unitAuras[unit]) then
-		if (... == "player") then
-			Neuron.ACTIONBUTTON.updateAuraInfo(unit)
-		end
-	end
-end
-
--------------------------------------------------------
 
 
 
 function BAR:GetPosition(oFrame)
 	local relFrame, point
 
-	if (oFrame) then
+	if oFrame then
 		relFrame = oFrame
 	else
 		relFrame = self:GetParent()
@@ -1119,31 +1118,31 @@ function BAR:GetPosition(oFrame)
 	local vert = (y>h/1.5) and "TOP" or (y>h/3) and "CENTER" or "BOTTOM"
 	local horz = (x>w/1.5) and "RIGHT" or (x>w/3) and "CENTER" or "LEFT"
 
-	if (vert == "CENTER") then
+	if vert == "CENTER" then
 		point = horz
-	elseif (horz == "CENTER") then
+	elseif horz == "CENTER" then
 		point = vert
 	else
 		point = vert..horz
 	end
 
-	if (vert:find("CENTER")) then y = y - h/2 end
-	if (horz:find("CENTER")) then x = x - w/2 end
-	if (point:find("RIGHT")) then x = x - w end
-	if (point:find("TOP")) then y = y - h end
+	if vert:find("CENTER") then y = y - h/2 end
+	if horz:find("CENTER") then x = x - w/2 end
+	if point:find("RIGHT") then x = x - w end
+	if point:find("TOP") then y = y - h end
 
 	return point, x, y
 end
 
 
 function BAR:SetPosition()
-	if (self.data.snapToPoint and self.data.snapToFrame) then
+	if self.data.snapToPoint and self.data.snapToFrame then
 		self:StickToPoint(_G[self.data.snapToFrame], self.data.snapToPoint, self.data.padH, self.data.padV)
 	else
 
 		local point, x, y = self.data.point, self.data.x, self.data.y
 
-		if (point:find("SnapTo")) then
+		if point:find("SnapTo") then
 			self.data.point = "CENTER"; point = "CENTER"
 		end
 
@@ -1153,7 +1152,7 @@ function BAR:SetPosition()
 		self:SetUserPlaced(true)
 		self:SetFrameStrata(self.data.barStrata)
 
-		if (self.message) then
+		if self.message then
 			self.message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
 			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
 			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
@@ -1164,32 +1163,32 @@ function BAR:SetPosition()
 end
 
 
----Fakes a state change for a given bar, calls up the counterpart function in NeuronButton
-function BAR:SetFauxState(state)
+--Fakes a state change for a given bar, calls up the counterpart function in NeuronButton
+function BAR:FakeStateChange(state)
 	self.handler:SetAttribute("fauxstate", state)
 
 	for i, object in ipairs(self.buttons) do
-		object:SetFauxState(state)
+		object:FakeStateChange(state)
 	end
 
-	if (NeuronObjectEditor and NeuronObjectEditor:IsVisible()) then
+	if NeuronObjectEditor and NeuronObjectEditor:IsVisible() then
 		Neuron.NeuronGUI:UpdateObjectGUI()
 	end
 end
 
 
----loads all the object stored for a given bar
+--loads all the object stored for a given bar
 function BAR:LoadObjects()
 	local spec
 
-	if (self.data.multiSpec) then
+	if self.data.multiSpec then
 		spec = Neuron.activeSpec
 	else
 		spec = 1
 	end
 
 	for i, object in ipairs(self.buttons) do
-		---all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
+		--all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
 		object:LoadData(spec, self.handler:GetAttribute("activestate"))
 		object:SetData(self)
 		object:SetType()
@@ -1198,7 +1197,7 @@ function BAR:LoadObjects()
 			object.binder = Neuron.KEYBINDER.new(object)
 		end
 
-		object:SetObjectVisibility()
+		object:UpdateObjectVisibility()
 	end
 end
 
@@ -1211,7 +1210,7 @@ function BAR:SetObjectLoc()
 	local columns, rows
 
 
-	---This is just for the flyout bar, it should be cleaned in the future
+	--This is just for the flyout bar, it should be cleaned in the future
 	local count
 	if self.class ~= "FlyoutBar" then
 		count = #self.buttons
@@ -1229,7 +1228,7 @@ function BAR:SetObjectLoc()
 	end
 	--------------------------------------------------------------------------
 
-	if (not origCol) then
+	if not origCol then
 		origCol = count; rows = 1
 	else
 		rows = (round(ceil(count/self.data.columns), 1)/2)+0.5
@@ -1237,21 +1236,21 @@ function BAR:SetObjectLoc()
 
 	for i, object in ipairs(buttons) do --once the flyout bars are fixed, this can be changed to ipairs(self.buttons)
 
-		if (num < count) then
+		if num < count then
 			object:ClearAllPoints()
 			object:SetParent(self.handler)
 			width = object:GetWidth(); height = object:GetHeight()
 
-			if (count > origCol and mod(count, origCol)~=0 and rAdjust == 1) then
+			if count > origCol and mod(count, origCol)~=0 and rAdjust == 1 then
 				columns = (mod(count, origCol))/2
-			elseif (origCol >= count) then
+			elseif origCol >= count then
 				columns = count/2
 			else
 				columns = origCol/2
 			end
 
-			if (shape == 2) then
-				if (not placed) then
+			if shape == 2 then
+				if not placed then
 					placed = arcStart
 				end
 
@@ -1262,8 +1261,8 @@ function BAR:SetObjectLoc()
 
 				placed = placed - (arcLength/count)
 
-			elseif (shape == 3) then
-				if (not placed) then
+			elseif shape == 3 then
+				if not placed then
 					placed = arcStart
 					object:SetPoint("CENTER", self, "CENTER", 0, 0)
 					placed = placed - (arcLength/count)
@@ -1276,7 +1275,7 @@ function BAR:SetObjectLoc()
 					placed = placed - (arcLength/(count-1))
 				end
 			else
-				if (not placed) then
+				if not placed then
 					placed = 0
 				end
 
@@ -1286,7 +1285,7 @@ function BAR:SetObjectLoc()
 				object:SetPoint("CENTER", self, "CENTER", x, y)
 				placed = placed + 1; cAdjust = cAdjust + 1
 
-				if (placed >= columns*2) then
+				if placed >= columns*2 then
 					placed = 0
 					cAdjust = 0.5
 					rAdjust = rAdjust + 1
@@ -1296,7 +1295,6 @@ function BAR:SetObjectLoc()
 			num = num + 1
 			object:SetAttribute("barPos", num)
 			object:SetData(self)
-			object:SetData(self)
 		end
 	end
 end
@@ -1305,7 +1303,7 @@ end
 function BAR:SetPerimeter()
 	local num = 0
 
-	---This is just for the flyout bar, it should be cleaned in the future
+	--This is just for the flyout bar, it should be cleaned in the future
 	local count
 	if self.class ~= "FlyoutBar" then
 		count = #self.buttons
@@ -1327,26 +1325,26 @@ function BAR:SetPerimeter()
 
 	for i, object in ipairs(buttons) do --once the flyout bars are fixed, this can be changed to ipairs(self.buttons)
 
-		if (num < count) then
+		if num < count then
 			local objTop, objBottom, objLeft, objRight = object:GetTop(), object:GetBottom(), object:GetLeft(), object:GetRight()
 			local scale = 1
 			--See if this fixes the ranom position error that happens
 			if not objTop then return end
 
-			if (self.top) then
-				if (objTop*scale > self.top) then self.top = objTop*scale end
+			if self.top then
+				if objTop*scale > self.top then self.top = objTop*scale end
 			else self.top = objTop*scale end
 
-			if (self.bottom) then
-				if (objBottom*scale < self.bottom) then self.bottom = objBottom*scale end
+			if self.bottom then
+				if objBottom*scale < self.bottom then self.bottom = objBottom*scale end
 			else self.bottom = objBottom*scale end
 
-			if (self.left) then
-				if (objLeft*scale < self.left) then self.left = objLeft*scale end
+			if self.left then
+				if objLeft*scale < self.left then self.left = objLeft*scale end
 			else self.left = objLeft*scale end
 
-			if (self.right) then
-				if (objRight*scale > self.right) then self.right = objRight*scale end
+			if self.right then
+				if objRight*scale > self.right then self.right = objRight*scale end
 			else self.right = objRight*scale end
 
 			num = num + 1
@@ -1378,7 +1376,7 @@ end
 function BAR:SetRemap_Stance()
 	local start = tonumber(MAS.stance.homestate:match("%d+"))
 
-	if (start) then
+	if start then
 		self.data.remap = ""
 
 		for i=start,GetNumShapeshiftForms() do
@@ -1388,7 +1386,7 @@ function BAR:SetRemap_Stance()
 		self.data.remap = gsub(self.data.remap, ";$", "")
 
 
-		if (Neuron.class == "ROGUE") then
+		if Neuron.class == "ROGUE" then
 			self.data.remap = self.data.remap..";2:2"
 		end
 	end
@@ -1396,7 +1394,7 @@ end
 
 
 function BAR:SetSize()
-	if (self.right) then
+	if self.right then
 		self:SetWidth(((self.right-self.left)+5)*(self.data.scale))
 		self:SetHeight(((self.top-self.bottom)+5)*(self.data.scale))
 	else
@@ -1406,12 +1404,12 @@ function BAR:SetSize()
 end
 
 ----------------------------------------------------------------------
+------------------------Event Handlers--------------------------------
 ----------------------------------------------------------------------
-------------------------Event Handlers __-----------------------------
----TODO:I need to figure out what to do with this
 
+--TODO: I need to figure out what to do with this
 --[[function NeuronBar:ACTIVE_TALENT_GROUP_CHANGED(bar, ...)
-	if (Neuron.enteredWorld) then
+	if Neuron.enteredWorld then
 		bar.stateschanged = true
 		bar.vischanged = true
 		bar:Update()
@@ -1424,13 +1422,13 @@ end]]
 
 
 ----------------------------------------------------------------------
-----------------------------------------------------------------------
 ------------------------OnEvent Functions-----------------------------
+----------------------------------------------------------------------
 
 function BAR:OnClick(...)
 	local click, down, newBar = select(1, ...), select(2, ...)
 
-	if (not down) then
+	if not down then
 		newBar = self:ChangeBar()
 	end
 
@@ -1439,9 +1437,9 @@ function BAR:OnClick(...)
 	self.elapsed = 0
 	self.pushed = 0
 
-	if (IsShiftKeyDown() and not down) then
+	if IsShiftKeyDown() and not down then
 
-		if (self.microAdjust) then
+		if self.microAdjust then
 			self.microAdjust = false
 			self:EnableKeyboard(false)
 			self.message:Hide()
@@ -1459,40 +1457,40 @@ function BAR:OnClick(...)
 			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
 		end
 
-	elseif (click == "MiddleButton") then
-		if (GetMouseFocus() ~= Neuron.CurrentBar) then
+	elseif click == "MiddleButton" then
+		if GetMouseFocus() ~= Neuron.CurrentBar then
 			newBar = self:ChangeBar()
 		end
 
-		if (down) then
+		if down then
 			--Neuron:ConcealBar(nil, true)
 		end
 
-	elseif (click == "RightButton" and not self.action and not down) then
+	elseif click == "RightButton" and not self.action and not down then
 		self.mousewheelfunc = nil
 
-		if (NeuronBarEditor) then
-			if (not newBar and NeuronBarEditor:IsVisible()) then
+		if NeuronBarEditor then
+			if not newBar and NeuronBarEditor:IsVisible() then
 				NeuronBarEditor:Hide()
 			else
 				NeuronBarEditor:Show()
 			end
 		end
 
-	elseif (not down) then
-		if (not newBar) then
+	elseif not down then
+		if not newBar then
 			--updateState(bar, 1)
 		end
 	end
 
-	if (not down and NeuronBarEditor and NeuronBarEditor:IsVisible()) then
+	if not down and NeuronBarEditor and NeuronBarEditor:IsVisible() then
 		Neuron.NeuronGUI:UpdateBarGUI(newBar)
 	end
 end
 
 
 function BAR:OnEnter(...)
-	if (self.data.conceal) then
+	if self.data.conceal then
 		self:SetBackdropColor(1,0,0,0.6)
 	else
 		self:SetBackdropColor(0,0,1,0.5)
@@ -1503,15 +1501,15 @@ end
 
 
 function BAR:OnLeave(...)
-	if (self ~= Neuron.CurrentBar) then
-		if (self.data.conceal) then
+	if self ~= Neuron.CurrentBar then
+		if self.data.conceal then
 			self:SetBackdropColor(1,0,0,0.4)
 		else
 			self:SetBackdropColor(0,0,0,0.4)
 		end
 	end
 
-	if (self ~= Neuron.CurrentBar) then
+	if self ~= Neuron.CurrentBar then
 		self.text:Hide()
 	end
 end
@@ -1540,10 +1538,10 @@ function BAR:OnDragStop(...)
 	self:StopMovingOrSizing()
 
 	for _,v in pairs(Neuron.BARIndex) do
-		if (not point and self.data.snapTo and v.data.snapTo and self ~= v) then
+		if not point and self.data.snapTo and v.data.snapTo and self ~= v then
 			point = self:Stick(v, Neuron.SNAPTO_TOLLERANCE, self.data.padH, self.data.padV)
 
-			if (point) then
+			if point then
 				self.data.snapToPoint = point
 				self.data.snapToFrame = v:GetName()
 				self.data.point = "SnapTo: "..point
@@ -1553,14 +1551,14 @@ function BAR:OnDragStop(...)
 		end
 	end
 
-	if (not point) then
+	if not point then
 		self.data.snapToPoint = false
 		self.data.snapToFrame = false
 		self.data.point, self.data.x, self.data.y = self:GetPosition()
 		self:SetPosition()
 	end
 
-	if (self.data.snapTo and not self.data.snapToPoint) then
+	if self.data.snapTo and not self.data.snapToPoint then
 		self:StickToEdge()
 	end
 
@@ -1571,10 +1569,10 @@ function BAR:OnDragStop(...)
 end
 
 function BAR:OnKeyDown(key, onupdate)
-	if (self.microAdjust) then
+	if self.microAdjust then
 		self.keydown = key
 
-		if (not onupdate) then
+		if not onupdate then
 			self.elapsed = 0
 		end
 
@@ -1582,15 +1580,15 @@ function BAR:OnKeyDown(key, onupdate)
 		self:SetUserPlaced(false)
 		self:ClearAllPoints()
 
-		if (key == "UP") then
+		if key == "UP" then
 			self.data.y = self.data.y + .1 * self.microAdjust
-		elseif (key == "DOWN") then
+		elseif key == "DOWN" then
 			self.data.y = self.data.y - .1 * self.microAdjust
-		elseif (key == "LEFT") then
+		elseif key == "LEFT" then
 			self.data.x = self.data.x - .1 * self.microAdjust
-		elseif (key == "RIGHT") then
+		elseif key == "RIGHT" then
 			self.data.x = self.data.x + .1 * self.microAdjust
-		elseif (not key:find("SHIFT")) then
+		elseif not key:find("SHIFT") then
 			self.microAdjust = false
 			self:EnableKeyboard(false)
 		end
@@ -1601,7 +1599,7 @@ end
 
 
 function BAR:OnKeyUp(key)
-	if (self.microAdjust and not key:find("SHIFT")) then
+	if self.microAdjust and not key:find("SHIFT") then
 		self.microAdjust = 1
 		self.keydown = nil
 		self.elapsed = 0
@@ -1610,16 +1608,16 @@ end
 
 
 function BAR:OnShow()
-	if (self == Neuron.CurrentBar) then
+	if self == Neuron.CurrentBar then
 
-		if (self.data.conceal) then
+		if self.data.conceal then
 			self:SetBackdropColor(1,0,0,0.6)
 		else
 			self:SetBackdropColor(0,0,1,0.5)
 		end
 
 	else
-		if (self.data.conceal) then
+		if self.data.conceal then
 			self:SetBackdropColor(1,0,0,0.4)
 		else
 			self:SetBackdropColor(0,0,0,0.4)
@@ -1628,7 +1626,7 @@ function BAR:OnShow()
 
 	self.handler:SetAttribute("editmode", true)
 	self.handler:Show()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:EnableKeyboard(false)
 end
 
@@ -1636,11 +1634,11 @@ end
 function BAR:OnHide()
 	self.handler:SetAttribute("editmode", nil)
 
-	if (self.handler:GetAttribute("vishide")) then
+	if self.handler:GetAttribute("vishide") then
 		self.handler:Hide()
 	end
 
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:EnableKeyboard(false)
 end
 
@@ -1648,23 +1646,25 @@ end
 function BAR:Pulse(elapsed)
 	alphaTimer = alphaTimer + elapsed * 1.5
 
-	if (alphaDir == 1) then
-		if (1-alphaTimer <= 0) then
-			alphaDir = 0; alphaTimer = 0
+	if alphaDir == 1 then
+		if 1-alphaTimer <= 0 then
+			alphaDir = 0
+			alphaTimer = 0
 		end
 	else
-		if (alphaTimer >= 1) then
-			alphaDir = 1; alphaTimer = 0
+		if alphaTimer >= 1 then
+			alphaDir = 1
+			alphaTimer = 0
 		end
 	end
 
-	if (alphaDir == 1) then
-		if ((1-(alphaTimer)) >= 0) then
-			self:SetAlpha(1-(alphaTimer))
+	if alphaDir == 1 then
+		if 1-alphaTimer >= 0 then
+			self:SetAlpha(1-alphaTimer)
 		end
 	else
-		if ((alphaTimer) <= 1) then
-			self:SetAlpha((alphaTimer))
+		if alphaTimer <= 1 then
+			self:SetAlpha(alphaTimer)
 		end
 	end
 
@@ -1680,7 +1680,7 @@ function BAR:LoadData()
 
 	self.data = self.DB
 
-	if (not self.data.name or self.data.name == ":") then
+	if not self.data.name or self.data.name == ":" then
 		self.data.name = self.barLabel.." "..self.DB.id
 	end
 end
@@ -1689,32 +1689,32 @@ end
 function BAR:UpdateObjectData()
 	for _, object in pairs(self.buttons) do
 
-		if (object) then
+		if object then
 			object:SetData(self)
 		end
 	end
 end
 
 
-function BAR:UpdateObjectVisibility(show)
+function BAR:UpdateBarObjectVisibility(show)
 	for _, object in pairs(self.buttons) do
-		if (object) then
-			object:SetObjectVisibility(show)
+		if object then
+			object:UpdateObjectVisibility(show)
 		end
 	end
 end
 
-function BAR:UpdateObjects()
+function BAR:UpdateObjectUsability()
 	for _, object in pairs(self.buttons) do
-		if (object) then
-			object:UpdateButton()
+		if object then
+			object:UpdateUsable()
 		end
 	end
 end
 
-function BAR:UpdateIcons()
+function BAR:UpdateObjectIcons()
 	for _, object in pairs(self.buttons) do
-		if (object) then
+		if object then
 			object:UpdateIcon()
 		end
 	end
@@ -1723,15 +1723,15 @@ end
 function BAR:ChangeBar()
 	local newBar = false
 
-	if (Neuron.enteredWorld) then
+	if Neuron.enteredWorld then
 
-		if (self and Neuron.CurrentBar ~= self) then
+		if self and Neuron.CurrentBar ~= self then
 			Neuron.CurrentBar = self
 
 			self.selected = true
 			self.action = nil
 
-			if (self.data.hidden) then
+			if self.data.hidden then
 				self:SetBackdropColor(1,0,0,0.6)
 			else
 				self:SetBackdropColor(0,0,1,0.5)
@@ -1740,16 +1740,16 @@ function BAR:ChangeBar()
 			newBar = true
 		end
 
-		if (not self) then
+		if not self then
 			Neuron.CurrentBar = nil
-		elseif (self.text) then
+		elseif self.text then
 			self.text:Show()
 		end
 
 		for k,v in pairs(Neuron.BARIndex) do
-			if (v ~= self) then
+			if v ~= self then
 
-				if (v.data.conceal) then
+				if v.data.conceal then
 					v:SetBackdropColor(1,0,0,0.4)
 				else
 					v:SetBackdropColor(0,0,0,0.4)
@@ -1766,7 +1766,7 @@ function BAR:ChangeBar()
 			end
 		end
 
-		if (Neuron.CurrentBar) then
+		if Neuron.CurrentBar then
 			self:OnEnter(Neuron.CurrentBar)
 		end
 	end
@@ -1776,13 +1776,13 @@ end
 
 
 function BAR:SetState(msg, gui, checked, query)
-	if (msg) then
+	if msg then
 		local state = msg:match("^%S+")
 		local command = msg:gsub(state, "");
 		command = command:gsub("^%s+", "")
 
-		if (not MAS[state]) then
-			if (not gui) then
+		if not MAS[state] then
+			if not gui then
 				Neuron:PrintStateList()
 			else
 				Neuron:Print("GUI option error")
@@ -1791,8 +1791,8 @@ function BAR:SetState(msg, gui, checked, query)
 			return
 		end
 
-		if (gui) then
-			if (checked) then
+		if gui then
+			if checked then
 				self.data[state] = true
 			else
 				self.data[state] = false
@@ -1800,42 +1800,42 @@ function BAR:SetState(msg, gui, checked, query)
 		else
 			local toggle = self.data[state]
 
-			if (toggle) then
+			if toggle then
 				self.data[state] = false
 			else
 				self.data[state] = true
 			end
 		end
 
-		if (state == "paged") then
+		if state == "paged" then
 			self.data.stance = false
 			self.data.pet = false
 
-			if (self.data.paged) then
+			if self.data.paged then
 				self:SetRemap_Paged()
 			else
 				self.data.remap = false
 			end
 		end
 
-		if (state == "stance") then
+		if state == "stance" then
 			self.data.paged = false
 			self.data.pet = false
 
 
-			if (Neuron.class == "ROGUE" and self.data.stealth) then
+			if Neuron.class == "ROGUE" and self.data.stealth then
 				self.data.stealth = false
 			end
 
-			if (self.data.stance) then
+			if self.data.stance then
 				self:SetRemap_Stance()
 			else
 				self.data.remap = false
 			end
 		end
 
-		if (state == "custom") then
-			if (self.data.custom) then
+		if state == "custom" then
+			if self.data.custom then
 				local count, newstates = 0, ""
 
 				self.data.customNames = {}
@@ -1844,7 +1844,7 @@ function BAR:SetState(msg, gui, checked, query)
 					if string.find(states, "%[(.+)%]") then
 						self.data.customRange = "1;"..count
 
-						if (count == 0) then
+						if count == 0 then
 							newstates = states.." homestate;"
 							self.data.customNames["homestate"] = states
 						else
@@ -1858,7 +1858,7 @@ function BAR:SetState(msg, gui, checked, query)
 					end
 				end
 
-				if (newstates ~= "" ) then
+				if newstates ~= ""  then
 					self.data.custom = newstates
 				else
 					self.data.custom = false
@@ -1879,7 +1879,7 @@ function BAR:SetState(msg, gui, checked, query)
 			end
 		end
 
-		if (state == "pet") then
+		if state == "pet" then
 			self.data.paged = false
 			self.data.stance = false
 		end
@@ -1887,12 +1887,12 @@ function BAR:SetState(msg, gui, checked, query)
 		self.stateschanged = true
 		self:Update()
 
-	elseif (not gui) then
+	elseif not gui then
 		wipe(statetable)
 
 		for k,v in pairs(Neuron.STATEINDEX) do
 
-			if (self.data[k]) then
+			if self.data[k] then
 				table.insert(statetable, k..": on")
 			else
 				table.insert(statetable, k..": off")
@@ -1912,19 +1912,19 @@ end
 --I have no clue what or how any of this works. I took out the annoying print statements, but for now I'll just leave it. -Soyier
 
 function BAR:SetVisibility(msg, gui, checked, query)
-	if (msg) then
+	if msg then
 		wipe(statetable)
 		local toggle, index, num = (" "):split(msg)
 		toggle = toggle:lower()
 
-		if (toggle and Neuron.STATEINDEX[toggle]) then
-			if (index) then
+		if toggle and Neuron.STATEINDEX[toggle] then
+			if index then
 				num = index:match("%d+")
 
-				if (num) then
+				if num then
 					local hidestate = Neuron.STATEINDEX[toggle]..num
-					if (Neuron.STATES[hidestate]) or (toggle == "custom" and self.data.customNames) then
-						if (self.data.hidestates:find(hidestate)) then
+					if Neuron.STATES[hidestate] or (toggle == "custom" and self.data.customNames) then
+						if self.data.hidestates:find(hidestate) then
 							self.data.hidestates = self.data.hidestates:gsub(hidestate..":", "")
 						else
 							self.data.hidestates = self.data.hidestates..hidestate..":"
@@ -1933,14 +1933,14 @@ function BAR:SetVisibility(msg, gui, checked, query)
 						Neuron:Print(L["Invalid index"]); return
 					end
 
-				elseif (index == L["Show"]) then
+				elseif index == L["Show"] then
 					local hidestate = Neuron.STATEINDEX[toggle].."%d+"
 					self.data.hidestates = self.data.hidestates:gsub(hidestate..":", "")
-				elseif (index == L["Hide"]) then
+				elseif index == L["Hide"] then
 					local hidestate = Neuron.STATEINDEX[toggle]
 
 					for state in pairs(Neuron.STATES) do
-						if (state:find("^"..hidestate) and not self.data.hidestates:find(state)) then
+						if state:find("^"..hidestate) and not self.data.hidestates:find(state) then
 							self.data.hidestates = self.data.hidestates..state..":"
 						end
 					end
@@ -1956,17 +1956,17 @@ function BAR:SetVisibility(msg, gui, checked, query)
 			for state,desc in pairs(Neuron.STATES) do
 				index = state:match("%d+$")
 
-				if (index) then
+				if index then
 					index = tonumber(index)
 
-					if (index and state:find("^"..toggle)) then
-						if (hidestates:find(state)) then
+					if index and state:find("^"..toggle) then
+						if hidestates:find(state) then
 							statetable[index] = desc..":".."Hide:"..state
 						else
 							statetable[index] = desc..":".."Show:"..state
 						end
 
-						if (index > highindex) then
+						if index > highindex then
 							highindex = index
 						end
 					end
@@ -1974,18 +1974,18 @@ function BAR:SetVisibility(msg, gui, checked, query)
 			end
 
 			for i=1,highindex do
-				if (not statetable[i]) then
+				if not statetable[i] then
 					statetable[i] = "ignore"
 				end
 			end
 
-			if (#statetable > 0) then
-				--[[if (statetable[0]) then
+			if #statetable > 0 then
+				--[[if statetable[0] then
 					desc, showhide = (":"):split(statetable[0])
 				end]]
 
 				for k,v in ipairs(statetable) do
-					if (v ~= "ignore") then
+					if v ~= "ignore" then
 						desc, showhide = (":"):split(v)
 					end
 				end
@@ -2003,12 +2003,12 @@ end
 
 
 function BAR:AutoHideBar(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.autoHide
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.autoHide = true
 		else
 			self.data.autoHide = false
@@ -2017,7 +2017,7 @@ function BAR:AutoHideBar(msg, gui, checked, query)
 	else
 		local toggle = self.data.autoHide
 
-		if (toggle) then
+		if toggle then
 			self.data.autoHide = false
 		else
 			self.data.autoHide = true
@@ -2029,18 +2029,18 @@ end
 
 
 function BAR:ShowGridSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.showGrid
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.showGrid = true
 		else
 			self.data.showGrid = false
 		end
 	else
-		if (self.data.showGrid) then
+		if self.data.showGrid then
 			self.data.showGrid = false
 		else
 			self.data.showGrid = true
@@ -2048,66 +2048,66 @@ function BAR:ShowGridSet(msg, gui, checked, query)
 	end
 
 	self:UpdateObjectData()
-	self:UpdateObjectVisibility()
+	self:UpdateBarObjectVisibility()
 	self:Update()
 end
 
 
 function BAR:spellGlowMod(msg, gui)
-	if (msg:lower() == "default") then
-		if (self.data.spellGlowDef) then
+	if msg:lower() == "default" then
+		if self.data.spellGlowDef then
 			self.data.spellGlowDef = false
 		else
 			self.data.spellGlowDef = true
 			self.data.spellGlowAlt = false
 		end
 
-		if (not self.data.spellGlowDef and not self.data.spellGlowAlt) then
+		if not self.data.spellGlowDef and not self.data.spellGlowAlt then
 			self.data.spellGlowDef = true
 		end
 
-	elseif (msg:lower() == "alt") then
-		if (self.data.spellGlowAlt) then
+	elseif msg:lower() == "alt" then
+		if self.data.spellGlowAlt then
 			self.data.spellGlowAlt = false
 		else
 			self.data.spellGlowAlt = true
 			self.data.spellGlowDef = false
 		end
 
-		if (not self.data.spellGlowDef and not self.data.spellGlowAlt) then
+		if not self.data.spellGlowDef and not self.data.spellGlowAlt then
 			self.data.spellGlowDef = true
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Spellglow_Instructions"])
 	end
 end
 
 
 function BAR:SpellGlowSet(msg, gui, checked, query)
-	if (query) then
-		if (msg == "default") then
+	if query then
+		if msg == "default" then
 			return self.data.spellGlowDef
-		elseif(msg == "alt") then
+		elseif msg == "alt" then
 			return self.data.spellGlowAlt
 		else
 			return self.data.spellGlow
 		end
 	end
 
-	if (gui) then
-		if (msg) then
+	if gui then
+		if msg then
 			self:spellGlowMod(msg, gui)
-		elseif (checked) then
+		elseif checked then
 			self.data.spellGlow = true
 		else
 			self.data.spellGlow = false
 		end
 
 	else
-		if (msg) then
+		if msg then
 			self:spellGlowMod(msg, gui)
-		elseif (self.data.spellGlow) then
+		elseif self.data.spellGlow then
 			self.data.spellGlow = false
 		else
 			self.data.spellGlow = true
@@ -2120,12 +2120,12 @@ end
 
 
 function BAR:SnapToBar(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.snapTo
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.snapTo = true
 		else
 			self.data.snapTo = false
@@ -2133,7 +2133,7 @@ function BAR:SnapToBar(msg, gui, checked, query)
 	else
 		local toggle = self.data.snapTo
 
-		if (toggle) then
+		if toggle then
 			self.data.snapTo = false
 			self.data.snapToPoint = false
 			self.data.snapToFrame = false
@@ -2150,19 +2150,19 @@ function BAR:SnapToBar(msg, gui, checked, query)
 end
 
 function BAR:UpClicksSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.upClicks
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.upClicks = true
 		else
 			self.data.upClicks = false
 		end
 
 	else
-		if (self.data.upClicks) then
+		if self.data.upClicks then
 			self.data.upClicks = false
 		else
 			self.data.upClicks = true
@@ -2175,19 +2175,19 @@ end
 
 
 function BAR:DownClicksSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.downClicks
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.downClicks = true
 		else
 			self.data.downClicks = false
 		end
 
 	else
-		if (self.data.downClicks) then
+		if self.data.downClicks then
 			self.data.downClicks = false
 		else
 			self.data.downClicks = true
@@ -2200,12 +2200,12 @@ end
 
 
 function BAR:MultiSpecSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.multiSpec
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.multiSpec = true
 		else
 			self.data.multiSpec = false
@@ -2213,7 +2213,7 @@ function BAR:MultiSpecSet(msg, gui, checked, query)
 	else
 		local toggle = self.data.multiSpec
 
-		if (toggle) then
+		if toggle then
 			self.data.multiSpec = false
 		else
 			self.data.multiSpec = true
@@ -2233,16 +2233,16 @@ end
 
 
 function BAR:ConcealBar(msg, gui, checked, query)
-	if (InCombatLockdown()) then
+	if InCombatLockdown() then
 		return
 	end
 
-	if (query) then
+	if query then
 		return self.data.conceal
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.conceal = true
 		else
 			self.data.conceal = false
@@ -2251,21 +2251,21 @@ function BAR:ConcealBar(msg, gui, checked, query)
 	else
 		local toggle = self.data.conceal
 
-		if (toggle) then
+		if toggle then
 			self.data.conceal = false
 		else
 			self.data.conceal = true
 		end
 	end
 
-	if (self.data.conceal) then
-		if (self.selected) then
+	if self.data.conceal then
+		if self.selected then
 			self:SetBackdropColor(1,0,0,0.6)
 		else
 			self:SetBackdropColor(1,0,0,0.4)
 		end
 	else
-		if (self.selected) then
+		if self.selected then
 			self:SetBackdropColor(0,0,1,0.5)
 		else
 			self:SetBackdropColor(0,0,0,0.4)
@@ -2277,59 +2277,59 @@ end
 
 
 function BAR:barLockMod(msg, gui)
-	if (msg:lower() == "alt") then
-		if (self.data.barLockAlt) then
+	if msg:lower() == "alt" then
+		if self.data.barLockAlt then
 			self.data.barLockAlt = false
 		else
 			self.data.barLockAlt = true
 		end
 
-	elseif (msg:lower() == "ctrl") then
-		if (self.data.barLockCtrl) then
+	elseif msg:lower() == "ctrl" then
+		if self.data.barLockCtrl then
 			self.data.barLockCtrl = false
 		else
 			self.data.barLockCtrl = true
 		end
 
-	elseif (msg:lower() == "shift") then
-		if (self.data.barLockShift) then
+	elseif msg:lower() == "shift" then
+		if self.data.barLockShift then
 			self.data.barLockShift = false
 		else
 			self.data.barLockShift = true
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Bar_Lock_Modifier_Instructions"])
 	end
 end
 
 function BAR:LockSet(msg, gui, checked, query)
-	if (query) then
-		if (msg == "shift") then
+	if query then
+		if msg == "shift" then
 			return self.data.barLockShift
-		elseif(msg == "ctrl") then
+		elseif msg == "ctrl" then
 			return self.data.barLockCtrl
-		elseif(msg == "alt") then
+		elseif msg == "alt" then
 			return self.data.barLockAlt
 		else
 			return self.data.barLock
 		end
 	end
 
-	if (gui) then
-		if (msg) then
+	if gui then
+		if msg then
 			self:barLockMod(msg, gui)
-		elseif (checked) then
+		elseif checked then
 			self.data.barLock = true
 		else
 			self.data.barLock = false
 		end
 
 	else
-		if (msg) then
+		if msg then
 			self:barLockMod(msg, gui)
 		else
-			if (self.data.barLock) then
+			if self.data.barLock then
 				self.data.barLock = false
 			else
 				self.data.barLock = true
@@ -2343,51 +2343,51 @@ end
 
 
 function BAR:toolTipMod(msg, gui)
-	if (msg:lower() == "enhanced") then
-		if (self.data.tooltipsEnhanced) then
+	if msg:lower() == "enhanced" then
+		if self.data.tooltipsEnhanced then
 			self.data.tooltipsEnhanced = false
 		else
 			self.data.tooltipsEnhanced = true
 		end
 
-	elseif (msg:lower() == "combat") then
-		if (self.data.tooltipsCombat) then
+	elseif msg:lower() == "combat" then
+		if self.data.tooltipsCombat then
 			self.data.tooltipsCombat = false
 		else
 			self.data.tooltipsCombat = true
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Tooltip_Instructions"])
 	end
 end
 
 
 function BAR:ToolTipSet(msg, gui, checked, query)
-	if (query) then
-		if (msg == "enhanced") then
+	if query then
+		if msg == "enhanced" then
 			return self.data.tooltipsEnhanced
-		elseif(msg == "combat") then
+		elseif msg == "combat" then
 			return self.data.tooltipsCombat
 		else
 			return self.data.tooltips
 		end
 	end
 
-	if (gui) then
-		if (msg) then
+	if gui then
+		if msg then
 			self:toolTipMod(msg, gui)
-		elseif (checked) then
+		elseif checked then
 			self.data.tooltips = true
 		else
 			self.data.tooltips = false
 		end
 
 	else
-		if (msg) then
+		if msg then
 			self:toolTipMod(msg, gui)
 		else
-			if (self.data.tooltips) then
+			if self.data.tooltips then
 				self.data.tooltips = false
 			else
 				self.data.tooltips = true
@@ -2401,7 +2401,7 @@ end
 
 
 function BAR:NameBar(name, gui)
-	if (name) then
+	if name then
 		self.data.name = name
 		self:Update()
 	end
@@ -2409,27 +2409,27 @@ end
 
 
 function BAR:ShapeBar(shape, gui, query)
-	if (query) then
+	if query then
 		return barShapes[self.data.shape]
 	end
 
 	shape = tonumber(shape)
 
-	if (shape and barShapes[shape]) then
+	if shape and barShapes[shape] then
 		self.data.shape = shape
 		self:SetObjectLoc()
 		self:SetPerimeter()
 		self:SetSize()
 		self:Update()
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Bar_Shapes_List"])
 	end
 end
 
 
 function BAR:ColumnsSet(command, gui, query, skipupdate)
-	if (query) then
-		if (self.data.columns) then
+	if query then
+		if self.data.columns then
 			return self.data.columns
 		else
 			return L["Off"]
@@ -2438,132 +2438,132 @@ function BAR:ColumnsSet(command, gui, query, skipupdate)
 
 	local columns = tonumber(command)
 
-	if (columns and columns > 0) then
+	if columns and columns > 0 then
 		self.data.columns = round(columns, 0)
 		self:SetObjectLoc()
 		self:SetPerimeter()
 		self:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not columns or columns <= 0) then
+	elseif not columns or columns <= 0 then
 		self.data.columns = false
 		self:SetObjectLoc()
 		self:SetPerimeter()
 		self:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Bar_Column_Instructions"])
 	end
 end
 
 
 function BAR:ArcStartSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.arcStart
 	end
 
 	local start = tonumber(command)
 
-	if (start and start>=0 and start<=359) then
+	if start and start>=0 and start<=359 then
 		self.data.arcStart = start
 		self:SetObjectLoc()
 		self:SetPerimeter()
 		self:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Bar_ArcStart_Instructions"])
 	end
 end
 
 
 function BAR:ArcLengthSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.arcLength
 	end
 
 	local length = tonumber(command)
 
-	if (length and length>=0 and length<=359) then
+	if length and length>=0 and length<=359 then
 		self.data.arcLength = length
 		self:SetObjectLoc()
 		self:SetPerimeter()
 		self:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Bar_ArcLength_Instructions"])
 	end
 end
 
 
 function BAR:PadHSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.padH
 	end
 
 	local padh = tonumber(command)
 
-	if (padh) then
+	if padh then
 		self.data.padH = round(padh, 1)
 		self:SetObjectLoc()
 		self:SetPerimeter()
 		self:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Horozontal_Padding_Instructions"])
 	end
 end
 
 
 function BAR:PadVSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.padV
 	end
 
 	local padv = tonumber(command)
 
-	if (padv) then
+	if padv then
 		self.data.padV = round(padv, 1)
 		self:SetObjectLoc()
 		self:SetPerimeter()
 		self:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Vertical_Padding_Instructions"])
 	end
 end
 
 
 function BAR:PadHVSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return "---"
 	end
 
 	local padhv = tonumber(command)
 
-	if (padhv) then
+	if padhv then
 		self.data.padH = round(self.data.padH + padhv, 1)
 		self.data.padV = round(self.data.padV + padhv, 1)
 
@@ -2571,30 +2571,30 @@ function BAR:PadHVSet(command, gui, query, skipupdate)
 		self:SetPerimeter()
 		self:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Horozontal_and_Vertical_Padding_Instructions"])
 	end
 end
 
 
 function BAR:ScaleBar(scale, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.scale
 	end
 
 	scale = tonumber(scale)
 
-	if (scale) then
+	if scale then
 		self.data.scale = round(scale, 2)
 		self:SetObjectLoc()
 		self:SetPerimeter()
 		self:SetSize()
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 	end
@@ -2602,13 +2602,13 @@ end
 
 
 function BAR:StrataSet(command, gui, query)
-	if (query) then
+	if query then
 		return self.data.objectStrata
 	end
 
 	local strata = tonumber(command)
 
-	if (strata and Neuron.STRATAS[strata] and Neuron.STRATAS[strata+1]) then
+	if strata and Neuron.STRATAS[strata] and Neuron.STRATAS[strata+1] then
 		self.data.barStrata = Neuron.STRATAS[strata+1]
 		self.data.objectStrata = Neuron.STRATAS[strata]
 
@@ -2616,36 +2616,36 @@ function BAR:StrataSet(command, gui, query)
 		self:UpdateObjectData()
 		self:Update()
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Bar_Strata_List"])
 	end
 end
 
 
 function BAR:AlphaSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.alpha
 	end
 
 	local alpha = tonumber(command)
 
-	if (alpha and alpha>=0 and alpha<=1) then
+	if alpha and alpha>=0 and alpha<=1 then
 		self.data.alpha = round(alpha, 2)
 		self.handler:SetAlpha(self.data.alpha)
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Bar_Alpha_Instructions"])
 	end
 end
 
 function BAR:AlphaUpSet(command, gui, query)
-	if (query) then
+	if query then
 		--temp fix
-		if (self.data.alphaUp == "none" or self.data.alphaUp == 1) then
+		if self.data.alphaUp == "none" or self.data.alphaUp == 1 then
 			self.data.alphaUp = alphaUps[1]
 		end
 
@@ -2654,10 +2654,10 @@ function BAR:AlphaUpSet(command, gui, query)
 
 	local alphaUp = tonumber(command)
 
-	if (alphaUp and alphaUps[alphaUp]) then
+	if alphaUp and alphaUps[alphaUp] then
 		self.data.alphaUp = alphaUps[alphaUp]
 		self:Update()
-	elseif (not gui) then
+	elseif not gui then
 		local text = ""
 
 		for k,v in ipairs(alphaUps) do
@@ -2669,39 +2669,39 @@ end
 
 
 function BAR:AlphaUpSpeedSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.fadeSpeed
 	end
 
 	local speed = tonumber(command)
 
-	if (speed) then
+	if speed then
 		self.data.fadeSpeed = round(speed, 2)
 
-		if (self.data.fadeSpeed > 1) then
+		if self.data.fadeSpeed > 1 then
 			self.data.fadeSpeed = 1
 		end
 
-		if (self.data.fadeSpeed < 0.01) then
+		if self.data.fadeSpeed < 0.01 then
 			self.data.fadeSpeed = 0.01
 		end
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 	end
 end
 
 function BAR:XAxisSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.x
 	end
 
 	local x = tonumber(command)
 
-	if (x) then
+	if x then
 		self.data.x = round(x, 2)
 		self.data.snapTo = false
 		self.data.snapToPoint = false
@@ -2709,29 +2709,29 @@ function BAR:XAxisSet(command, gui, query, skipupdate)
 		self:SetPosition()
 		self.data.point, self.data.x, self.data.y = self:GetPosition()
 
-		if (not gui) then
+		if not gui then
 			self.message:Show()
 			self.messagebg:Show()
 		end
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
 
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["X_Position_Instructions"])
 	end
 end
 
 
 function BAR:YAxisSet(command, gui, query, skipupdate)
-	if (query) then
+	if query then
 		return self.data.y
 	end
 
 	local y = tonumber(command)
 
-	if (y) then
+	if y then
 		self.data.y = round(y, 2)
 		self.data.snapTo = false
 		self.data.snapToPoint = false
@@ -2739,34 +2739,34 @@ function BAR:YAxisSet(command, gui, query, skipupdate)
 		self:SetPosition()
 		self.data.point, self.data.x, self.data.y = self:GetPosition()
 
-		if (not gui) then
+		if not gui then
 			self.message:Show()
 			self.messagebg:Show()
 		end
 
-		if (not skipupdate) then
+		if not skipupdate then
 			self:Update()
 		end
-	elseif (not gui) then
+	elseif not gui then
 		Neuron:Print(L["Y_Position_Instructions"])
 	end
 end
 
 
 function BAR:BindTextSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.bindText, self.data.bindColor
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.bindText = true
 		else
 			self.data.bindText = false
 		end
 
 	else
-		if (self.data.bindText) then
+		if self.data.bindText then
 			self.data.bindText = false
 		else
 			self.data.bindText = true
@@ -2779,19 +2779,19 @@ end
 
 
 function BAR:MacroTextSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.macroText, self.data.macroColor
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.macroText = true
 		else
 			self.data.macroText = false
 		end
 
 	else
-		if (self.data.macroText) then
+		if self.data.macroText then
 			self.data.macroText = false
 		else
 			self.data.macroText = true
@@ -2804,19 +2804,19 @@ end
 
 
 function BAR:CountTextSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.countText, self.data.countColor
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.countText = true
 		else
 			self.data.countText = false
 		end
 
 	else
-		if (self.data.countText) then
+		if self.data.countText then
 			self.data.countText = false
 		else
 			self.data.countText = true
@@ -2829,19 +2829,19 @@ end
 
 
 function BAR:RangeIndSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.rangeInd, self.data.rangecolor
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.rangeInd = true
 		else
 			self.data.rangeInd = false
 		end
 
 	else
-		if (self.data.rangeInd) then
+		if self.data.rangeInd then
 			self.data.rangeInd = false
 		else
 			self.data.rangeInd = true
@@ -2854,19 +2854,19 @@ end
 
 
 function BAR:CDTextSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.cdText, self.data.cdcolor1, self.data.cdcolor2
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.cdText = true
 		else
 			self.data.cdText = false
 		end
 
 	else
-		if (self.data.cdText) then
+		if self.data.cdText then
 			self.data.cdText = false
 		else
 			self.data.cdText = true
@@ -2879,72 +2879,22 @@ end
 
 
 function BAR:CDAlphaSet(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.cdAlpha
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.cdAlpha = true
 		else
 			self.data.cdAlpha = false
 		end
 
 	else
-		if (self.data.cdAlpha) then
+		if self.data.cdAlpha then
 			self.data.cdAlpha = false
 		else
 			self.data.cdAlpha = true
-		end
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
-
-function BAR:AuraTextSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.auraText, self.data.auracolor1, self.data.auracolor2
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.auraText = true
-		else
-			self.data.auraText = false
-		end
-
-	else
-		if (self.data.auraText) then
-			self.data.auraText = false
-		else
-			self.data.auraText = true
-		end
-	end
-
-	self:UpdateObjectData()
-	self:Update()
-end
-
-
-function BAR:AuraIndSet(msg, gui, checked, query)
-	if (query) then
-		return self.data.auraInd, self.data.buffcolor, self.data.debuffcolor
-	end
-
-	if (gui) then
-		if (checked) then
-			self.data.auraInd = true
-		else
-			self.data.auraInd = false
-		end
-
-	else
-		if (self.data.auraInd) then
-			self.data.auraInd = false
-		else
-			self.data.auraInd = true
 		end
 	end
 
@@ -2953,25 +2903,25 @@ function BAR:AuraIndSet(msg, gui, checked, query)
 end
 
 function BAR:SetBorderStyle(msg, gui, checked, query)
-	if (query) then
+	if query then
 		return self.data.showBorderStyle
 	end
 
-	if (gui) then
-		if (checked) then
+	if gui then
+		if checked then
 			self.data.showBorderStyle = true
 		else
 			self.data.showBorderStyle = false
 		end
 	else
-		if (self.data.showBorderStyle) then
+		if self.data.showBorderStyle then
 			self.data.showBorderStyle = false
 		else
 			self.data.showBorderStyle = true
 		end
 	end
 
-	self:UpdateIcons()
+	self:UpdateObjectIcons()
 end
 
 
@@ -2994,10 +2944,10 @@ end
 -- @param checked(Bool) : Used when using a GUI checkbox - It is the box's current state
 -- @param query: N/A
 function BAR:SetCastingTarget(value, gui, checked, query)
-	if (value) then
-		if (gui) then
+	if value then
+		if gui then
 
-			if (checked) then
+			if checked then
 				self.data[value] = true
 			else
 				self.data[value] = false
@@ -3007,7 +2957,7 @@ function BAR:SetCastingTarget(value, gui, checked, query)
 
 			local toggle = self.data[value]
 
-			if (toggle) then
+			if toggle then
 				self.data[value] = false
 			else
 				self.data[value] = true

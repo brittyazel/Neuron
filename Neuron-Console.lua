@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -64,8 +64,6 @@ local slashFunctions = {
 	{L["CountText"], L["CountText_Description"], "CountTextSet"},
 	{L["CDText"], L["CDText_Description"], "CDTextSet"},
 	{L["CDAlpha"], L["CDAlpha_Description"], "CDAlphaSet"},
-	--{L["AuraText"], L["AuraText_Description"], "AuraTextSet"},
-	{L["AuraInd"], L["AuraInd_Description"], "AuraIndSet"},
 	{L["UpClick"], L["UpClick_Description"], "UpClicksSet"},
 	{L["DownClick"], L["DownClick_Description"], "DownClicksSet"},
 	{L["BarTypes"], L["BarTypes_Description"], "PrintBarTypes"},
@@ -77,7 +75,7 @@ local slashFunctions = {
 --New Slash functionality
 function Neuron:slashHandler(input)
 
-	if (string.len(input)==0 or input:lower() == "help") then
+	if string.len(input)==0 or input:lower() == "help" then
 		Neuron:printSlashHelp()
 		return
 	end
@@ -104,13 +102,13 @@ function Neuron:slashHandler(input)
 
 	for i = 1,#slashFunctions do
 
-		if (command == slashFunctions[i][1]:lower()) then
+		if command == slashFunctions[i][1]:lower() then
 			local func = slashFunctions[i][3]
 			local bar = Neuron.CurrentBar
 
-			if (Neuron[func]) then
+			if Neuron[func] then
 				Neuron[func](Neuron, args[1])
-			elseif (bar and bar[func]) then
+			elseif bar and bar[func] then
 				--because we're calling a variable func name, we can't use the ":" notation, so we have to explicitly state the parent object as the first param
 				bar[func](bar, args[1]) --not sure what to do for more than 1 arg input
 			else
@@ -144,14 +142,14 @@ function Neuron:PrintStateList()
 	local list
 
 	for k,v in pairs(Neuron.MANAGED_ACTION_STATES) do
-		if (Neuron.STATEINDEX[k]) then
+		if Neuron.STATEINDEX[k] then
 			data[v.order] = Neuron.STATEINDEX[k]
 		end
 	end
 
 	for k,v in ipairs(data) do
 
-		if (not list) then
+		if not list then
 			list = L["Valid States"]..":"..v
 		else
 			list = list..", "..v

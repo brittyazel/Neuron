@@ -17,25 +17,17 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-
-
-
 function Neuron:Startup()
-
 	DB = Neuron.db.profile
-
 	Neuron:RegisterBars()
-
 	Neuron:RegisterGUI()
-
 	Neuron:CreateBarsAndButtons()
-
 end
 
 
@@ -46,7 +38,7 @@ function Neuron:RegisterBars()
 	Neuron:RegisterBarClass("ActionBar", "ActionBar", L["Action Bar"], "Action Button", DB.ActionBar, Neuron.ACTIONBUTTON, 250, true)
 
 	--Neuron Bag Bar
-	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN,5, false)
+	Neuron:RegisterBarClass("BagBar", "BagBar", L["Bag Bar"], "Bag Button", DB.BagBar, Neuron.BAGBTN, Neuron.NUM_BAG_BUTTONS, false) --Neuron.NUM_BAG_BUTTONS == 5 for retail and 6 for classic due to the keyring
 
 	--Neuron Status Bar
 	Neuron:RegisterBarClass("StatusBar", "StatusBar", L["Status Bar"], "Status Bar", DB.StatusBar, Neuron.STATUSBTN, 20, false)
@@ -89,9 +81,7 @@ function Neuron:RegisterGUI()
 		COUNTTEXT = true,
 		RANGEIND = true,
 		CDTEXT = true,
-		CDALPHA = true,
-		AURATEXT = true,
-		AURAIND = true },
+		CDALPHA = true, },
 			true, 115)
 
 	--Neuron Bag Bar
@@ -155,6 +145,8 @@ function Neuron:RegisterGUI()
 			TOOLTIPS = true,
 			BINDTEXT = true,
 			COUNTTEXT = true,
+			CDTEXT = true,
+			CDALPHA = true,
 			BORDERSTYLE = true,},
 				false, 65)
 
@@ -171,6 +163,8 @@ function Neuron:RegisterGUI()
 			TOOLTIPS = true,
 			BINDTEXT = true,
 			COUNTTEXT = true,
+			CDTEXT = true,
+			CDALPHA = true,
 			BORDERSTYLE = true,},
 				false, 65)
 
@@ -190,9 +184,9 @@ end
 
 function Neuron:CreateBarsAndButtons()
 
-	if (DB.firstRun) then
+	if DB.firstRun then
 
-		for barClass, barDefaults in pairs(NeuronDefaultBarOptions) do
+		for barClass, barDefaults in pairs(Neuron.DefaultBarOptions) do
 			if Neuron.registeredBarData[barClass] then --only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
 				for i, defaults in ipairs(barDefaults) do --create the bar objects
 					local newBar = Neuron.BAR.new(barClass, i) --this calls the bar constructor
@@ -214,7 +208,7 @@ function Neuron:CreateBarsAndButtons()
 
 		for barClass, barClassData in pairs (Neuron.registeredBarData) do
 			for id,data in pairs(barClassData.barDB) do
-				if (data ~= nil) then
+				if data ~= nil then
 					local newBar = Neuron.BAR.new(barClass, id) --this calls the bar constructor
 
 					--create all the saved button objects for a given bar

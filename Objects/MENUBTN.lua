@@ -17,13 +17,13 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class MENUBTN : BUTTON @define class MENUBTN inherits from class BUTTON
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
-local menuElements = {
+local blizzMenuButtons = {
 	CharacterMicroButton,
 	SpellbookMicroButton,
 	TalentMicroButton,
@@ -37,9 +37,9 @@ local menuElements = {
 	MainMenuMicroButton}
 
 if Neuron.isWoWClassic then
-	wipe(menuElements)
+	wipe(blizzMenuButtons)
 	for i=1, #MICRO_BUTTONS do
-		table.insert(menuElements, _G[MICRO_BUTTONS[i]])
+		blizzMenuButtons[i] = _G[MICRO_BUTTONS[i]]
 	end
 end
 ---------------------------------------------------------
@@ -50,51 +50,48 @@ end
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return MENUBTN @ A newly created MENUBTN object
 function MENUBTN.new(bar, buttonID, defaults)
-
 	---call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, MENUBTN, "MenuBar", "MenuButton", "NeuronAnchorButtonTemplate")
 
-	if (defaults) then
+	if defaults then
 		newButton:SetDefaults(defaults)
 	end
 
 	return newButton
 end
 
-
 ---------------------------------------------------------
 
 function MENUBTN:SetType()
+	if not Neuron.isWoWClassic then
+		if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic then --only run this code on the first SetType, not the reloads after pet battles and such
+			self:RegisterEvent("PET_BATTLE_CLOSE")
+		end
 
-	if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic then --only run this code on the first SetType, not the reloads after pet battles and such
-		self:RegisterEvent("PET_BATTLE_CLOSE")
+		if not Neuron:IsHooked("MoveMicroButtons") then --we need to intercept MoveMicroButtons for during pet battles
+			Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)
+		end
 	end
 
-	if not Neuron:IsHooked("MoveMicroButtons") then --we need to intercept MoveMicroButtons for during pet battles
-		Neuron:RawHook("MoveMicroButtons", function(...) MENUBTN.ModifiedMoveMicroButtons(...) end, true)
-	end
+	if blizzMenuButtons[self.id] then
 
-	if (menuElements[self.id]) then
-
-		self:SetWidth(menuElements[self.id]:GetWidth()-2)
-		self:SetHeight(menuElements[self.id]:GetHeight()-2)
+		self:SetWidth(blizzMenuButtons[self.id]:GetWidth()-2)
+		self:SetHeight(blizzMenuButtons[self.id]:GetHeight()-2)
 
 		self:SetHitRectInsets(self:GetWidth()/2, self:GetWidth()/2, self:GetHeight()/2, self:GetHeight()/2)
 
-		self.element = menuElements[self.id]
+		self.hookedButton = blizzMenuButtons[self.id]
 
-		self.element:ClearAllPoints()
-		self.element:SetParent(self)
-		self.element:Show()
-		self.element:SetPoint("CENTER", self, "CENTER")
-		self.element:SetScale(1)
+		self.hookedButton:ClearAllPoints()
+		self.hookedButton:SetParent(self)
+		self.hookedButton:Show()
+		self.hookedButton:SetPoint("CENTER", self, "CENTER")
+		self.hookedButton:SetScale(1)
 	end
-
 end
 
-
 function MENUBTN:SetData(bar)
-	if (bar) then
+	if bar then
 		self.bar = bar
 		self:SetFrameStrata(bar.data.objectStrata)
 		self:SetScale(bar.data.scale)
@@ -105,26 +102,24 @@ function MENUBTN:SetData(bar)
 	self:SetFrameLevel(4)
 end
 
-
 function MENUBTN:PET_BATTLE_CLOSE()
 	---we have to reload SetType to put the buttons back at the end of the pet battle
 	self:SetType()
 end
 
-
 ---this overwrites the default MoveMicroButtons and basically just extends it to reposition all the other buttons as well, not just the 1st and 6th.
 ---This is necessary for petbattles, otherwise there's no menubar
 function MENUBTN.ModifiedMoveMicroButtons(anchor, anchorTo, relAnchor, x, y, isStacked)
 
-	menuElements[1]:ClearAllPoints();
-	menuElements[1]:SetPoint(anchor, anchorTo, relAnchor, x-5, y+4);
+	blizzMenuButtons[1]:ClearAllPoints();
+	blizzMenuButtons[1]:SetPoint(anchor, anchorTo, relAnchor, x-5, y+4);
 
-	for i=2,#menuElements do
-		menuElements[i]:ClearAllPoints();
-		menuElements[i]:SetPoint("BOTTOMLEFT", menuElements[i-1], "BOTTOMRIGHT", -2,0)
+	for i=2,#blizzMenuButtons do
+		blizzMenuButtons[i]:ClearAllPoints();
+		blizzMenuButtons[i]:SetPoint("BOTTOMLEFT", blizzMenuButtons[i-1], "BOTTOMRIGHT", -2,0)
 		if isStacked and i == 6 then
-			menuElements[6]:ClearAllPoints();
-			menuElements[6]:SetPoint("TOPLEFT", menuElements[1], "BOTTOMLEFT", 0,2)
+			blizzMenuButtons[6]:ClearAllPoints();
+			blizzMenuButtons[6]:SetPoint("TOPLEFT", blizzMenuButtons[1], "BOTTOMLEFT", 0,2)
 		end
 	end
 

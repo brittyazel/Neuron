@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 
@@ -51,14 +51,6 @@ local genericButtonData = {
 	cdcolor1 = "1;0.82;0;1",
 	cdcolor2 = "1;0.1;0.1;1",
 
-	auraText = false,
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
-
-	auraInd = false,
-	buffcolor = "0;0.8;0;1",
-	debuffcolor = "0.8;0;0;1",
-
 	rangeInd = true,
 	rangecolor = "0.7;0.15;0.15;1",
 
@@ -79,11 +71,10 @@ local genericSpecData = {
 	macro_Text = "",
 	macro_Icon = false,
 	macro_Name = "",
-	macro_Auto = false,
-	macro_Watch = false,
-	macro_Equip = false,
 	macro_Note = "",
 	macro_UseNote = false,
+	macro_BlizzMacro = false,
+	macro_EquipmentSet = false,
 }
 
 local genericStatusBtnData= {
@@ -183,8 +174,6 @@ local genericBarData = {
 	countColor = "1;1;1;1",
 	cdcolor1 = "1;0.82;0;1",
 	cdcolor2 = "1;0.1;0.1;1",
-	auracolor1 = "0;0.82;0;1",
-	auracolor2 = "1;0.1;0.1;1",
 	buffcolor = "0;0.8;0;1",
 	debuffcolor = "0.8;0;0;1",
 	rangecolor = "0.7;0.15;0.15;1",
@@ -217,8 +206,6 @@ local genericBarData = {
 
 	cdText = false,
 	cdAlpha = false,
-	auraText = false,
-	auraInd = false,
 
 	showBorderStyle = true,
 
@@ -268,8 +255,6 @@ NeuronDefaults = {
 
 		NeuronItemCache = {},
 		NeuronSpellCache = {},
-		NeuronCollectionCache = {},
-		NeuronToyCache = {},
 
 		NeuronIcon = {hide = false,},
 

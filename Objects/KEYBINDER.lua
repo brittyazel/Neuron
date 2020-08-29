@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class KEYBINDER : Button @define class KEYBINDER is our keybinding object
 local KEYBINDER = setmetatable({}, { __index = CreateFrame("Button") })
@@ -73,20 +73,20 @@ end
 local function GetModifier()
 	local modifier
 
-	if (IsAltKeyDown()) then
+	if IsAltKeyDown() then
 		modifier = "ALT-"
 	end
 
-	if (IsControlKeyDown()) then
-		if (modifier) then
+	if IsControlKeyDown() then
+		if modifier then
 			modifier = modifier.."CTRL-";
 		else
 			modifier = "CTRL-";
 		end
 	end
 
-	if (IsShiftKeyDown()) then
-		if (modifier) then
+	if IsShiftKeyDown() then
+		if modifier then
 			modifier = modifier.."SHIFT-";
 		else
 			modifier = "SHIFT-";
@@ -101,14 +101,14 @@ end
 --- @return string @The current key that is bound to the selected button
 function KEYBINDER:GetBindkeyList()
 
-	if (not self.button.data) then return L["None"] end
+	if not self.button.data then return L["None"] end
 
 	local bindkeys = self.button.keys.hotKeyText:gsub(":", ", ")
 
 	bindkeys = bindkeys:gsub("^, ", "")
 	bindkeys = bindkeys:gsub(", $", "")
 
-	if (string.len(bindkeys) < 1) then
+	if string.len(bindkeys) < 1 then
 		bindkeys = L["None"]
 	end
 
@@ -121,16 +121,16 @@ end
 function KEYBINDER:GetKeyText(key)
 	local keytext
 
-	if (key:find("Button")) then
+	if key:find("Button") then
 		keytext = key:gsub("([Bb][Uu][Tt][Tt][Oo][Nn])(%d+)","m%2")
-	elseif (key:find("NUMPAD")) then
+	elseif key:find("NUMPAD") then
 		keytext = key:gsub("NUMPAD","n")
 		keytext = keytext:gsub("DIVIDE","/")
 		keytext = keytext:gsub("MULTIPLY","*")
 		keytext = keytext:gsub("MINUS","-")
 		keytext = keytext:gsub("PLUS","+")
 		keytext = keytext:gsub("DECIMAL",".")
-	elseif (key:find("MOUSEWHEEL")) then
+	elseif key:find("MOUSEWHEEL") then
 		keytext = key:gsub("MOUSEWHEEL","mw")
 		keytext = keytext:gsub("UP","U")
 		keytext = keytext:gsub("DOWN","D")
@@ -158,7 +158,7 @@ end
 --- @param key string @Which key was pressed
 function KEYBINDER:ClearBindings(key)
 
-	if (key) then
+	if key then
 
 		local newkey = key:gsub("%-", "%%-")
 		self.button.keys.hotKeys = self.button.keys.hotKeys:gsub(newkey..":", "")
@@ -185,13 +185,13 @@ function KEYBINDER:ApplyBindings()
 	---checks if the button is a Neuron action or a special Blizzard action (such as a zone ability)
 	---this is necessary because Blizzard buttons usually won't work and can give very weird results
 	---if clicked with a virtual key other than the default "LeftButton"
-	if (self.button.class == "ActionBar") then
+	if self.button.class == "ActionBar" then
 		virtualKey = NEURON_VIRTUAL_KEY
 	else
 		virtualKey = DEFAULT_VIRTUAL_KEY
 	end
 
-	if (self.button:IsVisible() or self.button:GetParent():GetAttribute("concealed")) then
+	if self.button:IsVisible() or self.button:GetParent():GetAttribute("concealed") then
 		self.button.keys.hotKeys:gsub("[^:]+", function(key) SetOverrideBindingClick(self.button, self.button.keys.hotKeyPri, key, self.button:GetName(), virtualKey) end)
 	end
 
@@ -201,12 +201,12 @@ function KEYBINDER:ApplyBindings()
 	end
 
 
-	self.button.hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
+	self.button.elements.Hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
 
-	if (self.button.bindText) then
-		self.button.hotkey:Show()
+	if self.button.bindText then
+		self.button.elements.Hotkey:Show()
 	else
-		self.button.hotkey:Hide()
+		self.button.elements.Hotkey:Hide()
 	end
 end
 
@@ -216,29 +216,29 @@ end
 function KEYBINDER:ProcessBinding(key)
 
 	--if the button is locked, warn the user as to the locked status
-	if (self.button and self.button.keys and self.button.keys.hotKeyLock) then
+	if self.button and self.button.keys and self.button.keys.hotKeyLock then
 		UIErrorsFrame:AddMessage(L["Bindings_Locked_Notice"], 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME)
 		return
 	end
 
 	--if the key being pressed is escape, clear the bindings on the button
-	if (key == "ESCAPE") then
+	if key == "ESCAPE" then
 
 		self:ClearBindings()
 
 		--if the key is anything else, keybind the button to this key
-	elseif (key) then --checks to see if another keybind already has that key, and if so clears it from the other button
+	elseif key then --checks to see if another keybind already has that key, and if so clears it from the other button
 
 		--check to see if any other button has this key bound to it, ignoring locked buttons, and if so remove the key from the other button
 		for _,binder in pairs(Neuron.BINDIndex) do
-			if (self.button ~= binder.button and not binder.button.keys.hotKeyLock) then
-				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if (key == binding) then binder:ClearBindings(binding) binder:ApplyBindings() end end)
+			if self.button ~= binder.button and not binder.button.keys.hotKeyLock then
+				binder.button.keys.hotKeys:gsub("[^:]+", function(binding) if key == binding then binder:ClearBindings(binding) binder:ApplyBindings() end end)
 			end
 		end
 
 		--search the current hotKeys to see if our new key is missing, and if so add it
 		local found
-		self.button.keys.hotKeys:gsub("[^:]+", function(binding) if(binding == key) then found = true end end)
+		self.button.keys.hotKeys:gsub("[^:]+", function(binding) if binding == key then found = true end end)
 
 		if not found then
 			local keytext = self:GetKeyText(key)
@@ -252,7 +252,7 @@ function KEYBINDER:ProcessBinding(key)
 	end
 
 	--update the tooltip to reflect the changes to the keybinds
-	if (self:IsVisible()) then
+	if self:IsVisible() then
 		self:OnEnter()
 	end
 
@@ -262,17 +262,17 @@ end
 --- OnShow Event handler
 function KEYBINDER:OnShow()
 
-	if (self.button.bar) then
+	if self.button.bar then
 		self:SetFrameLevel(self.button.bar:GetFrameLevel()+1)
 	end
 
 	local priority = ""
 
-	if (self.button.keys.hotKeyPri) then
+	if self.button.keys.hotKeyPri then
 		priority = "|cff00ff00"..L["Priority"].."|r\n"
 	end
 
-	if (self.button.keys.hotKeyLock) then
+	if self.button.keys.hotKeyLock then
 		self.label:SetText(priority.."|cfff00000"..L["Locked"].."|r")
 	else
 		self.label:SetText(priority.."|cffffffff"..L["Bind"].."|r")
@@ -280,7 +280,7 @@ function KEYBINDER:OnShow()
 
 	--set a repeating timer when the keybinder is shown to enable or disable Keyboard input on mouseover.
 	self.keybindUpdateTimer = self:ScheduleRepeatingTimer(function()
-		if (self:IsMouseOver()) then
+		if self:IsMouseOver() then
 			self:EnableKeyboard(true)
 		else
 			self:EnableKeyboard(false)
@@ -342,9 +342,9 @@ end
 --- @param mousebutton string @The button that was clicked
 function KEYBINDER:OnClick(mousebutton)
 
-	if (mousebutton == "LeftButton") then
+	if mousebutton == "LeftButton" then
 
-		if (self.button.keys.hotKeyLock) then
+		if self.button.keys.hotKeyLock then
 			self.button.keys.hotKeyLock = false
 		else
 			self.button.keys.hotKeyLock = true
@@ -355,8 +355,8 @@ function KEYBINDER:OnClick(mousebutton)
 		return
 	end
 
-	if (mousebutton== "RightButton") then
-		if (self.button.keys.hotKeyPri) then
+	if mousebutton== "RightButton" then
+		if self.button.keys.hotKeyPri then
 			self.button.keys.hotKeyPri = false
 		else
 			self.button.keys.hotKeyPri = true
@@ -372,13 +372,13 @@ function KEYBINDER:OnClick(mousebutton)
 	local modifier = GetModifier()
 	local key
 
-	if (mousebutton == "MiddleButton") then
+	if mousebutton == "MiddleButton" then
 		key = "Button3"
 	else
 		key = mousebutton
 	end
 
-	if (modifier) then
+	if modifier then
 		key = modifier..key
 	end
 
@@ -389,13 +389,13 @@ end
 --- OnKeyDown Event handler
 --- @param key string @The key that was pressed
 function KEYBINDER:OnKeyDown(key)
-	if (key:find("ALT") or key:find("SHIFT") or key:find("CTRL") or key:find("PRINTSCREEN")) then
+	if key:find("ALT") or key:find("SHIFT") or key:find("CTRL") or key:find("PRINTSCREEN") then
 		return
 	end
 
 	local modifier = GetModifier()
 
-	if (modifier) then
+	if modifier then
 		key = modifier..key
 	end
 
@@ -410,7 +410,7 @@ function KEYBINDER:OnMouseWheel(delta)
 	local key
 	local action
 
-	if (delta > 0) then
+	if delta > 0 then
 		key = "MOUSEWHEELUP"
 		action = "MousewheelUp"
 	else
@@ -418,7 +418,7 @@ function KEYBINDER:OnMouseWheel(delta)
 		action = "MousewheelDown"
 	end
 
-	if (modifier) then
+	if modifier then
 		key = modifier..key
 	end
 

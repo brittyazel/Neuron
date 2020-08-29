@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 local addonName = ...
 
@@ -83,8 +83,6 @@ local swatchOptions = {
 	[4] = { "RANGEIND", L["Out-of-Range Indicator"], 1, "RangeIndSet", true, nil, "rangecolor" },
 	[5] = { "CDTEXT", L["Cooldown Countdown"], 1, "CDTextSet", true, true, "cdcolor1", "cdcolor2" },
 	[6] = { "CDALPHA", L["Cooldown Transparency"], 1, "CDAlphaSet", nil, nil },
-	--[7] = { "AURATEXT", L["Buff/Debuff Aura Countdown"], 1, "AuraTextSet", true, true, "auracolor1", "auracolor2" },
-	[7] = { "AURAIND", L["Buff/Debuff Aura Border"], 1, "AuraIndSet", true, true, "buffcolor", "debuffcolor" },
 }
 
 local specoveride = Neuron.activeSpec
@@ -554,7 +552,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 								f.text:SetTextColor(1,0.82,0)
 								f.disabled = nil
 							else
-								f:SetChecked(nil)
+								f:SetChecked(false)
 								f:Disable()
 								f.text:SetTextColor(0.5,0.5,0.5)
 								f.disabled = true
@@ -752,8 +750,8 @@ function NeuronGUI:UpdateBarGUI(newBar)
 
 			--Sets bar primaary options
 			for i,f in ipairs(barOpt.pri) do
-				if (f.option == "stance" and (GetNumShapeshiftForms() < 1 or Neuron.class == "DEATHKNIGHT" or Neuron.class == "PALADIN" or Neuron.class == "HUNTER")) then
-					f:SetChecked(nil)
+				if (f.option == "stance" and ((GetNumShapeshiftForms() < 1 or Neuron.class == "DEATHKNIGHT" or Neuron.class == "PALADIN" or Neuron.class == "HUNTER"))) and not Neuron.class=="SHAMAN" then
+					f:SetChecked(false)
 					f:Disable()
 					f.text:SetTextColor(0.5,0.5,0.5)
 				else
@@ -772,7 +770,7 @@ function NeuronGUI:UpdateBarGUI(newBar)
 						f:Enable()
 						f.text:SetTextColor(1,0.82,0)
 					else
-						f:SetChecked(nil)
+						f:SetChecked(false)
 						f:Disable()
 						f.text:SetTextColor(0.5,0.5,0.5)
 					end
@@ -933,7 +931,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 
 				NeuronGUI:UpdateBarGUI()
 			else
-				tab:SetChecked(nil)
+				tab:SetChecked(false)
 				panel:Hide()
 			end
 
@@ -946,7 +944,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -28, -8.5)
 	--f:SetScript("OnClick", function(self) TabsOnClick(self, true) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	--f.text:SetText(L["Spell Target Options"])
 	frame.tab3 = f; frame.tabs[f] = frame.targetoptions
 
@@ -956,7 +954,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetPoint("RIGHT", frame.tab3, "LEFT", -5, 0)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText(L["Bar States"])
 	frame.tab2 = f; frame.tabs[f] = frame.barstates
 
@@ -1078,7 +1076,7 @@ function NeuronGUI:BarListScrollFrame_OnLoad(frame)
 
 							end
 						else
-							button:SetChecked(nil)
+							button:SetChecked(false)
 						end
 
 					end
@@ -1169,7 +1167,7 @@ function NeuronGUI:BarListScrollFrameUpdate(frame, tableList, alt)
 	for i=1,numShown do
 
 		button = _G["NeuronBarEditorBarListScrollFrameButton"..i]
-		button:SetChecked(nil)
+		button:SetChecked(false)
 
 		count = dataOffset + i
 
@@ -1822,7 +1820,7 @@ function NeuronGUI:ActionEditor_OnLoad(frame)
 			--Renames Stance for rogues to Stealth as that is what should really be used
 			if state == "stance" and (class == "ROGUE") then
 				f.text:SetText(L["Stealth"])--:upper())
-			elseif state == "stance" and (class == "DRUID") then
+			elseif state == "stance" and (class == "DRUID" or class=="SHAMAN") then
 				f.text:SetText(L["Shapeshift"])--:upper())
 			else
 				f.text:SetText(MAS[state].localizedName)--:upper())
@@ -2046,7 +2044,7 @@ function NeuronGUI:VisEditorScrollFrameUpdate(frame, tableList, alt)
 	for i=1,numVisShown do
 
 		button = _G["NeuronBarEditorBarStatesVisEditorScrollFrameButton"..i]
-		button:SetChecked(nil)
+		button:SetChecked(false)
 
 		count = dataOffset + i
 
@@ -2189,7 +2187,7 @@ function NeuronGUI:SecondaryPresetsScrollFrameUpdate(frame, stateList, alt)
 	for i=1,numStatesShown do
 
 		button = _G["PresetsScrollFrameButton"..i] --"NeuronBarEditorBarStatesSecondaryPresetsScrollFrameButton"..i]
-		button:SetChecked(nil)
+		button:SetChecked(false)
 
 		count = statesOffset + i
 
@@ -2348,11 +2346,11 @@ function NeuronGUI:ActionListScrollFrame_OnLoad(frame)
 						if (i == self:GetID()) then
 
 							if (self.bar) then
-								self.bar:SetFauxState(self.state)
+								self.bar:FakeStateChange(self.state)
 							end
 
 						else
-							button:SetChecked(nil)
+							button:SetChecked(false)
 						end
 
 					end
@@ -2482,7 +2480,7 @@ function NeuronGUI:ActionListScrollFrameUpdate(frame)
 	for i=1,numShown do
 
 		button = _G["NeuronButtonEditorActionListScrollFrameButton"..i]
-		button:SetChecked(nil)
+		button:SetChecked(false)
 
 		count = dataOffset + i
 
@@ -2535,8 +2533,6 @@ function NeuronGUI:specUpdateIcon(button,state)
 			if (NeuronSpellCache[spell]) then
 				local spell_id = NeuronSpellCache[spell].spellID
 				texture = GetSpellTexture(spell_id)
-			elseif (NeuronCollectionCache[spell]) then
-				texture = NeuronCollectionCache[spell].icon
 			elseif (spell) then
 				texture = GetSpellTexture(spell)
 			end
@@ -2546,7 +2542,7 @@ function NeuronGUI:specUpdateIcon(button,state)
 		end
 
 	else
-		texture = button.iconframeicon:GetTexture()
+		texture = button.elements.IconFrameIcon:GetTexture()
 	end
 	return texture
 end
@@ -2562,8 +2558,8 @@ function NeuronGUI:MacroEditorUpdate()
 			buttonSpec = specoveride
 
 			--Sets spec tab to current spec
-			NBTNE.spec1:SetChecked(nil)
-			NBTNE.spec2:SetChecked(nil)
+			NBTNE.spec1:SetChecked(false)
+			NBTNE.spec2:SetChecked(false)
 			NBTNE["spec"..buttonSpec]:SetChecked(true)
 
 			--Sets current spec marker to proper tab
@@ -2613,7 +2609,7 @@ function NeuronGUI:MacroEditorUpdate()
 		if (data) then
 			NBTNE.macroedit.edit:SetText(data.macro_Text)
 			if (not data.macro_Icon) then
-				NBTNE.macroicon.icon:SetTexture(NeuronGUI:specUpdateIcon(button, state))--button.iconframeicon:GetTexture())
+				NBTNE.macroicon.icon:SetTexture(NeuronGUI:specUpdateIcon(button, state))--button.elements.IconFrameIcon:GetTexture())
 			elseif (data.macro_Icon == "BLANK") then
 				NBTNE.macroicon.icon:SetTexture("")
 			else
@@ -2702,7 +2698,7 @@ function NeuronGUI:macroText_OnTextChanged(frame)
 			if (button and buttonSpec and state) then
 				if button.DB[buttonSpec][state] then
 					button.DB[buttonSpec][state].macro_Text = frame:GetText()
-					button.DB[buttonSpec][state].macro_Watch = false
+					button.DB[buttonSpec][state].macro_BlizzMacro = false
 				else
 					--Neuron:Print("nothinghere")
 					--button.DB[buttonSpec][state] = button:build()
@@ -2750,7 +2746,7 @@ function NeuronGUI:macroButton_Changed(frame, button, down)
 	frame.click = true
 	frame.elapsed = 0
 	frame:GetParent():Hide()
-	frame:SetChecked(nil)
+	frame:SetChecked(false)
 
 end
 
@@ -2837,7 +2833,7 @@ function NeuronGUI:macroIconOnClick(frame)
 	end
 
 	if frame.SetChecked then
-		frame:SetChecked(nil)
+		frame:SetChecked(false)
 	end
 
 
@@ -2870,7 +2866,7 @@ function NeuronGUI:updateIconList()
 				local _, _, numSlots, isKnown = GetFlyoutInfo(ID);
 				if (isKnown and numSlots > 0) then
 					for k = 1, numSlots do
-						local spellID, overrideSpellID, isKnown = GetFlyoutSlotInfo(ID, k)
+						local spellID, _, isKnown = GetFlyoutSlotInfo(ID, k)
 						if (isKnown) then
 							local fileID = GetSpellTexture(spellID);
 							if (fileID) then
@@ -2978,7 +2974,7 @@ function NeuronGUI:customPathOnShow(frame)
 
 		if (button.data.macro_Icon) then
 			--Needs fixing
-			local text = button.data.macro_Icon:gsub("INTERFACE\\", "")
+			local text = button.data.macro_Icon
 
 			frame:SetText(text)
 
@@ -3026,10 +3022,9 @@ function NeuronGUI:ResetButtonFields()
 	data.macro_Text = ""
 	data.macro_Icon = false
 	data.macro_Name = ""
-	data.macro_Auto = false
-	data.macro_Watch = false
-	data.macro_Equip = false
 	data.macro_Note = ""
+	data.macro_BlizzMacro = false
+	data.macro_EquipmentSet = false
 
 	NBTNE.nameedit:SetText("")
 	NBTNE.noteedit:SetFocus()
@@ -3053,7 +3048,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 					PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 				end
 			else
-				tab:SetChecked(nil)
+				tab:SetChecked(false)
 			end
 			tab:SetBackdropBorderColor(.5, .5, .5 , .5)
 
@@ -3071,7 +3066,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 				end
 				panel:Show()
 			else
-				tab:SetChecked(nil)
+				tab:SetChecked(false)
 				panel:Hide()
 			end
 
@@ -3168,7 +3163,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.reset_button, "RIGHT", -1, 1.25)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 1 ; NeuronGUI:ButtonEditorUpdate() end)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText("Spec1")
 	f.tooltipText = L["Display button for specialization 1"]
 	frame.spec1 = f; frame.specs[f] = frame.spec1
@@ -3189,7 +3184,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec1, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 2 ; NeuronGUI:ButtonEditorUpdate() end)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText("Spec2")
 	f.tooltipText = L["Display button for specialization 2"]
 	frame.spec2 = f; frame.specs[f] = frame.spec2
@@ -3199,7 +3194,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec2, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 3 ; NeuronGUI:ButtonEditorUpdate() end)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText("Spec3")
 	f.tooltipText = L["Display button for specialization 3"]
 	frame.spec3 = f; frame.specs[f] = frame.spec3
@@ -3209,7 +3204,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetHeight(33.5)
 	f:SetPoint("LEFT", frame.spec3, "RIGHT", 0, 0)
 	f:SetScript("OnClick", function(self) SpecOnClick(self); specoveride = 4 ; NeuronGUI:ButtonEditorUpdate() end)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText("Spec4")
 	f.tooltipText = L["Display button for specialization 4"]
 	frame.spec4 = f; frame.specs[f] = frame.spec4
@@ -3476,7 +3471,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetPoint("RIGHT", frame.tab1, "RIGHT", 150, 0)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(nil)
+	f:SetChecked(false)
 	f.text:SetText(L["Flyout Options"])
 	frame.tab2 = f; frame.tabs[f] = frame.options
 
@@ -4175,7 +4170,7 @@ function NeuronGUI:StatusBarEditorUpdate(reset)
 				if (sb.config.sbType == f.sbType) then
 					f:SetChecked(1)
 				else
-					f:SetChecked(nil)
+					f:SetChecked(false)
 				end
 
 			end

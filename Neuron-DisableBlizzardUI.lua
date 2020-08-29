@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 local hiddenFrame = CreateFrame('Frame', nil, UIParent, 'SecureFrameTemplate');
 Neuron.hiddenFrame = hiddenFrame
@@ -86,32 +86,32 @@ function Neuron:HideBlizzardUI()
 
 
 	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
-	if (not Neuron:IsHooked('ActionButton_OnEvent')) then
+	if not Neuron:IsHooked('ActionButton_OnEvent') then
 		Neuron:RawHook('ActionButton_OnEvent', function() end, true)
 	end
 
-	if (not Neuron:IsHooked('ActionButton_Update')) then
+	if not Neuron:IsHooked('ActionButton_Update') then
 		Neuron:RawHook('ActionButton_Update', function() end, true)
 	end
 
-	if (not Neuron:IsHooked('MultiActionBar_Update')) then
+	if not Neuron:IsHooked('MultiActionBar_Update') then
 		Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
 
-	if (not Neuron:IsHooked('ActionButton_HideGrid')) then
+	if not Neuron:IsHooked('ActionButton_HideGrid') then
 		Neuron:RawHook('ActionButton_HideGrid', function() end, true)
 	end
 
-	if (not Neuron:IsHooked('ActionButton_ShowGrid')) then
+	if not Neuron:IsHooked('ActionButton_ShowGrid') then
 		Neuron:RawHook('ActionButton_ShowGrid', function() end, true)
 	end
 
-	if (not Neuron:IsHooked('PetActionBar_Update')) then
+	if not Neuron:IsHooked('PetActionBar_Update') then
 		Neuron:RawHook('PetActionBar_Update', function() end, true)
 	end
 
 	if not Neuron.isWoWClassic then
-		if (not Neuron:IsHooked('OverrideActionBar_UpdateSkin')) then
+		if not Neuron:IsHooked('OverrideActionBar_UpdateSkin') then
 			Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
 		end
 	end
@@ -124,11 +124,11 @@ function Neuron:ToggleBlizzUI()
 
 	local DB = Neuron.db.profile
 
-	if (InCombatLockdown()) then
+	if InCombatLockdown() then
 		return
 	end
 
-	if (DB.blizzbar == true) then
+	if DB.blizzbar == true then
 		DB.blizzbar = false
 		Neuron:HideBlizzardUI()
 		StaticPopup_Show("ReloadUI")

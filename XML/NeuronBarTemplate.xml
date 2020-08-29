@@ -17,9 +17,9 @@
 
 	Copyright for portions of Neuron are held by Connor Chenoweth,
 	a.k.a Maul, 2014 as part of his original project, Ion. All other
-	copyrights for Neuron are held by Britt Yazel, 2017-2019.-->
+	copyrights for Neuron are held by Britt Yazel, 2017-2020.-->
 
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://github.com/Ellypse/wow-ui-source/blob/live/FrameXML/UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://github.com/Gethe/wow-ui-source/blob/live/FrameXML/UI.xsd">
 
 	<Button name="NeuronBarTemplate" enableMouse="true" movable="true" frameStrata="MEDIUM" virtual="true" inherits="SecureHandlerStateTemplate" >
 		<Layers>

@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class BUTTON : CheckButton @define BUTTON as inheriting from CheckButton
 local BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
@@ -54,10 +54,13 @@ function BUTTON.new(bar, buttonID,baseObj, barClass, objType, template)
 	----------------------
 	--returns a table of the names of all the child objects for a given frame
 	local objects = Neuron:GetParentKeys(newButton)
+
+	--table to hold all of our captured frame element handles
+	newButton.elements = {}
 	--populates the button with all the Icon,Shine,Cooldown frame references
 	for k,v in pairs(objects) do
 		local name = (v):gsub(newButton:GetName(), "")
-		newButton[name:lower()] = _G[v]
+		newButton.elements[name] = _G[v]
 	end
 	-----------------------
 
@@ -97,19 +100,19 @@ function BUTTON:ChangeObject(object)
 
 	local newObj, newEditor = false, false
 
-	if (Neuron.enteredWorld) then
+	if Neuron.enteredWorld then
 
-		if (object and object ~= Neuron.CurrentObject) then
+		if object and object ~= Neuron.CurrentObject then
 
-			if (Neuron.CurrentObject and Neuron.CurrentObject.editor.editType ~= object.editor.editType) then
+			if Neuron.CurrentObject and Neuron.CurrentObject.editor.editType ~= object.editor.editType then
 				newEditor = true
 			end
 
-			if (Neuron.CurrentObject and Neuron.CurrentObject.bar ~= object.bar) then
+			if Neuron.CurrentObject and Neuron.CurrentObject.bar ~= object.bar then
 
 				local bar = Neuron.CurrentObject.bar
 
-				if (bar.handler:GetAttribute("assertstate")) then
+				if bar.handler:GetAttribute("assertstate") then
 					bar.handler:SetAttribute("state-"..bar.handler:GetAttribute("assertstate"), bar.handler:GetAttribute("activestate") or "homestate")
 				end
 
@@ -127,12 +130,12 @@ function BUTTON:ChangeObject(object)
 			newObj = true
 		end
 
-		if (not object) then
+		if not object then
 			Neuron.CurrentObject = nil
 		end
 
 		for k,v in pairs(Neuron.EDITIndex) do
-			if (not object or v ~= object.editor) then
+			if not object or v ~= object.editor then
 				v.select:Hide()
 			end
 		end
@@ -141,10 +144,35 @@ function BUTTON:ChangeObject(object)
 	return newObj, newEditor
 end
 
+function BUTTON:CancelCooldownTimer(stopAnimation)
+	--cleanup so on state changes the cooldowns don't persist
+	if self:TimeLeft(self.elements.IconFrameCooldown.cooldownTimer) ~= 0 then
+		self:CancelTimer(self.elements.IconFrameCooldown.cooldownTimer)
+	end
+
+	if self:TimeLeft(self.elements.IconFrameCooldown.cooldownUpdateTimer) ~= 0 then
+		self:CancelTimer(self.elements.IconFrameCooldown.cooldownUpdateTimer)
+	end
+
+	self.elements.IconFrameCooldown.timer:SetText("")
+
+	self.elements.IconFrameCooldown.showCountdownTimer = false
+	self.elements.IconFrameCooldown.showCountdownAlpha = false
+
+	--clear previous sweeping cooldown animations
+	if stopAnimation then
+		CooldownFrame_Clear(self.elements.IconFrameCooldown) --clear the cooldown frame
+	end
+
+	self:UpdateObjectVisibility()
+end
+
 
 function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, modrate, color1, color2, showCountdownAlpha, charges, maxCharges)
 
 	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
+		--if there's currently a timer, cancel it
+		self:CancelCooldownTimer(true)
 		return
 	end
 
@@ -152,34 +180,32 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 
 		if duration > 2 then --sets non GCD cooldowns
 			if charges and charges > 0 and maxCharges > 1 then
-				CooldownFrame_Set(self.iconframechargecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation. Show Draw Edge.
+				self.elements.IconFrameCooldown:SetDrawSwipe(false);
+				CooldownFrame_Set(self.elements.IconFrameCooldown, start, duration, enable, true, modrate) --set clock style cooldown animation. Show Draw Edge.
 			else
-				CooldownFrame_Set(self.iconframecooldown, start, duration, enable, true, modrate) --set clock style cooldown animation for ability cooldown. Show Draw Edge.
+				self.elements.IconFrameCooldown:SetDrawSwipe(true);
+				CooldownFrame_Set(self.elements.IconFrameCooldown, start, duration, enable, true, modrate) --set clock style cooldown animation for ability cooldown. Show Draw Edge.
 			end
 		else --sets GCD cooldowns
-			CooldownFrame_Set(self.iconframecooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
-		end
-
-		-- Clear the charge cooldown frame if it is still going from a different ability in a different state (i.e. frenzied regen in the same spot as Swiftmend)
-		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
-			CooldownFrame_Clear(self.iconframechargecooldown)
+			self.elements.IconFrameCooldown:SetDrawSwipe(true);
+			CooldownFrame_Set(self.elements.IconFrameCooldown, start, duration, enable, false, modrate) --don't show the Draw Edge for the GCD
 		end
 
 		--this is only for abilities that have CD's >4 sec. Any less than that and we don't want to track the CD with text or alpha, just with the standard animation
-		if (duration >= Neuron.TIMERLIMIT) then --if spells have a cooldown less than 4sec then don't show a full cooldown
+		if duration >= Neuron.TIMERLIMIT then --if spells have a cooldown less than 4sec then don't show a full cooldown
 
-			if (showCountdownTimer or showCountdownAlpha) then --only set a timer if we explicitely want to (this saves CPU for a lot of people)
+			if showCountdownTimer or showCountdownAlpha then --only set a timer if we explicitely want to (this saves CPU for a lot of people)
 
 				--set a local variable to the boolean state of either Timer or the Alpha
-				self.iconframecooldown.showCountdownTimer = showCountdownTimer
-				self.iconframecooldown.showCountdownAlpha = showCountdownAlpha
+				self.elements.IconFrameCooldown.showCountdownTimer = showCountdownTimer
+				self.elements.IconFrameCooldown.showCountdownAlpha = showCountdownAlpha
 
 
-				self.iconframecooldown.charges = charges or 0 --used to know if we should set alpha on the button (if cdAlpha is enabled) immediately, or if we need to wait for charges to run out
+				self.elements.IconFrameCooldown.charges = charges or 0 --used to know if we should set alpha on the button (if cdAlpha is enabled) immediately, or if we need to wait for charges to run out
 
 				--clear old timer before starting a new one
-				if self:TimeLeft(self.iconframecooldown.cooldownTimer) ~= 0 then
-					self:CancelTimer(self.iconframecooldown.cooldownTimer)
+				if self:TimeLeft(self.elements.IconFrameCooldown.cooldownTimer) ~= 0 then
+					self:CancelTimer(self.elements.IconFrameCooldown.cooldownTimer)
 				end
 
 				--Get the remaining time left so when we re-call the timer when switching back to a state it has the correct time left instead of the full time
@@ -191,159 +217,112 @@ function BUTTON:SetCooldownTimer(start, duration, enable, showCountdownTimer, mo
 				end
 
 				--set timer that is both our cooldown counter, but also the cancels the repeating updating timer at the end
-				self.iconframecooldown.cooldownTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over (to fully finish the animations/alpha transition)
-
+				self.elements.IconFrameCooldown.cooldownTimer = self:ScheduleTimer(function() self:CancelTimer(self.elements.IconFrameCooldown.cooldownUpdateTimer) end, timeleft + 1) --add 1 to the length of the timer to keep it going for 1 second once the spell cd is over (to fully finish the animations/alpha transition)
 
 				--clear old timer before starting a new one
-				if self:TimeLeft(self.iconframecooldown.cooldownUpdateTimer) ~= 0 then
-					self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
+				if self:TimeLeft(self.elements.IconFrameCooldown.cooldownUpdateTimer) ~= 0 then
+					self:CancelTimer(self.elements.IconFrameCooldown.cooldownUpdateTimer)
 				end
 
 				--schedule a repeating timer that is physically keeping track of the countdown and switching the alpha and count text
-				self.iconframecooldown.cooldownUpdateTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.20)
-				self.iconframecooldown.normalcolor = color1
-				self.iconframecooldown.expirecolor = color2
+				self.elements.IconFrameCooldown.cooldownUpdateTimer = self:ScheduleRepeatingTimer("CooldownCounterUpdate", 0.20)
+				self.elements.IconFrameCooldown.normalcolor = color1
+				self.elements.IconFrameCooldown.expirecolor = color2
 			else
-				self.iconframecooldown.showCountdownTimer = false
-				self.iconframecooldown.showCountdownAlpha = false
+				self.elements.IconFrameCooldown.showCountdownTimer = false
+				self.elements.IconFrameCooldown.showCountdownAlpha = false
 			end
 
 		else
-			--Cancel Timers as they're unnecessary
-			self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
-			self.iconframecooldown.timer:SetText("")
-
-			if self.data.alpha then
-				self:SetAlpha(self.data.alpha) --try to restore the original alpha
-			else
-				self:SetAlpha(1)
-			end
-
-			self.iconframecooldown.showCountdownTimer = false
-			self.iconframecooldown.showCountdownAlpha = false
+			self:CancelCooldownTimer(false)
 		end
 	else
-		--cleanup so on state changes the cooldowns don't persist
-		self:CancelTimer(self.iconframecooldown.cooldownUpdateTimer)
-		self.iconframecooldown.timer:SetText("")
-
-		if self.data.alpha then
-			self:SetAlpha(self.data.alpha) --try to restore the original alpha
-		else
-			self:SetAlpha(1)
-		end
-
-		self.iconframecooldown.showCountdownTimer = false
-		self.iconframecooldown.showCountdownAlpha = false
-
-		--clear previous sweeping cooldown animations
-		CooldownFrame_Clear(self.iconframecooldown) --clear the cooldown frame
-		if not charges or charges == maxCharges or maxCharges == 1 then --if ability does not support charges then clear the charge cooldown frame
-			CooldownFrame_Clear(self.iconframechargecooldown)
-		end
+		self:CancelCooldownTimer(true)
 	end
-
-	--this is important for items like the ExtraActionButton who use Alpha to show and hide itself (to avoid in-combat restrictions). Without it the button would stay visible
-	self:SetObjectVisibility()
 end
 
 
----this function is called by a repeating timer set in SetCooldownTimer every 0.2sec, which is automatically is set to terminate 1sec after the cooldown timer ends
+---this function is called by a repeating timer set in SetCooldownTimer every 0.2sec, which is autoGmatically is set to terminate 1sec after the cooldown timer ends
 ---this function's job is to overlay the countdown text on a button and set the button's cooldown alpha
 function BUTTON:CooldownCounterUpdate()
 
 	local coolDown, formatted, size
 
-	local normalcolor = self.iconframecooldown.normalcolor
-	local expirecolor = self.iconframecooldown.expirecolor
+	local normalcolor = self.elements.IconFrameCooldown.normalcolor
+	local expirecolor = self.elements.IconFrameCooldown.expirecolor
 
-	coolDown = self:TimeLeft(self.iconframecooldown.cooldownTimer) - 1 --subtract 1 from the timer because we added 1 in SetCooldownTimer to keep the timer runing for 1 extra second after the spell
+	coolDown = self:TimeLeft(self.elements.IconFrameCooldown.cooldownTimer) - 1 --subtract 1 from the timer because we added 1 in SetCooldownTimer to keep the timer runing for 1 extra second after the spell
 
-	if self.iconframecooldown.showCountdownTimer then --check if flag is set, otherwise skip
+	if self.elements.IconFrameCooldown.showCountdownTimer then --check if flag is set, otherwise skip
 
-		if (coolDown < 1) then
-			if (coolDown <= 0) then
-				self.iconframecooldown.timer:SetText("")
-				self.iconframecooldown.expirecolor = nil
-				self.iconframecooldown.cdsize = nil
+		if coolDown < 1 then
+			if coolDown <= 0 then
+				self.elements.IconFrameCooldown.timer:SetText("")
+				self.elements.IconFrameCooldown.expirecolor = nil
+				self.elements.IconFrameCooldown.cdsize = nil
 
-			elseif (coolDown > 0) then
-				if (self.iconframecooldown.alphafade) then
-					self.iconframecooldown:SetAlpha(coolDown)
+			elseif coolDown > 0 then
+				if self.elements.IconFrameCooldown.alphafade then
+					self.elements.IconFrameCooldown:SetAlpha(coolDown)
 				end
 			end
-
 		else
-
-			if (coolDown >= 86400) then --append a "d" if the timer is longer than 1 day
+			if coolDown >= 86400 then --append a "d" if the timer is longer than 1 day
 				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
 				size = self:GetWidth()*0.3
-				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.elements.IconFrameCooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
-			elseif (coolDown >= 3600) then --append a "h" if the timer is longer than 1 hour
+			elseif coolDown >= 3600 then --append a "h" if the timer is longer than 1 hour
 				formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
 				size = self:GetWidth()*0.3
-				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.elements.IconFrameCooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
-			elseif (coolDown >= 60) then --append a "m" if the timer is longer than 1 min
+			elseif coolDown >= 60 then --append a "m" if the timer is longer than 1 min
 				formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
 				size = self:GetWidth()*0.3
-				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.elements.IconFrameCooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
-			elseif (coolDown >=6) then --this is the 'normal' countdown text state
+			elseif coolDown >=6 then --this is the 'normal' countdown text state
 				formatted = string.format( "%.0f",coolDown)
 				size = self:GetWidth()*0.45
-				self.iconframecooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.elements.IconFrameCooldown.timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
-			elseif (coolDown < 6) then --this is the countdown text state but with the text larger and set to the expire color (usually red)
+			elseif coolDown < 6 then --this is the countdown text state but with the text larger and set to the expire color (usually red)
 				formatted = string.format( "%.0f",coolDown)
 				size = self:GetWidth()*0.6
-				if (expirecolor) then
-					self.iconframecooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
+				if expirecolor then
+					self.elements.IconFrameCooldown.timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
 					expirecolor = nil
 				end
 
 			end
 
-			if (not self.iconframecooldown.cdsize or self.iconframecooldown.cdsize ~= size) then
-				self.iconframecooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
-				self.iconframecooldown.cdsize = size
+			if not self.elements.IconFrameCooldown.cdsize or self.elements.IconFrameCooldown.cdsize ~= size then
+				self.elements.IconFrameCooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
+				self.elements.IconFrameCooldown.cdsize = size
 			end
 
-			self.iconframecooldown.timer:SetText(formatted)
-
+			self.elements.IconFrameCooldown.timer:SetText(formatted)
 		end
-
 	end
 
-
-	if self.iconframecooldown.showCountdownAlpha and self.iconframecooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
-
+	if self.elements.IconFrameCooldown.showCountdownAlpha and self.elements.IconFrameCooldown.charges == 0 then --check if flag is set and if charges are nil or zero, otherwise skip
 		if coolDown > 0 then
-			self:SetAlpha(self.cdAlpha)
-		else
-			if self.data.alpha then
-				self:SetAlpha(self.data.alpha) --try to restore the original alpha
-			else
-				self:SetAlpha(1)
-			end
-		end
-	else
-		if self.data.alpha then
-			self:SetAlpha(self.data.alpha) --try to restore the original alpha
+			self:SetAlpha(0.2)
 		else
 			self:SetAlpha(1)
 		end
+	else
+		self:SetAlpha(1)
 	end
-
 end
 
 
 function BUTTON:SetData(bar)
-	if (bar) then
+	if bar then
 
 		self.bar = bar
 
@@ -366,15 +345,6 @@ function BUTTON:SetData(bar)
 
 		self.cdText = bar.data.cdText
 
-		if (bar.data.cdAlpha) then
-			self.cdAlpha = 0.2
-		else
-			self.cdAlpha = 1
-		end
-
-		self.auraText = bar.data.auraText
-		self.auraInd = bar.data.auraInd
-
 		self.rangeInd = bar.data.rangeInd
 
 		self.upClicks = bar.data.upClicks
@@ -387,46 +357,59 @@ function BUTTON:SetData(bar)
 		self.macroColor = bar.data.macroColor
 		self.countColor = bar.data.countColor
 
-		self.macroname:SetText(self.data.macro_Name) --custom macro's weren't showing the name
+		self.elements.Name:SetText(self.data.macro_Name) --custom macro's weren't showing the name
 
-		if (not self.cdcolor1) then
-			self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+		if not self.cdcolor1 then
+			if type(bar.data.cdcolor1) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+			else
+				bar.data.cdcolor1 =  nil
+				self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
+			end
 		else
 			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
 		end
 
-		if (not self.cdcolor2) then
-			self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+		if not self.cdcolor2 then
+			if type(bar.data.cdcolor2) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+			else
+				bar.data.cdcolor2 =  nil
+				self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
+			end
 		else
 			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
 		end
 
-		if (not self.auracolor1) then
-			self.auracolor1 = { (";"):split(bar.data.auracolor1) }
-		else
-			self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], self.auracolor1[4] = (";"):split(bar.data.auracolor1)
-		end
-
-		if (not self.auracolor2) then
-			self.auracolor2 = { (";"):split(bar.data.auracolor2) }
-		else
-			self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], self.auracolor2[4] = (";"):split(bar.data.auracolor2)
-		end
-
-		if (not self.buffcolor) then
-			self.buffcolor = { (";"):split(bar.data.buffcolor) }
+		if not self.buffcolor then
+			if type(bar.data.buffcolor) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.buffcolor = { (";"):split(bar.data.buffcolor) }
+			else
+				bar.data.buffcolor = nil
+				self.buffcolor = { (";"):split(bar.data.buffcolor) }
+			end
 		else
 			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.data.buffcolor)
 		end
 
-		if (not self.debuffcolor) then
-			self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
+		if not self.debuffcolor then
+			if type(bar.data.debuffcolor) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
+			else
+				bar.data.debuffcolor = nil
+				self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
+			end
 		else
 			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
 		end
 
-		if (not self.rangecolor) then
-			self.rangecolor = { (";"):split(bar.data.rangecolor) }
+		if not self.rangecolor then
+			if type(bar.data.rangecolor) == "string" then --TODO: This is temp during the transition to NeuronNext. REMOVE EVENTUALLY
+				self.rangecolor = { (";"):split(bar.data.rangecolor) }
+			else
+				bar.data.rangecolor = nil
+				self.rangecolor = { (";"):split(bar.data.rangecolor) }
+			end
 		else
 			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.data.rangecolor)
 		end
@@ -436,48 +419,48 @@ function BUTTON:SetData(bar)
 		self:SetScale(bar.data.scale)
 	end
 
-	if (self.bindText) then
-		self.hotkey:Show()
-		if (self.bindColor) then
-			self.hotkey:SetTextColor((";"):split(self.bindColor))
+	if self.bindText then
+		self.elements.Hotkey:Show()
+		if self.bindColor then
+			self.elements.Hotkey:SetTextColor((";"):split(self.bindColor))
 		end
 	else
-		self.hotkey:Hide()
+		self.elements.Hotkey:Hide()
 	end
 
-	if (self.macroText) then
-		self.macroname:Show()
-		if (self.macroColor) then
-			self.macroname:SetTextColor((";"):split(self.macroColor))
+	if self.macroText then
+		self.elements.Name:Show()
+		if self.macroColor then
+			self.elements.Name:SetTextColor((";"):split(self.macroColor))
 		end
 	else
-		self.macroname:Hide()
+		self.elements.Name:Hide()
 	end
 
-	if (self.countText) then
-		self.count:Show()
-		if (self.countColor) then
-			self.count:SetTextColor((";"):split(self.countColor))
+	if self.countText then
+		self.elements.Count:Show()
+		if self.countColor then
+			self.elements.Count:SetTextColor((";"):split(self.countColor))
 		end
 	else
-		self.count:Hide()
+		self.elements.Count:Hide()
 	end
 
 	local down, up = "", ""
 
-	if (self.upClicks) then up = up.."AnyUp" end
-	if (self.downClicks) then down = down.."AnyDown" end
+	if self.upClicks then up = up.."AnyUp" end
+	if self.downClicks then down = down.."AnyDown" end
 
 	self:RegisterForClicks(down, up)
 	self:RegisterForDrag("LeftButton", "RightButton")
 
-	if (not self.equipcolor) then
+	if not self.equipcolor then
 		self.equipcolor = { 0.1, 1, 0.1, 1 }
 	else
 		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3], self.equipcolor[4] = 0.1, 1, 0.1, 1
 	end
 
-	if (not self.manacolor) then
+	if not self.manacolor then
 		self.manacolor = { 0.5, 0.5, 1.0, 1 }
 	else
 		self.manacolor[1], self.manacolor[2], self.manacolor[3], self.manacolor[4] = 0.5, 0.5, 1.0, 1
@@ -485,7 +468,7 @@ function BUTTON:SetData(bar)
 
 	self:GetSkinned()
 
-	self:UpdateTimers()
+	self:UpdateCooldown()
 end
 
 
@@ -497,33 +480,17 @@ function BUTTON:LoadData()
 end
 
 
-function BUTTON:SetObjectVisibility()
-
-	if self.bar.class ~= "ActionBar" then --TODO: I'd like to not have separate logic for ActionBars in the future
-		if self.isShown then
-			if self.data.alpha then
-				self:SetAlpha(self.data.alpha) --try to restore alpha value instead of default to 1
-			else
-				self:SetAlpha(1)
-			end
-		else
-			self:SetAlpha(0)
-		end
+function BUTTON:UpdateObjectVisibility()
+	if self.isShown or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+		self.isShown = true
 	else
+		self.isShown = false
+	end
 
-		if InCombatLockdown() then
-			return
-		end
-
-		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't querry self.showGrid directly
-		self:SetAttribute("isshown", show)
-
-		if self.isShown then
-			self:Show()
-		else
-			self:Hide()
-		end
-
+	if self.isShown then
+		self:SetAlpha(1)
+	else
+		self:SetAlpha(0)
 	end
 end
 
@@ -555,27 +522,27 @@ end
 
 function BUTTON:SetSkinned(flyout)
 
-	if (SKIN) then
+	if SKIN then
 		local bar = self.bar
 
-		if (bar) then
+		if bar then
 			local btnData = {
-				Normal = self.normaltexture,
-				Icon = self.iconframeicon,
-				HotKey = self.hotkey,
-				Count = self.count,
-				Name = self.name,
-				Border = self.border,
-				Shine = self.shine,
-				Cooldown = self.iconframecooldown,
-				AutoCastable = self.autocastable,
-				Checked = self.checkedtexture,
+				Normal = self.elements.NormalTexture,
+				Icon = self.elements.IconFrameIcon,
+				HotKey = self.elements.Hotkey,
+				Count = self.elements.Count,
+				Name = self.elements.Name,
+				Border = self.elements.Border,
+				Shine = self.elements.Shine,
+				Cooldown = self.elements.IconFrameCooldown,
+				AutoCastable = self.elements.AutoCastable,
+				Checked = self.elements.CheckedTexture,
 				Pushed = self:GetPushedTexture(),
 				Disabled = self:GetDisabledTexture(),
-				Highlight = self.highlighttexture,
+				Highlight = self.elements.HighlightTexture,
 			}
 
-			if (flyout) then
+			if flyout then
 				SKIN:Group("Neuron", self.anchor.bar.data.name):AddButton(self, btnData, "Action")
 			else
 				SKIN:Group("Neuron", bar.data.name):AddButton(self, btnData, "Action")
@@ -587,14 +554,14 @@ function BUTTON:SetSkinned(flyout)
 end
 
 function BUTTON:GetSkinned()
-	if (self.__MSQ_NormalTexture) then
+	if self.__MSQ_NormalTexture then
 		local Skin = self.__MSQ_NormalSkin
 
-		if (Skin) then
+		if Skin then
 			self.hasAction = Skin.Texture or false
 			self.noAction = Skin.EmptyTexture or false
 
-			if (self.__MSQ_Shape) then
+			if self.__MSQ_Shape then
 				self.shape = self.__MSQ_Shape:lower()
 			else
 				self.shape = "square"
@@ -618,273 +585,40 @@ end
 function BUTTON:HasAction()
 	local hasAction = self.data.macro_Text
 
-	if (self.actionID) then
-		if (self.actionID == 0) then
+	if self.actionID then
+		if self.actionID == 0 then
 			return true
 		else
 			return HasAction(self.actionID)
 		end
 
-	elseif (hasAction and #hasAction>0) then
+	elseif hasAction and #hasAction>0 then
 		return true
 	else
 		return false
 	end
 end
 
-
----Updates the buttons "count", i.e. the spell charges
-function BUTTON:UpdateSpellCount(spell)
-	local charges, maxCharges = GetSpellCharges(spell)
-
-	local count = GetSpellCount(spell)
-
-	if (maxCharges and maxCharges > 1) then
-		self.count:SetText(charges)
-	elseif count and count > 0 then
-		self.count:SetText(count)
-	else
-		self.count:SetText("")
-	end
-end
-
-
----Updates the buttons "count", i.e. the item stack size
-function BUTTON:UpdateItemCount(item)
-
-	local count = GetItemCount(item,nil,true)
-
-	if (count and count > 1) then
-		self.count:SetText(count)
-	else
-		self.count:SetText("")
-	end
-end
-
-
-function BUTTON:UpdateCooldown()
-	local spell, item, show = self.macrospell, self.macroitem, self.macroshow
-
-	if (self.actionID) then
-		self:ACTION_SetCooldown(self.actionID)
-	elseif (show and #show>0) then
-		if (NeuronItemCache[show]) then
-			self:SetItemCooldown(show)
-		else
-			self:SetSpellCooldown(show)
-		end
-
-	elseif (spell and #spell>0) then
-		self:SetSpellCooldown(spell)
-	elseif (item and #item>0) then
-		self:SetItemCooldown(item)
-	else
-		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
-		self:SetCooldownTimer()
-	end
-end
-
-
-function BUTTON:SetSpellCooldown(spell)
-
-	if type(spell) == "string" then
-		spell = (spell):lower()
-	end
-
-	local start, duration, enable, modrate = GetSpellCooldown(spell)
-	local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(spell)
-
-	if (charges and maxCharges and maxCharges > 0 and charges < maxCharges) then
-		self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
-	else
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
-	end
-end
-
-
-
-function BUTTON:SetItemCooldown(item)
-
-	local id = NeuronItemCache[item]
-
-	if (id) then
-
-		local start, duration, enable, modrate = GetItemCooldown(id)
-
-		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
-	end
-end
-
-function BUTTON:ACTION_SetCooldown(action)
-
-	local actionID = tonumber(action)
-
-	if (actionID) then
-
-		if (HasAction(actionID)) then
-
-			local start, duration, enable, modrate = GetActionCooldown(actionID)
-
-			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2, self.cdAlpha)
-		end
-	end
-end
-
-
-function BUTTON:UpdateAuraWatch(unit, spell)
-
-	local uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count, auraColor
-
-	if (spell and (unit == self.unit or unit == "player")) then
-		spell = spell:gsub("%s*%(.+%)", ""):lower()
-
-		if (Neuron.unitAuras[unit][spell]) then
-			uaw_auraType, uaw_duration, uaw_timeLeft, uaw_count = (":"):split(Neuron.unitAuras[unit][spell])
-
-			uaw_duration = tonumber(uaw_duration)
-			uaw_timeLeft = tonumber(uaw_timeLeft)
-
-			--if (self.auraText or self.auraInd) then
-			if (self.auraInd) then
-
-				--self.iconframecooldown.showAuraCountdown = self.auraText
-				self.iconframecooldown.showAuraBorder = self.auraInd
-
-				self.iconframecooldown.auraType = uaw_auraType
-				self.iconframecooldown.unit = unit
-
-
-				--clear old timer before starting a new one
-				if self:TimeLeft(self.iconframecooldown.auraTimer) ~= 0 then
-					self:CancelTimer(self.iconframecooldown.auraTimer)
-				end
-
-				local timeLeft = uaw_timeLeft - GetTime()
-
-				self.iconframecooldown.auraTimer = self:ScheduleTimer(function() self:CancelTimer(self.iconframecooldown.auraUpdateTimer) end, timeLeft + 1)
-
-
-				--clear old timer before starting a new one
-				if self:TimeLeft(self.iconframecooldown.auraUpdateTimer) ~= 0 then
-					self:CancelTimer(self.iconframecooldown.auraUpdateTimer)
-				end
-
-				self.iconframecooldown.auraUpdateTimer = self:ScheduleRepeatingTimer("AuraCounterUpdate", 0.20)
-
-			else
-				--self.iconframecooldown.showAuraCountdown = false
-				self.iconframecooldown.showAuraBorder = false
-			end
-
-			self.auraWatchUnit = unit
-
-		elseif (self.auraWatchUnit == unit) then
-
-			self:CancelTimer(self.iconframecooldown.auraUpdateTimer)
-			--self.iconframecooldown.timer:SetText("")
-			self.border:Hide()
-
-			--self.iconframecooldown.showAuraCountdown = false
-			self.iconframecooldown.showAuraBorder = false
-
-			self.auraWatchUnit = nil
-		end
-	end
-end
-
-
-function BUTTON:AuraCounterUpdate()
-
-	local coolDown, formatted, size
-
-	coolDown = self:TimeLeft(self.iconframecooldown.auraTimer) - 1
-
-	--[[if self.iconframecooldown.showAuraCountdown and not self.iconframecooldown.showCountdownTimer then
-
-		if (coolDown < 1) then
-			self.iconframecooldown.timer:SetText("")
-		else
-
-			formatted = string.format( "%.0f",coolDown)
-
-			size = self:GetWidth()*0.45
-
-			if (self.iconframecooldown.auraType == "buff") then
-				self.border:SetVertexColor(self.auracolor1[1], self.auracolor1[2], self.auracolor1[3], 1.0)
-			elseif (self.iconframecooldown.auraType == "debuff" and self.iconframecooldown.unit == "target") then
-				self.border:SetVertexColor(self.auracolor2[1], self.auracolor2[2], self.auracolor2[3], 1.0)
-			end
-
-			self.iconframecooldown.timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
-
-			self.iconframecooldown.timer:SetText(formatted)
-
-		end
-
-	end]]
-
-
-	if self.iconframecooldown.showAuraBorder then
-		if coolDown > 0 then
-			if (self.iconframecooldown.auraType == "buff") then
-				self.border:SetVertexColor(self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], 1.0)
-			elseif (self.iconframecooldown.auraType == "debuff" and self.iconframecooldown.unit == "target") then
-				self.border:SetVertexColor(self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], 1.0)
-			end
-
-			self.border:Show()
-
-		else
-			self.border:Hide()
-		end
-	else
-		self.border:Hide()
-	end
-
-end
-
-
------------------------------------------------------
---------------General Update Functions---------------
------------------------------------------------------
+-----------------------------------------------------------------------------------------
+------------------------------------- Update Functions ----------------------------------
+-----------------------------------------------------------------------------------------
 
 function BUTTON:UpdateAll()
 	self:UpdateData()
-	self:UpdateButton()
 	self:UpdateIcon()
-	self:UpdateState()
-	self:UpdateTimers()
+	self:UpdateStatus()
+	self:UpdateCooldown()
 	self:UpdateNormalTexture()
+	self:UpdateUsable()
 end
-
 
 function BUTTON:UpdateData()
 	-- empty --
 end
 
-function BUTTON:UpdateButton()
-	-- empty --
-end
-
-function BUTTON:UpdateIcon()
-	-- empty --
-end
-
-function BUTTON:UpdateState()
-	-- empty --
-end
-
-
-function BUTTON:UpdateTimers()
-	self:UpdateCooldown()
-	for k in pairs(Neuron.unitAuras) do
-		self:UpdateAuraWatch(k, self.macrospell)
-	end
-end
-
 function BUTTON:UpdateNormalTexture()
-	if (not self:GetSkinned()) then
-		if (self:HasAction()) then
+	if not self:GetSkinned() then
+		if self:HasAction() then
 			self:SetNormalTexture(self.hasAction or "")
 			self:GetNormalTexture():SetVertexColor(1,1,1,1)
 		else
@@ -894,5 +628,417 @@ function BUTTON:UpdateNormalTexture()
 	end
 end
 
-----------------------------------------------------------
-----------------------------------------------------------
+
+-----------------------------------------------------------------------------------------
+------------------------------------- Set Count/Charge ----------------------------------
+-----------------------------------------------------------------------------------------
+
+function BUTTON:UpdateCount()
+	if self.actionID then
+		self:UpdateActionCount()
+	elseif self.spell then
+		self:UpdateSpellCount()
+	elseif self.item then
+		self:UpdateItemCount()
+	else
+		self.elements.Count:SetText("")
+	end
+end
+
+
+---Updates the buttons "count", i.e. the spell charges
+function BUTTON:UpdateSpellCount()
+	local charges, maxCharges = GetSpellCharges(self.spell)
+	local count = GetSpellCount(self.spell)
+
+	if maxCharges and maxCharges > 1 then
+		self.elements.Count:SetText(charges)
+	elseif count and count > 0 then
+		self.elements.Count:SetText(count)
+	else
+		self.elements.Count:SetText("")
+	end
+end
+
+
+---Updates the buttons "count", i.e. the item stack size
+function BUTTON:UpdateItemCount()
+	local count = GetItemCount(self.item,nil,true)
+
+	if count and count > 1 then
+		self.elements.Count:SetText(count)
+	else
+		self.elements.Count:SetText("")
+	end
+end
+
+
+function BUTTON:UpdateActionCount()
+	local count = GetActionCount(self.actionID)
+
+	if count and count > 0 then
+		self.elements.Count:SetText(count)
+	else
+		self.elements.Count:SetText("")
+	end
+end
+
+-----------------------------------------------------------------------------------------
+------------------------------------- Set Cooldown --------------------------------------
+-----------------------------------------------------------------------------------------
+
+function BUTTON:UpdateCooldown()
+	if self.actionID then
+		self:UpdateActionCooldown()
+	elseif self.spell then
+		self:UpdateSpellCooldown()
+	elseif self.item then
+		self:UpdateItemCooldown()
+	else
+		--this is super important for removing CD's from empty buttons, like when switching states. You don't want the CD from one state to show on a different state.
+		self:CancelCooldownTimer(true)
+	end
+end
+
+function BUTTON:UpdateSpellCooldown()
+	if self.spell and self.isShown then
+		local start, duration, enable, modrate = GetSpellCooldown(self.spell)
+		local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(self.spell)
+
+		if charges and maxCharges and maxCharges > 0 and charges < maxCharges then
+			self:SetCooldownTimer(chStart, chDuration, enable, self.cdText, chargemodrate, self.cdcolor1, self.cdcolor2, self.bar.data.cdAlpha, charges, maxCharges) --only evoke charge cooldown (outer border) if charges are present and less than maxCharges (this is the case with the GCD)
+		else
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2,  self.bar.data.cdAlpha, charges, maxCharges) --call standard cooldown, handles both abilty cooldowns and GCD
+		end
+	else
+		self:CancelCooldownTimer(true)
+	end
+end
+
+function BUTTON:UpdateItemCooldown()
+	if self.item and self.isShown then
+		local start, duration, enable, modrate
+		if NeuronItemCache[self.item:lower()] then
+			start, duration, enable, modrate = GetItemCooldown(NeuronItemCache[self.item:lower()])
+		else
+			local itemID = GetItemInfoInstant(self.item)
+			start, duration, enable, modrate = GetItemCooldown(itemID)
+		end
+		self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2,  self.bar.data.cdAlpha)
+	else
+		self:CancelCooldownTimer(true)
+	end
+end
+
+function BUTTON:UpdateActionCooldown()
+	if self.actionID and self.isShown then
+		if HasAction(self.actionID) then
+			local start, duration, enable, modrate = GetActionCooldown(self.actionID)
+			self:SetCooldownTimer(start, duration, enable, self.cdText, modrate, self.cdcolor1, self.cdcolor2,  self.bar.data.cdAlpha)
+		end
+	else
+		self:CancelCooldownTimer(true)
+	end
+end
+
+-----------------------------------------------------------------------------------------
+------------------------------------- Set Usable ----------------------------------------
+-----------------------------------------------------------------------------------------
+
+function BUTTON:UpdateUsable()
+	if self.editmode then
+		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
+	elseif self.actionID then
+		self:UpdateUsableAction()
+	elseif self.spell then
+		self:UpdateUsableSpell()
+	elseif self.item then
+		self:UpdateUsableItem()
+	else
+		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+	end
+end
+
+function BUTTON:UpdateUsableSpell()
+	local isUsable, notEnoughMana = IsUsableSpell(self.spell)
+
+	if notEnoughMana  and self.manacolor then
+		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	elseif isUsable then
+		if self.rangeInd and IsSpellInRange(self.spell, self.unit)==0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		elseif NeuronSpellCache[self.spell:lower()] and self.rangeInd and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit)==0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		else
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+		end
+	else
+		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
+	end
+end
+
+function BUTTON:UpdateUsableItem()
+	local isUsable, notEnoughMana = IsUsableItem(self.item)
+
+	--for some reason toys don't show as usable items, so this is a workaround for that
+	if not isUsable then
+		local itemID = GetItemInfoInstant(self.item)
+		if not Neuron.isWoWClassic and itemID and PlayerHasToy(itemID) then
+			isUsable = true
+		end
+	end
+
+	if notEnoughMana and self.manacolor then
+		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	elseif isUsable then
+		if self.rangeInd and IsItemInRange(self.item, self.unit) == 0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		elseif NeuronItemCache[self.item:lower()] and self.rangeInd and IsItemInRange(NeuronItemCache[self.item:lower()], self.unit)==0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		else
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+		end
+	else
+		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
+	end
+end
+
+function BUTTON:UpdateUsableAction()
+	if self.actionID == 0 then
+		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+		return
+	end
+
+	local isUsable, notEnoughMana = IsUsableAction(self.actionID)
+
+	if notEnoughMana and self.manacolor then
+		self.elements.IconFrameIcon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
+	elseif isUsable then
+		if self.rangeInd and IsActionInRange(self.spell, self.unit)==0 then
+			self.elements.IconFrameIcon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
+		else
+			self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+		end
+	else
+		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
+	end
+end
+
+-----------------------------------------------------------------------------------------
+-------------------------------------- Set Icon -----------------------------------------
+-----------------------------------------------------------------------------------------
+
+function BUTTON:UpdateIcon()
+	if self.actionID then
+		self:UpdateActionIcon()
+	elseif self.data.macro_Icon then
+		self.elements.IconFrameIcon:SetTexture(self.data.macro_Icon)
+		self.elements.IconFrameIcon:Show()
+	elseif self.spell then
+		self:UpdateSpellIcon()
+	elseif self.item then
+		self:UpdateItemIcon()
+	else
+		self.elements.Name:SetText("")
+		self.elements.IconFrameIcon:SetTexture("")
+		self.elements.IconFrameIcon:Hide()
+		self.elements.Border:Hide()
+	end
+end
+
+function BUTTON:UpdateSpellIcon()
+	local texture = GetSpellTexture(self.spell)
+
+	if not texture then
+		if NeuronSpellCache[self.spell:lower()] then
+			texture = NeuronSpellCache[self.spell:lower()].icon
+		end
+	end
+
+	if texture then
+		self.elements.IconFrameIcon:SetTexture(texture)
+	else
+		self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+	end
+	self.elements.IconFrameIcon:Show()
+end
+
+function BUTTON:UpdateItemIcon()
+	local texture = GetItemIcon(self.item)
+
+	if not texture then
+		if NeuronItemCache[self.item:lower()] then
+			texture = GetItemIcon("item:"..NeuronItemCache[self.item:lower()]..":0:0:0:0:0:0:0")
+		end
+	end
+
+	if texture then
+		self.elements.IconFrameIcon:SetTexture(texture)
+	else
+		self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+	end
+
+	self.elements.IconFrameIcon:Show()
+
+	if IsEquippedItem(self.item) then --makes the border green when item is equipped and dragged to a button
+		self.elements.Border:SetVertexColor(0, 1.0, 0, 0.2)
+		self.elements.Border:Show()
+	else
+		self.elements.Border:Hide()
+	end
+end
+
+function BUTTON:UpdateActionIcon()
+	local texture
+
+	if HasAction(self.actionID) then
+		texture = GetActionTexture(self.actionID)
+	end
+
+	if texture then
+		self.elements.IconFrameIcon:SetTexture(texture)
+	else
+		--self.elements.IconFrameIcon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
+		self.elements.IconFrameIcon:SetTexture("")
+	end
+
+	self.elements.IconFrameIcon:Show()
+end
+
+-----------------------------------------------------------------------------------------
+-------------------------------------- Set Status ---------------------------------------
+-----------------------------------------------------------------------------------------
+
+function BUTTON:UpdateStatus()
+	if self.actionID then
+		self:UpdateActionStatus()
+	elseif self.data.macro_BlizzMacro then
+		self.elements.Name:SetText(self.data.macro_Name)
+	elseif self.data.macro_EquipmentSet then
+		self.elements.Name:SetText(self.data.macro_Name)
+	elseif self.spell then
+		self:UpdateSpellStatus()
+	elseif self.item then
+		self:UpdateItemStatus()
+	else
+		self:SetChecked(false)
+		self.elements.Name:SetText("")
+		self.elements.Count:SetText("")
+	end
+end
+
+function BUTTON:UpdateSpellStatus()
+	if IsCurrentSpell(self.spell) or IsAutoRepeatSpell(self.spell) then
+		self:SetChecked(1)
+	else
+		self:SetChecked(false)
+	end
+
+	self.elements.Name:SetText(self.data.macro_Name)
+	self:UpdateCount()
+	self:UpdateUsable()
+end
+
+function BUTTON:UpdateItemStatus()
+	if IsCurrentItem(self.item) then
+		self:SetChecked(1)
+	else
+		self:SetChecked(false)
+	end
+
+	self.elements.Name:SetText(self.data.macro_Name)
+	self:UpdateCount()
+	self:UpdateUsable()
+end
+
+function BUTTON:UpdateActionStatus()
+	local name
+
+	if self.actionID then
+		if IsCurrentAction(self.actionID) or IsAutoRepeatAction(self.actionID) then
+			self:SetChecked(1)
+		else
+			self:SetChecked(false)
+		end
+
+		--find out the action name
+		local type, id, _ = GetActionInfo(self.actionID)
+		if type == "spell" then
+			name = GetSpellInfo(id)
+		elseif type == "item" then
+			name = GetItemInfo(id)
+		end
+	else
+		self:SetChecked(false)
+	end
+
+	if name then
+		self.elements.Name:SetText(name)
+	else
+		self.elements.Name:SetText("")
+	end
+
+	self:UpdateUsable()
+end
+
+-----------------------------------------------------------------------------------------
+------------------------------------- Set Tooltip ---------------------------------------
+-----------------------------------------------------------------------------------------
+
+function BUTTON:UpdateTooltip()
+	if self.actionID then
+		self:UpdateActionTooltip()
+	elseif self.data.macro_BlizzMacro then
+		GameTooltip:SetText(self.data.macro_Name)
+	elseif self.data.macro_EquipmentSet then
+		GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
+	elseif self.spell then
+		self:UpdateSpellTooltip()
+	elseif self.item then
+		self:UpdateItemTooltip()
+	elseif self.data.macro_Text and #self.data.macro_Text > 0 then
+		GameTooltip:SetText(self.data.macro_Name)
+	end
+end
+
+function BUTTON:UpdateSpellTooltip()
+	if self.spell and self.spellID then --try to get the correct spell from the spellbook first
+		if self.UberTooltips  then
+			GameTooltip:SetSpellByID(self.spellID)
+		else
+			GameTooltip:SetText(self.spell, 1, 1, 1)
+		end
+	elseif NeuronSpellCache[self.spell:lower()] then --if the spell isn't in the spellbook, check our spell cache
+		if self.UberTooltips then
+			GameTooltip:SetSpellByID(NeuronSpellCache[self.spell:lower()].spellID)
+		else
+			GameTooltip:SetText(NeuronSpellCache[self.spell:lower()].spellName, 1, 1, 1)
+		end
+	else
+		GameTooltip:SetText(UNKNOWN, 1, 1, 1)
+	end
+end
+
+function BUTTON:UpdateItemTooltip()
+	local name, link = GetItemInfo(self.item)
+
+	if name and link then
+		if self.UberTooltips then
+			GameTooltip:SetHyperlink(link)
+		else
+			GameTooltip:SetText(name, 1, 1, 1)
+		end
+	elseif NeuronItemCache[self.item:lower()] then
+		if self.UberTooltips then
+			GameTooltip:SetHyperlink("item:"..NeuronItemCache[self.item:lower()]..":0:0:0:0:0:0:0")
+		else
+			GameTooltip:SetText(NeuronItemCache[self.item:lower()], 1, 1, 1)
+		end
+	end
+end
+
+function BUTTON:UpdateActionTooltip()
+	if HasAction(self.actionID) then
+		GameTooltip:SetAction(self.actionID)
+	end
+end

@@ -17,7 +17,7 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
@@ -107,7 +107,7 @@ local function keySort(list)
 	local sorter = function()
 		i = i + 1
 
-		if (array[i] == nil) then
+		if array[i] == nil then
 			return nil
 		else
 			return array[i], list[array[i]]
@@ -628,7 +628,7 @@ function ACTIONBUTTON:filter_type()
 		for itemID,name in pairs(itemCache) do
 			if GetItemCount(name)>0 then
 				local _, _, _, _, _, itemType, itemSubType, _, itemSlot = GetItemInfo(itemID)
-				if itemType and ((itemType:lower()):match(arg) or (itemSubType:lower()):match(arg) or (itemSlot:lower()):match(arg)) then
+				if itemType and (itemType:lower():match(arg) or itemSubType:lower():match(arg) or itemSlot:lower():match(arg)) then
 					data[itemID:lower()] = "item"
 				end
 			end
@@ -812,11 +812,11 @@ function ACTIONBUTTON:GetBlizzData()
 		spellID, _, isKnown = GetFlyoutSlotInfo(self.flyout.keys, i)
 		petIndex, petName = GetCallPetSpellInfo(spellID)
 
-		if (petIndex and (not petName or petName == "")) then
+		if petIndex and (not petName or petName == "") then
 			visible = false
 		end
 
-		if (isKnown and visible) then
+		if isKnown and visible then
 			spell = GetSpellInfo(spellID)
 
 			data[spell] = "blizz"
@@ -835,21 +835,21 @@ function ACTIONBUTTON:GetDataList(options)
 	for types in gmatch(self.flyout.types, "%a+[%+]*") do
 		tooltip = types:match("%+")
 
-		if (types:find("^b")) then  --Blizzard Flyout
+		if types:find("^b") then  --Blizzard Flyout
 			scanData = self:GetBlizzData()
-		elseif (types:find("^s")) then  --Spell
+		elseif types:find("^s") then  --Spell
 			scanData = self:filter_spell(tooltip)
-		elseif (types:find("^i")) then  --Item
+		elseif types:find("^i") then  --Item
 			scanData = self:filter_item(tooltip)
-		elseif (types:find("^c")) and not Neuron.isWoWClassic then --Companion
+		elseif types:find("^c") and not Neuron.isWoWClassic then --Companion
 			scanData = self:filter_pet()
-		elseif (types:find("^f")) and not Neuron.isWoWClassic then  --toy
+		elseif types:find("^f") and not Neuron.isWoWClassic then  --toy
 			scanData = self:filter_toy()
-		elseif (types:find("^m")) then  --Mount
+		elseif types:find("^m") then  --Mount
 			scanData = self:filter_mount()
-		elseif (types:find("^p")) and not Neuron.isWoWClassic then  --Profession
+		elseif types:find("^p") and not Neuron.isWoWClassic then  --Profession
 			scanData = self:filter_profession()
-		elseif (types:find("^t")) then  --Item Type
+		elseif types:find("^t") then  --Item Type
 			scanData = self:filter_type()
 		end
 	end
@@ -858,10 +858,10 @@ end
 
 function ACTIONBUTTON:updateFlyoutBars(elapsed)
 
-	if (not InCombatLockdown() and Neuron.enteredWorld) then  --Workarout for protected taint if UI reload in combat
+	if not InCombatLockdown() and Neuron.enteredWorld then  --Workarout for protected taint if UI reload in combat
 		local bar = table.remove(barsToUpdate) ---this does nothing. It makes bar empty
 
-		if (bar) then
+		if bar then
 			bar:SetObjectLoc()
 			bar:SetPerimeter()
 			bar:SetSize()
@@ -875,11 +875,11 @@ end
 
 
 
-function ACTIONBUTTON:Flyout_UpdateButtons(init)
+function ACTIONBUTTON:Flyout_UpdateData(init)
 	local slot
 	local pet = false
 
-	if (self.flyout) then
+	if self.flyout then
 		local count, list = 0, {}
 		local button, prefix, macroSet
 
@@ -889,7 +889,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 			self:Flyout_ReleaseButton(val)
 		end
 
-		if (data) then
+		if data then
 			for spell, source in keySort(data) do
 
 				button = self:Flyout_GetButton()
@@ -897,8 +897,8 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 				button.source = source
 
 
-				if (source == "spell" or source =="blizz") then
-					if (spell:find("%(")) then
+				if source == "spell" or source =="blizz" then
+					if spell:find("%(") then
 						button.macroshow = spell
 					else
 						button.macroshow = spell.."()"
@@ -910,7 +910,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 					prefix = "/cast "
 
-				elseif (source == "companion") then
+				elseif source == "companion" then
 
 					button.macroshow = spell
 					button:SetAttribute("prefix", "/summonpet ")
@@ -919,21 +919,21 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 					button:SetAttribute("macro_Name", spell)
 					prefix = "/summonpet "
 
-				elseif (source == "mount") then
+				elseif source == "mount" then
 					button.macroshow = spell
 					button:SetAttribute("prefix", "/summonpet ")
 					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
 					prefix = "/summonpet "
 
 
-				elseif (source == "item") then
+				elseif source == "item" then
 
-					if (IsEquippableItem(spell)) then
-						if (self.flyout.keys:find("#%d+")) then
+					if IsEquippableItem(spell) then
+						if self.flyout.keys:find("#%d+") then
 							slot = self.flyout.keys:match("%d+").." "
 						end
 
-						if (slot) then
+						if slot then
 							prefix = "/equipslot "
 							button:SetAttribute("slot", slot.." ")
 						else
@@ -953,15 +953,15 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 
 					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
 
-					if (slot) then
+					if slot then
 						button:SetAttribute("showtooltip", "#showtooltip "..slot.."\n")
 					else
 						button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
 					end
 
-				elseif (source:find("equipset")) then
+				elseif source:find("equipset") then
 					button.macroshow = spell
-					button.data.macro_Equip = spell
+					button.data.macro_EquipmentSet = spell
 					button:SetAttribute("prefix", "/equipset ")
 					button:SetAttribute("showtooltip", "")
 
@@ -974,11 +974,11 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 					button:SetAttribute("showtooltip", "")
 				end
 
-				if (slot) then
+				if slot then
 					button:SetAttribute("macro_Text", button:GetAttribute("prefix").."[nobtn:2] "..slot)
 					button:SetAttribute("*macrotext1", prefix.."[nobtn:2] "..slot..button.macroshow)
 					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..slot.."\n/stopmacro [nobtn:2]\n/flyout "..self.lyout.options)
-				elseif (pet) then
+				elseif pet then
 					button:SetAttribute("macro_Text", button:GetAttribute("prefix").."[nobtn:2] "..pet)
 					button:SetAttribute("*macrotext1", prefix.."[nobtn:2] "..pet)
 					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..pet.."\n/stopmacro [nobtn:2]\n/flyout "..self.flyout.options)
@@ -988,14 +988,14 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..button.macroshow.."\n/stopmacro [nobtn:2]\n/flyout "..self.flyout.options)
 				end
 
-				if (not macroSet and not self.data.macro_Text:find("nobtn:2")) then
+				if not macroSet and not self.data.macro_Text:find("nobtn:2") then
 					self.data.macro_Text = button:GetAttribute("flyoutMacro")
 					macroSet = true
 				end
 
 				button.data.macro_Text = button:GetAttribute("macro_Text")
-				button:UpdateParse()
-				button:MACRO_Reset()
+				button:ParseAndSanitizeMacro()
+				button:ClearButton()
 				button:UpdateAll()
 
 				list[#list+1] = button.id--table.insert(list, button.id)
@@ -1007,7 +1007,7 @@ function ACTIONBUTTON:Flyout_UpdateButtons(init)
 		self.flyout.bar.objCount = count
 		self.flyout.bar.data.objectList = list
 
-		if (not init) then
+		if not init then
 			table.insert(barsToUpdate, self.flyout.bar)
 			self:updateFlyoutBars()
 		end
@@ -1017,59 +1017,59 @@ end
 
 
 function ACTIONBUTTON:Flyout_UpdateBar()
-	self.flyouttop:Hide()
-	self.flyoutbottom:Hide()
-	self.flyoutleft:Hide()
-	self.flyoutright:Hide()
+	self.elements.FlyoutTop:Hide()
+	self.elements.FlyoutBottom:Hide()
+	self.elements.FlyoutLeft:Hide()
+	self.elements.FlyoutRight:Hide()
 
 	local flyout = self.flyout
 	local pointA, pointB, hideArrow, shape, columns, pad
 
-	if (flyout.shape and flyout.shape:lower():find("^c")) then
+	if flyout.shape and flyout.shape:lower():find("^c") then
 		shape = 2
 	else
 		shape = 1
 	end
 
-	if (flyout.point) then
+	if flyout.point then
 		pointA = flyout.point:match("%a+"):upper() pointA = POINTS[pointA] or "RIGHT"
 	end
 
-	if (flyout.relPoint) then
+	if flyout.relPoint then
 		pointB = flyout.relPoint:upper() pointB = POINTS[pointB] or "LEFT"
 	end
 
-	if (flyout.colrad and tonumber(flyout.colrad)) then
-		if (shape == 1) then
+	if flyout.colrad and tonumber(flyout.colrad) then
+		if shape == 1 then
 			columns = tonumber(flyout.colrad)
-		elseif (shape == 2) then
+		elseif shape == 2 then
 			pad = tonumber(flyout.colrad)
 		end
 	end
 
-	if (flyout.mode and flyout.mode:lower():find("^m")) then
+	if flyout.mode and flyout.mode:lower():find("^m") then
 		flyout.mode = "mouse"
 	else
 		flyout.mode = "click"
 	end
 
-	if (flyout.hideArrow and flyout.hideArrow:lower():find("^h")) then
+	if flyout.hideArrow and flyout.hideArrow:lower():find("^h") then
 		hideArrow = true
 	end
 
-	if (shape) then
+	if shape then
 		flyout.bar.data.shape = shape
 	else
 		flyout.bar.data.shape = 1
 	end
 
-	if (columns) then
+	if columns then
 		flyout.bar.data.columns = columns
 	else
 		flyout.bar.data.columns = 12
 	end
 
-	if (pad) then
+	if pad then
 		flyout.bar.data.padH = pad
 		flyout.bar.data.padV = pad
 		flyout.bar.data.arcStart = 0
@@ -1085,30 +1085,30 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 	flyout.bar:SetFrameStrata(self:GetFrameStrata())
 	flyout.bar:SetFrameLevel(self:GetFrameLevel()+1)
 
-	if (not hideArrow) then
-		if (pointB == "TOP") then
+	if not hideArrow then
+		if pointB == "TOP" then
 			self.flyout.arrowPoint = "TOP"
 			self.flyout.arrowX = 0
 			self.flyout.arrowY = 5
-			self.flyout.arrow = self.flyouttop
+			self.flyout.arrow = self.elements.FlyoutTop
 			self.flyout.arrow:Show()
-		elseif (pointB == "BOTTOM") then
+		elseif pointB == "BOTTOM" then
 			self.flyout.arrowPoint = "BOTTOM"
 			self.flyout.arrowX = 0
 			self.flyout.arrowY = -5
-			self.flyout.arrow = self.flyoutbottom
+			self.flyout.arrow = self.elements.FlyoutBottom
 			self.flyout.arrow:Show()
-		elseif (pointB == "LEFT") then
+		elseif pointB == "LEFT" then
 			self.flyout.arrowPoint = "LEFT"
 			self.flyout.arrowX = -5
 			self.flyout.arrowY = 0
-			self.flyout.arrow = self.flyoutleft
+			self.flyout.arrow = self.elements.FlyoutLeft
 			self.flyout.arrow:Show()
-		elseif (pointB == "RIGHT") then
+		elseif pointB == "RIGHT" then
 			self.flyout.arrowPoint = "RIGHT"
 			self.flyout.arrowX = 5
 			self.flyout.arrowY = 0
-			self.flyout.arrow = self.flyoutright
+			self.flyout.arrow = self.elements.FlyoutRight
 			self.flyout.arrow:Show()
 		end
 	end
@@ -1128,10 +1128,10 @@ function ACTIONBUTTON:Flyout_RemoveButtons()
 end
 
 function ACTIONBUTTON:Flyout_RemoveBar()
-	self.flyouttop:Hide()
-	self.flyoutbottom:Hide()
-	self.flyoutleft:Hide()
-	self.flyoutright:Hide()
+	self.elements.FlyoutTop:Hide()
+	self.elements.FlyoutBottom:Hide()
+	self.elements.FlyoutLeft:Hide()
+	self.elements.FlyoutRight:Hide()
 
 	self:Anchor_Update(true)
 
@@ -1145,13 +1145,13 @@ function ACTIONBUTTON:UpdateFlyout(init)
 		options = self.data.macro_Text:match("/flyout%s(%C+)")
 	end
 
-	if (self.flyout) then
+	if self.flyout then
 		self:Flyout_RemoveButtons()
 		self:Flyout_RemoveBar()
 	end
 
-	if (options) then
-		if (not self.flyout) then
+	if options then
+		if not self.flyout then
 			self.flyout = { buttons = {} }
 		end
 
@@ -1167,10 +1167,10 @@ function ACTIONBUTTON:UpdateFlyout(init)
 		self.flyout.mode = select(7, (":"):split(options))
 		self.flyout.hideArrow = select(8, (":"):split(options))
 
-		self:Flyout_UpdateButtons(init)
+		self:Flyout_UpdateData(init)
 		self:Flyout_UpdateBar()
 
-		if (not self.bar.watchframes) then
+		if not self.bar.watchframes then
 			self.bar.watchframes = {}
 		end
 
@@ -1190,7 +1190,7 @@ function ACTIONBUTTON:Flyout_ReleaseButton(button)
 	button.stored = true
 
 	button.data.macro_Text = ""
-	button.data.macro_Equip = false
+	button.data.macro_EquipmentSet = false
 	button.data.macro_Icon = false
 
 	button.macrospell = nil
@@ -1209,7 +1209,7 @@ end
 
 
 function ACTIONBUTTON:Flyout_SetData(bar)
-	if (bar) then
+	if bar then
 
 		self.bar = bar
 
@@ -1220,15 +1220,13 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 		--self:SetScale(bar.data.scale)
 	end
 
-	self.hotkey:Hide()
-	self.macroname:Hide()
+	self.elements.Hotkey:Hide()
+	self.elements.Name:Hide()
 	self:RegisterForClicks("AnyUp")
 
 	self.equipcolor = { 0.1, 1, 0.1, 1 }
 	self.cdcolor1 = { 1, 0.82, 0, 1 }
 	self.cdcolor2 = { 1, 0.1, 0.1, 1 }
-	self.auracolor1 = { 0, 0.82, 0, 1 }
-	self.auracolor2 = { 1, 0.1, 0.1, 1 }
 	self.buffcolor = { 0, 0.8, 0, 1 }
 	self.debuffcolor = { 0.8, 0, 0, 1 }
 	self.manacolor = { 0.5, 0.5, 1.0 }
@@ -1246,11 +1244,11 @@ function ACTIONBUTTON:Flyout_PostClick()
 	button.data.macro_Icon = self:GetAttribute("macro_Icon") or false
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
-	button:UpdateParse()
-	button:MACRO_Reset()
+	button:ParseAndSanitizeMacro()
+	button:ClearButton()
 	button:UpdateAll()
 
-	self:UpdateState()
+	self:UpdateStatus()
 end
 
 function ACTIONBUTTON:Flyout_GetButton()
@@ -1258,7 +1256,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 	local id = 1
 
 	for _,button in ipairs(FOBTNIndex) do
-		if (button.stored) then
+		if button.stored then
 			button.anchor = self
 			button.bar = self.flyout.bar
 			button.stored = false
@@ -1272,43 +1270,46 @@ function ACTIONBUTTON:Flyout_GetButton()
 		id = id + 1
 	end
 
-	local button = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate") --create the new button frame using the desired parameters
-	setmetatable(button, {__index = ACTIONBUTTON})
+	local newButton = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate") --create the new button frame using the desired parameters
+	setmetatable(newButton, {__index = ACTIONBUTTON})
 
-	button.elapsed = 0
+	newButton.elapsed = 0
 
-	local objects = Neuron:GetParentKeys(button)
+	local objects = Neuron:GetParentKeys(newButton)
 
+	--table to hold all of our captured frame element handles
+	newButton.elements = {}
+	--populates the button with all the Icon,Shine,Cooldown frame references
 	for k,v in pairs(objects) do
-		local name = (v):gsub(button:GetName(), "")
-		button[name:lower()] = _G[v]
+		local name = (v):gsub(newButton:GetName(), "")
+		newButton.elements[name] = _G[v]
 	end
 
-	button.class = "flyout"
-	button.id = id
-	button:SetID(0)
-	button:SetToplevel(true)
-	button.objTIndex = id
-	button.objType = "FLYOUTBUTTON"
-	button.data = { macro_Text = "" }
+	newButton.class = "flyout"
+	newButton.id = id
+	newButton:SetID(0)
+	newButton:SetToplevel(true)
+	newButton.objTIndex = id
+	newButton.objType = "FLYOUTBUTTON"
+	newButton.data = { macro_Text = "" }
 
-	button.anchor = self
-	button.bar = self.flyout.bar
-	button.stored = false
+	newButton.anchor = self
+	newButton.bar = self.flyout.bar
+	newButton.stored = false
 
-	SecureHandler_OnLoad(button)
+	SecureHandler_OnLoad(newButton)
 
-	button:SetAttribute("type1", "macro")
-	button:SetAttribute("*macrotext1", "")
+	newButton:SetAttribute("type1", "macro")
+	newButton:SetAttribute("*macrotext1", "")
 
-	button:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
-	button:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-	button:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
+	newButton:SetScript("PostClick", function(self) self:Flyout_PostClick() end)
+	newButton:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+	newButton:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
-	button:SetScript("OnShow", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
-	button:SetScript("OnHide", function(self) self:UpdateButton(); self:UpdateIcon(); self:UpdateState() end)
+	newButton:SetScript("OnShow", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateStatus() end)
+	newButton:SetScript("OnHide", function(self) self:UpdateUsable(); self:UpdateIcon(); self:UpdateStatus() end)
 
-	button:WrapScript(button, "OnClick", [[
+	newButton:WrapScript(newButton, "OnClick", [[
 			local button = self:GetParent():GetParent()
 			button:SetAttribute("macroUpdate", true)
 			button:SetAttribute("*macrotext*", self:GetAttribute("flyoutMacro"))
@@ -1317,20 +1318,20 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 
 	--link objects to their associated functions
-	button.SetData = ACTIONBUTTON.Flyout_SetData
+	newButton.SetData = ACTIONBUTTON.Flyout_SetData
 
 
-	button:SetData(self.flyout.bar)
+	newButton:SetData(self.flyout.bar)
 
-	button:Flyout_UpdateButtons(true)
-	button:SetSkinned(true)
-	button:Show()
+	newButton:Flyout_UpdateData(true)
+	newButton:SetSkinned(true)
+	newButton:Show()
 
-	self.flyout.buttons[id] = button
+	self.flyout.buttons[id] = newButton
 
-	FOBTNIndex[id] = button
+	FOBTNIndex[id] = newButton
 
-	return button
+	return newButton
 end
 
 
@@ -1358,7 +1359,7 @@ function ACTIONBUTTON:Flyout_GetBar()
 	local id = 1
 
 	for _,bar in ipairs(FOBARIndex) do
-		if (bar.stored) then
+		if bar.stored then
 			bar.stored = false
 			bar:SetParent(UIParent)
 			return bar
@@ -1423,7 +1424,7 @@ end
 function ACTIONBUTTON:Anchor_RemoveChild()
 	local child = self.flyout.bar and self.flyout.bar.handler
 
-	if (child) then
+	if child then
 		self:UnwrapScript(self, "OnEnter")
 		self:UnwrapScript(self, "OnLeave")
 		self:UnwrapScript(self, "OnClick")
@@ -1441,15 +1442,15 @@ end
 function ACTIONBUTTON:Anchor_UpdateChild()
 	local child = self.flyout.bar and self.flyout.bar.handler
 
-	if (child) then
+	if child then
 		local mode = self.flyout.mode
 		local delay
 
-		if (mode == "click") then
+		if mode == "click" then
 			self:SetAttribute("click-show", "hide")
 			self:WrapScript(self, "OnClick", [[
-							if (button == "RightButton") then
-								if (self:GetAttribute("click-show") == "hide") then
+							if button == "RightButton" then
+								if self:GetAttribute("click-show") == "hide" then
 									self:SetAttribute("click-show", "show")
 								else
 									self:SetAttribute("click-show", "hide")
@@ -1459,7 +1460,7 @@ function ACTIONBUTTON:Anchor_UpdateChild()
 							]])
 
 			child:WrapScript(child, "OnShow", [[
-							if (self:GetAttribute("timedelay")) then
+							if self:GetAttribute("timedelay") then
 								self:RegisterAutoHide(self:GetAttribute("timedelay"))
 							else
 								self:UnregisterAutoHide()
@@ -1469,19 +1470,19 @@ function ACTIONBUTTON:Anchor_UpdateChild()
 			child:WrapScript(child, "OnHide", [[ self:GetParent():SetAttribute("click-show", "hide") self:UnregisterAutoHide() ]])
 
 			child:SetAttribute("timedelay", tonumber(delay) or 0)
-			child:SetAttribute("_childupdate-onclick", [[ if (message == "show") then self:Show() else self:Hide() end ]] )
+			child:SetAttribute("_childupdate-onclick", [[ if message == "show" then self:Show() else self:Hide() end ]] )
 
 			child:SetParent(self)
 
-		elseif (mode == "mouse") then
+		elseif mode == "mouse" then
 			self:WrapScript(self, "OnEnter", [[ control:ChildUpdate("onmouse", "enter") ]])
-			self:WrapScript(self, "OnLeave", [[ if (not self:IsUnderMouse(true)) then control:ChildUpdate("onmouse", "leave") end ]])
+			self:WrapScript(self, "OnLeave", [[ if not self:IsUnderMouse(true) then control:ChildUpdate("onmouse", "leave") end ]])
 
 			child:SetAttribute("timedelay", tonumber(delay) or 0)
-			child:SetAttribute("_childupdate-onmouse", [[ if (message == "enter") then self:Show() elseif (message == "leave") then self:Hide() end ]] )
+			child:SetAttribute("_childupdate-onmouse", [[ if message == "enter" then self:Show() elseif message == "leave" then self:Hide() end ]] )
 
 			child:WrapScript(child, "OnShow", [[
-							if (self:GetAttribute("timedelay")) then
+							if self:GetAttribute("timedelay") then
 								self:RegisterAutoHide(self:GetAttribute("timedelay"))
 							else
 								self:UnregisterAutoHide()
@@ -1498,7 +1499,7 @@ end
 
 function ACTIONBUTTON:Anchor_Update(remove)
 
-	if (remove) then
+	if remove then
 		self:Anchor_RemoveChild()
 	else
 		self:Anchor_UpdateChild()

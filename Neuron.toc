@@ -1,14 +1,14 @@
-## Interface: 80205
+## Interface: 80300
 ## Title: Neuron
 ## Notes: A macro-based action bar and object manager add-on
-## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (aka Maul)
+## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (Maul)
 ## X-Credits-Maintainer: Soyier
 ## Version: @project-version@
 ## DefaultState: enabled
 ## OptionalDeps: Masque
 ## SavedVariables: NeuronProfilesDB
 ## SavedVariablesPerCharacter:
-## X-Copyright: Copyright© 2006-2014 Connor H. Chenoweth, aka Maul - All rights reserved.
+## X-Copyright: Copyright© 2006-2014 Connor H. Chenoweth (Maul); Copyright© 2017-2020 Britt W. Yazel (Soyier)
 ## X-Permissions: Fork of Ion Action Bars with express permission from Connor H. Chenoweth, aka Maul
 ## X-Email: bwyazel@gmail.com
 
@@ -17,40 +17,40 @@ Libs\embeds.xml
 Localizations\Neuron_Localizations.xml
 
 Neuron-DB-Defaults.lua
-Neuron-Defaults.lua
 Neuron.lua
 Neuron-States.lua
 
-Utilities/DB-Fixer.lua
+Utilities\DB-Fixer.lua
 
 
-Objects/BUTTON.lua
-Objects/BAR.lua
-Objects/ACTIONBUTTON.lua
-Objects/ACTIONBUTTON_DragAndDrop.lua
-Objects/ACTIONBUTTON_Flyout.lua
-Objects/BAGBTN.lua
-Objects/EXITBTN.lua
-Objects/EXTRABTN.lua
-Objects/MENUBTN.lua
-Objects/PETBTN.lua
-Objects/STATUSBTN.lua
-Objects/ZONEABILITYBTN.lua
-Objects/BAR_SnapTo.lua
-Objects/KEYBINDER.lua
+Objects\BUTTON.lua
+Objects\BAR.lua
+Objects\ACTIONBUTTON.lua
+Objects\ACTIONBUTTON_DragAndDrop.lua
+Objects\ACTIONBUTTON_Flyout.lua
+Objects\BAGBTN.lua
+Objects\EXITBTN.lua
+Objects\EXTRABTN.lua
+Objects\MENUBTN.lua
+Objects\PETBTN.lua
+Objects\STATUSBTN.lua
+Objects\ZONEABILITYBTN.lua
+Objects\BAR_SnapTo.lua
+Objects\KEYBINDER.lua
 
 Neuron-DisableBlizzardUI.lua
 Neuron-Console.lua
 Neuron-MinimapIcon.lua
 
-XML/NeuronActionButtonTemplate.xml
-XML/NeuronAnchorButtonTemplate.xml
-XML/NeuronBarTemplate.xml
-XML/NeuronBindFrameTemplate.xml
-XML/NeuronCheckButtonTextureTemplate.xml
-XML/NeuronStatusBarTemplate.xml
+XML\NeuronActionButtonTemplate.xml
+XML\NeuronAnchorButtonTemplate.xml
+XML\NeuronBarTemplate.xml
+XML\NeuronBindFrameTemplate.xml
+XML\NeuronCheckButtonTextureTemplate.xml
+XML\NeuronStatusBarTemplate.xml
 
+Neuron-Defaults.lua
 Neuron-Startup.lua
 
 Neuron-GUI.lua
-XML/Neuron-GUI.xml
+XML\Neuron-GUI.xml

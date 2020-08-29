@@ -17,12 +17,11 @@
 --
 --Copyright for portions of Neuron are held by Connor Chenoweth,
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2019.
+--copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
 ---@class EXTRABTN : BUTTON @define class EXTRABTN inherits from class BUTTON
 local EXTRABTN = setmetatable({}, { __index = Neuron.BUTTON })
 Neuron.EXTRABTN = EXTRABTN
-
 
 ----------------------------------------------------------
 
@@ -32,27 +31,19 @@ Neuron.EXTRABTN = EXTRABTN
 ---@param defaults table @Default options table to be loaded onto the given button
 ---@return EXTRABTN @ A newly created EXTRABTN object
 function EXTRABTN.new(bar, buttonID, defaults)
-
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
 
-	if (defaults) then
+	if defaults then
 		newButton:SetDefaults(defaults)
 	end
-
-	newButton.style = newButton:CreateTexture(nil, "OVERLAY")
-	newButton.style:SetPoint("CENTER", -2, 1)
-	newButton.style:SetWidth(190)
-	newButton.style:SetHeight(95)
 
 	return newButton
 end
 
-
 ----------------------------------------------------------
 
 function EXTRABTN:SetType()
-
 	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
@@ -60,121 +51,115 @@ function EXTRABTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_COOLDOWN", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 	self:RegisterEvent("SPELL_UPDATE_USABLE", "OnEvent")
-	self:RegisterUnitEvent("UNIT_AURA", "player")
 
 	self:SetAttribute("type1", "action")
 
-	--action content gets set in UpdateButton
-	self:UpdateButton()
+	self:SetAttribute("action1", 169) --baseline actionID for most zoneability actions
 
-	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
+
+	--action content gets set in UpdateData
+	self:UpdateData()
+
+	self:SetScript("PostClick", function(self) self:UpdateStatus() end)
+	self:SetScript("OnEnter", function(self) self:UpdateTooltip() end)
 	self:SetScript("OnLeave", GameTooltip_Hide)
-
-	self:UpdateIcon()
-	self:SetObjectVisibility()
 
 	self:SetSkinned()
 end
 
-
 function EXTRABTN:OnEvent(event, ...)
-
-	self:SetObjectVisibility()
-	self:UpdateButton()
+	self:UpdateData()
 
 	if event == "PLAYER_ENTERING_WORLD" then
 		self.binder:ApplyBindings()
+		self:UpdateIcon()
 	end
 
 end
 
 ---overwrite function in parent class BUTTON
-function EXTRABTN:UpdateButton()
+function EXTRABTN:UpdateData()
 
-	---default to 169 as is the most of then the case as of 8.1
-	self.actionID = 169
-
-	---get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
+	--get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
+		--default to 169 as is the most of then the case as of 8.1
+		self.actionID = 169
+
 		local extraPage = GetExtraBarIndex()
 		self.actionID = extraPage*12 - 11 --1st slot on the extraPage (page 15 as of 8.1, so 169)
+
+		if not InCombatLockdown() then
+			self:SetAttribute("action1", self.actionID)
+		end
+
+		_, self.spellID = GetActionInfo(self.actionID)
+
+		if self.spellID then
+			self.spell = GetSpellInfo(self.spellID);
+		else
+			self.spell = nil
+		end
+	else
+		self.actionID = nil
+		self.spellID = nil
+		self.spell = nil
 	end
 
-	if not InCombatLockdown() then
-		self:SetAttribute("action1", self.actionID)
-	end
+	-----------------------
+	self.elements.Name:Hide()
 
-	_, self.spellID = GetActionInfo(self.actionID)
-	self.spellName, _, self.spellIcon = GetSpellInfo(self.spellID);
-
-	if self.spellID then
-		self:UpdateIcon()
-
-		self:SetSpellCooldown(self.spellID) --for some reason this doesn't work if you give it self.spellName. The cooldown will be nil
-
-		---extra button charges (some quests have ability charges)
-		self:UpdateSpellCount(self.spellID)
-	end
-
-	---make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:UpdateObjectVisibility()
+	self:UpdateIcon()
+	self:UpdateCooldown()
+	--extra button charges (some quests have ability charges)
+	self:UpdateCount()
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
-
 end
 
-
-function EXTRABTN:SetObjectVisibility(show)
-
-	if HasExtraActionBar() or show or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
+function EXTRABTN:UpdateObjectVisibility()
+	if HasExtraActionBar() then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.SetObjectVisibility(self) --call parent function
-
+	Neuron.BUTTON.UpdateObjectVisibility(self) --call parent function
 end
-
 
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateIcon()
-	self:SetButtonTex()
-end
-
-
-function EXTRABTN:SetButtonTex()
-
-	self.iconframeicon:SetTexture(self.spellIcon)
+	local spellTexture = GetSpellTexture(self.spellID)
+	self.elements.IconFrameIcon:SetTexture(spellTexture)
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
-	self.style:SetTexture(texture)
+	self.elements.Flair:SetTexture(texture)
 
 	if self.bar.data.showBorderStyle then
-		self.style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+		self.elements.Flair:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 	else
-		self.style:Hide()
+		self.elements.Flair:Hide()
 	end
 end
 
+function EXTRABTN:UpdateTooltip()
+	if not self.isShown then
+		return
+	end
 
-function EXTRABTN:OnEnter(...)
-
-	if (self.bar) then
-		if (self.tooltipsCombat and InCombatLockdown()) then
+	if self.bar then
+		if self.tooltipsCombat and InCombatLockdown() then
 			return
 		end
 
-		if (self.tooltips) then
-
+		if self.tooltips then
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-
-			if (self.tooltipsEnhanced and self.spellID) then
+			if self.tooltipsEnhanced and self.spellID then
 				GameTooltip:SetSpellByID(self.spellID)
-			elseif (self.spellName) then
-				GameTooltip:SetText(self.spellName)
+			elseif self.spell then
+				GameTooltip:SetText(self.spell)
 			end
-
 			GameTooltip:Show()
 		end
-
 	end
 end
