@@ -63,6 +63,8 @@ Neuron.STRATAS = {
 Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLERANCE = 28
 
+Neuron.DEBUG = true
+
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
 -------------------------------------------------------------------------
@@ -156,6 +158,11 @@ function Neuron:OnEnable()
 	Neuron:Overrides()
 
 	Neuron.NeuronGUI:LoadInterfaceOptions()
+
+	if Neuron.DEBUG then
+		_G.Neuron = Neuron
+	end
+
 end
 
 --- **OnDisable**, which is only called when your addon is manually being disabled.
