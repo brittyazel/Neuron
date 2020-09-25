@@ -21,7 +21,7 @@
 
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://github.com/Gethe/wow-ui-source/blob/live/FrameXML/UI.xsd">
 
-	<Button name="NeuronPopupButtonTemplate" virtual="true">
+	<Button name="NeuronPopupButtonTemplate" virtual="true" inherits="BackdropTemplate">
 		<CheckedTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
 			<Anchors>
 				<Anchor point="TOPLEFT">
@@ -106,7 +106,7 @@
 
 
 
-	<Button name="NeuronEditFrameTemplate" frameStrata="TOOLTIP" hidden="true" virtual="true">
+	<Button name="NeuronEditFrameTemplate" frameStrata="TOOLTIP" hidden="true" virtual="true" inherits="BackdropTemplate">
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="$parentType" parentKey="type" inherits="ChatFontSmall" justifyH="CENTER" justifyV="CENTER" nonspacewrap="true">
@@ -134,7 +134,7 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame name="$parentSelect" parentKey="select" setAllPoints="true" hidden="true">
+			<Frame name="$parentSelect" parentKey="select" setAllPoints="true" hidden="true" inherits="BackdropTemplate">
 				<Layers>
 					<Layer level="OVERLAY">
 						<Texture name="$parentReticleTL" parentKey="TL" file="Interface\Buttons\UI-AutoCastableOverlay">
@@ -182,7 +182,7 @@
 
 
 
-	<EditBox name="NeuronEditBoxTemplateSmall" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
+	<EditBox name="NeuronEditBoxTemplateSmall" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" inherits="BackdropTemplate">
 		<Size x="37" y="21"/>
 		<Scripts>
 			<OnEscapePressed>
@@ -202,7 +202,7 @@
 
 
 
-	<Frame name="NeuronAdjustOptionTemplate" virtual="true">
+	<Frame name="NeuronAdjustOptionTemplate" virtual="true" inherits="BackdropTemplate">
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString parentKey="text" inherits="GameFontNormal" justifyH="LEFT" nonspacewrap="false">
@@ -215,7 +215,7 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame parentKey="method1" enableMouse="true" hidden="true">
+			<Frame parentKey="method1" enableMouse="true" hidden="true" inherits="BackdropTemplate">
 				<Size x="100" y="24"/>
 				<Anchors>
 					<Anchor point="LEFT" relativePoint="CENTER">
@@ -300,7 +300,7 @@
 					</EditBox>
 				</Frames>
 			</Frame>
-			<Frame parentKey="method2" hidden="true">
+			<Frame parentKey="method2" hidden="true" inherits="BackdropTemplate">
 				<Size x="100" y="24"/>
 				<Anchors>
 					<Anchor point="LEFT" relativePoint="CENTER">
@@ -343,7 +343,7 @@
 
 
 
-	<EditBox name="NeuronDropDownOption" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
+	<EditBox name="NeuronDropDownOption" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" inherits="BackdropTemplate">
 		<Frames>
 			<Button name="$parentButton" parentKey="button" hidden="false">
 				<Anchors>
@@ -375,7 +375,7 @@
 					</OnLeave>
 				</Scripts>
 			</Button>
-			<Frame name="$parentPopUp" parentkey="popup" toplevel="true" enableMouse="true" clampedToScreen="true">
+			<Frame name="$parentPopUp" parentkey="popup" toplevel="true" enableMouse="true" clampedToScreen="true" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="CENTER">
 						<Offset x="0" y="0"/>
@@ -447,7 +447,7 @@
 
 
 
-	<EditBox name="NeuronDropDownOptionFull" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" >
+	<EditBox name="NeuronDropDownOptionFull" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" inherits="BackdropTemplate">
 		<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 			<EdgeSize>
 				<AbsValue val="14"/>
@@ -506,7 +506,7 @@
 				<DisabledTexture name="$parentDisabledTexture" file="Interface\AddOns\Neuron\Images\UI-Panel-ExpandButton-Disabled"/>
 				<HighlightTexture name="$parentHighlightTexture" file="Interface\AddOns\Neuron\Images\UI-Common-MouseHilight" alphaMode="ADD"/>
 			</Button>
-			<Frame name="$parentPopUp" parentKey="popup" toplevel="true" enableMouse="true" clampedToScreen="true">
+			<Frame name="$parentPopUp" parentKey="popup" toplevel="true" enableMouse="true" clampedToScreen="true" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="TOPRIGHT">
 						<Offset x="0" y="0"/>
@@ -575,7 +575,7 @@
 	</EditBox>
 
 
-	<CheckButton name="NeuronOptionsCheckButtonTemplate" virtual="true">
+	<CheckButton name="NeuronOptionsCheckButtonTemplate" virtual="true" inherits="BackdropTemplate">
 		<Size x="26" y="26"/>
 		<HitRectInsets>
 			<AbsInset left="0" right="-50" top="0" bottom="0"/>
@@ -625,7 +625,7 @@
 
 
 
-	<Button name="NeuronButtonTemplate1" virtual="true">
+	<Button name="NeuronButtonTemplate1" virtual="true" inherits="BackdropTemplate">
 		<Size x="60" y="20"/>
 		<Layers>
 			<Layer level="ARTWORK">
@@ -656,7 +656,7 @@
 		<DisabledFont inherits="GameFontDisableSmall"/>
 	</Button>
 
-	<Button name="NeuronTopTabTemplate" motionScriptsWhileDisabled="true" virtual="true">
+	<Button name="NeuronTopTabTemplate" motionScriptsWhileDisabled="true" virtual="true" inherits="BackdropTemplate">
 		<Size x="10" y="32"/>
 		<HitRectInsets>
 			<AbsInset left="10" right="10" top="-6" bottom="4"/>
@@ -732,7 +732,7 @@
 		</HighlightTexture>
 	</Button>
 
-	<Button name="NeuronColorSwatchTempate" virtual="true">
+	<Button name="NeuronColorSwatchTempate" virtual="true" inherits="BackdropTemplate">
 		<Size x="16" y="16"/>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -817,7 +817,7 @@
 
 	<!-- CheckButton Templates -->
 
-	<CheckButton name="NeuronCheckButtonTemplate1" virtual="true">
+	<CheckButton name="NeuronCheckButtonTemplate1" virtual="true" inherits="BackdropTemplate">
 		<Size x="60" y="20"/>
 		<Layers>
 			<Layer level="ARTWORK">
@@ -863,7 +863,7 @@
 		<DisabledFont inherits="GameFontDisableSmall"/>
 	</CheckButton>
 
-	<CheckButton name="NeuronCheckButtonTabTemplate" virtual="true">
+	<CheckButton name="NeuronCheckButtonTabTemplate" virtual="true" inherits="BackdropTemplate">
 		<Size x="60" y="20"/>
 		<Backdrop bgFile="Interface\AddOns\Neuron\Images\UI-Panel-Tab-Background" edgeFile="Interface\AddOns\Neuron\Images\UI-Tooltip-Border-Tab">
 			<EdgeSize>
@@ -904,7 +904,7 @@
 		</Scripts>
 	</CheckButton>
 
-	<CheckButton name="NeuronCheckButtonTemplateGrey" virtual="true">
+	<CheckButton name="NeuronCheckButtonTemplateGrey" virtual="true" inherits="BackdropTemplate">
 		<Size x="60" y="20"/>
 		<Layers>
 			<Layer level="ARTWORK">
@@ -935,7 +935,7 @@
 		<DisabledFont inherits="GameFontDisableSmall"/>
 	</CheckButton>
 
-	<CheckButton name="NeuronScrollFrameButtonTemplate" virtual="true">
+	<CheckButton name="NeuronScrollFrameButtonTemplate" virtual="true" inherits="BackdropTemplate">
 
 		<Layers>
 			<Layer level="ARTWORK">
@@ -1012,7 +1012,7 @@
 		</Scripts>
 	</CheckButton>
 
-	<CheckButton name="NeuronMacroIconButtonTemplate" virtual="true">
+	<CheckButton name="NeuronMacroIconButtonTemplate" virtual="true" inherits="BackdropTemplate">
 		<Size x="30" y="30"/>
 		<Layers>
 			<Layer level="OVERLAY">
@@ -1060,7 +1060,7 @@
 		<CheckedTexture alphaMode="ADD" file="Interface\AddOns\Neuron\Images\CheckButtonHilight"/>
 	</CheckButton>
 
-	<CheckButton name="NeuronOptionsCheckButtonSwatchTemplate" virtual="true">
+	<CheckButton name="NeuronOptionsCheckButtonSwatchTemplate" virtual="true" inherits="BackdropTemplate">
 		<Size x="20" y="20"/>
 		<HitRectInsets>
 			<AbsInset left="2" right="2" top="2" bottom="2"/>
@@ -1124,7 +1124,7 @@
 
 	<!-- ScrollFrame Templates -->
 
-	<ScrollFrame name="NeuronScrollFrameTemplate1" toplevel="true"  inherits="UIPanelScrollFrameTemplate" virtual="true">
+	<ScrollFrame name="NeuronScrollFrameTemplate1" toplevel="true"  inherits="UIPanelScrollFrameTemplate,BackdropTemplate" virtual="true">
 		<Scripts>
 			<OnLoad>
 				self.offset = 0
@@ -1165,7 +1165,7 @@
 		</Scripts>
 	</ScrollFrame>
 
-	<ScrollFrame name="NeuronScrollFrameTemplate2" inherits="UIPanelScrollFrameTemplate" virtual="true">
+	<ScrollFrame name="NeuronScrollFrameTemplate2" inherits="UIPanelScrollFrameTemplate,BackdropTemplate" virtual="true">
 		<ScrollChild>
 			<EditBox name="$parentEditBox" parentKey="edit" multiLine="true" letters="1023" countInvisibleLetters="true" autoFocus="false">
 				<Size x="330" y="1"/>
@@ -1210,7 +1210,7 @@
 
 	<!-- Not Templates -->
 
-	<Frame name="NeuronMainMenu" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent">
+	<Frame name="NeuronMainMenu" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent" inherits="BackdropTemplate">
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
 				<Offset x="0" y="75"/>
@@ -1232,14 +1232,14 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="NeuronBarEditor" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent">
+	<Frame name="NeuronBarEditor" enableMouse="true" movable="true" hidden="true" frameStrata="DIALOG" parent="UIParent" inherits="BackdropTemplate">
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
 				<Offset x="0" y="75"/>
 			</Anchor>
 		</Anchors>
 		<Frames>
-			<Frame name="$parentBarList" parentKey="barlist">
+			<Frame name="$parentBarList" parentKey="barlist" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="10" y="-10"/>
@@ -1259,7 +1259,7 @@
 							</Anchor>
 						</Anchors>
 						<ScrollChild>
-							<Frame name="$parentScrollChildFrame">
+							<Frame name="$parentScrollChildFrame" inherits="BackdropTemplate">
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset x="5" y="-5"/>
@@ -1295,7 +1295,7 @@
 				</Scripts>
 			</Frame>
 
-			<Frame name="$parentBarOptions" parentKey="baropt">
+			<Frame name="$parentBarOptions" parentKey="baropt" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
 						<Offset x="3" y="-30"/>
@@ -1305,7 +1305,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Frame name="$parentCheckOptions" parentKey="chkoptions">
+					<Frame name="$parentCheckOptions" parentKey="chkoptions" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="0" y="0"/>
@@ -1321,7 +1321,7 @@
 						</Scripts>
 					</Frame>
 
-					<Frame name="$parentAdjustableOptions" parentKey="adjoptions">
+					<Frame name="$parentAdjustableOptions" parentKey="adjoptions" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentCheckOptions" relativePoint="TOPRIGHT">
 								<Offset x="3" y="0"/>
@@ -1340,7 +1340,7 @@
 						</Scripts>
 					</Frame>
 
-					<Frame name="$parentVisiualOptions" parentKey="visoptions">
+					<Frame name="$parentVisiualOptions" parentKey="visoptions" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentAdjustableOptions" relativePoint="BOTTOMLEFT">
 								<Offset x="0" y="-3"/>
@@ -1356,7 +1356,7 @@
 						</Scripts>
 					</Frame>
 
-					<Frame name="$parentColorPicker" parentKey="colorpicker" hidden="true" toplevel="true">
+					<Frame name="$parentColorPicker" parentKey="colorpicker" hidden="true" toplevel="true" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentAdjustableOptions" relativePoint="TOPLEFT">
 								<Offset x="0" y="0"/>
@@ -1386,7 +1386,7 @@
 				</Scripts>
 			</Frame>
 
-			<Frame name="$parentBarStates" parentKey="barstates" hidden="true">
+			<Frame name="$parentBarStates" parentKey="barstates" hidden="true" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
 						<Offset x="3" y="-30"/>
@@ -1396,7 +1396,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Frame name="$parentActionEditor" parentKey="actionedit">
+					<Frame name="$parentActionEditor" parentKey="actionedit" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="163" y="0"/>
@@ -1406,7 +1406,7 @@
 							</Anchor>
 						</Anchors>
 						<Frames>
-							<Frame name="$parentPresets" parentKey="presets">
+							<Frame name="$parentPresets" parentKey="presets" inherits="BackdropTemplate">
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset x="0" y="0"/>
@@ -1436,7 +1436,7 @@
 									</Layer>
 								</Layers>
 								<Frames>
-									<Frame parentKey="primary">
+									<Frame parentKey="primary" inherits="BackdropTemplate">
 										<Anchors>
 											<Anchor point="TOPLEFT">
 												<Offset x="6" y="-6"/>
@@ -1451,7 +1451,7 @@
 											</OnLoad>
 										</Scripts>
 									</Frame>
-									<Frame name="$parentSecondary" parentKey="secondary">
+									<Frame name="$parentSecondary" parentKey="secondary" inherits="BackdropTemplate">
 										<Anchors>
 											<Anchor point="TOPLEFT">
 												<Offset x="111" y="-6"/>
@@ -1472,7 +1472,7 @@
 													</Anchor>
 												</Anchors>
 												<ScrollChild>
-													<Frame name="$parentScrollChildFrame">
+													<Frame name="$parentScrollChildFrame" inherits="BackdropTemplate">
 														<Anchors>
 															<Anchor point="TOPLEFT">
 																<Offset x="5" y="-5"/>
@@ -1510,7 +1510,7 @@
 									</Frame>
 								</Frames>
 							</Frame>
-							<Frame name="$parentCustom" parentKey="custom" hidden="true">
+							<Frame name="$parentCustom" parentKey="custom" hidden="true" inherits="BackdropTemplate">
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset x="0" y="0"/>
@@ -1520,7 +1520,7 @@
 									</Anchor>
 								</Anchors>
 								<Frames>
-									<Frame>
+									<Frame inherits="BackdropTemplate">
 										<Anchors>
 											<Anchor point="TOPLEFT">
 												<Offset x="0" y="0"/>
@@ -1532,7 +1532,7 @@
 									</Frame>
 								</Frames>
 							</Frame>
-							<Frame name="$parentHidden" parentKey="hidden" hidden="true">
+							<Frame name="$parentHidden" parentKey="hidden" hidden="true" inherits="BackdropTemplate">
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset x="0" y="0"/>
@@ -1542,7 +1542,7 @@
 									</Anchor>
 								</Anchors>
 								<Frames>
-									<Frame>
+									<Frame inherits="BackdropTemplate">
 										<Anchors>
 											<Anchor point="TOPLEFT">
 												<Offset x="0" y="0"/>
@@ -1561,7 +1561,7 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Frame name="$parentVisEditor" parentKey="visedit">
+					<Frame name="$parentVisEditor" parentKey="visedit" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentActionEditor" relativePoint="BOTTOMLEFT">
 								<Offset x="0" y="-55"/>
@@ -1581,7 +1581,7 @@
 									</Anchor>
 								</Anchors>
 								<ScrollChild>
-									<Frame name="$parentScrollChildFrame">
+									<Frame name="$parentScrollChildFrame" inherits="BackdropTemplate">
 										<Anchors>
 											<Anchor point="TOPLEFT">
 												<Offset x="5" y="-5"/>
@@ -1617,7 +1617,7 @@
 						</Scripts>
 					</Frame>
 
-					<Frame name="$parentStateList" parentKey="statelist">
+					<Frame name="$parentStateList" parentKey="statelist" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="0" y="0"/>
@@ -1640,7 +1640,7 @@
 				</Scripts>
 			</Frame>
 
-			<Frame name="$parentTargetOptions" parentKey="targetoptions" hidden="true">
+			<Frame name="$parentTargetOptions" parentKey="targetoptions" hidden="true" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentBarList" relativePoint="TOPRIGHT" >
 						<Offset x="3" y="-30"/>
@@ -1650,7 +1650,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Frame name="$parentList" parentKey="list">
+					<Frame name="$parentList" parentKey="list" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="0" y="0"/>
@@ -1681,7 +1681,7 @@
 									</Anchor>
 								</Anchors>
 								<ScrollChild>
-									<Frame name="$parentScrollChildFrame">
+									<Frame name="$parentScrollChildFrame" inherits="BackdropTemplate">
 										<Anchors>
 											<Anchor point="TOPLEFT">
 												<Offset x="5" y="-5"/>
@@ -1761,7 +1761,7 @@
 				</Scripts>
 			</Button>
 
-			<Frame name="$parentConfirm" hidden="true">
+			<Frame name="$parentConfirm" hidden="true" inherits="BackdropTemplate">
 				<Size x="200" y="28"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativeTo="NeuronBarEditor" relativePoint="BOTTOMRIGHT">
@@ -1853,7 +1853,7 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="NeuronObjectEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" hidden="true">
+	<Frame name="NeuronObjectEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" hidden="true" inherits="BackdropTemplate">
 		<Size x="500" y="415"/>
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" relativePoint="CENTER">
@@ -1900,7 +1900,7 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="NeuronButtonEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="NeuronObjectEditor" hidden="true">
+	<Frame name="NeuronButtonEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="NeuronObjectEditor" hidden="true" inherits="BackdropTemplate">
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="NeuronObjectEditor" relativePoint="TOPLEFT">
 				<Offset x="0" y="0"/>
@@ -1910,7 +1910,7 @@
 			</Anchor>
 		</Anchors>
 		<Frames>
-			<Frame name="$parentActionList" parentKey="actionlist">
+			<Frame name="$parentActionList" parentKey="actionlist" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="10" y="-10"/>
@@ -1941,7 +1941,7 @@
 							</Anchor>
 						</Anchors>
 						<ScrollChild>
-							<Frame name="$parentScrollChildFrame">
+							<Frame name="$parentScrollChildFrame" inherits="BackdropTemplate">
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset x="5" y="-5"/>
@@ -1987,7 +1987,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Frame>
+					<Frame inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="0" y="45"/>
@@ -2023,7 +2023,7 @@
 					</Button>
 				</Frames>
 				<ScrollChild>
-					<Frame name="$parentScrollChildFrame">
+					<Frame name="$parentScrollChildFrame" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="5" y="-5"/>
@@ -2072,7 +2072,7 @@
 		</Scripts>
 	</Frame>
 
-	<ColorSelect name="NeuronColorPicker" parent="UIParent" frameStrata="TOOLTIP" enableMouse="true" enableKeyboard="true" hidden="true">
+	<ColorSelect name="NeuronColorPicker" parent="UIParent" frameStrata="TOOLTIP" enableMouse="true" enableKeyboard="true" hidden="true" inherits="BackdropTemplate">
 		<Size x="400" y="240"/>
 		<ColorWheelTexture name="$parentColorPickerWheel">
 			<Size x="150" y="150"/>
@@ -2099,7 +2099,7 @@
 			<TexCoords left="0.25" right="1.0" top="0" bottom="0.875"/>
 		</ColorValueThumbTexture>
 		<Frames>
-			<Slider name="$parentOpacitySlider" parentKey="alpha" orientation="VERTICAL" minValue="0" maxValue="1" valueStep="0.01" defaultValue="1">
+			<Slider name="$parentOpacitySlider" parentKey="alpha" orientation="VERTICAL" minValue="0" maxValue="1" valueStep="0.01" defaultValue="1" inherits="BackdropTemplate">
 				<Size x="24" y="155"/>
 				<Anchors>
 					<Anchor point="TOPRIGHT">
@@ -2369,9 +2369,9 @@
 	</ColorSelect>
 
 
-	<Frame name="NeuronStatusBarEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" hidden="true">
+	<Frame name="NeuronStatusBarEditor" frameStrata="DIALOG" enableMouse="true" movable="true" parent="UIParent" hidden="true" inherits="BackdropTemplate">
 		<Frames>
-			<Frame name="$parentTypes" parentKey="types">
+			<Frame name="$parentTypes" parentKey="types" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="10" y="-30"/>
@@ -2389,7 +2389,7 @@
 					</OnLoad>
 				</Scripts>
 			</Frame>
-			<Frame name="$parentAdjustableOptions" parentKey="adjoptions">
+			<Frame name="$parentAdjustableOptions" parentKey="adjoptions" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentTypes" relativePoint="TOPRIGHT">
 						<Offset x="5" y="0"/>
