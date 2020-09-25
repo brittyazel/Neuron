@@ -76,16 +76,12 @@ function ZONEABILITYBTN:OnEvent(event, ...)
 	end
 end
 
-local function SortByUIPriority(lhs, rhs)
-	return lhs.uiPriority < rhs.uiPriority;
-end
-
 ---overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateData()
 	--get table with zone ability info. The table has 5 values, "zoneAbilityID", "uiPriority", "spellID", "textureKit", and "tutorialText"
 	local zoneAbilityTable = C_ZoneAbility.GetActiveAbilities()
 
-	table.sort(zoneAbilityTable, function(lhs, rhs) return lhs.uiPriority < rhs.uiPriority end);
+	table.sort(zoneAbilityTable, function(a, b) return a.uiPriority < b.uiPriority end);
 
 	---TODO: We will want to revisit this as it seems like now we can have multiple zone abilities at once now. This is just a patch
 	if #zoneAbilityTable > 0 then

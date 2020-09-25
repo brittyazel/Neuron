@@ -104,16 +104,13 @@
 								<Offset x="3" y="-3"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="12"/>
-							</EdgeSize>
-							<BackgroundInsets>
-								<AbsInset left="3" right="3" top="3" bottom="3"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Scripts>
-							<OnLoad>
+							<OnLoad inherit="prepend">
+								self:SetBackdrop({
+									bgFile = "Interface\Tooltips\UI-Tooltip-Background",
+									edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
+									insets = { left = 3, right = 3, top = 3, bottom = 3 }
+								});
 								self:SetBackdropColor(0, 0, 0, 0.8)
 								self:SetBackdropBorderColor(0.8,0.8,0.8,0)
 								self:SetFrameLevel(0)
@@ -129,16 +126,13 @@
 								<Offset x="2" y="-3"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="12"/>
-							</EdgeSize>
-							<BackgroundInsets>
-								<AbsInset left="3" right="3" top="3" bottom="3"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Scripts>
-							<OnLoad>
+							<OnLoad inherit="prepend">
+								self:SetBackdrop({
+									bgFile = "Interface\Tooltips\UI-Tooltip-Background",
+									edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
+									insets = { left = 3, right = 3, top = 3, bottom = 3 }
+								});
 								self:SetBackdropColor(0, 0, 0, 0)
 								self:SetBackdropBorderColor(0.8,0.8,0.8,0)
 								self:SetFrameLevel(10)
@@ -146,16 +140,13 @@
 						</Scripts>
 					</Frame>
 					<Frame name="$parentBarFlash" parentKey="barflash" hidden="true" inherits="BackdropTemplate">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="15"/>
-							</EdgeSize>
-							<BackgroundInsets>
-								<AbsInset left="2" right="2" top="2" bottom="2"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Scripts>
-							<OnLoad>
+							<OnLoad inherit="prepend">
+								self:SetBackdrop({
+									bgFile = "Interface\Tooltips\UI-Tooltip-Background",
+									edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 15,
+									insets = { left = 2, right = 2, top = 2, bottom = 2 }
+								});
 								self:SetBackdropColor(1, 1, 1, 0.5)
 								self:SetBackdropBorderColor(1, 1, 1)
 								self:SetFrameLevel(3)
@@ -229,16 +220,13 @@
 										<Offset x="3" y="-3"/>
 									</Anchor>
 								</Anchors>
-								<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-									<EdgeSize>
-										<AbsValue val="12"/>
-									</EdgeSize>
-									<BackgroundInsets>
-										<AbsInset left="3" right="3" top="3" bottom="3"/>
-									</BackgroundInsets>
-								</Backdrop>
 								<Scripts>
-									<OnLoad>
+									<OnLoad inherit="prepend">
+										self:SetBackdrop({
+											bgFile = "Interface\FriendsFrame\UI-Toast-Background",
+											edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
+											insets = { left = 3, right = 3, top = 3, bottom = 3 }
+										});
 										self:SetBackdropColor(0, 0, 0, 1)
 										self:SetBackdropBorderColor(0.8,0.8,0.8,0)
 										self:SetFrameLevel(0)
@@ -254,16 +242,13 @@
 										<Offset x="2" y="-3"/>
 									</Anchor>
 								</Anchors>
-								<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-									<EdgeSize>
-										<AbsValue val="12"/>
-									</EdgeSize>
-									<BackgroundInsets>
-										<AbsInset left="3" right="3" top="3" bottom="3"/>
-									</BackgroundInsets>
-								</Backdrop>
 								<Scripts>
-									<OnLoad>
+									<OnLoad inherit="prepend">
+										self:SetBackdrop({
+											bgFile = "Interface\Tooltips\UI-Tooltip-Background",
+											edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
+											insets = { left = 3, right = 3, top = 3, bottom = 3 }
+										});
 										self:SetBackdropColor(0, 0, 0, 0)
 										self:SetBackdropBorderColor(0.8,0.8,0.8,0)
 										self:SetFrameLevel(10)
