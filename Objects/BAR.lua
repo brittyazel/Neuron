@@ -1204,7 +1204,7 @@ end
 
 function BAR:SetObjectLoc()
 	local width, height, num, origCol = 0, 0, 0, self.data.columns
-	local x, y, lastObj, placed
+	local x, y, placed
 	local shape, padH, padV, arcStart, arcLength = self.data.shape, self.data.padH, self.data.padV, self.data.arcStart, self.data.arcLength
 	local cAdjust, rAdjust = 0.5, 1
 	local columns, rows
@@ -1226,6 +1226,7 @@ function BAR:SetObjectLoc()
 			table.insert(buttons, Neuron.FOBTNIndex[v])
 		end
 	end
+
 	--------------------------------------------------------------------------
 
 	if not origCol then
