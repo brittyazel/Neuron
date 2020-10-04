@@ -98,8 +98,8 @@ function ACTIONBUTTON:UpdateObjectVisibility(show)
 	end
 
 	if not InCombatLockdown() then
+		---TODO: we probably don't need this happening everytime. It's probably safe to move it to a Set/Get function
 		self:SetAttribute("showGrid", self.showGrid) --this is important because in our state switching code, we can't query self.showGrid directly
-		self:SetAttribute("isshown", self.isShown)
 
 		if self.isShown then
 			self:Show()
@@ -198,31 +198,23 @@ function ACTIONBUTTON:SetType()
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
+	self:SetAttribute("overrideID_Offset", 156)
+	self:SetAttribute("vehicleID_Offset", 132)
+
 	--This is so that hotkeypri works properly with priority/locked buttons
 	self:WrapScript(self, "OnShow", [[
-
 			for i=1,select('#',(":"):split(self:GetAttribute("hotkeys"))) do
 				self:SetBindingClick(self:GetAttribute("hotkeypri"), select(i,(":"):split(self:GetAttribute("hotkeys"))), self:GetName())
 			end
-
 			]])
 
 	self:WrapScript(self, "OnHide", [[
-
 			if not self:GetParent():GetAttribute("concealed") then
 				for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
 					self:ClearBinding(key)
 				end
 			end
-
 			]])
-
-	--new action ID's for vehicle 133-138
-	--new action ID's for possess 133-138
-	--new action ID's for override 157-162
-
-	self:SetAttribute("overrideID_Offset", 156)
-	self:SetAttribute("vehicleID_Offset", 132)
 
 	self:SetAttribute("_childupdate",
 			[[
@@ -269,9 +261,10 @@ function ACTIONBUTTON:SetType()
 							self:SetAttribute("type", "macro")
 							self:SetAttribute("*macrotext*", self:GetAttribute(msg.."-macro_Text"))
 
-							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("isshown") then
+							--if there is a macro present, or if showGrid is enabled, show the button. If not, hide it. This works in combat.
+							if (self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0) or self:GetAttribute("showGrid") then
 								self:Show()
-							elseif not self:GetAttribute("showGrid") then
+							else
 								self:Hide()
 							end
 
@@ -693,9 +686,10 @@ function ACTIONBUTTON:FakeStateChange(state)
 				self:SetAttribute("type", "macro")
 				self:SetAttribute("*self*", self:GetAttribute(msg.."-macro_Text"))
 
-				if self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0 or self:GetAttribute("isshown") then
+				--if there is a macro present, or if showGrid is enabled, show the button. If not, hide it. This works in combat.
+				if self:GetAttribute("*macrotext*") and #self:GetAttribute("*macrotext*") > 0 or self:GetAttribute("showGrid") then
 					self:Show()
-				elseif not self:GetAttribute("showGrid") then
+				else
 					self:Hide()
 				end
 
