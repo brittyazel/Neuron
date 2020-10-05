@@ -117,6 +117,10 @@ end
 --- Register Events, Hook functions, Create Frames, Get information from
 --- the game that wasn't available in OnInitialize
 function Neuron:OnEnable()
+	if Neuron.DEBUG then
+		_G.Neuron = Neuron
+	end
+
 	Neuron:RegisterEvent("PLAYER_REGEN_DISABLED")
 	Neuron:RegisterEvent("PLAYER_ENTERING_WORLD")
 	Neuron:RegisterEvent("SPELLS_CHANGED")
@@ -158,10 +162,6 @@ function Neuron:OnEnable()
 	Neuron:Overrides()
 
 	Neuron.NeuronGUI:LoadInterfaceOptions()
-
-	if Neuron.DEBUG then
-		_G.Neuron = Neuron
-	end
 
 end
 

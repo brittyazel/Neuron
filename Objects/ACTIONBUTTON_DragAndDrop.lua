@@ -438,8 +438,8 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 	local count = #self.bar.buttons
 	local columns = self.bar.data.columns or count
 	local rows = count/columns
-	
-    local point = self:GetPosition()
+
+	local point = self:GetPosition(UIParent)
 
 	if columns/rows > 1 then
 
@@ -476,7 +476,7 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 	self.data.macro_BlizzMacro = false
 	self.data.macro_EquipmentSet = false
 
-	--self:UpdateFlyout(true)
+	self:UpdateFlyout(true)
 end
 
 
