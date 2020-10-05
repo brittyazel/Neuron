@@ -1,31 +1,35 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[Client Version] Title for my issue..."
+title: ''
 labels: bug
 assignees: brittyazel
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Describe the issue:**
+A clear and concise description of what the issue is.
 
-**To Reproduce**
+**How to reproduce:**
 Steps to reproduce the behavior:
-1. Go to '...'
+1. Go to '....'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Expected behavior:**
+A clear and concise description of what you expected to happen. 
 
-**Screenshots**
+**Screenshots:**
 If applicable, add screenshots to help explain your problem.
 
 **Versions:**
- - Neuron Version [e.g. 1.3.6a]
- - Client Version [e.g. Retail or Classic]
+ - Addon Version [e.g. 1.2.1]
+ - Client [e.g. Retail or Classic]
+ - Client Patch Version [e.g. 9.0.1]
 
-**Additional context**
+**Additional context:**
 Add any other context about the problem here.
+
+**Lua error log:**
+Attach the Lua error log here (please use code tags)
