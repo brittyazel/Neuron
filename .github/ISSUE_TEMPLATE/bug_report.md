@@ -6,30 +6,28 @@ labels: bug
 assignees: brittyazel
 
 ---
+*When reporting, please verify the issue with only **this** addon enabled and no others unless explicitly reporting an incompatibility between this addon an another. Likewise, please fill in the below information to the best of your ability — this information helps us a great deal.*
 
-**Describe the issue:**
-A clear and concise description of what the issue is.
+## Issue description:
+*A clear and concise description of what the issue is (i.e. what went wrong and what should have happened).*
 
-**How to reproduce:**
-Steps to reproduce the behavior:
-1. Go to '....'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## How to reproduce:
+*E.g., Steps to reproduce the behavior...*
+1. *Go to '....'*
+2. *Click on '....'*
+3. *Scroll down to '....'*
+4. *See error*
 
-**Expected behavior:**
-A clear and concise description of what you expected to happen. 
+## Technical info:
+ - **Addon Version:** *[e.g., 1.2.1]*
+ - **Client:** *[e.g., Retail, Classic, PTR, or Beta]*
+ - **Client Patch Version:** *[e.g., 9.0.1]*
+ 
+## Additional context:
+*Add any other context about the problem here.*
 
-**Screenshots:**
-If applicable, add screenshots to help explain your problem.
+## Screenshots:
+*If applicable, add screenshots to help explain your problem.*
 
-**Versions:**
- - Addon Version [e.g. 1.2.1]
- - Client [e.g. Retail or Classic]
- - Client Patch Version [e.g. 9.0.1]
-
-**Additional context:**
-Add any other context about the problem here.
-
-**Lua error log:**
-Attach the Lua error log here (please use code tags)
+## Lua error log:
+*Attach the Lua error log here (please use code tags)*
