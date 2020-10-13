@@ -78,8 +78,17 @@ end
 
 ---overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateData()
-	--update the ZoneAbility spell ID
-	self.spellID = GetZoneAbilitySpellInfo();
+	--get table with zone ability info. The table has 5 values, "zoneAbilityID", "uiPriority", "spellID", "textureKit", and "tutorialText"
+	local zoneAbilityTable = C_ZoneAbility.GetActiveAbilities()
+
+	table.sort(zoneAbilityTable, function(a, b) return a.uiPriority < b.uiPriority end);
+
+	---TODO: We will want to revisit this as it seems like now we can have multiple zone abilities at once now. This is just a patch
+	if #zoneAbilityTable > 0 then
+		self.spellID = zoneAbilityTable[1].spellID
+		self.textureKit = zoneAbilityTable[1].textureKit
+	end
+
 
 	if self.spellID then
 		self.spell = GetSpellInfo(self.spellID);
@@ -102,7 +111,7 @@ function ZONEABILITYBTN:UpdateData()
 end
 
 function ZONEABILITYBTN:UpdateObjectVisibility()
-	if HasZoneAbility() then
+	if #C_ZoneAbility.GetActiveAbilities() > 0 then
 		self.isShown = true
 	else
 		self.isShown = false
@@ -116,8 +125,13 @@ function ZONEABILITYBTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
 	self.elements.IconFrameIcon:SetTexture(spellTexture);
 
-	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[self.spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
-	self.elements.Flair:SetTexture(texture)
+	local texture = self.textureKit or "Interface\\ExtraButton\\GarrZoneAbility-Armory"
+
+	if C_Texture.GetAtlasInfo(texture) then
+		self.elements.Flair:SetAtlas(texture, true);
+	elseif texture then
+		self.elements.Flair:SetTexture(texture);
+	end
 
 	if self.bar.data.showBorderStyle then
 		self.elements.Flair:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.

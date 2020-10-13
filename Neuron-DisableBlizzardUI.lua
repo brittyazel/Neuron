@@ -84,18 +84,13 @@ function Neuron:HideBlizzardUI()
 
 	ActionBarController:UnregisterAllEvents()
 
-
 	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
-	if not Neuron:IsHooked('ActionButton_OnEvent') then
+	--[[if not Neuron:IsHooked('ActionButton_OnEvent') then
 		Neuron:RawHook('ActionButton_OnEvent', function() end, true)
 	end
 
 	if not Neuron:IsHooked('ActionButton_Update') then
 		Neuron:RawHook('ActionButton_Update', function() end, true)
-	end
-
-	if not Neuron:IsHooked('MultiActionBar_Update') then
-		Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
 
 	if not Neuron:IsHooked('ActionButton_HideGrid') then
@@ -105,16 +100,21 @@ function Neuron:HideBlizzardUI()
 	if not Neuron:IsHooked('ActionButton_ShowGrid') then
 		Neuron:RawHook('ActionButton_ShowGrid', function() end, true)
 	end
+	]]
 
-	if not Neuron:IsHooked('PetActionBar_Update') then
-		Neuron:RawHook('PetActionBar_Update', function() end, true)
+	--[[if not Neuron:IsHooked('MultiActionBar_Update') then
+    	Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
 
 	if not Neuron.isWoWClassic then
-		if not Neuron:IsHooked('OverrideActionBar_UpdateSkin') then
-			Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
-		end
+    	if not Neuron:IsHooked('OverrideActionBar_UpdateSkin') then
+       		Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
+    	end
 	end
+
+	if not Neuron:IsHooked('PetActionBar_Update') then
+    	Neuron:RawHook('PetActionBar_Update', function() end, true)
+	end]]
 
 end
 
