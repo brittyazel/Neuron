@@ -55,39 +55,39 @@
 
 				if (text) then
 
-				if (parentparent:GetObjectType() == "EditBox") then
+					if (parentparent:GetObjectType() == "EditBox") then
 
-				parentparent:SetText("")
-				parentparent:SetText(text)
-				parentparent:SetFocus()
-				parentparent:ClearFocus()
+						parentparent:SetText("")
+						parentparent:SetText(text)
+						parentparent:SetFocus()
+						parentparent:ClearFocus()
 
-				if (self.value) then
-				parentparent.value = self.value
-				end
+						if (self.value) then
+							parentparent.value = self.value
+						end
 
-				elseif (edit and self.value) then
+					elseif (edit and self.value) then
 
-				Neuron:Print("hit2")
+						Neuron:Print("hit2")
 
-				edit:SetText("")
-				edit:SetText(self.value)
+						edit:SetText("")
+						edit:SetText(self.value)
 
-				elseif (edit) then
+					elseif (edit) then
 
-				Neuron:Print("hit3")
+						Neuron:Print("hit3")
 
-				edit:SetText("")
-				edit:SetText(text)
-				end
+						edit:SetText("")
+						edit:SetText(text)
+					end
 				end
 
 				parent:Hide()
 			</OnClick>
 			<OnEnter>
 				if (self.tooltip) then
-				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-				GameTooltip:SetText(self.tooltip)
+					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+					GameTooltip:SetText(self.tooltip)
 				end
 			</OnEnter>
 			<OnLeave>
@@ -359,11 +359,11 @@
 						self:GetParent().show = nil
 						self:GetParent().popup.timer = 0;
 						if (self:GetParent().popup:IsVisible()) then
-						self:GetParent().popup:Hide()
+							self:GetParent().popup:Hide()
 						else
-						if (self:GetParent().popup.data) then
-						self:GetParent().popup:Show()
-						end
+							if (self:GetParent().popup.data) then
+								self:GetParent().popup:Show()
+							end
 						end
 						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 					</OnClick>
@@ -410,9 +410,9 @@
 					<OnUpdate>
 						self.timer = self.timer + elapsed
 						if (self:IsVisible() and self.timer > 5) then
-						if (not self:IsMouseOver()) then
-						self:Hide()
-						end
+							if (not self:IsMouseOver()) then
+								self:Hide()
+							end
 						end
 					</OnUpdate>
 				</Scripts>
@@ -484,19 +484,19 @@
 					</OnLoad>
 					<OnEvent>
 						if (... == "Neuron") then
-						self:SetWidth(self:GetParent():GetHeight())
-						self:SetHeight(self:GetParent():GetHeight())
+							self:SetWidth(self:GetParent():GetHeight())
+							self:SetHeight(self:GetParent():GetHeight())
 						end
 					</OnEvent>
 					<OnClick>
 						self:GetParent().show = nil
 						self:GetParent().popup.timer = 0;
 						if (self:GetParent().popup:IsVisible()) then
-						self:GetParent().popup:Hide()
+							self:GetParent().popup:Hide()
 						else
-						if (self:GetParent().popup.data) then
-						self:GetParent().popup:Show()
-						end
+							if (self:GetParent().popup.data) then
+								self:GetParent().popup:Show()
+							end
 						end
 						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 					</OnClick>
@@ -541,9 +541,9 @@
 					<OnUpdate>
 						self.timer = self.timer + elapsed
 						if (self:IsVisible() and self.timer > 5) then
-						if (not self:IsMouseOver()) then
-						self:Hide()
-						end
+							if (not self:IsMouseOver()) then
+								self:Hide()
+							end
 						end
 					</OnUpdate>
 				</Scripts>
@@ -594,18 +594,18 @@
 		<Scripts>
 			<OnClick>
 				if ( self:GetChecked() ) then
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 				else
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
 				end
 			</OnClick>
 			<OnEnter>
 				if ( self.tooltipText ) then
-				GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-				GameTooltip:SetText(self.tooltipText)
+					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+					GameTooltip:SetText(self.tooltipText)
 				end
 				if ( self.tooltipRequirement ) then
-				GameTooltip:AddLine(self.tooltipRequirement)
+					GameTooltip:AddLine(self.tooltipRequirement)
 				end
 				GameTooltip:Show();
 			</OnEnter>
@@ -831,11 +831,11 @@
 		<Scripts>
 			<OnEnter>
 				if ( self.tooltipText ) then
-				GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-				GameTooltip:SetText(self.tooltipText)
+					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+					GameTooltip:SetText(self.tooltipText)
 				end
 				if ( self.tooltipRequirement ) then
-				GameTooltip:AddLine(self.tooltipRequirement)
+					GameTooltip:AddLine(self.tooltipRequirement)
 				end
 				GameTooltip:Show();
 			</OnEnter>
@@ -898,7 +898,7 @@
 			</OnEnter>
 			<OnLeave>
 				if (not self.selected) then
-				self:SetBackdropColor(0.7,0.7,0.7,1)
+					self:SetBackdropColor(0.7,0.7,0.7,1)
 				end
 			</OnLeave>
 		</Scripts>
@@ -1002,8 +1002,8 @@
 			</OnLoad>
 			<OnEnter>
 				if (self.tooltip) then
-				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-				GameTooltip:SetText(self.tooltip)
+					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+					GameTooltip:SetText(self.tooltip)
 				end
 			</OnEnter>
 			<OnLeave>
@@ -1037,12 +1037,12 @@
 			</OnLoad>
 			<OnClick>
 				if (self.onclick_func) then
-				self.onclick_func(self, button, down)
+					self.onclick_func(self, button, down)
 				end
 			</OnClick>
 			<OnUpdate>
 				if (self.onupdate_func) then
-				self.onupdate_func(self, elapsed)
+					self.onupdate_func(self, elapsed)
 				end
 			</OnUpdate>
 		</Scripts>
@@ -1095,18 +1095,18 @@
 		<Scripts>
 			<OnClick>
 				if ( self:GetChecked() ) then
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 				else
-				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
 				end
 			</OnClick>
 			<OnEnter>
 				if ( self.tooltipText ) then
-				GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
-				GameTooltip:SetText(self.tooltipText)
+					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+					GameTooltip:SetText(self.tooltipText)
 				end
 				if ( self.tooltipRequirement ) then
-				GameTooltip:AddLine(self.tooltipRequirement)
+					GameTooltip:AddLine(self.tooltipRequirement)
 				end
 				GameTooltip:Show();
 			</OnEnter>
@@ -1149,14 +1149,14 @@
 				self.scrollbar:SetValue(offset)
 				local min, max = self.scrollbar:GetMinMaxValues()
 				if ( offset == 0 ) then
-				self.scrollbarup:Disable()
+					self.scrollbarup:Disable()
 				else
-				self.scrollbarup:Enable()
+					self.scrollbarup:Enable()
 				end
 				if ((self.scrollbar:GetValue() - max) == 0) then
-				self.scrollbardown:Disable()
+					self.scrollbardown:Disable()
 				else
-				self.scrollbardown:Enable()
+					self.scrollbardown:Enable()
 				end
 			</OnVerticalScroll>
 			<OnMouseWheel>
@@ -2112,11 +2112,11 @@
 					</OnLoad>
 					<OnValueChanged>
 						if (NeuronColorPicker.opacityFunc) then
-						NeuronColorPicker.opacityFunc()
+							NeuronColorPicker.opacityFunc()
 						end
 
 						if (self:GetParent().alphavalue) then
-						self:GetParent().alphavalue:SetText(1-self:GetValue())
+							self:GetParent().alphavalue:SetText(1-self:GetValue())
 						end
 					</OnValueChanged>
 				</Scripts>
@@ -2298,14 +2298,14 @@
 						local value = self:GetText()
 						value = tonumber(value)
 						if (value) then
-						self:GetParent().alpha:SetValue(1-value)
+							self:GetParent().alpha:SetValue(1-value)
 						end
 					</OnTabPressed>
 					<OnEnterPressed>
 						local value = self:GetText()
 						value = tonumber(value)
 						if (value) then
-						self:GetParent().alpha:SetValue(1-value)
+							self:GetParent().alpha:SetValue(1-value)
 						end
 					</OnEnterPressed>
 				</Scripts>
@@ -2325,11 +2325,11 @@
 						PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
 						if (self.parent.frame) then
 
-						if (self.parent.frame.updateFunc) then
-						self.parent.frame.updateFunc(self.parent.frame)
-						end
+							if (self.parent.frame.updateFunc) then
+								self.parent.frame.updateFunc(self.parent.frame)
+							end
 
-						self.parent.frame:Hide()
+							self.parent.frame:Hide()
 
 						end
 					</OnClick>
@@ -2349,7 +2349,7 @@
 					<OnClick>
 						PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK)
 						if (self.parent.frame) then
-						self.parent.frame:Hide()
+							self.parent.frame:Hide()
 						end
 					</OnClick>
 				</Scripts>
