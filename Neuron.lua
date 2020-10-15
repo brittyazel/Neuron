@@ -173,9 +173,6 @@ function Neuron:OnInitialize()
 	--Initialize the chat commands (i.e. /neuron)
 	Neuron:RegisterChatCommand("neuron", "slashHandler")
 
-	--build all bar and button frames and run initial setup
-	Neuron:Startup()
-
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -215,11 +212,13 @@ function Neuron:OnEnable()
 		end)
 	end
 
-	Neuron:LoginMessage()
-
+	--set current spec before loading bars and buttons
 	if not Neuron.isWoWClassic then
 		Neuron.activeSpec = GetSpecialization()
 	end
+
+	--build all bar and button frames and run initial setup
+	Neuron:Startup()
 
 	--Load all bars and buttons
 	for i,v in pairs(Neuron.BARIndex) do
@@ -227,7 +226,7 @@ function Neuron:OnEnable()
 	end
 
 	Neuron:Overrides()
-
+	Neuron:LoginMessage()
 end
 
 --- **OnDisable**, which is only called when your addon is manually being disabled.
@@ -353,26 +352,22 @@ function Neuron:LoginMessage()
 
 	--displays a info window on login for either fresh installs or updates
 	if not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM  then
-
-		print(" ")
-		print("                  ~~~~~~~~~~NEURON~~~~~~~~~")
-		print("    Ladies and Gentlemen,")
-		print("    Lots of work is underway on Neuron 2.0, which will include a fully rewritten core, GUI, modules, and more. Likewise, please reach out if you are interested in contributing to Neuron's development, we always need more help coding and translating, and, as always, donations are welcome!")
-		print("    In addition, we recently released a custom Masque theme just for Neuron, called Masque: Neuron. You can find it on CurseForge or the Twitch app.")
-		print("       -Soyier")
-
 		if not IsAddOnLoaded("Masque") then
 			print(" ")
 			print("    You do not currently have Masque installed or enabled.")
 			print("    Please consider using Masque for enhancing the visual appearance of Neuron's action buttons.")
 			print("    We recommend using Masque: Neuron, the theme made by Soyier for use with Neuron.")
+			print(" ")
 		end
-
-		print(" ")
-
 	end
 
 	DB.updateWarning = LATEST_VERSION_NUM
+
+	if Neuron.activeSpec > 4 then
+		print(" ")
+		Neuron:Print("Warning: You do not currently have a specialization selected. Changes to any buttons which have 'Multi Spec' set will not persist.")
+		print(" ")
+	end
 end
 
 

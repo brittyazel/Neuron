@@ -64,7 +64,7 @@ function BUTTON.new(bar, buttonID,baseObj, barClass, objType, template)
 	end
 	-----------------------
 
-	--crosslink the bar and button for easy refrencing
+	--crosslink the bar and button for easy referencing
 	bar.buttons[buttonID] = newButton
 	newButton.bar = bar
 
@@ -512,8 +512,7 @@ function BUTTON:SetDefaults(defaults)
 			self.DB.keys[k] = v
 		end
 	end
-
-
+	
 end
 
 function BUTTON:SetType()

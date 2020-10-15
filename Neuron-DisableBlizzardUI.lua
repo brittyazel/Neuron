@@ -81,8 +81,14 @@ function Neuron:HideBlizzardUI()
 		StatusTrackingBarManager:UnregisterAllEvents()
 	end
 
-
 	ActionBarController:UnregisterAllEvents()
+
+	--it's important we shut down the tutorial or we will get a ton of errors
+	--this cleanly shuts down the tutorial and returns visibility to all UI elements hidden
+	if Tutorials then --the Tutorials table is only available during the tutorial scenario, ignore if otherwise
+		Tutorials:Shutdown()
+	end
+
 
 	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
 	--[[if not Neuron:IsHooked('ActionButton_OnEvent') then

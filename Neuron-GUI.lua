@@ -2557,6 +2557,10 @@ function NeuronGUI:MacroEditorUpdate()
 		if (button.bar.data.multiSpec) then
 			buttonSpec = specoveride
 
+			if buttonSpec > 4 then
+				buttonSpec = 1
+			end
+
 			--Sets spec tab to current spec
 			NBTNE.spec1:SetChecked(false)
 			NBTNE.spec2:SetChecked(false)
