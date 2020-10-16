@@ -512,7 +512,7 @@ function BUTTON:SetDefaults(defaults)
 			self.DB.keys[k] = v
 		end
 	end
-	
+
 end
 
 function BUTTON:SetType()
