@@ -77,9 +77,7 @@ end
 
 --- Sorting function
 local function keySort(list)
-
 	local array = {}
-
 	local i = 0
 
 	for n in pairs(list) do
@@ -90,7 +88,6 @@ local function keySort(list)
 
 	local sorter = function()
 		i = i + 1
-
 		if array[i] == nil then
 			return nil
 		else
@@ -102,7 +99,6 @@ local function keySort(list)
 end
 
 local function timerFrame_OnUpdate(frame, elapsed)
-
 	if Neuron.enteredWorld then
 		local tick
 		local times = timerTimes
@@ -164,20 +160,6 @@ local function getSpellInfo(index, bookType)
 	local spellType,spellIdOrActionId = GetSpellBookItemInfo(index, bookType)
 	local _,_, icon = GetSpellInfo(index, spellRankOrSubtype)
 	return spellBookSpellName, spellRankOrSubtype, spellType, spellIdOrActionId, icon
-end
-
----@param list table<string|number,any> of <[string]|[number],[any]>
----@return string comma separated string of the list
-local function getKeys(list)
-	local txt = ""
-	for k,_ in pairs(list) do
-		if txt == "" then
-			txt = txt..k
-		else
-			txt = txt..", "..k
-		end
-	end
-	return txt
 end
 
 local function sequence(delim,first,...)
@@ -327,15 +309,15 @@ end
 ---@param haystack string - string to search for
 ---@param index number - an index number, which Slot # to match against.
 local function isMatch(Criteria, haystack, index)
-	local hit, Search, haystack, j = false, Criteria, haystack, index
-	if (Search.MustNot.MatchCount > 0 and isAnyMatchIn(Search.MustNot.Match,haystack:lower())) or (j ~= nil and (Search.Slot.MatchCount > 0 and not Search.Slot.Match[""..j])) then
+	local hit = false
+	if (Criteria.MustNot.MatchCount > 0 and isAnyMatchIn(Criteria.MustNot.Match,haystack:lower())) or (index ~= nil and (Criteria.Slot.MatchCount > 0 and not Criteria.Slot.Match[""..index])) then
 		return hit
 	end
-	if (Search.Must.MatchCount == 0 and Search.Optional.MatchCount > 0 and isAnyMatchIn(Search.Optional.Match, haystack:lower())) then
+	if (Criteria.Must.MatchCount == 0 and Criteria.Optional.MatchCount > 0 and isAnyMatchIn(Criteria.Optional.Match, haystack:lower())) then
 		hit = true
 	end
-	if (Search.Must.MatchCount > 0 and isAllMatchIn(Search.Must.Match,haystack:lower())) then
-		if (Search.Optional.MatchCount > 0) and not isAnyMatchIn(Search.Optional.Match, haystack:lower()) then return false end
+	if (Criteria.Must.MatchCount > 0 and isAllMatchIn(Criteria.Must.Match,haystack:lower())) then
+		if (Criteria.Optional.MatchCount > 0) and not isAnyMatchIn(Criteria.Optional.Match, haystack:lower()) then return false end
 		hit = true
 	end
 	return hit
@@ -544,7 +526,6 @@ function ACTIONBUTTON:filter_type()
 						if (name) then -- match by name
 							local findIn = "worn "..itemType.." "..itemSubType
 							--TODO: Get item equipable slot, this j is wrong
-							print(tostring(i),tostring(j))
 							if (isMatch(Criteria,findIn,j)) then
 								data[name] = "item"
 							end
@@ -693,21 +674,14 @@ function ACTIONBUTTON:filter_pet()
 
 	local keys = self.flyout.keys
 	for ckey in gmatch(keys, "[^,]+") do
-
 		local cmd, arg = (ckey):match("%s*(%p*)(%P+)")
-
-
-
 		local speciesID, _ = C_PetJournal.FindPetIDByName(arg)
-
-
 		local speciesName, speciesIcon = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
 
 		if speciesName then
 			data[speciesName] = "companion"
 			petIcons[speciesName] = speciesIcon
 		end
-
 	end
 
 	return data
@@ -906,7 +880,7 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 				if slot then
 					button:SetAttribute("macro_Text", button:GetAttribute("prefix").."[nobtn:2] "..slot)
 					button:SetAttribute("*macrotext1", prefix.."[nobtn:2] "..slot..button.macroshow)
-					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..slot.."\n/stopmacro [nobtn:2]\n/flyout "..self.lyout.options)
+					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..slot.."\n/stopmacro [nobtn:2]\n/flyout "..self.flyout.options)
 				elseif pet then
 					button:SetAttribute("macro_Text", button:GetAttribute("prefix").."[nobtn:2] "..pet)
 					button:SetAttribute("*macrotext1", prefix.."[nobtn:2] "..pet)
