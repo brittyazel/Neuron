@@ -981,7 +981,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 
 	NeuronGUI:SubFrameBlackBackdrop_OnLoad(f)
 
-	f = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	f = CreateFrame("Frame", nil, frame, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetWidth(250)
 	f:SetHeight(30)
 	f:SetPoint("BOTTOM", 0, 10)
@@ -995,7 +995,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	text:SetText("Test Object Count: 12")
 	frame.count.text = text
 
-	f = CreateFrame("Button", nil, frame.count, "BackdropTemplate")
+	f = CreateFrame("Button", nil, frame.count, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetWidth(32)
 	f:SetHeight(40)
 	f:SetPoint("LEFT", text, "RIGHT", 10, -1)
@@ -1004,7 +1004,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetHighlightTexture("Interface\\AddOns\\Neuron\\Images\\AdjustOptionRight-Highlight")
 	f:SetScript("OnClick", function() if (Neuron.CurrentBar) then Neuron.CurrentBar:AddObjectsToBar() end end)
 
-	f = CreateFrame("Button", nil, frame.count, "BackdropTemplate")
+	f = CreateFrame("Button", nil, frame.count, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetWidth(32)
 	f:SetHeight(40)
 	f:SetPoint("RIGHT", text, "LEFT", -10, -1)
@@ -2221,7 +2221,7 @@ end
 --- OnLoad event for Bar editor Spell Target Options frame
 function NeuronGUI:TargetOptions_OnLoad(frame)
 	--Container Support
-	local content = CreateFrame("Frame",nil, frame, "BackdropTemplate")
+	local content = CreateFrame("Frame",nil, frame, BackdropTemplateMixin and "BackdropTemplate")
 	content:SetPoint("TOPLEFT",10,-5 )
 	content:SetPoint("BOTTOMRIGHT",-10,5)
 	--This creats a cusomt AceGUI container which lets us imbed a AceGUI menu into our frame.
@@ -2248,7 +2248,7 @@ end
 function NeuronGUI:FlyoutOptions_OnLoad(frame)
 	--NeuronButtonEditor.options
 	--Container Support
-	local content = CreateFrame("Frame",nil, frame.options, "BackdropTemplate")
+	local content = CreateFrame("Frame",nil, frame.options, BackdropTemplateMixin and "BackdropTemplate")
 	content:SetPoint("TOPLEFT",10,-5 )
 	content:SetPoint("BOTTOMRIGHT",-10,5)
 	--This creats a cusomt AceGUI container which lets us imbed a AceGUI menu into our frame.
@@ -3086,7 +3086,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 
 	local f
 
-	f = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	f = CreateFrame("Frame", nil, frame, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", frame.actionlist, "TOPRIGHT", 10, -10)
 	f:SetPoint("BOTTOMRIGHT", -10, 10)
 	f:SetScript("OnUpdate", function(self,elapsed) if (self.elapsed == 0) then NeuronGUI:UpdateObjectGUI(true) end self.elapsed = elapsed end)
@@ -3103,7 +3103,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.edit:SetScript("OnEditFocusLost", function(self)NeuronGUI:macroText_OnEditFocusLost(self) end)
 	frame.macroedit = f
 
-	f = CreateFrame("Button", "focus", frame.macro, "BackdropTemplate")
+	f = CreateFrame("Button", "focus", frame.macro, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", frame.macroedit, "TOPLEFT", -10, 10)
 	f:SetPoint("BOTTOMRIGHT", -18, 0)
 	f:SetWidth(350)
@@ -3112,7 +3112,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.macroedit = frame.macroedit
 	frame.macrofocus = f
 
-	f = CreateFrame("Frame", nil, frame.macroedit, "BackdropTemplate")
+	f = CreateFrame("Frame", nil, frame.macroedit, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", -10, 10)
 	f:SetPoint("BOTTOMRIGHT", 4, -20)
 	f:SetFrameLevel(frame.macroedit.edit:GetFrameLevel()-1)
@@ -3139,7 +3139,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.iconlist:SetScript("OnHide", function() NeuronObjectEditor.done:Show() end)
 	frame.macroicon = f
 
-	f = CreateFrame("Button", nil, frame.macro, "BackdropTemplate")
+	f = CreateFrame("Button", nil, frame.macro, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("BOTTOMLEFT", frame.macroicon, "BOTTOMRIGHT", 2, -7)
 	f:SetWidth(34)
 	f:SetHeight(34)
@@ -3172,7 +3172,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.tooltipText = L["Display button for specialization 1"]
 	frame.spec1 = f; frame.specs[f] = frame.spec1
 
-	f = CreateFrame("frame", nil, frame.spec1, "BackdropTemplate")
+	f = CreateFrame("frame", nil, frame.spec1, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetWidth(20)
 	f:SetHeight(20)
 	f:SetPoint("LEFT",10)
@@ -3226,7 +3226,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.tooltipText = _G.SAVE
 	frame.savestate = f
 
-	f = CreateFrame("EditBox", nil, frame.macro, "BackdropTemplate")
+	f = CreateFrame("EditBox", nil, frame.macro, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetMultiLine(false)
 	f:SetNumeric(false)
 	f:SetAutoFocus(false)
@@ -3247,14 +3247,14 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.text:SetJustifyH("CENTER")
 	f.text:SetText(L["Macro Name"])
 
-	f = CreateFrame("Frame", nil, frame.nameedit, "BackdropTemplate")
+	f = CreateFrame("Frame", nil, frame.nameedit, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", 0, 0)
 	f:SetPoint("BOTTOMRIGHT", 0, 0)
 	f:SetFrameLevel(frame.nameedit:GetFrameLevel()-1)
 
 	NeuronGUI:SubFrameBlackBackdrop_OnLoad(f)
 
-	f = CreateFrame("EditBox", nil, frame.macro, "BackdropTemplate")
+	f = CreateFrame("EditBox", nil, frame.macro, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetMultiLine(false)
 	f:SetMaxLetters(50)
 	f:SetNumeric(false)
@@ -3277,7 +3277,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.text:SetJustifyH("CENTER")
 	f.text:SetText(L["Click here to edit macro note"])
 
-	f = CreateFrame("Frame", nil, frame.noteedit, "BackdropTemplate")
+	f = CreateFrame("Frame", nil, frame.noteedit, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", 0, 0)
 	f:SetPoint("BOTTOMRIGHT", 15, 0)
 	f:SetFrameLevel(frame.noteedit:GetFrameLevel()-1)
@@ -3359,7 +3359,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 
 	NeuronGUI:SubFrameBlackBackdrop_OnLoad(f)
 
-	f.cancel = CreateFrame("Button", nil, f, "BackdropTemplate")
+	f.cancel = CreateFrame("Button", nil, f, BackdropTemplateMixin and "BackdropTemplate")
 	f.cancel:SetWidth(20)
 	f.cancel:SetHeight(20)
 	f.cancel:SetPoint("RIGHT", -3, 0)
@@ -3438,7 +3438,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetTextInsets(f.text:GetWidth()+5, 0, 0, 0)
 
 
-	f = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	f = CreateFrame("Frame", nil, frame, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", frame.actionlist, "TOPRIGHT", 10, -10)
 	f:SetPoint("BOTTOMRIGHT", -10, 10)
 	f:SetScript("OnUpdate", function(self,elapsed) if (self.elapsed == 0) then NeuronGUI:UpdateObjectGUI(true) end self.elapsed = elapsed end)
@@ -3446,7 +3446,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f.elapsed = 0
 	frame.action = f
 
-	f = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+	f = CreateFrame("Frame", nil, frame, BackdropTemplateMixin and "BackdropTemplate")
 	f:SetPoint("TOPLEFT", frame.actionlist, "TOPRIGHT", 10, -25)
 	f:SetPoint("BOTTOMRIGHT", -10, 10)
 	f:SetScript("OnUpdate", function(self,elapsed) if (self.elapsed == 0) then NeuronGUI:UpdateObjectGUI(true) end self.elapsed = elapsed end)
