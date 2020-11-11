@@ -1,18 +1,12 @@
-tag 86a0d38e50b44b34c45fae4d9e00e8822b48b1d5 v1.16
+tag f7a1a0986f78f4ac4cd5aa248ab6061bf5aefd0f v1.17
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Sun Oct 18 11:14:43 2020 -0500
+Date:	Sun Nov 1 15:25:27 2020 -0600
 
-Tagging as v1.16
+Tagging as v1.17
 
-commit da9763c90430bf561918166e3436e62eaa0369b6
+commit 40bed370e0b910ebe764e8951b73fc93d006dad3
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Sun Oct 18 10:56:05 2020 -0500
+Date:   Tue Oct 27 22:08:40 2020 -0500
 
-    Always show the config options
-
-commit 044c32eb446e6e4d8b0779511fbc37c5475b7aa5
-Author: Kyle Buller <bullerk@gmail.com>
-Date:   Wed Oct 14 02:10:18 2020 -0500
-
-    Update TOC for 9.0.1
+    Disable spec profiles until you have picked a spec
 
