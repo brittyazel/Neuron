@@ -81,6 +81,7 @@ end
 function ZONEABILITYBTN:UpdateData()
 	--get table with zone ability info. The table has 5 values, "zoneAbilityID", "uiPriority", "spellID", "textureKit", and "tutorialText"
 	local zoneAbilityTable = C_ZoneAbility.GetActiveAbilities()
+	self.disableFlair = #zoneAbilityTable > 1
 
 	table.sort(zoneAbilityTable, function(a, b) return a.uiPriority < b.uiPriority end);
 
@@ -136,7 +137,7 @@ function ZONEABILITYBTN:UpdateIcon()
 		self.elements.Flair:SetTexture(texture);
 	end
 
-	if self.bar.data.showBorderStyle then
+	if not self.disableFlair and self.bar.data.showBorderStyle then
 		self.elements.Flair:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 	else
 		self.elements.Flair:Hide()
