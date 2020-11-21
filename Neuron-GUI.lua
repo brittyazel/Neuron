@@ -891,11 +891,10 @@ function NeuronGUI:countOnMouseWheel(delta)
 	local bar = Neuron.CurrentBar
 
 	if (bar) then
-
 		if (delta > 0) then
-			Neuron.bar:AddObjectsToBar()
+			bar:AddObjectsToBar()
 		else
-			Neuron.bar:RemoveObjectsFromBar()
+			bar:RemoveObjectsFromBar()
 		end
 	end
 end

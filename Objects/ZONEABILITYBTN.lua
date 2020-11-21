@@ -33,6 +33,7 @@ Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 function ZONEABILITYBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
 	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
+	newButton.AbiltyIndex = buttonID
 
 	if defaults then
 		newButton:SetDefaults(defaults)
@@ -80,15 +81,18 @@ end
 function ZONEABILITYBTN:UpdateData()
 	--get table with zone ability info. The table has 5 values, "zoneAbilityID", "uiPriority", "spellID", "textureKit", and "tutorialText"
 	local zoneAbilityTable = C_ZoneAbility.GetActiveAbilities()
+	self.disableFlair = #zoneAbilityTable > 1
 
 	table.sort(zoneAbilityTable, function(a, b) return a.uiPriority < b.uiPriority end);
 
-	---TODO: We will want to revisit this as it seems like now we can have multiple zone abilities at once now. This is just a patch
-	if #zoneAbilityTable > 0 then
-		self.spellID = zoneAbilityTable[1].spellID
-		self.textureKit = zoneAbilityTable[1].textureKit
+	local ability = zoneAbilityTable[self.AbiltyIndex]
+	if ability then
+		self.spellID = ability.spellID
+		self.textureKit = ability.textureKit
+	else
+		self.spellID = nil
+		self.textureKit = nil
 	end
-
 
 	if self.spellID then
 		self.spell = GetSpellInfo(self.spellID);
@@ -133,7 +137,7 @@ function ZONEABILITYBTN:UpdateIcon()
 		self.elements.Flair:SetTexture(texture);
 	end
 
-	if self.bar.data.showBorderStyle then
+	if not self.disableFlair and self.bar.data.showBorderStyle then
 		self.elements.Flair:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 	else
 		self.elements.Flair:Hide()
