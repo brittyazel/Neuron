@@ -155,8 +155,8 @@ local genericBarData = {
 	barStrata = "MEDIUM",
 	objectStrata = "LOW",
 
-	padH = 0,
-	padV = 0,
+	padH = 3,
+	padV = 3,
 	arcStart = 0,
 	arcLength = 359,
 

@@ -1,12 +1,12 @@
-tag f7a1a0986f78f4ac4cd5aa248ab6061bf5aefd0f v1.17
+tag ec617cad1ce89b7d45a8e73e8e6b0093cf470c42 1.18
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Sun Nov 1 15:25:27 2020 -0600
+Date:	Wed Nov 18 11:32:29 2020 -0600
 
-Tagging as v1.17
+Tagging as 1.18
 
-commit 40bed370e0b910ebe764e8951b73fc93d006dad3
+commit 9d8926bf740f90167b986624bd067feebbeb87f8
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Tue Oct 27 22:08:40 2020 -0500
+Date:   Wed Nov 18 11:30:37 2020 -0600
 
-    Disable spec profiles until you have picked a spec
+    Update TOC for 9.0.2
 

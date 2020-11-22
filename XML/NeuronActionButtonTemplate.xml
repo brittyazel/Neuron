@@ -58,7 +58,7 @@
 				</Texture>
 				<!--This is the fancy texture for ZoneAbility and ExtraAction buttons that surrounds the button-->
 				<Texture name="$parentFlair" hidden="true" alphaMode="BLEND">
-					<Size x="190" y="95"/>
+					<Size x="220" y="110"/>
 					<Anchors>
 						<Anchor point="CENTER">
 							<Offset x="-2" y="1"/>
@@ -101,21 +101,22 @@
 					</Anchors>
 					<TexCoords left="0.71875" right="1" top="0" bottom="1"/>
 				</Texture>
-				<FontString name="$parentHotkey" inherits="NumberFontNormal" justifyH="RIGHT">
-					<Size x="43" y="10"/>
+
+				<FontString name="$parentHotkey" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="TOP">
 					<Anchors>
-						<Anchor point="TOPLEFT">
+						<Anchor point="TOPRIGHT">
 							<Offset x="-3" y="-4"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT">
+				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="BOTTOM">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT">
-							<Offset x="-2" y="2"/>
+							<Offset x="-3" y="4"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
+
 
 				<Texture name="$parentAutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
 					<Anchors>
