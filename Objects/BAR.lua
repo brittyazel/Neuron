@@ -684,7 +684,7 @@ function BAR:ClearStates(handler, state)
 end
 
 
-function BAR:UpdateStatuss(handler)
+function BAR:UpdateStatus(handler)
 	for state, values in pairs(MAS) do
 
 		if self.data[state] then
@@ -1064,7 +1064,7 @@ function BAR:Update(show, hide)
 
 	if self.stateschanged then
 
-		self:UpdateStatuss(handler)
+		self:UpdateStatus(handler)
 
 		self.stateschanged = nil
 	end

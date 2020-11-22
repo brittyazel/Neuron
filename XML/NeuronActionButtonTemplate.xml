@@ -56,15 +56,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<!--This is the fancy texture for ZoneAbility and ExtraAction buttons that surrounds the button-->
-				<Texture name="$parentFlair" hidden="true" alphaMode="BLEND">
-					<Size x="220" y="110"/>
-					<Anchors>
-						<Anchor point="CENTER">
-							<Offset x="-2" y="1"/>
-						</Anchor>
-					</Anchors>
-				</Texture>
+
 				<Texture name="$parentFlyoutTop" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
 					<Size x="56" y="16"/>
 					<Anchors>

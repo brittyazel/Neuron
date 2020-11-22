@@ -928,7 +928,7 @@ end
 
 function BUTTON:UpdateSpellStatus()
 	if IsCurrentSpell(self.spell) or IsAutoRepeatSpell(self.spell) then
-		self:SetChecked(1)
+		self:SetChecked(true)
 	else
 		self:SetChecked(false)
 	end
@@ -940,7 +940,7 @@ end
 
 function BUTTON:UpdateItemStatus()
 	if IsCurrentItem(self.item) then
-		self:SetChecked(1)
+		self:SetChecked(true)
 	else
 		self:SetChecked(false)
 	end
@@ -955,7 +955,7 @@ function BUTTON:UpdateActionStatus()
 
 	if self.actionID then
 		if IsCurrentAction(self.actionID) or IsAutoRepeatAction(self.actionID) then
-			self:SetChecked(1)
+			self:SetChecked(true)
 		else
 			self:SetChecked(false)
 		end

@@ -107,7 +107,7 @@ function PETBTN:UpdateStatus()
 			self:GetCheckedTexture():SetAlpha(1.0)
 		end
 
-		self:SetChecked(1)
+		self:SetChecked(true)
 	else
 		self:GetCheckedTexture():SetAlpha(1.0)
 		self:SetChecked(false)
@@ -221,7 +221,7 @@ function PETBTN:OnDragStart()
 	end
 
 	if self.drag then
-		self:SetChecked(0)
+		self:SetChecked(false)
 
 		PickupPetAction(self.actionID)
 
@@ -244,7 +244,7 @@ function PETBTN:OnReceiveDrag()
 	local cursorType = GetCursorInfo()
 
 	if cursorType == "petaction" then
-		self:SetChecked(0)
+		self:SetChecked(false)
 		PickupPetAction(self.actionID)
 		self:UpdateData()
 	end

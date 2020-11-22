@@ -920,7 +920,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 
 			if (tab == cTab) then
 
-				tab:SetChecked(1)
+				tab:SetChecked(true)
 
 				if (MouseIsOver(cTab)) then
 					PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
@@ -963,7 +963,7 @@ function NeuronGUI:BarEditor_OnLoad(frame)
 	f:SetPoint("RIGHT", frame.tab2, "LEFT", -5, 0)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(1)
+	f:SetChecked(true)
 	f.text:SetText(L["General Options"])
 	frame.tab1 = f; frame.tabs[f] = frame.baropt
 
@@ -1175,7 +1175,7 @@ function NeuronGUI:BarListScrollFrameUpdate(frame, tableList, alt)
 			text = data[count]
 
 			if (tableList[text] == Neuron.CurrentBar) then
-				button:SetChecked(1)
+				button:SetChecked(true)
 			end
 
 			button.alt = alt
@@ -2488,7 +2488,7 @@ function NeuronGUI:ActionListScrollFrameUpdate(frame)
 			text = data[count]
 
 			if (bar and stateList[text] == bar.handler:GetAttribute("fauxstate")) then
-				button:SetChecked(1)
+				button:SetChecked(true)
 			end
 
 			button.bar = bar
@@ -3046,7 +3046,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 		for tab, panel in pairs(frame.specs) do
 
 			if (tab == cTab) then
-				tab:SetChecked(1)
+				tab:SetChecked(true)
 				if (MouseIsOver(cTab)) then
 					PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 				end
@@ -3063,7 +3063,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 		for tab, panel in pairs(frame.tabs) do
 
 			if (tab == cTab) then
-				tab:SetChecked(1)
+				tab:SetChecked(true)
 				if (MouseIsOver(cTab)) then
 					PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 				end
@@ -3463,7 +3463,7 @@ function NeuronGUI:ButtonEditor_OnLoad(frame)
 	f:SetPoint("TOPRIGHT", frame, "TOPLEFT", 287, -10)
 	f:SetScript("OnClick", function(self) TabsOnClick(self) end)
 	f:SetFrameLevel(frame:GetFrameLevel()+1)
-	f:SetChecked(1)
+	f:SetChecked(true)
 	f.text:SetText(L["Macro Data"])
 	frame.tab1 = f; frame.tabs[f] = frame.macro
 
@@ -4171,7 +4171,7 @@ function NeuronGUI:StatusBarEditorUpdate(reset)
 			for i,f in ipairs(sbOpt.types) do
 
 				if (sb.config.sbType == f.sbType) then
-					f:SetChecked(1)
+					f:SetChecked(true)
 				else
 					f:SetChecked(false)
 				end
