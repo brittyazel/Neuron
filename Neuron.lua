@@ -351,13 +351,6 @@ end
 function Neuron:LoginMessage()
 	--displays a info window on login for either fresh installs or updates
 	if not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM  then
-
-		print(" ")
-		Neuron:Print(WrapTextInColorCode("IMPORTANT: Shadowlands content now requires multiple Zone Ability Buttons. Please add at least 3 buttons to your Zone Ability Bar to support this new functionality.", "FF00FFEC"))
-		Neuron:Print(WrapTextInColorCode("If you do not, YOU WILL HAVE A BAD TIME in Shadowlands.", "FF00FFEC"))
-
-		print(" ")
-
 		if not IsAddOnLoaded("Masque") then
 			print(" ")
 			print("    You do not currently have Masque installed or enabled.")
@@ -372,6 +365,13 @@ function Neuron:LoginMessage()
 	if Neuron.activeSpec > 4 then
 		print(" ")
 		Neuron:Print("Warning: You do not currently have a specialization selected. Changes to any buttons which have 'Multi Spec' set will not persist.")
+		print(" ")
+	end
+
+	--Shadowlands warning that will show as long as a player has one button on their ZoneAbilityBar for Shadowlands content
+	if not Neuron.isWoWClassic and UnitLevel("player") >= 50 and Neuron.db.profile.ZoneAbilityBar[1] and #Neuron.db.profile.ZoneAbilityBar[1].buttons == 1 then
+		print(" ")
+		Neuron:Print(WrapTextInColorCode("IMPORTANT: Shadowlands content now requires multiple Zone Ability Buttons. Please add at least 3 buttons to your Zone Ability Bar to support this new functionality.", "FF00FFEC"))
 		print(" ")
 	end
 end
