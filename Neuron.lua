@@ -27,7 +27,7 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local LATEST_VERSION_NUM = "1.2.3a" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local LATEST_VERSION_NUM = "1.4.1" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local LATEST_DB_VERSION = 1.3
 
@@ -351,6 +351,13 @@ end
 function Neuron:LoginMessage()
 	--displays a info window on login for either fresh installs or updates
 	if not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM  then
+
+		print(" ")
+		Neuron:Print(WrapTextInColorCode("IMPORTANT: Shadowlands content now requires multiple Zone Ability Buttons. Please add at least 3 buttons to your Zone Ability Bar to support this new functionality.", "FF00FFEC"))
+		Neuron:Print(WrapTextInColorCode("If you do not, YOU WILL HAVE A BAD TIME in Shadowlands.", "FF00FFEC"))
+
+		print(" ")
+
 		if not IsAddOnLoaded("Masque") then
 			print(" ")
 			print("    You do not currently have Masque installed or enabled.")
