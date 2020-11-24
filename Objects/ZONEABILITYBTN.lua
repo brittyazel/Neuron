@@ -130,7 +130,7 @@ end
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
-	self.elements.IconFrameIcon:SetTexture(spellTexture);
+	self.elements.Icon:SetTexture(spellTexture);
 
 	local texture = self.textureKit or "Interface\\ExtraButton\\GarrZoneAbility-Armory"
 

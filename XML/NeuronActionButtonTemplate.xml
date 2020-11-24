@@ -24,10 +24,38 @@
 	<CheckButton name="NeuronActionButtonTemplate" inherits="SecureActionButtonTemplate, SecureHandlerEnterLeaveTemplate" virtual="true">
 		<Size x="43" y="43"/>
 		<Layers>
-			<Layer>
-				<Texture name="$parentFlyoutArrow" parentKey="FlyoutArrow" hidden="true"/>
-				<Texture name="$parentFlyoutBorder" parentKey="FlyoutBorder" hidden="true"/>
-				<Texture name="$parentFlyoutBorderShadow" parentKey="FlyoutBorderShadow" hidden="true"/>
+
+			<Layer level="ARTWORK">
+				<Texture name="$parentIcon">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="3" y="-3"/>
+						</Anchor>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset x="-3" y="3"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<!--Frame Elements-->
+				<Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset x="0" y="1"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentAutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<TexCoords left="0.1875" right="0.8125" top="0.1875" bottom="0.8125"/>
+				</Texture>
+
+				<!--FontStrings-->
 				<FontString name="$parentName" inherits="GameFontHighlightSmallOutline">
 					<Anchors>
 						<Anchor point="BOTTOMLEFT">
@@ -38,25 +66,26 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-			</Layer>
-			<Layer level="OVERLAY" textureSubLevel="1">
-				<Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
-					<Size x="64" y="64"/>
+				<FontString name="$parentHotkey" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="TOP">
 					<Anchors>
-						<Anchor point="CENTER">
-							<Offset x="0" y="1"/>
+						<Anchor point="TOPRIGHT">
+							<Offset x="-3" y="-4"/>
 						</Anchor>
 					</Anchors>
-				</Texture>
-				<Texture name="$parentGloss" file="Interface\Buttons\UI-PassiveHighlight" alphaMode="ADD">
-					<Size x="63" y="63"/>
+				</FontString>
+				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="BOTTOM">
 					<Anchors>
-						<Anchor point="CENTER">
-							<Offset x="0" y="1"/>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset x="-3" y="4"/>
 						</Anchor>
 					</Anchors>
-				</Texture>
+				</FontString>
 
+
+				<!--Flyout Textures-->
+				<Texture name="$parentFlyoutArrow" parentKey="FlyoutArrow" hidden="true"/>
+				<Texture name="$parentFlyoutBorder" parentKey="FlyoutBorder" hidden="true"/>
+				<Texture name="$parentFlyoutBorderShadow" parentKey="FlyoutBorderShadow" hidden="true"/>
 				<Texture name="$parentFlyoutTop" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
 					<Size x="56" y="16"/>
 					<Anchors>
@@ -93,111 +122,72 @@
 					</Anchors>
 					<TexCoords left="0.71875" right="1" top="0" bottom="1"/>
 				</Texture>
-
-				<FontString name="$parentHotkey" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="TOP">
-					<Anchors>
-						<Anchor point="TOPRIGHT">
-							<Offset x="-3" y="-4"/>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="BOTTOM">
-					<Anchors>
-						<Anchor point="BOTTOMRIGHT">
-							<Offset x="-3" y="4"/>
-						</Anchor>
-					</Anchors>
-				</FontString>
-
-
-				<Texture name="$parentAutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
-					<Anchors>
-						<Anchor point="TOPLEFT"/>
-						<Anchor point="BOTTOMRIGHT"/>
-					</Anchors>
-					<TexCoords left="0.1875" right="0.8125" top="0.1875" bottom="0.8125"/>
-				</Texture>
 			</Layer>
 		</Layers>
+
 		<Frames>
-			<Frame name="$parentIconFrame">
+			<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
-						<Offset x="3" y="-3"/>
+						<Offset x="5" y="-5"/>
 					</Anchor>
 					<Anchor point="BOTTOMRIGHT">
-						<Offset x="-3" y="3"/>
+						<Offset x="-5" y="5"/>
 					</Anchor>
 				</Anchors>
 				<Layers>
 					<Layer>
-						<Texture name="$parentIcon">
-							<TexCoords left="0.01" right="0.99" top="0.01" bottom="0.99"/>
-						</Texture>
+						<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal">
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset x="0.5" y="0"/>
+								</Anchor>
+							</Anchors>
+						</FontString>
 					</Layer>
 				</Layers>
-				<Frames>
-					<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT"/>
-							<Anchor point="BOTTOMRIGHT"/>
-						</Anchors>
-						<Layers>
-							<Layer level="OVERLAY" textureSubLevel="3">
-								<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal">
-									<Anchors>
-										<Anchor point="CENTER">
-											<Offset x="0.5" y="0"/>
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Scripts>
-							<OnLoad>
-								self:SetFrameLevel(3)
-								self.button = self:GetParent():GetParent()
-							</OnLoad>
-						</Scripts>
-					</Cooldown>
-				</Frames>
-				<Scripts>
-					<OnLoad>
-						self:SetFrameLevel(0)
-					</OnLoad>
-				</Scripts>
-			</Frame>
+			</Cooldown>
 			<Frame name="$parentShine" inherits="AutoCastShineTemplate">
-				<Size x="32" y="32"/>
 				<Anchors>
-					<Anchor point="CENTER">
-						<Offset x="0" y="0"/>
-					</Anchor>
+					<Anchor point="CENTER" x="0" y="0"/>
 				</Anchors>
 			</Frame>
 		</Frames>
+
 		<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="-12" y="12"/>
 				<Anchor point="BOTTOMRIGHT" x="13" y="-13"/>
+				<Anchor point="CENTER">
+					<Offset x="0" y="0"/>
+				</Anchor>
 			</Anchors>
 		</NormalTexture>
-		<PushedTexture name="$parentPushedTexture" inherits="NeuronCheckButtonTextureTemplate" file="Interface\Buttons\UI-Quickslot-Depress">
+		<PushedTexture name="$parentPushedTexture" file="Interface\Buttons\UI-Quickslot-Depress">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="2" y="-2"/>
 				<Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
+				<Anchor point="CENTER">
+					<Offset x="0" y="0"/>
+				</Anchor>
 			</Anchors>
 		</PushedTexture>
-		<HighlightTexture name="$parentHighlightTexture" inherits="NeuronCheckButtonTextureTemplate" alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square">
+		<HighlightTexture name="$parentHighlightTexture" alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="3" y="-3"/>
 				<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+				<Anchor point="CENTER">
+					<Offset x="0" y="0"/>
+				</Anchor>
 			</Anchors>
 		</HighlightTexture>
-		<CheckedTexture name="$parentCheckedTexture" inherits="NeuronCheckButtonTextureTemplate" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight">
+		<CheckedTexture name="$parentCheckedTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="3" y="-3"/>
 				<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
+				<Anchor point="CENTER">
+					<Offset x="0" y="0"/>
+				</Anchor>
 			</Anchors>
 		</CheckedTexture>
 	</CheckButton>

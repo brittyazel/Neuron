@@ -130,7 +130,7 @@ end
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
-	self.elements.IconFrameIcon:SetTexture(spellTexture)
+	self.elements.Icon:SetTexture(spellTexture)
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
 	self.elements.Style:SetTexture(texture)

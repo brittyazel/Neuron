@@ -24,7 +24,7 @@
 	<CheckButton name="NeuronExtraButtonTemplate" inherits="NeuronActionButtonTemplate" virtual="true">
 		<Size x="52" y="52"/>
 		<Layers>
-			<Layer level="OVERLAY">
+			<Layer level="BACKGROUND">
 				<Texture name="$parentStyle" hidden="true">
 					<Size x="220" y="110"/>
 					<Anchors>

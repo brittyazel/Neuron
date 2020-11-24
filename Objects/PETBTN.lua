@@ -85,15 +85,15 @@ function PETBTN:UpdateIcon()
 
 	if texture then
 		if isToken then
-			self.elements.IconFrameIcon:SetTexture(_G[texture])
+			self.elements.Icon:SetTexture(_G[texture])
 		else
-			self.elements.IconFrameIcon:SetTexture(texture)
+			self.elements.Icon:SetTexture(texture)
 		end
 
-		self.elements.IconFrameIcon:Show()
+		self.elements.Icon:Show()
 	else
-		self.elements.IconFrameIcon:SetTexture("")
-		self.elements.IconFrameIcon:Hide()
+		self.elements.Icon:SetTexture("")
+		self.elements.Icon:Hide()
 	end
 end
 
@@ -176,11 +176,11 @@ end
 
 function PETBTN:UpdateUsable()
 	if self.editmode then
-		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
+		self.elements.Icon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID and GetPetActionSlotUsable(self.actionID) then
-		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+		self.elements.Icon:SetVertexColor(1.0, 1.0, 1.0)
 	else
-		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
+		self.elements.Icon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 
