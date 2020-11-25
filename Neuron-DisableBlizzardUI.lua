@@ -91,6 +91,14 @@ function Neuron:HideBlizzardUI()
 
 
 	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
+	if not Neuron:IsHooked(ActionBarActionButtonMixin, 'OnEvent') then
+		Neuron:RawHook(ActionBarActionButtonMixin, 'OnEvent', function() end, true)
+	end
+
+	if not Neuron:IsHooked(ActionBarActionButtonMixin, 'Update') then
+		Neuron:RawHook(ActionBarActionButtonMixin, 'Update', function() end, true)
+	end
+
 	if not Neuron:IsHooked('MultiActionBar_Update') then
     	Neuron:RawHook('MultiActionBar_Update', function() end, true)
 	end
