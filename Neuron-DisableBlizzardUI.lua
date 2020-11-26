@@ -19,105 +19,110 @@
 --a.k.a Maul, 2014 as part of his original project, Ion. All other
 --copyrights for Neuron are held by Britt Yazel, 2017-2020.
 
-local hiddenFrame = CreateFrame('Frame', nil, UIParent, 'SecureFrameTemplate');
-Neuron.hiddenFrame = hiddenFrame
-hiddenFrame:Hide()
+-- Hidden parent frame
+local UIHider = CreateFrame("Frame")
+UIHider:Hide()
 
 
+local function disableFrame(frame, leaveEvents)
+	if frame then
+		if not leaveEvents then
+			frame:UnregisterAllEvents()
+		end
 
-local function disableFrame(frame, unregisterEvents)
-
-	if not frame then
-		Neuron:Print('Unknown Frame', frame:GetName())
-		return
-	end
-
-	frame:SetParent(hiddenFrame)
-
-	if unregisterEvents then
-		frame:UnregisterAllEvents()
+		frame:SetParent(UIHider)
+		frame:Hide()
 	end
 end
 
 local function disableFrameSlidingAnimation(frame)
-
-	if not frame then
-		Neuron:Print('Unknown Frame', frame:GetName())
-		return
+	if frame then
+		local animation = {frame.slideOut:GetAnimations()}
+		animation[1]:SetOffset(0,0)
 	end
-
-	local animation = (frame.slideOut:GetAnimations())
-
-	animation:SetOffset(0, 0)
 end
 
-
+---Some of this code logic is adapted from Bartender4 and Dominos and credit should go to those authors.
+---The Bartender4 and Dominos logic was slimmed down and modified to fit Neuron.
+---Thanks guys! Beer's on us.
 function Neuron:HideBlizzardUI()
+	--Hide and disable the individual buttons on most of our bars
+	for i=1,12 do
+		_G["ActionButton"..i]:Hide()
+		_G["ActionButton"..i]:UnregisterAllEvents()
+		_G["ActionButton"..i]:SetAttribute("statehidden", true)
 
-	---the idea for this code is inspired from Dominos. Thanks Tuller!
+		_G["MultiBarBottomLeftButton"..i]:Hide()
+		_G["MultiBarBottomLeftButton"..i]:UnregisterAllEvents()
+		_G["MultiBarBottomLeftButton"..i]:SetAttribute("statehidden", true)
 
-	disableFrame(MainMenuBar, true)
+		_G["MultiBarBottomRightButton"..i]:Hide()
+		_G["MultiBarBottomRightButton"..i]:UnregisterAllEvents()
+		_G["MultiBarBottomRightButton"..i]:SetAttribute("statehidden", true)
 
-	-- disable override bar transition animations
-	disableFrameSlidingAnimation(MainMenuBar)
-	disableFrame(MultiBarBottomLeft, true)
-	disableFrame(MultiBarBottomRight, true)
-	disableFrame(MultiBarLeft, true)
-	disableFrame(MultiBarRight, true)
-	disableFrame(MainMenuBarArtFrame, true)
-	disableFrame(StanceBarFrame, true)
-	disableFrame(PetActionBarFrame, true)
-	disableFrame(MainMenuBarVehicleLeaveButton, true)
-	disableFrame(MainMenuBarPerformanceBar)
+		_G["MultiBarRightButton"..i]:Hide()
+		_G["MultiBarRightButton"..i]:UnregisterAllEvents()
+		_G["MultiBarRightButton"..i]:SetAttribute("statehidden", true)
 
-	if not Neuron.isWoWClassic then
-		disableFrameSlidingAnimation(OverrideActionBar)
-		disableFrame(PossessBarFrame, true)
-		disableFrame(MicroButtonAndBagsBar, true)
-		disableFrame(MultiCastActionBarFrame, true)
-		disableFrame(ExtraActionBarFrame, true)
-		disableFrame(ZoneAbilityFrame, true)
-
-		StatusTrackingBarManager:UnregisterAllEvents()
+		_G["MultiBarLeftButton"..i]:Hide()
+		_G["MultiBarLeftButton"..i]:UnregisterAllEvents()
+		_G["MultiBarLeftButton"..i]:SetAttribute("statehidden", true)
 	end
 
+	for i=1,6 do
+		_G["OverrideActionBarButton"..i]:Hide()
+		_G["OverrideActionBarButton"..i]:UnregisterAllEvents()
+		_G["OverrideActionBarButton"..i]:SetAttribute("statehidden", true)
+	end
+
+	--disable main blizzard bar and graphics
+	disableFrame(MainMenuBar)
+	disableFrame(MainMenuBarArtFrame)
+	disableFrame(MainMenuBarArtFrameBackground)
+
+	--disable bottom bonus bars
+	disableFrame(MultiBarBottomLeft)
+	disableFrame(MultiBarBottomRight)
+
+	--disable right-side bonus bars
+	disableFrame(MultiBarLeft)
+	disableFrame(MultiBarRight)
+
+	--disable all other action bars
+	disableFrame(MicroButtonAndBagsBar)
+	disableFrame(StanceBarFrame)
+	disableFrame(PossessBarFrame)
+	disableFrame(MultiCastActionBarFrame)
+	disableFrame(PetActionBarFrame)
+	disableFrame(ZoneAbilityFrame)
+	disableFrame(ExtraActionBarFrame)
+	disableFrame(MainMenuBarVehicleLeaveButton)
+
+	--disable status bars
+	disableFrame(MainMenuExpBar)
+	disableFrame(ReputationWatchBar)
+	disableFrame(MainMenuBarMaxLevelBar)
+
+	disableFrameSlidingAnimation(MainMenuBar)
+	disableFrameSlidingAnimation(OverrideActionBar)
+
+	--disable the ActionBarController to avoid potential for taint
 	ActionBarController:UnregisterAllEvents()
+
+	--disable the controller for status bars as we're going to handle this ourselves
+	if StatusTrackingBarManager then
+		StatusTrackingBarManager:Hide()
+		StatusTrackingBarManager:UnregisterAllEvents()
+	end
 
 	--it's important we shut down the tutorial or we will get a ton of errors
 	--this cleanly shuts down the tutorial and returns visibility to all UI elements hidden
 	if Tutorials then --the Tutorials table is only available during the tutorial scenario, ignore if otherwise
 		Tutorials:Shutdown()
 	end
-
-
-	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
-	if not Neuron:IsHooked(ActionBarActionButtonMixin, 'OnEvent') then
-		Neuron:RawHook(ActionBarActionButtonMixin, 'OnEvent', function() end, true)
-	end
-
-	if not Neuron:IsHooked(ActionBarActionButtonMixin, 'Update') then
-		Neuron:RawHook(ActionBarActionButtonMixin, 'Update', function() end, true)
-	end
-
-	if not Neuron:IsHooked('MultiActionBar_Update') then
-    	Neuron:RawHook('MultiActionBar_Update', function() end, true)
-	end
-
-	if not Neuron.isWoWClassic then
-    	if not Neuron:IsHooked('OverrideActionBar_UpdateSkin') then
-       		Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
-    	end
-	end
-
-	if not Neuron:IsHooked('PetActionBar_Update') then
-    	Neuron:RawHook('PetActionBar_Update', function() end, true)
-	end
-
 end
 
-
 function Neuron:ToggleBlizzUI()
-
 	local DB = Neuron.db.profile
 
 	if InCombatLockdown() then
@@ -135,7 +140,6 @@ function Neuron:ToggleBlizzUI()
 end
 
 function Neuron:Overrides()
-
 	local DB = Neuron.db.profile
 
 	--bag bar overrides
