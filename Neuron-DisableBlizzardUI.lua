@@ -69,10 +69,12 @@ function Neuron:HideBlizzardUI()
 		_G["MultiBarLeftButton"..i]:SetAttribute("statehidden", true)
 	end
 
-	for i=1,6 do
-		_G["OverrideActionBarButton"..i]:Hide()
-		_G["OverrideActionBarButton"..i]:UnregisterAllEvents()
-		_G["OverrideActionBarButton"..i]:SetAttribute("statehidden", true)
+	if OverrideActionBar then
+		for i=1,6 do
+			_G["OverrideActionBarButton"..i]:Hide()
+			_G["OverrideActionBarButton"..i]:UnregisterAllEvents()
+			_G["OverrideActionBarButton"..i]:SetAttribute("statehidden", true)
+		end
 	end
 
 	--disable main blizzard bar and graphics
