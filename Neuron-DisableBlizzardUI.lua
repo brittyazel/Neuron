@@ -24,13 +24,18 @@ local UIHider = CreateFrame("Frame")
 UIHider:Hide()
 
 
-local function disableFrame(frame, leaveEvents)
+local function disableBarFrame(frame)
 	if frame then
-		if not leaveEvents then
-			frame:UnregisterAllEvents()
-		end
-
+		frame:UnregisterAllEvents()
 		frame:SetParent(UIHider)
+		frame:Hide()
+	end
+end
+
+local function disableButtonFrame(frame)
+	if frame then
+		frame:UnregisterAllEvents()
+		frame:SetAttribute("statehidden", true)
 		frame:Hide()
 	end
 end
@@ -42,72 +47,64 @@ local function disableFrameSlidingAnimation(frame)
 	end
 end
 
----Some of this code logic is adapted from Bartender4 and Dominos and credit should go to those authors.
----The Bartender4 and Dominos logic was slimmed down and modified to fit Neuron.
----Thanks guys! Beer's on us.
 function Neuron:HideBlizzardUI()
+	----------------------------
+	----- Disable Buttons ------
+	----------------------------
 	--Hide and disable the individual buttons on most of our bars
 	for i=1,12 do
-		_G["ActionButton"..i]:Hide()
-		_G["ActionButton"..i]:UnregisterAllEvents()
-		_G["ActionButton"..i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarBottomLeftButton"..i]:Hide()
-		_G["MultiBarBottomLeftButton"..i]:UnregisterAllEvents()
-		_G["MultiBarBottomLeftButton"..i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarBottomRightButton"..i]:Hide()
-		_G["MultiBarBottomRightButton"..i]:UnregisterAllEvents()
-		_G["MultiBarBottomRightButton"..i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarRightButton"..i]:Hide()
-		_G["MultiBarRightButton"..i]:UnregisterAllEvents()
-		_G["MultiBarRightButton"..i]:SetAttribute("statehidden", true)
-
-		_G["MultiBarLeftButton"..i]:Hide()
-		_G["MultiBarLeftButton"..i]:UnregisterAllEvents()
-		_G["MultiBarLeftButton"..i]:SetAttribute("statehidden", true)
+		disableButtonFrame(_G["ActionButton"..i])
+		disableButtonFrame(_G["MultiBarBottomLeftButton"..i])
+		disableButtonFrame(_G["MultiBarBottomRightButton"..i])
+		disableButtonFrame(_G["MultiBarRightButton"..i])
+		disableButtonFrame(_G["MultiBarLeftButton"..i])
 	end
 
-	if OverrideActionBar then
-		for i=1,6 do
-			_G["OverrideActionBarButton"..i]:Hide()
-			_G["OverrideActionBarButton"..i]:UnregisterAllEvents()
-			_G["OverrideActionBarButton"..i]:SetAttribute("statehidden", true)
-		end
+	for i=1,6 do
+		disableButtonFrame(_G["OverrideActionBarButton"..i])
 	end
 
+	disableButtonFrame(_G["ExtraActionButton1"])
+
+	----------------------------
+	------- Disable Bars -------
+	----------------------------
 	--disable main blizzard bar and graphics
-	disableFrame(MainMenuBar)
-	disableFrame(MainMenuBarArtFrame)
-	disableFrame(MainMenuBarArtFrameBackground)
+	disableBarFrame(MainMenuBar)
+	disableBarFrame(MainMenuBarArtFrame)
+	disableBarFrame(MainMenuBarArtFrameBackground)
+	disableFrameSlidingAnimation(MainMenuBar)
 
 	--disable bottom bonus bars
-	disableFrame(MultiBarBottomLeft)
-	disableFrame(MultiBarBottomRight)
+	disableBarFrame(MultiBarBottomLeft)
+	disableBarFrame(MultiBarBottomRight)
 
-	--disable right-side bonus bars
-	disableFrame(MultiBarLeft)
-	disableFrame(MultiBarRight)
+	--disable side bonus bars
+	disableBarFrame(MultiBarLeft)
+	disableBarFrame(MultiBarRight)
 
 	--disable all other action bars
-	disableFrame(MicroButtonAndBagsBar)
-	disableFrame(StanceBarFrame)
-	disableFrame(PossessBarFrame)
-	disableFrame(MultiCastActionBarFrame)
-	disableFrame(PetActionBarFrame)
-	disableFrame(ZoneAbilityFrame)
-	disableFrame(ExtraActionBarFrame)
-	disableFrame(MainMenuBarVehicleLeaveButton)
+	disableBarFrame(MicroButtonAndBagsBar)
+	disableBarFrame(StanceBarFrame)
+	disableBarFrame(PossessBarFrame)
+	disableBarFrame(MultiCastActionBarFrame)
+	disableBarFrame(PetActionBarFrame)
+	disableBarFrame(ZoneAbilityFrame)
+	disableBarFrame(ExtraActionBarFrame)
+	disableBarFrame(MainMenuBarVehicleLeaveButton)
 
 	--disable status bars
-	disableFrame(MainMenuExpBar)
-	disableFrame(ReputationWatchBar)
-	disableFrame(MainMenuBarMaxLevelBar)
+	disableBarFrame(MainMenuExpBar)
+	disableBarFrame(ReputationWatchBar)
+	disableBarFrame(MainMenuBarMaxLevelBar)
 
-	disableFrameSlidingAnimation(MainMenuBar)
+	--disable override action bars
+	disableBarFrame(OverrideActionBar)
 	disableFrameSlidingAnimation(OverrideActionBar)
 
+	----------------------------
+	------- Disable Misc -------
+	----------------------------
 	--disable the ActionBarController to avoid potential for taint
 	ActionBarController:UnregisterAllEvents()
 
@@ -117,6 +114,9 @@ function Neuron:HideBlizzardUI()
 		StatusTrackingBarManager:UnregisterAllEvents()
 	end
 
+	----------------------------
+	----- Disable Tutorial -----
+	----------------------------
 	--it's important we shut down the tutorial or we will get a ton of errors
 	--this cleanly shuts down the tutorial and returns visibility to all UI elements hidden
 	if Tutorials then --the Tutorials table is only available during the tutorial scenario, ignore if otherwise
@@ -185,18 +185,14 @@ function Neuron:Overrides()
 	end
 
 	if disableDefaultCast then
-		CastingBarFrame:UnregisterAllEvents()
-		CastingBarFrame:SetParent(Neuron.hiddenFrame)
+		disableBarFrame(CastingBarFrame)
 	end
 
 	if disableDefaultMirror then
 		UIParent:UnregisterEvent("MIRROR_TIMER_START")
-		MirrorTimer1:UnregisterAllEvents()
-		MirrorTimer1:SetParent(Neuron.hiddenFrame)
-		MirrorTimer2:UnregisterAllEvents()
-		MirrorTimer2:SetParent(Neuron.hiddenFrame)
-		MirrorTimer3:UnregisterAllEvents()
-		MirrorTimer3:SetParent(Neuron.hiddenFrame)
+		disableBarFrame(MirrorTimer1)
+		disableBarFrame(MirrorTimer2)
+		disableBarFrame(MirrorTimer3)
 	end
 
 end
