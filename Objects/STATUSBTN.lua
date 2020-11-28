@@ -321,7 +321,8 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 	if not Neuron.isWoWClassic then
 
 		--add Heart of Azeroth option
-		if C_AzeriteItem.FindActiveAzeriteItem() then --only show this button if they player has the Heart of Azeroth
+		local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
+		if azeriteItem and azeriteItem:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItem) then --only show this button if they player has the Heart of Azeroth
 			table.insert(menu, {
 				arg1 = self,
 				arg2 = "azerite_xp",
