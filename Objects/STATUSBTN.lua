@@ -131,13 +131,12 @@ end
 ---TODO: right now we are using DB.statusbtn to assign settins ot the status buttons, but I think our indexes are bar specific
 function STATUSBTN:xpstrings_Update() --handles updating all the strings for the play XP watch bar
 
-	local currXP, nextXP, restedXP, percentXP, bubbles, rank
+	local currXP, nextXP, restedXP, percentXP, bubbles, rank, isRested
 
 	--player xp option
 	if self.elements.SB.curXPType == "player_xp" then
 
 		currXP, nextXP, restedXP = UnitXP("player"), UnitXPMax("player"), GetXPExhaustion()
-
 		local playerLevel = UnitLevel("player")
 
 		if playerLevel == MAX_PLAYER_LEVEL then
@@ -145,85 +144,87 @@ function STATUSBTN:xpstrings_Update() --handles updating all the strings for the
 		end
 
 		percentXP = (currXP/nextXP)*100;
-
 		bubbles = tostring(math.floor(currXP/(nextXP/20))).." / 20 "..L["Bubbles"]
 		percentXP = string.format("%.2f", (percentXP)).."%"
 
-
-		if restedXP then
+		if restedXP > 0 then
 			restedXP = string.format("%.2f", (tostring(restedXP/nextXP))).." "..L["Levels"]
+			isRested = true
 		else
 			restedXP = "0".." "..L["Levels"]
+			isRested = false
 		end
 
 		rank = L["Level"].." "..tostring(playerLevel)
 
-		--heart of azeroth option
-	elseif self.elements.SB.curXPType == "azerite_xp" then
-
-		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-
-		if azeriteItemLocation then
-
-			currXP, nextXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
-
-			restedXP = "0".." "..L["Levels"]
-
-			percentXP = (currXP/nextXP)*100
-			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"]
-			rank = L["Level"] .. " " .. tostring(C_AzeriteItem.GetPowerLevel(azeriteItemLocation))
-		else
-			currXP = 0;
-			nextXP = 0;
-			percentXP = 0;
-			restedXP = "0".." "..L["Levels"]
-			bubbles = tostring(0).." / 20 "..L["Bubbles"]
-			rank = tostring(0).." "..L["Points"]
+		--covenant renown
+	elseif self.elements.SB.curXPType == "covenant_renown" then
+		if C_Covenants.GetActiveCovenantID() ~= 0 then
+			local covenantLevel = C_CovenantSanctumUI.GetRenownLevel(C_Covenants.GetActiveCovenantID())
+			local covenantName = C_Covenants.GetCovenantData(C_Covenants.GetActiveCovenantID()).name
+			rank = covenantName..": "..L["Level"].." "..covenantLevel
 		end
 
-		percentXP = string.format("%.2f", percentXP).."%"; --format
-
+		--heart of azeroth option
+	elseif self.elements.SB.curXPType == "azerite_xp" then
+		local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+		if azeriteItemLocation then
+			currXP, nextXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
+			restedXP = "0".." "..L["Levels"]
+			percentXP = string.format("%.2f", (currXP/nextXP)*100).."%" --format
+			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"]
+			rank = L["Level"].." "..tostring(C_AzeriteItem.GetPowerLevel(azeriteItemLocation))
+		end
 
 		--honor points option
 	elseif self.elements.SB.curXPType == "honor_points" then
 		currXP = UnitHonor("player"); -- current value for level
 		nextXP = UnitHonorMax("player"); -- max value for level
-		restedXP = tostring(0).." "..L["Levels"]
 
 		local level = UnitHonorLevel("player");
-
 		percentXP = (currXP/nextXP)*100
-
-
 		bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"];
 		percentXP = string.format("%.2f", percentXP).."%"; --format
-
-
-		rank = L["Level"] .. " " .. tostring(level)
+		rank = L["Level"].." "..tostring(level)
 
 	end
 
-	if not self.elements.SB.XPWatch then --make sure we make the table for us to store our data so we aren't trying to index a non existant table
+	if not self.elements.SB.XPWatch then --make sure we make the table for us to store our data so we aren't trying to index a non existent table
 		self.elements.SB.XPWatch = {}
 	end
 
-	self.elements.SB.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
-	self.elements.SB.XPWatch.rested = restedXP
-	self.elements.SB.XPWatch.percent = percentXP
-	self.elements.SB.XPWatch.bubbles = bubbles
-	self.elements.SB.XPWatch.rank = rank
-
-
-	local isRested
-	if restedXP ~= "0" then
-		isRested = true
+	if currXP and nextXP then
+		self.elements.SB.XPWatch.current = BreakUpLargeNumbers(currXP).." / "..BreakUpLargeNumbers(nextXP)
 	else
-		isRested = false
+		self.elements.SB.XPWatch.current = ""
+	end
+
+	if restedXP then
+		self.elements.SB.XPWatch.rested = restedXP
+	else
+		self.elements.SB.XPWatch.rested = ""
+	end
+
+	if percentXP then
+		self.elements.SB.XPWatch.percent = percentXP
+	else
+		self.elements.SB.XPWatch.percent = ""
+	end
+
+	if bubbles then
+		self.elements.SB.XPWatch.bubbles = bubbles
+	else
+		self.elements.SB.XPWatch.bubbles = ""
+	end
+
+	if rank then
+		self.elements.SB.XPWatch.rank = rank
+	else
+		self.elements.SB.XPWatch.rank = ""
 	end
 
 	return currXP, nextXP, isRested
 end
-
 
 
 function STATUSBTN:XPBar_OnEvent(event, ...)
@@ -241,40 +242,41 @@ function STATUSBTN:XPBar_OnEvent(event, ...)
 	if self.elements.SB.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType") then
 
 		currXP, nextXP, isRested = self:xpstrings_Update()
-
-		if isRested then
+		if isRested or UnitLevel("player") == MAX_PLAYER_LEVEL then --don't show rested XP as exhausted if we are max level
 			self.elements.SB:SetStatusBarColor(self.elements.SB.restColor[1], self.elements.SB.restColor[2], self.elements.SB.restColor[3], self.elements.SB.restColor[4])
 		else
 			self.elements.SB:SetStatusBarColor(self.elements.SB.norestColor[1], self.elements.SB.norestColor[2], self.elements.SB.norestColor[3], self.elements.SB.norestColor[4])
 		end
-
 		hasChanged = true;
 	end
 
+	if self.elements.SB.curXPType == "covenant_renown" and (event == "COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType") then
+		currXP, nextXP = self:xpstrings_Update()
+		local covenantData = C_Covenants.GetCovenantData(C_Covenants.GetActiveCovenantID())
+		local covenantColor = COVENANT_COLORS[covenantData.textureKit]
+		self.elements.SB:SetStatusBarColor(covenantColor:GetRGB())
+		hasChanged = true
+	end
 
 	if self.elements.SB.curXPType == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType") then
-
 		currXP, nextXP = self:xpstrings_Update()
-
-		self.elements.SB:SetStatusBarColor(1, 1, 0); --set to yellow?
-
-		hasChanged = true;
-
+		self.elements.SB:SetStatusBarColor(1, 1, 0) --set to yellow
+		hasChanged = true
 	end
 
 	if self.elements.SB.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType") then
-
 		currXP, nextXP = self:xpstrings_Update()
-
-		self.elements.SB:SetStatusBarColor(1, .4, .4);
-
-		hasChanged = true;
+		self.elements.SB:SetStatusBarColor(1, .4, .4) --set to red
+		hasChanged = true
 	end
 
 	if hasChanged == true then
 		self.elements.SB:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
-		self.elements.SB:SetValue((currXP/nextXP)*100)
-
+		if currXP and nextXP then
+			self.elements.SB:SetValue((currXP/nextXP)*100)
+		else
+			self.elements.SB:SetValue(100)
+		end
 		self.elements.SB.cText:SetText(self.elements.SB.cFunc(self.elements.SB))
 		self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
 		self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
@@ -284,13 +286,11 @@ function STATUSBTN:XPBar_OnEvent(event, ...)
 end
 
 
-
 function STATUSBTN:switchCurXPType(newXPType)
 
 	self.DB.curXPType = newXPType
 	self:XPBar_OnEvent("changed_curXPType")
 end
-
 
 function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
 
@@ -319,6 +319,16 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 
 	--wow classic doesn't have Honor points nor Azerite, carefull
 	if not Neuron.isWoWClassic then
+
+		if C_Covenants.GetActiveCovenantID() ~= 0 then
+			table.insert(menu, {
+				arg1 = self,
+				arg2 = "covenant_renown",
+				text = L["Track Covenant Renown"],
+				func = function(dropdown, self, newXPType) self:switchCurXPType(newXPType) end,
+				checked = self.elements.SB.curXPType == "covenant_renown",
+			})
+		end
 
 		--add Heart of Azeroth option
 		local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
@@ -1908,6 +1918,7 @@ function STATUSBTN:SetType()
 
 		if not Neuron.isWoWClassic then
 			self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
+			self:RegisterEvent("COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED", "XPBar_OnEvent")
 			self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
 		end
 

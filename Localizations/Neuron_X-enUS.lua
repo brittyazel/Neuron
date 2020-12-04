@@ -448,6 +448,7 @@ L["Pet Bar"] = true
 L["Menu Bar"] = true
 
 L["Track Character XP"] = true
+L["Track Covenant Renown"] = true
 L["Track Azerite Power"] = true
 L["Track Honor Points"] = true
 
