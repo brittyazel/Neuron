@@ -171,8 +171,9 @@ function STATUSBTN:xpstrings_Update() --handles updating all the strings for the
 		if azeriteItemLocation then
 			currXP, nextXP = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
 			restedXP = "0".." "..L["Levels"]
-			percentXP = string.format("%.2f", (currXP/nextXP)*100).."%" --format
-			bubbles = tostring(math.floor(percentXP/5)).." / 20 "..L["Bubbles"]
+			local percent = (currXP/nextXP)*100
+			percentXP = string.format("%.2f", percent).."%" --format
+			bubbles = tostring(math.floor(percent/5)).." / 20 "..L["Bubbles"]
 			rank = L["Level"].." "..tostring(C_AzeriteItem.GetPowerLevel(azeriteItemLocation))
 		end
 
@@ -240,12 +241,11 @@ function STATUSBTN:XPBar_OnEvent(event, ...)
 
 
 	if self.elements.SB.curXPType == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType") then
-
 		currXP, nextXP, isRested = self:xpstrings_Update()
 		if isRested or UnitLevel("player") == MAX_PLAYER_LEVEL then --don't show rested XP as exhausted if we are max level
-			self.elements.SB:SetStatusBarColor(self.elements.SB.restColor[1], self.elements.SB.restColor[2], self.elements.SB.restColor[3], self.elements.SB.restColor[4])
+			self.elements.SB:SetStatusBarColor(0.0, 0.39, 0.88, 1.0) --blue color
 		else
-			self.elements.SB:SetStatusBarColor(self.elements.SB.norestColor[1], self.elements.SB.norestColor[2], self.elements.SB.norestColor[3], self.elements.SB.norestColor[4])
+			self.elements.SB:SetStatusBarColor(0.58, 0.0, 0.55, 1.0) --deep purple color
 		end
 		hasChanged = true;
 	end
@@ -260,13 +260,13 @@ function STATUSBTN:XPBar_OnEvent(event, ...)
 
 	if self.elements.SB.curXPType == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType") then
 		currXP, nextXP = self:xpstrings_Update()
-		self.elements.SB:SetStatusBarColor(1, 1, 0) --set to yellow
+		self.elements.SB:SetStatusBarColor(ARTIFACT_BAR_COLOR:GetRGB()) --set to pale yellow
 		hasChanged = true
 	end
 
 	if self.elements.SB.curXPType == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType") then
 		currXP, nextXP = self:xpstrings_Update()
-		self.elements.SB:SetStatusBarColor(1, .4, .4) --set to red
+		self.elements.SB:SetStatusBarColor(1.0, 0.24, 0) --set to red
 		hasChanged = true
 	end
 
@@ -1776,9 +1776,6 @@ function STATUSBTN:SetData(bar)
 	self.elements.SB.lText:SetText(self.elements.SB.lFunc(self.elements.SB))
 	self.elements.SB.rText:SetText(self.elements.SB.rFunc(self.elements.SB))
 	self.elements.SB.mText:SetText(self.elements.SB.mFunc(self.elements.SB))
-
-	self.elements.SB.norestColor = { (";"):split(self.config.norestColor) }
-	self.elements.SB.restColor = { (";"):split(self.config.restColor) }
 
 	self.elements.SB.castColor = { (";"):split(self.config.castColor) }
 	self.elements.SB.channelColor = { (";"):split(self.config.channelColor) }

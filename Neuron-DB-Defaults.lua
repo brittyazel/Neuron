@@ -106,9 +106,6 @@ local genericStatusBtnData= {
 
 	bordercolor = "1;1;1;1",
 
-	norestColor = "1;0;1;1",
-	restColor = "0;0;1;1",
-
 	castColor = "1;0.7;0;1",
 	channelColor = "0;1;0;1",
 	successColor = "0;1;0;1",
