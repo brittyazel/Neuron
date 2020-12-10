@@ -553,7 +553,7 @@ function BUTTON:SetSkinned(flyout)
 end
 
 function BUTTON:GetSkinned()
-	if self.__MSQ_NormalTexture then
+	if self.__MSQ_NormalSkin then
 		local Skin = self.__MSQ_NormalSkin
 
 		if Skin then
