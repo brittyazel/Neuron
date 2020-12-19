@@ -147,7 +147,7 @@ function STATUSBTN:xpstrings_Update() --handles updating all the strings for the
 		bubbles = tostring(math.floor(currXP/(nextXP/20))).." / 20 "..L["Bubbles"]
 		percentXP = string.format("%.2f", (percentXP)).."%"
 
-		if restedXP > 0 then
+		if restedXP and restedXP > 0 then
 			restedXP = string.format("%.2f", (tostring(restedXP/nextXP))).." "..L["Levels"]
 			isRested = true
 		else
