@@ -183,30 +183,24 @@ function ACTIONBUTTON:SetMouseCursor()
 		PickupSpell(macroDrag.spellID)
 
 	elseif (macroDrag.item) then
-		PickupItem(macroDrag.item) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
+		--this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
+		PickupItem(macroDrag.item) 
 
-		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
-			return
-		end
-
-		PickupItem(GetItemInfoInstant(macroDrag.item))
-		if GetCursorInfo() then
-			return
-		end
-
-		if NeuronItemCache[macroDrag.item:lower()] then 
-			PickupItem(NeuronItemCache[macroDrag.item:lower()])
-			if GetCursorInfo() then
-				return
+		if (GetCursorInfo() == null) then 
+			--if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+			PickupItem(GetItemInfoInstant(macroDrag.item))
+			if (GetCursorInfo() == null) then 
+				if NeuronItemCache[macroDrag.item:lower()] then 
+					PickupItem(NeuronItemCache[macroDrag.item:lower()])
+				end
 			end
 		end
-
-	elseif (macroDrag.macroIcon) then
-		SetCursor(macroDrag.macroIcon)
+	--elseif (macroDrag.macroIcon) then
+	--	SetCursor(macroDrag.macroIcon) -- unfortunately using arbitrary icon doesn't seem to work... just use questionmark for more complex macros
 	end
 
+	--failsafe so there is 'something' on the mouse cursor
 	if GetCursorInfo() == nil then
-		--failsafe so there is 'something' on the mouse cursor
 		PickupItem(1217) --questionmark symbol
 	end
 end
