@@ -25,12 +25,20 @@
 
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
-local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
-
-local macroCache = {} --this will hold onto any previous contents of our button
+--this is a table that holds onto the contents of the current CursorInfo or macro being dragged
+local macroDrag = {} 
+-- DJ: macroCache is local newMacroDrag now that gets copied into macroDrag at end of OnReceiveDrag
+local protectDragDataTimeout = 0
 
 --------------------------------------
 --------------------------------------
+
+function ACTIONBUTTON:IsDragOk()
+	return not self.barLock 
+		or (self.barLockAlt and IsAltKeyDown()) 
+		or (self.barLockCtrl and IsControlKeyDown()) 
+		or (self.barLockShift and IsShiftKeyDown())
+end
 
 --this is the function that fires when you begin dragging an item
 function ACTIONBUTTON:OnDragStart()
@@ -38,84 +46,71 @@ function ACTIONBUTTON:OnDragStart()
 		return
 	end
 
-	self.drag = nil --flag that says if it's ok to drag or not
-
-	if not self.barLock then
-		self.drag = true
-	elseif self.barLockAlt and IsAltKeyDown() then
-		self.drag = true
-	elseif self.barLockCtrl and IsControlKeyDown() then
-		self.drag = true
-	elseif self.barLockShift and IsShiftKeyDown() then
-		self.drag = true
-	end
-
-	if self.drag then
-
-		ClearCursor()
-
-		--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, because once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
-		--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
+	--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, because once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
+	--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
+	if self:IsDragOk() and not macroDrag.cursorType then
+		macroDrag = self:GetMacroDragData()
 		self:SetMouseCursor()
-
-		self:PickUpMacro()
-
+		self:ClearButtonDragData();
 		self:SetType()
 		self:UpdateAll()
 		self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
-
 	end
+end
 
-	self:ACTIONBAR_SHOWGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
+function ACTIONBUTTON:OnReceiveDrag()
+	self:ProcessDrop()
 end
 
 --This is the function that fires when a button is receiving a dragged item
-function ACTIONBUTTON:OnReceiveDrag()
+function ACTIONBUTTON:ProcessDrop()
+
 	if InCombatLockdown() then --don't allow moving or changing macros while in combat. This will cause taint
 		return
 	end
 
-	local cursorType, action1, action2, spellID = GetCursorInfo()
+	self:GetCursorDragData()
+	self:StartDragDataProtectTimeout()
 
-	if self:HasAction() then --if our button being dropped onto already has content, we need to cache that content
-		macroCache[1] = self:GetDragAction()
-		macroCache[2] = self.data.macro_Text
-		macroCache[3] = self.data.macro_Icon
-		macroCache[4] = self.data.macro_Name
-		macroCache[5] = self.data.macro_Note
-		macroCache[6] = self.data.macro_UseNote
-		macroCache[7] = self.data.macro_BlizzMacro
-		macroCache[8] = self.data.macro_EquipmentSet
-	else
-		wipe(macroCache)
+	--we need to have dragData to do something valid here
+	if (not macroDrag.cursorType) then
+		return;
 	end
 
-	if macroDrag[1] then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
+	local newMacroDrag --this will hold onto any previous contents of our button
+	if self:HasAction() then --if our button being dropped onto already has content, we need to cache that content
+		newMacroDrag = self:GetMacroDragData();
+	end
+
+	if (macroDrag.cursorType == "neuronMacro") then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
 		self:PlaceMacro()
-	elseif cursorType == "spell" then
-		self:PlaceSpell(action1, action2, spellID)
 
-	elseif cursorType == "item" then
-		self:PlaceItem(action1, action2)
+	elseif macroDrag.cursorType == "spell" then
+		self:PlaceSpell(macroDrag.action1, macroDrag.action2, macroDrag.spellID)
 
-	elseif cursorType == "macro" then
-		self:PlaceBlizzMacro(action1)
+	elseif macroDrag.cursorType == "item" then
+		self:PlaceItem(macroDrag.action1, macroDrag.action2)
 
-	elseif cursorType == "equipmentset" then
-		self:PlaceBlizzEquipSet(action1)
+	elseif macroDrag.cursorType == "macro" then
+		self:PlaceBlizzMacro(macroDrag.action1)
 
-	elseif cursorType == "mount" then
-		self:PlaceMount(action1, action2)
+	elseif macroDrag.cursorType == "equipmentset" then
+		self:PlaceBlizzEquipSet(macroDrag.action1)
 
-	elseif cursorType == "flyout" then
-		self:PlaceFlyout(action1, action2)
+	elseif macroDrag.cursorType == "mount" then
+		self:PlaceMount(macroDrag.action1, macroDrag.action2)
 
-	elseif cursorType == "battlepet" then
-		self:PlaceBattlePet(action1, action2)
-	elseif cursorType == "companion" then
-		self:PlaceCompanion(action1, action2)
-	elseif cursorType == "petaction" then
-		self:PlacePetAbility(action1, action2)
+	elseif macroDrag.cursorType == "flyout" then
+		self:PlaceFlyout(macroDrag.action1, macroDrag.action2)
+
+	elseif macroDrag.cursorType == "battlepet" then
+		self:PlaceBattlePet(macroDrag.action1, macroDrag.action2)
+
+	elseif macroDrag.cursorType == "companion" then
+		self:PlaceCompanion(macroDrag.action1, macroDrag.action2)
+
+	elseif macroDrag.cursorType == "petaction" then
+		self:PlacePetAbility(macroDrag.action1, macroDrag.action2)
 	end
 
 	wipe(macroDrag)
@@ -124,8 +119,10 @@ function ACTIONBUTTON:OnReceiveDrag()
 	self:UpdateAll()
 	self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
 
-	if macroCache[1] then
-		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
+	--If we picked up a new ability after dropping this one we have to manually call OnDragStart
+	if newMacroDrag then
+		macroDrag = newMacroDrag
+		self:SetMouseCursor()
 		self:ACTIONBAR_SHOWGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
 	else
 		SetCursor(nil)
@@ -135,77 +132,117 @@ function ACTIONBUTTON:OnReceiveDrag()
 	if NeuronObjectEditor and NeuronObjectEditor:IsVisible() then
 		Neuron.NeuronGUI:UpdateObjectGUI()
 	end
+
+	--PostClick handler called this even after nothing happened. Do we need this?
+	--self:UpdateStatus()
 end
 
-
-function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
-	if macroDrag[1] then
-		self:OnReceiveDrag()
+function ACTIONBUTTON:GetCursorDragData()
+	if (not macroDrag.cursorType) then
+		local cursorType, action1, action2, spellID = GetCursorInfo()
+		macroDrag.cursorType = cursorType
+		macroDrag.action1 = action1
+		macroDrag.action2 = action2
+		macroDrag.spellID = spellID
 	end
-	self:UpdateStatus()
 end
 
---we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
-function ACTIONBUTTON:WorldFrame_OnReceiveDrag()
-	if macroDrag[1] then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
-		SetCursor(nil)
-		ClearCursor()
+--we delete macroDrag data on HIDEGRID event when we press right click, but only after this timeout has passed. 
+--A 1/60 of a frame or less should be enough. This only needs to protect the dragData from hidegrid being triggered in the same frame just as we drop the action on a button. Maybe there is an underlying issue in neuron that triggers these extra hide actionbar events that also erase the cursor type data, but for now this works well
+function ACTIONBUTTON:StartDragDataProtectTimeout()
+	protectDragDataTimeout = GetTime() + 0.001
+end
+
+function ACTIONBUTTON:PostClick(mouseButton)
+	self:StartDragDataProtectTimeout()
+	self:ProcessDrop()
+end
+
+function ACTIONBUTTON:OnMouseDown(mouseButton)
+	--save crusorInfo into macroDrag
+	self:GetCursorDragData()
+	self:StartDragDataProtectTimeout()
+end
+
+--this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
+function ACTIONBUTTON:OnMouseUp() 
+	self:StartDragDataProtectTimeout()
+end
+
+function ACTIONBUTTON:ACTIONBAR_HIDEGRID()
+	if (macroDrag.cursorType and (GetTime() > protectDragDataTimeout)) then
 		wipe(macroDrag)
-		wipe(macroCache)
 	end
+	self:UpdateObjectVisibility()
 end
---------------------------------------
---------------------------------------
 
+function ACTIONBUTTON:SetMouseCursor()
+	ClearCursor() --ClearCursor seems to lead to ACTIONBAR_HIDEGRID
+	--DJ: Please review. I'm not sure about the contents of the button self.spell and self.item that gets stored here. Ultimately the data is stored in macroDrag anyways
+	if (not macroDrag.item and macroDrag.spellID) then
+		PickupSpell(macroDrag.spellID)
 
-function ACTIONBUTTON:PickUpMacro()
-
-	local pickup
-
-	if not self.barLock then
-		pickup = true
-	elseif self.barLockAlt and IsAltKeyDown() then
-		pickup = true
-	elseif self.barLockCtrl and IsControlKeyDown() then
-		pickup = true
-	elseif self.barLockShift and IsShiftKeyDown() then
-		pickup = true
-	end
-
-	if pickup then
-
-		if macroCache[1] then  --triggers when picking up an existing button with a button in the cursor
-
-			macroDrag = CopyTable(macroCache)
-			wipe(macroCache) --once macroCache is loaded into macroDrag, wipe it
-
-		elseif self:HasAction() then
-
-			macroDrag[1] = self:GetDragAction()
-			macroDrag[2] = self.data.macro_Text
-			macroDrag[3] = self.data.macro_Icon
-			macroDrag[4] = self.data.macro_Name
-			macroDrag[5] = self.data.macro_Note
-			macroDrag[6] = self.data.macro_UseNote
-			macroDrag[7] = self.data.macro_BlizzMacro
-			macroDrag[8] = self.data.macro_EquipmentSet
-
-			self.data.macro_Text = ""
-			self.data.macro_Icon = false
-			self.data.macro_Name = ""
-			self.data.macro_Note = ""
-			self.data.macro_UseNote = false
-			self.data.macro_BlizzMacro = false
-			self.data.macro_EquipmentSet = false
-
-			self.spell = nil
-			self.spellID = nil
-			self.item = nil
-
-			self:SetType()
+	elseif macroDrag.item then
+		PickupItem(macroDrag.item) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
+		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
+			return
 		end
 
+		PickupItem(GetItemInfoInstant(macroDrag.item))
+		if GetCursorInfo() then
+			return
+		end
+
+		if NeuronItemCache[macroDrag.item:lower()] then 
+			PickupItem(NeuronItemCache[macroDrag.item:lower()])
+			if GetCursorInfo() then
+				return
+			end
+		end
 	end
+	
+	--DJ: Should this be removed? This leads to empty buttons producing a ? icon when draggin which is confusing
+	--if not GetCursorInfo() then
+	--	--failsafe so there is 'something' on the mouse cursor
+	--	PickupItem(1217) --questionmark symbol
+	--end
+end
+
+--------------------------------------
+--------------------------------------
+
+
+function ACTIONBUTTON:GetMacroDragData()
+	local dragData = {}
+	dragData.cursorType = "neuronMacro"
+	dragData[2] = self.data.macro_Text
+	dragData[3] = self.data.macro_Icon
+	dragData[4] = self.data.macro_Name
+	dragData[5] = self.data.macro_Note
+	dragData[6] = self.data.macro_UseNote
+	dragData[7] = self.data.macro_BlizzMacro
+	dragData[8] = self.data.macro_EquipmentSet
+	dragData.spell = self.spell -- for drag and drop cursor
+	dragData.spellID = self.spellID
+	dragData.item = self.item
+	return dragData;
+end
+
+function ACTIONBUTTON:ClearButtonDragData()
+
+	self.data.macro_Text = ""
+	self.data.macro_Icon = false
+	self.data.macro_Name = ""
+	self.data.macro_Note = ""
+	self.data.macro_UseNote = false
+	self.data.macro_BlizzMacro = false
+	self.data.macro_EquipmentSet = false
+
+	self.spell = nil
+	self.spellID = nil
+	self.item = nil
+
+	self:SetType()
 end
 
 
@@ -382,7 +419,8 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 		self.data.macro_Icon = "Interface\\ICONS\\ACHIEVEMENT_GUILDPERK_MOUNTUP"
 		self.data.macro_Name = "Random Mount"
 	else
-		self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
+		local mountSpellName = GetSpellInfo(mountSpellID) -- the journal name is not always the same as the spell name (paladin mount and chauffeured mount)		
+		self.data.macro_Text = "#autowrite\n/cast "..mountSpellName..";"
 		self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 		self.data.macro_Name = mountName
 	end
@@ -481,36 +519,4 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 	self.data.macro_EquipmentSet = false
 
 	self:UpdateFlyout(true)
-end
-
-
-function ACTIONBUTTON:SetMouseCursor()
-	if self.spell and self.spellID then
-		PickupSpell(self.spellID)
-		if GetCursorInfo() then
-			return
-		end
-	end
-
-	if self.item then
-		PickupItem(self.item) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
-		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
-			return
-		end
-
-		PickupItem(GetItemInfoInstant(self.item))
-		if GetCursorInfo() then
-			return
-		end
-
-		if NeuronItemCache[self.item:lower()] then --try to pull the spellID from our ItemCache as a last resort
-			PickupItem(NeuronItemCache[self.item:lower()])
-			if GetCursorInfo() then
-				return
-			end
-		end
-	end
-
-	--failsafe so there is 'something' on the mouse cursor
-	PickupItem(1217) --questionmark symbol
 end

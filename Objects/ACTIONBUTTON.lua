@@ -1,4 +1,4 @@
-﻿--Neuron, a World of Warcraft® user interface addon.
+--Neuron, a World of Warcraft® user interface addon.
 
 --This file is part of Neuron.
 --
@@ -184,15 +184,12 @@ function ACTIONBUTTON:SetType()
 	self:SetScript("PostClick", function(self, mousebutton) self:PostClick(mousebutton) end)
 	self:SetScript("OnReceiveDrag", function(self, preclick) self:OnReceiveDrag(preclick) end)
 	self:SetScript("OnDragStart", function(self, mousebutton) self:OnDragStart(mousebutton) end)
+	self:SetScript("OnMouseUp", function(self, mousebutton) self:OnMouseUp(mousebutton) end)
+	self:SetScript("OnMouseDown", function(self, mousebutton) self:OnMouseDown(mousebutton) end)
 
+	--DJ: listening to hidegrid in combination with the timeout allows us to safely let go for a spell
 	--this is to allow for the correct releasing of the button when dragging icons off of the bar
 	--we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
-	if not Neuron:IsHooked(WorldFrame, "OnReceiveDrag") then
-		Neuron:HookScript(WorldFrame, "OnReceiveDrag", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
-	end
-	if not Neuron:IsHooked(WorldFrame, "OnMouseDown") then
-		Neuron:HookScript(WorldFrame, "OnMouseDown", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
-	end
 
 	self:SetScript("OnAttributeChanged", function(self, name, value) self:OnAttributeChanged(name, value) end)
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
@@ -587,10 +584,6 @@ function ACTIONBUTTON:ACTIONBAR_SHOWGRID()
 	end
 
 	self:UpdateObjectVisibility(show)
-end
-
-function ACTIONBUTTON:ACTIONBAR_HIDEGRID()
-	self:UpdateObjectVisibility()
 end
 
 function ACTIONBUTTON:UPDATE_MACROS()
