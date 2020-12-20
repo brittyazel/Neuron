@@ -987,14 +987,14 @@ end
 function BUTTON:UpdateTooltip()
 	if self.actionID then
 		self:UpdateActionTooltip()
-	elseif self.data.macro_BlizzMacro then
-		GameTooltip:SetText(self.data.macro_Name)
 	elseif self.data.macro_EquipmentSet then
 		GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
 	elseif self.spell then
 		self:UpdateSpellTooltip()
 	elseif self.item then
 		self:UpdateItemTooltip()
+	elseif self.data.macro_BlizzMacro then
+		GameTooltip:SetText(self.data.macro_Name)
 	elseif self.data.macro_Text and #self.data.macro_Text > 0 then
 		GameTooltip:SetText(self.data.macro_Name)
 	end
