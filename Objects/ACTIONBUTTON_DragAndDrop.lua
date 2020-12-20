@@ -48,7 +48,7 @@ function ACTIONBUTTON:OnDragStart()
 
 	--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, because once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
 	--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
-	if self:IsDragOk() and not macroDrag.cursorType then
+	if self:HasAction() and self:IsDragOk() and not macroDrag.cursorType then
 		macroDrag = self:GetMacroDragData()
 		self:SetMouseCursor()
 		self:ClearButtonDragData();
@@ -178,12 +178,13 @@ end
 
 function ACTIONBUTTON:SetMouseCursor()
 	ClearCursor() --ClearCursor seems to lead to ACTIONBAR_HIDEGRID
-	--DJ: Please review. I'm not sure about the contents of the button self.spell and self.item that gets stored here. Ultimately the data is stored in macroDrag anyways
-	if (not macroDrag.item and macroDrag.spellID) then
+	--DJ: Please review. Dragging of empty buttons is prevented in OnDragStart now
+	if (macroDrag.spellID) then
 		PickupSpell(macroDrag.spellID)
 
-	elseif macroDrag.item then
+	elseif (macroDrag.item) then
 		PickupItem(macroDrag.item) --this is to try to catch any stragglers that might not have a spellID on the button. Things like mounts and such. This only works on currently available items
+
 		if GetCursorInfo() then --if this isn't a normal spell (like a flyout) or it is a pet abiity, revert to a question mark symbol
 			return
 		end
@@ -199,13 +200,15 @@ function ACTIONBUTTON:SetMouseCursor()
 				return
 			end
 		end
+
+	elseif (macroDrag.macroIcon) then
+		SetCursor(macroDrag.macroIcon)
 	end
-	
-	--DJ: Should this be removed? This leads to empty buttons producing a ? icon when draggin which is confusing
-	--if not GetCursorInfo() then
-	--	--failsafe so there is 'something' on the mouse cursor
-	--	PickupItem(1217) --questionmark symbol
-	--end
+
+	if GetCursorInfo() == nil then
+		--failsafe so there is 'something' on the mouse cursor
+		PickupItem(1217) --questionmark symbol
+	end
 end
 
 --------------------------------------
@@ -215,13 +218,13 @@ end
 function ACTIONBUTTON:GetMacroDragData()
 	local dragData = {}
 	dragData.cursorType = "neuronMacro"
-	dragData[2] = self.data.macro_Text
-	dragData[3] = self.data.macro_Icon
-	dragData[4] = self.data.macro_Name
-	dragData[5] = self.data.macro_Note
-	dragData[6] = self.data.macro_UseNote
-	dragData[7] = self.data.macro_BlizzMacro
-	dragData[8] = self.data.macro_EquipmentSet
+	dragData.macro_Text = self.data.macro_Text
+	dragData.macro_Icon = self.data.macro_Icon
+	dragData.macro_Name = self.data.macro_Name
+	dragData.macro_Note = self.data.macro_Note
+	dragData.macro_UseNote = self.data.macro_UseNote
+	dragData.macro_BlizzMacro = self.data.macro_BlizzMacro
+	dragData.macro_EquipmentSet = self.data.macro_EquipmentSet
 	dragData.spell = self.spell -- for drag and drop cursor
 	dragData.spellID = self.spellID
 	dragData.item = self.item
@@ -247,13 +250,13 @@ end
 
 
 function ACTIONBUTTON:PlaceMacro()
-	self.data.macro_Text = macroDrag[2]
-	self.data.macro_Icon = macroDrag[3]
-	self.data.macro_Name = macroDrag[4]
-	self.data.macro_Note = macroDrag[5]
-	self.data.macro_UseNote = macroDrag[6]
-	self.data.macro_BlizzMacro = macroDrag[7]
-	self.data.macro_EquipmentSet = macroDrag[8]
+	self.data.macro_Text = macroDrag.macro_Text
+	self.data.macro_Icon = macroDrag.macro_Icon
+	self.data.macro_Name = macroDrag.macro_Name
+	self.data.macro_Note = macroDrag.macro_Note
+	self.data.macro_UseNote = macroDrag.macro_UseNote
+	self.data.macro_BlizzMacro = macroDrag.macro_BlizzMacro
+	self.data.macro_EquipmentSet = macroDrag.macro_EquipmentSet
 
 end
 
