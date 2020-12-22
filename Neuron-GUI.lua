@@ -109,10 +109,9 @@ function NeuronGUI:OnInitialize()
 	MAS = Neuron.MANAGED_ACTION_STATES
 
 	---This loads the Neuron interface panel
-	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(NeuronGUI.interfaceOptions, addonName)
-	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, NeuronGUI.interfaceOptions)
-	NeuronGUI.interfaceOptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(Neuron.db)
 
+	--LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(NeuronGUI.interfaceOptions, addonName)
+	NeuronGUI.interfaceOptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(Neuron.db)
 	-- Per spec profiles
 	if not Neuron.isWoWClassic then
 		local LibDualSpec = LibStub('LibDualSpec-1.0')
@@ -120,9 +119,19 @@ function NeuronGUI:OnInitialize()
 		LibDualSpec:EnhanceOptions(NeuronGUI.interfaceOptions.args.profile, Neuron.db) -- enhance the profiles config panel with per spec profile features
 	end
 
+	-- we can insert the profiles into the main options for a more compact option panel
+	NeuronGUI.interfaceOptions.args.mainoptions.args.profile = NeuronGUI.interfaceOptions.args.profile
+	NeuronGUI.interfaceOptions.args.profile.inline = true
 
-	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addonName)
+	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName .. "-General", NeuronGUI.interfaceOptions.args.mainoptions)
+	--LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName .. "-Profile", NeuronGUI.interfaceOptions.args.profile)
+	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName .. "-Changelog", NeuronGUI.interfaceOptions.args.changelog)
+	LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName .. "-FAQ", NeuronGUI.interfaceOptions.args.faq)
 
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName .. "-General", addonName)
+	--LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName .. "-Profile", "Profile", addonName)
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName .. "-Changelog", L["Changelog"], addonName)
+	LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName .. "-FAQ", L["F.A.Q."], addonName)
 
 	--for the object
 	---- editor
@@ -3864,7 +3873,7 @@ NeuronGUI.interfaceOptions = {
 	name = "Neuron",
 	type = 'group',
 	args = {
-		moreoptions={
+		mainoptions={
 			name = L["Options"],
 			type = "group",
 			order = 0,
@@ -3910,15 +3919,24 @@ NeuronGUI.interfaceOptions = {
 			order = 1001,
 			args = {
 
-				line1 = {
-					type = "description",
-					name = L["FAQ_Intro"],
-				},
-
 				g1 = {
 					type = "group",
-					name = L["Bar Configuration"],
+					name = L["Frequently Asked Questions"],
 					order = 1,
+					args = {
+
+						line1 = {
+							type = "description",
+							name = L["FAQ_Intro"],
+							order = 1,
+						},
+					},
+				},
+				
+				g2 = {
+					type = "group",
+					name = L["Bar Configuration"],
+					order = 2,
 					args = {
 
 						line1 = {
@@ -3926,52 +3944,52 @@ NeuronGUI.interfaceOptions = {
 							name = L["Bar_Configuration_FAQ"],
 							order = 1,
 						},
+					},
+				},
 
-						g1 = {
-							type = "group",
-							name = L["General Options"],
+				g3 = {
+					type = "group",
+					name = L["General Options"],
+					order = 3,
+					args = {
+						line1 = {
+							type = "description",
+							name = L["General_Bar_Configuration_Option_FAQ"] ,
 							order = 1,
-							args = {
-								line1 = {
-									type = "description",
-									name = L["General_Bar_Configuration_Option_FAQ"] ,
-									order = 1,
-								},
-							},
-						},
-
-						g2 = {
-							type = "group",
-							name = L["Bar States"],
-							order = 2,
-							args = {
-								line1 = {
-									type = "description",
-									name = L["Bar_State_Configuration_FAQ"],
-									order = 1,
-								},
-							},
-						},
-
-						g3 = {
-							type = "group",
-							name = L["Spell Target Options"],
-							order = 3,
-							args = {
-								line1 = {
-									type = "description",
-									name = L["Spell_Target_Options_FAQ"],
-									order = 1,
-								},
-							},
 						},
 					},
 				},
 
-				g2 = {
+				g4 = {
+					type = "group",
+					name = L["Bar States"],
+					order = 4,
+					args = {
+						line1 = {
+							type = "description",
+							name = L["Bar_State_Configuration_FAQ"],
+							order = 1,
+						},
+					},
+				},
+
+				g5 = {
+					type = "group",
+					name = L["Spell Target Options"],
+					order = 5,
+					args = {
+						line1 = {
+							type = "description",
+							name = L["Spell_Target_Options_FAQ"],
+							order = 1,
+						},
+					},
+				},
+
+				g6 = {
 					type = "group",
 					name = L["Flyout"],
-					order = 3,
+					order = 6,
 					args = {
 						line1a = {
 							type = "description",
