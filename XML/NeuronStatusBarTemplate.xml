@@ -24,7 +24,7 @@
 	<Button name="NeuronStatusBarTemplate" frameStrata="LOW" virtual="true" inherits="BackdropTemplate">
 		<Size x="195" y="16"/>
 		<Frames>
-			<StatusBar name="$parentSB">
+			<StatusBar name="$parentSB" parentKey="SB">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="1" y="-3"/>
@@ -40,13 +40,13 @@
 						</Texture>
 					</Layer>
 					<Layer>
-						<Texture name="$parentBorderShield" parentKey="shield" file="Interface\CastingBar\UI-CastingBar-Arena-Shield" hidden="true">
+						<Texture name="$parentShield" parentKey="Shield" file="Interface\CastingBar\UI-CastingBar-Arena-Shield" hidden="true">
 							<Size x="42" y="42"/>
 							<Anchors>
 								<Anchor point="LEFT" x="-26" y="0"/>
 							</Anchors>
 						</Texture>
-						<Texture name="$parentBarIcon" parentKey="icon" hidden="true">
+						<Texture name="$parentIcon" parentKey="Icon" hidden="true">
 							<Size x="14" y="14"/>
 							<Anchors>
 								<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT">
@@ -56,35 +56,35 @@
 						</Texture>
 					</Layer>
 					<Layer level="OVERLAY">
-						<FontString name="$parentCenterText" parentKey="cText" inherits="GameFontHighlightSmall">
+						<FontString name="$parentCenterText" parentKey="CenterText" inherits="GameFontHighlightSmall">
 							<Anchors>
 								<Anchor point="CENTER">
 									<Offset x="0" y="0"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentLeftText" parentKey="lText" justifyH="LEFT" inherits="GameFontHighlightSmall">
+						<FontString name="$parentLeftText" parentKey="LeftText" justifyH="LEFT" inherits="GameFontHighlightSmall">
 							<Anchors>
 								<Anchor point="LEFT">
 									<Offset x="3" y="0"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentRightText" parentKey="rText" justifyH="RIGHT" inherits="GameFontHighlightSmall">
+						<FontString name="$parentRightText" parentKey="RightText" justifyH="RIGHT" inherits="GameFontHighlightSmall">
 							<Anchors>
 								<Anchor point="RIGHT">
 									<Offset x="-3" y="0"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentMouseoverText" parentKey="mText" inherits="GameFontHighlightSmall" hidden="true">
+						<FontString name="$parentMouseoverText" parentKey="MouseoverText" inherits="GameFontHighlightSmall" hidden="true">
 							<Anchors>
 								<Anchor point="CENTER">
 									<Offset x="0" y="0"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<Texture name="$parentSpark" parentKey="spark" file="Interface\AddOns\Neuron\Images\CastingBar_Spark_1" alphaMode="ADD" hidden="true">
+						<Texture name="$parentSpark" parentKey="Spark" file="Interface\AddOns\Neuron\Images\CastingBar_Spark_1" alphaMode="ADD" hidden="true">
 							<Size x="32" y="32"/>
 							<Anchors>
 								<Anchor point="CENTER">
@@ -95,7 +95,7 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Frame name="$parentBackground" parentKey="bg" inherits="BackdropTemplate">
+					<Frame name="$parentBackground" parentKey="Background" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="-3" y="3"/>
@@ -117,7 +117,7 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Frame name="$parentBorder" parentKey="border" inherits="BackdropTemplate">
+					<Frame name="$parentBorder" parentKey="Border" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="-2" y="3"/>
@@ -139,7 +139,7 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Frame name="$parentBarFlash" parentKey="barflash" hidden="true" inherits="BackdropTemplate">
+					<Frame name="$parentBarFlash" parentKey="BarFlash" hidden="true" inherits="BackdropTemplate">
 						<Scripts>
 							<OnLoad inherit="prepend">
 								self:SetBackdrop({
@@ -153,26 +153,18 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Frame name="$parentCBTimer" parentKey="cbtimer"/>
+					<Frame name="$parentCBTimer" parentKey="CBTimer"/>
 				</Frames>
 				<Scripts>
 					<OnLoad>
 						self:SetFrameLevel(1)
-						self.barflash:SetAllPoints(self.border)
+						self.BarFlash:SetAllPoints(self.Border)
 					</OnLoad>
 				</Scripts>
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 				<BarColor r="0.75" g="0" b="0.75"/>
 			</StatusBar>
-			<Frame name="$parentDropDown" parentKey="dropdown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-				<Size x="10" y="10"/>
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
-						<Offset x="3" y="0"/>
-					</Anchor>
-				</Anchors>
-			</Frame>
-			<CheckButton name="$parentFBFrame" hidden="true">
+			<CheckButton name="$parentFBFrame" parentKey="FBFrame" hidden="true">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="0" y="0"/>
@@ -182,7 +174,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<StatusBar name="$parentFeedback" parentKey="feedback">
+					<StatusBar name="$parentFeedback" parentKey="Feedback">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="1" y="-3"/>
@@ -193,7 +185,7 @@
 						</Anchors>
 						<Layers>
 							<Layer level="OVERLAY">
-								<FontString name="$parentText" parentKey="text" inherits="ChatFontSmall" nonspacewrap="true">
+								<FontString name="$parentText" parentKey="Text" inherits="ChatFontSmall" nonspacewrap="true">
 									<Anchors>
 										<Anchor point="TOP">
 											<Offset x="0" y="-1"/>
@@ -211,7 +203,7 @@
 							</Layer>
 						</Layers>
 						<Frames>
-							<Frame name="$parentBackground" parentKey="bg" inherits="BackdropTemplate">
+							<Frame name="$parentBackground" parentKey="Background" inherits="BackdropTemplate">
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset x="-3" y="3"/>
@@ -233,7 +225,7 @@
 									</OnLoad>
 								</Scripts>
 							</Frame>
-							<Frame name="$parentBorder" parentKey="border" inherits="BackdropTemplate">
+							<Frame name="$parentBorder" parentKey="Border" inherits="BackdropTemplate">
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset x="-2" y="3"/>
@@ -267,7 +259,7 @@
 				</Frames>
 				<Scripts>
 					<OnShow>
-						self.feedback:SetStatusBarColor(self:GetParent().elements.SB:GetStatusBarColor())
+						self.Feedback:SetStatusBarColor(self:GetParent().SB:GetStatusBarColor())
 					</OnShow>
 				</Scripts>
 			</CheckButton>

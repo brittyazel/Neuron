@@ -521,8 +521,8 @@ function ACTIONBUTTON:StartGlow()
 		if self.spellGlowDef then
 			ActionButton_ShowOverlayGlow(self)
 		elseif self.spellGlowAlt then
-			self.elements.Shine:Show()
-			AutoCastShine_AutoCastStart(self.elements.Shine);
+			self.Shine:Show()
+			AutoCastShine_AutoCastStart(self.Shine);
 		end
 	end
 end
@@ -532,8 +532,8 @@ function ACTIONBUTTON:StopGlow()
 		if self.spellGlowDef then
 			ActionButton_HideOverlayGlow(self)
 		elseif self.spellGlowAlt then
-			self.elements.Shine:Hide()
-			AutoCastShine_AutoCastStop(self.elements.Shine);
+			self.Shine:Hide()
+			AutoCastShine_AutoCastStop(self.Shine);
 		end
 	end
 end
@@ -544,7 +544,7 @@ end
 
 function ACTIONBUTTON:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
-	self.binder:ApplyBindings()
+	self.Binder:ApplyBindings()
 
 	if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
 		self:ScheduleTimer(function() self:SetType() end, 1)

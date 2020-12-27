@@ -110,9 +110,9 @@ function BAR.new(class, barID)
 	newBar.toggleframe = newBar
 	newBar.microAdjust = false
 	newBar.vis = {}
-	newBar.text:Hide()
-	newBar.message:Hide()
-	newBar.messagebg:Hide()
+	newBar.Text:Hide()
+	newBar.Message:Hide()
+	newBar.MessageBG:Hide()
 
 	newBar:SetWidth(375)
 	newBar:SetHeight(40)
@@ -309,8 +309,8 @@ function BAR:RemoveObjectsFromBar(num) --called from NeuronGUI
 			table.remove(self.buttons, id)
 
 
-			if object.binder then
-				object.binder:ClearBindings()
+			if object.Binder then
+				object.Binder:ClearBindings()
 			end
 
 			object:SetParent(TRASHCAN)
@@ -1089,7 +1089,7 @@ function BAR:Update(show, hide)
 	self:SetHidden(handler, show, hide)
 	self:SetAutoHide()
 	self:SetAlphaUp()
-	self.text:SetText(self.data.name)
+	self.Text:SetText(self.data.name)
 	handler:SetAlpha(self.data.alpha)
 
 	if not hide and NeuronBarEditor and NeuronBarEditor:IsVisible() then
@@ -1152,10 +1152,10 @@ function BAR:SetPosition()
 		self:SetUserPlaced(true)
 		self:SetFrameStrata(self.data.barStrata)
 
-		if self.message then
-			self.message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
-			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
-			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
+		if self.Message then
+			self.Message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
+			self.MessageBG:SetWidth(self.Message:GetWidth()*1.05)
+			self.MessageBG:SetHeight(self.Message:GetHeight()*1.1)
 		end
 
 		self.posSet = true
@@ -1188,13 +1188,13 @@ function BAR:LoadObjects()
 	end
 
 	for i, object in ipairs(self.buttons) do
-		--all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
+		--all of these objects need to stay as "object:****" because which SetData/LoadData/etc is bar dependent. Symlinks are made to the associated bar objects to these class functions
 		object:LoadData(spec, self.handler:GetAttribute("activestate"))
 		object:SetData(self)
 		object:SetType()
 
 		if Neuron.registeredBarData[object.class] and Neuron.registeredBarData[object.class].keybindable then
-			object.binder = Neuron.KEYBINDER.new(object)
+			object.Binder = Neuron.KEYBINDER.new(object)
 		end
 
 		object:UpdateObjectVisibility()
@@ -1443,19 +1443,19 @@ function BAR:OnClick(...)
 		if self.microAdjust then
 			self.microAdjust = false
 			self:EnableKeyboard(false)
-			self.message:Hide()
-			self.messagebg:Hide()
+			self.Message:Hide()
+			self.MessageBG:Hide()
 		else
 			self.data.snapTo = false
 			self.data.snapToPoint = false
 			self.data.snapToFrame = false
 			self.microAdjust = 1
 			self:EnableKeyboard(true)
-			self.message:Show()
-			self.message:SetText(self.data.point:lower().."     x: "..format("%0.2f", self.data.x).."     y: "..format("%0.2f", self.data.y))
-			self.messagebg:Show()
-			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
-			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
+			self.Message:Show()
+			self.Message:SetText(self.data.point:lower().."     x: "..format("%0.2f", self.data.x).."     y: "..format("%0.2f", self.data.y))
+			self.MessageBG:Show()
+			self.MessageBG:SetWidth(self.Message:GetWidth()*1.05)
+			self.MessageBG:SetHeight(self.Message:GetHeight()*1.1)
 		end
 
 	elseif click == "MiddleButton" then
@@ -1497,7 +1497,7 @@ function BAR:OnEnter(...)
 		self:SetBackdropColor(0,0,1,0.5)
 	end
 
-	self.text:Show()
+	self.Text:Show()
 end
 
 
@@ -1511,7 +1511,7 @@ function BAR:OnLeave(...)
 	end
 
 	if self ~= Neuron.CurrentBar then
-		self.text:Hide()
+		self.Text:Hide()
 	end
 end
 
@@ -1743,8 +1743,8 @@ function BAR:ChangeBar()
 
 		if not self then
 			Neuron.CurrentBar = nil
-		elseif self.text then
-			self.text:Show()
+		elseif self.Text then
+			self.Text:Show()
 		end
 
 		for k,v in pairs(Neuron.BARIndex) do
@@ -1759,9 +1759,9 @@ function BAR:ChangeBar()
 				v.selected = false
 				v.microAdjust = false
 				v:EnableKeyboard(false)
-				v.text:Hide()
-				v.message:Hide()
-				v.messagebg:Hide()
+				v.Text:Hide()
+				v.Message:Hide()
+				v.MessageBG:Hide()
 				v.mousewheelfunc = nil
 				v.action = nil
 			end
@@ -2711,8 +2711,8 @@ function BAR:XAxisSet(command, gui, query, skipupdate)
 		self.data.point, self.data.x, self.data.y = self:GetPosition()
 
 		if not gui then
-			self.message:Show()
-			self.messagebg:Show()
+			self.Message:Show()
+			self.MessageBG:Show()
 		end
 
 		if not skipupdate then
@@ -2741,8 +2741,8 @@ function BAR:YAxisSet(command, gui, query, skipupdate)
 		self.data.point, self.data.x, self.data.y = self:GetPosition()
 
 		if not gui then
-			self.message:Show()
-			self.messagebg:Show()
+			self.Message:Show()
+			self.MessageBG:Show()
 		end
 
 		if not skipupdate then

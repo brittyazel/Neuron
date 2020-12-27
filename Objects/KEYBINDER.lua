@@ -51,7 +51,7 @@ function KEYBINDER.new(button)
 	newKeyBinder:SetScript("OnKeyDown", function(self, key) self:OnKeyDown(key) end)
 	newKeyBinder:SetScript("OnMouseWheel", function(self, delta) self:OnMouseWheel(delta) end)
 
-	newKeyBinder.label:SetText(L["Bind"])
+	newKeyBinder.Label:SetText(L["Bind"])
 	newKeyBinder.button = button
 	newKeyBinder.bindType = "button"
 
@@ -201,12 +201,12 @@ function KEYBINDER:ApplyBindings()
 	end
 
 
-	self.button.elements.Hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
+	self.button.Hotkey:SetText(self.button.keys.hotKeyText:match("^:([^:]+)") or "")
 
 	if self.button.bindText then
-		self.button.elements.Hotkey:Show()
+		self.button.Hotkey:Show()
 	else
-		self.button.elements.Hotkey:Hide()
+		self.button.Hotkey:Hide()
 	end
 end
 
@@ -273,9 +273,9 @@ function KEYBINDER:OnShow()
 	end
 
 	if self.button.keys.hotKeyLock then
-		self.label:SetText(priority.."|cfff00000"..L["Locked"].."|r")
+		self.Label:SetText(priority.."|cfff00000"..L["Locked"].."|r")
 	else
-		self.label:SetText(priority.."|cffffffff"..L["Bind"].."|r")
+		self.Label:SetText(priority.."|cffffffff"..L["Bind"].."|r")
 	end
 
 	--set a repeating timer when the keybinder is shown to enable or disable Keyboard input on mouseover.
@@ -315,7 +315,7 @@ function KEYBINDER:OnEnter()
 		name = "Button"
 	end
 
-	self.select:Show()
+	self.Select:Show()
 
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
@@ -334,7 +334,7 @@ end
 
 --- OnLeave Event handler
 function KEYBINDER:OnLeave()
-	self.select:Hide()
+	self.Select:Hide()
 	GameTooltip:Hide()
 end
 

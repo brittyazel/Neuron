@@ -74,7 +74,7 @@ function ZONEABILITYBTN:OnEvent(event, ...)
 	self:UpdateData()
 
 	if event == "PLAYER_ENTERING_WORLD" then
-		self.binder:ApplyBindings()
+		self.Binder:ApplyBindings()
 		self:UpdateIcon()
 	end
 end
@@ -106,7 +106,7 @@ function ZONEABILITYBTN:UpdateData()
 		self.spell = nil
 	end
 
-	self.elements.Name:Hide()
+	self.Name:Hide()
 
 	self:UpdateObjectVisibility()
 	self:UpdateIcon()
@@ -130,20 +130,20 @@ end
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
-	self.elements.Icon:SetTexture(spellTexture);
+	self.Icon:SetTexture(spellTexture);
 
 	local texture = self.textureKit or "Interface\\ExtraButton\\GarrZoneAbility-Armory"
 
 	if C_Texture.GetAtlasInfo(texture) then
-		self.elements.Style:SetAtlas(texture, true);
+		self.Style:SetAtlas(texture, true);
 	elseif texture then
-		self.elements.Style:SetTexture(texture);
+		self.Style:SetTexture(texture);
 	end
 
 	if not self.disableStyle and self.abilityIndex == 1 and self.bar.data.showBorderStyle then
-		self.elements.Style:Show()
+		self.Style:Show()
 	else
-		self.elements.Style:Hide()
+		self.Style:Hide()
 	end
 end
 

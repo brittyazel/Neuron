@@ -71,7 +71,7 @@ function EXTRABTN:OnEvent(event, ...)
 	self:UpdateData()
 
 	if event == "PLAYER_ENTERING_WORLD" then
-		self.binder:ApplyBindings()
+		self.Binder:ApplyBindings()
 		self:UpdateIcon()
 	end
 
@@ -106,7 +106,7 @@ function EXTRABTN:UpdateData()
 	end
 
 	-----------------------
-	self.elements.Name:Hide()
+	self.Name:Hide()
 
 	self:UpdateObjectVisibility()
 	self:UpdateIcon()
@@ -130,15 +130,15 @@ end
 ---overwrite function in parent class BUTTON
 function EXTRABTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
-	self.elements.Icon:SetTexture(spellTexture)
+	self.Icon:SetTexture(spellTexture)
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
-	self.elements.Style:SetTexture(texture)
+	self.Style:SetTexture(texture)
 
 	if self.bar.data.showBorderStyle then
-		self.elements.Style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+		self.Style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 	else
-		self.elements.Style:Hide()
+		self.Style:Hide()
 	end
 end
 

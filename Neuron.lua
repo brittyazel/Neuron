@@ -335,15 +335,12 @@ function Neuron:DatabaseMigration()
 			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", NeuronDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
 		end
 	end
-	-----------------------------------------------------
+
 end
-
-
 
 function Neuron:RefreshConfig()
 	StaticPopup_Show("ReloadUI")
 end
-
 
 -----------------------------------------------------------------
 
@@ -374,32 +371,6 @@ function Neuron:LoginMessage()
 		Neuron:Print(WrapTextInColorCode("IMPORTANT: Shadowlands content now requires multiple Zone Ability Buttons. Please add at least 3 buttons to your Zone Ability Bar to support this new functionality.", "FF00FFEC"))
 		print(" ")
 	end
-end
-
-
---I'm not sure what this function does, but it returns a table of all the names of children of a given frame
-function Neuron:GetParentKeys(frame)
-	if frame == nil then
-		return
-	end
-
-	local data, childData = {}, {}
-	local children = {frame:GetChildren()}
-	local regions = {frame:GetRegions()}
-
-	for _,v in pairs(children) do
-		table.insert(data, v:GetName())
-		childData = Neuron:GetParentKeys(v)
-		for _,value in pairs(childData) do
-			table.insert(data, value)
-		end
-	end
-
-	for _,v in pairs(regions) do
-		table.insert(data, v:GetName())
-	end
-
-	return data
 end
 
 

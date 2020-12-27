@@ -2541,7 +2541,7 @@ function NeuronGUI:specUpdateIcon(button,state)
 		end
 
 	else
-		texture = button.elements.Icon:GetTexture()
+		texture = button.Icon:GetTexture()
 	end
 	return texture
 end
@@ -2612,7 +2612,7 @@ function NeuronGUI:MacroEditorUpdate()
 		if (data) then
 			NBTNE.macroedit.edit:SetText(data.macro_Text)
 			if (not data.macro_Icon) then
-				NBTNE.macroicon.icon:SetTexture(NeuronGUI:specUpdateIcon(button, state))--button.elements.Icon:GetTexture())
+				NBTNE.macroicon.icon:SetTexture(NeuronGUI:specUpdateIcon(button, state))--button.Icon:GetTexture())
 			elseif (data.macro_Icon == "BLANK") then
 				NBTNE.macroicon.icon:SetTexture("")
 			else

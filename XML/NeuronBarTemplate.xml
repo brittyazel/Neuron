@@ -24,14 +24,14 @@
 	<Button name="NeuronBarTemplate" enableMouse="true" movable="true" frameStrata="MEDIUM" virtual="true" inherits="SecureHandlerStateTemplate, BackdropTemplate" >
 		<Layers>
 			<Layer level="BACKGROUND">
-				<FontString name="$parentText" parentKey="text" inherits="GameFontNormal">
+				<FontString name="$parentText" parentKey="Text" inherits="GameFontNormal">
 					<Anchors>
 						<Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP">
 							<Offset x="0" y="1"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<Texture name="$parentMessageBG" parentKey="messagebg" hidden="true">
+				<Texture name="$parentMessageBG" parentKey="MessageBG" hidden="true">
 					<Size x="1" y="1"/>
 					<Anchors>
 						<Anchor point="TOP" relativeTo="$parent" relativePoint="BOTTOM">
@@ -40,7 +40,7 @@
 					</Anchors>
 					<Color r="0" g="0" b="0" a="0.9"/>
 				</Texture>
-				<FontString name="$parentMessage" parentKey="message" inherits="FriendsFont_UserText" justifyV="TOP">
+				<FontString name="$parentMessage" parentKey="Message" inherits="FriendsFont_UserText" justifyV="TOP">
 					<Anchors>
 						<Anchor point="CENTER" relativeTo="$parentMessageBG" relativePoint="CENTER">
 							<Offset x="0" y="0"/>
@@ -52,10 +52,6 @@
 				</FontString>
 			</Layer>
 		</Layers>
-		<Frames>
-			<CheckButton name="$parentKeyBind" parentKey="keybind" inherits="SecureActionButtonTemplate">
-			</CheckButton>
-		</Frames>
 	</Button>
 
 </Ui>

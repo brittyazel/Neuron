@@ -28,7 +28,7 @@
 				self:SetFrameLevel(2)
 			</OnLoad>
 		</Scripts>
-		<NormalTexture name="$parentIcon" parentKey="icon">
+		<NormalTexture name="$parentIcon" parentKey="Icon">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="-12" y="12"/>
 				<Anchor point="BOTTOMRIGHT" x="13" y="-13"/>

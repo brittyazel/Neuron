@@ -25,7 +25,7 @@
 		<Size x="52" y="52"/>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<Texture name="$parentStyle" hidden="true">
+				<Texture name="$parentStyle" parentKey="Style" hidden="true">
 					<Size x="220" y="110"/>
 					<Anchors>
 						<Anchor point="CENTER" x="-1.5" y="1"/>

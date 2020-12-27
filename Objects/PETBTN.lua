@@ -80,20 +80,20 @@ end
 function PETBTN:UpdateIcon()
 	local _, texture, isToken = GetPetActionInfo(self.actionID)
 
-	self.elements.Name:SetText("")
-	self.elements.Count:SetText("")
+	self.Name:SetText("")
+	self.Count:SetText("")
 
 	if texture then
 		if isToken then
-			self.elements.Icon:SetTexture(_G[texture])
+			self.Icon:SetTexture(_G[texture])
 		else
-			self.elements.Icon:SetTexture(texture)
+			self.Icon:SetTexture(texture)
 		end
 
-		self.elements.Icon:Show()
+		self.Icon:Show()
 	else
-		self.elements.Icon:SetTexture("")
-		self.elements.Icon:Hide()
+		self.Icon:SetTexture("")
+		self.Icon:Hide()
 	end
 end
 
@@ -114,21 +114,21 @@ function PETBTN:UpdateStatus()
 	end
 
 	if allowed then
-		self.elements.AutoCastable:Show()
+		self.AutoCastable:Show()
 	else
-		self.elements.AutoCastable:Hide()
+		self.AutoCastable:Hide()
 	end
 
 	if enabled then
-		self.elements.Shine:Show()
-		AutoCastShine_AutoCastStart(self.elements.Shine)
-		self.elements.AutoCastable:Hide()
+		self.Shine:Show()
+		AutoCastShine_AutoCastStart(self.Shine)
+		self.AutoCastable:Hide()
 	else
-		self.elements.Shine:Hide()
-		AutoCastShine_AutoCastStop(self.elements.Shine)
+		self.Shine:Hide()
+		AutoCastShine_AutoCastStop(self.Shine)
 
 		if allowed then
-			self.elements.AutoCastable:Show()
+			self.AutoCastable:Show()
 		end
 	end
 
@@ -176,11 +176,11 @@ end
 
 function PETBTN:UpdateUsable()
 	if self.editmode then
-		self.elements.Icon:SetVertexColor(0.2, 0.2, 0.2)
+		self.Icon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID and GetPetActionSlotUsable(self.actionID) then
-		self.elements.Icon:SetVertexColor(1.0, 1.0, 1.0)
+		self.Icon:SetVertexColor(1.0, 1.0, 1.0)
 	else
-		self.elements.Icon:SetVertexColor(0.4, 0.4, 0.4)
+		self.Icon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 
@@ -193,7 +193,7 @@ function PETBTN:PLAYER_ENTERING_WORLD()
 
 	self:UpdateObjectVisibility(true) --have to set true at login or the buttons on the bar don't show
 
-	self.binder:ApplyBindings()
+	self.Binder:ApplyBindings()
 
 	--This part is so that the grid get's set properly on login
 	self:ScheduleTimer(function() self:UpdateObjectVisibility() end, 2)

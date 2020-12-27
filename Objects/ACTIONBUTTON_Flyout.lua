@@ -918,10 +918,10 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 end
 
 function ACTIONBUTTON:Flyout_UpdateBar()
-	self.elements.FlyoutTop:Hide()
-	self.elements.FlyoutBottom:Hide()
-	self.elements.FlyoutLeft:Hide()
-	self.elements.FlyoutRight:Hide()
+	self.FlyoutTop:Hide()
+	self.FlyoutBottom:Hide()
+	self.FlyoutLeft:Hide()
+	self.FlyoutRight:Hide()
 
 	local flyout = self.flyout
 	local pointA, pointB, hideArrow, shape, columns, pad
@@ -991,25 +991,25 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 			self.flyout.arrowPoint = "TOP"
 			self.flyout.arrowX = 0
 			self.flyout.arrowY = 5
-			self.flyout.arrow = self.elements.FlyoutTop
+			self.flyout.arrow = self.FlyoutTop
 			self.flyout.arrow:Show()
 		elseif pointB == "BOTTOM" then
 			self.flyout.arrowPoint = "BOTTOM"
 			self.flyout.arrowX = 0
 			self.flyout.arrowY = -5
-			self.flyout.arrow = self.elements.FlyoutBottom
+			self.flyout.arrow = self.FlyoutBottom
 			self.flyout.arrow:Show()
 		elseif pointB == "LEFT" then
 			self.flyout.arrowPoint = "LEFT"
 			self.flyout.arrowX = -5
 			self.flyout.arrowY = 0
-			self.flyout.arrow = self.elements.FlyoutLeft
+			self.flyout.arrow = self.FlyoutLeft
 			self.flyout.arrow:Show()
 		elseif pointB == "RIGHT" then
 			self.flyout.arrowPoint = "RIGHT"
 			self.flyout.arrowX = 5
 			self.flyout.arrowY = 0
-			self.flyout.arrow = self.elements.FlyoutRight
+			self.flyout.arrow = self.FlyoutRight
 			self.flyout.arrow:Show()
 		end
 	end
@@ -1029,10 +1029,10 @@ function ACTIONBUTTON:Flyout_RemoveButtons()
 end
 
 function ACTIONBUTTON:Flyout_RemoveBar()
-	self.elements.FlyoutTop:Hide()
-	self.elements.FlyoutBottom:Hide()
-	self.elements.FlyoutLeft:Hide()
-	self.elements.FlyoutRight:Hide()
+	self.FlyoutTop:Hide()
+	self.FlyoutBottom:Hide()
+	self.FlyoutLeft:Hide()
+	self.FlyoutRight:Hide()
 
 	self:Anchor_Update(true)
 
@@ -1119,8 +1119,8 @@ function ACTIONBUTTON:Flyout_SetData(bar)
 		--self:SetScale(bar.data.scale)
 	end
 
-	self.elements.Hotkey:Hide()
-	self.elements.Name:Hide()
+	self.Hotkey:Hide()
+	self.Name:Hide()
 	self:RegisterForClicks("AnyUp")
 
 	self.equipcolor = { 0.1, 1, 0.1, 1 }
@@ -1172,16 +1172,6 @@ function ACTIONBUTTON:Flyout_GetButton()
 	setmetatable(newButton, {__index = ACTIONBUTTON})
 
 	newButton.elapsed = 0
-
-	local objects = Neuron:GetParentKeys(newButton)
-
-	--table to hold all of our captured frame element handles
-	newButton.elements = {}
-	--populates the button with all the Icon,Shine,Cooldown frame references
-	for k,v in pairs(objects) do
-		local name = (v):gsub(newButton:GetName(), "")
-		newButton.elements[name] = _G[v]
-	end
 
 	newButton.class = "flyout"
 	newButton.id = id
@@ -1272,9 +1262,9 @@ function ACTIONBUTTON:Flyout_GetBar()
 	bar.elapsed = 0
 	bar.data = { scale = 1 }
 
-	bar.text:Hide()
-	bar.message:Hide()
-	bar.messagebg:Hide()
+	bar.Text:Hide()
+	bar.Message:Hide()
+	bar.MessageBG:Hide()
 
 	bar:SetID(id)
 	bar:SetWidth(43)

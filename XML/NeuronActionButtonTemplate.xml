@@ -26,7 +26,7 @@
 		<Layers>
 
 			<Layer level="ARTWORK">
-				<Texture name="$parentIcon">
+				<Texture name="$parentIcon" parentKey="Icon">
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset x="3" y="-3"/>
@@ -40,14 +40,14 @@
 
 			<Layer level="OVERLAY" textureSubLevel="1">
 				<!--Frame Elements-->
-				<Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
+				<Texture name="$parentBorder" parentKey="Border" file="Interface\Buttons\UI-ActionButton-Border" hidden="true" alphaMode="ADD">
 					<Anchors>
 						<Anchor point="CENTER">
 							<Offset x="0" y="1"/>
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<Texture name="$parentAutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
+				<Texture name="$parentAutoCastable" parentKey="AutoCastable" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
 					<Anchors>
 						<Anchor point="TOPLEFT"/>
 						<Anchor point="BOTTOMRIGHT"/>
@@ -56,7 +56,7 @@
 				</Texture>
 
 				<!--FontStrings-->
-				<FontString name="$parentName" inherits="GameFontHighlightSmallOutline">
+				<FontString name="$parentName" parentKey="Name" inherits="GameFontHighlightSmallOutline">
 					<Anchors>
 						<Anchor point="BOTTOMLEFT">
 							<Offset x="2" y="2"/>
@@ -66,14 +66,14 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentHotkey" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="TOP">
+				<FontString name="$parentHotkey" parentKey="Hotkey" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="TOP">
 					<Anchors>
 						<Anchor point="TOPRIGHT">
 							<Offset x="-3" y="-4"/>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="BOTTOM">
+				<FontString name="$parentCount" parentKey="Count" inherits="NumberFontNormal" justifyH="RIGHT" justifyV="BOTTOM">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT">
 							<Offset x="-3" y="4"/>
@@ -86,7 +86,7 @@
 				<Texture name="$parentFlyoutArrow" parentKey="FlyoutArrow" hidden="true"/>
 				<Texture name="$parentFlyoutBorder" parentKey="FlyoutBorder" hidden="true"/>
 				<Texture name="$parentFlyoutBorderShadow" parentKey="FlyoutBorderShadow" hidden="true"/>
-				<Texture name="$parentFlyoutTop" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
+				<Texture name="$parentFlyoutTop" parentKey="FlyoutTop" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
 					<Size x="56" y="16"/>
 					<Anchors>
 						<Anchor point="TOP">
@@ -95,7 +95,7 @@
 					</Anchors>
 					<TexCoords left="0" right="1" top="0" bottom="0.28125"/>
 				</Texture>
-				<Texture name="$parentFlyoutBottom" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
+				<Texture name="$parentFlyoutBottom" parentKey="FlyoutBottom" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
 					<Size x="56" y="16"/>
 					<Anchors>
 						<Anchor point="BOTTOM">
@@ -104,7 +104,7 @@
 					</Anchors>
 					<TexCoords left="0" right="1" top="0.71875" bottom="1"/>
 				</Texture>
-				<Texture name="$parentFlyoutLeft" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
+				<Texture name="$parentFlyoutLeft" parentKey="FlyoutLeft" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
 					<Size x="16" y="56"/>
 					<Anchors>
 						<Anchor point="LEFT">
@@ -113,7 +113,7 @@
 					</Anchors>
 					<TexCoords left="0" right="0.28125" top="0" bottom="1"/>
 				</Texture>
-				<Texture name="$parentFlyoutRight" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
+				<Texture name="$parentFlyoutRight" parentKey="FlyoutRight" file="Interface\AddOns\Neuron\Images\flyout.tga" hidden="true">
 					<Size x="16" y="56"/>
 					<Anchors>
 						<Anchor point="RIGHT">
@@ -126,7 +126,7 @@
 		</Layers>
 
 		<Frames>
-			<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate">
+			<Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="5" y="-5"/>
@@ -137,7 +137,7 @@
 				</Anchors>
 				<Layers>
 					<Layer>
-						<FontString name="$parentTimer" parentKey="timer" inherits="GameFontNormal">
+						<FontString name="$parentTimer" parentKey="Timer" inherits="GameFontNormal">
 							<Anchors>
 								<Anchor point="CENTER">
 									<Offset x="0.5" y="0"/>
@@ -147,14 +147,14 @@
 					</Layer>
 				</Layers>
 			</Cooldown>
-			<Frame name="$parentShine" inherits="AutoCastShineTemplate">
+			<Frame name="$parentShine" parentKey="Shine" inherits="AutoCastShineTemplate">
 				<Anchors>
 					<Anchor point="CENTER" x="0" y="0"/>
 				</Anchors>
 			</Frame>
 		</Frames>
 
-		<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot">
+		<NormalTexture name="$parentNormal" parentKey="Normal" file="Interface\Buttons\UI-Quickslot">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="-12" y="12"/>
 				<Anchor point="BOTTOMRIGHT" x="13" y="-13"/>
@@ -163,7 +163,7 @@
 				</Anchor>
 			</Anchors>
 		</NormalTexture>
-		<PushedTexture name="$parentPushedTexture" file="Interface\Buttons\UI-Quickslot-Depress">
+		<PushedTexture name="$parentPushed" parentKey="Pushed" file="Interface\Buttons\UI-Quickslot-Depress">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="2" y="-2"/>
 				<Anchor point="BOTTOMRIGHT" x="-2" y="2"/>
@@ -172,7 +172,7 @@
 				</Anchor>
 			</Anchors>
 		</PushedTexture>
-		<HighlightTexture name="$parentHighlightTexture" alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square">
+		<HighlightTexture name="$parentHighlight" parentKey="Highlight" alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="3" y="-3"/>
 				<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
@@ -181,7 +181,7 @@
 				</Anchor>
 			</Anchors>
 		</HighlightTexture>
-		<CheckedTexture name="$parentCheckedTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight">
+		<CheckedTexture name="$parentChecked" parentKey="Checked" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight">
 			<Anchors>
 				<Anchor point="TOPLEFT" x="3" y="-3"/>
 				<Anchor point="BOTTOMRIGHT" x="-3" y="3"/>
