@@ -21,10 +21,10 @@
 
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://github.com/Gethe/wow-ui-source/blob/live/FrameXML/UI.xsd">
 
-	<Button name="NeuronStatusBarTemplate" frameStrata="LOW" virtual="true" inherits="BackdropTemplate">
+	<Frame name="NeuronStatusBarTemplate" frameStrata="LOW" virtual="true" inherits="BackdropTemplate">
 		<Size x="195" y="16"/>
 		<Frames>
-			<StatusBar name="$parentSB" parentKey="SB">
+			<StatusBar name="$parentStatusBar" parentKey="StatusBar">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="1" y="-3"/>
@@ -153,7 +153,6 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Frame name="$parentCBTimer" parentKey="CBTimer"/>
 				</Frames>
 				<Scripts>
 					<OnLoad>
@@ -164,106 +163,94 @@
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 				<BarColor r="0.75" g="0" b="0.75"/>
 			</StatusBar>
-			<CheckButton name="$parentFBFrame" parentKey="FBFrame" hidden="true">
+
+			<StatusBar name="$parentFeedback" parentKey="Feedback">
 				<Anchors>
 					<Anchor point="TOPLEFT">
-						<Offset x="0" y="0"/>
+						<Offset x="1" y="-3"/>
 					</Anchor>
 					<Anchor point="BOTTOMRIGHT">
-						<Offset x="0" y="0"/>
+						<Offset x="-1" y="3"/>
 					</Anchor>
 				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parentText" parentKey="Text" inherits="ChatFontSmall" nonspacewrap="true">
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset x="0" y="-1"/>
+								</Anchor>
+								<Anchor point="BOTTOM">
+									<Offset x="0" y="3"/>
+								</Anchor>
+							</Anchors>
+							<Shadow>
+								<Offset x="1" y="-1"/>
+								<Color r="0" g="0" b="0"/>
+							</Shadow>
+							<Color r="1" g="1" b="1"/>
+						</FontString>
+					</Layer>
+				</Layers>
 				<Frames>
-					<StatusBar name="$parentFeedback" parentKey="Feedback">
+					<Frame name="$parentBackground" parentKey="Background" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
-								<Offset x="1" y="-3"/>
+								<Offset x="-3" y="3"/>
 							</Anchor>
 							<Anchor point="BOTTOMRIGHT">
-								<Offset x="-1" y="3"/>
+								<Offset x="3" y="-3"/>
 							</Anchor>
 						</Anchors>
-						<Layers>
-							<Layer level="OVERLAY">
-								<FontString name="$parentText" parentKey="Text" inherits="ChatFontSmall" nonspacewrap="true">
-									<Anchors>
-										<Anchor point="TOP">
-											<Offset x="0" y="-1"/>
-										</Anchor>
-										<Anchor point="BOTTOM">
-											<Offset x="0" y="3"/>
-										</Anchor>
-									</Anchors>
-									<Shadow>
-										<Offset x="1" y="-1"/>
-										<Color r="0" g="0" b="0"/>
-									</Shadow>
-									<Color r="1" g="1" b="1"/>
-								</FontString>
-							</Layer>
-						</Layers>
-						<Frames>
-							<Frame name="$parentBackground" parentKey="Background" inherits="BackdropTemplate">
-								<Anchors>
-									<Anchor point="TOPLEFT">
-										<Offset x="-3" y="3"/>
-									</Anchor>
-									<Anchor point="BOTTOMRIGHT">
-										<Offset x="3" y="-3"/>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnLoad inherit="prepend">
-										self:SetBackdrop({
-											bgFile = "Interface\FriendsFrame\UI-Toast-Background",
-											edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
-											insets = { left = 3, right = 3, top = 3, bottom = 3 }
-										});
-										self:SetBackdropColor(0, 0, 0, 1)
-										self:SetBackdropBorderColor(0.8,0.8,0.8,0)
-										self:SetFrameLevel(0)
-									</OnLoad>
-								</Scripts>
-							</Frame>
-							<Frame name="$parentBorder" parentKey="Border" inherits="BackdropTemplate">
-								<Anchors>
-									<Anchor point="TOPLEFT">
-										<Offset x="-2" y="3"/>
-									</Anchor>
-									<Anchor point="BOTTOMRIGHT">
-										<Offset x="2" y="-3"/>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnLoad inherit="prepend">
-										self:SetBackdrop({
-											bgFile = "Interface\Tooltips\UI-Tooltip-Background",
-											edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
-											insets = { left = 3, right = 3, top = 3, bottom = 3 }
-										});
-										self:SetBackdropColor(0, 0, 0, 0)
-										self:SetBackdropBorderColor(0.8,0.8,0.8,0)
-										self:SetFrameLevel(10)
-									</OnLoad>
-								</Scripts>
-							</Frame>
-						</Frames>
 						<Scripts>
-							<OnLoad>
-								self:SetFrameLevel(1)
+							<OnLoad inherit="prepend">
+								self:SetBackdrop({
+									bgFile = "Interface\FriendsFrame\UI-Toast-Background",
+									edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
+									insets = { left = 3, right = 3, top = 3, bottom = 3 }
+								});
+								self:SetBackdropColor(0, 0, 0, 1)
+								self:SetBackdropBorderColor(0.8,0.8,0.8,0)
+								self:SetFrameLevel(0)
 							</OnLoad>
 						</Scripts>
-						<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
-						<BarColor r="0.3" g="0.3" b="0.3"/>
-					</StatusBar>
+					</Frame>
+					<Frame name="$parentBorder" parentKey="Border" inherits="BackdropTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset x="-2" y="3"/>
+							</Anchor>
+							<Anchor point="BOTTOMRIGHT">
+								<Offset x="2" y="-3"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad inherit="prepend">
+								self:SetBackdrop({
+									bgFile = "Interface\Tooltips\UI-Tooltip-Background",
+									edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
+									insets = { left = 3, right = 3, top = 3, bottom = 3 }
+								});
+								self:SetBackdropColor(0, 0, 0, 0)
+								self:SetBackdropBorderColor(0.8,0.8,0.8,0)
+								self:SetFrameLevel(10)
+							</OnLoad>
+						</Scripts>
+					</Frame>
 				</Frames>
 				<Scripts>
+					<OnLoad>
+						self:SetFrameLevel(1)
+					</OnLoad>
 					<OnShow>
-						self.Feedback:SetStatusBarColor(self:GetParent().SB:GetStatusBarColor())
+						self:SetStatusBarColor(self:GetParent().StatusBar:GetStatusBarColor())
 					</OnShow>
 				</Scripts>
-			</CheckButton>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+				<BarColor r="0.3" g="0.3" b="0.3"/>
+			</StatusBar>
+
 		</Frames>
-	</Button>
+	</Frame>
 
 </Ui>
