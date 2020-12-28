@@ -93,17 +93,17 @@ function PETBTN:InitializeButtonSettings()
 	self:SetScale(self.bar:GetBarScale())
 
 	if self.bar:GetShowBindText() then
-		self.elements.Hotkey:Show()
-		self.elements.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
+		self.Hotkey:Show()
+		self.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
 	else
-		self.elements.Hotkey:Hide()
+		self.Hotkey:Hide()
 	end
 
 	if self.bar:GetShowButtonText() then
-		self.elements.Name:Show()
-		self.elements.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
+		self.Name:Show()
+		self.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
 	else
-		self.elements.Name:Hide()
+		self.Name:Hide()
 	end
 
 	local down, up = "", ""
@@ -216,20 +216,20 @@ function PETBTN:UpdateIcon()
 
 	local _, texture, isToken = GetPetActionInfo(self.actionID)
 
-	self.elements.Name:SetText("")
-	self.elements.Count:SetText("")
+	self.Name:SetText("")
+	self.Count:SetText("")
 
 	if texture then
 		if isToken then
-			self.elements.IconFrameIcon:SetTexture(_G[texture])
+			self.Icon:SetTexture(_G[texture])
 		else
-			self.elements.IconFrameIcon:SetTexture(texture)
+			self.Icon:SetTexture(texture)
 		end
 
-		self.elements.IconFrameIcon:Show()
+		self.Icon:Show()
 	else
-		self.elements.IconFrameIcon:SetTexture("")
-		self.elements.IconFrameIcon:Hide()
+		self.Icon:SetTexture("")
+		self.Icon:Hide()
 	end
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
@@ -250,28 +250,28 @@ function PETBTN:UpdateStatus()
 			self:GetCheckedTexture():SetAlpha(1.0)
 		end
 
-		self:SetChecked(1)
+		self:SetChecked(true)
 	else
 		self:GetCheckedTexture():SetAlpha(1.0)
 		self:SetChecked(false)
 	end
 
 	if allowed then
-		self.elements.AutoCastable:Show()
+		self.AutoCastable:Show()
 	else
-		self.elements.AutoCastable:Hide()
+		self.AutoCastable:Hide()
 	end
 
 	if enabled then
-		self.elements.Shine:Show()
-		AutoCastShine_AutoCastStart(self.elements.Shine)
-		self.elements.AutoCastable:Hide()
+		self.Shine:Show()
+		AutoCastShine_AutoCastStart(self.Shine)
+		self.AutoCastable:Hide()
 	else
-		self.elements.Shine:Hide()
-		AutoCastShine_AutoCastStop(self.elements.Shine)
+		self.Shine:Hide()
+		AutoCastShine_AutoCastStop(self.Shine)
 
 		if allowed then
-			self.elements.AutoCastable:Show()
+			self.AutoCastable:Show()
 		end
 	end
 
@@ -289,11 +289,11 @@ end
 --overwrite function in parent class BUTTON
 function PETBTN:UpdateUsable()
 	if Neuron.buttonEditMode or Neuron.bindingMode then
-		self.elements.IconFrameIcon:SetVertexColor(0.2, 0.2, 0.2)
+		self.Icon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID and GetPetActionSlotUsable(self.actionID) then
-		self.elements.IconFrameIcon:SetVertexColor(1.0, 1.0, 1.0)
+		self.Icon:SetVertexColor(1.0, 1.0, 1.0)
 	else
-		self.elements.IconFrameIcon:SetVertexColor(0.4, 0.4, 0.4)
+		self.Icon:SetVertexColor(0.4, 0.4, 0.4)
 	end
 end
 

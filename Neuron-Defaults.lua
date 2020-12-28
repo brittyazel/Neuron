@@ -118,12 +118,14 @@ addonTable.defaultBarOptions.ZoneAbilityBar = {
 		snapToPoint = false,
 		showGrid = false,
 		point = "BOTTOM",
-		x = 350,
+		x = 425,
 		y = 75,
 		border = true,
 
 		buttons = {
 			[1] = {},
+			[2] = {},
+			[3] = {},
 		},
 	}
 }
@@ -280,7 +282,7 @@ addonTable.defaultBarOptions.PetBar = {
 		snapToFrame = false,
 		snapToPoint = false,
 		point = "BOTTOM",
-		x = -440,
+		x = -500,
 		y = 75,
 
 		buttons = {
@@ -312,6 +314,8 @@ if not Neuron.isWoWClassic then
 			point = "BOTTOMRIGHT",
 			x = -357,
 			y = 24,
+			padH = 0,
+			padV = 0,
 
 			buttons = {
 				[1] = {},

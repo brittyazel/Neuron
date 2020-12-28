@@ -21,10 +21,10 @@
 
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://github.com/Gethe/wow-ui-source/blob/live/FrameXML/UI.xsd">
 
-	<Button name="NeuronStatusBarTemplate" frameStrata="LOW" virtual="true">
+	<Frame name="NeuronStatusBarTemplate" frameStrata="LOW" virtual="true" inherits="BackdropTemplate">
 		<Size x="195" y="16"/>
 		<Frames>
-			<StatusBar name="$parentSB">
+			<StatusBar name="$parentStatusBar" parentKey="StatusBar">
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset x="1" y="-3"/>
@@ -40,13 +40,13 @@
 						</Texture>
 					</Layer>
 					<Layer>
-						<Texture name="$parentBorderShield" parentKey="shield" file="Interface\CastingBar\UI-CastingBar-Arena-Shield" hidden="true">
+						<Texture name="$parentShield" parentKey="Shield" file="Interface\CastingBar\UI-CastingBar-Arena-Shield" hidden="true">
 							<Size x="42" y="42"/>
 							<Anchors>
 								<Anchor point="LEFT" x="-26" y="0"/>
 							</Anchors>
 						</Texture>
-						<Texture name="$parentBarIcon" parentKey="icon" hidden="true">
+						<Texture name="$parentIcon" parentKey="Icon" hidden="true">
 							<Size x="14" y="14"/>
 							<Anchors>
 								<Anchor point="RIGHT" relativeTo="$parent" relativePoint="LEFT">
@@ -56,35 +56,35 @@
 						</Texture>
 					</Layer>
 					<Layer level="OVERLAY">
-						<FontString name="$parentCenterText" parentKey="cText" inherits="GameFontHighlightSmall">
+						<FontString name="$parentCenterText" parentKey="CenterText" inherits="GameFontHighlightSmall">
 							<Anchors>
 								<Anchor point="CENTER">
 									<Offset x="0" y="0"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentLeftText" parentKey="lText" justifyH="LEFT" inherits="GameFontHighlightSmall">
+						<FontString name="$parentLeftText" parentKey="LeftText" justifyH="LEFT" inherits="GameFontHighlightSmall">
 							<Anchors>
 								<Anchor point="LEFT">
 									<Offset x="3" y="0"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentRightText" parentKey="rText" justifyH="RIGHT" inherits="GameFontHighlightSmall">
+						<FontString name="$parentRightText" parentKey="RightText" justifyH="RIGHT" inherits="GameFontHighlightSmall">
 							<Anchors>
 								<Anchor point="RIGHT">
 									<Offset x="-3" y="0"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentMouseoverText" parentKey="mText" inherits="GameFontHighlightSmall" hidden="true">
+						<FontString name="$parentMouseoverText" parentKey="MouseoverText" inherits="GameFontHighlightSmall" hidden="true">
 							<Anchors>
 								<Anchor point="CENTER">
 									<Offset x="0" y="0"/>
 								</Anchor>
 							</Anchors>
 						</FontString>
-						<Texture name="$parentSpark" parentKey="spark" file="Interface\AddOns\Neuron\Images\CastingBar_Spark_1" alphaMode="ADD" hidden="true">
+						<Texture name="$parentSpark" parentKey="Spark" file="Interface\AddOns\Neuron\Images\CastingBar_Spark_1" alphaMode="ADD" hidden="true">
 							<Size x="32" y="32"/>
 							<Anchors>
 								<Anchor point="CENTER">
@@ -95,7 +95,7 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Frame name="$parentBackground" parentKey="bg">
+					<Frame name="$parentBackground" parentKey="Background" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="-3" y="3"/>
@@ -104,21 +104,20 @@
 								<Offset x="3" y="-3"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="12"/>
-							</EdgeSize>
-							<BackgroundInsets>
-								<AbsInset left="3" right="3" top="3" bottom="3"/>
-							</BackgroundInsets>
-						</Backdrop>
 						<Scripts>
-							<OnLoad>
-								self:SetFrameLevel(self:GetParent():GetFrameLevel())
+							<OnLoad inherit="prepend">
+								self:SetBackdrop({
+									bgFile = "Interface\Tooltips\UI-Tooltip-Background",
+									edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
+									insets = { left = 3, right = 3, top = 3, bottom = 3 }
+								});
+								self:SetBackdropColor(0, 0, 0, 0.8)
+								self:SetBackdropBorderColor(0.8,0.8,0.8,0)
+								self:SetFrameLevel(0)
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Frame name="$parentBorder" parentKey="border">
+					<Frame name="$parentBorder" parentKey="Border" inherits="BackdropTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset x="-2" y="3"/>
@@ -127,30 +126,40 @@
 								<Offset x="2" y="-3"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="12"/>
-							</EdgeSize>
-							<BackgroundInsets>
-								<AbsInset left="3" right="3" top="3" bottom="3"/>
-							</BackgroundInsets>
-						</Backdrop>
+						<Scripts>
+							<OnLoad inherit="prepend">
+								self:SetBackdrop({
+									bgFile = "Interface\Tooltips\UI-Tooltip-Background",
+									edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 12,
+									insets = { left = 3, right = 3, top = 3, bottom = 3 }
+								});
+								self:SetBackdropColor(0, 0, 0, 0)
+								self:SetBackdropBorderColor(0.8,0.8,0.8,0)
+								self:SetFrameLevel(10)
+							</OnLoad>
+						</Scripts>
 					</Frame>
-					<Frame name="$parentBarFlash" parentKey="barflash" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-							<EdgeSize>
-								<AbsValue val="15"/>
-							</EdgeSize>
-							<BackgroundInsets>
-								<AbsInset left="2" right="2" top="2" bottom="2"/>
-							</BackgroundInsets>
-						</Backdrop>
+					<Frame name="$parentBarFlash" parentKey="BarFlash" hidden="true" inherits="BackdropTemplate">
+						<Scripts>
+							<OnLoad inherit="prepend">
+								self:SetBackdrop({
+									bgFile = "Interface\Tooltips\UI-Tooltip-Background",
+									edgeFile = "Interface\Tooltips\UI-Tooltip-Border", tile = true, tileSize = 0, edgeSize = 15,
+									insets = { left = 2, right = 2, top = 2, bottom = 2 }
+								});
+								self:SetBackdropColor(1, 1, 1, 0.5)
+								self:SetBackdropBorderColor(1, 1, 1)
+								self:SetFrameLevel(3)
+							</OnLoad>
+						</Scripts>
 					</Frame>
 				</Frames>
+
 				<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
 				<BarColor r="0.75" g="0" b="0.75"/>
 			</StatusBar>
+
 		</Frames>
-	</Button>
+	</Frame>
 
 </Ui>

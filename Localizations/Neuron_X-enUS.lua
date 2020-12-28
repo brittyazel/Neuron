@@ -460,6 +460,7 @@ L["Cast Bar"] = true
 L["Mirror Bar"] = true
 
 L["Track Character XP"] = true
+L["Track Covenant Renown"] = true
 L["Track Azerite Power"] = true
 L["Track Honor Points"] = true
 

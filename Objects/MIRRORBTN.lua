@@ -56,7 +56,7 @@ function MIRRORBTN:InitializeButton()
 	self:SetScript("OnUpdate", function() self:OnUpdate() end)
 
 	table.insert(mirrorBars, self)
-	self.elements.SB:Hide()
+	self.StatusBar:Hide()
 	self.typeString = L["Mirror Bar"]
 	
 	self:InitializeButtonSettings()
@@ -100,12 +100,12 @@ function MIRRORBTN:Start(type, value, maxvalue, scale, paused, label)
 
 			local color = MirrorTimerColors[type]
 
-			mbar.elements.SB:SetMinMaxValues(0, (maxvalue / 1000))
-			mbar.elements.SB:SetValue(mbar.value)
-			mbar.elements.SB:SetStatusBarColor(color.r, color.g, color.b)
+			mbar.StatusBar:SetMinMaxValues(0, (maxvalue / 1000))
+			mbar.StatusBar:SetValue(mbar.value)
+			mbar.StatusBar:SetStatusBarColor(color.r, color.g, color.b)
 
-			mbar.elements.SB:SetAlpha(1)
-			mbar.elements.SB:Show()
+			mbar.StatusBar:SetAlpha(1)
+			mbar.StatusBar:Show()
 		end
 	end
 end
@@ -130,15 +130,15 @@ function MIRRORBTN:OnUpdate()
 		self.value = GetMirrorTimerProgress(self.mirror)/1000
 
 		if self.value > self.maxvalue then
-			self.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
+			self.alpha = self.StatusBar:GetAlpha() - CASTING_BAR_ALPHA_STEP
 			if self.alpha > 0 then
-				self.elements.SB:SetAlpha(self.alpha)
+				self.StatusBar:SetAlpha(self.alpha)
 			else
-				self.elements.SB:Hide()
+				self.StatusBar:Hide()
 			end
 
 		else
-			self.elements.SB:SetValue(self.value)
+			self.StatusBar:SetValue(self.value)
 			if self.value >= 60 then
 				self.value = string.format("%0.1f", self.value/60)
 				self.value = self.value.."m"
@@ -151,18 +151,18 @@ function MIRRORBTN:OnUpdate()
 		end
 
 	elseif not Neuron.barEditMode and not Neuron.buttonEditMode then
-		self.alpha = self.elements.SB:GetAlpha() - CASTING_BAR_ALPHA_STEP
+		self.alpha = self.StatusBar:GetAlpha() - CASTING_BAR_ALPHA_STEP
 		if self.alpha > 0 then
-			self.elements.SB:SetAlpha(self.alpha)
+			self.StatusBar:SetAlpha(self.alpha)
 		else
-			self.elements.SB:Hide()
+			self.StatusBar:Hide()
 		end
 	end
 
 	if not Neuron.barEditMode and not Neuron.buttonEditMode then
-		self.elements.SB.cText:SetText(self:cFunc())
-		self.elements.SB.lText:SetText(self:lFunc())
-		self.elements.SB.rText:SetText(self:rFunc())
-		self.elements.SB.mText:SetText(self:mFunc())
+		self.StatusBar.CenterText:SetText(self:cFunc())
+		self.StatusBar.LeftText:SetText(self:lFunc())
+		self.StatusBar.RightText:SetText(self:rFunc())
+		self.StatusBar.MouseoverText:SetText(self:mFunc())
 	end
 end

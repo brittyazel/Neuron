@@ -35,7 +35,9 @@ Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 ---@return ZONEABILITYBTN @ A newly created ZONEABILITYBTN object
 function ZONEABILITYBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronZoneAbilityButtonTemplate")
+
+	newButton.abilityIndex = buttonID
 
 	if defaults then
 		newButton:SetDefaults(defaults)
@@ -96,8 +98,21 @@ end
 
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateData()
-	--update the ZoneAbility spell ID
-	self.spellID = GetZoneAbilitySpellInfo();
+	--get table with zone ability info. The table has 5 values, "zoneAbilityID", "uiPriority", "spellID", "textureKit", and "tutorialText"
+	local zoneAbilityTable = C_ZoneAbility.GetActiveAbilities()
+
+	--TODO: figure out a way to use the fancy texture style even when having multiple zone abilities at once
+	self.disableStyle = #zoneAbilityTable > 1
+
+	table.sort(zoneAbilityTable, function(a, b) return a.uiPriority < b.uiPriority end);
+
+	if zoneAbilityTable[self.abilityIndex] then
+		self.spellID = zoneAbilityTable[self.abilityIndex].spellID
+		self.textureKit = zoneAbilityTable[self.abilityIndex].textureKit
+	else
+		self.spellID = nil
+		self.textureKit = nil
+	end
 
 	if self.spellID then
 		self.spell = GetSpellInfo(self.spellID);
@@ -108,7 +123,7 @@ function ZONEABILITYBTN:UpdateData()
 		self.spell = nil
 	end
 
-	self.elements.Name:Hide()
+	self.Name:Hide()
 
 	self:UpdateVisibility()
 	self:UpdateIcon()
@@ -119,7 +134,7 @@ end
 
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateVisibility()
-	if HasZoneAbility() then
+	if self.spellID then
 		self.isShown = true
 	else
 		self.isShown = false
@@ -131,15 +146,20 @@ end
 --overwrite function in parent class BUTTON
 function ZONEABILITYBTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
-	self.elements.IconFrameIcon:SetTexture(spellTexture);
+	self.Icon:SetTexture(spellTexture);
 
-	local texture = ZONE_SPELL_ABILITY_TEXTURES_BASE[self.spellID] or ZONE_SPELL_ABILITY_TEXTURES_BASE_FALLBACK
-	self.elements.Flair:SetTexture(texture)
+	local texture = self.textureKit or "Interface\\ExtraButton\\GarrZoneAbility-Armory"
 
-	if self.bar:GetShowBorderStyle() then
-		self.elements.Flair:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+	if C_Texture.GetAtlasInfo(texture) then
+		self.Style:SetAtlas(texture, true);
+	elseif texture then
+		self.Style:SetTexture(texture);
+	end
+
+	if not self.disableStyle and self.abilityIndex == 1 and self.bar:GetShowBorderStyle() then
+		self.Style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 	else
-		self.elements.Flair:Hide()
+		self.Style:Hide()
 	end
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()

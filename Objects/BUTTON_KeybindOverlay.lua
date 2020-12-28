@@ -181,12 +181,12 @@ function BUTTON:KeybindOverlay_ApplyBindings()
 		self:SetAttribute("hotkeys", self.keys.hotKeys)
 	end
 
-	self.elements.Hotkey:SetText(self.keys.hotKeyText:match("^:([^:]+)") or "")
+	self.Hotkey:SetText(self.keys.hotKeyText:match("^:([^:]+)") or "")
 
 	if self.bar:GetShowBindText() then
-		self.elements.Hotkey:Show()
+		self.Hotkey:Show()
 	else
-		self.elements.Hotkey:Hide()
+		self.Hotkey:Hide()
 	end
 end
 

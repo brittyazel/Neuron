@@ -204,24 +204,24 @@ function ACTIONBUTTON:InitializeButtonSettings()
 	self:SetScale(self.bar:GetBarScale())
 
 	if self.bar:GetShowBindText() then
-		self.elements.Hotkey:Show()
-		self.elements.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
+		self.Hotkey:Show()
+		self.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
 	else
-		self.elements.Hotkey:Hide()
+		self.Hotkey:Hide()
 	end
 
 	if self.bar:GetShowButtonText() then
-		self.elements.Name:Show()
-		self.elements.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
+		self.Name:Show()
+		self.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
 	else
-		self.elements.Name:Hide()
+		self.Name:Hide()
 	end
 
 	if self.bar:GetShowCountText() then
-		self.elements.Count:Show()
-		self.elements.Count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3],self.bar:GetCountColor()[4])
+		self.Count:Show()
+		self.Count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3],self.bar:GetCountColor()[4])
 	else
-		self.elements.Count:Hide()
+		self.Count:Hide()
 	end
 
 	local down, up = "", ""
@@ -416,8 +416,8 @@ function ACTIONBUTTON:StartGlow()
 	if self.bar:GetSpellGlow() == "default" then
 		ActionButton_ShowOverlayGlow(self)
 	else
-		self.elements.Shine:Show()
-		AutoCastShine_AutoCastStart(self.elements.Shine);
+		self.Shine:Show()
+		AutoCastShine_AutoCastStart(self.Shine);
 	end
 end
 
@@ -425,8 +425,8 @@ function ACTIONBUTTON:StopGlow()
 	if self.bar:GetSpellGlow() == "default" then
 		ActionButton_HideOverlayGlow(self)
 	else
-		self.elements.Shine:Hide()
-		AutoCastShine_AutoCastStop(self.elements.Shine);
+		self.Shine:Hide()
+		AutoCastShine_AutoCastStop(self.Shine);
 	end
 end
 

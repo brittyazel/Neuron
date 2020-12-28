@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90002
 ## Title: Neuron
 ## Notes: A macro-based action bar and object manager add-on
 ## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (Maul)
@@ -50,8 +50,9 @@ XML\NeuronActionButtonTemplate.xml
 XML\NeuronAnchorButtonTemplate.xml
 XML\NeuronBarTemplate.xml
 XML\NeuronOverlayFrameTemplate.xml
-XML\NeuronCheckButtonTextureTemplate.xml
 XML\NeuronStatusBarTemplate.xml
+XML\NeuronExtraButtonTemplate.xml
+XML\NeuronZoneAbilityButtonTemplate.xml
 
 Neuron-Defaults.lua
 Neuron-Startup.lua

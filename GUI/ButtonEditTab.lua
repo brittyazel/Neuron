@@ -73,7 +73,7 @@ end
 
 function NeuronGUI:RefreshIconPreview(iconFrame)
 	--try to get the texture currently on the button itself
-	local texture = Neuron.currentButton.elements.IconFrameIcon:GetTexture()
+	local texture = Neuron.currentButton.Icon:GetTexture()
 	if texture then
 		iconFrame:SetImage(texture)
 	else --fallback to question mark icon if nothing is found

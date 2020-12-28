@@ -31,12 +31,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local RepWatch = {}
 
 REPBTN.sbStrings = {
-	[1] = { L["None"], function(self) return "" end },
+	[1] = { L["None"], function() return "" end },
 	[2] = { L["Faction"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].name end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
 	[3] = { L["Current/Next"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].current end end },
 	[4] = { L["Percent"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].percent end end },
 	[5] = { L["Bubbles"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].bubbles end end },
-	[6] = { L["Current Level/Rank"], function(self) if RepWatch[selfrepID] then return RepWatch[self.repID].standing end end },
+	[6] = { L["Current Level/Rank"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].standing end end },
 }
 
 
@@ -67,7 +67,7 @@ function REPBTN:InitializeButton()
 
 	self.repID = self.config.repID
 
-	self.elements.SB:Show()
+	self.StatusBar:Show()
 	self.typeString = L["Rep Bar"]
 
 	self:InitializeButtonSettings()
@@ -130,11 +130,15 @@ function REPBTN:UpdateData(repGainedString)
 			standingID = 9
 		end
 
+		if standingID == 8 then
+			min = 0
+		end
+
 		if isHeader and not isChild then --set a header variable that will get set on each rep that follows until the next header is set
 			header = name
 		end
 
-		if not isHeader or hasRep and not IsFactionInactive(i) then
+		if (not isHeader or hasRep) and not IsFactionInactive(i) then
 
 			local fID, standing, isParagon
 			if not Neuron.isWoWClassic then --classic doesn't have Friendships or Paragon, carefull
@@ -194,19 +198,19 @@ function REPBTN:OnEvent(event,...)
 	self:UpdateData(...)
 
 	if RepWatch[self.repID] then
-		self.elements.SB:SetStatusBarColor(RepWatch[self.repID].r,  RepWatch[self.repID].g, RepWatch[self.repID].b)
-		self.elements.SB:SetMinMaxValues(RepWatch[self.repID].min, RepWatch[self.repID].max)
-		self.elements.SB:SetValue(RepWatch[self.repID].value)
+		self.StatusBar:SetStatusBarColor(RepWatch[self.repID].r,  RepWatch[self.repID].g, RepWatch[self.repID].b)
+		self.StatusBar:SetMinMaxValues(RepWatch[self.repID].min, RepWatch[self.repID].max)
+		self.StatusBar:SetValue(RepWatch[self.repID].value)
 	else
-		self.elements.SB:SetStatusBarColor(0.5,  0.5, 0.5)
-		self.elements.SB:SetMinMaxValues(0, 1)
-		self.elements.SB:SetValue(1)
+		self.StatusBar:SetStatusBarColor(0.5,  0.5, 0.5)
+		self.StatusBar:SetMinMaxValues(0, 1)
+		self.StatusBar:SetValue(1)
 	end
 
-	self.elements.SB.cText:SetText(self:cFunc())
-	self.elements.SB.lText:SetText(self:lFunc())
-	self.elements.SB.rText:SetText(self:rFunc())
-	self.elements.SB.mText:SetText(self:mFunc())
+	self.StatusBar.CenterText:SetText(self:cFunc())
+	self.StatusBar.LeftText:SetText(self:lFunc())
+	self.StatusBar.RightText:SetText(self:rFunc())
+	self.StatusBar.MouseoverText:SetText(self:mFunc())
 end
 
 

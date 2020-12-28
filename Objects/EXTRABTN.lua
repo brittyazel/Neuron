@@ -35,7 +35,7 @@ Neuron.EXTRABTN = EXTRABTN
 ---@return EXTRABTN @ A newly created EXTRABTN object
 function EXTRABTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON.new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronExtraButtonTemplate")
 
 	if defaults then
 		newButton:SetDefaults(defaults)
@@ -59,7 +59,7 @@ function EXTRABTN:InitializeButton()
 
 	self:SetAttribute("type1", "action")
 
-	self:SetAttribute("action1", 169) --baseline actionID for most zoneability actions
+	self:SetAttribute("action1", 169) --baseline actionID for most extra actions
 
 	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
 	self:SetAttribute("hotkeys", self.keys.hotKeys)
@@ -121,7 +121,7 @@ function EXTRABTN:UpdateData()
 	end
 
 	-----------------------
-	self.elements.Name:Hide()
+	self.Name:Hide()
 
 	self:UpdateVisibility()
 	self:UpdateIcon()
@@ -143,15 +143,15 @@ end
 --overwrite function in parent class BUTTON
 function EXTRABTN:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
-	self.elements.IconFrameIcon:SetTexture(spellTexture)
+	self.Icon:SetTexture(spellTexture)
 
 	local texture = GetOverrideBarSkin() or "Interface\\ExtraButton\\Default"
-	self.elements.Flair:SetTexture(texture)
+	self.Style:SetTexture(texture)
 
 	if self.bar:GetShowBorderStyle() then
-		self.elements.Flair:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
+		self.Style:Show() --this actually show/hide the fancy button theme surrounding the bar. If you wanted to do a toggle for the style, it should be here.
 	else
-		self.elements.Flair:Hide()
+		self.Style:Hide()
 	end
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()

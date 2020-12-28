@@ -79,16 +79,16 @@ function BAR.new(class, barID)
 	newBar.vischanged =true
 	newBar.microAdjust = false
 	newBar.vis = {}
-	newBar.text:Hide()
-	newBar.message:Hide()
-	newBar.messagebg:Hide()
+	newBar.Text:Hide()
+	newBar.Message:Hide()
+	newBar.MessageBG:Hide()
 
 	newBar:SetWidth(375)
 	newBar:SetHeight(40)
 	newBar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-	                    edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-	                    tile = true, tileSize = 16, edgeSize = 12,
-	                    insets = {left = 4, right = 4, top = 4, bottom = 4}})
+						edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+						tile = true, tileSize = 16, edgeSize = 12,
+						insets = {left = 4, right = 4, top = 4, bottom = 4}})
 	newBar:SetBackdropColor(0,0,0,0.4)
 	newBar:SetBackdropBorderColor(0,0,0,0)
 	newBar:RegisterForClicks("AnyDown", "AnyUp")
@@ -331,7 +331,7 @@ function BAR.ChangeSelectedBar(newBar)
 	if not newBar then
 		Neuron.currentBar = nil
 	elseif newBar.text then
-		newBar.text:Show()
+		newBar.Text:Show()
 	end
 
 	for k,v in pairs(Neuron.bars) do
@@ -345,9 +345,9 @@ function BAR.ChangeSelectedBar(newBar)
 
 			v.microAdjust = false
 			v:EnableKeyboard(false)
-			v.text:Hide()
-			v.message:Hide()
-			v.messagebg:Hide()
+			v.Text:Hide()
+			v.Message:Hide()
+			v.MessageBG:Hide()
 			v.mousewheelfunc = nil
 			v.mousewheelfunc = nil
 		end
@@ -938,7 +938,7 @@ function BAR:UpdateBarStatus(show)
 		self.vischanged = false
 	end
 
-	self.text:SetText(self:GetBarName())
+	self.Text:SetText(self:GetBarName())
 	self.handler:SetAlpha(self:GetBarAlpha())
 end
 
@@ -1003,10 +1003,10 @@ function BAR:SetPosition()
 		self:SetUserPlaced(true)
 		self:SetFrameStrata(Neuron.STRATAS[self:GetStrata()])
 
-		if self.message then
-			self.message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
-			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
-			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
+		if self.Message then
+			self.Message:SetText(point:lower().."     x: "..format("%0.2f", x).."     y: "..format("%0.2f", y))
+			self.MessageBG:SetWidth(self.Message:GetWidth()*1.05)
+			self.MessageBG:SetHeight(self.Message:GetHeight()*1.1)
 		end
 	end
 end
@@ -1263,16 +1263,16 @@ function BAR:OnClick(...)
 		if self.microAdjust then
 			self.microAdjust = false
 			self:EnableKeyboard(false)
-			self.message:Hide()
-			self.messagebg:Hide()
+			self.Message:Hide()
+			self.MessageBG:Hide()
 		else
 			self.microAdjust = 1
 			self:EnableKeyboard(true)
-			self.message:Show()
-			self.message:SetText(self.data.point:lower().."     x: "..format("%0.2f", self:GetXAxis()).."     y: "..format("%0.2f", self:GetYAxis()))
-			self.messagebg:Show()
-			self.messagebg:SetWidth(self.message:GetWidth()*1.05)
-			self.messagebg:SetHeight(self.message:GetHeight()*1.1)
+			self.Message:Show()
+			self.Message:SetText(self.data.point:lower().."     x: "..format("%0.2f", self:GetXAxis()).."     y: "..format("%0.2f", self:GetYAxis()))
+			self.MessageBG:Show()
+			self.MessageBG:SetWidth(self.Message:GetWidth()*1.05)
+			self.MessageBG:SetHeight(self.Message:GetHeight()*1.1)
 		end
 
 	elseif click == "MiddleButton" then
@@ -1300,7 +1300,7 @@ function BAR:OnEnter(...)
 		self:SetBackdropColor(0,0,1,0.5)
 	end
 
-	self.text:Show()
+	self.Text:Show()
 end
 
 
@@ -1313,9 +1313,13 @@ function BAR:OnLeave(...)
 		end
 	end
 
-	if self ~= Neuron.currentBar then
-		self.text:Hide()
+	if self ~= Neuron.CurrentBar then
+		self.Text:Hide()
+		if self ~= Neuron.currentBar then
+			self.Text:Hide()
+		end
 	end
+
 end
 
 

@@ -22,93 +22,108 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
-local hiddenFrame = CreateFrame('Frame', nil, UIParent, 'SecureFrameTemplate');
-Neuron.hiddenFrame = hiddenFrame
-hiddenFrame:Hide()
+-- Hidden parent frame
+local UIHider = CreateFrame("Frame")
+UIHider:Hide()
 
 
-local function disableFrame(frame, unregisterEvents)
-	if not frame then
-		Neuron:Print('Unknown Frame', frame:GetName())
-		return
-	end
-
-	frame:SetParent(hiddenFrame)
-
-	if unregisterEvents then
+local function disableBarFrame(frame)
+	if frame then
 		frame:UnregisterAllEvents()
+		frame:SetParent(UIHider)
+		frame:Hide()
+	end
+end
+
+local function disableButtonFrame(frame)
+	if frame then
+		frame:UnregisterAllEvents()
+		frame:SetAttribute("statehidden", true)
+		frame:Hide()
 	end
 end
 
 local function disableFrameSlidingAnimation(frame)
-	if not frame then
-		Neuron:Print('Unknown Frame', frame:GetName())
-		return
+	if frame then
+		local animation = {frame.slideOut:GetAnimations()}
+		animation[1]:SetOffset(0,0)
 	end
-
-	local animation = (frame.slideOut:GetAnimations())
-
-	animation:SetOffset(0, 0)
 end
 
 function Neuron:HideBlizzardUI()
-	---the idea for this code is inspired from Dominos. Thanks Tuller!
-	disableFrame(MainMenuBar, true)
+	----------------------------
+	----- Disable Buttons ------
+	----------------------------
+	--Hide and disable the individual buttons on most of our bars
+	for i=1,12 do
+		disableButtonFrame(_G["ActionButton"..i])
+		disableButtonFrame(_G["MultiBarBottomLeftButton"..i])
+		disableButtonFrame(_G["MultiBarBottomRightButton"..i])
+		disableButtonFrame(_G["MultiBarRightButton"..i])
+		disableButtonFrame(_G["MultiBarLeftButton"..i])
+	end
 
-	-- disable override bar transition animations
+	for i=1,6 do
+		disableButtonFrame(_G["OverrideActionBarButton"..i])
+	end
+
+	disableButtonFrame(_G["ExtraActionButton1"])
+
+	----------------------------
+	------- Disable Bars -------
+	----------------------------
+	--disable main blizzard bar and graphics
+	disableBarFrame(MainMenuBar)
+	disableBarFrame(MainMenuBarArtFrame)
+	disableBarFrame(MainMenuBarArtFrameBackground)
 	disableFrameSlidingAnimation(MainMenuBar)
-	disableFrame(MultiBarBottomLeft, true)
-	disableFrame(MultiBarBottomRight, true)
-	disableFrame(MultiBarLeft, true)
-	disableFrame(MultiBarRight, true)
-	disableFrame(MainMenuBarArtFrame, true)
-	disableFrame(StanceBarFrame, true)
-	disableFrame(PetActionBarFrame, true)
-	disableFrame(MainMenuBarVehicleLeaveButton, true)
-	disableFrame(MainMenuBarPerformanceBar)
 
-	if not Neuron.isWoWClassic then
-		disableFrameSlidingAnimation(OverrideActionBar)
-		disableFrame(PossessBarFrame, true)
-		disableFrame(MicroButtonAndBagsBar, true)
-		disableFrame(MultiCastActionBarFrame, true)
-		disableFrame(ExtraActionBarFrame, true)
-		disableFrame(ZoneAbilityFrame, true)
+	--disable bottom bonus bars
+	disableBarFrame(MultiBarBottomLeft)
+	disableBarFrame(MultiBarBottomRight)
 
+	--disable side bonus bars
+	disableBarFrame(MultiBarLeft)
+	disableBarFrame(MultiBarRight)
+
+	--disable all other action bars
+	disableBarFrame(MicroButtonAndBagsBar)
+	disableBarFrame(StanceBarFrame)
+	disableBarFrame(PossessBarFrame)
+	disableBarFrame(MultiCastActionBarFrame)
+	disableBarFrame(PetActionBarFrame)
+	disableBarFrame(ZoneAbilityFrame)
+	disableBarFrame(ExtraActionBarFrame)
+	disableBarFrame(MainMenuBarVehicleLeaveButton)
+
+	--disable status bars
+	disableBarFrame(MainMenuExpBar)
+	disableBarFrame(ReputationWatchBar)
+	disableBarFrame(MainMenuBarMaxLevelBar)
+
+	--disable override action bars
+	disableBarFrame(OverrideActionBar)
+	disableFrameSlidingAnimation(OverrideActionBar)
+
+	----------------------------
+	------- Disable Misc -------
+	----------------------------
+	--disable the ActionBarController to avoid potential for taint
+	ActionBarController:UnregisterAllEvents()
+
+	--disable the controller for status bars as we're going to handle this ourselves
+	if StatusTrackingBarManager then
+		StatusTrackingBarManager:Hide()
 		StatusTrackingBarManager:UnregisterAllEvents()
 	end
 
-	ActionBarController:UnregisterAllEvents()
-
-	--this is the equivalent of dropping a sledgehammer on the taint issue. It protects from taint and saves CPU cycles though so....
-	if not Neuron:IsHooked('ActionButton_OnEvent') then
-		Neuron:RawHook('ActionButton_OnEvent', function() end, true)
-	end
-
-	if not Neuron:IsHooked('ActionButton_Update') then
-		Neuron:RawHook('ActionButton_Update', function() end, true)
-	end
-
-	if not Neuron:IsHooked('MultiActionBar_Update') then
-		Neuron:RawHook('MultiActionBar_Update', function() end, true)
-	end
-
-	if not Neuron:IsHooked('ActionButton_HideGrid') then
-		Neuron:RawHook('ActionButton_HideGrid', function() end, true)
-	end
-
-	if not Neuron:IsHooked('ActionButton_ShowGrid') then
-		Neuron:RawHook('ActionButton_ShowGrid', function() end, true)
-	end
-
-	if not Neuron:IsHooked('PetActionBar_Update') then
-		Neuron:RawHook('PetActionBar_Update', function() end, true)
-	end
-
-	if not Neuron.isWoWClassic then
-		if not Neuron:IsHooked('OverrideActionBar_UpdateSkin') then
-			Neuron:RawHook('OverrideActionBar_UpdateSkin', function() end, true)
-		end
+	----------------------------
+	----- Disable Tutorial -----
+	----------------------------
+	--it's important we shut down the tutorial or we will get a ton of errors
+	--this cleanly shuts down the tutorial and returns visibility to all UI elements hidden
+	if Tutorials then --the Tutorials table is only available during the tutorial scenario, ignore if otherwise
+		Tutorials:Shutdown()
 	end
 end
 
@@ -173,17 +188,13 @@ function Neuron:Overrides()
 	end
 
 	if disableDefaultCast then
-		CastingBarFrame:UnregisterAllEvents()
-		CastingBarFrame:SetParent(Neuron.hiddenFrame)
+		disableBarFrame(CastingBarFrame)
 	end
 
 	if disableDefaultMirror then
 		UIParent:UnregisterEvent("MIRROR_TIMER_START")
-		MirrorTimer1:UnregisterAllEvents()
-		MirrorTimer1:SetParent(Neuron.hiddenFrame)
-		MirrorTimer2:UnregisterAllEvents()
-		MirrorTimer2:SetParent(Neuron.hiddenFrame)
-		MirrorTimer3:UnregisterAllEvents()
-		MirrorTimer3:SetParent(Neuron.hiddenFrame)
+		disableBarFrame(MirrorTimer1)
+		disableBarFrame(MirrorTimer2)
+		disableBarFrame(MirrorTimer3)
 	end
 end

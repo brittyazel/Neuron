@@ -76,10 +76,10 @@ function STATUSBTN:InitializeButtonSettings()
 	self:SetWidth(self.config.width)
 	self:SetHeight(self.config.height)
 
-	self.elements.SB.cText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
-	self.elements.SB.lText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
-	self.elements.SB.rText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
-	self.elements.SB.mText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
+	self.StatusBar.CenterText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
+	self.StatusBar.LeftText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
+	self.StatusBar.RightText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
+	self.StatusBar.MouseoverText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
 
 	if not self.sbStrings[self.config.cIndex] then
 		self.config.cIndex = 1
@@ -106,37 +106,37 @@ function STATUSBTN:InitializeButtonSettings()
 	end
 	self.tFunc = self.sbStrings[self.config.tIndex][2]
 
-	self.elements.SB.cText:SetText(self:cFunc())
-	self.elements.SB.lText:SetText(self:lFunc())
-	self.elements.SB.rText:SetText(self:rFunc())
-	self.elements.SB.mText:SetText(self:mFunc())
+	self.StatusBar.CenterText:SetText(self:cFunc())
+	self.StatusBar.LeftText:SetText(self:lFunc())
+	self.StatusBar.RightText:SetText(self:rFunc())
+	self.StatusBar.MouseoverText:SetText(self:mFunc())
 
 	self.orientation = self.config.orientation
-	self.elements.SB:SetOrientation(BAR_ORIENTATIONS[self.config.orientation]:lower())
+	self.StatusBar:SetOrientation(BAR_ORIENTATIONS[self.config.orientation]:lower())
 
 	if self.config.orientation == 2 then
-		self.elements.SB.cText:SetAlpha(0)
-		self.elements.SB.lText:SetAlpha(0)
-		self.elements.SB.rText:SetAlpha(0)
-		self.elements.SB.mText:SetAlpha(0)
+		self.StatusBar.CenterText:SetAlpha(0)
+		self.StatusBar.LeftText:SetAlpha(0)
+		self.StatusBar.RightText:SetAlpha(0)
+		self.StatusBar.MouseoverText:SetAlpha(0)
 	else
-		self.elements.SB.cText:SetAlpha(1)
-		self.elements.SB.lText:SetAlpha(1)
-		self.elements.SB.rText:SetAlpha(1)
-		self.elements.SB.mText:SetAlpha(1)
+		self.StatusBar.CenterText:SetAlpha(1)
+		self.StatusBar.LeftText:SetAlpha(1)
+		self.StatusBar.RightText:SetAlpha(1)
+		self.StatusBar.MouseoverText:SetAlpha(1)
 	end
 
 	if BAR_TEXTURES[self.config.texture] then
-		self.elements.SB:SetStatusBarTexture(BAR_TEXTURES[self.config.texture][self.config.orientation])
+		self.StatusBar:SetStatusBarTexture(BAR_TEXTURES[self.config.texture][self.config.orientation])
 	else
-		self.elements.SB:SetStatusBarTexture(BAR_TEXTURES[1][self.config.orientation])
+		self.StatusBar:SetStatusBarTexture(BAR_TEXTURES[1][self.config.orientation])
 	end
 
 	self:SetBorder()
 end
 
 function STATUSBTN:SetBorder()
-	self.elements.SB.border:SetBackdrop({
+	self.StatusBar.Border:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 		edgeFile = BAR_BORDERS[self.config.border][2],
 		tile = true,
@@ -150,16 +150,16 @@ function STATUSBTN:SetBorder()
 		}
 	})
 
-	self.elements.SB.border:SetPoint("TOPLEFT", BAR_BORDERS[self.config.border][9], BAR_BORDERS[self.config.border][10])
-	self.elements.SB.border:SetPoint("BOTTOMRIGHT", BAR_BORDERS[self.config.border][11], BAR_BORDERS[self.config.border][12])
+	self.StatusBar.Border:SetPoint("TOPLEFT", BAR_BORDERS[self.config.border][9], BAR_BORDERS[self.config.border][10])
+	self.StatusBar.Border:SetPoint("BOTTOMRIGHT", BAR_BORDERS[self.config.border][11], BAR_BORDERS[self.config.border][12])
 
-	self.elements.SB.border:SetBackdropColor(0, 0, 0, 0)
-	self.elements.SB.border:SetBackdropBorderColor(self.config.bordercolor[1], self.config.bordercolor[2], self.config.bordercolor[3], 1)
+	self.StatusBar.Border:SetBackdropColor(0, 0, 0, 0)
+	self.StatusBar.Border:SetBackdropBorderColor(self.config.bordercolor[1], self.config.bordercolor[2], self.config.bordercolor[3], 1)
 
-	self.elements.SB.bg:SetBackdropColor(0, 0, 0, 1)
-	self.elements.SB.bg:SetBackdropBorderColor(0, 0, 0, 0)
+	self.StatusBar.Background:SetBackdropColor(0, 0, 0, 1)
+	self.StatusBar.Background:SetBackdropBorderColor(0, 0, 0, 0)
 
-	self.elements.SB.barflash:SetBackdrop({
+	self.StatusBar.BarFlash:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 		edgeFile = BAR_BORDERS[self.config.border][2],
 		tile = true,
@@ -176,11 +176,11 @@ end
 
 function STATUSBTN:OnEnter()
 	if self.config.mIndex > 1 then
-		self.elements.SB.cText:Hide()
-		self.elements.SB.lText:Hide()
-		self.elements.SB.rText:Hide()
-		self.elements.SB.mText:Show()
-		self.elements.SB.mText:SetText(self:mFunc())
+		self.StatusBar.CenterText:Hide()
+		self.StatusBar.LeftText:Hide()
+		self.StatusBar.RightText:Hide()
+		self.StatusBar.MouseoverText:Show()
+		self.StatusBar.MouseoverText:SetText(self:mFunc())
 	end
 
 	if self.config.tIndex > 1 then
@@ -199,13 +199,13 @@ end
 
 function STATUSBTN:OnLeave()
 	if self.config.mIndex > 1 then
-		self.elements.SB.cText:Show()
-		self.elements.SB.lText:Show()
-		self.elements.SB.rText:Show()
-		self.elements.SB.mText:Hide()
-		self.elements.SB.cText:SetText(self:cFunc())
-		self.elements.SB.lText:SetText(self:lFunc())
-		self.elements.SB.rText:SetText(self:rFunc())
+		self.StatusBar.CenterText:Show()
+		self.StatusBar.LeftText:Show()
+		self.StatusBar.RightText:Show()
+		self.StatusBar.MouseoverText:Hide()
+		self.StatusBar.CenterText:SetText(self:cFunc())
+		self.StatusBar.LeftText:SetText(self:lFunc())
+		self.StatusBar.RightText:SetText(self:rFunc())
 	end
 
 	if self.config.tIndex > 1 then
@@ -239,7 +239,7 @@ function STATUSBTN:UpdateBarFill(command)
 	local index = tonumber(command)
 	if index and BAR_TEXTURES[index] then
 		self.config.texture = index
-		self.elements.SB:SetStatusBarTexture(BAR_TEXTURES[self.config.texture][self.config.orientation])
+		self.StatusBar:SetStatusBarTexture(BAR_TEXTURES[self.config.texture][self.config.orientation])
 	end
 end
 
@@ -258,18 +258,18 @@ function STATUSBTN:UpdateOrientation(command)
 		if self.config.orientation ~= index then
 			self.config.orientation = index
 			self.orientation = self.config.orientation
-			self.elements.SB:SetOrientation(BAR_ORIENTATIONS[self.config.orientation]:lower())
+			self.StatusBar:SetOrientation(BAR_ORIENTATIONS[self.config.orientation]:lower())
 
 			if self.config.orientation == 2 then
-				self.elements.SB.cText:SetAlpha(0)
-				self.elements.SB.lText:SetAlpha(0)
-				self.elements.SB.rText:SetAlpha(0)
-				self.elements.SB.mText:SetAlpha(0)
+				self.StatusBar.CenterText:SetAlpha(0)
+				self.StatusBar.LeftText:SetAlpha(0)
+				self.StatusBar.RightText:SetAlpha(0)
+				self.StatusBar.MouseoverText:SetAlpha(0)
 			else
-				self.elements.SB.cText:SetAlpha(1)
-				self.elements.SB.lText:SetAlpha(1)
-				self.elements.SB.rText:SetAlpha(1)
-				self.elements.SB.mText:SetAlpha(1)
+				self.StatusBar.CenterText:SetAlpha(1)
+				self.StatusBar.LeftText:SetAlpha(1)
+				self.StatusBar.RightText:SetAlpha(1)
+				self.StatusBar.MouseoverText:SetAlpha(1)
 			end
 
 			local newWidth = self.config.height
@@ -292,7 +292,7 @@ function STATUSBTN:UpdateCenterText(command)
 	if index then
 		self.config.cIndex = index
 		self.cFunc = self.sbStrings[self.config.cIndex][2]
-		self.elements.SB.cText:SetText(self:cFunc())
+		self.StatusBar.CenterText:SetText(self:cFunc())
 	end
 end
 
@@ -301,7 +301,7 @@ function STATUSBTN:UpdateLeftText(command)
 	if index then
 		self.config.lIndex = index
 		self.lFunc = self.sbStrings[self.config.lIndex][2]
-		self.elements.SB.lText:SetText(self:lFunc())
+		self.StatusBar.LeftText:SetText(self:lFunc())
 	end
 end
 
@@ -314,7 +314,7 @@ function STATUSBTN:UpdateRightText(command)
 	if index then
 		self.config.rIndex = index
 		self.rFunc = self.sbStrings[self.config.rIndex][2]
-		self.elements.SB.rText:SetText(self:rFunc())
+		self.StatusBar.RightText:SetText(self:rFunc())
 	end
 end
 
@@ -327,7 +327,7 @@ function STATUSBTN:UpdateMouseover(command)
 	if index then
 		self.config.mIndex = index
 		self.mFunc = self.sbStrings[self.config.mIndex][2]
-		self.elements.SB.mText:SetText(self:mFunc())
+		self.StatusBar.MouseoverText:SetText(self:mFunc())
 	end
 end
 
@@ -339,23 +339,23 @@ end
 --overwrite function in parent class BUTTON
 function STATUSBTN:UpdateVisibility()
 	if Neuron.barEditMode or Neuron.buttonEditMode then
-		self.elements.SB:Show()
-		self.elements.SB:SetAlpha(1)
+		self.StatusBar:Show()
+		self.StatusBar:SetAlpha(1)
 	end
 end
 
 --overwrite function in parent class BUTTON
 function STATUSBTN:UpdateStatus()
 	if Neuron.barEditMode or Neuron.buttonEditMode then
-		self.elements.SB.cText:SetText("")
-		self.elements.SB.lText:SetText(self.typeString)
-		self.elements.SB.rText:SetText("")
-		self.elements.SB.mText:SetText("")
+		self.StatusBar.CenterText:SetText("")
+		self.StatusBar.LeftText:SetText(self.typeString)
+		self.StatusBar.RightText:SetText("")
+		self.StatusBar.MouseoverText:SetText("")
 	else
-		self.elements.SB.cText:SetText(self:cFunc())
-		self.elements.SB.lText:SetText(self:lFunc())
-		self.elements.SB.rText:SetText(self:rFunc())
-		self.elements.SB.mText:SetText(self:mFunc())
+		self.StatusBar.CenterText:SetText(self:cFunc())
+		self.StatusBar.LeftText:SetText(self:lFunc())
+		self.StatusBar.RightText:SetText(self:rFunc())
+		self.StatusBar.MouseoverText:SetText(self:mFunc())
 	end
 end
 

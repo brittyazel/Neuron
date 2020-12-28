@@ -29,7 +29,7 @@ local DB
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local LATEST_VERSION_NUM = "1.2.3a" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
+local LATEST_VERSION_NUM = "1.4.1" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
 local LATEST_DB_VERSION = 1.3
 
@@ -152,6 +152,11 @@ function Neuron:OnEnable()
 		end)
 	end
 
+	--set current spec before loading bars and buttons
+	if not Neuron.isWoWClassic then
+		Neuron.activeSpec = GetSpecialization()
+	end
+
 	Neuron:LoginMessage()
 
 	--Load all bars and buttons
@@ -263,69 +268,42 @@ function Neuron:DatabaseMigration()
 			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", addonTable.databaseDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
 		end
 	end
-	-----------------------------------------------------
+
 end
-
-
 
 function Neuron:RefreshConfig()
 	StaticPopup_Show("ReloadUI")
 end
 
-
 -----------------------------------------------------------------
 
 
 function Neuron:LoginMessage()
-
 	--displays a info window on login for either fresh installs or updates
 	if not DB.updateWarning or DB.updateWarning ~= LATEST_VERSION_NUM  then
-
-		print(" ")
-		print("                  ~~~~~~~~~~NEURON~~~~~~~~~")
-		print("    Ladies and Gentlemen,")
-		print("    Lots of work is underway on Neuron 2.0, which will include a fully rewritten core, GUI, modules, and more. Likewise, please reach out if you are interested in contributing to Neuron's development, we always need more help coding and translating, and, as always, donations are welcome!")
-		print("    In addition, we recently released a custom Masque theme just for Neuron, called Masque: Neuron. You can find it on CurseForge or the Twitch app.")
-		print("       -Soyier")
-
 		if not IsAddOnLoaded("Masque") then
 			print(" ")
 			print("    You do not currently have Masque installed or enabled.")
 			print("    Please consider using Masque for enhancing the visual appearance of Neuron's action buttons.")
 			print("    We recommend using Masque: Neuron, the theme made by Soyier for use with Neuron.")
+			print(" ")
 		end
-
-		print(" ")
-
 	end
 
 	DB.updateWarning = LATEST_VERSION_NUM
-end
 
-
---I'm not sure what this function does, but it returns a table of all the names of children of a given frame
-function Neuron:GetParentKeys(frame)
-	if frame == nil then
-		return
+	if Neuron.activeSpec > 4 then
+		print(" ")
+		Neuron:Print("Warning: You do not currently have a specialization selected. Changes to any buttons which have 'Multi Spec' set will not persist.")
+		print(" ")
 	end
 
-	local data, childData = {}, {}
-	local children = {frame:GetChildren()}
-	local regions = {frame:GetRegions()}
-
-	for _,v in pairs(children) do
-		table.insert(data, v:GetName())
-		childData = Neuron:GetParentKeys(v)
-		for _,value in pairs(childData) do
-			table.insert(data, value)
-		end
+	--Shadowlands warning that will show as long as a player has one button on their ZoneAbilityBar for Shadowlands content
+	if not Neuron.isWoWClassic and UnitLevel("player") >= 50 and Neuron.db.profile.ZoneAbilityBar[1] and #Neuron.db.profile.ZoneAbilityBar[1].buttons == 1 then
+		print(" ")
+		Neuron:Print(WrapTextInColorCode("IMPORTANT: Shadowlands content now requires multiple Zone Ability Buttons. Please add at least 3 buttons to your Zone Ability Bar to support this new functionality.", "FF00FFEC"))
+		print(" ")
 	end
-
-	for _,v in pairs(regions) do
-		table.insert(data, v:GetName())
-	end
-
-	return data
 end
 
 

@@ -65,11 +65,12 @@ function XPBTN:InitializeButton()
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "OnEvent")
 
 	if not Neuron.isWoWClassic then
+		self:RegisterEvent("COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED", "OnEvent")
 		self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "OnEvent")
 		self:RegisterEvent("HONOR_XP_UPDATE", "OnEvent")
 	end
 
-	self.elements.SB:Show()
+	self.StatusBar:Show()
 	self.typeString = L["XP Bar"]
 
 	self:InitializeButtonSettings()
@@ -94,6 +95,26 @@ function XPBTN:UpdateData() --handles updating all the strings for the play XP w
 			self.rested = self.rested/self.next
 		else
 			self.rested = 0
+		end
+
+	--covenant renown
+	elseif self:GetXPType() == "covenant_renown" then
+		if C_Covenants.GetActiveCovenantID() ~= 0 then
+			local covenantLevel = C_CovenantSanctumUI.GetRenownLevel(C_Covenants.GetActiveCovenantID())
+			local covenantName = C_Covenants.GetCovenantData(C_Covenants.GetActiveCovenantID()).name
+			self.rank = covenantName..": "..L["Level"].." "..covenantLevel
+			self.rested = 0
+			self.percent = 100
+			self.bubbles = 20
+			self.current = 100
+			self.next = 100
+		else
+			self.current = 0
+			self.next = 0
+			self.percent = 0
+			self.rested = 0
+			self.bubbles = 0
+			self.rank = 0
 		end
 
 	--heart of azeroth option
@@ -130,26 +151,31 @@ function XPBTN:OnEvent(event)
 	self:UpdateData()
 
 	if self:GetXPType() == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType") then
-		if self.rested ~= 0 then
-			self.elements.SB:SetStatusBarColor(self.config.restColor[1], self.config.restColor[2], self.config.restColor[3], self.config.restColor[4])
+		if self.rested ~= 0 or UnitLevel("player") == MAX_PLAYER_LEVEL then
+			self.StatusBar:SetStatusBarColor(0.0, 0.39, 0.88, 1.0) --blue color
 		else
-			self.elements.SB:SetStatusBarColor(self.config.norestColor[1], self.config.norestColor[2], self.config.norestColor[3], self.config.norestColor[4])
+			self.StatusBar:SetStatusBarColor(0.58, 0.0, 0.55, 1.0) --deep purple color
 		end
 
+	elseif self:GetXPType() == "covenant_renown" and (event == "COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType") then
+		local covenantData = C_Covenants.GetCovenantData(C_Covenants.GetActiveCovenantID())
+		local covenantColor = COVENANT_COLORS[covenantData.textureKit]
+		self.StatusBar:SetStatusBarColor(covenantColor:GetRGB())
+
 	elseif self:GetXPType() == "azerite_xp" and (event =="AZERITE_ITEM_EXPERIENCE_CHANGED" or event =="PLAYER_ENTERING_WORLD" or event =="PLAYER_EQUIPMENT_CHANGED" or event =="changed_curXPType") then
-		self.elements.SB:SetStatusBarColor(1, 1, 0); --set to yellow?
+		self.StatusBar:SetStatusBarColor(ARTIFACT_BAR_COLOR:GetRGB()) --set to pale yellow
 
 	elseif self:GetXPType() == "honor_points" and (event=="HONOR_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event =="changed_curXPType") then
-		self.elements.SB:SetStatusBarColor(1, .4, .4);
+		self.StatusBar:SetStatusBarColor(1.0, 0.24, 0) --set to red
 	end
 
-	self.elements.SB:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
-	self.elements.SB:SetValue((self.current/self.next)*100)
+	self.StatusBar:SetMinMaxValues(0, 100) --these are for the bar itself, the progress it has from left to right
+	self.StatusBar:SetValue((self.current/self.next)*100)
 
-	self.elements.SB.cText:SetText(self:cFunc())
-	self.elements.SB.lText:SetText(self:lFunc())
-	self.elements.SB.rText:SetText(self:rFunc())
-	self.elements.SB.mText:SetText(self:mFunc())
+	self.StatusBar.CenterText:SetText(self:cFunc())
+	self.StatusBar.LeftText:SetText(self:lFunc())
+	self.StatusBar.RightText:SetText(self:rFunc())
+	self.StatusBar.MouseoverText:SetText(self:mFunc())
 end
 
 function XPBTN:InitializeDropDown() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
@@ -176,10 +202,23 @@ function XPBTN:InitializeDropDown() -- initialize the dropdown menu for chosing 
 		checked = self:GetXPType() == "player_xp",
 	})
 
-	--wow classic doesn't have Honor points nor Azerite, carefull
+	--wow classic doesn't have Honor points nor Azerite, careful
 	if not Neuron.isWoWClassic then
+
+		--add Renown tracking for Covenants
+		if C_Covenants.GetActiveCovenantID() ~= 0 then
+			table.insert(menu, {
+				arg1 = self,
+				arg2 = "covenant_renown",
+				text = L["Track Covenant Renown"],
+				func = function(dropdown, self, newXPType) self:SetXPType(newXPType) end,
+				checked = self:GetXPType() == "covenant_renown",
+			})
+		end
+
 		--add Heart of Azeroth option
-		if(C_AzeriteItem.FindActiveAzeriteItem()) then --only show this button if they player has the Heart of Azeroth
+		local azeriteItem = C_AzeriteItem.FindActiveAzeriteItem()
+		if azeriteItem and azeriteItem:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItem) then --only show this button if they player has the Heart of Azeroth
 			table.insert(menu, {
 				arg1 = self,
 				arg2 = "azerite_xp",

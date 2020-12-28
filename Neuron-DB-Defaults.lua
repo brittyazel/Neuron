@@ -68,8 +68,6 @@ local genericXPBtnData= {
 
 	bordercolor = {1,1,1,1},
 
-	norestColor = {1,0,1,1},
-	restColor = {0,0,1,1},
 }
 
 local genericRepBtnData= {
@@ -198,8 +196,8 @@ local genericBarData = {
 
 	strata = 3,
 
-	padH = 0,
-	padV = 0,
+	padH = 3,
+	padV = 3,
 	arcStart = 0,
 	arcLength = 359,
 
@@ -350,6 +348,8 @@ addonTable.databaseDefaults.profile.ActionBar['*'].buttons = {
 		[2] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
 		[3] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
 		[4] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}},
+		--any time a player is without spec, it is not treated as spec 5
+		[5] = {['**'] = CopyTable(genericSpecData), ['homestate'] = {}}, --we need this or we will error out on new character creation
 	}
 }
 

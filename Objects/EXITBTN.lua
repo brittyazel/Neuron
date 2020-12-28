@@ -71,7 +71,7 @@ end
 
 function EXITBTN:OnEvent(event, ...)
 	--reset button back to normal in the case of setting a tint on prior taxi trip
-	self.elements.IconFrameIcon:SetDesaturated(false)
+	self.Icon:SetDesaturated(false)
 	if not InCombatLockdown() then
 		self:Enable()
 	end
@@ -84,7 +84,7 @@ function EXITBTN:OnClick()
 	if UnitOnTaxi("player") then
 		TaxiRequestEarlyLanding()
 		--desaturate the button if early landing is requested and disable it
-		self.elements.IconFrameIcon:SetDesaturated(true);
+		self.Icon:SetDesaturated(true);
 		self:Disable()
 	else
 		VehicleExit()
@@ -109,7 +109,7 @@ end
 
 --overwrite function in parent class BUTTON
 function EXITBTN:UpdateIcon()
-	self.elements.IconFrameIcon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
+	self.Icon:SetTexture("Interface\\AddOns\\Neuron\\Images\\new_vehicle_exit")
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
 end
