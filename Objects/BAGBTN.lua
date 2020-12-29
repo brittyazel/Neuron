@@ -89,7 +89,6 @@ function BAGBTN:SetData(bar)
 		self.bar = bar
 		self:SetFrameStrata(bar.data.objectStrata)
 		self:SetScale(bar.data.scale)
-
 		self.isShown = true
 	end
 end
@@ -118,4 +117,8 @@ function BAGBTN:SetSkinned()
 			self.skinned = true
 		end
 	end
+end
+
+function BAGBTN:UpdateUsable()
+	--empty--
 end

@@ -152,8 +152,8 @@ local genericBarData = {
 	barStrata = "MEDIUM",
 	objectStrata = "LOW",
 
-	padH = 3,
-	padV = 3,
+	padH = 0,
+	padV = 0,
 	arcStart = 0,
 	arcLength = 359,
 
@@ -196,7 +196,7 @@ local genericBarData = {
 	tooltipsCombat = false,
 
 	bindText = true,
-	macroText = true,
+	macroText = false,
 	countText = true,
 	rangeInd = true,
 

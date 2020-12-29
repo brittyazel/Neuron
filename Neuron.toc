@@ -47,8 +47,6 @@ XML\NeuronAnchorButtonTemplate.xml
 XML\NeuronBarTemplate.xml
 XML\NeuronBindFrameTemplate.xml
 XML\NeuronStatusBarTemplate.xml
-XML\NeuronExtraButtonTemplate.xml
-XML\NeuronZoneAbilityButtonTemplate.xml
 
 Neuron-Defaults.lua
 Neuron-Startup.lua

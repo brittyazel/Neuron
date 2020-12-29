@@ -23,35 +23,16 @@
 
 	<Button name="NeuronBindFrameTemplate" frameStrata="DIALOG" hidden="true" virtual="true">
 		<Layers>
-			<Layer>
-				<FontString name="$parentLabel" parentKey="Label" inherits="ChatFontSmall" nonspacewrap="true" text="bind">
+			<Layer level="OVERLAY">
+				<FontString name="$parentLabel" parentKey="Label" inherits="ChatFontSmall" />
+				<Texture name="$parentSelect" parentKey="Select" file="Interface\Buttons\UI-AutoCastableOverlay" hidden="true">
+					<Size x="75" y="75"/>
 					<Anchors>
-						<Anchor point="TOP">
-							<Offset x="0" y="-1"/>
-						</Anchor>
-						<Anchor point="BOTTOM">
-							<Offset x="0" y="3"/>
-						</Anchor>
+						<Anchor point="CENTER" x="0" y="0"/>
 					</Anchors>
-					<Shadow>
-						<Offset x="1" y="-1"/>
-						<Color r="0" g="0" b="0"/>
-					</Shadow>
-					<Color r="1" g="1" b="1"/>
-				</FontString>
+				</Texture>
 			</Layer>
 		</Layers>
-		<Frames>
-			<Frame name="$parentSelect" parentKey="Select" setAllPoints="true" hidden="true">
-				<Layers>
-					<Layer level="OVERLAY">
-						<Texture name="$parentReticle" file="Interface\Buttons\UI-AutoCastableOverlay">
-							<TexCoords left="0.24" right="0.75" top="0.24" bottom="0.75"/>
-						</Texture>
-					</Layer>
-				</Layers>
-			</Frame>
-		</Frames>
 	</Button>
 
 </Ui>

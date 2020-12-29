@@ -98,8 +98,6 @@ function MENUBTN:SetData(bar)
 
 		self.isShown = true
 	end
-
-	self:SetFrameLevel(4)
 end
 
 function MENUBTN:PET_BATTLE_CLOSE()
@@ -123,4 +121,8 @@ function MENUBTN.ModifiedMoveMicroButtons(anchor, anchorTo, relAnchor, x, y, isS
 	end
 
 	UpdateMicroButtons();
+end
+
+function MENUBTN:UpdateUsable()
+	--empty--
 end

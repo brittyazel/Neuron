@@ -32,7 +32,7 @@ Neuron.ZONEABILITYBTN = ZONEABILITYBTN
 ---@return ZONEABILITYBTN @ A newly created ZONEABILITYBTN object
 function ZONEABILITYBTN.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronZoneAbilityButtonTemplate")
+	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
 
 	newButton.abilityIndex = buttonID
 
@@ -53,6 +53,9 @@ function ZONEABILITYBTN:SetType()
 	self:RegisterEvent("SPELL_UPDATE_CHARGES", "OnEvent")
 
 	self:SetAttribute("type1", "macro")
+
+	self:SetSize(52,52)
+	self.Style:SetPoint("CENTER", -1.5, 1)
 
 	--macro content gets set in UpdateData
 	self:UpdateData()
