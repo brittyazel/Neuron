@@ -127,7 +127,7 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 		self:CancelTimer(self.Cooldown.cooldownUpdateTimer)
 	end
 
-	self.Cooldown.Timer:SetText("")
+	self.Countdown:SetText("")
 
 	self.Cooldown.showCountdownTimer = false
 	self.Cooldown.showCountdownAlpha = false
@@ -226,7 +226,7 @@ function BUTTON:CooldownCounterUpdate()
 
 		if coolDown < 1 then
 			if coolDown <= 0 then
-				self.Cooldown.Timer:SetText("")
+				self.Countdown:SetText("")
 				self.Cooldown.expirecolor = nil
 				self.Cooldown.cdsize = nil
 
@@ -240,37 +240,37 @@ function BUTTON:CooldownCounterUpdate()
 				formatted = string.format( "%.0f", coolDown/86400)
 				formatted = formatted.."d"
 				size = self:GetWidth()*0.3
-				self.Cooldown.Timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.Countdown:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif coolDown >= 3600 then --append a "h" if the timer is longer than 1 hour
 				formatted = string.format( "%.0f",coolDown/3600)
 				formatted = formatted.."h"
 				size = self:GetWidth()*0.3
-				self.Cooldown.Timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.Countdown:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif coolDown >= 60 then --append a "m" if the timer is longer than 1 min
 				formatted = string.format( "%.0f",coolDown/60)
 				formatted = formatted.."m"
 				size = self:GetWidth()*0.3
-				self.Cooldown.Timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.Countdown:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif coolDown >=6 then --this is the 'normal' countdown text state
 				formatted = string.format( "%.0f",coolDown)
 				size = self:GetWidth()*0.45
-				self.Cooldown.Timer:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
+				self.Countdown:SetTextColor(normalcolor[1], normalcolor[2], normalcolor[3])
 
 			elseif coolDown < 6 then --this is the countdown text state but with the text larger and set to the expire color (usually red)
 				formatted = string.format( "%.0f",coolDown)
 				size = self:GetWidth()*0.6
 				if expirecolor then
-					self.Cooldown.Timer:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
+					self.Countdown:SetTextColor(expirecolor[1], expirecolor[2], expirecolor[3])
 					expirecolor = nil
 				end
 
 			end
 
 			if not self.Cooldown.cdsize or self.Cooldown.cdsize ~= size then
-				self.Cooldown.Timer:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
+				self.Countdown:SetFont(STANDARD_TEXT_FONT, size, "OUTLINE")
 				self.Cooldown.cdsize = size
 			end
 

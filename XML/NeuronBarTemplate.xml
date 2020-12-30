@@ -26,25 +26,19 @@
 			<Layer level="BACKGROUND">
 				<FontString name="$parentText" parentKey="Text" inherits="GameFontNormal">
 					<Anchors>
-						<Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP">
-							<Offset x="0" y="1"/>
-						</Anchor>
+						<Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP" x="0" y="1"/>
 					</Anchors>
 				</FontString>
 				<Texture name="$parentMessageBG" parentKey="MessageBG" hidden="true">
 					<Size x="1" y="1"/>
 					<Anchors>
-						<Anchor point="TOP" relativeTo="$parent" relativePoint="BOTTOM">
-							<Offset x="0" y="-1"/>
-						</Anchor>
+						<Anchor point="TOP" relativeTo="$parent" relativePoint="BOTTOM" x="0" y="-1"/>
 					</Anchors>
 					<Color r="0" g="0" b="0" a="0.9"/>
 				</Texture>
 				<FontString name="$parentMessage" parentKey="Message" inherits="FriendsFont_UserText" justifyV="TOP">
 					<Anchors>
-						<Anchor point="CENTER" relativeTo="$parentMessageBG" relativePoint="CENTER">
-							<Offset x="0" y="0"/>
-						</Anchor>
+						<Anchor point="CENTER" relativeTo="$parentMessageBG" relativePoint="CENTER" x="0" y="0"/>
 					</Anchors>
 					<FontHeight>
 						<AbsValue val="12"/>
