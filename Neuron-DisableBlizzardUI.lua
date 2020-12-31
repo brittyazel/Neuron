@@ -114,6 +114,15 @@ function Neuron:HideBlizzardUI()
 		StatusTrackingBarManager:UnregisterAllEvents()
 	end
 
+	--these two get called when opening the spellbook so it's best to just silence them ahead of time
+	if not Neuron:IsHooked("MultiActionBar_ShowAllGrids") then
+		Neuron:RawHook("MultiActionBar_ShowAllGrids", function() end, true)
+	end
+	if not Neuron:IsHooked("MultiActionBar_HideAllGrids") then
+		Neuron:RawHook("MultiActionBar_HideAllGrids", function() end, true)
+	end
+
+
 	----------------------------
 	----- Disable Tutorial -----
 	----------------------------
