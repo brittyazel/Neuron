@@ -31,6 +31,9 @@ L["Menu_Description"] = "Open the main menu"
 L["Create"] = true
 L["Create_Description"] = "Create a blank bar of the given type"
 
+L["Select"] = true
+L["Select_Description"] = "Switch the currently selected bar"
+
 L["Delete"] = true
 L["Delete_Description"] = "Delete the currently selected bar"
 

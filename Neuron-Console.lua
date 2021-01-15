@@ -29,6 +29,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local slashFunctions = {
 	{L["Menu"], L["Menu_Description"], "ToggleMainMenu"},
 	{L["Create"], L["Create_Description"], "CreateNewBar"},
+	{L["Select"], L["Select_Description"], "ChangeBar"},
 	{L["Delete"], L["Delete_Description"], "DeleteBar"},
 	{L["Config"], L["Config_Description"], "ToggleBarEditMode"},
 	{L["Add"], L["Add_Description"], "AddObjectsToBar"},
@@ -80,7 +81,7 @@ function Neuron:slashHandler(input)
 		return
 	end
 
-	local commandAndArgs = {strsplit(" ", input)} --split the input into the command and the arguments
+	local commandAndArgs = {Neuron:GetArgs(input, 3, 1)} --split the input into the command and the arguments
 	local command = commandAndArgs[1]:lower()
 	local args = {}
 	for i = 2,#commandAndArgs do
@@ -105,6 +106,21 @@ function Neuron:slashHandler(input)
 		if command == slashFunctions[i][1]:lower() then
 			local func = slashFunctions[i][3]
 			local bar = Neuron.CurrentBar
+
+			if func == "ChangeBar" then --intercept our bar assignment and reassign to the new bar, if it exists
+				local newBar
+				for _,v in pairs(Neuron.BARIndex) do
+					if v.data.name == args[1] then
+						newBar = v
+						break
+					end
+				end
+				if newBar then
+					bar = newBar --swap out the current bar with the new bar
+				else
+					bar = nil --unassign bar if the entered one doesn't exists
+				end
+			end
 
 			if Neuron[func] then
 				Neuron[func](Neuron, args[1])
