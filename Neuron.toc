@@ -1,4 +1,4 @@
-## Interface: 90002
+## Interface: 90005
 ## Title: Neuron
 ## Notes: A macro-based action bar and object manager add-on
 ## Author: Britt Yazel (aka Soyier) and Connor Chenoweth (Maul)
