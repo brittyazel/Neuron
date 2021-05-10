@@ -732,12 +732,14 @@ end
 function BUTTON:UpdateUsableSpell()
 	local isUsable, notEnoughMana = IsUsableSpell(self.spell)
 
-	if notEnoughMana  and self.manacolor then
+	if notEnoughMana and self.manacolor then
 		self.Icon:SetVertexColor(self.manacolor[1], self.manacolor[2], self.manacolor[3])
 	elseif isUsable then
-		if self.rangeInd and IsSpellInRange(self.spell, self.unit)==0 then
+		if not self.rangeInd or IsSpellInRange(self.spell, self.unit)==1 then
+			self.Icon:SetVertexColor(1.0, 1.0, 1.0)
+		elseif self.rangeInd and IsSpellInRange(self.spell, self.unit)==0 then
 			self.Icon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
-		elseif NeuronSpellCache[self.spell:lower()] and self.rangeInd and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit)==0 then
+		elseif self.rangeInd and NeuronSpellCache[self.spell:lower()] and IsSpellInRange(NeuronSpellCache[self.spell:lower()].index,"spell", self.unit)==0 then
 			self.Icon:SetVertexColor(self.rangecolor[1], self.rangecolor[2], self.rangecolor[3])
 		else
 			self.Icon:SetVertexColor(1.0, 1.0, 1.0)

@@ -4,7 +4,7 @@
 -- This code is licensed under the MIT license (see LICENSE for details)
 
 
----@class Neuron @define The main addon object for the Neuron Action Bar addon
+---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
 Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
 
 local DB
