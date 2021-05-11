@@ -192,8 +192,10 @@ function ACTIONBUTTON:SetType()
 			end
 			]])
 
+    self:SetFrameRef("uiparent",UIParent)
 	self:WrapScript(self, "OnHide", [[
-			if not self:GetParent():GetAttribute("concealed") then
+            UIParent = self:GetFrameRef("uiparent")
+			if (not self:GetParent():GetAttribute("concealed")) and (not UIParent:IsShown() == false) then
 				for key in gmatch(self:GetAttribute("hotkeys"), "[^:]+") do
 					self:ClearBinding(key)
 				end
