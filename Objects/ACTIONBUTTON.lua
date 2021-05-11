@@ -192,7 +192,7 @@ function ACTIONBUTTON:SetType()
 			end
 			]])
 
-    self:SetFrameRef("uiparent",UIParent)
+	self:SetFrameRef("uiparent",UIParent)
 	self:WrapScript(self, "OnHide", [[
             UIParent = self:GetFrameRef("uiparent")
 			if (not self:GetParent():GetAttribute("concealed")) and (not UIParent:IsShown() == false) then
