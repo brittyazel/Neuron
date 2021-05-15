@@ -20,7 +20,7 @@ local blizzMenuButtons = {
 	StoreMicroButton,
 	MainMenuMicroButton}
 
-if Neuron.isWoWClassic then
+if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
 	wipe(blizzMenuButtons)
 	for i=1, #MICRO_BUTTONS do
 		blizzMenuButtons[i] = _G[MICRO_BUTTONS[i]]
@@ -47,8 +47,8 @@ end
 ---------------------------------------------------------
 
 function MENUBTN:SetType()
-	if not Neuron.isWoWClassic then
-		if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic then --only run this code on the first SetType, not the reloads after pet battles and such
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+		if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then --only run this code on the first SetType, not the reloads after pet battles and such
 			self:RegisterEvent("PET_BATTLE_CLOSE")
 		end
 

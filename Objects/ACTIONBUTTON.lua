@@ -130,7 +130,7 @@ function ACTIONBUTTON:SetupEvents()
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
 	self:RegisterEvent("UNIT_PET", "UpdateAll")
 
-	if not Neuron.isWoWClassic then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
@@ -469,7 +469,7 @@ function ACTIONBUTTON:UpdateAll()
 	--pass to parent UpdateAll function
 	Neuron.BUTTON.UpdateAll(self)
 
-	if not Neuron.isWoWClassic then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 		self:UpdateGlow()
 	end
 end

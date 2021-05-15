@@ -98,7 +98,7 @@ function NeuronGUI:OnInitialize()
 	NeuronGUI.interfaceOptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(Neuron.db)
 
 	-- Per spec profiles
-	if not Neuron.isWoWClassic then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 		local LibDualSpec = LibStub('LibDualSpec-1.0')
 		LibDualSpec:EnhanceDatabase(Neuron.db, addonName) --enhance the database object with per spec profile features
 		LibDualSpec:EnhanceOptions(NeuronGUI.interfaceOptions.args.profile, Neuron.db) -- enhance the profiles config panel with per spec profile features
@@ -131,7 +131,7 @@ function NeuronGUI:OnEnable()
 
 	NeuronGUI:RegisterEvent("ADDON_LOADED")
 
-	if not Neuron.isWoWClassic then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 		NeuronGUI:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	end
 

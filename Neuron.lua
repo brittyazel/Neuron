@@ -104,6 +104,8 @@ Neuron.enteredWorld = false --flag that gets set when the player enters the worl
 
 if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then --boolean check to set a flag if the current session is WoW Classic. Retail == 1, Classic == 2
 	Neuron.isWoWClassic = true
+elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+	Neuron.isWoWClassic_TBC = true
 end
 
 Neuron.activeSpec = 1
@@ -200,7 +202,7 @@ function Neuron:OnEnable()
 	end
 
 	--set current spec before loading bars and buttons
-	if not Neuron.isWoWClassic then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 		Neuron.activeSpec = GetSpecialization()
 	end
 
@@ -350,7 +352,7 @@ function Neuron:LoginMessage()
 	end
 
 	--Shadowlands warning that will show as long as a player has one button on their ZoneAbilityBar for Shadowlands content
-	if not Neuron.isWoWClassic and UnitLevel("player") >= 50 and Neuron.db.profile.ZoneAbilityBar[1] and #Neuron.db.profile.ZoneAbilityBar[1].buttons == 1 then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC and UnitLevel("player") >= 50 and Neuron.db.profile.ZoneAbilityBar[1] and #Neuron.db.profile.ZoneAbilityBar[1].buttons == 1 then
 		print(" ")
 		Neuron:Print(WrapTextInColorCode("IMPORTANT: Shadowlands content now requires multiple Zone Ability Buttons. Please add at least 3 buttons to your Zone Ability Bar to support this new functionality.", "FF00FFEC"))
 		print(" ")
@@ -436,7 +438,7 @@ function Neuron:UpdateSpellCache()
 		end
 	end
 
-	if not Neuron.isWoWClassic then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 		for i = 1, select("#", GetProfessions()) do
 			local index = select(i, GetProfessions())
 

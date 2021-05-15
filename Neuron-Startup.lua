@@ -33,7 +33,7 @@ function Neuron:RegisterBars()
 	--Neuron Pet Bar
 	Neuron:RegisterBarClass("PetBar", "PetBar", L["Pet Bar"], "Pet Button", DB.PetBar, Neuron.PETBTN, 10, true)
 
-	if not Neuron.isWoWClassic then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 		--Neuron Zone Ability Bar
 		Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 5, true)
 
@@ -116,7 +116,7 @@ function Neuron:RegisterGUI()
 		CDALPHA = true },
 			false, 65)
 
-	if not Neuron.isWoWClassic then
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 		--Neuron Zone Ability Bar
 		Neuron:RegisterGUIOptions("ZoneAbilityBar", {
 			AUTOHIDE = true,

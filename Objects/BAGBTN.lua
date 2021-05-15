@@ -7,7 +7,7 @@
 local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.BAGBTN = BAGBTN
 
-if Neuron.isWoWClassic then
+if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
 	Neuron.NUM_BAG_BUTTONS = 6
 else
 	Neuron.NUM_BAG_BUTTONS = 5
@@ -15,7 +15,7 @@ end
 
 local blizzBagButtons
 
-if Neuron.isWoWClassic then
+if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
 	blizzBagButtons = {
 		KeyRingButton, --wow classic has a keyring button
 		CharacterBag3Slot,
@@ -58,7 +58,7 @@ function BAGBTN:SetType()
 		self.hookedButton:ClearAllPoints()
 		self.hookedButton:SetParent(self)
 		self.hookedButton:Show()
-		if Neuron.isWoWClassic and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
+		if (Neuron.isWoWClassic or Neuron.isWoWClassic_TBC) and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
 			self.hookedButton:SetPoint("RIGHT", self, "RIGHT")
 		else
 			self.hookedButton:SetPoint("CENTER", self, "CENTER")
