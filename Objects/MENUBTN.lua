@@ -1,23 +1,7 @@
---Neuron, a World of Warcraft® user interface addon.
-
---This file is part of Neuron.
---
---Neuron is free software: you can redistribute it and/or modify
---it under the terms of the GNU General Public License as published by
---the Free Software Foundation, either version 3 of the License, or
---(at your option) any later version.
---
---Neuron is distributed in the hope that it will be useful,
---but WITHOUT ANY WARRANTY; without even the implied warranty of
---MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
---GNU General Public License for more details.
---
---You should have received a copy of the GNU General Public License
---along with this add-on.  If not, see <https://www.gnu.org/licenses/>.
---
---Copyright for portions of Neuron are held by Connor Chenoweth,
---a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2020.
+-- Neuron is a World of Warcraft® user interface addon.
+-- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2006-2014 Connor H. Chenoweth
+-- This code is licensed under the MIT license (see LICENSE for details)
 
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
@@ -39,7 +23,7 @@ local blizzMenuButtons = {
 	StoreMicroButton,
 	MainMenuMicroButton}
 
-if Neuron.isWoWClassic then
+if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
 	wipe(blizzMenuButtons)
 	for i=1, #MICRO_BUTTONS do
 		blizzMenuButtons[i] = _G[MICRO_BUTTONS[i]]
@@ -66,8 +50,8 @@ end
 ---------------------------------------------------------
 
 function MENUBTN:InitializeButton()
-	if not Neuron.isWoWClassic then
-		if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic then --only run this code on the first InitializeButton, not the reloads after pet battles and such
+	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+		if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then --only run this code on the first InitializeButton, not the reloads after pet battles and such
 			self:RegisterEvent("PET_BATTLE_CLOSE")
 		end
 

@@ -1,23 +1,7 @@
---Neuron, a World of Warcraft® user interface addon.
-
---This file is part of Neuron.
---
---Neuron is free software: you can redistribute it and/or modify
---it under the terms of the GNU General Public License as published by
---the Free Software Foundation, either version 3 of the License, or
---(at your option) any later version.
---
---Neuron is distributed in the hope that it will be useful,
---but WITHOUT ANY WARRANTY; without even the implied warranty of
---MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
---GNU General Public License for more details.
---
---You should have received a copy of the GNU General Public License
---along with this add-on.  If not, see <https://www.gnu.org/licenses/>.
---
---Copyright for portions of Neuron are held by Connor Chenoweth,
---a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2020.
+-- Neuron is a World of Warcraft® user interface addon.
+-- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2006-2014 Connor H. Chenoweth
+-- This code is licensed under the MIT license (see LICENSE for details)
 
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
@@ -758,13 +742,13 @@ function ACTIONBUTTON:GetDataList(options)
 			scanData = self:filter_spell(tooltip)
 		elseif types:find("^i") then  --Item
 			scanData = self:filter_item(tooltip)
-		elseif types:find("^c") and not Neuron.isWoWClassic then --Companion
+		elseif types:find("^c") and not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then --Companion
 			scanData = self:filter_pet()
-		elseif types:find("^f") and not Neuron.isWoWClassic then  --toy
+		elseif types:find("^f") and not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then  --toy
 			scanData = self:filter_toy()
 		elseif types:find("^m") then  --Mount
 			scanData = self:filter_mount()
-		elseif types:find("^p") and not Neuron.isWoWClassic then  --Profession
+		elseif types:find("^p") and not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then  --Profession
 			scanData = self:filter_profession()
 		elseif types:find("^t") then  --Item Type
 			scanData = self:filter_type()

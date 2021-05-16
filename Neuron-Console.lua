@@ -1,23 +1,7 @@
---Neuron, a World of Warcraft® user interface addon.
-
---This file is part of Neuron.
---
---Neuron is free software: you can redistribute it and/or modify
---it under the terms of the GNU General Public License as published by
---the Free Software Foundation, either version 3 of the License, or
---(at your option) any later version.
---
---Neuron is distributed in the hope that it will be useful,
---but WITHOUT ANY WARRANTY; without even the implied warranty of
---MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
---GNU General Public License for more details.
---
---You should have received a copy of the GNU General Public License
---along with this add-on.  If not, see <https://www.gnu.org/licenses/>.
---
---Copyright for portions of Neuron are held by Connor Chenoweth,
---a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2020.
+-- Neuron is a World of Warcraft® user interface addon.
+-- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2006-2014 Connor H. Chenoweth
+-- This code is licensed under the MIT license (see LICENSE for details)
 
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
@@ -32,6 +16,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local slashFunctions = {
 	{L["Menu"], L["Menu_Description"], "ToggleMainMenu"},
 	{L["Create"], L["Create_Description"], "CreateNewBar"},
+	{L["Select"], L["Select_Description"], "ChangeBar"},
 	{L["Delete"], L["Delete_Description"], "DeleteBar"},
 	{L["Config"], L["Config_Description"], "ToggleBarEditMode"},
 	{L["Add"], L["Add_Description"], "AddObjectToBar"},
@@ -79,7 +64,7 @@ function Neuron:slashHandler(input)
 		return
 	end
 
-	local commandAndArgs = {strsplit(" ", input)} --split the input into the command and the arguments
+	local commandAndArgs = {Neuron:GetArgs(input, 3, 1)} --split the input into the command and the arguments
 	local command = commandAndArgs[1]:lower()
 	local args = {}
 	for i = 2,#commandAndArgs do
@@ -102,6 +87,21 @@ function Neuron:slashHandler(input)
 		if command == slashFunctions[i][1]:lower() then
 			local func = slashFunctions[i][3]
 			local bar = Neuron.currentBar
+
+			if func == "ChangeBar" then --intercept our bar assignment and reassign to the new bar, if it exists
+				local newBar
+				for _,v in pairs(Neuron.BARIndex) do
+					if v.data.name == args[1] then
+						newBar = v
+						break
+					end
+				end
+				if newBar then
+					bar = newBar --swap out the current bar with the new bar
+				else
+					bar = nil --unassign bar if the entered one doesn't exists
+				end
+			end
 
 			if Neuron[func] then
 				Neuron[func](Neuron, args[1])

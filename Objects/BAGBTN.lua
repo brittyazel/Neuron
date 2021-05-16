@@ -1,23 +1,7 @@
---Neuron, a World of Warcraft® user interface addon.
-
---This file is part of Neuron.
---
---Neuron is free software: you can redistribute it and/or modify
---it under the terms of the GNU General Public License as published by
---the Free Software Foundation, either version 3 of the License, or
---(at your option) any later version.
---
---Neuron is distributed in the hope that it will be useful,
---but WITHOUT ANY WARRANTY; without even the implied warranty of
---MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
---GNU General Public License for more details.
---
---You should have received a copy of the GNU General Public License
---along with this add-on.  If not, see <https://www.gnu.org/licenses/>.
---
---Copyright for portions of Neuron are held by Connor Chenoweth,
---a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2020.
+-- Neuron is a World of Warcraft® user interface addon.
+-- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2006-2014 Connor H. Chenoweth
+-- This code is licensed under the MIT license (see LICENSE for details)
 
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
@@ -26,7 +10,7 @@ local Neuron = addonTable.Neuron
 local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.BAGBTN = BAGBTN
 
-if Neuron.isWoWClassic then
+if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
 	Neuron.NUM_BAG_BUTTONS = 6
 else
 	Neuron.NUM_BAG_BUTTONS = 5
@@ -34,7 +18,7 @@ end
 
 local blizzBagButtons
 
-if Neuron.isWoWClassic then
+if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
 	blizzBagButtons = {
 		KeyRingButton, --wow classic has a keyring button
 		CharacterBag3Slot,
@@ -77,7 +61,7 @@ function BAGBTN:InitializeButton()
 		self.hookedButton:ClearAllPoints()
 		self.hookedButton:SetParent(self)
 		self.hookedButton:Show()
-		if Neuron.isWoWClassic and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
+		if (Neuron.isWoWClassic or Neuron.isWoWClassic_TBC) and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
 			self.hookedButton:SetPoint("RIGHT", self, "RIGHT")
 		else
 			self.hookedButton:SetPoint("CENTER", self, "CENTER")

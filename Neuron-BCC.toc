@@ -1,4 +1,4 @@
-## Interface: 90005
+## Interface: 20501
 ## Title: Neuron
 ## Notes: A macro-based action bar and object manager add-on
 ## Author: Britt W. Yazel
@@ -20,6 +20,10 @@ Neuron.lua
 Neuron-States.lua
 
 Utilities\DB-Fixer.lua
+
+#fix for missing template in Classic
+#I want to remove this as soon as possible
+ClassicHacks\BackdropTemplate.xml
 
 Objects\BUTTON.lua
 Objects\BUTTON_EditorOverlay.lua

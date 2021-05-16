@@ -1,23 +1,7 @@
---Neuron, a World of Warcraft® user interface addon.
-
---This file is part of Neuron.
---
---Neuron is free software: you can redistribute it and/or modify
---it under the terms of the GNU General Public License as published by
---the Free Software Foundation, either version 3 of the License, or
---(at your option) any later version.
---
---Neuron is distributed in the hope that it will be useful,
---but WITHOUT ANY WARRANTY; without even the implied warranty of
---MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
---GNU General Public License for more details.
---
---You should have received a copy of the GNU General Public License
---along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
---
---Copyright for portions of Neuron are held by Connor Chenoweth,
---a.k.a Maul, 2014 as part of his original project, Ion. All other
---copyrights for Neuron are held by Britt Yazel, 2017-2018.
+-- Neuron is a World of Warcraft® user interface addon.
+-- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2006-2014 Connor H. Chenoweth
+-- This code is licensed under the MIT license (see LICENSE for details)
 
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
@@ -76,7 +60,7 @@ end
 --- Creates a table containing provided data
 -- @param name, hasFriendStatus, standing, minrep, maxrep, value, colors
 -- @return reptable:  Table containing provided data
-local function SetRepWatch(ID, name, standing, header, minrep, maxrep, value, colors, headerOverride)
+local function SetRepWatch(ID, name, standing, header, minrep, maxrep, value, colors)
 	local reptable = {}
 	reptable.ID = ID
 	reptable.name = name
@@ -92,7 +76,6 @@ local function SetRepWatch(ID, name, standing, header, minrep, maxrep, value, co
 	reptable.r = colors.r
 	reptable.g = colors.g
 	reptable.b = colors.b
-	reptable.headerOverride = headerOverride
 
 	return reptable
 end
@@ -122,7 +105,6 @@ function REPBTN:UpdateData(repGainedString)
 	for i=1, GetNumFactions() do
 		local name, _, standingID, min, max, value, _, _, isHeader, _, hasRep, _, isChild, factionID = GetFactionInfo(i)
 		local colors = {}
-		local headerOverride
 
 		if not standingID then --not sure if we will ever be in a position where standingID comes back as nil, but if so, protect for it.
 			standingID = 0
@@ -136,17 +118,20 @@ function REPBTN:UpdateData(repGainedString)
 
 		if isHeader and not isChild then --set a header variable that will get set on each rep that follows until the next header is set
 			header = name
+			if header == "Guild" then --the "Guild" category is kinda stupid to just have alone, so we should override it with "Other"
+				header = "Other"
+			end
 		end
 
 		if (not isHeader or hasRep) and not IsFactionInactive(i) then
 
-			local fID, standing, isParagon
-			if not Neuron.isWoWClassic then --classic doesn't have Friendships or Paragon, carefull
-				fID, _, _, _, _, _, standing, _, _ = GetFriendshipReputation(factionID)
+			local friendID, standing, isParagon
+			if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then --classic doesn't have Friendships or Paragon, carefull
+				friendID, _, _, _, _, _, standing, _, _ = GetFriendshipReputation(factionID)
 				isParagon = C_Reputation.IsFactionParagon(factionID)
 			end
 
-			if not fID then --not a "Friendship" faction, i.e. Chromie or Brawlers Guild
+			if not friendID then --not a "Friendship" faction, i.e. Chromie or Brawlers Guild
 				if not isParagon then
 					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
 					standing = BAR_REP_DATA[standingID].l --convert numerical standingID to text i.e "Exalted" instead of 8
@@ -163,17 +148,16 @@ function REPBTN:UpdateData(repGainedString)
 				end
 			else --is a "Friendship" faction
 				if string.find(name, "Brawl'gar Arena") or string.find(name, "Bizmo's Brawlpub") then
-					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b --offset by two, because friendships don't have "hated" or "hostile" ranks
+					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
 				else
 					if standingID + 2 > 8 then
 						standingID = 6
 					end
 					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID+2].r, BAR_REP_DATA[standingID+2].g, BAR_REP_DATA[standingID+2].b --offset by two, because friendships don't have "hated" or "hostile" ranks
 				end
-				headerOverride = "Other"
 			end
 
-			local repData = SetRepWatch(i, name, standing, header, min, max, value, colors, headerOverride)
+			local repData = SetRepWatch(i, name, standing, header, min, max, value, colors)
 
 			--repGainedString is a phrase that reads like "Reputation with Zandalari Empire increased by 75.", except on login it's type boolean for some reason
 			if repGainedString and type(repGainedString) ~= "boolean" and repGainedString:find(name) or self.config.autoWatch == i then --this line automatically assigns the most recently updated repData to RepWatch[0], and the "auto" option assigns RepWatch[0] to be shown
@@ -219,21 +203,10 @@ function REPBTN:InitializeDropDown() --Initialize the dropdown menu for choosing
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
 		if k > 0 then --skip the "0" entry which is our autowatch
-			local header
-			if v.headerOverride then
-				header = v.headerOverride
-			else
-				header = v.header
-				if v.header == "Guild" then --the "Guild" category is kinda stupid to just have alone, so we should override it with "Other"
-					header = "Other"
-				end
+			if not repDataTable[v.header]then
+				repDataTable[v.header] = {}
 			end
-
-			if not repDataTable[header]then
-				repDataTable[header] = {}
-			end
-			table.insert(repDataTable[header], { ID=v.ID, name=v.name, standing=v.standing, percent=v.percent, hex=v.hex})
-		end
+			table.insert(repDataTable[v.header], { ID=v.ID, name=v.name, standing=v.standing, percent=v.percent, hex=v.hex})		end
 	end
 
 	local menuFrame
@@ -311,7 +284,19 @@ function REPBTN:InitializeDropDown() --Initialize the dropdown menu for choosing
 	end--create a comparison table for our custom sort routine
 
 	--these are the English Strings. It would be good to get these translated
-	local SORT_TABLE = {["Battle for Azeroth"]=1, ["Legion"]=2, ["Warlords of Draenor"]=3, ["Mists of Pandaria"]=4, ["Cataclysm"]=5, ["Wrath of the Lich King"]=6, ["The Burning Crusade"]=7, ["Classic"]=8, ["Guild"]=9, ["Other"]=10}
+	local SORT_TABLE = {
+		["Shadowlands"] = 1,
+		["Battle for Azeroth"]=2,
+		["Legion"]=3,
+		["Warlords of Draenor"]=4,
+		["Mists of Pandaria"]=5,
+		["Cataclysm"]=6,
+		["Wrath of the Lich King"]=7,
+		["The Burning Crusade"]=8,
+		["Classic"]=9,
+		["Guild"]=10,
+		["Other"]=11
+	}
 	--sort the list of our reputation brackets according the priority table above
 	table.sort(innerMenu, function(a,b)
 		if SORT_TABLE[a.text] and SORT_TABLE[b.text] then

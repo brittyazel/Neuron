@@ -1,9 +1,13 @@
 # Neuron
+Neuron is a full featured action Bar addon for [World of Warcraft: Shadowlands](https://worldofwarcraft.com/en-us/), updated for Patch 9.0.5
 
-Neuron is a full featured action Bar addon for [World of Warcraft: Battle for Azeroth](https://worldofwarcraft.com/en-us/), updated for Patch 8.1.5
 
 ## Manual Install:
-I do not recommend downloading this addon directly from Github, as there are CurseForge packaging modifications made the the addon upon release. These modifications include updating all included libraries to their latest release versions and pulling in all of the crowd sourced localizations. I have made an effort to pull in periodic samplings of these, but what you will find in the packaged versions on CurseForge or WowInterface will be much more up to date.
+I do not recommend downloading this addon directly from Github, as there are CurseForge packaging modifications made to the addon upon release. These modifications include updating all included libraries to their latest release versions and pulling in all of the crowd sourced localizations. I have made an effort to pull in periodic samplings of these, but what you will find in the packaged versions on CurseForge or WowInterface will be much more up to date.
+
+
+## Want to Donate?
+Making add-ons is a lot of work! Your help goes a huge way to making my add-on work possible. If you would like to Donate, [Github Sponsors](https://github.com/sponsors/brittyazel "Sponsor Me") is the preferred method as they are currently matching donations dollar for dollar and take zero cut.
 
 
 ## Translating
@@ -11,28 +15,12 @@ The efforts to translate Neuron into many languages is a community project, and 
 
 Head **[here](https://wow.curseforge.com/projects/neuron/localization)** to start translating.
 
+
 ## Download:
 The addon can be downloaded at these places:
 * **[Curse](https://www.curseforge.com/wow/addons/neuron)** 
 * **[Curseforge](https://wow.curseforge.com/projects/neuron)**
 * **[WowInterface](https://www.wowinterface.com/downloads/info10636-Neuron.html)**
-
-## Theme Support:
-
-Neuron inherits all theming courtesy of the **[Masque](https://mods.curse.com/addons/wow/masque "Masque")** addon. Neuron has full Masque compatibility, and the theming options found in Masque are quite in-depth, not to mention the robust portfolio of skins made to support Masque. In short, you can make your bars look any way you like!
-
-
-## Features:
-* Neuron features an unlimited number of macros. You can create as many bars/buttons as you want/need per character!
-* Are you a clicker extraordinaire? As many buttons on the screen you want where you want, when you want!
-* Macros the size of Texas! Up to 1024 characters in length!
-* Maul's unique mouse-over key-binding system - where the mouse-over binding system was born!
-* Many other of the favorite desired bar addon features and then some!
-* And, last but not least, **MASQUE support!**
-
-
-## Graphical Editor:
-Neuron contains a graphical bar editor that allows for nearly endless customization to bar shape, size, orientation, and much more! Further, Neuron has neither the limitations on max number of bars nor on the max number of buttons per bar, as you might find in addons such as Bartender4 or Dominoes. 
 
 
 ## Development:
@@ -49,15 +37,6 @@ A good place to start coding is by looking through the **[issue tracker](https:/
 
 
 
-## Credits:
-Translators:
-* German: Aszkarath, Wolfsmutter
-* French: Cinedelle, El_Mapache
-* Brazilian Portuguese: Alanbre20
-* Russian: Hubbotu
-* Simplified Chinese: Acey7, Cestmysndee
+### Disclaimer:
 
-**Disclaimer:**
-
-Neuron is a fork of the amazing *Ion Action Bars* addon started by Connor Chenoweth aka **Maul**, for World of Warcraft Legion and onwards. All credit for the bulk of this addon should go to him accordingly, along with SLOKnightFall for his maintainership throughout the years.
-**I, Soyier, take no credit for the idea or implementation of this addon prior to my adoption of the code in the Fall quarter of 2017.**
+Neuron is a fork of the amazing *Ion Action Bars* addon started by Connor H. Chenoweth. All credit for the work done prior to 2017 should go to him, accordingly.
