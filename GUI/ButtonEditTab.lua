@@ -11,8 +11,7 @@ local NeuronGUI = Neuron.NeuronGUI
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
 
-local iconSelector
-local iconList = {}
+Neuron.previewIconFrame = {}
 
 
 -----------------------------------------------------------------------------
@@ -30,12 +29,12 @@ function NeuronGUI:ButtonEditPanel(tabContainer)
 		tabContainer:AddChild(settingContainer)
 
 		--icon button that represents the currently selected icon
-		local iconFrame=AceGUI:Create("Icon")
-		NeuronGUI:RefreshIconPreview(iconFrame)
-		iconFrame:SetImageSize(60,60)
-		iconFrame:SetWidth(60)
-		iconFrame:SetCallback("OnClick", function() NeuronGUI:IconFrame_OnClick() end)
-		settingContainer:AddChild(iconFrame)
+		Neuron.previewIconFrame=AceGUI:Create("Icon")
+		NeuronGUI:RefreshIconPreview(Neuron.previewIconFrame)
+		Neuron.previewIconFrame:SetImageSize(60,60)
+		Neuron.previewIconFrame:SetWidth(60)
+		Neuron.previewIconFrame:SetCallback("OnClick", function() NeuronGUI:IconFrame_OnClick() end)
+		settingContainer:AddChild(Neuron.previewIconFrame)
 
 		--edit box to show the current macro
 		local macroEditFrame = AceGUI:Create("MultiLineEditBox")
@@ -51,82 +50,13 @@ function NeuronGUI:ButtonEditPanel(tabContainer)
 	end
 end
 
------------------------------------------------------------------------------
---------------------------Icon Selector--------------------------------------
------------------------------------------------------------------------------
 
-function NeuronGUI:RefreshIconPreview(iconFrame)
+function NeuronGUI:RefreshIconPreview()
 	--try to get the texture currently on the button itself
 	local texture = Neuron.currentButton.Icon:GetTexture()
 	if texture then
-		iconFrame:SetImage(texture)
+		Neuron.previewIconFrame:SetImage(texture)
 	else --fallback to question mark icon if nothing is found
-		iconFrame:SetImage("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-	end
-end
-
-function NeuronGUI:IconFrame_OnClick()
-	if not iconSelector then
-		NeuronGUI:CreateIconSelector()
-	else
-		iconSelector:Show()
-	end
-end
-
-function NeuronGUI:CreateIconSelector()
-	iconSelector = AceGUI:Create("Frame")
-	iconSelector:SetTitle("Select and icon")
-	iconSelector:SetCallback("OnClose", function() iconSelector:Hide() end)
-	iconSelector:SetWidth(660)
-	iconSelector:SetHeight(500)
-	iconSelector:SetLayout("Fill") -- important!
-
-	local scrollContainer = AceGUI:Create("SimpleGroup") -- "InlineGroup" is also good
-	scrollContainer:SetLayout("Fill") -- important!
-	iconSelector:AddChild(scrollContainer)
-
-	local iconScroll = AceGUI:Create("ScrollFrame")
-	iconScroll:SetLayout("Flow") -- probably?
-	scrollContainer:SetFullWidth(true)
-	scrollContainer:SetFullHeight(true)
-	scrollContainer:AddChild(iconScroll)
-
-	--this is temporary. We need to populate a list of icons here
-
-	NeuronGUI:RefreshPlayerSpellIconInfo()
-
-	for i=1,#iconList do
-		local iconFrame=AceGUI:Create("Icon")
-		iconFrame:SetImage(iconList[i])
-		iconFrame:SetImageSize(40,40)
-		iconFrame:SetWidth(50)
-		iconScroll:AddChild(iconFrame)
-	end
-end
-
-function NeuronGUI:RefreshPlayerSpellIconInfo()
-	wipe(iconList)
-	--we need a quick function to check if a table contains a value already
-	local function tContains(table, item)
-		local index = 1;
-		while table[index] do
-			if item == table[index] then
-				return 1;
-			end
-			index = index + 1;
-		end
-		return nil;
-	end
-
-	for _,v in pairs(Neuron.spellCache) do
-		if v.icon and not tContains(iconList, v.icon) then
-			table.insert(iconList, v.icon)
-		end
-	end
-
-	for _,v in pairs(Neuron.itemCache) do
-		if v.icon and not tContains(iconList, v.icon) then
-			table.insert(iconList, v.icon)
-		end
+		Neuron.previewIconFrame:SetImage("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
 end

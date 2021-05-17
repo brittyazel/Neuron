@@ -4,15 +4,12 @@
 	This code is licensed under the MIT license (see LICENSE for details)-->
 
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/FrameXML/UI.xsd">
-	<Script file="Neuron_X-enUS.lua"/>
-	<Script file="Neuron_X-deDE.lua"/>
-	<Script file="Neuron_X-esES.lua"/>
-	<Script file="Neuron_X-esMX.lua"/>
-	<Script file="Neuron_X-frFR.lua"/>
-	<Script file="Neuron_X-itIT.lua"/>
-	<Script file="Neuron_X-koKR.lua"/>
-	<Script file="Neuron_X-ptBR.lua"/>
-	<Script file="Neuron_X-ruRU.lua"/>
-	<Script file="Neuron_X-zhCN.lua"/>
-	<Script file="Neuron_X-zhTW.lua"/>
+	<Script file="MainWindow.lua"/>
+	<Script file="InterfacePanel.lua"/>
+	<Script file="BarEditTab.lua"/>
+	<Script file="BarEditTab_GeneralConfigPanel.lua"/>
+	<Script file="BarEditTab_BarStatesPanel.lua"/>
+	<Script file="BarEditTab_BarVisibilityPanel.lua"/>
+	<Script file="ButtonEditTab.lua"/>
+	<Script file="IconSelectorPanel.lua"/>
 </Ui>
