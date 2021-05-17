@@ -443,8 +443,8 @@ function ACTIONBUTTON:UPDATE_MACROS()
 end
 
 function ACTIONBUTTON:EQUIPMENT_SETS_CHANGED()
-	if not InCombatLockdown() and self.data.macro_EquipmentSet then
-		self:PlaceBlizzEquipSet(self.data.macro_EquipmentSet)
+	if not InCombatLockdown() and self:GetMacroEquipmentSet() then
+		self:PlaceBlizzEquipSet(self:GetMacroEquipmentSet())
 	end
 end
 

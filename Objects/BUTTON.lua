@@ -692,7 +692,7 @@ function BUTTON:UpdateStatus()
 		self:UpdateActionStatus()
 	elseif self:GetMacroBlizzMacro() then
 		self.Name:SetText(self:GetMacroName())
-	elseif self.data.macro_EquipmentSet then
+	elseif self:GetMacroEquipmentSet() then
 		self.Name:SetText(self:GetMacroName())
 	elseif self.spell then
 		self:UpdateSpellStatus()
@@ -777,8 +777,8 @@ function BUTTON:UpdateTooltip()
 			self:UpdateActionTooltip()
 		elseif self:GetMacroBlizzMacro() then
 			GameTooltip:SetText(self:GetMacroName())
-		elseif self.data.macro_EquipmentSet then
-			GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
+		elseif self:GetMacroEquipmentSet() then
+			GameTooltip:SetEquipmentSet(self:GetMacroEquipmentSet())
 			GameTooltip:Show()
 		elseif self.spell then
 			self:UpdateSpellTooltip()
@@ -921,4 +921,18 @@ end
 
 function BUTTON:GetMacroBlizzMacro()
 	return self.data.macro_BlizzMacro
+end
+
+
+--Macro EquipmentSet
+function BUTTON:SetMacroEquipmentSet(newEquipmentSet)
+	if newEquipmentSet then
+		self.data.macro_EquipmentSet = newEquipmentSet
+	else
+		self.data.macro_EquipmentSet = false
+	end
+end
+
+function BUTTON:GetMacroEquipmentSet()
+	return self.data.macro_EquipmentSet
 end

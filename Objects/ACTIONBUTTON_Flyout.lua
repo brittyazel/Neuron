@@ -847,7 +847,7 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 
 				elseif source:find("equipset") then
 					button.macroshow = spell
-					button.data.macro_EquipmentSet = spell
+					button:SetMacroEquipmentSet(spell)
 					button:SetAttribute("prefix", "/equipset ")
 					button:SetAttribute("showtooltip", "")
 
@@ -1074,7 +1074,7 @@ function ACTIONBUTTON:Flyout_ReleaseButton(button)
 	button.stored = true
 
 	button:SetMacroText()
-	button.data.macro_EquipmentSet = false
+	button:SetMacroEquipmentSet()
 	button:SetMacroIcon()
 
 	button.macrospell = nil
