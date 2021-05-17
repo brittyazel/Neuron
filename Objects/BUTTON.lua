@@ -690,7 +690,7 @@ end
 function BUTTON:UpdateStatus()
 	if self.actionID then
 		self:UpdateActionStatus()
-	elseif self.data.macro_BlizzMacro then
+	elseif self:GetMacroBlizzMacro() then
 		self.Name:SetText(self:GetMacroName())
 	elseif self.data.macro_EquipmentSet then
 		self.Name:SetText(self:GetMacroName())
@@ -775,7 +775,7 @@ function BUTTON:UpdateTooltip()
 
 		if self.actionID then
 			self:UpdateActionTooltip()
-		elseif self.data.macro_BlizzMacro then
+		elseif self:GetMacroBlizzMacro() then
 			GameTooltip:SetText(self:GetMacroName())
 		elseif self.data.macro_EquipmentSet then
 			GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
@@ -907,4 +907,18 @@ end
 
 function BUTTON:GetMacroUseNote()
 	return self.data.macro_UseNote
+end
+
+
+--Macro Blizz Macro
+function BUTTON:SetMacroBlizzMacro(newBlizzMacro)
+	if newBlizzMacro then
+		self.data.macro_BlizzMacro = newBlizzMacro
+	else
+		self.data.macro_BlizzMacro = false
+	end
+end
+
+function BUTTON:GetMacroBlizzMacro()
+	return self.data.macro_BlizzMacro
 end

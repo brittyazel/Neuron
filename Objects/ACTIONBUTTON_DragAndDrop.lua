@@ -77,7 +77,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 		macroCache[4] = self:GetMacroName()
 		macroCache[5] = self:GetMacroNote()
 		macroCache[6] = self:GetMacroUseNote()
-		macroCache[7] = self.data.macro_BlizzMacro
+		macroCache[7] = self:GetMacroBlizzMacro()
 		macroCache[8] = self.data.macro_EquipmentSet
 	else
 		wipe(macroCache)
@@ -167,7 +167,7 @@ function ACTIONBUTTON:PickUpMacro()
 		macroDrag[4] = self:GetMacroName()
         macroDrag[5] = self:GetMacroNote()
 		macroDrag[6] = self:GetMacroUseNote()
-		macroDrag[7] = self.data.macro_BlizzMacro
+		macroDrag[7] = self:GetMacroBlizzMacro()
 		macroDrag[8] = self.data.macro_EquipmentSet
 
 		self:SetMacroText()
@@ -175,7 +175,7 @@ function ACTIONBUTTON:PickUpMacro()
 		self:SetMacroName()
         self:SetMacroNote()
 		self:SetMacroUseNote()
-		self.data.macro_BlizzMacro = false
+		self:SetMacroBlizzMacro()
 		self.data.macro_EquipmentSet = false
 
 		self.spell = nil
@@ -195,7 +195,7 @@ function ACTIONBUTTON:PlaceMacro()
 	self:SetMacroName(macroDrag[4])
 	self:SetMacroNote(macroDrag[5])
 	self:SetMacroUseNote(macroDrag[6])
-	self.data.macro_BlizzMacro = macroDrag[7]
+	self:SetMacroBlizzMacro(macroDrag[7])
 	self.data.macro_EquipmentSet = macroDrag[8]
 
 end
@@ -231,7 +231,7 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	self:SetMacroName(spellName)
 	self:SetMacroNote()
 	self:SetMacroUseNote()
-	self.data.macro_BlizzMacro = false
+	self:SetMacroBlizzMacro()
 	self.data.macro_EquipmentSet = false
 end
 
@@ -248,7 +248,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		self:SetMacroName(spellInfoName)
 		self:SetMacroNote()
 		self:SetMacroUseNote()
-		self.data.macro_BlizzMacro = false
+		self:SetMacroBlizzMacro()
 		self.data.macro_EquipmentSet = false
 
 	else
@@ -275,7 +275,7 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 	self:SetMacroName(item)
 	self:SetMacroNote()
 	self:SetMacroUseNote()
-	self.data.macro_BlizzMacro = false
+	self:SetMacroBlizzMacro()
 	self.data.macro_EquipmentSet = false
 
 end
@@ -292,12 +292,12 @@ function ACTIONBUTTON:PlaceBlizzMacro(action1)
 		self:SetMacroText(body)
 		self:SetMacroName(name)
 		self:SetMacroIcon(texture)
-		self.data.macro_BlizzMacro = name
+		self:SetMacroBlizzMacro(name)
 	else
 		self:SetMacroText()
 		self:SetMacroName()
 		self:SetMacroIcon()
-		self.data.macro_BlizzMacro = false
+		self:SetMacroBlizzMacro()
 	end
 
 	self:SetMacroNote()
@@ -340,7 +340,7 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 
 	self:SetMacroNote()
 	self:SetMacroUseNote()
-	self.data.macro_BlizzMacro = false
+	self:SetMacroBlizzMacro()
 end
 
 
@@ -367,7 +367,7 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 	end
 	self:SetMacroNote()
 	self:SetMacroUseNote()
-	self.data.macro_BlizzMacro = false
+	self:SetMacroBlizzMacro()
 	self.data.macro_EquipmentSet = false
 
 end
@@ -392,7 +392,7 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 	self:SetMacroIcon(icon) --need to set icon here, it won't pull it automatically
 	self:SetMacroNote()
 	self:SetMacroUseNote()
-	self.data.macro_BlizzMacro = false
+	self:SetMacroBlizzMacro()
 	self.data.macro_EquipmentSet = false
 end
 
@@ -408,7 +408,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 	self:SetMacroName(petName)
 	self:SetMacroNote()
 	self:SetMacroUseNote()
-	self.data.macro_BlizzMacro = false
+	self:SetMacroBlizzMacro()
 	self.data.macro_EquipmentSet = false
 end
 
@@ -456,7 +456,7 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 	self:SetMacroName()
 	self:SetMacroNote()
 	self:SetMacroUseNote()
-	self.data.macro_BlizzMacro = false
+	self:SetMacroBlizzMacro()
 	self.data.macro_EquipmentSet = false
 
 	self:UpdateFlyout(true)

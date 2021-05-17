@@ -437,8 +437,8 @@ end
 
 
 function ACTIONBUTTON:UPDATE_MACROS()
-	if not InCombatLockdown() and self.data.macro_BlizzMacro then
-		self:PlaceBlizzMacro(self.data.macro_BlizzMacro)
+	if not InCombatLockdown() and self:GetMacroBlizzMacro() then
+		self:PlaceBlizzMacro(self:GetMacroBlizzMacro())
 	end
 end
 
