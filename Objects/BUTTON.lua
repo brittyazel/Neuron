@@ -711,7 +711,7 @@ function BUTTON:UpdateSpellStatus()
 	else
 		self:SetChecked(false)
 	end
-	
+
 	self.Name:SetText(self:GetMacroName())
 	self:UpdateCount()
 	self:UpdateUsable()
@@ -879,4 +879,32 @@ end
 
 function BUTTON:GetMacroName()
 	return self.data.macro_Name
+end
+
+
+--Macro Note
+function BUTTON:SetMacroNote(newNote)
+	if newNote then
+		self.data.macro_Note = newNote
+	else
+		self.data.macro_Note = ""
+	end
+end
+
+function BUTTON:GetMacroNote()
+	return self.data.macro_Note
+end
+
+
+--Macro Use Note
+function BUTTON:SetMacroUseNote(newUseNote)
+	if newUseNote then
+		self.data.macro_UseNote = newUseNote
+	else
+		self.data.macro_UseNote = false
+	end
+end
+
+function BUTTON:GetMacroUseNote()
+	return self.data.macro_UseNote
 end

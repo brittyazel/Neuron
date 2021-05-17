@@ -75,8 +75,8 @@ function ACTIONBUTTON:OnReceiveDrag()
 		macroCache[2] = self:GetMacroText()
 		macroCache[3] = self:GetMacroIcon()
 		macroCache[4] = self:GetMacroName()
-		macroCache[5] = self.data.macro_Note
-		macroCache[6] = self.data.macro_UseNote
+		macroCache[5] = self:GetMacroNote()
+		macroCache[6] = self:GetMacroUseNote()
 		macroCache[7] = self.data.macro_BlizzMacro
 		macroCache[8] = self.data.macro_EquipmentSet
 	else
@@ -165,16 +165,16 @@ function ACTIONBUTTON:PickUpMacro()
 		macroDrag[2] = self:GetMacroText()
 		macroDrag[3] = self:GetMacroIcon()
 		macroDrag[4] = self:GetMacroName()
-        macroDrag[5] = self.data.macro_Note
-		macroDrag[6] = self.data.macro_UseNote
+        macroDrag[5] = self:GetMacroNote()
+		macroDrag[6] = self:GetMacroUseNote()
 		macroDrag[7] = self.data.macro_BlizzMacro
 		macroDrag[8] = self.data.macro_EquipmentSet
 
 		self:SetMacroText()
 		self:SetMacroIcon()
 		self:SetMacroName()
-        self.data.macro_Note = ""
-		self.data.macro_UseNote = false
+        self:SetMacroNote()
+		self:SetMacroUseNote()
 		self.data.macro_BlizzMacro = false
 		self.data.macro_EquipmentSet = false
 
@@ -193,8 +193,8 @@ function ACTIONBUTTON:PlaceMacro()
 	self:SetMacroText(macroDrag[2])
 	self:SetMacroIcon(macroDrag[3])
 	self:SetMacroName(macroDrag[4])
-	self.data.macro_Note = macroDrag[5]
-	self.data.macro_UseNote = macroDrag[6]
+	self:SetMacroNote(macroDrag[5])
+	self:SetMacroUseNote(macroDrag[6])
 	self.data.macro_BlizzMacro = macroDrag[7]
 	self.data.macro_EquipmentSet = macroDrag[8]
 
@@ -229,8 +229,8 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	self:SetMacroText(self:AutoWriteMacro(spell))
 	self:SetMacroIcon() --will pull icon automatically unless explicitly overridden
 	self:SetMacroName(spellName)
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
+	self:SetMacroNote()
+	self:SetMacroUseNote()
 	self.data.macro_BlizzMacro = false
 	self.data.macro_EquipmentSet = false
 end
@@ -246,11 +246,10 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 		self:SetMacroText(self:AutoWriteMacro(spellInfoName))
 		self:SetMacroIcon() --will pull icon automatically unless explicitly overridden
 		self:SetMacroName(spellInfoName)
-		self.data.macro_Note = ""
-		self.data.macro_UseNote = false
+		self:SetMacroNote()
+		self:SetMacroUseNote()
 		self.data.macro_BlizzMacro = false
 		self.data.macro_EquipmentSet = false
-		self.data.macro_isPetSpell = true
 
 	else
 		Neuron:Print(L["DragDrop_Error_Message"])
@@ -274,8 +273,8 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 
 	self:SetMacroIcon() --will pull icon automatically unless explicitly overridden
 	self:SetMacroName(item)
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
+	self:SetMacroNote()
+	self:SetMacroUseNote()
 	self.data.macro_BlizzMacro = false
 	self.data.macro_EquipmentSet = false
 
@@ -301,8 +300,8 @@ function ACTIONBUTTON:PlaceBlizzMacro(action1)
 		self.data.macro_BlizzMacro = false
 	end
 
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
+	self:SetMacroNote()
+	self:SetMacroUseNote()
 	self.data.macro_EquipmentSet = false
 end
 
@@ -339,8 +338,8 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 		self.data.macro_EquipmentSet = false
 	end
 
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
+	self:SetMacroNote()
+	self:SetMacroUseNote()
 	self.data.macro_BlizzMacro = false
 end
 
@@ -366,8 +365,8 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 		self:SetMacroIcon() --will pull icon automatically unless explicitly overridden
 		self:SetMacroName(mountName)
 	end
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
+	self:SetMacroNote()
+	self:SetMacroUseNote()
 	self.data.macro_BlizzMacro = false
 	self.data.macro_EquipmentSet = false
 
@@ -391,8 +390,8 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 	end
 
 	self:SetMacroIcon(icon) --need to set icon here, it won't pull it automatically
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
+	self:SetMacroNote()
+	self:SetMacroUseNote()
 	self.data.macro_BlizzMacro = false
 	self.data.macro_EquipmentSet = false
 end
@@ -407,8 +406,8 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 	self:SetMacroText("#autowrite\n/summonpet "..petName)
 	self:SetMacroIcon(petIcon) --need to set icon here, it won't pull it automatically
 	self:SetMacroName(petName)
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
+	self:SetMacroNote()
+	self:SetMacroUseNote()
 	self.data.macro_BlizzMacro = false
 	self.data.macro_EquipmentSet = false
 end
@@ -455,8 +454,8 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 	self:SetMacroText("/flyout blizz:"..action1..":l:"..point..":c")
 	self:SetMacroIcon()
 	self:SetMacroName()
-	self.data.macro_Note = ""
-	self.data.macro_UseNote = false
+	self:SetMacroNote()
+	self:SetMacroUseNote()
 	self.data.macro_BlizzMacro = false
 	self.data.macro_EquipmentSet = false
 
