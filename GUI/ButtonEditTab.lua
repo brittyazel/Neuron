@@ -41,8 +41,8 @@ function NeuronGUI:ButtonEditPanel(tabContainer)
 		macroEditFrame:SetLabel("Edit Macro")
 		macroEditFrame:SetWidth(400)
 		macroEditFrame:SetHeight(200)
-		if Neuron.currentButton.data.macro_Text then
-			macroEditFrame:SetText(Neuron.currentButton.data.macro_Text)
+		if Neuron.currentButton:GetMacroText() then
+			macroEditFrame:SetText(Neuron.currentButton:GetMacroText())
 		else
 			macroEditFrame:SetText("")
 		end

@@ -784,7 +784,7 @@ function BUTTON:UpdateTooltip()
 			self:UpdateSpellTooltip()
 		elseif self.item then
 			self:UpdateItemTooltip()
-		elseif self.data.macro_Text and #self.data.macro_Text > 0 then
+		elseif self:GetMacroText() and #self:GetMacroText() > 0 then
 			GameTooltip:SetText(self.data.macro_Name)
 		end
 
@@ -840,6 +840,7 @@ end
 -------------------Sets and Gets---------------------
 -----------------------------------------------------
 
+--Macro Icon
 function BUTTON:SetMacroIcon(newIcon)
 	if newIcon then
 		self.data.macro_Icon = newIcon
@@ -852,3 +853,15 @@ function BUTTON:GetMacroIcon()
 	return self.data.macro_Icon
 end
 
+--Macro Text
+function BUTTON:SetMacroText(newText)
+	if newText then
+		self.data.macro_Text = newText
+	else
+		self.data.macro_Text = ""
+	end
+end
+
+function BUTTON:GetMacroText()
+	return self.data.macro_Text
+end

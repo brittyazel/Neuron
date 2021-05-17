@@ -874,12 +874,12 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 					button:SetAttribute("flyoutMacro", button:GetAttribute("showtooltip")..button:GetAttribute("prefix").."[nobtn:2] "..button.macroshow.."\n/stopmacro [nobtn:2]\n/flyout "..self.flyout.options)
 				end
 
-				if not macroSet and not self.data.macro_Text:find("nobtn:2") then
-					self.data.macro_Text = button:GetAttribute("flyoutMacro")
+				if not macroSet and not self:GetMacroText():find("nobtn:2") then
+					self:SetMacroText(button:GetAttribute("flyoutMacro"))
 					macroSet = true
 				end
 
-				button.data.macro_Text = button:GetAttribute("macro_Text")
+				button:SetMacroText(button:GetAttribute("macro_Text"))
 				button:ParseAndSanitizeMacro()
 				button:ClearButton()
 				button:UpdateAll()
@@ -1025,8 +1025,8 @@ end
 function ACTIONBUTTON:UpdateFlyout(init)
 	local options
 
-	if self.data.macro_Text then
-		options = self.data.macro_Text:match("/flyout%s(%C+)")
+	if self:GetMacroText() then
+		options = self:GetMacroText():match("/flyout%s(%C+)")
 	end
 
 	if self.flyout then
@@ -1073,7 +1073,7 @@ function ACTIONBUTTON:Flyout_ReleaseButton(button)
 
 	button.stored = true
 
-	button.data.macro_Text = ""
+	button:SetMacroText()
 	button.data.macro_EquipmentSet = false
 	button:SetMacroIcon()
 
@@ -1108,7 +1108,7 @@ end
 function ACTIONBUTTON:Flyout_PostClick()
 	local button = self.anchor
 
-	button.data.macro_Text = self:GetAttribute("flyoutMacro")
+	button:SetMacroText(self:GetAttribute("flyoutMacro"))
 	button:SetMacroIcon(self:GetAttribute("macro_Icon") or nil)
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 

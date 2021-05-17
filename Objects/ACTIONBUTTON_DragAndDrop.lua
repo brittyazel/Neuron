@@ -39,7 +39,7 @@ function ACTIONBUTTON:OnDragStart()
 		drag = false
 	end
 
-	if drag and self.data.macro_Text ~= "" then
+	if drag and self:GetMacroText() ~= "" then
 
 		ClearCursor()
 
@@ -72,7 +72,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 
 	if self:HasAction() then --if our button being dropped onto already has content, we need to cache that content
 		macroCache[1] = self:GetDragAction()
-		macroCache[2] = self.data.macro_Text
+		macroCache[2] = self:GetMacroText()
 		macroCache[3] = self:GetMacroIcon()
 		macroCache[4] = self.data.macro_Name
 		macroCache[5] = self.data.macro_Note
@@ -162,7 +162,7 @@ function ACTIONBUTTON:PickUpMacro()
 	elseif self:HasAction() then
 
 		macroDrag[1] = self:GetDragAction()
-		macroDrag[2] = self.data.macro_Text
+		macroDrag[2] = self:GetMacroText()
 		macroDrag[3] = self:GetMacroIcon()
 		macroDrag[4] = self.data.macro_Name
         macroDrag[5] = self.data.macro_Note
@@ -170,7 +170,7 @@ function ACTIONBUTTON:PickUpMacro()
 		macroDrag[7] = self.data.macro_BlizzMacro
 		macroDrag[8] = self.data.macro_EquipmentSet
 
-		self.data.macro_Text = ""
+		self:SetMacroText()
 		self:SetMacroIcon()
 		self.data.macro_Name = ""
         self.data.macro_Note = ""
@@ -190,7 +190,7 @@ end
 
 
 function ACTIONBUTTON:PlaceMacro()
-	self.data.macro_Text = macroDrag[2]
+	self:SetMacroText(macroDrag[2])
 	self:SetMacroIcon(macroDrag[3])
 	self.data.macro_Name = macroDrag[4]
 	self.data.macro_Note = macroDrag[5]
@@ -226,7 +226,7 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	end
 
 
-	self.data.macro_Text = self:AutoWriteMacro(spell)
+	self:SetMacroText(self:AutoWriteMacro(spell))
 	self:SetMacroIcon() --will pull icon automatically unless explicitly overridden
 	self.data.macro_Name = spellName
 	self.data.macro_Note = ""
@@ -243,7 +243,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 	if spellIndex then --if the ability doesn't have a spellIndex, i.e (passive, follow, defensive, etc, print a warning)
 		local spellInfoName , _, icon = GetSpellInfo(spellID)
 
-		self.data.macro_Text = self:AutoWriteMacro(spellInfoName)
+		self:SetMacroText(self:AutoWriteMacro(spellInfoName))
 		self:SetMacroIcon() --will pull icon automatically unless explicitly overridden
 		self.data.macro_Name = spellInfoName
 		self.data.macro_Note = ""
@@ -267,9 +267,9 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 	end
 
 	if IsEquippableItem(item) then
-		self.data.macro_Text = "/equip "..item.."\n/use "..item
+		self:SetMacroText("/equip "..item.."\n/use "..item)
 	else
-		self.data.macro_Text = "/use "..item
+		self:SetMacroText("/use "..item)
 	end
 
 	self:SetMacroIcon() --will pull icon automatically unless explicitly overridden
@@ -290,12 +290,12 @@ function ACTIONBUTTON:PlaceBlizzMacro(action1)
 	local name, texture, body = GetMacroInfo(action1)
 
 	if body then
-		self.data.macro_Text = body
+		self:SetMacroText(body)
 		self.data.macro_Name = name
 		self:SetMacroIcon(texture)
 		self.data.macro_BlizzMacro = name
 	else
-		self.data.macro_Text = ""
+		self:SetMacroText()
 		self.data.macro_Name = ""
 		self:SetMacroIcon()
 		self.data.macro_BlizzMacro = false
@@ -328,12 +328,12 @@ function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
 	local name, texture = C_EquipmentSet.GetEquipmentSetInfo(equipsetNameIndex)
 
 	if texture then
-		self.data.macro_Text = "/equipset "..equipmentSetName
+		self:SetMacroText("/equipset "..equipmentSetName)
 		self.data.macro_Name = name
 		self:SetMacroIcon(texture)
 		self.data.macro_EquipmentSet = equipmentSetName
 	else
-		self.data.macro_Text = ""
+		self:SetMacroText()
 		self.data.macro_Name = ""
 		self:SetMacroIcon()
 		self.data.macro_EquipmentSet = false
@@ -358,11 +358,11 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 
 	--The Summon Random Mount from the Mount Journal
 	if action1 == 268435455 then
-		self.data.macro_Text = "#autowrite\n/run C_MountJournal.SummonByID(0);"
+		self:SetMacroText("#autowrite\n/run C_MountJournal.SummonByID(0);")
 		self:SetMacroIcon("Interface\\ICONS\\ACHIEVEMENT_GUILDPERK_MOUNTUP")
 		self.data.macro_Name = "Random Mount"
 	else
-		self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
+		self:SetMacroText("#autowrite\n/cast "..mountName..";")
 		self:SetMacroIcon() --will pull icon automatically unless explicitly overridden
 		self.data.macro_Name = mountName
 	end
@@ -384,10 +384,10 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 
 	if name then
 		self.data.macro_Name = name
-		self.data.macro_Text = self:AutoWriteMacro(name)
+		self:SetMacroText(self:AutoWriteMacro(name))
 	else
 		self.data.macro_Name = ""
-		self.data.macro_Text = ""
+		self:SetMacroText()
 	end
 
 	self:SetMacroIcon(icon) --need to set icon here, it won't pull it automatically
@@ -404,7 +404,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 
 	local _, _, _, _, _, _, _,petName, petIcon= C_PetJournal.GetPetInfoByPetID(action1)
 
-	self.data.macro_Text = "#autowrite\n/summonpet "..petName
+	self:SetMacroText("#autowrite\n/summonpet "..petName)
 	self:SetMacroIcon(petIcon) --need to set icon here, it won't pull it automatically
 	self.data.macro_Name = petName
 	self.data.macro_Note = ""
@@ -452,7 +452,7 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 		end
 	end
 
-	self.data.macro_Text = "/flyout blizz:"..action1..":l:"..point..":c"
+	self:SetMacroText("/flyout blizz:"..action1..":l:"..point..":c")
 	self:SetMacroIcon()
 	self.data.macro_Name = ""
 	self.data.macro_Note = ""

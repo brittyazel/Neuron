@@ -452,7 +452,7 @@ end
 -----------------------------------------------------------------------------------------
 
 function ACTIONBUTTON:ParseAndSanitizeMacro()
-	local uncleanMacro = self.data.macro_Text
+	local uncleanMacro = self:GetMacroText()
 	if #uncleanMacro > 0 then
 		--adds an empty line above and below the macro
 		uncleanMacro = "\n"..uncleanMacro.."\n"
@@ -691,17 +691,17 @@ function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
 
 		for i = 1,2 do
 			for state, info in pairs(cur_button[i]) do
-				if info.macro_Text and info.macro_Text:find("#autowrite\n/cast") then
+				if info:GetMacroText() and info:GetMacroText():find("#autowrite\n/cast") then
 					local spell = ""
 
-					spell = info.macro_Text:gsub("%[.*%]", "")
+					spell = info:GetMacroText():gsub("%[.*%]", "")
 					spell = spell:match("#autowrite\n/cast%s*(.+)%((.*)%)")
 
 					if spell then
 						if global_update then
-							info.macro_Text = button:AutoUpdateMacro(info.macro_Text)
+							info:SetMacroText(button:AutoUpdateMacro(info.macro_Text))
 						else
-							info.macro_Text = button:AutoWriteMacro(spell)
+							info:SetMacroText(button:AutoWriteMacro(spell))
 						end
 
 					end
