@@ -804,7 +804,7 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 					button.macroshow = spell
 					button:SetAttribute("prefix", "/summonpet ")
 					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
-					button.data.macro_Name = spell
+					button:SetMacroName(spell)
 					button:SetAttribute("macro_Name", spell)
 					prefix = "/summonpet "
 
@@ -835,7 +835,7 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 					local itemname = GetItemInfo(spell)
 
 					button.macroshow = spell
-					button.data.macro_Name = itemname
+					button:SetMacroName(itemname)
 
 					button:SetAttribute("showtooltip", "#showtooltip "..button.macroshow.."\n")
 
@@ -1110,7 +1110,7 @@ function ACTIONBUTTON:Flyout_PostClick()
 
 	button:SetMacroText(self:GetAttribute("flyoutMacro"))
 	button:SetMacroIcon(self:GetAttribute("macro_Icon") or nil)
-	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
+	button:SetMacroName(self:GetAttribute("macro_Name") or nil)
 
 	button:ParseAndSanitizeMacro()
 	button:ClearButton()

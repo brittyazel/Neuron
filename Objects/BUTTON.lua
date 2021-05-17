@@ -691,9 +691,9 @@ function BUTTON:UpdateStatus()
 	if self.actionID then
 		self:UpdateActionStatus()
 	elseif self.data.macro_BlizzMacro then
-		self.Name:SetText(self.data.macro_Name)
+		self.Name:SetText(self:GetMacroName())
 	elseif self.data.macro_EquipmentSet then
-		self.Name:SetText(self.data.macro_Name)
+		self.Name:SetText(self:GetMacroName())
 	elseif self.spell then
 		self:UpdateSpellStatus()
 	elseif self.item then
@@ -711,8 +711,8 @@ function BUTTON:UpdateSpellStatus()
 	else
 		self:SetChecked(false)
 	end
-
-	self.Name:SetText(self.data.macro_Name)
+	
+	self.Name:SetText(self:GetMacroName())
 	self:UpdateCount()
 	self:UpdateUsable()
 end
@@ -724,7 +724,7 @@ function BUTTON:UpdateItemStatus()
 		self:SetChecked(false)
 	end
 
-	self.Name:SetText(self.data.macro_Name)
+	self.Name:SetText(self:GetMacroName())
 	self:UpdateCount()
 	self:UpdateUsable()
 end
@@ -776,7 +776,7 @@ function BUTTON:UpdateTooltip()
 		if self.actionID then
 			self:UpdateActionTooltip()
 		elseif self.data.macro_BlizzMacro then
-			GameTooltip:SetText(self.data.macro_Name)
+			GameTooltip:SetText(self:GetMacroName())
 		elseif self.data.macro_EquipmentSet then
 			GameTooltip:SetEquipmentSet(self.data.macro_EquipmentSet)
 			GameTooltip:Show()
@@ -785,7 +785,7 @@ function BUTTON:UpdateTooltip()
 		elseif self.item then
 			self:UpdateItemTooltip()
 		elseif self:GetMacroText() and #self:GetMacroText() > 0 then
-			GameTooltip:SetText(self.data.macro_Name)
+			GameTooltip:SetText(self:GetMacroName())
 		end
 
 		GameTooltip:Show()
@@ -829,7 +829,7 @@ end
 
 function BUTTON:UpdateActionTooltip()
 	if HasAction(self.actionID) then
-		if self.bar:GetTooltipOption() == "normal" or elf.bar:GetTooltipOption() == "minimal" then
+		if self.bar:GetTooltipOption() == "normal" or self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetAction(self.actionID)
 		end
 	end
@@ -853,6 +853,7 @@ function BUTTON:GetMacroIcon()
 	return self.data.macro_Icon
 end
 
+
 --Macro Text
 function BUTTON:SetMacroText(newText)
 	if newText then
@@ -864,4 +865,18 @@ end
 
 function BUTTON:GetMacroText()
 	return self.data.macro_Text
+end
+
+
+--Macro Name
+function BUTTON:SetMacroName(newName)
+	if newName then
+		self.data.macro_Name = newName
+	else
+		self.data.macro_Name = ""
+	end
+end
+
+function BUTTON:GetMacroName()
+	return self.data.macro_Name
 end
