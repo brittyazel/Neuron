@@ -1075,7 +1075,7 @@ function ACTIONBUTTON:Flyout_ReleaseButton(button)
 
 	button.data.macro_Text = ""
 	button.data.macro_EquipmentSet = false
-	button.data.macro_Icon = false
+	button:SetMacroIcon()
 
 	button.macrospell = nil
 	button.macroitem = nil
@@ -1109,7 +1109,7 @@ function ACTIONBUTTON:Flyout_PostClick()
 	local button = self.anchor
 
 	button.data.macro_Text = self:GetAttribute("flyoutMacro")
-	button.data.macro_Icon = self:GetAttribute("macro_Icon") or false
+	button:SetMacroIcon(self:GetAttribute("macro_Icon") or nil)
 	button.data.macro_Name = self:GetAttribute("macro_Name") or nil
 
 	button:ParseAndSanitizeMacro()

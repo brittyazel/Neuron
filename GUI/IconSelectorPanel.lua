@@ -86,7 +86,7 @@ function NeuronGUI:CreateIconSelectorInternals()
 		iconFrame:SetImageSize(40,40)
 		iconFrame:SetWidth(50)
 		iconFrame:SetCallback("OnClick", function()
-			Neuron.currentButton.data.macro_Icon = iconList[i]
+			Neuron.currentButton:SetMacroIcon(iconList[i])
 			Neuron.currentButton:UpdateIcon()
 			NeuronGUI:RefreshIconPreview()
 		end)

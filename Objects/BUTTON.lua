@@ -606,8 +606,8 @@ end
 function BUTTON:UpdateIcon()
 	if self.actionID then
 		self:UpdateActionIcon()
-	elseif self.data.macro_Icon then
-		self.Icon:SetTexture(self.data.macro_Icon)
+	elseif self:GetMacroIcon() then
+		self.Icon:SetTexture(self:GetMacroIcon())
 		self.Icon:Show()
 	elseif self.spell then
 		self:UpdateSpellIcon()
@@ -834,3 +834,21 @@ function BUTTON:UpdateActionTooltip()
 		end
 	end
 end
+
+
+-----------------------------------------------------
+-------------------Sets and Gets---------------------
+-----------------------------------------------------
+
+function BUTTON:SetMacroIcon(newIcon)
+	if newIcon then
+		self.data.macro_Icon = newIcon
+	else
+		self.data.macro_Icon = false
+	end
+end
+
+function BUTTON:GetMacroIcon()
+	return self.data.macro_Icon
+end
+
