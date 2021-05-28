@@ -134,6 +134,8 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 	if stopAnimation then
 		CooldownFrame_Clear(self.Cooldown) --clear the cooldown frame
 	end
+
+	self:UpdateObjectVisibility()
 end
 
 

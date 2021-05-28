@@ -10,6 +10,7 @@
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
 local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
+Neuron.macroDrag = macroDrag --class level handle for checking during show/hide states
 
 local macroCache = {} --this will hold onto any previous contents of our button
 
