@@ -75,7 +75,7 @@ function ACTIONBUTTON:LoadData(spec, state)
 end
 
 function ACTIONBUTTON:UpdateObjectVisibility(show)
-	if self:HasAction() or #Neuron.macroDrag > 0 or show or self.showGrid or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if self:HasAction() or Neuron.dragging or show or self.showGrid or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
 	else
 		self.isShown = false
@@ -572,10 +572,13 @@ function ACTIONBUTTON:ACTIONBAR_SHOWGRID()
 		show = false
 	end
 
+	Neuron.dragging = true
+
 	self:UpdateObjectVisibility(show)
 end
 
 function ACTIONBUTTON:ACTIONBAR_HIDEGRID()
+	Neuron.dragging = false
 	self:UpdateObjectVisibility()
 end
 
