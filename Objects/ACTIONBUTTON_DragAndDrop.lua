@@ -12,8 +12,6 @@ local Neuron = addonTable.Neuron
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
 local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
-Neuron.macroDrag = macroDrag --class level handle for checking during show/hide states
-
 local macroCache = {} --this will hold onto any previous contents of our button
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -26,6 +24,8 @@ function ACTIONBUTTON:OnDragStart()
 	if InCombatLockdown() or not self.bar or self.actionID then
 		return
 	end
+
+	Neuron.dragging = true
 
 	local drag
 
@@ -85,7 +85,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 		wipe(macroCache)
 	end
 
-	if macroDrag[1] then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
+	if #macroDrag>0 then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
 		self:PlaceMacro()
 	elseif cursorType == "spell" then
 		self:PlaceSpell(action1, action2, spellID)
@@ -117,9 +117,8 @@ function ACTIONBUTTON:OnReceiveDrag()
 
 	self:InitializeButton()
 	self:UpdateAll()
-	self:UpdateCooldown() --clear any cooldowns that may be on the button now that the button is empty
 
-	if macroCache[1] then
+	if #macroCache>0 then
 		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
 		for _,bar in pairs(Neuron.bars) do
 			bar:ACTIONBAR_SHOWHIDEGRID(true) --show the button grid if we have something picked up (i.e if macroDrag contains something)
@@ -127,6 +126,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 	else
 		SetCursor(nil)
 		ClearCursor() --if we did not pick up a new spell, clear the cursor
+		Neuron.dragging = false
 		for _,bar in pairs(Neuron.bars) do
 			bar:ACTIONBAR_SHOWHIDEGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
 		end
@@ -135,7 +135,7 @@ end
 
 
 function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
-	if macroDrag[1] then
+	if #macroDrag>0 then
 		self:OnReceiveDrag()
 	end
 	self:UpdateStatus()
@@ -143,33 +143,19 @@ end
 
 --we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
 function ACTIONBUTTON:WorldFrame_OnReceiveDrag()
-
-	SetCursor(nil)
-	ClearCursor()
-
-	if #macroDrag>0 then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
-		wipe(macroDrag)
-		wipe(macroCache)
-	end
-
-	for _,v in pairs(Neuron.bars) do
-		v:UpdateObjectVisibility()
-	end
-end
-
---we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
-function ACTIONBUTTON:WorldFrame_OnMouseDown()
 	if #macroDrag>0 then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
 		SetCursor(nil)
 		ClearCursor()
+		Neuron.dragging = false
 		wipe(macroDrag)
 		wipe(macroCache)
 	end
 
-	for _,v in pairs(Neuron.bars) do
-		v:UpdateObjectVisibility()
+	for _,bar in pairs(Neuron.bars) do
+		bar:ACTIONBAR_SHOWHIDEGRID()
 	end
 end
+
 --------------------------------------
 --------------------------------------
 
@@ -219,7 +205,6 @@ function ACTIONBUTTON:PlaceMacro()
 	self:SetMacroUseNote(macroDrag[6])
 	self:SetMacroBlizzMacro(macroDrag[7])
 	self:SetMacroEquipmentSet(macroDrag[8])
-
 end
 
 function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)

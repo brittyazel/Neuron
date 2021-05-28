@@ -113,12 +113,12 @@ function BAR.new(class, barID)
 end
 
 function BAR:InitializeBar()
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
-		if self.class == "ActionBar" then
+	if self.class == "ActionBar" then
+		if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
 			self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-			self:RegisterEvent("ACTIONBAR_SHOWGRID", "ACTIONBAR_SHOWHIDEGRID", true)
-			self:RegisterEvent("ACTIONBAR_HIDEGRID", "ACTIONBAR_SHOWHIDEGRID")
 		end
+		self:RegisterEvent("ACTIONBAR_SHOWGRID", "ACTIONBAR_SHOWHIDEGRID", true)
+		self:RegisterEvent("ACTIONBAR_HIDEGRID", "ACTIONBAR_SHOWHIDEGRID")
 	end
 end
 
@@ -137,6 +137,13 @@ function BAR:ACTIVE_TALENT_GROUP_CHANGED()
 end
 
 function BAR:ACTIONBAR_SHOWHIDEGRID(show)
+
+	if show then
+		Neuron.dragging = true
+	else
+		Neuron.dragging = false
+	end
+
 	--don't show the grid if the bar is locked and the right key isn't pressed
 	if self:GetBarLock() == "alt" and not IsAltKeyDown() then
 		show = nil

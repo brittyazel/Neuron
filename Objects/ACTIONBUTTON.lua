@@ -93,7 +93,7 @@ function ACTIONBUTTON:InitializeButton()
 		Neuron:HookScript(WorldFrame, "OnReceiveDrag", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
 	end
 	if not Neuron:IsHooked(WorldFrame, "OnMouseDown") then
-		Neuron:HookScript(WorldFrame, "OnMouseDown", function() ACTIONBUTTON:WorldFrame_OnMouseDown() end)
+		Neuron:HookScript(WorldFrame, "OnMouseDown", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
 	end
 
 	self:SetScript("OnAttributeChanged", function(_, name, value) self:OnAttributeChanged(name, value) end)
@@ -794,7 +794,7 @@ end
 
 --overwrite function in parent class BUTTON
 function ACTIONBUTTON:UpdateVisibility(show)
-	if self:HasAction() or #Neuron.macroDrag > 0 or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if self:HasAction() or Neuron.dragging or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
 	else
 		self.isShown = false
