@@ -12,6 +12,8 @@ local Neuron = addonTable.Neuron
 local ACTIONBUTTON = Neuron.ACTIONBUTTON
 
 local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
+Neuron.macroDrag = macroDrag --class level handle for checking during show/hide states
+
 local macroCache = {} --this will hold onto any previous contents of our button
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
@@ -141,11 +143,31 @@ end
 
 --we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
 function ACTIONBUTTON:WorldFrame_OnReceiveDrag()
-	if macroDrag[1] then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
+
+	SetCursor(nil)
+	ClearCursor()
+
+	if #macroDrag>0 then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
+		wipe(macroDrag)
+		wipe(macroCache)
+	end
+
+	for _,v in pairs(Neuron.bars) do
+		v:UpdateObjectVisibility()
+	end
+end
+
+--we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
+function ACTIONBUTTON:WorldFrame_OnMouseDown()
+	if #macroDrag>0 then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
 		SetCursor(nil)
 		ClearCursor()
 		wipe(macroDrag)
 		wipe(macroCache)
+	end
+
+	for _,v in pairs(Neuron.bars) do
+		v:UpdateObjectVisibility()
 	end
 end
 --------------------------------------
