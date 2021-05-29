@@ -37,11 +37,10 @@ function ACTIONBUTTON:OnDragStart()
 
 	if drag then
 
-		ClearCursor()
-
-		--This is all just to put an icon on the mousecursor. Sadly we can't use SetCursor, because once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
-		--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
-		self:SetMouseCursor()
+		--don't run if we have a cache, we will call it manually on the OnReceiveDrag on the new button
+		if #macroCache==0 then
+			self:SetMouseCursor()
+		end
 
 		self:PickUpMacro()
 
@@ -73,6 +72,10 @@ function ACTIONBUTTON:OnReceiveDrag()
 		macroCache[8] = self.data.macro_EquipmentSet
 	else
 		wipe(macroCache)
+	end
+
+	if #macroCache>0 then --if we have a cache, pickup the current icon before replacing it with the new content
+		self:SetMouseCursor()
 	end
 
 	if #macroDrag>0 then --checks to see if the thing we are placing is a Neuron created macro vs something from the spellbook
@@ -109,7 +112,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 	self:UpdateAll()
 
 	if #macroCache>0 then
-		self:OnDragStart(macroCache) --If we picked up a new ability after dropping this one we have to manually call OnDragStart
+		self:OnDragStart() --If we picked up a new ability after dropping this one we have to manually call OnDragStart
 		self:ACTIONBAR_SHOWGRID() --show the button grid if we have something picked up (i.e if macroDrag contains something)
 	else
 		SetCursor(nil)
@@ -472,8 +475,11 @@ function ACTIONBUTTON:PlaceFlyout(action1, action2)
 	self:UpdateFlyout(true)
 end
 
-
+--This is all just to put an icon on the mouse cursor. Sadly we can't use SetCursor, because once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
+--This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
 function ACTIONBUTTON:SetMouseCursor()
+	ClearCursor()
+
 	if self.spell and self.spellID then
 		PickupSpell(self.spellID)
 		if GetCursorInfo() then
