@@ -36,6 +36,17 @@ function NeuronGUI:ButtonEditPanel(tabContainer)
 		Neuron.previewIconFrame:SetCallback("OnClick", function() NeuronGUI:IconFrame_OnClick() end)
 		settingContainer:AddChild(Neuron.previewIconFrame)
 
+		--reset icon button
+		local resetIconButton = AceGUI:Create("Button")
+		resetIconButton:SetRelativeWidth(0.15)
+		resetIconButton:SetText("Reset Icon")
+		resetIconButton:SetCallback("OnClick", function()
+			Neuron.currentButton:SetMacroIcon() --unset the icon
+			Neuron.currentButton:UpdateIcon()
+			NeuronGUI:RefreshIconPreview()
+		end)
+		settingContainer:AddChild(resetIconButton)
+
 		--edit box to show the current macro
 		local macroEditFrame = AceGUI:Create("MultiLineEditBox")
 		macroEditFrame:SetLabel("Edit Macro")

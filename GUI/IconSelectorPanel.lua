@@ -14,7 +14,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 local iconSelector
 local iconList = {}
 
-local MAX_ICONS_PER_PAGE = 168
+local MAX_ICONS_PER_PAGE = 120
 local curIconPage = 1
 
 -----------------------------------------------------------------------------
@@ -27,14 +27,15 @@ end
 
 function NeuronGUI:CreateIconSelector()
 	iconSelector = AceGUI:Create("Frame")
-	iconSelector:SetTitle("Select and icon")
+	iconSelector:SetTitle("Select an icon")
 	iconSelector:SetCallback("OnClose", function() iconSelector:Release() end)
-	iconSelector:SetWidth(660)
+	iconSelector:SetWidth(610)
 	iconSelector:SetHeight(500)
 	iconSelector:EnableResize(true)
+	iconSelector.frame:SetMinResize(610,450)
 	iconSelector:SetLayout("Flow") -- important!
 
-	NeuronGUI:RefreshPlayerSpellIconInfo()
+	NeuronGUI:GenerateIconList()
 
 	NeuronGUI:CreateIconSelectorInternals()
 
@@ -51,8 +52,34 @@ function NeuronGUI:CreateIconSelectorInternals()
 	------------------- Pagination -------------------
 	--------------------------------------------------
 
+	--container group for pagination
+	local paginationContainer = AceGUI:Create("SimpleGroup")
+	paginationContainer:SetLayout("Flow") -- important!
+	paginationContainer:SetFullWidth(true)
+	paginationContainer:SetHeight(80)
+	iconSelector:AddChild(paginationContainer)
+
+	--back button
+	local backButton = AceGUI:Create("Button")
+	backButton:SetRelativeWidth(0.15)
+	backButton:SetText("Previous")
+	backButton:SetCallback("OnClick", function()
+		if curIconPage > 1 then
+			curIconPage = curIconPage-1
+		end
+		NeuronGUI:RefreshIconSelector()
+	end)
+	--disable button if we are on th first page
+	if curIconPage > 1 then
+		backButton:SetDisabled(false)
+	else
+		backButton:SetDisabled(true)
+	end
+	paginationContainer:AddChild(backButton)
+
+	--pagination slider
 	local paginationSlider = AceGUI:Create("Slider")
-	paginationSlider:SetFullWidth(true)
+	paginationSlider:SetRelativeWidth(0.68)
 	paginationSlider:SetSliderValues(1,ceil(#iconList/MAX_ICONS_PER_PAGE),1)
 	paginationSlider:SetLabel("Page")
 	paginationSlider:SetValue(curIconPage)
@@ -60,7 +87,25 @@ function NeuronGUI:CreateIconSelectorInternals()
 		curIconPage = self:GetValue()
 		NeuronGUI:RefreshIconSelector()
 	end)
-	iconSelector:AddChild(paginationSlider)
+	paginationContainer:AddChild(paginationSlider)
+
+	--forward button
+	local forwardButton = AceGUI:Create("Button")
+	forwardButton:SetRelativeWidth(0.15)
+	forwardButton:SetText("Next")
+	forwardButton:SetCallback("OnClick",function()
+		if curIconPage < ceil(#iconList/MAX_ICONS_PER_PAGE) then
+			curIconPage = curIconPage + 1
+		end
+		NeuronGUI:RefreshIconSelector()
+	end)
+	--disable button if we are on the last page
+	if curIconPage < ceil(#iconList/MAX_ICONS_PER_PAGE) then
+		forwardButton:SetDisabled(false)
+	else
+		forwardButton:SetDisabled(true)
+	end
+	paginationContainer:AddChild(forwardButton)
 
 	--------------------------------------------------
 	--------------- Icon Scroll Frame ----------------
@@ -94,7 +139,10 @@ function NeuronGUI:CreateIconSelectorInternals()
 	end
 end
 
-function NeuronGUI:RefreshPlayerSpellIconInfo()
+-----------------------------------------------------------
+-----------------------------------------------------------
+
+function NeuronGUI:GenerateIconList()
 	wipe(iconList)
 	--we need a quick function to check if a table contains a value already
 	local function tContains(table, item)
