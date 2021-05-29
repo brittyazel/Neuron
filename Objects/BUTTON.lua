@@ -640,7 +640,12 @@ function BUTTON:UpdateSpellIcon()
 	else
 		self.Icon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
+
 	self.Icon:Show()
+
+	--Hide the border in case this button used to have an equipped item in it
+	--otherwise it will continue to have a green border until a reload takes place
+	self.Border:Hide()
 end
 
 function BUTTON:UpdateItemIcon()
