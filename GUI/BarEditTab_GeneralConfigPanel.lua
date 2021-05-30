@@ -240,7 +240,7 @@ function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 		local clickModeDropdown = AceGUI:Create("Dropdown")
 		clickModeDropdown:SetLabel(L["Click Mode"])
 		clickModeDropdown:SetRelativeWidth(INNER_WIDGET_RATIO)
-		clickModeDropdown:SetList({["UpClick"] = L["Activate On Release"], ["DownClick"] = L["Activate On Click"]},
+		clickModeDropdown:SetList({["UpClick"] = L["On Release"], ["DownClick"] = L["On Click"]},
 				{[1] = "UpClick", [2] = "DownClick"})
 		clickModeDropdown:SetValue(Neuron.currentBar:GetClickMode())
 		clickModeDropdown:SetCallback("OnValueChanged", function(_, _, key)

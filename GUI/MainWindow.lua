@@ -12,7 +12,7 @@ Neuron.NeuronGUI = NeuronGUI
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
 
-local currentTab = "tab1" --remember which tab we were using between refreshes
+local currentTab = "bar" --remember which tab we were using between refreshes
 
 -----------------------------------------------------------------------------
 --------------------------Main Window----------------------------------------
@@ -41,8 +41,8 @@ function NeuronGUI:CreateEditor(defaultTab)
 
 	addonTable.NeuronEditor:SetTitle("Neuron Editor")
 	addonTable.NeuronEditor:EnableResize(true)
-	addonTable.NeuronEditor.frame:SetMinResize(780,600)
-	addonTable.NeuronEditor:SetWidth("780")
+	addonTable.NeuronEditor.frame:SetMinResize(760,600)
+	addonTable.NeuronEditor:SetWidth("760")
 	addonTable.NeuronEditor:SetHeight("840")
 	if Neuron.currentBar then
 		addonTable.NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
@@ -73,7 +73,7 @@ function NeuronGUI:PopulateEditorWindow()
 	--Tab group that will contain all of our settings to configure
 	local tabFrame = AceGUI:Create("TabGroup")
 	tabFrame:SetLayout("Flow")
-	tabFrame:SetTabs({{text="Bar Settings", value="tab1"}, {text="Button Settings", value="tab2"}})
+	tabFrame:SetTabs({{text="Bar Settings", value="bar"}, {text="Button Settings", value="button"}})
 	tabFrame:SetCallback("OnGroupSelected", function(self, _, value) NeuronGUI:SelectTab(self, _, value) end)
 	addonTable.NeuronEditor:AddChild(tabFrame)
 	tabFrame:SelectTab(currentTab)
@@ -82,11 +82,11 @@ end
 
 function NeuronGUI:SelectTab(tabFrame, _, value)
 	tabFrame:ReleaseChildren()
-	if value == "tab1" then
+	if value == "bar" then
 		NeuronGUI:BarEditPanel(tabFrame)
-		currentTab = "tab1"
-	elseif value == "tab2" then
+		currentTab = "bar"
+	elseif value == "button" then
 		NeuronGUI:ButtonEditPanel(tabFrame)
-		currentTab = "tab2"
+		currentTab = "button"
 	end
 end

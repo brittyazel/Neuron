@@ -11,7 +11,7 @@ local NeuronGUI = Neuron.NeuronGUI
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
 
-local currentTab = "tab1" --remember which tab we were using between refreshes
+local currentTab = "general" --remember which tab we were using between refreshes
 local selectedBarType --remember which bar type was selected for creating new bars between refreshes
 
 -----------------------------------------------------------------------------
@@ -107,21 +107,29 @@ function NeuronGUI:BarEditPanel(tabFrame)
 	---------------------------------
 
 	if Neuron.currentBar then
-	--Tab group that will contain all of our settings to configure
-	local innerTabFrame = AceGUI:Create("TabGroup")
-	innerTabFrame:SetLayout("Fill")
-	innerTabFrame:SetFullHeight(true)
-	innerTabFrame:SetFullWidth(true)
-	innerTabFrame:SetTabs({{text="General Configuration", value="tab1"}, {text="Bar States", value="tab2"}, {text="Bar Visibility", value="tab3"}})
-	innerTabFrame:SetCallback("OnGroupSelected", function(self, _, value) NeuronGUI:SelectInnerBarTab(self, _, value) end)
-	tabFrame:AddChild(innerTabFrame)
+		--Tab group that will contain all of our settings to configure
+		local innerTabFrame = AceGUI:Create("TabGroup")
+		innerTabFrame:SetLayout("Fill")
+		innerTabFrame:SetFullHeight(true)
+		innerTabFrame:SetFullWidth(true)
+		--only show the states tab if the bar is an ActionBar
+		if Neuron.currentBar.class=="ActionBar" then
+			innerTabFrame:SetTabs({{text="General Configuration", value="general"}, {text="Bar States", value="states"}, {text="Bar Visibility", value="visibility"}})
+		else
+			innerTabFrame:SetTabs({{text="General Configuration", value="general"}, {text="Bar Visibility", value="visibility"}})
+			if currentTab == "states" then
+				currentTab = "general"
+			end
+		end
+		innerTabFrame:SetCallback("OnGroupSelected", function(self, _, value) NeuronGUI:SelectInnerBarTab(self, _, value) end)
+		tabFrame:AddChild(innerTabFrame)
 
-	innerTabFrame:SelectTab(currentTab)
+		innerTabFrame:SelectTab(currentTab)
 	else
-	local selectBarMessage = AceGUI:Create("Label")
-	selectBarMessage:SetText("Please select a bar to continue")
-	selectBarMessage:SetFont("Fonts\\FRIZQT__.TTF", 30)
-	tabFrame:AddChild(selectBarMessage)
+		local selectBarMessage = AceGUI:Create("Label")
+		selectBarMessage:SetText("Please select a bar to continue")
+		selectBarMessage:SetFont("Fonts\\FRIZQT__.TTF", 30)
+		tabFrame:AddChild(selectBarMessage)
 	end
 end
 
@@ -131,14 +139,14 @@ end
 
 function NeuronGUI:SelectInnerBarTab(tabFrame, _, value)
 	tabFrame:ReleaseChildren()
-	if value == "tab1" then
+	if value == "general" then
 		NeuronGUI:GeneralConfigPanel(tabFrame)
-		currentTab = "tab1"
-	elseif value == "tab2" then
+		currentTab = "general"
+	elseif value == "states" then
 		NeuronGUI:BarStatesPanel(tabFrame)
-		currentTab = "tab2"
-	elseif value == "tab3" then
+		currentTab = "states"
+	elseif value == "visibility" then
 		NeuronGUI:BarVisibilityPanel(tabFrame)
-		currentTab = "tab3"
+		currentTab = "visibility"
 	end
 end

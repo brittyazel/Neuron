@@ -53,9 +53,9 @@ function Neuron:Minimap_OnClickHandler(button)
 			if not Neuron.barEditMode then
 				Neuron:ToggleBarEditMode(true)
 				if not addonTable.NeuronEditor then
-					Neuron.NeuronGUI:CreateEditor("tab1")
+					Neuron.NeuronGUI:CreateEditor("bar")
 				else
-					Neuron.NeuronGUI:RefreshEditor("tab1")
+					Neuron.NeuronGUI:RefreshEditor("bar")
 				end
 			else
 				Neuron:ToggleBarEditMode(false)
@@ -75,9 +75,9 @@ function Neuron:Minimap_OnClickHandler(button)
 			if not Neuron.buttonEditMode then
 				Neuron:ToggleButtonEditMode(true)
 				if not addonTable.NeuronEditor then
-					Neuron.NeuronGUI:CreateEditor("tab2")
+					Neuron.NeuronGUI:CreateEditor("button")
 				else
-					Neuron.NeuronGUI:RefreshEditor("tab2")
+					Neuron.NeuronGUI:RefreshEditor("button")
 				end
 			else
 				Neuron:ToggleButtonEditMode(false)
