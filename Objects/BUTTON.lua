@@ -996,7 +996,9 @@ function BUTTON:UpdateItemTooltip()
 
 	if name and link then
 		if self.UberTooltips then
-			GameTooltip:SetHyperlink(link)
+			if select(2, GameTooltip:GetItem()) ~= link then
+				GameTooltip:SetHyperlink(link)
+			end
 		else
 			GameTooltip:SetText(name, 1, 1, 1)
 		end
