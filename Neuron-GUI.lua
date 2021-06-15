@@ -3875,6 +3875,26 @@ NeuronGUI.interfaceOptions = {
 			},
 		},
 
+		importexport={
+			name = L["Import"].."/"..L["Export"],
+			type = "group",
+			order = 1,
+			args={
+				TextBox = {
+					order = 1,
+					name = L["Import or Export the current profile:"],
+					desc = L["ImportExport_Desc"],
+					type = "input",
+					multiline = 30,
+					confirm = function() return L["ImportWarning"] end,
+					validate = false,
+					set = function(self, input) Neuron:SetSerializedAndCompressedProfile(input) end,
+					get = function() return Neuron:GetSerializedAndCompressedProfile() end,
+					width = "full",
+				},
+			},
+		},
+
 		changelog = {
 			name = L["Changelog"],
 			type = "group",

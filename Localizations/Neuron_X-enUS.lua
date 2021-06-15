@@ -151,6 +151,16 @@ L["How to use"] = true
 L["Command"] = true
 L["Option"] = true
 
+L["Import"] = true
+L["Export"] = true
+L["Import or Export the current profile:"] = true
+L["ImportExport_Desc"] = "Copying the profile can be a time consuming experience. It may stall your game for multiple seconds. WARNING: It will overwrite the current profile."
+L["ImportWarning"] = "Are you absolutely certain you wish to import this profile? The current profile will be overwritten."
+L["Decoding failed."] = true
+L["Decompression failed."] = true
+L["Data import Failed."] = true
+L["Aborting."] = true
+
 L["No bar selected or command invalid"] = true
 
 L["Custom_Option"] = "For custom states, add a desired state string (/neuron state custom <state string>) where <state string> is a semicolon seperated list of state conditions"

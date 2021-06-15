@@ -5,10 +5,11 @@
 
 
 ---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
-Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
+Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0", "AceSerializer-3.0")
 
 local DB
 
+local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local LATEST_VERSION_NUM = "1.4.1" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
@@ -680,4 +681,42 @@ function Neuron:RegisterGUIOptions(class, chkOpt, stateOpt, adjOpt)
 		stateOpt = stateOpt,
 		adjOpt = adjOpt,
 	}
+end
+
+
+function Neuron:GetSerializedAndCompressedProfile()
+	local uncompressed = Neuron:Serialize(Neuron.db.profile) --serialize the database into a string value
+	local compressed = LibDeflate:CompressZlib(uncompressed) --compress the data
+	local encoded = LibDeflate:EncodeForPrint(compressed) --encode the data for print for copy+paste
+	return encoded
+end
+
+
+function Neuron:SetSerializedAndCompressedProfile(input)
+	local decoded = LibDeflate:DecodeForPrint(input)
+	if decoded == nil then
+		Neuron:Print(L["Decoding failed."].." "..L["Aborting."])
+		return
+	end
+
+	local uncompressed = LibDeflate:DecompressZlib(decoded)
+	if uncompressed == nil then
+		Neuron:Print(L["Decompression failed"].." "..L["Aborting."])
+		return
+	end
+
+	local result, newProfile = Neuron:Deserialize(uncompressed)
+
+	if result == true and newProfile then
+		for k,v in pairs(newProfile) do
+			if type(v) == "table" then
+				Neuron.db.profile[k] = CopyTable(v)
+			else
+				Neuron.db.profile[k] = v
+			end
+		end
+		ReloadUI()
+	else
+		Neuron:Print(L["Data import Failed"].." "..L["Aborting."])
+	end
 end
