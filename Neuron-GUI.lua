@@ -3889,7 +3889,14 @@ NeuronGUI.interfaceOptions = {
 					set = function(self, inpStr)
 						local result, newTable = Neuron:Deserialize(inpStr)
 						if result == true and newTable then
-							Neuron.db.profile = CopyTable(newTable)
+							for k,v in pairs(newTable) do
+								if type(v) == "table" then
+									Neuron.db.profile[k] = CopyTable(v)
+								else
+									Neuron.db.profile[k] = v
+								end
+							end
+							ReloadUI()
 						else
 							print(L["Data import Failed"])
 						end
