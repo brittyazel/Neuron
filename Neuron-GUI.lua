@@ -3882,26 +3882,13 @@ NeuronGUI.interfaceOptions = {
 			args={
 				TextBox = {
 					order = 1,
-					name = L["Import or Export the current profile"],
+					name = L["Import or Export the current profile:"],
+					desc = L["ImportExport_Desc"],
 					type = "input",
 					multiline = 30,
-					confirm = function() return "Are you absolutely certain you wish to import this profile? The current profile will be overwritten." end,
-					set = function(self, inpStr)
-						local result, newTable = Neuron:Deserialize(inpStr)
-						if result == true and newTable then
-							for k,v in pairs(newTable) do
-								if type(v) == "table" then
-									Neuron.db.profile[k] = CopyTable(v)
-								else
-									Neuron.db.profile[k] = v
-								end
-							end
-							ReloadUI()
-						else
-							print(L["Data import Failed"])
-						end
-					end,
-					get = function() return Neuron:Serialize(Neuron.db.profile) end,
+					confirm = function() return L["ImportWarning"] end,
+					set = function(self, input) Neuron:SetSerializedAndCompressedProfile(input) end,
+					get = function() return Neuron:GetSerializedAndCompressedProfile() end,
 					width = "full",
 				},
 			},
