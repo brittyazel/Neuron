@@ -3875,6 +3875,42 @@ NeuronGUI.interfaceOptions = {
 			},
 		},
 
+		importexport={
+			name = L["Import"].."/"..L["Export"],
+			type = "group",
+			order = 1,
+			args={
+				TextBox = {
+					order = 1,
+					name = L["Import or Export the current profile"],
+					type = "input",
+					multiline = 30,
+					set = function(self, inpStr)
+						local result, newTable = Neuron:Deserialize(inpStr)
+						if result == true then
+							print("Test")
+							--[[StaticPopupDialogs["Import_Profile_Check"] = {
+								text = "Are you absolutely certain you wish to import this profile? The current profile will be overwritten.",
+								button1 = ACCEPT,
+								button2 = CANCEL,
+								timeout = 0,
+								whileDead = true,
+								OnAccept = function()
+									Neuron.db.profile = CopyTable(newTable)
+									ReloadUI()
+								end,
+							}]]
+							StaticPopup_Show("Import_Profile_Check")
+						else
+							print(L["Data import Failed"])
+						end
+					end,
+					get = function() return Neuron:Serialize(Neuron.db.profile) end,
+					width = "full",
+				},
+			},
+		},
+
 		changelog = {
 			name = L["Changelog"],
 			type = "group",

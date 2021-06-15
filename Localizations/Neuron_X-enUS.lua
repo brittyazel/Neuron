@@ -151,6 +151,11 @@ L["How to use"] = true
 L["Command"] = true
 L["Option"] = true
 
+L["Import"] = true
+L["Export"] = true
+L["Import or Export the current profile"] = true
+L["Data import Failed"] = true
+
 L["No bar selected or command invalid"] = true
 
 L["Custom_Option"] = "For custom states, add a desired state string (/neuron state custom <state string>) where <state string> is a semicolon seperated list of state conditions"
