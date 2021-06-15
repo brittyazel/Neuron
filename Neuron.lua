@@ -686,7 +686,7 @@ end
 
 function Neuron:GetSerializedAndCompressedProfile()
 	local uncompressed = Neuron:Serialize(Neuron.db.profile) --serialize the database into a string value
-	local compressed = LibDeflate:CompressDeflate(uncompressed) --compress the data
+	local compressed = LibDeflate:CompressZlib(uncompressed) --compress the data
 	local encoded = LibDeflate:EncodeForPrint(compressed) --encode the data for print for copy+paste
 	return encoded
 end
@@ -699,7 +699,7 @@ function Neuron:SetSerializedAndCompressedProfile(input)
 		return
 	end
 
-	local uncompressed = LibDeflate:DecompressDeflate(decoded)
+	local uncompressed = LibDeflate:DecompressZlib(decoded)
 	if uncompressed == nil then
 		Neuron:Print(L["Decompression failed"].." "..L["Aborting."])
 		return
