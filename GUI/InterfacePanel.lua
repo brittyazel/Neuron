@@ -62,22 +62,44 @@ function NeuronGUI:LoadInterfaceOptions()
 				type = "group",
 				order = 1001,
 				args = {
-					line1 = {
-						type = "description",
-						name = L["Experimental_Options_Warning"]
+
+					Header = {
+						order = 1,
+						name = L["Experimental Options"],
+						type = "header",
 					},
 
+					Warning = {
+						order = 2,
+						type = "description",
+						name = DIM_RED_FONT_COLOR:WrapTextInColorCode(L["Experimental_Options_Warning"]),
+						fontSize = "large",
+					},
 					importexport={
 						name = L["Profile"].." "..L["Import"].."/"..L["Export"],
 						type = "group",
 						order = 1,
 						args={
-							TextBox = {
+
+							Header = {
 								order = 1,
+								name = L["Profile"].." "..L["Import"].."/"..L["Export"],
+								type = "header",
+							},
+
+							Instructions = {
+								order = 2,
+								name = L["ImportExport_Desc"],
+								type = "description",
+								fontSize = "medium",
+							},
+
+							TextBox = {
+								order = 3,
 								name = L["Import or Export the current profile:"],
-								desc = L["ImportExport_Desc"],
+								desc = DIM_RED_FONT_COLOR:WrapTextInColorCode(L["ImportExport_WarningDesc"]),
 								type = "input",
-								multiline = 30,
+								multiline = 22,
 								confirm = function() return L["ImportWarning"] end,
 								validate = false,
 								set = function(self, input) Neuron:SetSerializedAndCompressedProfile(input) end,
