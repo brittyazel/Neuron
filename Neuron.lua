@@ -7,11 +7,12 @@
 local _, addonTable = ...
 
 ---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
-addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0")
+addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0", "AceSerializer-3.0")
 local Neuron = addonTable.Neuron
 
 local DB
 
+local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local LATEST_VERSION_NUM = "1.4.1" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
@@ -586,4 +587,50 @@ function Neuron:RegisterGUIOptions(class, generalOptions, visualOptions)
 		generalOptions = generalOptions,
 		visualOptions = visualOptions,
 	}
+end
+
+
+function Neuron:GetSerializedAndCompressedProfile()
+	local uncompressed = Neuron:Serialize(Neuron.db.profile) --serialize the database into a string value
+	local compressed = LibDeflate:CompressZlib(uncompressed) --compress the data
+	local encoded = LibDeflate:EncodeForPrint(compressed) --encode the data for print for copy+paste
+	return encoded
+end
+
+function Neuron:SetSerializedAndCompressedProfile(input)
+	--check if the input is empty
+	if input == "" then
+		Neuron:Print(L["No data to import."].." "..L["Aborting."])
+		return
+	end
+
+	--decode and check if decoding worked properly
+	local decoded = LibDeflate:DecodeForPrint(input)
+	if decoded == nil then
+		Neuron:Print(L["Decoding failed."].." "..L["Aborting."])
+		return
+	end
+
+	--uncompress and check if uncompresion worked properly
+	local uncompressed = LibDeflate:DecompressZlib(decoded)
+	if uncompressed == nil then
+		Neuron:Print(L["Decompression failed."].." "..L["Aborting."])
+		return
+	end
+
+	--deserialize the data and return it back into a table format
+	local result, newProfile = Neuron:Deserialize(uncompressed)
+
+	if result == true and newProfile then --if we successfully deserialize, load the new table and reload
+		for k,v in pairs(newProfile) do
+			if type(v) == "table" then
+				Neuron.db.profile[k] = CopyTable(v)
+			else
+				Neuron.db.profile[k] = v
+			end
+		end
+		ReloadUI()
+	else
+		Neuron:Print(L["Data import Failed."].." "..L["Aborting."])
+	end
 end

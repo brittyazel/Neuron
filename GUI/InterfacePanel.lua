@@ -49,103 +49,43 @@ function NeuronGUI:LoadInterfaceOptions()
 						name = L["Display Minimap Button"],
 						desc = L["Toggles the minimap button."],
 						type = "toggle",
-						set =  function() Neuron.NeuronMinimapIcon:ToggleIcon() end,
+						set =  function() Neuron:Minimap_ToggleIcon() end,
 						get = function() return not DB.NeuronIcon.hide end,
 						width = "full"
 					},
 				},
 			},
 
-			changelog = {
-				name = L["Changelog"],
-				type = "group",
-				order = 1000,
-				args = {
-					line1 = {
-						type = "description",
-						name = L["Changelog_Latest_Version"],
-					},
-				},
-			},
-
-			faq = {
-				name = L["F.A.Q."],
-				desc = L["Frequently Asked Questions"],
+			experimental = {
+				name = L["Experimental"],
+				desc = L["Experimental Options"],
 				type = "group",
 				order = 1001,
 				args = {
-
 					line1 = {
 						type = "description",
-						name = L["FAQ_Intro"],
+						name = L["Experimental_Options_Warning"]
 					},
 
-					g1 = {
+					importexport={
+						name = L["Profile"].." "..L["Import"].."/"..L["Export"],
 						type = "group",
-						name = L["Bar Configuration"],
 						order = 1,
-						args = {
-
-							line1 = {
-								type = "description",
-								name = L["Bar_Configuration_FAQ"],
+						args={
+							TextBox = {
 								order = 1,
-							},
-
-							g1 = {
-								type = "group",
-								name = L["General Options"],
-								order = 1,
-								args = {
-									line1 = {
-										type = "description",
-										name = L["General_Bar_Configuration_Option_FAQ"] ,
-										order = 1,
-									},
-								},
-							},
-
-							g2 = {
-								type = "group",
-								name = L["Bar States"],
-								order = 2,
-								args = {
-									line1 = {
-										type = "description",
-										name = L["Bar_State_Configuration_FAQ"],
-										order = 1,
-									},
-								},
-							},
-
-							g3 = {
-								type = "group",
-								name = L["Spell Target Options"],
-								order = 3,
-								args = {
-									line1 = {
-										type = "description",
-										name = L["Spell_Target_Options_FAQ"],
-										order = 1,
-									},
-								},
+								name = L["Import or Export the current profile:"],
+								desc = L["ImportExport_Desc"],
+								type = "input",
+								multiline = 30,
+								confirm = function() return L["ImportWarning"] end,
+								validate = false,
+								set = function(self, input) Neuron:SetSerializedAndCompressedProfile(input) end,
+								get = function() return Neuron:GetSerializedAndCompressedProfile() end,
+								width = "full",
 							},
 						},
 					},
-
-					g2 = {
-						type = "group",
-						name = L["Flyout"],
-						order = 3,
-						args = {
-							line1a = {
-								type = "description",
-								name = L["Flyout_FAQ"],
-								order = 1,
-							},
-						},
-					},
-
 				},
 			},
 		},
