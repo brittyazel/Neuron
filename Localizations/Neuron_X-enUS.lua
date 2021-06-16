@@ -532,6 +532,7 @@ L["Export"] = true
 L["Import or Export the current profile:"] = true
 L["ImportExport_Desc"] = "Copying the profile can be a time consuming experience. It may stall your game for multiple seconds. WARNING: It will overwrite the current profile."
 L["ImportWarning"] = "Are you absolutely certain you wish to import this profile? The current profile will be overwritten."
+L["No data to import."] = true
 L["Decoding failed."] = true
 L["Decompression failed."] = true
 L["Data import Failed."] = true

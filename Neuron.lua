@@ -693,21 +693,30 @@ end
 
 
 function Neuron:SetSerializedAndCompressedProfile(input)
+	--check if the input is empty
+	if input == "" then
+		Neuron:Print(L["No data to import."].." "..L["Aborting."])
+		return
+	end
+
+	--decode and check if decoding worked properly
 	local decoded = LibDeflate:DecodeForPrint(input)
 	if decoded == nil then
 		Neuron:Print(L["Decoding failed."].." "..L["Aborting."])
 		return
 	end
 
+	--uncompress and check if uncompresion worked properly
 	local uncompressed = LibDeflate:DecompressZlib(decoded)
 	if uncompressed == nil then
-		Neuron:Print(L["Decompression failed"].." "..L["Aborting."])
+		Neuron:Print(L["Decompression failed."].." "..L["Aborting."])
 		return
 	end
 
+	--deserialize the data and return it back into a table format
 	local result, newProfile = Neuron:Deserialize(uncompressed)
 
-	if result == true and newProfile then
+	if result == true and newProfile then --if we successfully deserialize, load the new table and reload
 		for k,v in pairs(newProfile) do
 			if type(v) == "table" then
 				Neuron.db.profile[k] = CopyTable(v)
@@ -717,6 +726,6 @@ function Neuron:SetSerializedAndCompressedProfile(input)
 		end
 		ReloadUI()
 	else
-		Neuron:Print(L["Data import Failed"].." "..L["Aborting."])
+		Neuron:Print(L["Data import Failed."].." "..L["Aborting."])
 	end
 end
