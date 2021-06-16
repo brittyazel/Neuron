@@ -530,7 +530,21 @@ L["Profile"] = true
 L["Import"] = true
 L["Export"] = true
 L["Import or Export the current profile:"] = true
-L["ImportExport_Desc"] = "Copying the profile can be a time consuming experience. It may stall your game for multiple seconds. WARNING: It will overwrite the current profile."
+L["ImportExport_Desc"] = [[
+
+Below you will find a text representation of your Neuron profile.
+
+To export this profile, select and copy all of the text below and paste it somewhere safe.
+
+To import a profile, replace all of the text below with the text from a previously exported profile.
+
+]]
+L["ImportExport_WarningDesc"] = [[
+
+Copying and pasting profile data can be a time consuming experience. It may stall your game for multiple seconds.
+
+WARNING: This will overwrite the current profile, and any changes you have made will be lost.
+]]
 L["ImportWarning"] = "Are you absolutely certain you wish to import this profile? The current profile will be overwritten."
 L["No data to import."] = true
 L["Decoding failed."] = true
@@ -541,9 +555,11 @@ L["Aborting."] = true
 L["Experimental"] = true
 L["Experimental Options"] = true
 L["Experimental_Options_Warning"] = [[
+
 Warning:
 
-Here you will fill find experimental and potential dangerous options.
+Here you will fill find experimental and potentially dangerous options.
 
 Use at your own risk.
+
 ]]
