@@ -449,30 +449,29 @@ function STATUSBTN:repstrings_Update(repGainedString)
 				isParagon = C_Reputation.IsFactionParagon(factionID)
 			end
 
-			if not friendID then --not a "Friendship" faction, i.e. Chromie or Brawlers Guild
-				if not isParagon then
-					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
-					standing = BAR_REP_DATA[standingID].l --convert numerical standingID to text i.e "Exalted" instead of 8
-				else
-					local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
-					value = para_value % para_max;
-					max = para_max
-					if hasRewardPending then
-						name = name.." ("..L["Reward"]:upper()..")"
+			if not isParagon then
+				colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
+				standing = BAR_REP_DATA[standingID].l --convert numerical standingID to text i.e "Exalted" instead of 8
+				--if not friendID then --not a "Friendship" faction, i.e. Chromie or Brawlers Guild
+				if friendID then --is a "Friendship" faction
+					if not string.find(name, "Brawl'gar Arena") or string.find(name, "Bizmo's Brawlpub") then --these two use the normal 9 rank system, the rest use a 7 rank system
+						if standingID + 2 > 8 then
+							standingID = 7
+						end
+						colors.r, colors.g, colors.b = BAR_REP_DATA[standingID+2].r, BAR_REP_DATA[standingID+2].g, BAR_REP_DATA[standingID+2].b --offset by two, because friendships don't have "hated" or "hostile" ranks
 					end
-					min = 0
-					colors.r, colors.g, colors.b = BAR_REP_DATA[9].r, BAR_REP_DATA[9].g, BAR_REP_DATA[9].b
-					standing = BAR_REP_DATA[9].l --set standing text to be "Paragon"
 				end
-			else --is a "Friendship" faction
-				if string.find(name, "Brawl'gar Arena") or string.find(name, "Bizmo's Brawlpub") then
-					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID].r, BAR_REP_DATA[standingID].g, BAR_REP_DATA[standingID].b
-				else
-					if standingID + 2 > 8 then
-						standingID = 6
-					end
-					colors.r, colors.g, colors.b = BAR_REP_DATA[standingID+2].r, BAR_REP_DATA[standingID+2].g, BAR_REP_DATA[standingID+2].b --offset by two, because friendships don't have "hated" or "hostile" ranks
+			else
+				local para_value, para_max, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID);
+				standingID = 9
+				value = para_value % para_max;
+				max = para_max
+				if hasRewardPending then
+					name = name.." ("..L["Reward"]:upper()..")"
 				end
+				min = 0
+				colors.r, colors.g, colors.b = BAR_REP_DATA[9].r, BAR_REP_DATA[9].g, BAR_REP_DATA[9].b
+				standing = BAR_REP_DATA[9].l --set standing text to be "Paragon"
 			end
 
 			local repData = self:SetRepWatch(i, name, standing, header, min, max, value, colors)
@@ -1285,7 +1284,7 @@ function STATUSBTN:OnEnter()
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 				end
 
-				GameTooltip:SetText(self.tFunc(self.StatusBar) or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
+				GameTooltip:SetText(self:tFunc() or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
 				GameTooltip:Show()
 			end
 		end
@@ -1749,6 +1748,7 @@ function STATUSBTN:SetData(bar)
 		if not sbStrings[self.config.sbType][self.config.tIndex] then
 			self.config.tIndex = 1
 		end
+
 		self.tFunc = sbStrings[self.config.sbType][self.config.tIndex][2]
 
 	else
