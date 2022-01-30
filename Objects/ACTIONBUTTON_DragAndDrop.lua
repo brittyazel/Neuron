@@ -365,14 +365,10 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 	local mountName, mountSpellID, mountIcon = C_MountJournal.GetMountInfoByID(action1)
     local mountSpell
 
-	if action1 == 0 then
+	if action1 == 0 or not mountSpellID or mountSpellID == 0 then
 		return
     else
-        if not mountSpellID or mountSpellID == 0 then
-            return
-        else
-            mountSpell = GetSpellInfo(mountSpellID)
-        end
+		mountSpell = GetSpellInfo(mountSpellID)
 	end
 
 	--The Summon Random Mount from the Mount Journal
