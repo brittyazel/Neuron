@@ -363,9 +363,16 @@ end
 
 function ACTIONBUTTON:PlaceMount(action1, action2)
 	local mountName, mountSpellID, mountIcon = C_MountJournal.GetMountInfoByID(action1)
+    local mountSpell
 
 	if action1 == 0 then
 		return
+    else
+        if not mountSpellID or mountSpellID == 0 then
+            return
+        else
+            mountSpell = GetSpellInfo(mountSpellID)
+        end
 	end
 
 	--The Summon Random Mount from the Mount Journal
@@ -374,7 +381,8 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 		self.data.macro_Icon = "Interface\\ICONS\\ACHIEVEMENT_GUILDPERK_MOUNTUP"
 		self.data.macro_Name = "Random Mount"
 	else
-		self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
+		--self.data.macro_Text = "#autowrite\n/cast "..mountName..";"
+		self.data.macro_Text = self:AutoWriteMacro(mountSpell)
 		self.data.macro_Icon = false --will pull icon automatically unless explicitly overridden
 		self.data.macro_Name = mountName
 	end
