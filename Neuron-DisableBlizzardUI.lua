@@ -74,6 +74,7 @@ function Neuron:HideBlizzardUI()
 	disableBarFrame(MultiCastActionBarFrame)
 	disableBarFrame(PetActionBarFrame)
 	disableBarFrame(ZoneAbilityFrame)
+	disableBarFrame(ExtraAbilityContainer)
 	disableBarFrame(ExtraActionBarFrame)
 	disableBarFrame(MainMenuBarVehicleLeaveButton)
 
