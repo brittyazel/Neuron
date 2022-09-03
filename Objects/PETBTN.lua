@@ -40,7 +40,7 @@ function PETBTN:SetType()
 	self:RegisterEvent("PLAYER_CONTROL_GAINED", "UpdateData")
 	self:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED", "UpdateData")
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		self:RegisterEvent("PET_SPECIALIZATION_CHANGED", "PLAYER_ENTERING_WORLD")
 	end
 

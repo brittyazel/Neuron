@@ -262,7 +262,7 @@ Neuron.DefaultBarOptions.PetBar = {
 -----------------------------------
 ----------- Menu Bar --------------
 -----------------------------------
-if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 	Neuron.DefaultBarOptions.MenuBar = {
 		[1] = {
 			snapTo = false,
@@ -310,7 +310,7 @@ end
 -----------------------------------
 ------------ Bag Bar --------------
 -----------------------------------
-if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 	Neuron.DefaultBarOptions.BagBar = {
 		[1] = {
 			padH = 1,

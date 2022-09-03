@@ -302,7 +302,7 @@ function STATUSBTN:xpDropDown_Initialize() -- initialize the dropdown menu for c
 	})
 
 	--wow classic doesn't have Honor points nor Azerite, carefull
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 
 		if C_Covenants.GetActiveCovenantID() ~= 0 then
 			table.insert(menu, {
@@ -444,7 +444,7 @@ function STATUSBTN:repstrings_Update(repGainedString)
 		if (not isHeader or hasRep) and not IsFactionInactive(i) then
 
 			local friendID, standing, isParagon
-			if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC  then --classic doesn't have Friendships or Paragon, carefull
+			if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic  then --classic doesn't have Friendships or Paragon, carefull
 				friendID, _, _, _, _, _, standing, _, _ = GetFriendshipReputation(factionID)
 				isParagon = C_Reputation.IsFactionParagon(factionID)
 			end
@@ -529,7 +529,10 @@ function STATUSBTN:repDropDown_Initialize() --Initialize the dropdown menu for c
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
 		if k > 0 then --skip the "0" entry which is our autowatch
-			if not repDataTable[v.header]then
+			if not v.header then --classic doesn't have headers, so this will give us a default header
+				v.header = "Core"
+			end
+			if not repDataTable[v.header] then
 				repDataTable[v.header] = {}
 			end
 			table.insert(repDataTable[v.header], { ID=v.ID, name=v.name, standing=v.standing, percent=v.percent, hex=v.hex})
@@ -814,7 +817,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible
 
-		if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+		if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
 		elseif unit == "player" then
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo() --classic doesn't have UnitCastingInfo()
@@ -878,7 +881,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 		local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible
 
-		if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+		if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 			name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 		elseif unit == "player" then
 			name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = ChannelInfo()
@@ -973,7 +976,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 			local name, text, texture, startTime, endTime, isTradeSkill
 
-			if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+			if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 				name, text, texture, startTime, endTime, isTradeSkill = UnitCastingInfo(unit)
 			elseif unit == "player" then
 				name, text, texture, startTime, endTime, isTradeSkill = CastingInfo() --Classic doesn't have UnitCastingInfo()
@@ -1009,7 +1012,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 
 			local name, text, texture, startTime, endTime, isTradeSkill, notInterruptible
 
-			if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+			if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 				name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = UnitChannelInfo(unit)
 			elseif unit == "player" then
 				name, text, texture, startTime, endTime, isTradeSkill, notInterruptible = ChannelInfo()
@@ -1859,7 +1862,7 @@ function STATUSBTN:SetType()
 		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "CastBar_OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "CastBar_OnEvent")
 
-		if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+		if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 			self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "CastBar_OnEvent")
 			self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "CastBar_OnEvent")
 		end
@@ -1897,7 +1900,7 @@ function STATUSBTN:SetType()
 		self:RegisterEvent("PLAYER_ENTERING_WORLD", "XPBar_OnEvent")
 		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "XPBar_OnEvent")
 
-		if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+		if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 			self:RegisterEvent("HONOR_XP_UPDATE", "XPBar_OnEvent")
 			self:RegisterEvent("COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED", "XPBar_OnEvent")
 			self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "XPBar_OnEvent")
