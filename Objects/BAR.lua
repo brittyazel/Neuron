@@ -547,7 +547,7 @@ function BAR:AddVisibilityDriver(handler, state, conditions)
 
 	if MBS[state] then
 
-		RegisterStateDriver(handler, state, conditions);
+		RegisterAttributeDriver(handler, "state-"..state, conditions);
 
 		if handler:GetAttribute("activestates"):find(state) then
 			handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", handler:GetAttribute("state-"..state)..";"))
@@ -566,7 +566,7 @@ end
 
 function BAR:ClearVisibilityDriver(handler, state)
 
-	UnregisterStateDriver(handler, state)
+	UnregisterAttributeDriver(handler, "state-"..state)
 
 	handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", ""))
 	handler:SetAttribute("state-current", "homestate")
@@ -637,7 +637,7 @@ end
 function BAR:AddStates(handler, state, conditions)
 
 	if MAS[state] then
-		RegisterStateDriver(handler, state, conditions);
+		RegisterAttributeDriver(handler, "state-"..state, conditions);
 	end
 
 	if MAS[state].homestate then
@@ -658,7 +658,7 @@ function BAR:ClearStates(handler, state)
 
 		handler:SetAttribute("state-"..state, nil)
 
-		UnregisterStateDriver(handler, state)
+		UnregisterAttributeDriver(handler, "state-"..state)
 
 		self[state].registered = false
 	end
@@ -1031,7 +1031,7 @@ function BAR:CreateWatcher()
 
             ]])
 
-	RegisterStateDriver(watcher, "petbattle", "[petbattle] hide; [nopetbattle] show");
+	RegisterAttributeDriver(watcher, "state-".."petbattle", "[petbattle] hide; [nopetbattle] show");
 
 end
 

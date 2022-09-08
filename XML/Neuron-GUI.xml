@@ -3,9 +3,10 @@
 	Copyright (c) 2006-2014 Connor H. Chenoweth
 	This code is licensed under the MIT license (see LICENSE for details)-->
 
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/FrameXML/UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI_shared.xsd">
 	<Button name="NeuronPopupButtonTemplate" virtual="true" inherits="BackdropTemplate">
-		<CheckedTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
+<!--		<CheckedTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
 			<Anchors>
 				<Anchor point="TOPLEFT">
 					<Offset x="2" y="-2"/>
@@ -14,7 +15,7 @@
 					<Offset x="-2" y="2"/>
 				</Anchor>
 			</Anchors>
-		</CheckedTexture>
+		</CheckedTexture>-->
 		<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
 			<Anchors>
 				<Anchor point="TOPLEFT">
@@ -77,6 +78,7 @@
 				GameTooltip:Hide()
 			</OnLeave>
 		</Scripts>
+
 		<ButtonText name="$parentText" inherits="GameFontHighlight" justifyH="CENTER" parentKey="text">
 			<Anchors>
 				<Anchor point="TOPLEFT"/>
@@ -92,7 +94,7 @@
 	<Button name="NeuronEditFrameTemplate" frameStrata="TOOLTIP" hidden="true" virtual="true" inherits="BackdropTemplate">
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parentType" parentKey="type" inherits="ChatFontSmall" justifyH="CENTER" justifyV="CENTER" nonspacewrap="true">
+				<FontString name="$parentType" parentKey="type" inherits="ChatFontSmall" nonspacewrap="true">
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset x="0" y="-1"/>
@@ -107,7 +109,7 @@
 					</Shadow>
 					<Color r="1" g="1" b="1"/>
 				</FontString>
-				<FontString name="$parentMessage" inherits="GameFontNormalSmall" justifyH="CENTER" justifyV="CENTER" nonspacewrap="true">
+				<FontString name="$parentMessage" inherits="GameFontNormalSmall" nonspacewrap="true">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="$parent" relativePoint="BOTTOM">
 							<Offset x="0" y="-1"/>
@@ -165,7 +167,7 @@
 
 
 
-	<EditBox name="NeuronEditBoxTemplateSmall" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" inherits="BackdropTemplate">
+	<EditBox name="NeuronEditBoxTemplateSmall" autoFocus="false" virtual="true" inherits="BackdropTemplate">
 		<Size x="37" y="21"/>
 		<Scripts>
 			<OnEscapePressed>
@@ -326,7 +328,7 @@
 
 
 
-	<EditBox name="NeuronDropDownOption" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" inherits="BackdropTemplate">
+	<EditBox name="NeuronDropDownOption" autoFocus="false" virtual="true" inherits="BackdropTemplate">
 		<Frames>
 			<Button name="$parentButton" parentKey="button" hidden="false">
 				<Anchors>
@@ -358,13 +360,13 @@
 					</OnLeave>
 				</Scripts>
 			</Button>
-			<Frame name="$parentPopUp" parentkey="popup" toplevel="true" enableMouse="true" clampedToScreen="true" inherits="BackdropTemplate">
+			<Frame name="$parentPopUp" parentKey="popup" toplevel="true" enableMouse="true" clampedToScreen="true" inherits="BackdropTemplate">
 				<Anchors>
 					<Anchor point="CENTER">
 						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\AddOns\Neuron\Images\UI-Tooltip-Border" tile="true">
+<!--				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\AddOns\Neuron\Images\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="18"/>
 					</EdgeSize>
@@ -374,7 +376,7 @@
 					<BackgroundInsets>
 						<AbsInset left="3" right="3" top="2" bottom="2"/>
 					</BackgroundInsets>
-				</Backdrop>
+				</Backdrop>-->
 				<Scripts>
 					<OnLoad>
 						self.timer = 0
@@ -430,8 +432,8 @@
 
 
 
-	<EditBox name="NeuronDropDownOptionFull" historyLines="0" numeric="false" autoFocus="false" nonspacewrap="true" virtual="true" inherits="BackdropTemplate">
-		<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+	<EditBox name="NeuronDropDownOptionFull" autoFocus="false"  virtual="true" inherits="BackdropTemplate">
+<!--		<Backdrop name="$parentBackdrop" bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 			<EdgeSize>
 				<AbsValue val="14"/>
 			</EdgeSize>
@@ -441,10 +443,10 @@
 			<BackgroundInsets>
 				<AbsInset left="3" right="3" top="2" bottom="2"/>
 			</BackgroundInsets>
-		</Backdrop>
+		</Backdrop>-->
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parentText" parentKey="text" justifyH="CENTER" inherits="GameFontNormalSmall" nonspacewrap="true">
+				<FontString name="$parentText" parentKey="text" inherits="GameFontNormalSmall" nonspacewrap="true">
 					<Anchors>
 						<Anchor point="BOTTOM" relativePoint="TOP">
 							<Offset x="0" y="1"/>
@@ -495,7 +497,7 @@
 						<Offset x="0" y="0"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\AddOns\Neuron\Images\UI-Tooltip-Border" tile="true">
+<!--				<Backdrop name="$parentBackdrop" bgFile="Interface\ItemTextFrame\ItemText-Stone-TopLeft" edgeFile="Interface\AddOns\Neuron\Images\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="18"/>
 					</EdgeSize>
@@ -505,7 +507,7 @@
 					<BackgroundInsets>
 						<AbsInset left="3" right="3" top="2" bottom="2"/>
 					</BackgroundInsets>
-				</Backdrop>
+				</Backdrop>-->
 				<Scripts>
 					<OnLoad>
 						self.timer = 0
@@ -565,7 +567,7 @@
 		</HitRectInsets>
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parentText" parentkey="text" inherits="GameFontNormal">
+				<FontString name="$parentText" parentKey="text" inherits="GameFontNormal">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="RIGHT">
 							<Offset x="3" y="0"/>
@@ -628,15 +630,15 @@
 		<HighlightTexture file="Interface\AddOns\Neuron\Images\UI-Panel-Button-Highlight" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</HighlightTexture>
-		<CheckedTexture file="Interface\AddOns\Neuron\Images\UI-Panel-Button-Highlight" alphaMode="ADD">
+<!--		<CheckedTexture file="Interface\AddOns\Neuron\Images\UI-Panel-Button-Highlight" alphaMode="ADD">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
-		</CheckedTexture>
+		</CheckedTexture>-->
 		<DisabledTexture file="Interface\AddOns\Neuron\Images\UI-Panel-Button-Disabled">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</DisabledTexture>
-		<NormalFont inherits="GameFontNormalSmall"/>
-		<HighlightFont inherits="GameFontHighlightSmall"/>
-		<DisabledFont inherits="GameFontDisableSmall"/>
+		<NormalFont style="GameFontNormalSmall"/>
+		<HighlightFont style="GameFontHighlightSmall"/>
+		<DisabledFont style="GameFontDisableSmall"/>
 	</Button>
 
 	<Button name="NeuronTopTabTemplate" motionScriptsWhileDisabled="true" virtual="true" inherits="BackdropTemplate">
@@ -786,7 +788,7 @@
 				self.bottom:SetTexture(0.5, 0.5, 0.5, 1)
 			</OnLeave>
 		</Scripts>
-		<NormalTexture name="$parentNormalTexture" drawLayer="ARTWORK" file="Interface\ChatFrame\ChatFrameColorSwatch">
+		<NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\ChatFrameColorSwatch">
 			<Anchors>
 				<Anchor point="TOPLEFT">
 					<Offset x="-1" y="1"/>
@@ -841,14 +843,14 @@
 		<DisabledTexture file="Interface\AddOns\Neuron\Images\UI-Panel-Button-Disabled">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</DisabledTexture>
-		<NormalFont inherits="GameFontNormalSmall"/>
-		<HighlightFont inherits="GameFontHighlightSmall"/>
-		<DisabledFont inherits="GameFontDisableSmall"/>
+		<NormalFont style="GameFontNormalSmall"/>
+		<HighlightFont style="GameFontHighlightSmall"/>
+		<DisabledFont style="GameFontDisableSmall"/>
 	</CheckButton>
 
 	<CheckButton name="NeuronCheckButtonTabTemplate" virtual="true" inherits="BackdropTemplate">
 		<Size x="60" y="20"/>
-		<Backdrop bgFile="Interface\AddOns\Neuron\Images\UI-Panel-Tab-Background" edgeFile="Interface\AddOns\Neuron\Images\UI-Tooltip-Border-Tab">
+<!--		<Backdrop bgFile="Interface\AddOns\Neuron\Images\UI-Panel-Tab-Background" edgeFile="Interface\AddOns\Neuron\Images\UI-Tooltip-Border-Tab">
 			<EdgeSize>
 				<AbsValue val="18"/>
 			</EdgeSize>
@@ -858,7 +860,7 @@
 			<BackgroundInsets>
 				<AbsInset left="2" right="2" top="0" bottom="2"/>
 			</BackgroundInsets>
-		</Backdrop>
+		</Backdrop>-->
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString name="$parentText" parentKey="text" inherits="GameFontNormal" justifyH="CENTER" text="">
@@ -868,9 +870,9 @@
 				</FontString>
 			</Layer>
 		</Layers>
-		<NormalFont inherits="GameFontNormalSmall"/>
-		<HighlightFont inherits="GameFontHighlightSmall"/>
-		<DisabledFont inherits="GameFontDisableSmall"/>
+		<NormalFont style="GameFontNormalSmall"/>
+		<HighlightFont style="GameFontHighlightSmall"/>
+		<DisabledFont style="GameFontDisableSmall"/>
 		<Scripts>
 			<OnLoad>
 				self:SetBackdropBorderColor(0.35, 0.35, 0.35, 1)
@@ -913,9 +915,9 @@
 		<DisabledTexture file="Interface\AddOns\Neuron\Images\UI-Panel-Button-Disabled">
 			<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 		</DisabledTexture>
-		<NormalFont inherits="GameFontNormalSmall"/>
-		<HighlightFont inherits="GameFontHighlightSmall"/>
-		<DisabledFont inherits="GameFontDisableSmall"/>
+		<NormalFont style="GameFontNormalSmall"/>
+		<HighlightFont style="GameFontHighlightSmall"/>
+		<DisabledFont style="GameFontDisableSmall"/>
 	</CheckButton>
 
 	<CheckButton name="NeuronScrollFrameButtonTemplate" virtual="true" inherits="BackdropTemplate">
@@ -942,7 +944,7 @@
 						<Offset x="-3" y="0"/>
 					</Anchor>
 				</Anchors>
-				<NormalTexture name="$parentNormalTexture" urgency="5" file="Interface\Buttons\UI-PlusButton-Up"/>
+				<NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-PlusButton-Up"/>
 				<PushedTexture name="$parentPushedTexture" file="Interface\Buttons\UI-MinusButton-Up"/>
 				<HighlightTexture name="$parentHighlightTexture" file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD"/>
 			</Button>
@@ -1029,7 +1031,7 @@
 				end
 			</OnUpdate>
 		</Scripts>
-		<NormalTexture name="$parentIcon" drawLayer="ARTWORK" parentKey="icon">
+		<NormalTexture name="$parentIcon" parentKey="icon">
 			<Anchors>
 				<Anchor point="TOPLEFT">
 					<Offset x="2" y="-2"/>
@@ -1252,11 +1254,11 @@
 									</Anchor>
 								</Anchors>
 							</Frame>
-							<Scripts>
+<!--							<Scripts>
 								<OnShow>
-									--self:SetValue(0)
+									&#45;&#45;self:SetValue(0)
 								</OnShow>
-							</Scripts>
+							</Scripts>-->
 						</ScrollChild>
 						<Scripts>
 							<OnLoad>
@@ -1465,11 +1467,11 @@
 															</Anchor>
 														</Anchors>
 													</Frame>
-													<Scripts>
+<!--													<Scripts>
 														<OnShow>
-															--self:SetValue(0)
+															&#45;&#45;self:SetValue(0)
 														</OnShow>
-													</Scripts>
+													</Scripts>-->
 												</ScrollChild>
 												<Scripts>
 													<OnLoad>
@@ -1574,11 +1576,11 @@
 											</Anchor>
 										</Anchors>
 									</Frame>
-									<Scripts>
+<!--									<Scripts>
 										<OnShow>
-											--self:SetValue(0)
+											&#45;&#45;self:SetValue(0)
 										</OnShow>
-									</Scripts>
+									</Scripts>-->
 								</ScrollChild>
 								<Scripts>
 									<OnLoad>
@@ -1642,7 +1644,7 @@
 								<Offset x="150" y="0"/>
 							</Anchor>
 						</Anchors>
-						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+<!--						<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 							<EdgeSize>
 								<AbsValue val="16"/>
 							</EdgeSize>
@@ -1652,7 +1654,7 @@
 							<BackgroundInsets>
 								<AbsInset left="5" right="5" top="5" bottom="5"/>
 							</BackgroundInsets>
-						</Backdrop>
+						</Backdrop>-->
 						<Frames>
 							<ScrollFrame name="$parentScrollFrame" inherits="NeuronScrollFrameTemplate1">
 								<Anchors>
@@ -1674,11 +1676,11 @@
 											</Anchor>
 										</Anchors>
 									</Frame>
-									<Scripts>
+<!--									<Scripts>
 										<OnShow>
-											--self:SetValue(0)
+											&#45;&#45;self:SetValue(0)
 										</OnShow>
-									</Scripts>
+									</Scripts>-->
 								</ScrollChild>
 								<Scripts>
 									<OnLoad>
@@ -1818,9 +1820,9 @@
 						self:GetParent():Hide()
 					</OnClick>
 				</Scripts>
-				<NormalTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
+				<NormalTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
 				<PushedTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Down"/>
-				<HighlightTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+				<HighlightTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
 		</Frames>
 		<Scripts>
@@ -1859,9 +1861,9 @@
 						self:GetParent():Hide()
 					</OnClick>
 				</Scripts>
-				<NormalTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
+				<NormalTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
 				<PushedTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Down"/>
-				<HighlightTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+				<HighlightTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 			</Button>
 		</Frames>
 		<Scripts>
@@ -1902,7 +1904,7 @@
 						<Offset x="135" y="10"/>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+<!--				<Backdrop bgFile="Interface\FriendsFrame\UI-Toast-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -1912,7 +1914,7 @@
 					<BackgroundInsets>
 						<AbsInset left="5" right="5" top="5" bottom="5"/>
 					</BackgroundInsets>
-				</Backdrop>
+				</Backdrop>-->
 				<Frames>
 					<ScrollFrame name="$parentScrollFrame" inherits="NeuronScrollFrameTemplate1">
 						<Anchors>
@@ -1934,11 +1936,11 @@
 									</Anchor>
 								</Anchors>
 							</Frame>
-							<Scripts>
+<!--							<Scripts>
 								<OnShow>
-									--self:SetValue(0)
+									&#45;&#45;self:SetValue(0)
 								</OnShow>
-							</Scripts>
+							</Scripts>-->
 						</ScrollChild>
 						<Scripts>
 							<OnLoad>
@@ -2000,9 +2002,9 @@
 								Neuron.NeuronGUI:ButtonEditorIconList_ResetCustom(self:GetParent():GetParent())
 							</OnHide>
 						</Scripts>
-						<NormalTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
+						<NormalTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Up"/>
 						<PushedTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Down"/>
-						<HighlightTexture urgency="5" file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+						<HighlightTexture file="Interface\AddOns\Neuron\Images\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 					</Button>
 				</Frames>
 				<ScrollChild>
@@ -2016,11 +2018,11 @@
 							</Anchor>
 						</Anchors>
 					</Frame>
-					<Scripts>
+<!--					<Scripts>
 						<OnShow>
-							--self:SetValue(0)
+							&#45;&#45;self:SetValue(0)
 						</OnShow>
-					</Scripts>
+					</Scripts>-->
 				</ScrollChild>
 				<Scripts>
 					<OnLoad>
@@ -2057,30 +2059,6 @@
 
 	<ColorSelect name="NeuronColorPicker" parent="UIParent" frameStrata="TOOLTIP" enableMouse="true" enableKeyboard="true" hidden="true" inherits="BackdropTemplate">
 		<Size x="400" y="240"/>
-		<ColorWheelTexture name="$parentColorPickerWheel">
-			<Size x="150" y="150"/>
-			<Anchors>
-				<Anchor point="TOPLEFT">
-					<Offset x="50" y="-10"/>
-				</Anchor>
-			</Anchors>
-		</ColorWheelTexture>
-		<ColorWheelThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
-			<Size x="10" y="10"/>
-			<TexCoords left="0" right="0.15625" top="0" bottom="0.625"/>
-		</ColorWheelThumbTexture>
-		<ColorValueTexture name="$parentColorPickerSwatch">
-			<Size x="20" y="150"/>
-			<Anchors>
-				<Anchor point="LEFT" relativeTo="$parentColorPickerWheel" relativePoint="RIGHT">
-					<Offset x="20" y="0"/>
-				</Anchor>
-			</Anchors>
-		</ColorValueTexture>
-		<ColorValueThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
-			<Size x="32" y="12"/>
-			<TexCoords left="0.25" right="1.0" top="0" bottom="0.875"/>
-		</ColorValueThumbTexture>
 		<Frames>
 			<Slider name="$parentOpacitySlider" parentKey="alpha" orientation="VERTICAL" minValue="0" maxValue="1" valueStep="0.01" defaultValue="1" inherits="BackdropTemplate">
 				<Size x="24" y="155"/>
@@ -2095,11 +2073,11 @@
 					</OnLoad>
 					<OnValueChanged>
 						if (NeuronColorPicker.opacityFunc) then
-							NeuronColorPicker.opacityFunc()
+						NeuronColorPicker.opacityFunc()
 						end
 
 						if (self:GetParent().alphavalue) then
-							self:GetParent().alphavalue:SetText(1-self:GetValue())
+						self:GetParent().alphavalue:SetText(1-self:GetValue())
 						end
 					</OnValueChanged>
 				</Scripts>
@@ -2281,7 +2259,7 @@
 						local value = self:GetText()
 						value = tonumber(value)
 						if (value) then
-							self:GetParent().alpha:SetValue(1-value)
+						self:GetParent().alpha:SetValue(1-value)
 						end
 					</OnTabPressed>
 					<OnEnterPressed>
@@ -2349,6 +2327,30 @@
 				Neuron.NeuronGUI:ColorPicker_OnColorSelect(self, r, g, b)
 			</OnColorSelect>
 		</Scripts>
+		<ColorWheelTexture name="$parentColorPickerWheel">
+			<Size x="150" y="150"/>
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="50" y="-10"/>
+				</Anchor>
+			</Anchors>
+		</ColorWheelTexture>
+		<ColorWheelThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
+			<Size x="10" y="10"/>
+			<TexCoords left="0" right="0.15625" top="0" bottom="0.625"/>
+		</ColorWheelThumbTexture>
+		<ColorValueTexture name="$parentColorPickerSwatch">
+			<Size x="20" y="150"/>
+			<Anchors>
+				<Anchor point="LEFT" relativeTo="$parentColorPickerWheel" relativePoint="RIGHT">
+					<Offset x="20" y="0"/>
+				</Anchor>
+			</Anchors>
+		</ColorValueTexture>
+		<ColorValueThumbTexture file="Interface\Buttons\UI-ColorPicker-Buttons">
+			<Size x="32" y="12"/>
+			<TexCoords left="0.25" right="1.0" top="0" bottom="0.875"/>
+		</ColorValueThumbTexture>
 	</ColorSelect>
 
 

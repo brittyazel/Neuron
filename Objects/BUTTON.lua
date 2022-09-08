@@ -338,7 +338,7 @@ function BUTTON:SetData(bar)
 				self.cdcolor1 = { (";"):split(bar.data.cdcolor1) }
 			end
 		else
-			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3], self.cdcolor1[4] = (";"):split(bar.data.cdcolor1)
+			self.cdcolor1[1], self.cdcolor1[2], self.cdcolor1[3] = (";"):split(bar.data.cdcolor1)
 		end
 
 		if not self.cdcolor2 then
@@ -349,7 +349,7 @@ function BUTTON:SetData(bar)
 				self.cdcolor2 = { (";"):split(bar.data.cdcolor2) }
 			end
 		else
-			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3], self.cdcolor2[4] = (";"):split(bar.data.cdcolor2)
+			self.cdcolor2[1], self.cdcolor2[2], self.cdcolor2[3] = (";"):split(bar.data.cdcolor2)
 		end
 
 		if not self.buffcolor then
@@ -360,7 +360,7 @@ function BUTTON:SetData(bar)
 				self.buffcolor = { (";"):split(bar.data.buffcolor) }
 			end
 		else
-			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3], self.buffcolor[4] = (";"):split(bar.data.buffcolor)
+			self.buffcolor[1], self.buffcolor[2], self.buffcolor[3] = (";"):split(bar.data.buffcolor)
 		end
 
 		if not self.debuffcolor then
@@ -371,7 +371,7 @@ function BUTTON:SetData(bar)
 				self.debuffcolor = { (";"):split(bar.data.debuffcolor) }
 			end
 		else
-			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3], self.debuffcolor[4] = (";"):split(bar.data.debuffcolor)
+			self.debuffcolor[1], self.debuffcolor[2], self.debuffcolor[3] = (";"):split(bar.data.debuffcolor)
 		end
 
 		if not self.rangecolor then
@@ -382,7 +382,7 @@ function BUTTON:SetData(bar)
 				self.rangecolor = { (";"):split(bar.data.rangecolor) }
 			end
 		else
-			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3], self.rangecolor[4] = (";"):split(bar.data.rangecolor)
+			self.rangecolor[1], self.rangecolor[2], self.rangecolor[3] = (";"):split(bar.data.rangecolor)
 		end
 
 		self:SetFrameStrata(bar.data.objectStrata)
@@ -417,24 +417,28 @@ function BUTTON:SetData(bar)
 		self.Count:Hide()
 	end
 
-	local down, up = "", ""
 
-	if self.upClicks then up = up.."AnyUp" end
-	if self.downClicks then down = down.."AnyDown" end
+	if self.upClicks and not self.downClicks then
+		self:RegisterForClicks("AnyUp")
+	elseif self.downClicks and not self.upClicks then
+		self:RegisterForClicks("AnyDown")
+	elseif self.downClicks and self.upClicks then
+		self:RegisterForClicks("AnyDown", "AnyUp")
+	end
 
-	self:RegisterForClicks(down, up)
+
 	self:RegisterForDrag("LeftButton", "RightButton")
 
 	if not self.equipcolor then
 		self.equipcolor = { 0.1, 1, 0.1, 1 }
 	else
-		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3], self.equipcolor[4] = 0.1, 1, 0.1, 1
+		self.equipcolor[1], self.equipcolor[2], self.equipcolor[3] = 0.1, 1, 0.1, 1
 	end
 
 	if not self.manacolor then
 		self.manacolor = { 0.5, 0.5, 1.0, 1 }
 	else
-		self.manacolor[1], self.manacolor[2], self.manacolor[3], self.manacolor[4] = 0.5, 0.5, 1.0, 1
+		self.manacolor[1], self.manacolor[2], self.manacolor[3] = 0.5, 0.5, 1.0, 1
 	end
 
 	self:GetSkinned()

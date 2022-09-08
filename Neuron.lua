@@ -212,7 +212,7 @@ function Neuron:OnEnable()
 		v:Load()
 	end
 
-	Neuron:Overrides()
+	--Neuron:Overrides()
 	Neuron:LoginMessage()
 end
 
@@ -253,7 +253,7 @@ function Neuron:PLAYER_ENTERING_WORLD()
 	end
 
 	if DB.blizzbar == false then
-		Neuron:HideBlizzardUI()
+		--Neuron:HideBlizzardUI()
 	end
 
 	Neuron.enteredWorld = true

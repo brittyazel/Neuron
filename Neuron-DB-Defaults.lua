@@ -21,26 +21,26 @@ local genericButtonData = {
 	cooldownAlpha = 1,
 
 	bindText = true,
-	bindColor = "1;1;1;1",
+	bindColor = "1;1;1",
 
 	countText = true,
 	spellCounts = false,
 	comboCounts = false,
-	countColor = "1;1;1;1",
+	countColor = "1;1;1",
 
 	macroText = false,
-	macroColor = "1;1;1;1",
+	macroColor = "1;1;1",
 
 	cdText = false,
-	cdcolor1 = "1;0.82;0;1",
-	cdcolor2 = "1;0.1;0.1;1",
+	cdcolor1 = "1;0.82;0",
+	cdcolor2 = "1;0.1;0.1",
 
 	rangeInd = true,
-	rangecolor = "0.7;0.15;0.15;1",
+	rangecolor = "0.7;0.15;0.15",
 
 	skincolor = "1;1;1;1",
-	hovercolor = "0.1;0.1;1;1",
-	equipcolor = "0.1;1;0.1;1",
+	hovercolor = "0.1;0.1;1",
+	equipcolor = "0.1;1;0.1",
 
 	scale = 1,
 	alpha = 1,
@@ -74,26 +74,26 @@ local genericStatusBtnData= {
 	orientation = 1,
 
 	cIndex = 1,
-	cColor = "1;1;1;1",
+	cColor = "1;1;1",
 
 	lIndex = 1,
-	lColor = "1;1;1;1",
+	lColor = "1;1;1",
 
 	rIndex = 1,
-	rColor = "1;1;1;1",
+	rColor = "1;1;1",
 
 	mIndex = 1,
-	mColor = "1;1;1;1",
+	mColor = "1;1;1",
 
 	tIndex = 1,
-	tColor = "1;1;1;1",
+	tColor = "1;1;1",
 
-	bordercolor = "1;1;1;1",
+	bordercolor = "1;1;1",
 
-	castColor = "1;0.7;0;1",
-	channelColor = "0;1;0;1",
-	successColor = "0;1;0;1",
-	failColor = "1;0;0;1",
+	castColor = "1;0.7;0",
+	channelColor = "0;1;0",
+	successColor = "0;1;0",
+	failColor = "1;0;0",
 
 	showIcon = false,
 
@@ -149,14 +149,14 @@ local genericBarData = {
 	autoHide = false,
 	showGrid = true,
 
-	bindColor = "1;1;1;1",
-	macroColor = "1;1;1;1",
-	countColor = "1;1;1;1",
-	cdcolor1 = "1;0.82;0;1",
-	cdcolor2 = "1;0.1;0.1;1",
-	buffcolor = "0;0.8;0;1",
-	debuffcolor = "0.8;0;0;1",
-	rangecolor = "0.7;0.15;0.15;1",
+	bindColor = "1;1;1",
+	macroColor = "1;1;1",
+	countColor = "1;1;1",
+	cdcolor1 = "1;0.82;0",
+	cdcolor2 = "1;0.1;0.1",
+	buffcolor = "0;0.8;0",
+	debuffcolor = "0.8;0;0",
+	rangecolor = "0.7;0.15;0.15",
 	border = true,
 
 	upClicks = true,

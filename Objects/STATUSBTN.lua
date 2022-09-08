@@ -86,6 +86,10 @@ local BarOrientations = {
 }
 Neuron.BarOrientations = BarOrientations
 
+local CASTING_BAR_ALPHA_STEP = 0.05
+local CASTING_BAR_FLASH_STEP = 0.2
+
+
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param bar BAR @Bar Object this button will be a child of
@@ -382,8 +386,15 @@ function STATUSBTN:SetRepWatch(ID, name, standing, header, minrep, maxrep, value
 	reptable.standing = standing
 	reptable.header = header
 	reptable.current = (value-minrep).." / "..(maxrep-minrep)
-	reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
-	reptable.bubbles = tostring(math.floor(((((value-minrep)/(maxrep-minrep))*100)/5))).." / 20 "..L["Bubbles"]
+
+	if maxrep-minrep > 0 then --avoid divide by zero
+		reptable.percent = floor(((value-minrep)/(maxrep-minrep))*100).."%"
+		reptable.bubbles = tostring(math.floor(((((value-minrep)/(maxrep-minrep))*100)/5))).." / 20 "..L["Bubbles"]
+	else
+		reptable.percent = "100%"
+		reptable.bubbles = "20 / 20 "..L["Bubbles"]
+	end
+
 	reptable.min = minrep
 	reptable.max = maxrep
 	reptable.value = value
@@ -445,7 +456,7 @@ function STATUSBTN:repstrings_Update(repGainedString)
 
 			local friendID, standing, isParagon
 			if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic  then --classic doesn't have Friendships or Paragon, carefull
-				friendID, _, _, _, _, _, standing, _, _ = GetFriendshipReputation(factionID)
+				friendID, _, _, _, _, _, standing, _, _ = C_GossipInfo.GetFriendshipReputation(factionID)
 				isParagon = C_Reputation.IsFactionParagon(factionID)
 			end
 
@@ -1720,11 +1731,10 @@ function STATUSBTN:SetData(bar)
 	self.mColor = { (";"):split(self.config.mColor) }
 	self.tColor = { (";"):split(self.config.tColor) }
 
-
-	self.StatusBar.CenterText:SetTextColor(self.cColor[1], self.cColor[2], self.cColor[3], self.cColor[4])
-	self.StatusBar.LeftText:SetTextColor(self.lColor[1], self.lColor[2], self.lColor[3], self.lColor[4])
-	self.StatusBar.RightText:SetTextColor(self.rColor[1], self.rColor[2], self.rColor[3], self.rColor[4])
-	self.StatusBar.MouseoverText:SetTextColor(self.mColor[1], self.mColor[2], self.mColor[3], self.mColor[4])
+	self.StatusBar.CenterText:SetTextColor(self.cColor[1], self.cColor[2], self.cColor[3])
+	self.StatusBar.LeftText:SetTextColor(self.lColor[1], self.lColor[2], self.lColor[3])
+	self.StatusBar.RightText:SetTextColor(self.rColor[1], self.rColor[2], self.rColor[3])
+	self.StatusBar.MouseoverText:SetTextColor(self.mColor[1], self.mColor[2], self.mColor[3])
 
 	if sbStrings[self.config.sbType] then
 
@@ -1819,7 +1829,7 @@ end
 
 function STATUSBTN:StatusBar_Reset()
 
-	self:RegisterForClicks("")
+	self:RegisterForClicks()
 	self:SetScript("OnClick", function() end)
 	self:SetScript("OnEnter", function() end)
 	self:SetScript("OnLeave", function() end)
