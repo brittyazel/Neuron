@@ -1,4 +1,4 @@
-## Interface: 90207
+## Interface: 30400
 ## LoadOnDemand: 1
 ## Title: Lib: DualSpec-1.0
 ## Version: v1.21.0

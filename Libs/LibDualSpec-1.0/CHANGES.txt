@@ -1,12 +1,36 @@
-tag ec617cad1ce89b7d45a8e73e8e6b0093cf470c42 1.18
+tag c35fcb3be5e7f34d259a655908bd91210dbf2c51 v1.21.0
 Author:	Kyle Buller <bullerk@gmail.com>
-Date:	Wed Nov 18 11:32:29 2020 -0600
+Date:	Thu Sep 8 06:10:10 2022 -0500
 
-Tagging as 1.18
+Tagging as v1.21.0
 
-commit 9d8926bf740f90167b986624bd067feebbeb87f8
+commit 9aaf1708ed4aa6217972081d4676e41ff64b64ae
 Author: Kyle Buller <bullerk@gmail.com>
-Date:   Wed Nov 18 11:30:37 2020 -0600
+Date:   Thu Sep 8 06:07:15 2022 -0500
 
-    Update TOC for 9.0.2
+    Bump minor
+
+commit 94ee41526cd9ca11646dd04f6a68f600b6338682
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Sep 8 06:05:59 2022 -0500
+
+    Update on PEW to catch forced role changes
+
+commit 9b67aa8fb64ad4af5e149b6197f9771ea7a2dc18
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Sep 8 04:50:58 2022 -0500
+
+    Add missing locale strings
+
+commit 3339b7732f1f11f9d99150b01131c68355e064fe
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Sep 8 04:30:31 2022 -0500
+
+    Add support for Wrath Classic
+
+commit 32ddbc1ac9a07bffa0a06366fc9c382b193b4e9d
+Author: Kyle Buller <bullerk@gmail.com>
+Date:   Thu Sep 8 03:11:13 2022 -0500
+
+    Update TOC for 9.2.7
 
