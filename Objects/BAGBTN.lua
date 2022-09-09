@@ -10,7 +10,7 @@ Neuron.BAGBTN = BAGBTN
 if Neuron.isWoWClassicEra or Neuron.isWoWClassic then
 	Neuron.NUM_BAG_BUTTONS = 6
 else
-	Neuron.NUM_BAG_BUTTONS = 5
+	Neuron.NUM_BAG_BUTTONS = 6
 end
 
 local blizzBagButtons
@@ -25,6 +25,7 @@ if Neuron.isWoWClassicEra or Neuron.isWoWClassic then
 		MainMenuBarBackpackButton}
 else
 	blizzBagButtons = {
+		CharacterReagentBag0Slot,
 		CharacterBag3Slot,
 		CharacterBag2Slot,
 		CharacterBag1Slot,

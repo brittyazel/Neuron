@@ -418,15 +418,15 @@ function BUTTON:SetData(bar)
 	end
 
 
-	if self.upClicks and not self.downClicks then
+	--[[if self.upClicks and not self.downClicks then
 		self:RegisterForClicks("AnyUp")
 	elseif self.downClicks and not self.upClicks then
 		self:RegisterForClicks("AnyDown")
 	elseif self.downClicks and self.upClicks then
 		self:RegisterForClicks("AnyDown", "AnyUp")
-	end
+	end]]
 
-
+	self:RegisterForClicks("AnyUp")
 	self:RegisterForDrag("LeftButton", "RightButton")
 
 	if not self.equipcolor then

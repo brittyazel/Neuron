@@ -212,6 +212,7 @@ function Neuron:OnEnable()
 		v:Load()
 	end
 
+	SetCVar("ActionButtonUseKeyDown", 0)
 	--Neuron:Overrides()
 	Neuron:LoginMessage()
 end
@@ -221,7 +222,7 @@ end
 --- You would probably only use an OnDisable if you want to
 --- build a "standby" mode, or be able to toggle modules on/off.
 function Neuron:OnDisable()
-
+	SetCVar("ActionButtonUseKeyDown", 1)
 end
 
 -------------------------------------------------
