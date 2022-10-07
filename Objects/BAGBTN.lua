@@ -7,11 +7,8 @@
 local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.BAGBTN = BAGBTN
 
-if Neuron.isWoWClassicEra or Neuron.isWoWClassic then
-	Neuron.NUM_BAG_BUTTONS = 6
-else
-	Neuron.NUM_BAG_BUTTONS = 6
-end
+Neuron.NUM_BAG_BUTTONS = 6
+
 
 local blizzBagButtons
 
@@ -79,7 +76,7 @@ function BAGBTN:SetData(bar)
 end
 
 ---simplified SetSkinned for the Bag Buttons. They're unique in that they contain buttons inside of the buttons
-function BAGBTN:SetSkinned()
+--[[function BAGBTN:SetSkinned()
 	local SKIN = LibStub("Masque", true)
 
 	if SKIN then
@@ -102,7 +99,7 @@ function BAGBTN:SetSkinned()
 			self.skinned = true
 		end
 	end
-end
+end]]
 
 function BAGBTN:UpdateUsable()
 	--empty--
