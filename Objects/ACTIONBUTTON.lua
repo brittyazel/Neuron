@@ -221,9 +221,7 @@ function ACTIONBUTTON:SetType()
 
 					elseif msg:find("possess") then
 
-						print "I'm a possess button"
 						if not self:GetAttribute(msg.."-actionID") then
-							print "I have an action Id"
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
