@@ -24,13 +24,6 @@ local function disableButtonFrame(frame)
 	end
 end
 
-local function disableFrameSlidingAnimation(frame)
-	if frame then
-		local animation = {frame.slideOut:GetAnimations()}
-		animation[1]:SetOffset(0,0)
-	end
-end
-
 function Neuron:HideBlizzardUI()
 	----------------------------
 	----- Disable Buttons ------
@@ -57,7 +50,6 @@ function Neuron:HideBlizzardUI()
 	disableBarFrame(MainMenuBar)
 	disableBarFrame(MainMenuBarArtFrame)
 	disableBarFrame(MainMenuBarArtFrameBackground)
-	disableFrameSlidingAnimation(MainMenuBar)
 
 	--disable bottom bonus bars
 	disableBarFrame(MultiBarBottomLeft)
@@ -66,12 +58,18 @@ function Neuron:HideBlizzardUI()
 	--disable side bonus bars
 	disableBarFrame(MultiBarLeft)
 	disableBarFrame(MultiBarRight)
+	disableBarFrame(MultiBar5)
+	disableBarFrame(MultiBar6)
+	disableBarFrame(MultiBar7)
 
 	--disable all other action bars
 	disableBarFrame(MicroButtonAndBagsBar)
+	disableBarFrame(StanceBar)
 	disableBarFrame(StanceBarFrame)
+	disableBarFrame(PossessBar)
 	disableBarFrame(PossessBarFrame)
 	disableBarFrame(MultiCastActionBarFrame)
+	disableBarFrame(PetActionBar)
 	disableBarFrame(PetActionBarFrame)
 	disableBarFrame(ZoneAbilityFrame)
 	disableBarFrame(ExtraAbilityContainer)
@@ -85,7 +83,6 @@ function Neuron:HideBlizzardUI()
 
 	--disable override action bars
 	disableBarFrame(OverrideActionBar)
-	disableFrameSlidingAnimation(OverrideActionBar)
 
 	----------------------------
 	------- Disable Misc -------
@@ -128,7 +125,7 @@ function Neuron:ToggleBlizzUI()
 	if DB.blizzbar == true then
 		DB.blizzbar = false
 		Neuron:HideBlizzardUI()
-		StaticPopup_Show("ReloadUI")
+		StaticPopup_Hide("ReloadUI")
 	else
 		DB.blizzbar = true
 		StaticPopup_Show("ReloadUI")
