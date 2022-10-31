@@ -824,7 +824,9 @@ function NeuronGUI:updateBarName(frame)
 
 		bar.data.name = frame:GetText()
 
-		bar.text:SetText(bar.data.name)
+		if (bar.text) then
+			bar.text:SetText(bar.data.name)
+		end
 
 		frame:ClearFocus()
 

@@ -182,8 +182,8 @@ function ACTIONBUTTON:SetType()
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
-	self:SetAttribute("overrideID_Offset", 156)
-	self:SetAttribute("vehicleID_Offset", 132)
+	self:SetAttribute("overrideID_Offset", 190)
+	self:SetAttribute("vehicleID_Offset", 180)
 
 	--This is so that hotkeypri works properly with priority/locked buttons
 	self:WrapScript(self, "OnShow", [[
@@ -221,7 +221,9 @@ function ACTIONBUTTON:SetType()
 
 					elseif msg:find("possess") then
 
+						print "I'm a possess button"
 						if not self:GetAttribute(msg.."-actionID") then
+							print "I have an action Id"
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
 						end
