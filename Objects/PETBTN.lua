@@ -90,16 +90,12 @@ function PETBTN:InitializeButtonSettings()
 		self.Name:Hide()
 	end
 
-	local down, up = "", ""
-
 	if self.bar:GetClickMode() == "UpClick" then
-		up = up.."AnyUp"
-	end
-	if self.bar:GetClickMode() == "DownClick" then
-		down = down.."AnyDown"
+		self:RegisterForClicks("AnyUp")
+	elseif self.bar:GetClickMode() == "DownClick" then
+		self:RegisterForClicks("AnyDown")
 	end
 
-	self:RegisterForClicks(down, up)
 	self:RegisterForDrag("LeftButton", "RightButton")
 	self:SetSkinned()
 end
