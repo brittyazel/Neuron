@@ -978,7 +978,7 @@ function STATUSBTN:CastBar_OnEvent(event, ...)
 			self.casting = false
 			self.channeling = false
 			self.fadeOut = 1
-			self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME
+			self.holdTime = GetTime() + (CASTING_BAR_HOLD_TIME or 0)
 		end
 
 	elseif event == "UNIT_SPELLCAST_DELAYED" then
