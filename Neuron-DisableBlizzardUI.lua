@@ -28,7 +28,7 @@ local function disableButtonFrame(frame)
 end
 
 local function disableFrameSlidingAnimation(frame)
-	if frame then
+	if frame and frame.slideOut then
 		local animation = {frame.slideOut:GetAnimations()}
 		animation[1]:SetOffset(0,0)
 	end

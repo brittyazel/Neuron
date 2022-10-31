@@ -1,4 +1,4 @@
-## Interface: 90005
+## Interface: 100000
 ## Title: Neuron
 ## Notes: A macro-based action bar and object manager add-on
 ## Author: Britt W. Yazel
