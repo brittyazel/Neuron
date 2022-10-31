@@ -182,7 +182,7 @@ function ACTIONBUTTON:SetType()
 	self:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
 	self:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
 
-	self:SetAttribute("overrideID_Offset", 190)
+	self:SetAttribute("overrideID_Offset", 204)
 	self:SetAttribute("vehicleID_Offset", 180)
 
 	--This is so that hotkeypri works properly with priority/locked buttons
