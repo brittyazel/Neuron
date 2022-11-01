@@ -32,7 +32,11 @@ function NeuronGUI:CreateIconSelector()
 	iconSelector:SetWidth(610)
 	iconSelector:SetHeight(500)
 	iconSelector:EnableResize(true)
-	iconSelector.frame:SetMinResize(610,450)
+	if iconSelector.frame.SetResizeBounds then -- WoW 10.0
+		iconSelector.frame:SetResizeBounds(610,450)
+	else
+		iconSelector.frame:SetMinResize(610,450)
+	end
 	iconSelector:SetLayout("Flow") -- important!
 
 	NeuronGUI:GenerateIconList()

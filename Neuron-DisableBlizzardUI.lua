@@ -69,14 +69,21 @@ function Neuron:HideBlizzardUI()
 	--disable side bonus bars
 	disableBarFrame(MultiBarLeft)
 	disableBarFrame(MultiBarRight)
+	disableBarFrame(MultiBar5)
+	disableBarFrame(MultiBar6)
+	disableBarFrame(MultiBar7)
 
 	--disable all other action bars
 	disableBarFrame(MicroButtonAndBagsBar)
+	disableBarFrame(StanceBar)
 	disableBarFrame(StanceBarFrame)
+	disableBarFrame(PossessBar)
 	disableBarFrame(PossessBarFrame)
 	disableBarFrame(MultiCastActionBarFrame)
+	disableBarFrame(PetActionBar)
 	disableBarFrame(PetActionBarFrame)
 	disableBarFrame(ZoneAbilityFrame)
+	disableBarFrame(ExtraAbilityContainer)
 	disableBarFrame(ExtraActionBarFrame)
 	disableBarFrame(MainMenuBarVehicleLeaveButton)
 

@@ -100,8 +100,13 @@ function ACTIONBUTTON:InitializeButton()
 	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
-	self:SetAttribute("overrideID_Offset", 156)
-	self:SetAttribute("vehicleID_Offset", 132)
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+		self:SetAttribute("overrideID_Offset", 204)
+		self:SetAttribute("vehicleID_Offset", 180)
+	else
+		self:SetAttribute("overrideID_Offset", 156)
+		self:SetAttribute("vehicleID_Offset", 132)
+	end
 
 	--This is so that hotkeypri works properly with priority/locked buttons
 	self:WrapScript(self, "OnShow", [[
@@ -191,30 +196,33 @@ function ACTIONBUTTON:InitializeButtonSettings()
 
 	if self.bar:GetShowBindText() then
 		self.Hotkey:Show()
-		self.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
+		self.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3])
 	else
 		self.Hotkey:Hide()
 	end
 
 	if self.bar:GetShowButtonText() then
 		self.Name:Show()
-		self.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
+		self.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3])
 	else
 		self.Name:Hide()
 	end
 
 	if self.bar:GetShowCountText() then
 		self.Count:Show()
-		self.Count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3],self.bar:GetCountColor()[4])
+		self.Count:SetTextColor(self.bar:GetCountColor()[1],self.bar:GetCountColor()[2],self.bar:GetCountColor()[3])
 	else
 		self.Count:Hide()
 	end
 
+	--[[
 	if self.bar:GetClickMode() == "UpClick" then
 		self:RegisterForClicks("AnyUp")
 	elseif self.bar:GetClickMode() == "DownClick" then
 		self:RegisterForClicks("AnyDown")
 	end
+	]]
+	self:RegisterForClicks("AnyUp")
 
 	self:RegisterForDrag("LeftButton", "RightButton")
 	self:SetSkinned()
@@ -253,7 +261,7 @@ function ACTIONBUTTON:SetupEvents()
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
 	self:RegisterEvent("UNIT_PET", "UpdateAll")
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
 		self:RegisterEvent("UNIT_ENTERED_VEHICLE", "UpdateAll")
@@ -462,7 +470,7 @@ end
 function ACTIONBUTTON:UpdateButtonSpec()
 	local spec
 
-	if self.bar:GetMultiSpec() then
+	if self.bar:GetMultiSpec() and not Neuron.isWoWClassic and not Neuron.isWoWClassicEra then
 		spec = GetSpecialization()
 	else
 		spec = 1
@@ -723,7 +731,7 @@ function ACTIONBUTTON:UpdateAll()
 	--pass to parent UpdateAll function
 	Neuron.BUTTON.UpdateAll(self)
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		self:UpdateGlow()
 	end
 end

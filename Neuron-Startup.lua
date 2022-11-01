@@ -43,7 +43,7 @@ function Neuron:RegisterBars()
 	--Neuron Mirror Bar
 	Neuron:RegisterBarClass("MirrorBar", "MirrorBar", L["Mirror Bar"], "Mirror Button", DB.MirrorBar, Neuron.MIRRORBTN, 10)
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		--Neuron Zone Ability Bar
 		Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 5, true)
 
@@ -165,7 +165,7 @@ function Neuron:RegisterGUI()
 				TOOLTIPS = true,
 			})
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		--Neuron Zone Ability Bar
 		Neuron:RegisterGUIOptions("ZoneAbilityBar",
 				{
@@ -256,6 +256,9 @@ end
 
 
 function Neuron:Overrides()
+	---disabled temporarily for 10.0 porting purposes
+	--[[
+
 	--bag bar overrides
 	if DB.blizzbar == false then
 		--hide the weird color border around bag bars
@@ -318,4 +321,6 @@ function Neuron:Overrides()
 		MirrorTimer3:UnregisterAllEvents()
 		MirrorTimer3:SetParent(Neuron.hiddenFrame)
 	end
+
+	]]
 end

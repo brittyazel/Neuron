@@ -41,7 +41,11 @@ function NeuronGUI:CreateEditor(defaultTab)
 
 	addonTable.NeuronEditor:SetTitle("Neuron Editor")
 	addonTable.NeuronEditor:EnableResize(true)
-	addonTable.NeuronEditor.frame:SetMinResize(760,600)
+	if addonTable.NeuronEditor.frame.SetResizeBounds then -- WoW 10.0
+		addonTable.NeuronEditor.frame:SetResizeBounds(760,600)
+	else
+		addonTable.NeuronEditor.frame:SetMinResize(760,600)
+	end
 	addonTable.NeuronEditor:SetWidth("760")
 	addonTable.NeuronEditor:SetHeight("840")
 	if Neuron.currentBar then

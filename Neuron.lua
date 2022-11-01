@@ -34,10 +34,12 @@ Neuron.buttonEditMode = false
 Neuron.bindingMode = false
 
 if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then --boolean check to set a flag if the current session is WoW Classic. Retail == 1, Classic == 2
+	Neuron.isWoWClassicEra = true
+elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
 	Neuron.isWoWClassic = true
-elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-	Neuron.isWoWClassic_TBC = true
 end
+
+Neuron.activeSpec = 1
 
 Neuron.STRATAS = {
 	[1] = "BACKGROUND",
@@ -141,7 +143,7 @@ function Neuron:OnEnable()
 	end
 
 	--set current spec before loading bars and buttons
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		Neuron.activeSpec = GetSpecialization()
 	end
 
@@ -151,6 +153,10 @@ function Neuron:OnEnable()
 	for _,v in pairs(Neuron.bars) do
 		v:Load()
 	end
+
+	--this is a hack for 10.0. They broke everything with regard to the way addons interface with
+	--SecureActionButtons see SecureTemplates.lua SecureActionButton_OnClick() for more information
+	SetCVar("ActionButtonUseKeyDown", 0)
 
 	Neuron:Overrides()
 
@@ -163,7 +169,7 @@ end
 --- You would probably only use an OnDisable if you want to
 --- build a "standby" mode, or be able to toggle modules on/off.
 function Neuron:OnDisable()
-
+	SetCVar("ActionButtonUseKeyDown", 1)
 end
 
 -------------------------------------------------
@@ -287,7 +293,7 @@ function Neuron:LoginMessage()
 	end
 
 	--Shadowlands warning that will show as long as a player has one button on their ZoneAbilityBar for Shadowlands content
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC and UnitLevel("player") >= 50 and Neuron.db.profile.ZoneAbilityBar[1] and #Neuron.db.profile.ZoneAbilityBar[1].buttons == 1 then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic and UnitLevel("player") >= 50 and Neuron.db.profile.ZoneAbilityBar[1] and #Neuron.db.profile.ZoneAbilityBar[1].buttons == 1 then
 		print(" ")
 		Neuron:Print(WrapTextInColorCode("IMPORTANT: Shadowlands content now requires multiple Zone Ability Buttons. Please add at least 3 buttons to your Zone Ability Bar to support this new functionality.", "FF00FFEC"))
 		print(" ")
@@ -373,7 +379,7 @@ function Neuron:UpdateSpellCache()
 		end
 	end
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		for i = 1, select("#", GetProfessions()) do
 			local index = select(i, GetProfessions())
 
@@ -435,7 +441,7 @@ function Neuron:UpdateStanceStrings()
 			Neuron.STATES["stance2"] = L["Vanish"]
 			states = states.."[stance:2] stance2; "
 
-			if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC and GetSpecialization() == 3 then
+			if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic and GetSpecialization() == 3 then
 				Neuron.STATES["stance3"] = L["Shadow Dance"]
 				states = states.."[stance:3] stance3; "
 			end

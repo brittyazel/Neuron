@@ -10,15 +10,15 @@ local Neuron = addonTable.Neuron
 local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.BAGBTN = BAGBTN
 
-if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
+if Neuron.isWoWClassicEra or Neuron.isWoWClassic then
 	Neuron.NUM_BAG_BUTTONS = 6
 else
-	Neuron.NUM_BAG_BUTTONS = 5
+	Neuron.NUM_BAG_BUTTONS = 6
 end
 
 local blizzBagButtons
 
-if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
+if Neuron.isWoWClassicEra or Neuron.isWoWClassic then
 	blizzBagButtons = {
 		KeyRingButton, --wow classic has a keyring button
 		CharacterBag3Slot,
@@ -28,6 +28,7 @@ if Neuron.isWoWClassic or Neuron.isWoWClassic_TBC then
 		MainMenuBarBackpackButton}
 else
 	blizzBagButtons = {
+		CharacterReagentBag0Slot,
 		CharacterBag3Slot,
 		CharacterBag2Slot,
 		CharacterBag1Slot,
@@ -61,7 +62,7 @@ function BAGBTN:InitializeButton()
 		self.hookedButton:ClearAllPoints()
 		self.hookedButton:SetParent(self)
 		self.hookedButton:Show()
-		if (Neuron.isWoWClassic or Neuron.isWoWClassic_TBC) and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
+		if (Neuron.isWoWClassicEra or Neuron.isWoWClassic) and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
 			self.hookedButton:SetPoint("RIGHT", self, "RIGHT")
 		else
 			self.hookedButton:SetPoint("CENTER", self, "CENTER")
@@ -79,7 +80,7 @@ function BAGBTN:InitializeButtonSettings()
 end
 
 ---simplified SetSkinned for the Bag Buttons. They're unique in that they contain buttons inside of the buttons
-function BAGBTN:SetSkinned()
+--[[function BAGBTN:SetSkinned()
 	local SKIN = LibStub("Masque", true)
 	if SKIN then
 		local btnData = {
@@ -93,7 +94,7 @@ function BAGBTN:SetSkinned()
 		}
 		SKIN:Group("Neuron", self.bar.data.name):AddButton(self, btnData, "Item")
 	end
-end
+end]]
 
 
 -----------------------------------------------------

@@ -60,10 +60,10 @@ function STATUSBTN:InitializeButtonSettings()
 	self:SetWidth(self.config.width)
 	self:SetHeight(self.config.height)
 
-	self.StatusBar.CenterText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3], self.config.cColor[4])
-	self.StatusBar.LeftText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3], self.config.lColor[4])
-	self.StatusBar.RightText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3], self.config.rColor[4])
-	self.StatusBar.MouseoverText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3], self.config.mColor[4])
+	self.StatusBar.CenterText:SetTextColor(self.config.cColor[1], self.config.cColor[2], self.config.cColor[3])
+	self.StatusBar.LeftText:SetTextColor(self.config.lColor[1], self.config.lColor[2], self.config.lColor[3])
+	self.StatusBar.RightText:SetTextColor(self.config.rColor[1], self.config.rColor[2], self.config.rColor[3])
+	self.StatusBar.MouseoverText:SetTextColor(self.config.mColor[1], self.config.mColor[2], self.config.mColor[3])
 
 	if not self.sbStrings[self.config.cIndex] then
 		self.config.cIndex = 1

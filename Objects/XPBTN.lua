@@ -48,7 +48,7 @@ function XPBTN:InitializeButton()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
 	self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", "OnEvent")
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		self:RegisterEvent("COVENANT_SANCTUM_RENOWN_LEVEL_CHANGED", "OnEvent")
 		self:RegisterEvent("AZERITE_ITEM_EXPERIENCE_CHANGED", "OnEvent")
 		self:RegisterEvent("HONOR_XP_UPDATE", "OnEvent")
@@ -187,7 +187,7 @@ function XPBTN:InitializeDropDown() -- initialize the dropdown menu for chosing 
 	})
 
 	--wow classic doesn't have Honor points nor Azerite, careful
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 
 		--add Renown tracking for Covenants
 		if C_Covenants.GetActiveCovenantID() ~= 0 then

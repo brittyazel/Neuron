@@ -20,6 +20,24 @@ MIRRORBTN.sbStrings = {
 	[3] = { L["Timer"], function(self) if mirrorWatch[self.mirror] then return mirrorWatch[self.mirror].timer end end },
 }
 
+local CASTING_BAR_ALPHA_STEP = 0.05
+
+--this table of colors used to belong to the core UI, but was removed in 10.0
+local MirrorTimerColors = { };
+MirrorTimerColors["EXHAUSTION"] = {
+	r = 1.00, g = 0.90, b = 0.00
+};
+MirrorTimerColors["BREATH"] = {
+	r = 0.00, g = 0.50, b = 1.00
+};
+MirrorTimerColors["DEATH"] = {
+	r = 1.00, g = 0.70, b = 0.00
+};
+MirrorTimerColors["FEIGNDEATH"] = {
+	r = 1.00, g = 0.70, b = 0.00
+};
+
+
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param bar BAR @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned

@@ -114,7 +114,7 @@ end
 
 function BAR:InitializeBar()
 	if self.class == "ActionBar" then
-		if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+		if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 			self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		end
 		self:RegisterEvent("ACTIONBAR_SHOWGRID", "ACTIONBAR_SHOWHIDEGRID", true)
@@ -491,7 +491,7 @@ end
 
 function BAR:AddVisibilityDriver(handler, state, conditions)
 	if Neuron.MANAGED_BAR_STATES[state] then
-		RegisterStateDriver(handler, state, conditions);
+		RegisterAttributeDriver(handler, "state-"..state, conditions);
 
 		if handler:GetAttribute("activestates"):find(state) then
 			handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", handler:GetAttribute("state-"..state)..";"))
@@ -509,7 +509,7 @@ end
 
 
 function BAR:ClearVisibilityDriver(handler, state)
-	UnregisterStateDriver(handler, state)
+	UnregisterAttributeDriver(handler, "state-"..state)
 	handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", ""))
 	handler:SetAttribute("state-current", "homestate")
 	handler:SetAttribute("state-last", "homestate")
@@ -565,7 +565,7 @@ end
 function BAR:AddStates(handler, state, conditions)
 	if state then
 		if Neuron.MANAGED_BAR_STATES[state] then
-			RegisterStateDriver(handler, state, conditions);
+			RegisterAttributeDriver(handler, "state-"..state, conditions);
 		end
 		if Neuron.MANAGED_BAR_STATES[state].homestate then
 			handler:SetAttribute("handler-homestate", Neuron.MANAGED_BAR_STATES[state].homestate)
@@ -580,7 +580,7 @@ function BAR:ClearStates(handler, state)
 			handler:SetAttribute("handler-homestate", nil)
 		end
 		handler:SetAttribute("state-"..state, nil)
-		UnregisterStateDriver(handler, state)
+		UnregisterAttributeDriver(handler, "state-"..state)
 		self[state].registered = false
 	end
 	handler:SetAttribute("state-current", "homestate")
@@ -910,7 +910,7 @@ function BAR:CreateWatcher()
 
             end
             ]])
-	RegisterAttributeDriver(watcher, "state-petbattle", "[petbattle] hide; [nopetbattle] show");
+	RegisterAttributeDriver(watcher, "state-".."petbattle", "[petbattle] hide; [nopetbattle] show");
 end
 
 function BAR:UpdateBarStatus(show)
@@ -1016,7 +1016,7 @@ end
 function BAR:LoadObjects()
 	local spec
 
-	if self:GetMultiSpec() then
+	if self:GetMultiSpec() and not Neuron.isWoWClassic and not Neuron.isWoWClassicEra then
 		spec = GetSpecialization()
 	else
 		spec = 1
@@ -2319,7 +2319,7 @@ function BAR:SetCooldownColor1(option)
 	if option then
 		self.data.cdcolor1 = option
 	else
-		self.data.cdcolor1 = {1,0.82,0,1}
+		self.data.cdcolor1 = {1,0.82,0}
 	end
 
 	self:UpdateObjectCooldowns()
@@ -2333,7 +2333,7 @@ function BAR:SetCooldownColor2(option)
 	if option then
 		self.data.cdcolor2 = option
 	else
-		self.data.cdcolor2 = {1,0.1,0.1,1}
+		self.data.cdcolor2 = {1,0.1,0.1}
 	end
 
 	self:UpdateObjectCooldowns()

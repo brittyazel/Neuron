@@ -66,7 +66,9 @@ function Neuron:Minimap_OnClickHandler(button)
 		end
 	elseif button == "RightButton" then
 		if IsShiftKeyDown() then
-			if InterfaceOptionsFrame:IsShown() then
+			if SettingsPanel and SettingsPanel:IsShown() then
+				SettingsPanel:Hide()
+			elseif InterfaceOptionsFrame and InterfaceOptionsFrame:IsShown() then --this is for pre-dragonflight compatibility
 				InterfaceOptionsFrame:Hide();
 			else
 				Neuron:ToggleMainMenu()

@@ -20,6 +20,11 @@ CASTBTN.sbStrings = {
 	[3] = { L["Timer"], function(self) if castWatch[self:GetUnit()] then return castWatch[self:GetUnit()].timer end end },
 }
 
+--these used to be a part of the core UI before being removed in 10.0
+local CASTING_BAR_ALPHA_STEP = 0.05
+local CASTING_BAR_FLASH_STEP = 0.2
+local CASTING_BAR_HOLD_TIME = 1
+
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
 ---@param bar BAR @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
@@ -43,7 +48,7 @@ function CASTBTN:InitializeButton()
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "OnEvent")
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "OnEvent")
 	end
@@ -72,7 +77,7 @@ function CASTBTN:OnEvent(event,...)
 
 	if event == "UNIT_SPELLCAST_START" then
 		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible
-		if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+		if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
 		else
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo() --classic doesn't have UnitCastingInfo()

@@ -45,7 +45,7 @@ function PETBTN:InitializeButton()
 	self:RegisterEvent("PET_BAR_HIDEGRID", "UpdateVisibility")
 	self:RegisterEvent("PET_BAR_SHOWGRID", "UpdateVisibility", true)
 
-	if not Neuron.isWoWClassic and not Neuron.isWoWClassic_TBC then
+	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
 		self:RegisterEvent("PET_SPECIALIZATION_CHANGED", "PLAYER_ENTERING_WORLD")
 	end
 
@@ -78,23 +78,26 @@ function PETBTN:InitializeButtonSettings()
 
 	if self.bar:GetShowBindText() then
 		self.Hotkey:Show()
-		self.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3],self.bar:GetBindColor()[4])
+		self.Hotkey:SetTextColor(self.bar:GetBindColor()[1],self.bar:GetBindColor()[2],self.bar:GetBindColor()[3])
 	else
 		self.Hotkey:Hide()
 	end
 
 	if self.bar:GetShowButtonText() then
 		self.Name:Show()
-		self.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3],self.bar:GetMacroColor()[4])
+		self.Name:SetTextColor(self.bar:GetMacroColor()[1],self.bar:GetMacroColor()[2],self.bar:GetMacroColor()[3])
 	else
 		self.Name:Hide()
 	end
 
+	--[[
 	if self.bar:GetClickMode() == "UpClick" then
 		self:RegisterForClicks("AnyUp")
 	elseif self.bar:GetClickMode() == "DownClick" then
 		self:RegisterForClicks("AnyDown")
 	end
+	]]
+	self:RegisterForClicks("AnyUp")
 
 	self:RegisterForDrag("LeftButton", "RightButton")
 	self:SetSkinned()

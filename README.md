@@ -1,5 +1,5 @@
 # Neuron
-Neuron is a full featured action Bar addon for [World of Warcraft: Shadowlands](https://worldofwarcraft.com/en-us/), updated for Patch 9.0.5
+Neuron is a full featured action Bar addon for [World of Warcraft: Dragonflight](https://worldofwarcraft.com/en-us/), updated for Patch 10.0.0
 
 
 ## Manual Install:

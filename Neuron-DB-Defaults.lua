@@ -36,21 +36,21 @@ local genericXPBtnData= {
 	orientation = 1,
 
 	cIndex = 2,
-	cColor = {1,1,1,1},
+	cColor = {1,1,1},
 
 	lIndex = 6,
-	lColor = {1,1,1,1},
+	lColor = {1,1,1},
 
 	rIndex = 4,
-	rColor = {1,1,1,1},
+	rColor = {1,1,1},
 
 	mIndex = 3,
-	mColor = {1,1,1,1},
+	mColor = {1,1,1},
 
 	tIndex = 1,
-	tColor = {1,1,1,1},
+	tColor = {1,1,1},
 
-	bordercolor = {1,1,1,1},
+	bordercolor = {1,1,1},
 
 }
 
@@ -66,21 +66,21 @@ local genericRepBtnData= {
 	orientation = 1,
 
 	cIndex = 3,
-	cColor = {1,1,1,1},
+	cColor = {1,1,1},
 
 	lIndex = 2,
-	lColor = {1,1,1,1},
+	lColor = {1,1,1},
 
 	rIndex = 4,
-	rColor = {1,1,1,1},
+	rColor = {1,1,1},
 
 	mIndex = 6,
-	mColor = {1,1,1,1},
+	mColor = {1,1,1},
 
 	tIndex = 1,
-	tColor = {1,1,1,1},
+	tColor = {1,1,1},
 
-	bordercolor = {1,1,1,1},
+	bordercolor = {1,1,1},
 }
 
 local genericCastBtnData= {
@@ -92,26 +92,26 @@ local genericCastBtnData= {
 	orientation = 1,
 
 	cIndex = 1,
-	cColor = {1,1,1,1},
+	cColor = {1,1,1},
 
 	lIndex = 2,
-	lColor = {1,1,1,1},
+	lColor = {1,1,1},
 
 	rIndex = 3,
-	rColor = {1,1,1,1},
+	rColor = {1,1,1},
 
 	mIndex = 1,
-	mColor = {1,1,1,1},
+	mColor = {1,1,1},
 
 	tIndex = 1,
-	tColor = {1,1,1,1},
+	tColor = {1,1,1},
 
-	bordercolor = {1,1,1,1},
+	bordercolor = {1,1,1},
 
-	castColor = {1,0.7,0,1},
-	channelColor = {0,1,0,1},
-	successColor = {0,1,0,1},
-	failColor = {1,0,0,1},
+	castColor = {1,0.7,0},
+	channelColor = {0,1,0},
+	successColor = {0,1,0},
+	failColor = {1,0,0},
 
 	unit = "player",
 	showIcon = true,
@@ -126,21 +126,21 @@ local genericMirrorBtnData= {
 	orientation = 1,
 
 	cIndex = 1,
-	cColor = {1,1,1,1},
+	cColor = {1,1,1},
 
 	lIndex = 2,
-	lColor = {1,1,1,1},
+	lColor = {1,1,1},
 
 	rIndex = 3,
-	rColor = {1,1,1,1},
+	rColor = {1,1,1},
 
 	mIndex = 1,
-	mColor = {1,1,1,1},
+	mColor = {1,1,1},
 
 	tIndex = 1,
-	tColor = {1,1,1,1},
+	tColor = {1,1,1},
 
-	bordercolor = {1,1,1,1},
+	bordercolor = {1,1,1},
 }
 
 
@@ -193,13 +193,13 @@ local genericBarData = {
 	autoHide = false,
 	showGrid = true,
 
-	bindColor = {1,1,1,1},
-	macroColor = {1,1,1,1},
-	countColor = {1,1,1,1},
-	cdcolor1 = {1,0.82,0,1},
-	cdcolor2 = {1,0.1,0.1,1},
-	rangecolor = {0.7,0.15,0.15,1},
-	manacolor = {0.5,0.5,1.0,1},
+	bindColor = {1,1,1},
+	macroColor = {1,1,1},
+	countColor = {1,1,1},
+	cdcolor1 = {1,0.82,0},
+	cdcolor2 = {1,0.1,0.1},
+	rangecolor = {0.7,0.15,0.15},
+	manacolor = {0.5,0.5,1.0},
 
 	border = true,
 
