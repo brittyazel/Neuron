@@ -118,7 +118,7 @@ function NeuronGUI:LoadInterfaceOptions()
 	interfaceOptions.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(Neuron.db)
 
 	-- Per spec profiles
-	if Neuron.isWoWRetail then
+	if Neuron.isWoWRetail or Neuron.isWoWWrathClassic then
 		local LibDualSpec = LibStub('LibDualSpec-1.0')
 		LibDualSpec:EnhanceDatabase(Neuron.db, addonName) --enhance the database object with per spec profile features
 		LibDualSpec:EnhanceOptions(interfaceOptions.args.profile, Neuron.db) -- enhance the profiles config panel with per spec profile features

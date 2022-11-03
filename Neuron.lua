@@ -34,7 +34,7 @@ Neuron.buttonEditMode = false
 Neuron.bindingMode = false
 
 Neuron.isWoWClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-Neuron.isWoWClassic = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+Neuron.isWoWWrathClassic = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Neuron.isWoWRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
 Neuron.activeSpec = 1
@@ -141,7 +141,7 @@ function Neuron:OnEnable()
 	end
 
 	--set current spec before loading bars and buttons
-	if Neuron.isWoWRetail then
+	if Neuron.isWoWRetail or Neuron.isWoWWrathClassic then
 		Neuron.activeSpec = GetSpecialization()
 	end
 

@@ -114,7 +114,7 @@ end
 
 function BAR:InitializeBar()
 	if self.class == "ActionBar" then
-		if Neuron.isWoWRetail then
+		if Neuron.isWoWRetail or Neuron.isWoWWrathClassic then
 			self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		end
 		self:RegisterEvent("ACTIONBAR_SHOWGRID", "ACTIONBAR_SHOWHIDEGRID", true)
@@ -1014,7 +1014,7 @@ end
 
 --loads all the object stored for a given bar
 function BAR:LoadObjects()
-	local spec = (self:GetMultiSpec() and Neuron.isWoWRetail) and GetSpecialization() or 1
+	local spec = (not self:GetMultiSpec() or Neuron.isWoWClassicEra) and 1 or GetSpecialization()
 
 	for i, object in ipairs(self.buttons) do
 		--all of these objects need to stay as "object:****" because which InitializeButtonSettings/LoadDataFromDatabase/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
