@@ -24,6 +24,14 @@ local genericSpecData = {
     macro_BlizzMacro = false,
 	macro_EquipmentSet = false,
 }
+--- Button fields
+-- indexes refer to a table of pairs which include a function to
+-- generate the button data
+--@field cIndex center text index
+--@field lIndex left text index
+--@field rIndex right text index
+--@field mIndex mouse over text index. hides other text
+--@field tIndex tooltip index
 
 local genericXPBtnData= {
 	curXPType = "player_xp",
