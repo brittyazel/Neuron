@@ -5,30 +5,29 @@
 
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
+local Array = addonTable.utilities.Array
+
 
 ---@class MENUBTN : BUTTON @define class MENUBTN inherits from class BUTTON
 local MENUBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.MENUBTN = MENUBTN
 
-local blizzMenuButtons = {
-	CharacterMicroButton,
-	SpellbookMicroButton,
-	TalentMicroButton,
-	AchievementMicroButton,
-	QuestLogMicroButton,
-	GuildMicroButton,
-	LFDMicroButton,
-	CollectionsMicroButton,
-	EJMicroButton,
-	StoreMicroButton,
-	MainMenuMicroButton}
+local blizzMenuButtons = not Neuron.isWoWRetail
+	and Array.initialize(#MICRO_BUTTONS, function(i) return _G[MICRO_BUTTONS[i]] end)
+	or {
+		CharacterMicroButton,
+		SpellbookMicroButton,
+		TalentMicroButton,
+		AchievementMicroButton,
+		QuestLogMicroButton,
+		GuildMicroButton,
+		LFDMicroButton,
+		CollectionsMicroButton,
+		EJMicroButton,
+		StoreMicroButton,
+		MainMenuMicroButton,
+	}
 
-if Neuron.isWoWClassicEra or Neuron.isWoWClassic then
-	wipe(blizzMenuButtons)
-	for i=1, #MICRO_BUTTONS do
-		blizzMenuButtons[i] = _G[MICRO_BUTTONS[i]]
-	end
-end
 ---------------------------------------------------------
 
 ---Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
@@ -50,8 +49,8 @@ end
 ---------------------------------------------------------
 
 function MENUBTN:InitializeButton()
-	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
-		if not self:IsEventRegistered("PET_BATTLE_CLOSE") and not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then --only run this code on the first InitializeButton, not the reloads after pet battles and such
+	if Neuron.isWoWRetail then
+		if not self:IsEventRegistered("PET_BATTLE_CLOSE") then --only run this code on the first InitializeButton, not the reloads after pet battles and such
 			self:RegisterEvent("PET_BATTLE_CLOSE")
 		end
 

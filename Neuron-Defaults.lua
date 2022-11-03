@@ -222,7 +222,7 @@ addonTable.defaultBarOptions.PetBar = {
 -----------------------------------
 ----------- Menu Bar --------------
 -----------------------------------
-if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+if Neuron.isWoWRetail then
 	addonTable.defaultBarOptions.MenuBar = {
 		[1] = {
 			snapTo = false,
@@ -255,7 +255,7 @@ end
 -----------------------------------
 ------------ Bag Bar --------------
 -----------------------------------
-if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+if Neuron.isWoWRetail then
 	addonTable.defaultBarOptions.BagBar = {
 		[1] = {
 			padH = 1,

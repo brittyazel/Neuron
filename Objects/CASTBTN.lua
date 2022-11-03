@@ -48,7 +48,7 @@ function CASTBTN:InitializeButton()
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP", "OnEvent")
 
-	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+	if Neuron.isWoWRetail then
 		self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTIBLE", "OnEvent")
 		self:RegisterEvent("UNIT_SPELLCAST_NOT_INTERRUPTIBLE", "OnEvent")
 	end
@@ -77,7 +77,7 @@ function CASTBTN:OnEvent(event,...)
 
 	if event == "UNIT_SPELLCAST_START" then
 		local name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible
-		if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+		if Neuron.isWoWRetail then
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = UnitCastingInfo(unit)
 		else
 			name, text, texture, startTime, endTime, isTradeSkill, castID, notInterruptible = CastingInfo() --classic doesn't have UnitCastingInfo()

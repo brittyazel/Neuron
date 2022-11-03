@@ -45,7 +45,7 @@ function PETBTN:InitializeButton()
 	self:RegisterEvent("PET_BAR_HIDEGRID", "UpdateVisibility")
 	self:RegisterEvent("PET_BAR_SHOWGRID", "UpdateVisibility", true)
 
-	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+	if Neuron.isWoWRetail then
 		self:RegisterEvent("PET_SPECIALIZATION_CHANGED", "PLAYER_ENTERING_WORLD")
 	end
 

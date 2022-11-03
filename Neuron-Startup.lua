@@ -43,7 +43,7 @@ function Neuron:RegisterBars()
 	--Neuron Mirror Bar
 	Neuron:RegisterBarClass("MirrorBar", "MirrorBar", L["Mirror Bar"], "Mirror Button", DB.MirrorBar, Neuron.MIRRORBTN, 10)
 
-	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+	if Neuron.isWoWRetail then
 		--Neuron Zone Ability Bar
 		Neuron:RegisterBarClass("ZoneAbilityBar", "ZoneAbilityBar", L["Zone Action Bar"], "Zone Action Button", DB.ZoneAbilityBar, Neuron.ZONEABILITYBTN, 5, true)
 
@@ -165,7 +165,7 @@ function Neuron:RegisterGUI()
 				TOOLTIPS = true,
 			})
 
-	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+	if Neuron.isWoWRetail then
 		--Neuron Zone Ability Bar
 		Neuron:RegisterGUIOptions("ZoneAbilityBar",
 				{
