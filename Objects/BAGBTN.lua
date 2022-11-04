@@ -10,31 +10,17 @@ local Neuron = addonTable.Neuron
 local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
 Neuron.BAGBTN = BAGBTN
 
-if Neuron.isWoWClassicEra or Neuron.isWoWClassic then
-	Neuron.NUM_BAG_BUTTONS = 6
-else
-	Neuron.NUM_BAG_BUTTONS = 6
-end
+Neuron.NUM_BAG_BUTTONS = 6
 
-local blizzBagButtons
-
-if Neuron.isWoWClassicEra or Neuron.isWoWClassic then
-	blizzBagButtons = {
-		KeyRingButton, --wow classic has a keyring button
-		CharacterBag3Slot,
-		CharacterBag2Slot,
-		CharacterBag1Slot,
-		CharacterBag0Slot,
-		MainMenuBarBackpackButton}
-else
-	blizzBagButtons = {
-		CharacterReagentBag0Slot,
-		CharacterBag3Slot,
-		CharacterBag2Slot,
-		CharacterBag1Slot,
-		CharacterBag0Slot,
-		MainMenuBarBackpackButton}
-end
+local blizzBagButtons = {
+	--wow classic has a keyring button
+	Neuron.isWowRetail and CharacterReagentBag0Slot or KeyRingButton,
+	CharacterBag3Slot,
+	CharacterBag2Slot,
+	CharacterBag1Slot,
+	CharacterBag0Slot,
+	MainMenuBarBackpackButton,
+}
 
 ---------------------------------------------------------
 
@@ -62,7 +48,7 @@ function BAGBTN:InitializeButton()
 		self.hookedButton:ClearAllPoints()
 		self.hookedButton:SetParent(self)
 		self.hookedButton:Show()
-		if (Neuron.isWoWClassicEra or Neuron.isWoWClassic) and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
+		if not Neuron.isWoWRetail and self.id==1 then --the keyring button should be aligned to the right because it's only 1/3 the width of the other bag buttons
 			self.hookedButton:SetPoint("RIGHT", self, "RIGHT")
 		else
 			self.hookedButton:SetPoint("CENTER", self, "CENTER")

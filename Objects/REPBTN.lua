@@ -131,7 +131,7 @@ function REPBTN:UpdateData(repGainedString)
 		if (not isHeader or hasRep) and not IsFactionInactive(i) then
 
 			local friendID, standing, isParagon
-			if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then --classic doesn't have Friendships or Paragon, carefull
+			if Neuron.isWoWRetail then --classic doesn't have Friendships or Paragon, carefull
 				friendID, _, _, _, _, _, standing, _, _ = C_GossipInfo.GetFriendshipReputation(factionID)
 				isParagon = C_Reputation.IsFactionParagon(factionID)
 			end

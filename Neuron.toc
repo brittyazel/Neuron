@@ -21,6 +21,8 @@
 Libs\embeds.xml
 Localizations\Neuron_Localizations.xml
 
+Utilities\Array.lua
+
 Neuron-DB-Defaults.lua
 Neuron.lua
 Neuron-States.lua

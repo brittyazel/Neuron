@@ -100,7 +100,7 @@ function ACTIONBUTTON:InitializeButton()
 	self:SetScript("OnEnter", function() self:UpdateTooltip() end)
 	self:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
-	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+	if Neuron.isWoWRetail then
 		self:SetAttribute("overrideID_Offset", 204)
 		self:SetAttribute("vehicleID_Offset", 180)
 	else
@@ -261,7 +261,7 @@ function ACTIONBUTTON:SetupEvents()
 	self:RegisterEvent("PLAYER_TARGET_CHANGED", "UpdateAll")
 	self:RegisterEvent("UNIT_PET", "UpdateAll")
 
-	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+	if Neuron.isWoWRetail then
 		self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
 
 		self:RegisterEvent("UNIT_ENTERED_VEHICLE", "UpdateAll")
@@ -468,13 +468,7 @@ function ACTIONBUTTON:ParseAndSanitizeMacro()
 end
 
 function ACTIONBUTTON:UpdateButtonSpec()
-	local spec
-
-	if self.bar:GetMultiSpec() and not Neuron.isWoWClassic and not Neuron.isWoWClassicEra then
-		spec = GetSpecialization()
-	else
-		spec = 1
-	end
+	local spec = (self.bar:GetMultiSpec() and Neuron.isWoWRetail) and GetSpecialization() or 1
 
 	self:LoadDataFromDatabase(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
 	self:InitializeButtonSettings()
@@ -731,7 +725,7 @@ function ACTIONBUTTON:UpdateAll()
 	--pass to parent UpdateAll function
 	Neuron.BUTTON.UpdateAll(self)
 
-	if not Neuron.isWoWClassicEra and not Neuron.isWoWClassic then
+	if Neuron.isWoWRetail then
 		self:UpdateGlow()
 	end
 end
