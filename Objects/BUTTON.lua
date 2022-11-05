@@ -608,13 +608,14 @@ end
 function BUTTON:UpdateIcon()
 	if self.actionID then
 		self:UpdateActionIcon()
-	elseif self:GetMacroIcon() then
-		self.Icon:SetTexture(self:GetMacroIcon())
-		self.Icon:Show()
 	elseif self.spell then
 		self:UpdateSpellIcon()
 	elseif self.item then
 		self:UpdateItemIcon()
+	-- macro must go after spells and items, for blizz macro #showtooltip to work
+	elseif self:GetMacroIcon() then
+		self.Icon:SetTexture(self:GetMacroIcon())
+		self.Icon:Show()
 	else
 		self.Name:SetText("")
 		self.Icon:SetTexture("")
@@ -697,14 +698,15 @@ end
 function BUTTON:UpdateStatus()
 	if self.actionID then
 		self:UpdateActionStatus()
-	elseif self:GetMacroBlizzMacro() then
-		self.Name:SetText(self:GetMacroName())
 	elseif self:GetMacroEquipmentSet() then
 		self.Name:SetText(self:GetMacroName())
 	elseif self.spell then
 		self:UpdateSpellStatus()
 	elseif self.item then
 		self:UpdateItemStatus()
+	-- macro must go after spells and items, for blizz macro #showtooltip to work
+	elseif self:GetMacroBlizzMacro() then
+		self.Name:SetText(self:GetMacroName())
 	else
 		self:SetChecked(false)
 		self.Name:SetText("")
@@ -782,8 +784,6 @@ function BUTTON:UpdateTooltip()
 
 		if self.actionID then
 			self:UpdateActionTooltip()
-		elseif self:GetMacroBlizzMacro() then
-			GameTooltip:SetText(self:GetMacroName())
 		elseif self:GetMacroEquipmentSet() then
 			GameTooltip:SetEquipmentSet(self:GetMacroEquipmentSet())
 			GameTooltip:Show()
@@ -791,6 +791,9 @@ function BUTTON:UpdateTooltip()
 			self:UpdateSpellTooltip()
 		elseif self.item then
 			self:UpdateItemTooltip()
+	-- macro must go after spells and items, for blizz macro #showtooltip to work
+		 elseif self:GetMacroBlizzMacro() then
+		 	GameTooltip:SetText(self:GetMacroName())
 		elseif self:GetMacroText() and #self:GetMacroText() > 0 then
 			GameTooltip:SetText(self:GetMacroName())
 		end
@@ -817,20 +820,21 @@ function BUTTON:UpdateSpellTooltip()
 	end
 end
 
+-- note that using SetHyperlink to set the tooltip to the same value
+-- twice will close the tooltip. see issue brittyazel/Neuron#354
 function BUTTON:UpdateItemTooltip()
 	local name, link = GetItemInfo(self.item)
-	if name and link then
-		if self.bar:GetTooltipOption() == "normal" then
-			GameTooltip:SetHyperlink(link)
-		elseif self.bar:GetTooltipOption() == "minimal" then
-			GameTooltip:SetText(name, 1, 1, 1)
-		end
-	elseif Neuron.itemCache[self.item:lower()] then
-		if self.bar:GetTooltipOption() == "normal" then
-			GameTooltip:SetHyperlink("item:"..Neuron.itemCache[self.item:lower()]..":0:0:0:0:0:0:0")
-		elseif self.bar:GetTooltipOption() == "minimal" then
-			GameTooltip:SetText(Neuron.itemCache[self.item:lower()], 1, 1, 1)
-		end
+	name = name or Neuron.itemCache[self.item:lower()]
+	link = link or "item:"..name..":0:0:0:0:0:0:0"
+
+	if not name or not link then
+		return
+	end
+
+	if self.bar:GetTooltipOption() == "normal" and select(2,GameTooltip:GetItem()) ~= link then
+		GameTooltip:SetHyperlink(link)
+	elseif self.bar:GetTooltipOption() == "minimal" then
+		GameTooltip:SetText(name, 1, 1, 1)
 	end
 end
 
