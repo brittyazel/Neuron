@@ -6,6 +6,8 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
+local Spec = addonTable.utilities.Spec
+
 ---@class ACTIONBUTTON : BUTTON @define class ACTIONBUTTON inherits from class BUTTON
 local ACTIONBUTTON = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
 Neuron.ACTIONBUTTON = ACTIONBUTTON
@@ -468,7 +470,7 @@ function ACTIONBUTTON:ParseAndSanitizeMacro()
 end
 
 function ACTIONBUTTON:UpdateButtonSpec()
-	local spec = (self.bar:GetMultiSpec() and Neuron.isWoWRetail) and GetSpecialization() or 1
+	local spec = Spec.active(self.bar:GetMultiSpec())
 
 	self:LoadDataFromDatabase(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
 	self:InitializeButtonSettings()
