@@ -90,7 +90,7 @@ function Neuron:slashHandler(input)
 
 			if func == "ChangeBar" then --intercept our bar assignment and reassign to the new bar, if it exists
 				local newBar
-				for _,v in pairs(Neuron.BARIndex) do
+				for _,v in pairs(Neuron.BarIndex) do
 					if v.data.name == args[1] then
 						newBar = v
 						break

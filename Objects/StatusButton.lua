@@ -6,9 +6,9 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class STATUSBTN : BUTTON @define class STATUSBTN inherits from class BUTTON
-local STATUSBTN = setmetatable({}, { __index = Neuron.BUTTON })
-Neuron.STATUSBTN = STATUSBTN
+---@class StatusButton : Button @define class StatusButton inherits from class Button
+local StatusButton = setmetatable({}, { __index = Neuron.Button })
+Neuron.StatusButton = StatusButton
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -34,15 +34,15 @@ local BAR_ORIENTATIONS = {
 	[2] = "Vertical",
 }
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return STATUSBTN @ A newly created STATUSBTN object
-function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
+---@return StatusButton @ A newly created StatusButton object
+function StatusButton.new(bar, buttonID, defaults, barObj, barType, objType)
 	--call the parent object constructor with the provided information specific to this button type
-	--local newButton = Neuron.BUTTON.new(bar, buttonID, STATUSBTN, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
-	local newButton = Neuron.BUTTON.new(bar, buttonID, barObj, barType, objType, "NeuronStatusBarTemplate")
+	--local newButton = Neuron.Button.new(bar, buttonID, StatusButton, "StatusBar", "StatusBar", "NeuronStatusBarTemplate")
+	local newButton = Neuron.Button.new(bar, buttonID, barObj, barType, objType, "NeuronStatusBarTemplate")
 
 	if defaults then
 		newButton:SetDefaults(defaults)
@@ -53,7 +53,7 @@ function STATUSBTN.new(bar, buttonID, defaults, barObj, barType, objType)
 	return newButton
 end
 
-function STATUSBTN:InitializeButtonSettings()
+function StatusButton:InitializeButtonSettings()
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
 
@@ -119,7 +119,7 @@ function STATUSBTN:InitializeButtonSettings()
 	self:SetBorder()
 end
 
-function STATUSBTN:SetBorder()
+function StatusButton:SetBorder()
 	self.StatusBar.Border:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 		edgeFile = BAR_BORDERS[self.config.border][2],
@@ -158,7 +158,7 @@ function STATUSBTN:SetBorder()
 	})
 end
 
-function STATUSBTN:OnEnter()
+function StatusButton:OnEnter()
 	if self.config.mIndex > 1 then
 		self.StatusBar.CenterText:Hide()
 		self.StatusBar.LeftText:Hide()
@@ -181,7 +181,7 @@ function STATUSBTN:OnEnter()
 	end
 end
 
-function STATUSBTN:OnLeave()
+function StatusButton:OnLeave()
 	if self.config.mIndex > 1 then
 		self.StatusBar.CenterText:Show()
 		self.StatusBar.LeftText:Show()
@@ -197,7 +197,7 @@ function STATUSBTN:OnLeave()
 	end
 end
 
-function STATUSBTN:UpdateWidth(command)
+function StatusButton:UpdateWidth(command)
 	local width = tonumber(command)
 	if width and width >= 10 then
 		self.config.width = width
@@ -208,7 +208,7 @@ function STATUSBTN:UpdateWidth(command)
 	end
 end
 
-function STATUSBTN:UpdateHeight(command)
+function StatusButton:UpdateHeight(command)
 	local height = tonumber(command)
 	if height and height >= 4 then
 		self.config.height = height
@@ -219,7 +219,7 @@ function STATUSBTN:UpdateHeight(command)
 	end
 end
 
-function STATUSBTN:UpdateBarFill(command)
+function StatusButton:UpdateBarFill(command)
 	local index = tonumber(command)
 	if index and BAR_TEXTURES[index] then
 		self.config.texture = index
@@ -227,7 +227,7 @@ function STATUSBTN:UpdateBarFill(command)
 	end
 end
 
-function STATUSBTN:UpdateBorder(command)
+function StatusButton:UpdateBorder(command)
 	local index = tonumber(command)
 	if index and BAR_BORDERS[index] then
 		self.config.border = index
@@ -235,7 +235,7 @@ function STATUSBTN:UpdateBorder(command)
 	end
 end
 
-function STATUSBTN:UpdateOrientation(command)
+function StatusButton:UpdateOrientation(command)
 	local index = tonumber(command)
 	if index then
 		--only update if we're changing, not staying the same
@@ -271,7 +271,7 @@ function STATUSBTN:UpdateOrientation(command)
 	end
 end
 
-function STATUSBTN:UpdateCenterText(command)
+function StatusButton:UpdateCenterText(command)
 	local index = tonumber(command)
 	if index then
 		self.config.cIndex = index
@@ -280,7 +280,7 @@ function STATUSBTN:UpdateCenterText(command)
 	end
 end
 
-function STATUSBTN:UpdateLeftText(command)
+function StatusButton:UpdateLeftText(command)
 	local index = tonumber(command)
 	if index then
 		self.config.lIndex = index
@@ -289,7 +289,7 @@ function STATUSBTN:UpdateLeftText(command)
 	end
 end
 
-function STATUSBTN:UpdateRightText(command)
+function StatusButton:UpdateRightText(command)
 	if not self.sbStrings then
 		return "---"
 	end
@@ -302,7 +302,7 @@ function STATUSBTN:UpdateRightText(command)
 	end
 end
 
-function STATUSBTN:UpdateMouseover(command)
+function StatusButton:UpdateMouseover(command)
 	if not self.sbStrings then
 		return "---"
 	end
@@ -320,16 +320,16 @@ end
 --------------------- Overrides ---------------------
 -----------------------------------------------------
 
---overwrite function in parent class BUTTON
-function STATUSBTN:UpdateVisibility()
+--overwrite function in parent class Button
+function StatusButton:UpdateVisibility()
 	if Neuron.barEditMode or Neuron.buttonEditMode then
 		self.StatusBar:Show()
 		self.StatusBar:SetAlpha(1)
 	end
 end
 
---overwrite function in parent class BUTTON
-function STATUSBTN:UpdateStatus()
+--overwrite function in parent class Button
+function StatusButton:UpdateStatus()
 	if Neuron.barEditMode or Neuron.buttonEditMode then
 		self.StatusBar.CenterText:SetText("")
 		self.StatusBar.LeftText:SetText(self.typeString)
@@ -343,8 +343,8 @@ function STATUSBTN:UpdateStatus()
 	end
 end
 
---overwrite function in parent class BUTTON
-function STATUSBTN:UpdateTooltip(command)
+--overwrite function in parent class Button
+function StatusButton:UpdateTooltip(command)
 	if not self.sbStrings then
 		return "---"
 	end
@@ -356,19 +356,19 @@ function STATUSBTN:UpdateTooltip(command)
 	end
 end
 
---overwrite function in parent class BUTTON
-function STATUSBTN:UpdateIcon()
+--overwrite function in parent class Button
+function StatusButton:UpdateIcon()
 	-- empty --
 end
---overwrite function in parent class BUTTON
-function STATUSBTN:UpdateUsable()
+--overwrite function in parent class Button
+function StatusButton:UpdateUsable()
 	-- empty --
 end
---overwrite function in parent class BUTTON
-function STATUSBTN:UpdateCount()
+--overwrite function in parent class Button
+function StatusButton:UpdateCount()
 	-- empty --
 end
---overwrite function in parent class BUTTON
-function STATUSBTN:UpdateCooldown()
+--overwrite function in parent class Button
+function StatusButton:UpdateCooldown()
 	-- empty --
 end

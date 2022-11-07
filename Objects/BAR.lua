@@ -6,14 +6,14 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class BAR : CheckButton @This is our bar object that serves as the container for all of our button objects
-local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
-Neuron.BAR = BAR
+---@class Bar : CheckButton @This is our bar object that serves as the container for all of our button objects
+local Bar = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
+Neuron.Bar = Bar
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-LibStub("AceTimer-3.0"):Embed(BAR)
-LibStub("AceEvent-3.0"):Embed(BAR)
+LibStub("AceTimer-3.0"):Embed(Bar)
+LibStub("AceEvent-3.0"):Embed(Bar)
 
 local alphaDir, alphaTimer = 0, 0
 
@@ -24,11 +24,11 @@ TRASHCAN:Hide()
 
 ----------------------------------------------------
 
----Constructor: Create a new Neuron BAR object
+---Constructor: Create a new Neuron Bar object
 ---@param class string @The class type of the new bar
 ---@param barID number @The ID of the new bar object
----@return BAR @ A newly created BUTTON object
-function BAR.new(class, barID)
+---@return Bar @ A newly created Button object
+function Bar.new(class, barID)
 	local data = Neuron.registeredBarData[class]
 
 	local newBar
@@ -36,10 +36,10 @@ function BAR.new(class, barID)
 	--this is the creation of our bar object frame
 	if _G["Neuron"..data.barType..barID] then --check to see if our bar already exists on the global namespace
 		newBar = CreateFrame("CheckButton", "Neuron"..data.barType..random(1000,10000000), UIParent, "NeuronBarTemplate") --in the case of trying to create a bar on a frame that already exists, create a random frame ID for this session only
-		setmetatable(newBar, {__index = BAR})
+		setmetatable(newBar, {__index = Bar})
 	else
 		newBar = CreateFrame("CheckButton", "Neuron"..data.barType..barID, UIParent, "NeuronBarTemplate")
-		setmetatable(newBar, {__index = BAR})
+		setmetatable(newBar, {__index = Bar})
 	end
 
 	--load saved data
@@ -112,7 +112,7 @@ function BAR.new(class, barID)
 	return newBar
 end
 
-function BAR:InitializeBar()
+function Bar:InitializeBar()
 	if self.class == "ActionBar" then
 		if Neuron.isWoWRetail or Neuron.isWoWWrathClassic then
 			self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
@@ -126,7 +126,7 @@ end
 --------- Event Handlers ----------
 -----------------------------------
 
-function BAR:ACTIVE_TALENT_GROUP_CHANGED()
+function Bar:ACTIVE_TALENT_GROUP_CHANGED()
 	if self.handler:GetAttribute("assertstate") then
 		self.handler:SetAttribute("state-"..self.handler:GetAttribute("assertstate"), self.handler:GetAttribute("activestate") or "homestate")
 	end
@@ -136,7 +136,7 @@ function BAR:ACTIVE_TALENT_GROUP_CHANGED()
 	end
 end
 
-function BAR:ACTIONBAR_SHOWHIDEGRID(show)
+function Bar:ACTIONBAR_SHOWHIDEGRID(show)
 
 	if show then
 		Neuron.dragging = true
@@ -162,8 +162,8 @@ end
 -----Bar Add/Remove Functions------
 -----------------------------------
 
----This function is used for creating brand new bars, and it is really just a wrapper for the BAR constructor with a couple of assumptions and checks
-function BAR:CreateNewBar(class)
+---This function is used for creating brand new bars, and it is really just a wrapper for the Bar constructor with a couple of assumptions and checks
+function Bar:CreateNewBar(class)
 
 	if not class and Neuron.registeredBarData[class] then --if the class isn't registered, go ahead and bail out.
 		Neuron.PrintBarTypes()
@@ -172,18 +172,18 @@ function BAR:CreateNewBar(class)
 
 	local barID = #Neuron.registeredBarData[class].barDB + 1 --increment 1 higher than the current number of bars in this class of bar's database
 
-	local newBar = BAR.new(class, barID) --create new bar
+	local newBar = Bar.new(class, barID) --create new bar
 
 	newBar.objTemplate.new(newBar, 1) --add at least 1 button to a new bar
-	BAR.ChangeSelectedBar(newBar)
+	Bar.ChangeSelectedBar(newBar)
 	newBar:Load() --load the bar
 
 	newBar:Show() --Show the transparent blue overlay that we show in the edit mode
 end
-Neuron.CreateNewBar = BAR.CreateNewBar --this is so the slash function works correctly
+Neuron.CreateNewBar = Bar.CreateNewBar --this is so the slash function works correctly
 
 
-function BAR:DeleteBar()
+function Bar:DeleteBar()
 	self.handler:SetAttribute("state-current", "homestate")
 	self.handler:SetAttribute("state-last", "homestate")
 	self.handler:SetAttribute("showstates", "homestate")
@@ -255,7 +255,7 @@ function BAR:DeleteBar()
 	end
 end
 
-function BAR:AddObjectToBar() --called from NeuronGUI
+function Bar:AddObjectToBar() --called from NeuronGUI
 	local id = #self.buttons + 1
 
 	if #self.buttons < self.objMax then
@@ -271,7 +271,7 @@ function BAR:AddObjectToBar() --called from NeuronGUI
 	self:UpdateObjectVisibility()
 end
 
-function BAR:RemoveObjectFromBar() --called from NeuronGUI
+function Bar:RemoveObjectFromBar() --called from NeuronGUI
 
 	local id = #self.buttons --always the last button
 
@@ -298,7 +298,7 @@ function BAR:RemoveObjectFromBar() --called from NeuronGUI
 end
 
 
-function BAR:Load()
+function Bar:Load()
 	self:SetPosition()
 	self:LoadObjects()
 	self:SetObjectLoc()
@@ -308,7 +308,7 @@ function BAR:Load()
 	self:UpdateBarStatus()
 end
 
-function BAR.ChangeSelectedBar(newBar)
+function Bar.ChangeSelectedBar(newBar)
 	if newBar and Neuron.currentBar ~= newBar then
 		Neuron.currentBar = newBar
 
@@ -363,7 +363,7 @@ end
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
-function BAR.IsMouseOverSelfOrWatchFrame(frame)
+function Bar.IsMouseOverSelfOrWatchFrame(frame)
 	if frame:IsMouseOver() then
 		return true
 	end
@@ -381,13 +381,13 @@ end
 
 
 ---this function is set via a repeating scheduled timer in SetAutoHide()
-function BAR:AutoHideUpdate()
+function Bar:AutoHideUpdate()
 	if self:GetAutoHide() and self.handler~=nil then
 		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
 			if self:IsShown() then
 				self.handler:SetAlpha(1)
 			else
-				if BAR.IsMouseOverSelfOrWatchFrame(self) then
+				if Bar.IsMouseOverSelfOrWatchFrame(self) then
 					if self.handler:GetAlpha() < self:GetBarAlpha() then
 						if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
 							self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
@@ -396,7 +396,7 @@ function BAR:AutoHideUpdate()
 						end
 					end
 				end
-				if not BAR.IsMouseOverSelfOrWatchFrame(self) then
+				if not Bar.IsMouseOverSelfOrWatchFrame(self) then
 					if self.handler:GetAlpha() > 0 then
 						if self.handler:GetAlpha()-self:GetAlphaUpSpeed() >= 0 then
 							self.handler:SetAlpha(self.handler:GetAlpha()-self:GetAlphaUpSpeed())
@@ -410,7 +410,7 @@ function BAR:AutoHideUpdate()
 	end
 end
 
-function BAR:AlphaUpUpdate()
+function Bar:AlphaUpUpdate()
 	if self:GetAlphaUp() == "combat" then
 		if InCombatLockdown() then
 			if self.handler:GetAlpha() < 1 then
@@ -430,7 +430,7 @@ function BAR:AlphaUpUpdate()
 			end
 		end
 	elseif self:GetAlphaUp() == "combat + mouseover" then
-		if InCombatLockdown() and BAR.IsMouseOverSelfOrWatchFrame(self)  then
+		if InCombatLockdown() and Bar.IsMouseOverSelfOrWatchFrame(self)  then
 			if self.handler:GetAlpha() < 1 then
 				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
 					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
@@ -448,7 +448,7 @@ function BAR:AlphaUpUpdate()
 			end
 		end
 	elseif self:GetAlphaUp() == "mouseover" then
-		if BAR.IsMouseOverSelfOrWatchFrame(self) then
+		if Bar.IsMouseOverSelfOrWatchFrame(self) then
 			if self.handler:GetAlpha() < 1 then
 				if self.handler:GetAlpha()+self:GetAlphaUpSpeed() <= 1 then
 					self.handler:SetAlpha(self.handler:GetAlpha()+self:GetAlphaUpSpeed())
@@ -468,7 +468,7 @@ function BAR:AlphaUpUpdate()
 	end
 end
 
-function BAR:UpdateAutoHideTimer()
+function Bar:UpdateAutoHideTimer()
 	if self:GetAutoHide() then
 		if self:TimeLeft(self.autoHideTimer) == 0 then --safety check to make sure we don't re-set an already active timer
 			self.autoHideTimer = self:ScheduleRepeatingTimer("AutoHideUpdate", 0.05)
@@ -478,7 +478,7 @@ function BAR:UpdateAutoHideTimer()
 	end
 end
 
-function BAR:UpdateAlphaUpTimer()
+function Bar:UpdateAlphaUpTimer()
 	if self:GetAlphaUp() ~= "off" then
 		if self:TimeLeft(self.alphaUpTimer) == 0 then --safety check to make sure we don't re-set an already active timer
 			self.alphaUpTimer = self:ScheduleRepeatingTimer("AlphaUpUpdate", 0.05)
@@ -489,7 +489,7 @@ function BAR:UpdateAlphaUpTimer()
 end
 
 
-function BAR:AddVisibilityDriver(handler, state, conditions)
+function Bar:AddVisibilityDriver(handler, state, conditions)
 	if Neuron.MANAGED_BAR_STATES[state] then
 		RegisterAttributeDriver(handler, "state-"..state, conditions);
 
@@ -508,7 +508,7 @@ function BAR:AddVisibilityDriver(handler, state, conditions)
 end
 
 
-function BAR:ClearVisibilityDriver(handler, state)
+function Bar:ClearVisibilityDriver(handler, state)
 	UnregisterAttributeDriver(handler, "state-"..state)
 	handler:SetAttribute("activestates", handler:GetAttribute("activestates"):gsub(state.."%d+;", ""))
 	handler:SetAttribute("state-current", "homestate")
@@ -517,7 +517,7 @@ function BAR:ClearVisibilityDriver(handler, state)
 end
 
 
-function BAR:UpdateBarVisibility(driver)
+function Bar:UpdateBarVisibility(driver)
 	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
 		if self.data.hidestates:find(":"..state) then
 			if not self.vis[state] or not self.vis[state].registered then
@@ -536,7 +536,7 @@ function BAR:UpdateBarVisibility(driver)
 	end
 end
 
-function BAR:BuildStateMap(remapState)
+function Bar:BuildStateMap(remapState)
 	local statemap, state, map, remap, homestate = "", remapState:gsub("paged", "bar")
 	for states in gmatch(self.data.remap, "[^;]+") do
 		map, remap = (":"):split(states)
@@ -562,7 +562,7 @@ function BAR:BuildStateMap(remapState)
 end
 
 
-function BAR:AddStates(handler, state, conditions)
+function Bar:AddStates(handler, state, conditions)
 	if state then
 		if Neuron.MANAGED_BAR_STATES[state] then
 			RegisterAttributeDriver(handler, "state-"..state, conditions);
@@ -574,7 +574,7 @@ function BAR:AddStates(handler, state, conditions)
 	end
 end
 
-function BAR:ClearStates(handler, state)
+function Bar:ClearStates(handler, state)
 	if state ~= "homestate" then
 		if Neuron.MANAGED_BAR_STATES[state].homestate then
 			handler:SetAttribute("handler-homestate", nil)
@@ -588,7 +588,7 @@ function BAR:ClearStates(handler, state)
 end
 
 
-function BAR:UpdateStates(handler)
+function Bar:UpdateStates(handler)
 	for state, values in pairs(Neuron.MANAGED_BAR_STATES) do
 		if self.data[state] then
 			if not self[state] or not self[state].registered then
@@ -617,7 +617,7 @@ function BAR:UpdateStates(handler)
 end
 
 
-function BAR:CreateDriver()
+function Bar:CreateDriver()
 	--This is the macro base that will be used to set state
 	local DRIVER_BASE_ACTION = [[
 	local state = self:GetAttribute("state-<MODIFIER>"):match("%a+")
@@ -652,7 +652,7 @@ function BAR:CreateDriver()
 end
 
 
-function BAR:CreateHandler()
+function Bar:CreateHandler()
 	local HANDLER_BASE_ACTION = [[
 	if self:GetAttribute("state-<MODIFIER>") == "laststate" then
 
@@ -888,7 +888,7 @@ function BAR:CreateHandler()
 end
 
 
-function BAR:CreateWatcher()
+function Bar:CreateWatcher()
 	local watcher = CreateFrame("Frame", "NeuronBarWatcher"..self.id, self.handler, "SecureHandlerStateTemplate")
 
 	watcher:SetID(self.id)
@@ -913,7 +913,7 @@ function BAR:CreateWatcher()
 	RegisterAttributeDriver(watcher, "state-".."petbattle", "[petbattle] hide; [nopetbattle] show");
 end
 
-function BAR:UpdateBarStatus(show)
+function Bar:UpdateBarStatus(show)
 	if InCombatLockdown() then
 		return
 	end
@@ -936,7 +936,7 @@ end
 -------------------------------------------------------
 
 
-function BAR:GetPosition(oFrame)
+function Bar:GetPosition(oFrame)
 	local relFrame, point
 
 	if oFrame then
@@ -976,7 +976,7 @@ function BAR:GetPosition(oFrame)
 end
 
 
-function BAR:SetPosition()
+function Bar:SetPosition()
 	if self.data.snapToPoint and self.data.snapToFrame then
 		self:StickToPoint(_G[self.data.snapToFrame], self.data.snapToPoint,self:GetHorizontalPad(), self:GetVerticalPad())
 	else
@@ -1003,7 +1003,7 @@ function BAR:SetPosition()
 end
 
 --Fakes a state change for a given bar, calls up the counterpart function in NeuronButton
-function BAR:FakeStateChange(state)
+function Bar:FakeStateChange(state)
 	self.handler:SetAttribute("fauxstate", state)
 
 	for i, object in ipairs(self.buttons) do
@@ -1013,7 +1013,7 @@ function BAR:FakeStateChange(state)
 end
 
 --loads all the object stored for a given bar
-function BAR:LoadObjects()
+function Bar:LoadObjects()
 	local spec = (not self:GetMultiSpec() or Neuron.isWoWClassicEra) and 1 or GetSpecialization()
 
 	for i, object in ipairs(self.buttons) do
@@ -1025,7 +1025,7 @@ function BAR:LoadObjects()
 end
 
 
-function BAR:SetObjectLoc()
+function Bar:SetObjectLoc()
 	local width, height, num, origCol = 0, 0, 0, self:GetColumns()
 	local x, y, placed
 	local shape, padH, padV, arcStart, arcLength = self:GetBarShape(), self:GetHorizontalPad(), self:GetVerticalPad(), self:GetArcStart(), self:GetArcLength()
@@ -1046,7 +1046,7 @@ function BAR:SetObjectLoc()
 		buttons = self.buttons
 	else
 		for k,v in pairs (self.data.objectList) do
-			table.insert(buttons, Neuron.FOBTNIndex[v])
+			table.insert(buttons, Neuron.FOBtnIndex[v])
 		end
 	end
 
@@ -1126,7 +1126,7 @@ function BAR:SetObjectLoc()
 end
 
 
-function BAR:SetPerimeter()
+function Bar:SetPerimeter()
 	local num = 0
 
 	--This is just for the flyout bar, it should be cleaned in the future
@@ -1142,7 +1142,7 @@ function BAR:SetPerimeter()
 		buttons = self.buttons
 	else
 		for k,v in pairs (self.data.objectList) do
-			table.insert(buttons, Neuron.FOBTNIndex[v])
+			table.insert(buttons, Neuron.FOBtnIndex[v])
 		end
 	end
 	-----------------------------------------------
@@ -1179,7 +1179,7 @@ function BAR:SetPerimeter()
 end
 
 
-function BAR:SetDefaults(defaults)
+function Bar:SetDefaults(defaults)
 	for k,v in pairs(defaults) do
 		if k ~= "buttons" then --ignore this value because it's just used to tell how many buttons should be placed on a bar by default on the first load
 			self.data[k] = v
@@ -1188,7 +1188,7 @@ function BAR:SetDefaults(defaults)
 end
 
 
-function BAR:SetRemap_Paged()
+function Bar:SetRemap_Paged()
 	self.data.remap = ""
 
 	for i=1,6 do
@@ -1199,7 +1199,7 @@ function BAR:SetRemap_Paged()
 end
 
 
-function BAR:SetRemap_Stance()
+function Bar:SetRemap_Stance()
 	local start = tonumber(Neuron.MANAGED_BAR_STATES.stance.homestate:match("%d+"))
 
 	if start then
@@ -1219,7 +1219,7 @@ function BAR:SetRemap_Stance()
 end
 
 
-function BAR:SetSize()
+function Bar:SetSize()
 	if self.right then
 		self:SetWidth(((self.right-self.left)+5) * self:GetBarScale())
 		self:SetHeight(((self.top-self.bottom)+5) * self:GetBarScale())
@@ -1236,11 +1236,11 @@ end
 ------------------------OnEvent Functions-----------------------------
 ----------------------------------------------------------------------
 
-function BAR:OnClick(...)
+function Bar:OnClick(...)
 	local click, down = select(1, ...), select(2, ...)
 
 	if not down then
-		BAR.ChangeSelectedBar(self)
+		Bar.ChangeSelectedBar(self)
 	end
 
 	if IsShiftKeyDown() and not down then
@@ -1262,7 +1262,7 @@ function BAR:OnClick(...)
 
 	elseif click == "MiddleButton" then
 		if GetMouseFocus() ~= Neuron.currentBar then
-			BAR.ChangeSelectedBar(self)
+			Bar.ChangeSelectedBar(self)
 		end
 
 	elseif click == "RightButton" and not down then
@@ -1278,7 +1278,7 @@ function BAR:OnClick(...)
 end
 
 
-function BAR:OnEnter(...)
+function Bar:OnEnter(...)
 	if self:GetBarConceal() then
 		self:SetBackdropColor(1,0,0,0.6)
 	else
@@ -1289,7 +1289,7 @@ function BAR:OnEnter(...)
 end
 
 
-function BAR:OnLeave(...)
+function Bar:OnLeave(...)
 	if self ~= Neuron.currentBar then
 		if self:GetBarConceal() then
 			self:SetBackdropColor(1,0,0,0.4)
@@ -1308,8 +1308,8 @@ function BAR:OnLeave(...)
 end
 
 
-function BAR:OnDragStart(...)
-	BAR.ChangeSelectedBar(self)
+function Bar:OnDragStart(...)
+	Bar.ChangeSelectedBar(self)
 
 	self:SetFrameStrata(Neuron.STRATAS[self:GetStrata()])
 	self:EnableKeyboard(false)
@@ -1321,7 +1321,7 @@ function BAR:OnDragStart(...)
 end
 
 
-function BAR:OnDragStop(...)
+function Bar:OnDragStop(...)
 
 	local point
 	self:StopMovingOrSizing()
@@ -1357,7 +1357,7 @@ function BAR:OnDragStop(...)
 	self:UpdateBarStatus()
 end
 
-function BAR:OnKeyDown(key)
+function Bar:OnKeyDown(key)
 	if self.microAdjust then
 		self.keydown = key
 
@@ -1387,7 +1387,7 @@ function BAR:OnKeyDown(key)
 end
 
 
-function BAR:OnKeyUp(key)
+function Bar:OnKeyUp(key)
 	if self.microAdjust and not key:find("SHIFT") then
 		self.microAdjust = 1
 		self.keydown = nil
@@ -1395,7 +1395,7 @@ function BAR:OnKeyUp(key)
 end
 
 
-function BAR:OnShow()
+function Bar:OnShow()
 	if self == Neuron.currentBar then
 		if self:GetBarConceal() then
 			self:SetBackdropColor(1,0,0,0.6)
@@ -1417,7 +1417,7 @@ function BAR:OnShow()
 end
 
 
-function BAR:OnHide()
+function Bar:OnHide()
 	self.handler:SetAttribute("editmode", nil)
 
 	if self.handler:GetAttribute("vishide") then
@@ -1429,7 +1429,7 @@ function BAR:OnHide()
 end
 
 
-function BAR:Pulse(elapsed)
+function Bar:Pulse(elapsed)
 	alphaTimer = alphaTimer + elapsed * 1.5
 
 	if alphaDir == 1 then
@@ -1459,7 +1459,7 @@ end
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 
-function BAR:UpdateButtonSettings()
+function Bar:UpdateButtonSettings()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:InitializeButtonSettings()
@@ -1468,7 +1468,7 @@ function BAR:UpdateButtonSettings()
 end
 
 
-function BAR:UpdateObjectVisibility(show)
+function Bar:UpdateObjectVisibility(show)
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:UpdateVisibility(show)
@@ -1476,7 +1476,7 @@ function BAR:UpdateObjectVisibility(show)
 	end
 end
 
-function BAR:UpdateObjectUsability()
+function Bar:UpdateObjectUsability()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:UpdateUsable()
@@ -1484,7 +1484,7 @@ function BAR:UpdateObjectUsability()
 	end
 end
 
-function BAR:UpdateObjectIcons()
+function Bar:UpdateObjectIcons()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:UpdateIcon()
@@ -1492,7 +1492,7 @@ function BAR:UpdateObjectIcons()
 	end
 end
 
-function BAR:UpdateObjectCooldowns()
+function Bar:UpdateObjectCooldowns()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:CancelCooldownTimer(true) --this will reset the text/alpha on the button
@@ -1501,7 +1501,7 @@ function BAR:UpdateObjectCooldowns()
 	end
 end
 
-function BAR:UpdateObjectCooldowns()
+function Bar:UpdateObjectCooldowns()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:CancelCooldownTimer(true) --this will reset the text/alpha on the button
@@ -1510,7 +1510,7 @@ function BAR:UpdateObjectCooldowns()
 	end
 end
 
-function BAR:UpdateObjectStatus()
+function Bar:UpdateObjectStatus()
 	for _, object in pairs(self.buttons) do
 		if object then
 			object:UpdateStatus()
@@ -1522,23 +1522,23 @@ end
 -------------------Sets and Gets---------------------
 -----------------------------------------------------
 
-function BAR:SetBarName(name)
+function Bar:SetBarName(name)
 	if name and name ~= "" then
 		self.data.name = name
 	end
 	self:UpdateBarStatus()
 end
 
-function BAR:GetBarName()
+function Bar:GetBarName()
 	return self.data.name
 end
 
-function BAR:GetNumObjects()
+function Bar:GetNumObjects()
 	return #self.buttons
 end
 
 --TODO: Rewrite this and simplify it
-function BAR:SetState(msg, gui, checked)
+function Bar:SetState(msg, gui, checked)
 	if msg then
 		local state = msg:match("^%S+")
 		local command = msg:gsub(state, "");
@@ -1671,7 +1671,7 @@ function BAR:SetState(msg, gui, checked)
 end
 
 --TODO: Rewrite this and simplify it
-function BAR:SetVisibility(msg)
+function Bar:SetVisibility(msg)
 	wipe(statetable)
 	local toggle, index, num = (" "):split(msg)
 	toggle = toggle:lower()
@@ -1757,7 +1757,7 @@ function BAR:SetVisibility(msg)
 end
 
 
-function BAR:SetAutoHide(checked)
+function Bar:SetAutoHide(checked)
 	if checked then
 		self.data.autoHide = true
 	else
@@ -1768,11 +1768,11 @@ function BAR:SetAutoHide(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetAutoHide()
+function Bar:GetAutoHide()
 	return self.data.autoHide
 end
 
-function BAR:SetShowGrid(checked)
+function Bar:SetShowGrid(checked)
 	if checked then
 		self.data.showGrid = true
 	else
@@ -1783,11 +1783,11 @@ function BAR:SetShowGrid(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetShowGrid()
+function Bar:GetShowGrid()
 	return self.data.showGrid
 end
 
-function BAR:SetSpellGlow(option)
+function Bar:SetSpellGlow(option)
 	if option then
 		if option == "default" then
 			self.data.spellGlow = "default"
@@ -1803,12 +1803,12 @@ function BAR:SetSpellGlow(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetSpellGlow()
+function Bar:GetSpellGlow()
 	return self.data.spellGlow
 end
 
 
-function BAR:SetSnapTo(checked)
+function Bar:SetSnapTo(checked)
 	if checked then
 		self.data.snapTo = true
 	else
@@ -1830,12 +1830,12 @@ function BAR:SetSnapTo(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetSnapTo()
+function Bar:GetSnapTo()
 	return self.data.snapTo
 end
 
 
-function BAR:SetClickMode(mode)
+function Bar:SetClickMode(mode)
 	if mode then
 		self.data.clickMode = mode
 	else
@@ -1846,12 +1846,12 @@ function BAR:SetClickMode(mode)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetClickMode()
+function Bar:GetClickMode()
 	return self.data.clickMode
 end
 
 
-function BAR:SetMultiSpec(checked)
+function Bar:SetMultiSpec(checked)
 	if checked then
 		self.data.multiSpec = true
 	else
@@ -1865,12 +1865,12 @@ function BAR:SetMultiSpec(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetMultiSpec()
+function Bar:GetMultiSpec()
 	return self.data.multiSpec
 end
 
 
-function BAR:SetBarConceal(checked)
+function Bar:SetBarConceal(checked)
 	if checked then
 		self.data.conceal = true
 		self:SetBackdropColor(1,0,0,0.4)
@@ -1882,11 +1882,11 @@ function BAR:SetBarConceal(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetBarConceal()
+function Bar:GetBarConceal()
 	return self.data.conceal
 end
 
-function BAR:SetBarLock(option)
+function Bar:SetBarLock(option)
 	if option then
 		if option == "shift" then
 			self.data.barLock = "shift"
@@ -1904,12 +1904,12 @@ function BAR:SetBarLock(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetBarLock()
+function Bar:GetBarLock()
 	return self.data.barLock
 end
 
 
-function BAR:SetTooltipOption(option)
+function Bar:SetTooltipOption(option)
 	if option then
 		if option == "minimal" then
 			self.data.tooltips = "minimal"
@@ -1925,11 +1925,11 @@ function BAR:SetTooltipOption(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetTooltipOption()
+function Bar:GetTooltipOption()
 	return self.data.tooltips
 end
 
-function BAR:SetTooltipCombat(checked)
+function Bar:SetTooltipCombat(checked)
 	if checked then
 		self.data.tooltipsCombat = true
 	else
@@ -1939,11 +1939,11 @@ function BAR:SetTooltipCombat(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetTooltipCombat()
+function Bar:GetTooltipCombat()
 	return self.data.tooltipsCombat
 end
 
-function BAR:SetBarShape(option)
+function Bar:SetBarShape(option)
 	if option then
 		if option == "linear" or option == "circle" or option == "circle + one" then
 			self.data.shape = option
@@ -1960,11 +1960,11 @@ function BAR:SetBarShape(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetBarShape()
+function Bar:GetBarShape()
 	return self.data.shape
 end
 
-function BAR:SetColumns(option)
+function Bar:SetColumns(option)
 	if option then
 		if option > 0 then
 			self.data.columns = option
@@ -1981,11 +1981,11 @@ function BAR:SetColumns(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetColumns()
+function Bar:GetColumns()
 	return self.data.columns
 end
 
-function BAR:SetArcStart(option)
+function Bar:SetArcStart(option)
 	if option then
 		self.data.arcStart = option
 	else
@@ -1998,11 +1998,11 @@ function BAR:SetArcStart(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetArcStart()
+function Bar:GetArcStart()
 	return self.data.arcStart
 end
 
-function BAR:SetArcLength(option)
+function Bar:SetArcLength(option)
 	if option then
 		self.data.arcLength = option
 	else
@@ -2015,13 +2015,13 @@ function BAR:SetArcLength(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetArcLength()
+function Bar:GetArcLength()
 	return self.data.arcLength
 end
 
 
 
-function BAR:SetHorizontalPad(option)
+function Bar:SetHorizontalPad(option)
 	if option then
 		self.data.padH = option
 	else
@@ -2034,11 +2034,11 @@ function BAR:SetHorizontalPad(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetHorizontalPad()
+function Bar:GetHorizontalPad()
 	return self.data.padH
 end
 
-function BAR:SetVerticalPad(option)
+function Bar:SetVerticalPad(option)
 	if option then
 		self.data.padV = option
 	else
@@ -2051,12 +2051,12 @@ function BAR:SetVerticalPad(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetVerticalPad()
+function Bar:GetVerticalPad()
 	return self.data.padV
 end
 
 
-function BAR:SetBarScale(option)
+function Bar:SetBarScale(option)
 	if option then
 		self.data.scale = option
 	else
@@ -2069,11 +2069,11 @@ function BAR:SetBarScale(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetBarScale()
+function Bar:GetBarScale()
 	return self.data.scale
 end
 
-function BAR:SetStrata(option)
+function Bar:SetStrata(option)
 	--option should be numeric, and should not ever be lower than 2. In the GUI we should make sure the list starts at 2 and runs until 6
 	if option and option >=2 and option <= 6 then
 		self.data.strata = option
@@ -2086,11 +2086,11 @@ function BAR:SetStrata(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetStrata()
+function Bar:GetStrata()
 	return self.data.strata
 end
 
-function BAR:SetBarAlpha(option)
+function Bar:SetBarAlpha(option)
 	if option then
 		self.data.alpha = option
 	else
@@ -2101,11 +2101,11 @@ function BAR:SetBarAlpha(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetBarAlpha()
+function Bar:GetBarAlpha()
 	return self.data.alpha
 end
 
-function BAR:SetAlphaUp(option)
+function Bar:SetAlphaUp(option)
 	if option then
 		if option == "off" or option == "mouseover" or option == "combat" or option =="combat + mouseover" then
 			self.data.alphaUp = option
@@ -2120,12 +2120,12 @@ function BAR:SetAlphaUp(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetAlphaUp()
+function Bar:GetAlphaUp()
 	--TODO: Get rid of :lower() in the future
 	return self.data.alphaUp:lower() --shouldn't have to set lower but older databases might have some capital letters
 end
 
-function BAR:SetAlphaUpSpeed(option)
+function Bar:SetAlphaUpSpeed(option)
 	if option then
 		if option < 0.01 then
 			self.data.fadeSpeed = 0.01
@@ -2141,11 +2141,11 @@ function BAR:SetAlphaUpSpeed(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetAlphaUpSpeed()
+function Bar:GetAlphaUpSpeed()
 	return self.data.fadeSpeed
 end
 
-function BAR:SetXAxis(option)
+function Bar:SetXAxis(option)
 	if option then
 		self.data.x = option
 	else
@@ -2156,11 +2156,11 @@ function BAR:SetXAxis(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetXAxis()
+function Bar:GetXAxis()
 	return self.data.x
 end
 
-function BAR:SetYAxis(option)
+function Bar:SetYAxis(option)
 	if option then
 		self.data.y = option
 	else
@@ -2171,11 +2171,11 @@ function BAR:SetYAxis(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetYAxis()
+function Bar:GetYAxis()
 	return self.data.y
 end
 
-function BAR:SetShowBindText(checked)
+function Bar:SetShowBindText(checked)
 	if checked then
 		self.data.bindText = true
 	else
@@ -2186,11 +2186,11 @@ function BAR:SetShowBindText(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetShowBindText()
+function Bar:GetShowBindText()
 	return self.data.bindText
 end
 
-function BAR:SetBindColor(option)
+function Bar:SetBindColor(option)
 	if option then
 		self.data.bindColor = option
 	else
@@ -2201,11 +2201,11 @@ function BAR:SetBindColor(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetBindColor()
+function Bar:GetBindColor()
 	return self.data.bindColor
 end
 
-function BAR:SetShowButtonText(checked)
+function Bar:SetShowButtonText(checked)
 	if checked then
 		self.data.buttonText = true
 	else
@@ -2216,11 +2216,11 @@ function BAR:SetShowButtonText(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetShowButtonText()
+function Bar:GetShowButtonText()
 	return self.data.buttonText
 end
 
-function BAR:SetMacroColor(option)
+function Bar:SetMacroColor(option)
 	if option then
 		self.data.macroColor = option
 	else
@@ -2231,11 +2231,11 @@ function BAR:SetMacroColor(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetMacroColor()
+function Bar:GetMacroColor()
 	return self.data.macroColor
 end
 
-function BAR:SetShowCountText(checked)
+function Bar:SetShowCountText(checked)
 	if checked then
 		self.data.countText = true
 	else
@@ -2246,11 +2246,11 @@ function BAR:SetShowCountText(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetShowCountText()
+function Bar:GetShowCountText()
 	return self.data.countText
 end
 
-function BAR:SetCountColor(option)
+function Bar:SetCountColor(option)
 	if option then
 		self.data.countColor = option
 	else
@@ -2261,11 +2261,11 @@ function BAR:SetCountColor(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetCountColor()
+function Bar:GetCountColor()
 	return self.data.countColor
 end
 
-function BAR:SetShowRangeIndicator(checked)
+function Bar:SetShowRangeIndicator(checked)
 	if checked then
 		self.data.rangeInd = true
 	else
@@ -2276,11 +2276,11 @@ function BAR:SetShowRangeIndicator(checked)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetShowRangeIndicator()
+function Bar:GetShowRangeIndicator()
 	return self.data.rangeInd
 end
 
-function BAR:SetRangeColor(option)
+function Bar:SetRangeColor(option)
 	if option then
 		self.data.rangecolor = option
 	else
@@ -2291,11 +2291,11 @@ function BAR:SetRangeColor(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetRangeColor()
+function Bar:GetRangeColor()
 	return self.data.rangecolor
 end
 
-function BAR:SetShowCooldownText(checked)
+function Bar:SetShowCooldownText(checked)
 	if checked then
 		self.data.cdText = true
 	else
@@ -2305,11 +2305,11 @@ function BAR:SetShowCooldownText(checked)
 	self:UpdateObjectCooldowns()
 end
 
-function BAR:GetShowCooldownText()
+function Bar:GetShowCooldownText()
 	return self.data.cdText
 end
 
-function BAR:SetCooldownColor1(option)
+function Bar:SetCooldownColor1(option)
 	if option then
 		self.data.cdcolor1 = option
 	else
@@ -2319,11 +2319,11 @@ function BAR:SetCooldownColor1(option)
 	self:UpdateObjectCooldowns()
 end
 
-function BAR:GetCooldownColor1()
+function Bar:GetCooldownColor1()
 	return self.data.cdcolor1
 end
 
-function BAR:SetCooldownColor2(option)
+function Bar:SetCooldownColor2(option)
 	if option then
 		self.data.cdcolor2 = option
 	else
@@ -2333,11 +2333,11 @@ function BAR:SetCooldownColor2(option)
 	self:UpdateObjectCooldowns()
 end
 
-function BAR:GetCooldownColor2()
+function Bar:GetCooldownColor2()
 	return self.data.cdcolor2
 end
 
-function BAR:SetShowCooldownAlpha(checked)
+function Bar:SetShowCooldownAlpha(checked)
 	if checked then
 		self.data.cdAlpha = true --hardcoded for now, maybe one day add an option to configure this value
 	else
@@ -2347,11 +2347,11 @@ function BAR:SetShowCooldownAlpha(checked)
 	self:UpdateObjectCooldowns()
 end
 
-function BAR:GetShowCooldownAlpha()
+function Bar:GetShowCooldownAlpha()
 	return self.data.cdAlpha
 end
 
-function BAR:SetShowBorderStyle(checked)
+function Bar:SetShowBorderStyle(checked)
 	if checked then
 		self.data.showBorderStyle = true
 	else
@@ -2361,11 +2361,11 @@ function BAR:SetShowBorderStyle(checked)
 	self:UpdateObjectIcons()
 end
 
-function BAR:GetShowBorderStyle()
+function Bar:GetShowBorderStyle()
 	return self.data.showBorderStyle
 end
 
-function BAR:SetManaColor(option)
+function Bar:SetManaColor(option)
 	if option then
 		self.data.manacolor = option
 	else
@@ -2376,6 +2376,6 @@ function BAR:SetManaColor(option)
 	self:UpdateBarStatus()
 end
 
-function BAR:GetManaColor()
+function Bar:GetManaColor()
 	return self.data.manacolor
 end

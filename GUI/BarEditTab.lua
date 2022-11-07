@@ -49,7 +49,7 @@ function NeuronGUI:BarEditPanel(tabFrame)
 	barListDropdown:SetLabel("Switch selected bar:")
 	barListDropdown:SetText(Neuron.currentBar:GetBarName() or "")
 	barListDropdown:SetList(barList) --assign the bar type table to the dropdown menu
-	barListDropdown:SetCallback("OnValueChanged", function(self, callBackType, key) Neuron.BAR.ChangeSelectedBar(key); NeuronGUI:RefreshEditor() end)
+	barListDropdown:SetCallback("OnValueChanged", function(self, callBackType, key) Neuron.Bar.ChangeSelectedBar(key); NeuronGUI:RefreshEditor() end)
 	topRow:AddChild(barListDropdown)
 
 	-------------------------------
@@ -93,7 +93,7 @@ function NeuronGUI:BarEditPanel(tabFrame)
 	newBarButton = AceGUI:Create("Button")
 	newBarButton:SetWidth(120)
 	newBarButton:SetText("Create")
-	newBarButton:SetCallback("OnClick", function() if selectedBarType then Neuron.BAR:CreateNewBar(selectedBarType); NeuronGUI:RefreshEditor() end end)
+	newBarButton:SetCallback("OnClick", function() if selectedBarType then Neuron.Bar:CreateNewBar(selectedBarType); NeuronGUI:RefreshEditor() end end)
 	if selectedBarType then
 		newBarButton:SetDisabled(false)
 	else

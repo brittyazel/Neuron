@@ -473,7 +473,7 @@ function Neuron:ToggleBarEditMode(show)
 		--if there is no bar selected, default to the first in the BarList
 		--TODO: This logic may be unintuitive. Should probably be fixed
 		if not Neuron.currentBar then
-			Neuron.BAR.ChangeSelectedBar(Neuron.bars[1])
+			Neuron.Bar.ChangeSelectedBar(Neuron.bars[1])
 		end
 	else
 		Neuron.barEditMode = false
@@ -502,12 +502,12 @@ function Neuron:ToggleButtonEditMode(show)
 					if not Neuron.currentButton then
 						if Neuron.currentBar then
 							if Neuron.currentBar.buttons[1].editFrame then --try to set the selected button to the first button on the selected bar, if it has an edit frame
-								Neuron.BUTTON.ChangeSelectedButton(Neuron.currentBar.buttons[1])
+								Neuron.Button.ChangeSelectedButton(Neuron.currentBar.buttons[1])
 							else
-								Neuron.BUTTON.ChangeSelectedButton(button) --if there's no edit frame, then just default to the selected button to the first bar in the list
+								Neuron.Button.ChangeSelectedButton(button) --if there's no edit frame, then just default to the selected button to the first bar in the list
 							end
 						else
-							Neuron.BUTTON.ChangeSelectedButton(button) --default to the selected button to the first bar in the list
+							Neuron.Button.ChangeSelectedButton(button) --default to the selected button to the first bar in the list
 						end
 					end
 				end

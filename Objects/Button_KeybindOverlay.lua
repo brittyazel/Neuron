@@ -6,7 +6,7 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
-local BUTTON = Neuron.BUTTON
+local Button = Neuron.Button
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -15,9 +15,9 @@ local NEURON_VIRTUAL_KEY = "Hotkey"
 
 ----------------------------------------------------------
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@return BUTTON @ A newly created BUTTON object
-function BUTTON:KeybindOverlay_CreateEditFrame()
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@return Button @ A newly created Button object
+function Button:KeybindOverlay_CreateEditFrame()
 	local keybindFrame = CreateFrame("Button", self:GetName().."BindFrame", self, "NeuronOverlayFrameTemplate")
 	setmetatable(keybindFrame, { __index = CreateFrame("Button") })
 
@@ -108,7 +108,7 @@ end
 
 --- Returns the keybind for a given button
 --- @return string @The current key that is bound to the selected button
-function BUTTON:KeybindOverlay_GetBindKeyList()
+function Button:KeybindOverlay_GetBindKeyList()
 	if not self.data then
 		return L["None"]
 	end
@@ -127,7 +127,7 @@ end
 
 --- Clears the bindings of a given button
 --- @param key string @Which key was pressed
-function BUTTON:KeybindOverlay_ClearBindings(key)
+function Button:KeybindOverlay_ClearBindings(key)
 	if key then
 		local newkey = key:gsub("%-", "%%-")
 		self.keys.hotKeys = self.keys.hotKeys:gsub(newkey..":", "")
@@ -144,7 +144,7 @@ function BUTTON:KeybindOverlay_ClearBindings(key)
 end
 
 --- Applies binding to button
-function BUTTON:KeybindOverlay_ApplyBindings()
+function Button:KeybindOverlay_ApplyBindings()
 	local virtualKey
 
 	---checks if the button is a Neuron action or a special Blizzard action (such as a zone ability)
@@ -176,7 +176,7 @@ end
 
 --- Processes the change to a key bind
 --- @param key string @The key to be used
-function BUTTON:KeybindOverlay_ProcessBinding(key)
+function Button:KeybindOverlay_ProcessBinding(key)
 	--if the button is locked, warn the user as to the locked status
 	if self.keys and self.keys.hotKeyLock then
 		UIErrorsFrame:AddMessage(L["Bindings_Locked_Notice"], 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME)
@@ -231,7 +231,7 @@ function BUTTON:KeybindOverlay_ProcessBinding(key)
 end
 
 --- OnShow Event handler
-function BUTTON:KeybindOverlay_OnShow()
+function Button:KeybindOverlay_OnShow()
 	local priority = ""
 
 	if self.keys.hotKeyPri then
@@ -244,7 +244,7 @@ function BUTTON:KeybindOverlay_OnShow()
 		self.keybindFrame.label:SetText(priority.."|cffffffff"..L["Bind"].."|r")
 	end
 
-	--set a repeating timer when the BUTTON is shown to enable or disable Keyboard input on mouseover.
+	--set a repeating timer when the Button is shown to enable or disable Keyboard input on mouseover.
 	self.keybindFrame.keybindUpdateTimer = self:ScheduleRepeatingTimer(function()
 		if self.keybindFrame:IsMouseOver() then
 			self.keybindFrame:EnableKeyboard(true)
@@ -255,13 +255,13 @@ function BUTTON:KeybindOverlay_OnShow()
 end
 
 --- OnHide Event handler
-function BUTTON:KeybindOverlay_OnHide()
+function Button:KeybindOverlay_OnHide()
 	--Cancel the repeating time when hiding the bar
 	self:CancelTimer(self.keybindFrame.keybindUpdateTimer)
 end
 
 --- OnEnter Event handler
-function BUTTON:KeybindOverlay_OnEnter()
+function Button:KeybindOverlay_OnEnter()
 	local name
 
 	---TODO:we should definitely added name strings for pets/companions as well. This was just to get it going
@@ -294,14 +294,14 @@ function BUTTON:KeybindOverlay_OnEnter()
 end
 
 --- OnLeave Event handler
-function BUTTON:KeybindOverlay_OnLeave()
+function Button:KeybindOverlay_OnLeave()
 	self.keybindFrame.select:Hide()
 	GameTooltip:Hide()
 end
 
 --- OnClick Event handler
 --- @param mousebutton string @The button that was clicked
-function BUTTON:KeybindOverlay_OnClick(mousebutton)
+function Button:KeybindOverlay_OnClick(mousebutton)
 	if mousebutton == "LeftButton" then
 		if self.keys.hotKeyLock then
 			self.keys.hotKeyLock = false
@@ -340,7 +340,7 @@ end
 
 --- OnKeyDown Event handler
 --- @param key string @The key that was pressed
-function BUTTON:KeybindOverlay_OnKeyDown(key)
+function Button:KeybindOverlay_OnKeyDown(key)
 	if key:find("ALT") or key:find("SHIFT") or key:find("CTRL") or key:find("PRINTSCREEN") then
 		return
 	end
@@ -356,7 +356,7 @@ end
 
 --- OnMouseWheel Event handler
 --- @param delta number @direction mouse wheel moved
-function BUTTON:KeybindOverlay_OnMouseWheel(delta)
+function Button:KeybindOverlay_OnMouseWheel(delta)
 	local modifier = GetModifier()
 	local key
 	local action

@@ -6,28 +6,28 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class BUTTON : CheckButton @define BUTTON as inheriting from CheckButton
-local BUTTON = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
-Neuron.BUTTON = BUTTON
+---@class Button : CheckButton @define Button as inheriting from CheckButton
+local Button = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
+Neuron.Button = Button
 
 local SKIN = LibStub("Masque", true)
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-LibStub("AceBucket-3.0"):Embed(BUTTON)
-LibStub("AceEvent-3.0"):Embed(BUTTON)
-LibStub("AceTimer-3.0"):Embed(BUTTON)
-LibStub("AceHook-3.0"):Embed(BUTTON)
+LibStub("AceBucket-3.0"):Embed(Button)
+LibStub("AceEvent-3.0"):Embed(Button)
+LibStub("AceTimer-3.0"):Embed(Button)
+LibStub("AceHook-3.0"):Embed(Button)
 
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
----@param baseObj BUTTON @Base object class for this specific button
+---@param baseObj Button @Base object class for this specific button
 ---@param barClass string @Class type for the bar the button will be on
 ---@param objType string @Type of object this button will be
 ---@param template string @The template name that this frame will derive from
----@return BUTTON @ A newly created BUTTON object
-function BUTTON.new(bar, buttonID, baseObj, barClass, objType, template)
+---@return Button @ A newly created Button object
+function Button.new(bar, buttonID, baseObj, barClass, objType, template)
 	local newButton
 	local newButtonName = bar:GetName().."_"..objType..buttonID
 
@@ -64,7 +64,7 @@ end
 ---These will often be overwritten per bar type--
 ------------------------------------------------
 
-function BUTTON.ChangeSelectedButton(newButton)
+function Button.ChangeSelectedButton(newButton)
 	if newButton and newButton ~= Neuron.currentButton then
 		if Neuron.currentButton and Neuron.currentButton.bar ~= newButton.bar then
 			local bar = Neuron.currentButton.bar
@@ -101,7 +101,7 @@ function BUTTON.ChangeSelectedButton(newButton)
 	end
 end
 
-function BUTTON:CancelCooldownTimer(stopAnimation)
+function Button:CancelCooldownTimer(stopAnimation)
 	--cleanup so on state changes the cooldowns don't persist
 	if self:TimeLeft(self.Cooldown.cooldownTimer) ~= 0 then
 		self:CancelTimer(self.Cooldown.cooldownTimer)
@@ -124,7 +124,7 @@ function BUTTON:CancelCooldownTimer(stopAnimation)
 	self:UpdateVisibility()
 end
 
-function BUTTON:SetCooldownTimer(start, duration, enable, modrate, showCountdownTimer, color1, color2, showCountdownAlpha, charges, maxCharges)
+function Button:SetCooldownTimer(start, duration, enable, modrate, showCountdownTimer, color1, color2, showCountdownAlpha, charges, maxCharges)
 	if not self.isShown then --if the button isn't shown, don't do set any cooldowns
 		--if there's currently a timer, cancel it
 		self:CancelCooldownTimer(true)
@@ -198,7 +198,7 @@ end
 
 ---this function is called by a repeating timer set in SetCooldownTimer every 0.2sec, which is autoGmatically is set to terminate 1sec after the cooldown timer ends
 ---this function's job is to overlay the countdown text on a button and set the button's cooldown alpha
-function BUTTON:CooldownCounterUpdate()
+function Button:CooldownCounterUpdate()
 	local coolDown, formatted, size
 
 	local normalcolor = self.Cooldown.normalcolor
@@ -277,7 +277,7 @@ function BUTTON:CooldownCounterUpdate()
 	end
 end
 
-function BUTTON:LoadDataFromDatabase(curSpec, curState)
+function Button:LoadDataFromDatabase(curSpec, curState)
 	self.config = self.DB.config
 	self.keys = self.DB.keys
 
@@ -294,7 +294,7 @@ function BUTTON:LoadDataFromDatabase(curSpec, curState)
 	end
 end
 
-function BUTTON:SetDefaults(defaults)
+function Button:SetDefaults(defaults)
 	if not defaults then
 		return
 	end
@@ -312,7 +312,7 @@ function BUTTON:SetDefaults(defaults)
 	end
 end
 
-function BUTTON:SetSkinned(flyout)
+function Button:SetSkinned(flyout)
 	if SKIN then
 		local btnData = {
 			Normal = self.Normal,
@@ -337,7 +337,7 @@ function BUTTON:SetSkinned(flyout)
 	end
 end
 
-function BUTTON:HasAction()
+function Button:HasAction()
 	if self.actionID then
 		if self.actionID == 0 then
 			return true
@@ -358,7 +358,7 @@ end
 ------------------------------------- Update Functions ----------------------------------
 -----------------------------------------------------------------------------------------
 
-function BUTTON:UpdateAll()
+function Button:UpdateAll()
 	self:UpdateData()
 	self:UpdateIcon()
 	self:UpdateStatus()
@@ -366,11 +366,11 @@ function BUTTON:UpdateAll()
 	self:UpdateUsable()
 end
 
-function BUTTON:UpdateData()
+function Button:UpdateData()
 	-- empty --
 end
 
-function BUTTON:UpdateNormalTexture()
+function Button:UpdateNormalTexture()
 	local actionTexture, noactionTexture
 
 	if self.__MSQ_NormalSkin then
@@ -390,7 +390,7 @@ function BUTTON:UpdateNormalTexture()
 	end
 end
 
-function BUTTON:UpdateVisibility()
+function Button:UpdateVisibility()
 	if self.isShown or Neuron.barEditMode or (Neuron.buttonEditMode and self.editFrame) or (Neuron.bindingMode and self.keybindFrame) then
 		self.isShown = true
 	else
@@ -408,7 +408,7 @@ end
 ------------------------------------- Set Count/Charge ----------------------------------
 -----------------------------------------------------------------------------------------
 
-function BUTTON:UpdateCount()
+function Button:UpdateCount()
 	if self.actionID then
 		self:UpdateActionCount()
 	elseif self.spell then
@@ -422,7 +422,7 @@ end
 
 
 ---Updates the buttons "count", i.e. the spell charges
-function BUTTON:UpdateSpellCount()
+function Button:UpdateSpellCount()
 	local charges, maxCharges = GetSpellCharges(self.spell)
 	local count = GetSpellCount(self.spell)
 
@@ -437,7 +437,7 @@ end
 
 
 ---Updates the buttons "count", i.e. the item stack size
-function BUTTON:UpdateItemCount()
+function Button:UpdateItemCount()
 	local count = GetItemCount(self.item,nil,true)
 
 	if count and count > 1 then
@@ -448,7 +448,7 @@ function BUTTON:UpdateItemCount()
 end
 
 
-function BUTTON:UpdateActionCount()
+function Button:UpdateActionCount()
 	local count = GetActionCount(self.actionID)
 
 	if count and count > 0 then
@@ -462,7 +462,7 @@ end
 ------------------------------------- Set Cooldown --------------------------------------
 -----------------------------------------------------------------------------------------
 
-function BUTTON:UpdateCooldown()
+function Button:UpdateCooldown()
 	if self.actionID then
 		self:UpdateActionCooldown()
 	elseif self.spell then
@@ -475,7 +475,7 @@ function BUTTON:UpdateCooldown()
 	end
 end
 
-function BUTTON:UpdateSpellCooldown()
+function Button:UpdateSpellCooldown()
 	if self.spell and self.isShown then
 		local start, duration, enable, modrate = GetSpellCooldown(self.spell)
 		local charges, maxCharges, chStart, chDuration, chargemodrate = GetSpellCharges(self.spell)
@@ -490,7 +490,7 @@ function BUTTON:UpdateSpellCooldown()
 	end
 end
 
-function BUTTON:UpdateItemCooldown()
+function Button:UpdateItemCooldown()
 	if self.item and self.isShown then
 		local start, duration, enable, modrate
 		if Neuron.itemCache[self.item:lower()] then
@@ -505,7 +505,7 @@ function BUTTON:UpdateItemCooldown()
 	end
 end
 
-function BUTTON:UpdateActionCooldown()
+function Button:UpdateActionCooldown()
 	if self.actionID and self.isShown then
 		if HasAction(self.actionID) then
 			local start, duration, enable, modrate = GetActionCooldown(self.actionID)
@@ -520,7 +520,7 @@ end
 ------------------------------------- Set Usable ----------------------------------------
 -----------------------------------------------------------------------------------------
 
-function BUTTON:UpdateUsable()
+function Button:UpdateUsable()
 	if Neuron.buttonEditMode or Neuron.bindingMode then
 		self.Icon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID then
@@ -534,7 +534,7 @@ function BUTTON:UpdateUsable()
 	end
 end
 
-function BUTTON:UpdateUsableSpell()
+function Button:UpdateUsableSpell()
 	local isUsable, notEnoughMana = IsUsableSpell(self.spell)
 
 	if notEnoughMana and self.bar:GetManaColor() then
@@ -554,7 +554,7 @@ function BUTTON:UpdateUsableSpell()
 	end
 end
 
-function BUTTON:UpdateUsableItem()
+function Button:UpdateUsableItem()
 	local isUsable, notEnoughMana = IsUsableItem(self.item)
 
 	--for some reason toys don't show as usable items, so this is a workaround for that
@@ -580,7 +580,7 @@ function BUTTON:UpdateUsableItem()
 	end
 end
 
-function BUTTON:UpdateUsableAction()
+function Button:UpdateUsableAction()
 	if self.actionID == 0 then
 		self.Icon:SetVertexColor(1.0, 1.0, 1.0)
 		return
@@ -605,7 +605,7 @@ end
 -------------------------------------- Set Icon -----------------------------------------
 -----------------------------------------------------------------------------------------
 
-function BUTTON:UpdateIcon()
+function Button:UpdateIcon()
 	if self.actionID then
 		self:UpdateActionIcon()
 	elseif self.spell then
@@ -627,7 +627,7 @@ function BUTTON:UpdateIcon()
 	self:UpdateNormalTexture()
 end
 
-function BUTTON:UpdateSpellIcon()
+function Button:UpdateSpellIcon()
 	local texture = GetSpellTexture(self.spell)
 
 	if not texture then
@@ -649,7 +649,7 @@ function BUTTON:UpdateSpellIcon()
 	self.Border:Hide()
 end
 
-function BUTTON:UpdateItemIcon()
+function Button:UpdateItemIcon()
 	local texture = GetItemIcon(self.item)
 
 	if not texture then
@@ -674,7 +674,7 @@ function BUTTON:UpdateItemIcon()
 	end
 end
 
-function BUTTON:UpdateActionIcon()
+function Button:UpdateActionIcon()
 	local texture
 
 	if HasAction(self.actionID) then
@@ -695,7 +695,7 @@ end
 -------------------------------------- Set Status ---------------------------------------
 -----------------------------------------------------------------------------------------
 
-function BUTTON:UpdateStatus()
+function Button:UpdateStatus()
 	if self.actionID then
 		self:UpdateActionStatus()
 	elseif self:GetMacroEquipmentSet() then
@@ -714,7 +714,7 @@ function BUTTON:UpdateStatus()
 	end
 end
 
-function BUTTON:UpdateSpellStatus()
+function Button:UpdateSpellStatus()
 	if IsCurrentSpell(self.spell) or IsAutoRepeatSpell(self.spell) then
 		self:SetChecked(true)
 	else
@@ -726,7 +726,7 @@ function BUTTON:UpdateSpellStatus()
 	self:UpdateUsable()
 end
 
-function BUTTON:UpdateItemStatus()
+function Button:UpdateItemStatus()
 	if IsCurrentItem(self.item) then
 		self:SetChecked(true)
 	else
@@ -738,7 +738,7 @@ function BUTTON:UpdateItemStatus()
 	self:UpdateUsable()
 end
 
-function BUTTON:UpdateActionStatus()
+function Button:UpdateActionStatus()
 	local name
 
 	if self.actionID then
@@ -772,7 +772,7 @@ end
 ------------------------------------- Set Tooltip ---------------------------------------
 -----------------------------------------------------------------------------------------
 
-function BUTTON:UpdateTooltip()
+function Button:UpdateTooltip()
 	if self.bar:GetTooltipOption() ~= "off" then --if the bar isn't showing tooltips, don't proceed
 
 		--if we are in combat and we don't have tooltips enable in-combat, don't go any further
@@ -802,7 +802,7 @@ function BUTTON:UpdateTooltip()
 	end
 end
 
-function BUTTON:UpdateSpellTooltip()
+function Button:UpdateSpellTooltip()
 	if self.spell and self.spellID then --try to get the correct spell from the spellbook first
 		if self.bar:GetTooltipOption() == "normal" then
 			GameTooltip:SetSpellByID(self.spellID)
@@ -822,7 +822,7 @@ end
 
 -- note that using SetHyperlink to set the tooltip to the same value
 -- twice will close the tooltip. see issue brittyazel/Neuron#354
-function BUTTON:UpdateItemTooltip()
+function Button:UpdateItemTooltip()
 	local name, link = GetItemInfo(self.item)
 	name = name or Neuron.itemCache[self.item:lower()]
 	link = link or "item:"..name..":0:0:0:0:0:0:0"
@@ -838,7 +838,7 @@ function BUTTON:UpdateItemTooltip()
 	end
 end
 
-function BUTTON:UpdateActionTooltip()
+function Button:UpdateActionTooltip()
 	if HasAction(self.actionID) then
 		if self.bar:GetTooltipOption() == "normal" or self.bar:GetTooltipOption() == "minimal" then
 			GameTooltip:SetAction(self.actionID)
@@ -852,7 +852,7 @@ end
 -----------------------------------------------------
 
 --Macro Icon
-function BUTTON:SetMacroIcon(newIcon)
+function Button:SetMacroIcon(newIcon)
 	if newIcon then
 		self.data.macro_Icon = newIcon
 	else
@@ -860,13 +860,13 @@ function BUTTON:SetMacroIcon(newIcon)
 	end
 end
 
-function BUTTON:GetMacroIcon()
+function Button:GetMacroIcon()
 	return self.data.macro_Icon
 end
 
 
 --Macro Text
-function BUTTON:SetMacroText(newText)
+function Button:SetMacroText(newText)
 	if newText then
 		self.data.macro_Text = newText
 	else
@@ -874,13 +874,13 @@ function BUTTON:SetMacroText(newText)
 	end
 end
 
-function BUTTON:GetMacroText()
+function Button:GetMacroText()
 	return self.data.macro_Text
 end
 
 
 --Macro Name
-function BUTTON:SetMacroName(newName)
+function Button:SetMacroName(newName)
 	if newName then
 		self.data.macro_Name = newName
 	else
@@ -888,13 +888,13 @@ function BUTTON:SetMacroName(newName)
 	end
 end
 
-function BUTTON:GetMacroName()
+function Button:GetMacroName()
 	return self.data.macro_Name
 end
 
 
 --Macro Note
-function BUTTON:SetMacroNote(newNote)
+function Button:SetMacroNote(newNote)
 	if newNote then
 		self.data.macro_Note = newNote
 	else
@@ -902,13 +902,13 @@ function BUTTON:SetMacroNote(newNote)
 	end
 end
 
-function BUTTON:GetMacroNote()
+function Button:GetMacroNote()
 	return self.data.macro_Note
 end
 
 
 --Macro Use Note
-function BUTTON:SetMacroUseNote(newUseNote)
+function Button:SetMacroUseNote(newUseNote)
 	if newUseNote then
 		self.data.macro_UseNote = newUseNote
 	else
@@ -916,13 +916,13 @@ function BUTTON:SetMacroUseNote(newUseNote)
 	end
 end
 
-function BUTTON:GetMacroUseNote()
+function Button:GetMacroUseNote()
 	return self.data.macro_UseNote
 end
 
 
 --Macro Blizz Macro
-function BUTTON:SetMacroBlizzMacro(newBlizzMacro)
+function Button:SetMacroBlizzMacro(newBlizzMacro)
 	if newBlizzMacro then
 		self.data.macro_BlizzMacro = newBlizzMacro
 	else
@@ -930,13 +930,13 @@ function BUTTON:SetMacroBlizzMacro(newBlizzMacro)
 	end
 end
 
-function BUTTON:GetMacroBlizzMacro()
+function Button:GetMacroBlizzMacro()
 	return self.data.macro_BlizzMacro
 end
 
 
 --Macro EquipmentSet
-function BUTTON:SetMacroEquipmentSet(newEquipmentSet)
+function Button:SetMacroEquipmentSet(newEquipmentSet)
 	if newEquipmentSet then
 		self.data.macro_EquipmentSet = newEquipmentSet
 	else
@@ -944,6 +944,6 @@ function BUTTON:SetMacroEquipmentSet(newEquipmentSet)
 	end
 end
 
-function BUTTON:GetMacroEquipmentSet()
+function Button:GetMacroEquipmentSet()
 	return self.data.macro_EquipmentSet
 end

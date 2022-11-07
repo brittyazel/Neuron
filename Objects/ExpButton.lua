@@ -6,13 +6,13 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class XPBTN: STATUSBTN @define class XPBTN inherits from class STATUSBTN
-local XPBTN = setmetatable({}, { __index = Neuron.STATUSBTN })
-Neuron.XPBTN = XPBTN
+---@class ExpButton: StatusButton @define class ExpButton inherits from class StatusButton
+local ExpButton = setmetatable({}, { __index = Neuron.StatusButton })
+Neuron.ExpButton = ExpButton
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-XPBTN.sbStrings = {
+ExpButton.sbStrings = {
 	[1] = { L["None"], function(self) return "" end },
 	[2] = { L["Current/Next"], function(self) if self.current and self.next then return BreakUpLargeNumbers(self.current).." / "..BreakUpLargeNumbers(self.next) end end },
 	[3] = { L["Rested Levels"], function(self) if self.rested then return string.format("%.2f", tostring(self.rested)).." "..L["Levels"] end end },
@@ -22,19 +22,19 @@ XPBTN.sbStrings = {
 }
 
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return XPBTN @ A newly created STATUSBTN object
-function XPBTN.new(bar, buttonID, defaults)
+---@return ExpButton @ A newly created StatusButton object
+function ExpButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.STATUSBTN.new(bar, buttonID, defaults, XPBTN, "XPBar", "XP Button")
+	local newButton = Neuron.StatusButton.new(bar, buttonID, defaults, ExpButton, "XPBar", "XP Button")
 
 	return newButton
 end
 
-function XPBTN:InitializeButton()
+function ExpButton:InitializeButton()
 	self:SetAttribute("hasaction", true)
 
 	self:RegisterForClicks("RightButtonUp")
@@ -61,7 +61,7 @@ function XPBTN:InitializeButton()
 end
 
 ---TODO: right now we are using DB.statusbtn to assign settings ot the status buttons, but I think our indexes are bar specific
-function XPBTN:UpdateData() --handles updating all the strings for the play XP watch bar
+function ExpButton:UpdateData() --handles updating all the strings for the play XP watch bar
 	--player xp option
 	if self:GetXPType() == "player_xp" then
 		self.current, self.next, self.rested = UnitXP("player"), UnitXPMax("player"), GetXPExhaustion()
@@ -131,7 +131,7 @@ function XPBTN:UpdateData() --handles updating all the strings for the play XP w
 	end
 end
 
-function XPBTN:OnEvent(event)
+function ExpButton:OnEvent(event)
 	self:UpdateData()
 
 	if self:GetXPType() == "player_xp" and (event=="PLAYER_XP_UPDATE" or event =="PLAYER_ENTERING_WORLD" or event=="UPDATE_EXHAUSTION" or event =="changed_curXPType") then
@@ -162,7 +162,7 @@ function XPBTN:OnEvent(event)
 	self.StatusBar.MouseoverText:SetText(self:mFunc())
 end
 
-function XPBTN:InitializeDropDown() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
+function ExpButton:InitializeDropDown() -- initialize the dropdown menu for chosing to watch either XP, azerite XP, or Honor Points
 	--this is the frame that will hold our dropdown menu
 	local menuFrame
 	if not NeuronXPDropdownMenu then --try to avoid re-creating this over again if we don't have to
@@ -251,7 +251,7 @@ function XPBTN:InitializeDropDown() -- initialize the dropdown menu for chosing 
 	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1)
 end
 
-function XPBTN:OnClick(mousebutton)
+function ExpButton:OnClick(mousebutton)
 	if (mousebutton == "RightButton") then
 		self:InitializeDropDown()
 	end
@@ -261,11 +261,11 @@ end
 -------------------Sets and Gets---------------------
 -----------------------------------------------------
 
-function XPBTN:SetXPType(newXPType)
+function ExpButton:SetXPType(newXPType)
 	self.config.curXPType = newXPType
 	self:OnEvent("changed_curXPType")
 end
 
-function XPBTN:GetXPType()
+function ExpButton:GetXPType()
 	return self.config.curXPType
 end
