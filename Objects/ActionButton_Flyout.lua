@@ -6,8 +6,8 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
-local ACTIONBUTTON = Neuron.ACTIONBUTTON
-local BAR = Neuron.BAR
+local ActionButton = Neuron.ActionButton
+local Bar = Neuron.Bar
 
 local petIcons = {}
 
@@ -18,11 +18,11 @@ local timersRunning = {} -- indexed numerically, timers that are running
 
 local barsToUpdate = {}
 
-local FOBARIndex, FOBTNIndex, ANCHORIndex = {}, {}, {}
+local FOBarIndex, FOBtnIndex, AnchorIndex = {}, {}, {}
 
-Neuron.FOBARIndex = FOBARIndex
-Neuron.FOBTNIndex = FOBTNIndex
-Neuron.ANCHORIndex = ANCHORIndex
+Neuron.FOBarIndex = FOBarIndex
+Neuron.FOBtnIndex = FOBtnIndex
+Neuron.AnchorIndex = AnchorIndex
 
 --[[ Timer Management ]]
 local timerFrame
@@ -185,7 +185,7 @@ end
 ---@param keyPrefixes string|table<number,table<string,Key>> keys as a comma separated string or list of name,value pairs. Matched keys have value: true.
 ---@param negativeKeyPrefixes string|table<number,table<string,Key>> keys as a comma separated string or list of name,value pairs. Matched keys have value: false.
 ---@param useDefault boolean flag whether or not to use default rules (table<name:string,value:Key: string> {"MustNot","!"}{"Optional","~"}{"Slot","#"})
-function ACTIONBUTTON:getCriteria(rules,negativeRules, useDefault)
+function ActionButton:getCriteria(rules,negativeRules, useDefault)
 	if type(rules) == "boolean" and negativeRules == nil and useDefault == nil then
 		useDefault = rules
 		rules = nil
@@ -310,7 +310,7 @@ end
 --- Filter handler for items
 -- item:id will get all items of that itemID
 -- item:name will get all items that contain "name" in its name
-function ACTIONBUTTON:filter_item(tooltip)
+function ActionButton:filter_item(tooltip)
 	local data, itemTooltips, Criteria = {},{}, self:getCriteria()
 	-- build tooltip table
 	if (tooltip) then -- part I of tooltip cache version
@@ -415,7 +415,7 @@ end
 --- Filter Handler for Spells
 -- spell:id will get all spells of that spellID
 -- spell:name will get all spells that contain "name" in its name or its flyout parent
-function ACTIONBUTTON:filter_spell(tooltip)
+function ActionButton:filter_spell(tooltip)
 	local data, spellTooltips, Criteria = {},{}, self:getCriteria()
 	-- build tooltip table
 	if (tooltip) then
@@ -496,7 +496,7 @@ end
 ---Filter handler for item type
 -- type:quest will get all quest items in bags, or those on person with Quest in a type field
 -- type:name will get all items that have "name" in its type, subtype or slot name
-function ACTIONBUTTON:filter_type()
+function ActionButton:filter_type()
 	local data, itemTypes, Criteria = {},{}, self:getCriteria()
 	itemTypes = nil
 	--should this search tooltip by default? does the tooltip contain the type?
@@ -554,7 +554,7 @@ end
 --- Filter handler for mounts
 -- mount:any, mount:flying, mount:land, mount:favorite, mount:fflying, mount:fland
 -- mount:arg filters mounts that include arg in the name or arg="flying" or arg="land" or arg=="any"
-function ACTIONBUTTON:filter_mount()
+function ActionButton:filter_mount()
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
 
 	local data = {}
@@ -602,7 +602,7 @@ end
 --- Filter handler for professions
 --- not WoW Classic
 -- profession:arg filters professions that include arg in the name or arg="primary" or arg="secondary" or arg="all"
-function ACTIONBUTTON:filter_profession()
+function ActionButton:filter_profession()
 
 	local data = {}
 
@@ -652,7 +652,7 @@ end
 --- Filter handler for companion pets
 --- not WoW Classic
 -- pet:arg filters companion pets that include arg in the name or arg="any" or arg="favorite(s)"
-function ACTIONBUTTON:filter_pet()
+function ActionButton:filter_pet()
 
 	local data = {}
 
@@ -675,7 +675,7 @@ end
 ---Filter handler for toy items
 --- not WoW Classic
 -- toy:arg filters items from the toybox; arg="favorite" "any" or partial name
-function ACTIONBUTTON:filter_toy()
+function ActionButton:filter_toy()
 	local keys, found, mandatory, optional = self.flyout.keys, 0, 0, 0
 
 	local data = {}
@@ -700,7 +700,7 @@ end
 
 
 --- Handler for Blizzard flyout spells
-function ACTIONBUTTON:GetBlizzData()
+function ActionButton:GetBlizzData()
 
 	local data = {}
 
@@ -728,7 +728,7 @@ end
 
 
 --- Flyout type handler
-function ACTIONBUTTON:GetDataList(options)
+function ActionButton:GetDataList(options)
 	local tooltip
 
 	local scanData = {}
@@ -757,7 +757,7 @@ function ACTIONBUTTON:GetDataList(options)
 	return scanData
 end
 
-function ACTIONBUTTON:updateFlyoutBars()
+function ActionButton:updateFlyoutBars()
 	if not InCombatLockdown() then  --Workaround for protected taint if UI reload in combat
 		local bar = table.remove(barsToUpdate) --this does nothing. It makes bar empty
 
@@ -771,7 +771,7 @@ function ACTIONBUTTON:updateFlyoutBars()
 	end
 end
 
-function ACTIONBUTTON:Flyout_UpdateData(init)
+function ActionButton:Flyout_UpdateData(init)
 	local slot
 	local pet = false
 
@@ -899,7 +899,7 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 	end
 end
 
-function ACTIONBUTTON:Flyout_UpdateBar()
+function ActionButton:Flyout_UpdateBar()
 	self.FlyoutTop:Hide()
 	self.FlyoutBottom:Hide()
 	self.FlyoutLeft:Hide()
@@ -1004,13 +1004,13 @@ function ACTIONBUTTON:Flyout_UpdateBar()
 end
 
 
-function ACTIONBUTTON:Flyout_RemoveButtons()
+function ActionButton:Flyout_RemoveButtons()
 	for _,button in pairs(self.flyout.buttons) do
 		self:Flyout_ReleaseButton(button)
 	end
 end
 
-function ACTIONBUTTON:Flyout_RemoveBar()
+function ActionButton:Flyout_RemoveBar()
 	self.FlyoutTop:Hide()
 	self.FlyoutBottom:Hide()
 	self.FlyoutLeft:Hide()
@@ -1021,7 +1021,7 @@ function ACTIONBUTTON:Flyout_RemoveBar()
 	self:Flyout_ReleaseBar(self.flyout.bar)
 end
 
-function ACTIONBUTTON:UpdateFlyout(init)
+function ActionButton:UpdateFlyout(init)
 	local options
 
 	if self:GetMacroText() then
@@ -1059,15 +1059,15 @@ function ACTIONBUTTON:UpdateFlyout(init)
 
 		self.bar.watchframes[self.flyout.bar.handler] = true
 
-		ANCHORIndex[self] = true
+		AnchorIndex[self] = true
 	else
-		ANCHORIndex[self] = nil
+		AnchorIndex[self] = nil
 		self.flyout = nil
 	end
 end
 
 
-function ACTIONBUTTON:Flyout_ReleaseButton(button)
+function ActionButton:Flyout_ReleaseButton(button)
 	self.flyout.buttons[button.id] = nil
 
 	button.stored = true
@@ -1091,7 +1091,7 @@ function ACTIONBUTTON:Flyout_ReleaseButton(button)
 end
 
 
-function ACTIONBUTTON:Flyout_InitializeButtonSettings(bar)
+function ActionButton:Flyout_InitializeButtonSettings(bar)
 	if bar then
 		self.bar = bar
 		self.bar.data.tooltips = "normal"
@@ -1104,7 +1104,7 @@ function ACTIONBUTTON:Flyout_InitializeButtonSettings(bar)
 end
 
 
-function ACTIONBUTTON:Flyout_PostClick()
+function ActionButton:Flyout_PostClick()
 	local button = self.anchor
 
 	button:SetMacroText(self:GetAttribute("flyoutMacro"))
@@ -1117,9 +1117,9 @@ function ACTIONBUTTON:Flyout_PostClick()
 	self:UpdateStatus()
 end
 
-function ACTIONBUTTON:Flyout_GetButton()
+function ActionButton:Flyout_GetButton()
 	local id = 1
-	for _,button in ipairs(FOBTNIndex) do
+	for _,button in ipairs(FOBtnIndex) do
 		if button.stored then
 			button.anchor = self
 			button.bar = self.flyout.bar
@@ -1135,7 +1135,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 	end
 
 	local newButton = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutButton"..id, UIParent, "NeuronActionButtonTemplate") --create the new button frame using the desired parameters
-	setmetatable(newButton, {__index = ACTIONBUTTON})
+	setmetatable(newButton, {__index = ActionButton})
 
 	newButton.elapsed = 0
 
@@ -1144,7 +1144,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 	newButton:SetID(0)
 	newButton:SetToplevel(true)
 	newButton.objTIndex = id
-	newButton.objType = "FLYOUTBUTTON"
+	newButton.objType = "FLYOUTButton"
 	newButton.data = { macro_Text = "" }
 
 	newButton.anchor = self
@@ -1182,7 +1182,7 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 
 	--link objects to their associated functions
-	newButton.InitializeButtonSettings = ACTIONBUTTON.Flyout_InitializeButtonSettings
+	newButton.InitializeButtonSettings = ActionButton.Flyout_InitializeButtonSettings
 
 
 	newButton:InitializeButtonSettings(self.flyout.bar)
@@ -1193,12 +1193,12 @@ function ACTIONBUTTON:Flyout_GetButton()
 
 	self.flyout.buttons[id] = newButton
 
-	FOBTNIndex[id] = newButton
+	FOBtnIndex[id] = newButton
 
 	return newButton
 end
 
-function ACTIONBUTTON:Flyout_ReleaseBar(bar)
+function ActionButton:Flyout_ReleaseBar(bar)
 	self.flyout.bar = nil
 
 	bar.stored = true
@@ -1213,16 +1213,16 @@ function ACTIONBUTTON:Flyout_ReleaseBar(bar)
 	end
 end
 
-function BAR:Flyout_OnEvent()
+function Bar:Flyout_OnEvent()
 	self:SetObjectLoc()
 	self:SetPerimeter()
 	self:SetSize()
 end
 
-function ACTIONBUTTON:Flyout_GetBar()
+function ActionButton:Flyout_GetBar()
 	local id = 1
 
-	for _,bar in ipairs(FOBARIndex) do
+	for _,bar in ipairs(FOBarIndex) do
 		if bar.stored then
 			bar.stored = false
 			bar:SetParent(UIParent)
@@ -1233,7 +1233,7 @@ function ACTIONBUTTON:Flyout_GetBar()
 	end
 
 	local bar = CreateFrame("CheckButton", self:GetName().."_".."NeuronFlyoutBar"..id, UIParent, "NeuronBarTemplate")
-	setmetatable(bar, {__index = Neuron.BAR})
+	setmetatable(bar, {__index = Neuron.Bar})
 
 	bar.class = "FlyoutBar"
 	bar.elapsed = 0
@@ -1280,12 +1280,12 @@ function ACTIONBUTTON:Flyout_GetBar()
 
 	bar.handler:Hide()
 
-	FOBARIndex[id] = bar
+	FOBarIndex[id] = bar
 	return bar
 end
 
 
-function ACTIONBUTTON:Anchor_RemoveChild()
+function ActionButton:Anchor_RemoveChild()
 	local child = self.flyout.bar and self.flyout.bar.handler
 
 	if child then
@@ -1303,7 +1303,7 @@ function ACTIONBUTTON:Anchor_RemoveChild()
 	end
 end
 
-function ACTIONBUTTON:Anchor_UpdateChild()
+function ActionButton:Anchor_UpdateChild()
 	local child = self.flyout.bar and self.flyout.bar.handler
 
 	if child then
@@ -1360,7 +1360,7 @@ function ACTIONBUTTON:Anchor_UpdateChild()
 	end
 end
 
-function ACTIONBUTTON:Anchor_Update(remove)
+function ActionButton:Anchor_Update(remove)
 	if remove then
 		self:Anchor_RemoveChild()
 	else

@@ -6,15 +6,15 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class MIRRORBTN : STATUSBTN @define class REPBTN inherits from class STATUSBTN
-local MIRRORBTN = setmetatable({}, { __index = Neuron.STATUSBTN })
-Neuron.MIRRORBTN = MIRRORBTN
+---@class MirrorButton : StatusButton @define class RepButton inherits from class StatusButton
+local MirrorButton = setmetatable({}, { __index = Neuron.StatusButton })
+Neuron.MirrorButton = MirrorButton
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local mirrorWatch, mirrorBars = {}, {}
 
-MIRRORBTN.sbStrings = {
+MirrorButton.sbStrings = {
 	[1] = { L["None"], function(self) return "" end },
 	[2] = { L["Type"], function(self) if mirrorWatch[self.mirror] then return mirrorWatch[self.mirror].label end end },
 	[3] = { L["Timer"], function(self) if mirrorWatch[self.mirror] then return mirrorWatch[self.mirror].timer end end },
@@ -38,19 +38,19 @@ MirrorTimerColors["FEIGNDEATH"] = {
 };
 
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return MIRRORBTN @ A newly created STATUSBTN object
-function MIRRORBTN.new(bar, buttonID, defaults)
+---@return MirrorButton @ A newly created StatusButton object
+function MirrorButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.STATUSBTN.new(bar, buttonID, defaults, MIRRORBTN, "MirrorBar", "Mirror Button")
+	local newButton = Neuron.StatusButton.new(bar, buttonID, defaults, MirrorButton, "MirrorBar", "Mirror Button")
 
 	return newButton
 end
 
-function MIRRORBTN:InitializeButton()
+function MirrorButton:InitializeButton()
 	self:RegisterEvent("MIRROR_TIMER_START", "OnEvent")
 	self:RegisterEvent("MIRROR_TIMER_STOP", "OnEvent")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", "OnEvent")
@@ -64,7 +64,7 @@ function MIRRORBTN:InitializeButton()
 	self:InitializeButtonSettings()
 end
 
-function MIRRORBTN:OnEvent(event, ...)
+function MirrorButton:OnEvent(event, ...)
 	if event == "MIRROR_TIMER_START" then
 		self:Start(...)
 
@@ -82,7 +82,7 @@ function MIRRORBTN:OnEvent(event, ...)
 	end
 end
 
-function MIRRORBTN:Start(type, value, maxvalue, scale, paused, label)
+function MirrorButton:Start(type, value, maxvalue, scale, paused, label)
 
 	if not mirrorWatch[type] then
 		mirrorWatch[type] = { active = false, mbar = nil, label = "", timer = "" }
@@ -112,7 +112,7 @@ function MIRRORBTN:Start(type, value, maxvalue, scale, paused, label)
 	end
 end
 
-function MIRRORBTN:Stop(type)
+function MirrorButton:Stop(type)
 	if mirrorWatch[type] and mirrorWatch[type].active then
 
 		local mbar = mirrorWatch[type].mbar
@@ -127,7 +127,7 @@ function MIRRORBTN:Stop(type)
 	end
 end
 
-function MIRRORBTN:OnUpdate()
+function MirrorButton:OnUpdate()
 	if self.mirror then
 		self.value = GetMirrorTimerProgress(self.mirror)/1000
 

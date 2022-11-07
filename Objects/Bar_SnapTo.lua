@@ -6,7 +6,7 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
-local BAR = Neuron.BAR
+local Bar = Neuron.Bar
 
 local function frameIsDependentOnFrame(frame, otherFrame)
 
@@ -119,7 +119,7 @@ end
 --[[ Usable Functions ]]--
 
 
-function BAR:StickToEdge()
+function Bar:StickToEdge()
 
 	local point, x, y= self:GetPosition()
 	local changed
@@ -155,7 +155,7 @@ function BAR:StickToEdge()
 	end
 end
 
-function BAR:Stick(oFrame, tolerance, xOff, yOff)
+function Bar:Stick(oFrame, tolerance, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 
@@ -217,7 +217,7 @@ function BAR:Stick(oFrame, tolerance, xOff, yOff)
 	end
 end
 
-function BAR:StickToPoint(oFrame, point, xOff, yOff)
+function Bar:StickToPoint(oFrame, point, xOff, yOff)
 
 	xOff, yOff = xOff or 0, yOff or 0
 

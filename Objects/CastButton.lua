@@ -6,15 +6,15 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class CASTBTN : STATUSBTN @define class CASTBTN inherits from class STATUSBTN
-local CASTBTN = setmetatable({}, { __index = Neuron.STATUSBTN })
-Neuron.CASTBTN = CASTBTN
+---@class CastButton : StatusButton @define class CastButton inherits from class StatusButton
+local CastButton = setmetatable({}, { __index = Neuron.StatusButton })
+Neuron.CastButton = CastButton
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local castWatch = {}
 
-CASTBTN.sbStrings = {
+CastButton.sbStrings = {
 	[1] = { L["None"], function(self) return "" end },
 	[2] = { L["Spell"], function(self) if castWatch[self:GetUnit()] then return castWatch[self:GetUnit()].spell end end },
 	[3] = { L["Timer"], function(self) if castWatch[self:GetUnit()] then return castWatch[self:GetUnit()].timer end end },
@@ -25,20 +25,20 @@ local CASTING_BAR_ALPHA_STEP = 0.05
 local CASTING_BAR_FLASH_STEP = 0.2
 local CASTING_BAR_HOLD_TIME = 1
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return CASTBTN @ A newly created STATUSBTN object
-function CASTBTN.new(bar, buttonID, defaults)
+---@return CastButton @ A newly created StatusButton object
+function CastButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.STATUSBTN.new(bar, buttonID, defaults, CASTBTN, "CastBar", "Cast Button")
+	local newButton = Neuron.StatusButton.new(bar, buttonID, defaults, CastButton, "CastBar", "Cast Button")
 
 	return newButton
 end
 
 
-function CASTBTN:InitializeButton()
+function CastButton:InitializeButton()
 	self:RegisterEvent("UNIT_SPELLCAST_START", "OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", "OnEvent")
 	self:RegisterEvent("UNIT_SPELLCAST_FAILED", "OnEvent")
@@ -63,7 +63,7 @@ function CASTBTN:InitializeButton()
 	self:InitializeButtonSettings()
 end
 
-function CASTBTN:OnEvent(event,...)
+function CastButton:OnEvent(event,...)
 	local unit = select(1, ...)
 	local eventCastID = select(2,...) --return payload is "unitTarget", "castGUID", spellID
 
@@ -248,7 +248,7 @@ function CASTBTN:OnEvent(event,...)
 	end
 end
 
-function CASTBTN:OnUpdate(elapsed)
+function CastButton:OnUpdate(elapsed)
 	--bail out if these values don't exist. Otherwise we will error later on
 	if not self.value and not self.maxValue then
 		self:Reset()
@@ -327,7 +327,7 @@ function CASTBTN:OnUpdate(elapsed)
 	end
 end
 
-function CASTBTN:FinishCast()
+function CastButton:FinishCast()
 	self.StatusBar.Spark:Hide()
 	self.StatusBar.BarFlash:SetAlpha(1.0)
 	self.StatusBar.BarFlash:Show()
@@ -337,7 +337,7 @@ function CASTBTN:FinishCast()
 	self.channeling = nil
 end
 
-function CASTBTN:Reset()
+function CastButton:Reset()
 	self.fadeout = true
 	self.casting = nil
 	self.channeling = nil
@@ -352,7 +352,7 @@ end
 -------------------Sets and Gets---------------------
 -----------------------------------------------------
 
-function CASTBTN:SetUnit(unit)
+function CastButton:SetUnit(unit)
 	--possible types are "player", "pet", "target", "targettarget", "focus", "mouseover", "party1", "party2", "party3", or "party4"
 	if unit then
 		self.config.unit = unit
@@ -361,14 +361,14 @@ function CASTBTN:SetUnit(unit)
 	end
 end
 
-function CASTBTN:GetUnit()
+function CastButton:GetUnit()
 	return self.config.unit
 end
 
-function CASTBTN:SetShowIcon(show)
+function CastButton:SetShowIcon(show)
 	self.config.showIcon = show
 end
 
-function CASTBTN:GetShowIcon()
+function CastButton:GetShowIcon()
 	return self.config.showIcon
 end

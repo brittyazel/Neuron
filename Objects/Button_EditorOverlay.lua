@@ -7,10 +7,10 @@ local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
 
----The functions in this file are part of the ACTIONBUTTON class.
+---The functions in this file are part of the ActionButton class.
 ---It was just easier to put them all in their own file for organization.
 
-local BUTTON = Neuron.BUTTON
+local Button = Neuron.Button
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
@@ -19,7 +19,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 --------------------------Button Editor Overlay-----------------------------
 ----------------------------------------------------------------------------
 
-function BUTTON:EditorOverlay_CreateEditFrame()
+function Button:EditorOverlay_CreateEditFrame()
 	local editFrame = CreateFrame("Button", self:GetName().."EditFrame", self, "NeuronOverlayFrameTemplate")
 	setmetatable(editFrame, { __index = CreateFrame("Button") })
 
@@ -33,7 +33,7 @@ function BUTTON:EditorOverlay_CreateEditFrame()
 
 	editFrame.label:SetText(L["Edit"])
 
-	if self.objType == "ACTIONBUTTON" then
+	if self.objType == "ActionButton" then
 		editFrame.select.Left:SetTexture("")
 		editFrame.select.Right:SetTexture("")
 	else
@@ -59,24 +59,24 @@ function BUTTON:EditorOverlay_CreateEditFrame()
 	editFrame:Hide()
 end
 
-function BUTTON:EditorOverlay_OnShow()
+function Button:EditorOverlay_OnShow()
 end
 
-function BUTTON:EditorOverlay_OnEnter()
+function Button:EditorOverlay_OnEnter()
 	self.editFrame.select:Show()
 	GameTooltip:SetOwner(self.editFrame, "ANCHOR_RIGHT")
 	GameTooltip:Show()
 end
 
-function BUTTON:EditorOverlay_OnLeave()
+function Button:EditorOverlay_OnLeave()
 	if self ~= Neuron.currentButton then
 		self.editFrame.select:Hide()
 	end
 	GameTooltip:Hide()
 end
 
-function BUTTON:EditorOverlay_OnClick()
-	Neuron.BUTTON.ChangeSelectedButton(self)
+function Button:EditorOverlay_OnClick()
+	Neuron.Button.ChangeSelectedButton(self)
 	if addonTable.NeuronEditor then
 		Neuron.NeuronGUI:RefreshEditor()
 	end

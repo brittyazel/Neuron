@@ -6,24 +6,24 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class PETBTN : BUTTON @define class PETBTN inherits from class BUTTON
-local PETBTN = setmetatable({}, { __index = Neuron.BUTTON })
-Neuron.PETBTN = PETBTN
+---@class PetButton : Button @define class PetButton inherits from class Button
+local PetButton = setmetatable({}, { __index = Neuron.Button })
+Neuron.PetButton = PetButton
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-LibStub("AceEvent-3.0"):Embed(PETBTN)
-LibStub("AceTimer-3.0"):Embed(PETBTN)
+LibStub("AceEvent-3.0"):Embed(PetButton)
+LibStub("AceTimer-3.0"):Embed(PetButton)
 
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return PETBTN @ A newly created PETBTN object
-function PETBTN.new(bar, buttonID, defaults)
+---@return PetButton @ A newly created PetButton object
+function PetButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON.new(bar, buttonID, PETBTN, "PetBar", "PetButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.Button.new(bar, buttonID, PetButton, "PetBar", "PetButton", "NeuronActionButtonTemplate")
 
 	if defaults then
 		newButton:SetDefaults(defaults)
@@ -34,7 +34,7 @@ function PETBTN.new(bar, buttonID, defaults)
 	return newButton
 end
 
-function PETBTN:InitializeButton()
+function PetButton:InitializeButton()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("UNIT_PET")
 	self:RegisterEvent("PET_BAR_UPDATE", "UpdateData")
@@ -72,7 +72,7 @@ function PETBTN:InitializeButton()
 	self:InitializeButtonSettings()
 end
 
-function PETBTN:InitializeButtonSettings()
+function PetButton:InitializeButtonSettings()
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
 
@@ -103,20 +103,20 @@ function PETBTN:InitializeButtonSettings()
 	self:SetSkinned()
 end
 
-function PETBTN:PLAYER_ENTERING_WORLD()
+function PetButton:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
 	self:KeybindOverlay_ApplyBindings()
 
 	self:ScheduleTimer(function() self:UpdateVisibility() end, 1)
 end
 
-function PETBTN:UNIT_PET(event, unit)
+function PetButton:UNIT_PET(event, unit)
 	if unit ==  "player" then
 		self:UpdateData()
 	end
 end
 
-function PETBTN:OnDragStart()
+function PetButton:OnDragStart()
 	if InCombatLockdown() then
 		return
 	end
@@ -147,7 +147,7 @@ function PETBTN:OnDragStart()
 end
 
 
-function PETBTN:OnReceiveDrag()
+function PetButton:OnReceiveDrag()
 	if InCombatLockdown() then
 		return
 	end
@@ -170,8 +170,8 @@ end
 --------------------- Overrides ---------------------
 -----------------------------------------------------
 
---overwrite function in parent class BUTTON
-function PETBTN:UpdateData()
+--overwrite function in parent class Button
+function PetButton:UpdateData()
 	if not self.actionID then
 		return
 	end
@@ -191,8 +191,8 @@ function PETBTN:UpdateData()
 	self:UpdateStatus()
 end
 
---overwrite function in parent class BUTTON
-function PETBTN:UpdateIcon()
+--overwrite function in parent class Button
+function PetButton:UpdateIcon()
 	if not self.actionID then
 		return
 	end
@@ -218,8 +218,8 @@ function PETBTN:UpdateIcon()
 	self:UpdateNormalTexture()
 end
 
---overwrite function in parent class BUTTON
-function PETBTN:UpdateStatus()
+--overwrite function in parent class Button
+function PetButton:UpdateStatus()
 	if not self.actionID then
 		return
 	end
@@ -261,16 +261,16 @@ function PETBTN:UpdateStatus()
 	self:UpdateUsable()
 end
 
---overwrite function in parent class BUTTON
-function PETBTN:UpdateCooldown()
+--overwrite function in parent class Button
+function PetButton:UpdateCooldown()
 	if self.actionID and GetPetActionInfo(self.actionID) then
 		local start, duration, enable, modrate = GetPetActionCooldown(self.actionID)
 		self:SetCooldownTimer(start, duration, enable, modrate, self.bar:GetShowCooldownText(), self.bar:GetCooldownColor1(), self.bar:GetCooldownColor2(), self.bar:GetShowCooldownAlpha())
 	end
 end
 
---overwrite function in parent class BUTTON
-function PETBTN:UpdateUsable()
+--overwrite function in parent class Button
+function PetButton:UpdateUsable()
 	if Neuron.buttonEditMode or Neuron.bindingMode then
 		self.Icon:SetVertexColor(0.2, 0.2, 0.2)
 	elseif self.actionID and GetPetActionSlotUsable(self.actionID) then
@@ -280,8 +280,8 @@ function PETBTN:UpdateUsable()
 	end
 end
 
---overwrite function in parent class BUTTON
-function PETBTN:UpdateTooltip()
+--overwrite function in parent class Button
+function PetButton:UpdateTooltip()
 	--if we are in combat and we don't have tooltips enable in-combat, don't go any further
 	if InCombatLockdown() and not self.bar:GetTooltipCombat() then
 		return
@@ -298,12 +298,12 @@ function PETBTN:UpdateTooltip()
 	end
 end
 
---overwrite function in parent class BUTTON
-function PETBTN:UpdateVisibility(show)
+--overwrite function in parent class Button
+function PetButton:UpdateVisibility(show)
 	if (self.bar:GetShowGrid() and IsPetActive()) or (self.actionID and GetPetActionInfo(self.actionID) and IsPetActive()) or show then
 		self.isShown = true
 	else
 		self.isShown = false
 	end
-	Neuron.BUTTON.UpdateVisibility(self) --call parent function
+	Neuron.Button.UpdateVisibility(self) --call parent function
 end
