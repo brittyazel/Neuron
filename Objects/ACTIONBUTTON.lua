@@ -6,6 +6,8 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
+local Spec = addonTable.utilities.Spec
+
 ---@class ACTIONBUTTON : BUTTON @define class ACTIONBUTTON inherits from class BUTTON
 local ACTIONBUTTON = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
 Neuron.ACTIONBUTTON = ACTIONBUTTON
@@ -75,10 +77,8 @@ function ACTIONBUTTON:InitializeButton()
 		self:SetupEvents()
 	end
 
-	self:ParseAndSanitizeMacro()
-
 	self:SetAttribute("type", "macro")
-	self:SetAttribute("*macrotext*", self.macro)
+	self:SetAttribute("*macrotext*", self.SanitizedMacro(self:GetMacroText()))
 
 	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
 	self:SetAttribute("hotkeys", self.keys.hotKeys)
@@ -321,7 +321,6 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 
 				--swap out our data with the data stored for the particular state
 				self.data = self.statedata[value]
-				self:ParseAndSanitizeMacro()
 				self:ClearButton()
 			end
 
@@ -363,6 +362,7 @@ function ACTIONBUTTON:ClearButton(clearAttributes)
 	self.spell = nil
 	self.spellID = nil
 	self.item = nil
+	self.unit = nil
 
 	if not InCombatLockdown() and clearAttributes then
 		self:SetAttribute("unit", nil)
@@ -455,20 +455,20 @@ end
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 
-function ACTIONBUTTON:ParseAndSanitizeMacro()
-	local uncleanMacro = self:GetMacroText()
-	if #uncleanMacro > 0 then
+function ACTIONBUTTON.SanitizedMacro(macro)
+	if type(macro) == "string" and #macro > 0 then
 		--adds an empty line above and below the macro
-		uncleanMacro = "\n"..uncleanMacro.."\n"
-		--I'm not sure what this line does, but it appears to just strip off any control characters
-		self.macro = uncleanMacro:gsub("(%c+)", " %1")
+		macro = "\n"..macro.."\n"
+		--I'm not sure what this line does, but it adds spaces before control characters.
+		--Maybe it's adding spaces before newlines?
+		return macro:gsub("(%c+)", " %1")
 	else
-		self.macro = nil
+		return nil
 	end
 end
 
 function ACTIONBUTTON:UpdateButtonSpec()
-	local spec = (self.bar:GetMultiSpec() and Neuron.isWoWRetail) and GetSpecialization() or 1
+	local spec = Spec.active(self.bar:GetMultiSpec())
 
 	self:LoadDataFromDatabase(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
 	self:InitializeButtonSettings()
@@ -730,23 +730,17 @@ function ACTIONBUTTON:UpdateAll()
 	end
 end
 
---overwrite function in parent class BUTTON
-function ACTIONBUTTON:UpdateData()
-	--clear any lingering values before we re-parse and reassign
-	self:ClearButton()
-
-	--if we have no macro content then bail immediately
-	--if we have an actionID on this button bail immediately
-	if not self.macro or self.actionID then
-		--clear any values that were set as they'll get in the way later
-		return
+function ACTIONBUTTON.ExtractMacroData(macro)
+	if not macro then
+		return {}
 	end
 
-	local command, abilityOrItem
-	local target
+	-- the results. probably either spell or item will be nil
+	local spell, spellID, item, unit
 
-	--the parsed contents of a macro and assign them for further processing
-	for cmd, content in gmatch(self.macro, "(%c%p%a+)(%C+)") do
+	--extract the parsed contents of a macro and assign them for further processing
+	local command, abilityOrItem, target
+	for cmd, content in gmatch(macro, "(%c%p%a+)(%C+)") do
 
 		--"cmd" is "/cast" or "/use" or "#autowrite" or "#showtooltip" etc
 		--"content" is everything else, like "Chi Torpedo()"
@@ -767,27 +761,49 @@ function ACTIONBUTTON:UpdateData()
 		end
 	end
 
-	self.unit = target or "target"
+	unit = target or "target"
 
 	if COMMAND_LIST[command] then
 		if abilityOrItem and #abilityOrItem > 0 and command:find("/castsequence") then --this always will set the button info the next ability or item in the sequence
-			_, self.item, self.spell = QueryCastSequence(abilityOrItem) --it will only ever return as either self.item or self.spell, never both
+			_, item, spell = QueryCastSequence(abilityOrItem) --it will only ever return as either item or spell, never both
 		elseif abilityOrItem and #abilityOrItem > 0 then
 			if Neuron.itemCache[abilityOrItem:lower()] then --if our abilityOrItem is actually an item in our cache, amend it as such
-				self.item = abilityOrItem
+				item = abilityOrItem
 			elseif GetItemInfo(abilityOrItem) then
-				self.item = abilityOrItem
+				item = abilityOrItem
 			elseif tonumber(abilityOrItem) and GetInventoryItemLink("player", abilityOrItem) then --in case abilityOrItem is a number and corresponds to a valid inventory item
-				self.item = GetInventoryItemLink("player", abilityOrItem)
+				item = GetInventoryItemLink("player", abilityOrItem)
 			elseif Neuron.spellCache[abilityOrItem:lower()] then
-				self.spell = abilityOrItem
-				self.spellID = Neuron.spellCache[abilityOrItem:lower()].spellID
+				spell = abilityOrItem
+				spellID = Neuron.spellCache[abilityOrItem:lower()].spellID
 			elseif GetSpellInfo(abilityOrItem) then
-				self.spell = abilityOrItem
-				_,_,_,_,_,_,self.spellID = GetSpellInfo(abilityOrItem)
+				spell = abilityOrItem
+				_,_,_,_,_,_,spellID = GetSpellInfo(abilityOrItem)
 			end
 		end
 	end
+
+	return {spell = spell, spellID = spellID, unit = unit, item = item}
+end
+
+--overwrite function in parent class BUTTON
+function ACTIONBUTTON:UpdateData()
+	--clear any lingering values before we re-parse and reassign
+	self:ClearButton()
+
+	--if we have no macro content then bail immediately
+	--if we have an actionID on this button bail immediately
+	if self.actionID then
+		--don't set any values as they'll get in the way later
+		return
+	end
+
+	local cleanMacro = self.SanitizedMacro(self:GetMacroText())
+	local spellItemUnit = self.ExtractMacroData(cleanMacro)
+	self.spell = spellItemUnit.spell
+	self.spellID = spellItemUnit.spellID
+	self.item = spellItemUnit.item
+	self.unit = spellItemUnit.unit
 end
 
 --overwrite function in parent class BUTTON
@@ -810,3 +826,125 @@ function ACTIONBUTTON:UpdateVisibility(show)
 
 	Neuron.BUTTON.UpdateVisibility(self)
 end
+
+-----------------------------------------------------------------------------------------
+-------------------------------------- Set Icon -----------------------------------------
+-----------------------------------------------------------------------------------------
+
+
+function ACTIONBUTTON:UpdateIcon()
+	local spec = Spec.active(self.bar:GetMultiSpec())
+	local state = self.bar.handler:GetAttribute("activestate") or "homestate"
+
+	-- if we have any issues with flyouts or other edge cases, then
+	-- then we can build our data from our ACTIONBUTTON instead of using
+	-- the database values. but we need to keep GetAppearance stateless
+	-- so that we can use it in other contexts: like the settings dialog
+	local data = (
+		self.DB
+		and self.DB[spec][state]
+		or {actionID = self.actionID, macro_Text = self:GetMacroText(), macro_Icon = self:GetMacroIcon()}
+	)
+
+	self:ApplyAppearance(self:GetAppearance(data))
+
+	--make sure our button gets the correct Normal texture if we're not using a Masque skin
+	self:UpdateNormalTexture()
+end
+
+--- @param data genericSpecData: actionID, macro_Text, macro_Icon
+--- @return texture, border an icon texture, and an rgb tuple, both nilable
+function ACTIONBUTTON:GetAppearance(data)
+	if data.actionID then
+		return self.GetActionAppearance(data.actionID)
+	end
+
+	local spellItem = self.ExtractMacroData(self.SanitizedMacro(data.macro_Text))
+	local spell, item = spellItem.spell, spellItem.item
+
+	local texture, border
+	if spell then
+		texture, border = self.GetSpellAppearance(spell)
+	elseif item then
+		texture, border = self.GetItemAppearance(item)
+	-- macro must go after spells and items, for blizz macro #showtooltip to work
+	elseif data.macro_Icon then
+		texture, border = data.macro_Icon, nil
+	else
+		texture, border = nil, nil
+	end
+
+	return texture, border
+end
+
+function ACTIONBUTTON:ApplyAppearance(texture, border)
+	if texture then
+		self.Icon:SetTexture(texture)
+		self.Icon:Show()
+	else
+		self.Name:SetText("")
+		self.Icon:SetTexture("")
+		self.Icon:Hide()
+	end
+
+	if border then
+		self.Border:SetVertexColor(unpack(border))
+		self.Border:Show()
+	else
+		self.Border:Hide()
+	end
+end
+
+--- @return texture, border an icon texture, and an rgb tuple, both nilable
+function ACTIONBUTTON.GetSpellAppearance(spell)
+	--Hide the border in case this button used to have an equipped item in it
+	--otherwise it will continue to have a green border until a reload takes place
+	local border = nil
+
+	local texture = GetSpellTexture(spell)
+
+	if not texture then
+		if Neuron.spellCache[spell:lower()] then
+			texture = Neuron.spellCache[spell:lower()].icon
+		end
+	end
+
+	if not texture then
+		texture = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
+	end
+
+	return texture, border
+end
+
+--- @return texture, border an icon texture, and an rgb tuple, both nilable
+function ACTIONBUTTON.GetItemAppearance(item)
+	local border = nil
+	local texture = GetItemIcon(item)
+
+	if not texture then
+		if Neuron.itemCache[item:lower()] then
+			texture = GetItemIcon("item:"..Neuron.itemCache[item:lower()]..":0:0:0:0:0:0:0")
+		end
+	end
+
+	if not texture then
+		texture = "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK"
+	end
+
+	if IsEquippedItem(item) then --makes the border green when item is equipped and dragged to a button
+		border = {0, 1.0, 0, 0.2}
+	end
+
+	return texture, border
+end
+
+--- @return texture, border an icon texture, and an rgb tuple, both nilable
+function ACTIONBUTTON.GetActionAppearance(actionID)
+	local texture, border
+
+	if HasAction(actionID) then
+		texture = GetActionTexture(actionID) or ""
+	end
+	return texture, border
+end
+

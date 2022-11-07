@@ -370,6 +370,10 @@ function BUTTON:UpdateData()
 	-- empty --
 end
 
+function BUTTON:UpdateIcon()
+	-- empty --
+end
+
 function BUTTON:UpdateNormalTexture()
 	local actionTexture, noactionTexture
 
@@ -599,96 +603,6 @@ function BUTTON:UpdateUsableAction()
 	else
 		self.Icon:SetVertexColor(0.4, 0.4, 0.4)
 	end
-end
-
------------------------------------------------------------------------------------------
--------------------------------------- Set Icon -----------------------------------------
------------------------------------------------------------------------------------------
-
-function BUTTON:UpdateIcon()
-	if self.actionID then
-		self:UpdateActionIcon()
-	elseif self.spell then
-		self:UpdateSpellIcon()
-	elseif self.item then
-		self:UpdateItemIcon()
-	-- macro must go after spells and items, for blizz macro #showtooltip to work
-	elseif self:GetMacroIcon() then
-		self.Icon:SetTexture(self:GetMacroIcon())
-		self.Icon:Show()
-	else
-		self.Name:SetText("")
-		self.Icon:SetTexture("")
-		self.Icon:Hide()
-		self.Border:Hide()
-	end
-
-	--make sure our button gets the correct Normal texture if we're not using a Masque skin
-	self:UpdateNormalTexture()
-end
-
-function BUTTON:UpdateSpellIcon()
-	local texture = GetSpellTexture(self.spell)
-
-	if not texture then
-		if Neuron.spellCache[self.spell:lower()] then
-			texture = Neuron.spellCache[self.spell:lower()].icon
-		end
-	end
-
-	if texture then
-		self.Icon:SetTexture(texture)
-	else
-		self.Icon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-	end
-
-	self.Icon:Show()
-
-	--Hide the border in case this button used to have an equipped item in it
-	--otherwise it will continue to have a green border until a reload takes place
-	self.Border:Hide()
-end
-
-function BUTTON:UpdateItemIcon()
-	local texture = GetItemIcon(self.item)
-
-	if not texture then
-		if Neuron.itemCache[self.item:lower()] then
-			texture = GetItemIcon("item:"..Neuron.itemCache[self.item:lower()]..":0:0:0:0:0:0:0")
-		end
-	end
-
-	if texture then
-		self.Icon:SetTexture(texture)
-	else
-		self.Icon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-	end
-
-	self.Icon:Show()
-
-	if IsEquippedItem(self.item) then --makes the border green when item is equipped and dragged to a button
-		self.Border:SetVertexColor(0, 1.0, 0, 0.2)
-		self.Border:Show()
-	else
-		self.Border:Hide()
-	end
-end
-
-function BUTTON:UpdateActionIcon()
-	local texture
-
-	if HasAction(self.actionID) then
-		texture = GetActionTexture(self.actionID)
-	end
-
-	if texture then
-		self.Icon:SetTexture(texture)
-	else
-		--self.Icon:SetTexture("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
-		self.Icon:SetTexture("")
-	end
-
-	self.Icon:Show()
 end
 
 -----------------------------------------------------------------------------------------

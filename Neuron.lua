@@ -6,6 +6,8 @@
 
 local _, addonTable = ...
 
+local Spec = addonTable.utilities.Spec
+
 ---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
 addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0", "AceSerializer-3.0")
 local Neuron = addonTable.Neuron
@@ -36,8 +38,6 @@ Neuron.bindingMode = false
 Neuron.isWoWClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 Neuron.isWoWWrathClassic = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Neuron.isWoWRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-
-Neuron.activeSpec = 1
 
 Neuron.STRATAS = {
 	[1] = "BACKGROUND",
@@ -138,11 +138,6 @@ function Neuron:OnEnable()
 			end
 
 		end)
-	end
-
-	--set current spec before loading bars and buttons
-	if Neuron.isWoWRetail or Neuron.isWoWWrathClassic then
-		Neuron.activeSpec = GetSpecialization()
 	end
 
 	Neuron:LoginMessage()
@@ -284,7 +279,7 @@ function Neuron:LoginMessage()
 
 	DB.updateWarning = LATEST_VERSION_NUM
 
-	if Neuron.activeSpec > 4 then
+	if Spec.active(true) > 4 then
 		print(" ")
 		Neuron:Print("Warning: You do not currently have a specialization selected. Changes to any buttons which have 'Multi Spec' set will not persist.")
 		print(" ")

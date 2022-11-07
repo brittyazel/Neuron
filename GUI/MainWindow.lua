@@ -74,10 +74,20 @@ function NeuronGUI:DestroyEditor()
 end
 
 function NeuronGUI:PopulateEditorWindow()
+	local tabs ={{text="Bar Settings", value="bar"}}
+	if Neuron.currentBar.barType ~= "ActionBar" then
+		-- make sure that we switch to the bar tab
+		-- when selecting a non-action bar
+		currentTab = "bar"
+	else
+		-- only action bars have editable buttons
+		table.insert(tabs, {text="Button Settings", value="button"})
+	end
+
 	--Tab group that will contain all of our settings to configure
 	local tabFrame = AceGUI:Create("TabGroup")
 	tabFrame:SetLayout("Flow")
-	tabFrame:SetTabs({{text="Bar Settings", value="bar"}, {text="Button Settings", value="button"}})
+	tabFrame:SetTabs(tabs)
 	tabFrame:SetCallback("OnGroupSelected", function(self, _, value) NeuronGUI:SelectTab(self, _, value) end)
 	addonTable.NeuronEditor:AddChild(tabFrame)
 	tabFrame:SelectTab(currentTab)
@@ -88,9 +98,12 @@ function NeuronGUI:SelectTab(tabFrame, _, value)
 	tabFrame:ReleaseChildren()
 	if value == "bar" then
 		NeuronGUI:BarEditPanel(tabFrame)
-		currentTab = "bar"
 	elseif value == "button" then
-		NeuronGUI:ButtonEditPanel(tabFrame)
-		currentTab = "button"
+		-- whenever we change a button, RefreshEditor is called upstream
+		-- so we don't need to keep track of updating currentButton here
+		NeuronGUI:ButtonsEditPanel(tabFrame)
+	else
+		return -- if we get here we forgot to add a tab!
 	end
+	currentTab = value
 end

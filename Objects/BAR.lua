@@ -6,6 +6,8 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
+local Spec = addonTable.utilities.Spec
+
 ---@class BAR : CheckButton @This is our bar object that serves as the container for all of our button objects
 local BAR = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.BAR = BAR
@@ -1014,7 +1016,7 @@ end
 
 --loads all the object stored for a given bar
 function BAR:LoadObjects()
-	local spec = (not self:GetMultiSpec() or Neuron.isWoWClassicEra) and 1 or GetSpecialization()
+	local spec = Spec.active(self:GetMultiSpec())
 
 	for i, object in ipairs(self.buttons) do
 		--all of these objects need to stay as "object:****" because which InitializeButtonSettings/LoadDataFromDatabase/etc is bar dependent. Symlinks are made to the asociated bar objects to these class functions
