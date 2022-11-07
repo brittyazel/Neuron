@@ -7,6 +7,9 @@ local _, addonTable = ...
 addonTable.utilities = addonTable.utilities or {}
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+local Array = addonTable.utilities.Array
+
+local wrathSpecNames = {TALENT_SPEC_PRIMARY, TALENT_SPEC_SECONDARY}
 
 local Spec; Spec = {
   --- get the currently active spec
@@ -20,11 +23,10 @@ local Spec; Spec = {
       index = GetSpecialization()
       _, name = GetSpecializationInfo(index)
     elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-      local specNames = {TALENT_SPEC_PRIMARY, TALENT_SPEC_SECONDARY}
       index = GetActiveTalentGroup()
-      name = specNames[index]
+      name = wrathSpecNames[index]
     else -- classic era or something we don't handle
-      index, name = 1, L["None"]
+      index, name = 1, ""
     end
 
     index = multiSpec and index or 1
@@ -32,6 +34,26 @@ local Spec; Spec = {
     return index, name
   end,
 
+  --- get a list of spec names
+  -- boolean -> string[]
+  --
+  -- @param bool indicating whether we want multispec
+  -- @return the names
+  names = function(multiSpec)
+    local names
+    if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+      names = Array.initialize(
+        GetNumSpecializations(),
+        function(i) return select(2, GetSpecializationInfo(i)) end
+      )
+    elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
+      names = wrathSpecNames
+    else
+      names = {""}
+    end
+
+    return multiSpec and names or {""}
+  end
 }
 
 addonTable.utilities.Spec = Spec
