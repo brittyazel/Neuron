@@ -880,7 +880,6 @@ function ACTIONBUTTON:Flyout_UpdateData(init)
 				end
 
 				button:SetMacroText(button:GetAttribute("macro_Text"))
-				button:ParseAndSanitizeMacro()
 				button:ClearButton()
 				button:UpdateAll()
 
@@ -1112,7 +1111,6 @@ function ACTIONBUTTON:Flyout_PostClick()
 	button:SetMacroIcon(self:GetAttribute("macro_Icon") or nil)
 	button:SetMacroName(self:GetAttribute("macro_Name") or nil)
 
-	button:ParseAndSanitizeMacro()
 	button:ClearButton()
 	button:UpdateAll()
 
