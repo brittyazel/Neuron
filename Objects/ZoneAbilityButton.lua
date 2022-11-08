@@ -6,20 +6,20 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class ZONEABILITYBTN : BUTTON @define class ZONEABILITYBTN inherits from class BUTTON
-local ZONEABILITYBTN = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
-Neuron.ZONEABILITYBTN = ZONEABILITYBTN
+---@class ZoneAbilityButton : Button @define class ZoneAbilityButton inherits from class Button
+local ZoneAbilityButton = setmetatable({}, {__index = Neuron.Button}) --this is the metatable for our button object
+Neuron.ZoneAbilityButton = ZoneAbilityButton
 
 ----------------------------------------------------------
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return ZONEABILITYBTN @ A newly created ZONEABILITYBTN object
-function ZONEABILITYBTN.new(bar, buttonID, defaults)
+---@return ZoneAbilityButton @ A newly created ZoneAbilityButton object
+function ZoneAbilityButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON.new(bar, buttonID, ZONEABILITYBTN, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.Button.new(bar, buttonID, ZoneAbilityButton, "ZoneAbilityBar", "ZoneActionButton", "NeuronActionButtonTemplate")
 
 	newButton.abilityIndex = buttonID
 
@@ -33,7 +33,7 @@ function ZONEABILITYBTN.new(bar, buttonID, defaults)
 end
 
 ----------------------------------------------------------
-function ZONEABILITYBTN:InitializeButton()
+function ZoneAbilityButton:InitializeButton()
 	self:RegisterUnitEvent("UNIT_AURA", "player")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
@@ -64,13 +64,13 @@ function ZONEABILITYBTN:InitializeButton()
 	self:InitializeButtonSettings()
 end
 
-function ZONEABILITYBTN:InitializeButtonSettings()
+function ZoneAbilityButton:InitializeButtonSettings()
 	self.bar:SetShowGrid(false)
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetSkinned()
 end
 
-function ZONEABILITYBTN:OnEvent(event, ...)
+function ZoneAbilityButton:OnEvent(event, ...)
 	self:UpdateData();
 	if event == "PLAYER_ENTERING_WORLD" then
 		self:KeybindOverlay_ApplyBindings()
@@ -83,8 +83,8 @@ end
 --------------------- Overrides ---------------------
 -----------------------------------------------------
 
---overwrite function in parent class BUTTON
-function ZONEABILITYBTN:UpdateData()
+--overwrite function in parent class Button
+function ZoneAbilityButton:UpdateData()
 	--get table with zone ability info. The table has 5 values, "zoneAbilityID", "uiPriority", "spellID", "textureKit", and "tutorialText"
 	local zoneAbilityTable = C_ZoneAbility.GetActiveAbilities()
 
@@ -119,19 +119,19 @@ function ZONEABILITYBTN:UpdateData()
 	self:UpdateCount()
 end
 
---overwrite function in parent class BUTTON
-function ZONEABILITYBTN:UpdateVisibility()
+--overwrite function in parent class Button
+function ZoneAbilityButton:UpdateVisibility()
 	if self.spellID then
 		self.isShown = true
 	else
 		self.isShown = false
 	end
 
-	Neuron.BUTTON.UpdateVisibility(self) --call parent function
+	Neuron.Button.UpdateVisibility(self) --call parent function
 end
 
---overwrite function in parent class BUTTON
-function ZONEABILITYBTN:UpdateIcon()
+--overwrite function in parent class Button
+function ZoneAbilityButton:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
 	self.Icon:SetTexture(spellTexture);
 
@@ -152,8 +152,8 @@ function ZONEABILITYBTN:UpdateIcon()
 	self:UpdateNormalTexture()
 end
 
---overwrite function in parent class BUTTON
-function ZONEABILITYBTN:UpdateTooltip()
+--overwrite function in parent class Button
+function ZoneAbilityButton:UpdateTooltip()
 	if not self.isShown then
 		return
 	end

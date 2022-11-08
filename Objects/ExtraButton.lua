@@ -6,20 +6,20 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class EXTRABTN : BUTTON @define class EXTRABTN inherits from class BUTTON
-local EXTRABTN = setmetatable({}, { __index = Neuron.BUTTON })
-Neuron.EXTRABTN = EXTRABTN
+---@class ExtraButton : Button @define class ExtraButton inherits from class Button
+local ExtraButton = setmetatable({}, { __index = Neuron.Button })
+Neuron.ExtraButton = ExtraButton
 
 ----------------------------------------------------------
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return EXTRABTN @ A newly created EXTRABTN object
-function EXTRABTN.new(bar, buttonID, defaults)
+---@return ExtraButton @ A newly created ExtraButton object
+function ExtraButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON.new(bar, buttonID, EXTRABTN, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.Button.new(bar, buttonID, ExtraButton, "ExtraBar", "ExtraActionButton", "NeuronActionButtonTemplate")
 
 	if defaults then
 		newButton:SetDefaults(defaults)
@@ -32,7 +32,7 @@ end
 
 ----------------------------------------------------------
 
-function EXTRABTN:InitializeButton()
+function ExtraButton:InitializeButton()
 	self:RegisterEvent("UPDATE_EXTRA_ACTIONBAR", "OnEvent")
 	self:RegisterEvent("ZONE_CHANGED", "OnEvent")
 	self:RegisterEvent("SPELLS_CHANGED", "OnEvent")
@@ -60,13 +60,13 @@ function EXTRABTN:InitializeButton()
 	self:InitializeButtonSettings()
 end
 
-function EXTRABTN:InitializeButtonSettings()
+function ExtraButton:InitializeButtonSettings()
 	self.bar:SetShowGrid(false)
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetSkinned()
 end
 
-function EXTRABTN:OnEvent(event, ...)
+function ExtraButton:OnEvent(event, ...)
 	self:UpdateData()
 	if event == "PLAYER_ENTERING_WORLD" then
 		self:KeybindOverlay_ApplyBindings()
@@ -79,8 +79,8 @@ end
 --------------------- Overrides ---------------------
 -----------------------------------------------------
 
---overwrite function in parent class BUTTON
-function EXTRABTN:UpdateData()
+--overwrite function in parent class Button
+function ExtraButton:UpdateData()
 	--get specific extrabutton actionID. Try to query it long form, but if it can't will fall back to 169 (as is the 7.0+ default)
 	if HasExtraActionBar() then
 		--default to 169 as is the most of then the case as of 8.1
@@ -116,18 +116,18 @@ function EXTRABTN:UpdateData()
 	self:UpdateCount()
 end
 
---overwrite function in parent class BUTTON
-function EXTRABTN:UpdateVisibility()
+--overwrite function in parent class Button
+function ExtraButton:UpdateVisibility()
 	if HasExtraActionBar() then --set alpha instead of :Show or :Hide, to avoid taint and to allow the button to appear in combat
 		self.isShown = true
 	else
 		self.isShown = false
 	end
-	Neuron.BUTTON.UpdateVisibility(self) --call parent function
+	Neuron.Button.UpdateVisibility(self) --call parent function
 end
 
---overwrite function in parent class BUTTON
-function EXTRABTN:UpdateIcon()
+--overwrite function in parent class Button
+function ExtraButton:UpdateIcon()
 	local spellTexture = GetSpellTexture(self.spellID)
 	self.Icon:SetTexture(spellTexture)
 
@@ -143,8 +143,8 @@ function EXTRABTN:UpdateIcon()
 	self:UpdateNormalTexture()
 end
 
---overwrite function in parent class BUTTON
-function EXTRABTN:UpdateTooltip()
+--overwrite function in parent class Button
+function ExtraButton:UpdateTooltip()
 	if not self.isShown then
 		return
 	end

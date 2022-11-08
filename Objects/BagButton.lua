@@ -6,9 +6,9 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class BAGBTN : BUTTON @class BAGBTN inherits from class BUTTON
-local BAGBTN = setmetatable({}, {__index = Neuron.BUTTON})
-Neuron.BAGBTN = BAGBTN
+---@class BagButton : Button @class BagButton inherits from class Button
+local BagButton = setmetatable({}, {__index = Neuron.Button})
+Neuron.BagButton = BagButton
 
 Neuron.NUM_BAG_BUTTONS = 6
 
@@ -24,14 +24,14 @@ local blizzBagButtons = {
 
 ---------------------------------------------------------
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return BAGBTN @ A newly created BAGBTN object
-function BAGBTN.new(bar, buttonID, defaults)
+---@return BagButton @ A newly created BagButton object
+function BagButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON.new(bar, buttonID, BAGBTN, "BagBar", "BagButton", "NeuronAnchorButtonTemplate")
+	local newButton = Neuron.Button.new(bar, buttonID, BagButton, "BagBar", "BagButton", "NeuronAnchorButtonTemplate")
 
 	if defaults then
 		newButton:SetDefaults(defaults)
@@ -42,7 +42,7 @@ end
 
 --------------------------------------------------------
 
-function BAGBTN:InitializeButton()
+function BagButton:InitializeButton()
 	if blizzBagButtons[self.id] then
 		self.hookedButton = blizzBagButtons[self.id]
 		self.hookedButton:ClearAllPoints()
@@ -58,7 +58,7 @@ function BAGBTN:InitializeButton()
 	self:InitializeButtonSettings()
 end
 
-function BAGBTN:InitializeButtonSettings()
+function BagButton:InitializeButtonSettings()
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
 	self:SetSkinned()
@@ -66,7 +66,7 @@ function BAGBTN:InitializeButtonSettings()
 end
 
 ---simplified SetSkinned for the Bag Buttons. They're unique in that they contain buttons inside of the buttons
---[[function BAGBTN:SetSkinned()
+--[[function BagButton:SetSkinned()
 	local SKIN = LibStub("Masque", true)
 	if SKIN then
 		local btnData = {
@@ -87,27 +87,27 @@ end]]
 --------------------- Overrides ---------------------
 -----------------------------------------------------
 
---overwrite function in parent class BUTTON
-function BAGBTN:UpdateStatus()
+--overwrite function in parent class Button
+function BagButton:UpdateStatus()
 	-- empty --
 end
---overwrite function in parent class BUTTON
-function BAGBTN:UpdateIcon()
+--overwrite function in parent class Button
+function BagButton:UpdateIcon()
 	-- empty --
 end
---overwrite function in parent class BUTTON
-function BAGBTN:UpdateUsable()
+--overwrite function in parent class Button
+function BagButton:UpdateUsable()
 	-- empty --
 end
---overwrite function in parent class BUTTON
-function BAGBTN:UpdateCount()
+--overwrite function in parent class Button
+function BagButton:UpdateCount()
 	-- empty --
 end
---overwrite function in parent class BUTTON
-function BAGBTN:UpdateCooldown()
+--overwrite function in parent class Button
+function BagButton:UpdateCooldown()
 	-- empty --
 end
---overwrite function in parent class BUTTON
-function BAGBTN:UpdateTooltip()
+--overwrite function in parent class Button
+function BagButton:UpdateTooltip()
 	-- empty --
 end

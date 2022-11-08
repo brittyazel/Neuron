@@ -6,10 +6,10 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----The functions in this file are part of the ACTIONBUTTON class.
+---The functions in this file are part of the ActionButton class.
 ---It was just easier to put them all in their own file for organization.
 
-local ACTIONBUTTON = Neuron.ACTIONBUTTON
+local ActionButton = Neuron.ActionButton
 
 local macroDrag = {} --this is a table that holds onto the contents of the  current macro being dragged
 local macroCache = {} --this will hold onto any previous contents of our button
@@ -20,7 +20,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 --------------------------------------
 
 --this is the function that fires when you begin dragging an item
-function ACTIONBUTTON:OnDragStart()
+function ActionButton:OnDragStart()
 	if InCombatLockdown() or not self.bar or self.actionID then
 		return
 	end
@@ -61,7 +61,7 @@ function ACTIONBUTTON:OnDragStart()
 end
 
 --This is the function that fires when a button is receiving a dragged item
-function ACTIONBUTTON:OnReceiveDrag()
+function ActionButton:OnReceiveDrag()
 	if InCombatLockdown() then --don't allow moving or changing macros while in combat. This will cause taint
 		return
 	end
@@ -135,7 +135,7 @@ function ACTIONBUTTON:OnReceiveDrag()
 end
 
 
-function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
+function ActionButton:PostClick() --this is necessary because if you are daisy-chain dragging spells to the bar you wont be able to place the last one due to it not firing an OnReceiveDrag
 	if #macroDrag>0 then
 		self:OnReceiveDrag()
 	end
@@ -143,7 +143,7 @@ function ACTIONBUTTON:PostClick() --this is necessary because if you are daisy-c
 end
 
 --we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
-function ACTIONBUTTON:WorldFrame_OnReceiveDrag()
+function ActionButton:WorldFrame_OnReceiveDrag()
 	SetCursor(nil)
 	ClearCursor()
 	Neuron.dragging = false
@@ -162,7 +162,7 @@ end
 --------------------------------------
 
 
-function ACTIONBUTTON:PickUpMacro()
+function ActionButton:PickUpMacro()
 
 	if macroCache[1] then  --triggers when picking up an existing button with a button in the cursor
 
@@ -199,7 +199,7 @@ function ACTIONBUTTON:PickUpMacro()
 end
 
 
-function ACTIONBUTTON:PlaceMacro()
+function ActionButton:PlaceMacro()
 	self:SetMacroText(macroDrag[2])
 	self:SetMacroIcon(macroDrag[3])
 	self:SetMacroName(macroDrag[4])
@@ -209,7 +209,7 @@ function ACTIONBUTTON:PlaceMacro()
 	self:SetMacroEquipmentSet(macroDrag[8])
 end
 
-function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
+function ActionButton:PlaceSpell(action1, action2, spellID)
 	local spell
 
 	if action1 == 0 then
@@ -244,7 +244,7 @@ function ACTIONBUTTON:PlaceSpell(action1, action2, spellID)
 	self:SetMacroEquipmentSet()
 end
 
-function ACTIONBUTTON:PlacePetAbility(action1, action2)
+function ActionButton:PlacePetAbility(action1, action2)
 
 	local spellID = action1
 	local spellIndex = action2
@@ -266,7 +266,7 @@ function ACTIONBUTTON:PlacePetAbility(action1, action2)
 end
 
 
-function ACTIONBUTTON:PlaceItem(action1, action2)
+function ActionButton:PlaceItem(action1, action2)
 	local item, link = GetItemInfo(action2)
 
 	if link and not Neuron.itemCache[item:lower()] then --add the item to the itemcache if it isn't otherwise in it
@@ -290,7 +290,7 @@ function ACTIONBUTTON:PlaceItem(action1, action2)
 end
 
 
-function ACTIONBUTTON:PlaceBlizzMacro(action1)
+function ActionButton:PlaceBlizzMacro(action1)
 	if action1 == 0 then
 		return
 	end
@@ -315,7 +315,7 @@ function ACTIONBUTTON:PlaceBlizzMacro(action1)
 end
 
 
-function ACTIONBUTTON:PlaceBlizzEquipSet(equipmentSetName)
+function ActionButton:PlaceBlizzEquipSet(equipmentSetName)
 	if equipmentSetName == 0 then
 		return
 	end
@@ -357,7 +357,7 @@ end
 --Based on discussion thread http://www.wowinterface.com/forums/showthread.php?t=49599&page=2
 --More dynamic than the manual list that was originally implement
 
-function ACTIONBUTTON:PlaceMount(action1, action2)
+function ActionButton:PlaceMount(action1, action2)
 	local mountName, mountSpellID, mountIcon = C_MountJournal.GetMountInfoByID(action1)
 	local mountSpell
 
@@ -384,7 +384,7 @@ function ACTIONBUTTON:PlaceMount(action1, action2)
 end
 
 
-function ACTIONBUTTON:PlaceCompanion(action1, action2)
+function ActionButton:PlaceCompanion(action1, action2)
 	if action1 == 0 then
 		return
 	end
@@ -407,7 +407,7 @@ function ACTIONBUTTON:PlaceCompanion(action1, action2)
 	self:SetMacroEquipmentSet()
 end
 
-function ACTIONBUTTON:PlaceBattlePet(action1, action2)
+function ActionButton:PlaceBattlePet(action1, action2)
 	if action1 == 0 then
 		return
 	end
@@ -424,7 +424,7 @@ function ACTIONBUTTON:PlaceBattlePet(action1, action2)
 end
 
 
-function ACTIONBUTTON:PlaceFlyout(action1, action2)
+function ActionButton:PlaceFlyout(action1, action2)
 	if action1 == 0 then
 		return
 	end
@@ -476,7 +476,7 @@ end
 
 --This is all just to put an icon on the mouse cursor. Sadly we can't use SetCursor, because once you leave the frame the icon goes away. PickupSpell seems to work, but we need a valid spellID
 --This trick here is that we ignore what is 'actually' and are just using it for the icon and the sound effects
-function ACTIONBUTTON:SetMouseCursor()
+function ActionButton:SetMouseCursor()
 	ClearCursor()
 
 	if self.spell and self.spellID then

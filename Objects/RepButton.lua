@@ -6,15 +6,15 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class REPBTN : STATUSBTN @define class REPBTN inherits from class STATUSBTN
-local REPBTN = setmetatable({}, { __index = Neuron.STATUSBTN })
-Neuron.REPBTN = REPBTN
+---@class RepButton : StatusButton @define class RepButton inherits from class StatusButton
+local RepButton = setmetatable({}, { __index = Neuron.StatusButton })
+Neuron.RepButton = RepButton
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local RepWatch = {}
 
-REPBTN.sbStrings = {
+RepButton.sbStrings = {
 	[1] = { L["None"], function() return "" end },
 	[2] = { L["Faction"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].name end end }, --TODO:should probably do the same as above here, just in case people have more than 1 rep bar
 	[3] = { L["Current/Next"], function(self) if RepWatch[self.repID] then return RepWatch[self.repID].current end end },
@@ -24,19 +24,19 @@ REPBTN.sbStrings = {
 }
 
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return REPBTN @ A newly created STATUSBTN object
-function REPBTN.new(bar, buttonID, defaults)
+---@return RepButton @ A newly created StatusButton object
+function RepButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.STATUSBTN.new(bar, buttonID, defaults, REPBTN, "RepBar", "Rep Button")
+	local newButton = Neuron.StatusButton.new(bar, buttonID, defaults, RepButton, "RepBar", "Rep Button")
 
 	return newButton
 end
 
-function REPBTN:InitializeButton()
+function RepButton:InitializeButton()
 	self:SetAttribute("hasaction", true)
 
 	self:RegisterForClicks("RightButtonUp")
@@ -85,7 +85,7 @@ local function SetRepWatch(ID, name, standing, header, minrep, maxrep, value, co
 	return reptable
 end
 
-function REPBTN:UpdateData(repGainedString)
+function RepButton:UpdateData(repGainedString)
 	local BAR_REP_DATA = {
 		[0] = { l="Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
 		[1] = { l="Hated", r=0.6, g=0.1, b=0.1, a=1.0 },
@@ -182,7 +182,7 @@ function REPBTN:UpdateData(repGainedString)
 	end
 end
 
-function REPBTN:OnEvent(event,...)
+function RepButton:OnEvent(event,...)
 	self:UpdateData(...)
 
 	if RepWatch[self.repID] then
@@ -202,7 +202,7 @@ function REPBTN:OnEvent(event,...)
 end
 
 
-function REPBTN:InitializeDropDown() --Initialize the dropdown menu for choosing a rep
+function RepButton:InitializeDropDown() --Initialize the dropdown menu for choosing a rep
 	local repDataTable = {}
 
 	for k,v in pairs(RepWatch) do --insert all factions and percentages into "data"
@@ -345,7 +345,7 @@ function REPBTN:InitializeDropDown() --Initialize the dropdown menu for choosing
 end
 
 
-function REPBTN:OnClick(mousebutton)
+function RepButton:OnClick(mousebutton)
 	if mousebutton == "RightButton" then
 		self:InitializeDropDown()
 	end
