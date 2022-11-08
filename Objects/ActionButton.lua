@@ -8,9 +8,9 @@ local Neuron = addonTable.Neuron
 
 local Spec = addonTable.utilities.Spec
 
----@class ACTIONBUTTON : BUTTON @define class ACTIONBUTTON inherits from class BUTTON
-local ACTIONBUTTON = setmetatable({}, {__index = Neuron.BUTTON}) --this is the metatable for our button object
-Neuron.ACTIONBUTTON = ACTIONBUTTON
+---@class ActionButton : Button @define class ActionButton inherits from class Button
+local ActionButton = setmetatable({}, {__index = Neuron.Button}) --this is the metatable for our button object
+Neuron.ActionButton = ActionButton
 
 ---------------------------------------------------------
 -------------------declare globals-----------------------
@@ -49,14 +49,14 @@ local COMMAND_LIST = {
 	["#showtooltip"] = true,
 }
 
----Constructor: Create a new Neuron BUTTON object (this is the base object for all Neuron button types)
----@param bar BAR @Bar Object this button will be a child of
+---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
+---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
 ---@param defaults table @Default options table to be loaded onto the given button
----@return ACTIONBUTTON @ A newly created ACTIONBUTTON object
-function ACTIONBUTTON.new(bar, buttonID, defaults)
+---@return ActionButton @ A newly created ActionButton object
+function ActionButton.new(bar, buttonID, defaults)
 	--call the parent object constructor with the provided information specific to this button type
-	local newButton = Neuron.BUTTON.new(bar, buttonID, ACTIONBUTTON, "ActionBar", "ActionButton", "NeuronActionButtonTemplate")
+	local newButton = Neuron.Button.new(bar, buttonID, ActionButton, "ActionBar", "ActionButton", "NeuronActionButtonTemplate")
 
 	if defaults then
 		newButton:SetDefaults(defaults)
@@ -68,7 +68,7 @@ function ACTIONBUTTON.new(bar, buttonID, defaults)
 	return newButton
 end
 
-function ACTIONBUTTON:InitializeButton()
+function ActionButton:InitializeButton()
 	self:ClearButton(true)
 
 	SecureHandler_OnLoad(self)
@@ -90,10 +90,10 @@ function ACTIONBUTTON:InitializeButton()
 	--this is to allow for the correct releasing of the button when dragging icons off of the bar
 	--we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
 	if not Neuron:IsHooked(WorldFrame, "OnReceiveDrag") then
-		Neuron:HookScript(WorldFrame, "OnReceiveDrag", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
+		Neuron:HookScript(WorldFrame, "OnReceiveDrag", function() ActionButton:WorldFrame_OnReceiveDrag() end)
 	end
 	if not Neuron:IsHooked(WorldFrame, "OnMouseDown") then
-		Neuron:HookScript(WorldFrame, "OnMouseDown", function() ACTIONBUTTON:WorldFrame_OnReceiveDrag() end)
+		Neuron:HookScript(WorldFrame, "OnMouseDown", function() ActionButton:WorldFrame_OnReceiveDrag() end)
 	end
 
 	self:SetScript("OnAttributeChanged", function(_, name, value) self:OnAttributeChanged(name, value) end)
@@ -190,7 +190,7 @@ function ACTIONBUTTON:InitializeButton()
 	self:InitializeButtonSettings()
 end
 
-function ACTIONBUTTON:InitializeButtonSettings()
+function ActionButton:InitializeButtonSettings()
 	self:SetFrameStrata(Neuron.STRATAS[self.bar:GetStrata()-1])
 	self:SetScale(self.bar:GetBarScale())
 
@@ -229,7 +229,7 @@ function ACTIONBUTTON:InitializeButtonSettings()
 end
 
 
-function ACTIONBUTTON:SetupEvents()
+function ActionButton:SetupEvents()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	self:RegisterEvent("UPDATE_MACROS")
@@ -280,7 +280,7 @@ function ACTIONBUTTON:SetupEvents()
 	end
 end
 
-function ACTIONBUTTON:OnAttributeChanged(name, value)
+function ActionButton:OnAttributeChanged(name, value)
 
 	if value and self.data then
 		if name == "activestate" then
@@ -342,7 +342,7 @@ function ACTIONBUTTON:OnAttributeChanged(name, value)
 end
 
 
-function ACTIONBUTTON:OnLeave(...)
+function ActionButton:OnLeave(...)
 	GameTooltip:Hide()
 
 	if self.flyout and self.flyout.arrow then
@@ -354,11 +354,11 @@ end
 --------------General Button Methods------------------------
 ------------------------------------------------------------
 
-function ACTIONBUTTON:GetDragAction()
+function ActionButton:GetDragAction()
 	return "macro"
 end
 
-function ACTIONBUTTON:ClearButton(clearAttributes)
+function ActionButton:ClearButton(clearAttributes)
 	self.spell = nil
 	self.spellID = nil
 	self.item = nil
@@ -376,7 +376,7 @@ function ACTIONBUTTON:ClearButton(clearAttributes)
 	end
 end
 
-function ACTIONBUTTON:UpdateGlow()
+function ActionButton:UpdateGlow()
 	if self.bar:GetSpellGlow() and self.spellID then
 		--druid fix for thrash glow not showing for feral druids.
 		--Thrash Guardian: 77758
@@ -402,7 +402,7 @@ function ACTIONBUTTON:UpdateGlow()
 end
 
 
-function ACTIONBUTTON:StartGlow()
+function ActionButton:StartGlow()
 	if self.bar:GetSpellGlow() == "default" then
 		ActionButton_ShowOverlayGlow(self)
 	else
@@ -411,7 +411,7 @@ function ACTIONBUTTON:StartGlow()
 	end
 end
 
-function ACTIONBUTTON:StopGlow()
+function ActionButton:StopGlow()
 	if self.bar:GetSpellGlow() == "default" then
 		ActionButton_HideOverlayGlow(self)
 	else
@@ -424,7 +424,7 @@ end
 ---------------------Event Functions------------------------------------------
 ------------------------------------------------------------------------------
 
-function ACTIONBUTTON:PLAYER_ENTERING_WORLD()
+function ActionButton:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
 	self:KeybindOverlay_ApplyBindings()
 
@@ -433,20 +433,20 @@ function ACTIONBUTTON:PLAYER_ENTERING_WORLD()
 	end
 end
 
-function ACTIONBUTTON:UNIT_SPELLCAST_INTERRUPTED(unit)
+function ActionButton:UNIT_SPELLCAST_INTERRUPTED(unit)
 	if (unit == "player" or unit == "pet") and self.spell then
 		self:UpdateCooldown()
 	end
 end
 
 
-function ACTIONBUTTON:UPDATE_MACROS()
+function ActionButton:UPDATE_MACROS()
 	if not InCombatLockdown() and self:GetMacroBlizzMacro() then
 		self:PlaceBlizzMacro(self:GetMacroBlizzMacro())
 	end
 end
 
-function ACTIONBUTTON:EQUIPMENT_SETS_CHANGED()
+function ActionButton:EQUIPMENT_SETS_CHANGED()
 	if not InCombatLockdown() and self:GetMacroEquipmentSet() then
 		self:PlaceBlizzEquipSet(self:GetMacroEquipmentSet())
 	end
@@ -455,7 +455,7 @@ end
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 
-function ACTIONBUTTON.SanitizedMacro(macro)
+function ActionButton.SanitizedMacro(macro)
 	if type(macro) == "string" and #macro > 0 then
 		--adds an empty line above and below the macro
 		macro = "\n"..macro.."\n"
@@ -467,7 +467,7 @@ function ACTIONBUTTON.SanitizedMacro(macro)
 	end
 end
 
-function ACTIONBUTTON:UpdateButtonSpec()
+function ActionButton:UpdateButtonSpec()
 	local spec = Spec.active(self.bar:GetMultiSpec())
 
 	self:LoadDataFromDatabase(spec, self.bar.handler:GetAttribute("activestate") or "homestate")
@@ -477,7 +477,7 @@ function ACTIONBUTTON:UpdateButtonSpec()
 end
 
 --this function is used to "fake" a state change in the button editor so you can see what each state will look like
-function ACTIONBUTTON:FakeStateChange(state)
+function ActionButton:FakeStateChange(state)
 	if state then
 
 		local msg = (":"):split(state)
@@ -541,7 +541,7 @@ end
 --spell: name of spell to use
 --subname: subname of spell to use (optional)
 --return: macro text
-function ACTIONBUTTON:AutoWriteMacro(spell)
+function ActionButton:AutoWriteMacro(spell)
 	local DB = Neuron.db.profile
 
 	local spellName
@@ -600,7 +600,7 @@ function ACTIONBUTTON:AutoWriteMacro(spell)
 	return "#autowrite\n/cast"..modifier..spell.."()"
 end
 
-function ACTIONBUTTON:GetPosition(relFrame)
+function ActionButton:GetPosition(relFrame)
 	local point
 
 	if not relFrame then
@@ -633,7 +633,7 @@ end
 --This will update the modifier value in a macro when a bar is set with a target conditional
 --@spell:  this is hte macro text to be updated
 --return: updated macro text
---[[function ACTIONBUTTON:AutoUpdateMacro(macro)
+--[[function ActionButton:AutoUpdateMacro(macro)
 
 	local DB = Neuron.db.profile
 
@@ -664,7 +664,7 @@ end
 -- macro will then be updated to via AutoWriteMacro to include selected target macro option, or via AutoUpdateMacro
 -- to update a current target macro's toggle modifier.
 -- @param global(boolean): if true will go though all buttons, else it will just update the button set for the current bar
-function ACTIONBUTTON:UpdateMacroCastTargets(global_update)
+function ActionButton:UpdateMacroCastTargets(global_update)
 
 	local button_list = {}
 
@@ -720,17 +720,17 @@ end]]
 --------------------- Overrides ---------------------
 -----------------------------------------------------
 
---overwrite function in parent class BUTTON
-function ACTIONBUTTON:UpdateAll()
+--overwrite function in parent class Button
+function ActionButton:UpdateAll()
 	--pass to parent UpdateAll function
-	Neuron.BUTTON.UpdateAll(self)
+	Neuron.Button.UpdateAll(self)
 
 	if Neuron.isWoWRetail then
 		self:UpdateGlow()
 	end
 end
 
-function ACTIONBUTTON.ExtractMacroData(macro)
+function ActionButton.ExtractMacroData(macro)
 	if not macro then
 		return {}
 	end
@@ -786,8 +786,8 @@ function ACTIONBUTTON.ExtractMacroData(macro)
 	return {spell = spell, spellID = spellID, unit = unit, item = item}
 end
 
---overwrite function in parent class BUTTON
-function ACTIONBUTTON:UpdateData()
+--overwrite function in parent class Button
+function ActionButton:UpdateData()
 	--clear any lingering values before we re-parse and reassign
 	self:ClearButton()
 
@@ -806,8 +806,8 @@ function ACTIONBUTTON:UpdateData()
 	self.unit = spellItemUnit.unit
 end
 
---overwrite function in parent class BUTTON
-function ACTIONBUTTON:UpdateVisibility(show)
+--overwrite function in parent class Button
+function ActionButton:UpdateVisibility(show)
 	if self:HasAction() or Neuron.dragging or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
 		self.isShown = true
 	else
@@ -824,7 +824,7 @@ function ACTIONBUTTON:UpdateVisibility(show)
 		end
 	end
 
-	Neuron.BUTTON.UpdateVisibility(self)
+	Neuron.Button.UpdateVisibility(self)
 end
 
 -----------------------------------------------------------------------------------------
@@ -832,12 +832,12 @@ end
 -----------------------------------------------------------------------------------------
 
 
-function ACTIONBUTTON:UpdateIcon()
+function ActionButton:UpdateIcon()
 	local spec = Spec.active(self.bar:GetMultiSpec())
 	local state = self.bar.handler:GetAttribute("activestate") or "homestate"
 
 	-- if we have any issues with flyouts or other edge cases, then
-	-- then we can build our data from our ACTIONBUTTON instead of using
+	-- then we can build our data from our ActionButton instead of using
 	-- the database values. but we need to keep GetAppearance stateless
 	-- so that we can use it in other contexts: like the settings dialog
 	local data = (
@@ -854,7 +854,7 @@ end
 
 --- @param data genericSpecData: actionID, macro_Text, macro_Icon
 --- @return texture, border an icon texture, and an rgb tuple, both nilable
-function ACTIONBUTTON:GetAppearance(data)
+function ActionButton:GetAppearance(data)
 	if data.actionID then
 		return self.GetActionAppearance(data.actionID)
 	end
@@ -877,7 +877,7 @@ function ACTIONBUTTON:GetAppearance(data)
 	return texture, border
 end
 
-function ACTIONBUTTON:ApplyAppearance(texture, border)
+function ActionButton:ApplyAppearance(texture, border)
 	if texture then
 		self.Icon:SetTexture(texture)
 		self.Icon:Show()
@@ -896,7 +896,7 @@ function ACTIONBUTTON:ApplyAppearance(texture, border)
 end
 
 --- @return texture, border an icon texture, and an rgb tuple, both nilable
-function ACTIONBUTTON.GetSpellAppearance(spell)
+function ActionButton.GetSpellAppearance(spell)
 	--Hide the border in case this button used to have an equipped item in it
 	--otherwise it will continue to have a green border until a reload takes place
 	local border = nil
@@ -917,7 +917,7 @@ function ACTIONBUTTON.GetSpellAppearance(spell)
 end
 
 --- @return texture, border an icon texture, and an rgb tuple, both nilable
-function ACTIONBUTTON.GetItemAppearance(item)
+function ActionButton.GetItemAppearance(item)
 	local border = nil
 	local texture = GetItemIcon(item)
 
@@ -939,7 +939,7 @@ function ACTIONBUTTON.GetItemAppearance(item)
 end
 
 --- @return texture, border an icon texture, and an rgb tuple, both nilable
-function ACTIONBUTTON.GetActionAppearance(actionID)
+function ActionButton.GetActionAppearance(actionID)
 	local texture, border
 
 	if HasAction(actionID) then
