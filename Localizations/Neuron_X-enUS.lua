@@ -344,6 +344,7 @@ L["Click Mode"] = true
 L["On Click"] = true
 L["On Release"] = true
 L["Multi Spec"] = true
+L["No Spec"] = true
 L["Spell Alerts"] = true
 L["Default Alert"] = true
 L["Subdued Alert"] = true
