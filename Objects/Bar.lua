@@ -136,6 +136,7 @@ function Bar:ACTIVE_TALENT_GROUP_CHANGED()
 	for _,button in pairs(self.buttons) do
 		button:UpdateButtonSpec()
 	end
+	self:Load()
 end
 
 function Bar:ACTIONBAR_SHOWHIDEGRID(show)
