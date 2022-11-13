@@ -119,8 +119,12 @@ function NeuronGUI:ButtonsEditPanel(topContainer)
 					return
 				end
 
-				Neuron.currentButton:LoadDataFromDatabase(specIndex, state)
-				Neuron.currentButton:UpdateAll()
+				-- for some reason we need to do a full bar load or the buttons don't
+				-- update. we can investigate further, but note that switching specs
+				-- probably needs the same fix
+				Neuron.currentButton.bar:Load()
+				--Neuron.currentButton:LoadDataFromDatabase(specIndex, state)
+				--Neuron.currentButton:UpdateAll()
 			end)
 			container:AddChild(buttonEditor)
 		end)
