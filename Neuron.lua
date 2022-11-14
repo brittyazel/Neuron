@@ -79,6 +79,7 @@ function Neuron:OnInitialize()
 	Neuron.spellCache = DB.NeuronSpellCache
 
 	Neuron.class = select(2, UnitClass("player"))
+	Neuron:UpdateStanceStrings()
 
 	StaticPopupDialogs["ReloadUI"] = {
 		text = "ReloadUI",
@@ -397,52 +398,6 @@ function Neuron:UpdateSpellCache()
 				end
 			end
 		end
-	end
-end
-
-function Neuron:UpdateStanceStrings()
-	if Neuron.class == "DRUID" or Neuron.class == "ROGUE" then
-
-		local icon, active, castable, spellID
-
-		local states = "[stance:0] stance0; "
-
-		if Neuron.class == "DRUID" then
-
-			Neuron.STATES["stance0"] = L["Caster Form"]
-
-			for i=1,6 do
-				Neuron.STATES["stance"..i] = nil
-			end
-
-			for i=1,GetNumShapeshiftForms() do
-				icon, active, castable, spellID = GetShapeshiftFormInfo(i)
-				Neuron.STATES["stance"..i], _, _, _, _, _, _ = GetSpellInfo(spellID) --Get the string name of the shapeshift form (now that shapeshifts are considered spells)
-				states = states.."[stance:"..i.."] stance"..i.."; "
-
-			end
-		end
-
-		--Adds Shadow Dance State for Subelty Rogues
-		if Neuron.class == "ROGUE" then
-
-			Neuron.STATES["stance0"] = L["Melee"]
-
-			Neuron.STATES["stance1"] = L["Stealth"]
-			states = states.."[stance:1] stance1; "
-
-			Neuron.STATES["stance2"] = L["Vanish"]
-			states = states.."[stance:2] stance2; "
-
-			if Neuron.isWoWRetail and GetSpecialization() == 3 then
-				Neuron.STATES["stance3"] = L["Shadow Dance"]
-				states = states.."[stance:3] stance3; "
-			end
-		end
-
-		states = states:gsub("; $", "")
-
-		Neuron.MANAGED_BAR_STATES.stance.states = states
 	end
 end
 
