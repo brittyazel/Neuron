@@ -24,7 +24,6 @@ local LATEST_VERSION_NUM = "1.4.1" --this variable is set to popup a welcome mes
 Neuron.bars = {} --this table will be our main handle for all of our bars.
 
 Neuron.registeredBarData = {}
-Neuron.registeredGUIData = {}
 
 --these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 Neuron.itemCache = {} --Stores a cache of all items that have been seen by a Neuron button
@@ -485,28 +484,6 @@ function Neuron:ToggleBindingMode(show)
 		end
 	end
 end
-
----This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
-	Neuron.registeredBarData[class] = {
-		class = class;
-		barType = barType,
-		barLabel = barLabel,
-		objType = objType,
-		barDB = barDB,
-		objTemplate = objTemplate,
-		objMax = objMax,
-	}
-end
-
-function Neuron:RegisterGUIOptions(class, generalOptions, visualOptions)
-	Neuron.registeredGUIData[class] = {
-		class = class;
-		generalOptions = generalOptions,
-		visualOptions = visualOptions,
-	}
-end
-
 
 function Neuron:GetSerializedAndCompressedProfile()
 	local uncompressed = Neuron:Serialize(Neuron.db.profile) --serialize the database into a string value

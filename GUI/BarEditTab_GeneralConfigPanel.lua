@@ -17,7 +17,7 @@ local WIDGET_GRID_HEIGHT = 45
 local INNER_WIDGET_RATIO = 0.95
 
 
-function NeuronGUI:GeneralConfigPanel(tabFrame)
+function NeuronGUI:GeneralConfigPanel(tabFrame, registeredGUIData)
 
 	local scrollFrame = AceGUI:Create("ScrollFrame")
 	scrollFrame:SetLayout("Flow")
@@ -49,7 +49,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 	heading1:SetText(L["General Options"])
 	scrollFrame:AddChild(heading1)
 
-	NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
+	NeuronGUI:PopulateGeneralBarOptions(scrollFrame, registeredGUIData)
 
 	------------------------------------------------
 	------------------------------------------------
@@ -64,7 +64,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 
 	------------------------------------------------
 	------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions then
 		--Visual Heading
 		local heading3 = AceGUI:Create("Heading")
 		heading3:SetHeight(WIDGET_GRID_HEIGHT)
@@ -72,7 +72,7 @@ function NeuronGUI:GeneralConfigPanel(tabFrame)
 		heading3:SetText(L["Visuals"])
 		scrollFrame:AddChild(heading3)
 
-		NeuronGUI:PopulateVisualBarOptions(scrollFrame)
+		NeuronGUI:PopulateVisualBarOptions(scrollFrame, registeredGUIData)
 	end
 
 	--------------------------------------------------
@@ -106,11 +106,11 @@ end
 --------------------------------------------------
 --------------------------------------------------
 
-function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
+function NeuronGUI:PopulateGeneralBarOptions(scrollFrame, registeredGUIData)
 	--------------------------------------------------
 	-------------------- AutoHide --------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.AUTOHIDE then
+	if registeredGUIData[Neuron.currentBar.class].generalOptions.AUTOHIDE then
 		local autoHideCheckboxContainer = AceGUI:Create("SimpleGroup")
 		autoHideCheckboxContainer:SetWidth(WIDGET_GRID_WIDTH)
 		autoHideCheckboxContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -129,7 +129,7 @@ function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- ShowGrid --------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.SHOWGRID then
+	if registeredGUIData[Neuron.currentBar.class].generalOptions.SHOWGRID then
 		local showGridCheckboxContainer = AceGUI:Create("SimpleGroup")
 		showGridCheckboxContainer:SetWidth(WIDGET_GRID_WIDTH)
 		showGridCheckboxContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -148,7 +148,7 @@ function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- SnapTo ----------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.SNAPTO then
+	if registeredGUIData[Neuron.currentBar.class].generalOptions.SNAPTO then
 		local snapToCheckboxContainer = AceGUI:Create("SimpleGroup")
 		snapToCheckboxContainer:SetWidth(WIDGET_GRID_WIDTH)
 		snapToCheckboxContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -167,7 +167,7 @@ function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- MultiSpec -------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.MULTISPEC then
+	if registeredGUIData[Neuron.currentBar.class].generalOptions.MULTISPEC then
 		local multiSpecCheckboxContainer = AceGUI:Create("SimpleGroup")
 		multiSpecCheckboxContainer:SetWidth(WIDGET_GRID_WIDTH)
 		multiSpecCheckboxContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -186,7 +186,7 @@ function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- Hide Bar --------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.HIDDEN then
+	if registeredGUIData[Neuron.currentBar.class].generalOptions.HIDDEN then
 		local barConcealCheckboxContainer = AceGUI:Create("SimpleGroup")
 		barConcealCheckboxContainer:SetWidth(WIDGET_GRID_WIDTH)
 		barConcealCheckboxContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -205,7 +205,7 @@ function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- Bar Lock --------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.LOCKBAR then
+	if registeredGUIData[Neuron.currentBar.class].generalOptions.LOCKBAR then
 		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
 		spellAlertDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		spellAlertDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -231,7 +231,7 @@ function NeuronGUI:PopulateGeneralBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- Click Mode ------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].generalOptions.CLICKMODE then
+	if registeredGUIData[Neuron.currentBar.class].generalOptions.CLICKMODE then
 		local clickModeDropdownContainer = AceGUI:Create("SimpleGroup")
 		clickModeDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		clickModeDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -463,11 +463,11 @@ function NeuronGUI:PopulateLayoutBarOptions(scrollFrame)
 end
 
 
-function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
+function NeuronGUI:PopulateVisualBarOptions(scrollFrame, registeredGUIData)
 	--------------------------------------------------
 	-------------------- Bind Text -------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.BINDTEXT then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.BINDTEXT then
 		local bindTextContainer = AceGUI:Create("SimpleGroup")
 		bindTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		bindTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -495,7 +495,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	------------------- Macro Text -------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.BUTTONTEXT then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.BUTTONTEXT then
 		local macroTextContainer = AceGUI:Create("SimpleGroup")
 		macroTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		macroTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -523,7 +523,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- Count Text ------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.COUNTTEXT then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.COUNTTEXT then
 		local countTextContainer = AceGUI:Create("SimpleGroup")
 		countTextContainer:SetWidth(WIDGET_GRID_WIDTH)
 		countTextContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -551,7 +551,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	------------------ Range Indicator ---------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.RANGEIND then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.RANGEIND then
 		local rangeIndContainer = AceGUI:Create("SimpleGroup")
 		rangeIndContainer:SetWidth(WIDGET_GRID_WIDTH)
 		rangeIndContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -579,7 +579,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	------------------ Cooldown Text -----------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.CDTEXT then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.CDTEXT then
 		local cooldownCounterContainer = AceGUI:Create("SimpleGroup")
 		cooldownCounterContainer:SetWidth(WIDGET_GRID_WIDTH)
 		cooldownCounterContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -615,7 +615,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	------------------ Cooldown Alpha ----------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.CDALPHA then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.CDALPHA then
 		local cooldownAlphaContainer = AceGUI:Create("SimpleGroup")
 		cooldownAlphaContainer:SetWidth(WIDGET_GRID_WIDTH)
 		cooldownAlphaContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -635,7 +635,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	------------------ SpellGlow ---------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.SPELLGLOW then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.SPELLGLOW then
 		local spellAlertDropdownContainer = AceGUI:Create("SimpleGroup")
 		spellAlertDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		spellAlertDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -661,7 +661,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	-------------------- Tooltips --------------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.TOOLTIPS then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.TOOLTIPS then
 		local tooltipDropdownContainer = AceGUI:Create("SimpleGroup")
 		tooltipDropdownContainer:SetWidth(WIDGET_GRID_WIDTH)
 		tooltipDropdownContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -688,7 +688,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	------------------Tooltips in Combat -------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.TOOLTIPS then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.TOOLTIPS then
 		local combatTooltipsCheckboxContainer = AceGUI:Create("SimpleGroup")
 		combatTooltipsCheckboxContainer:SetWidth(WIDGET_GRID_WIDTH)
 		combatTooltipsCheckboxContainer:SetHeight(WIDGET_GRID_HEIGHT)
@@ -707,7 +707,7 @@ function NeuronGUI:PopulateVisualBarOptions(scrollFrame)
 	--------------------------------------------------
 	------------------- Border Style -----------------
 	--------------------------------------------------
-	if Neuron.registeredGUIData[Neuron.currentBar.class].visualOptions.BORDERSTYLE then
+	if registeredGUIData[Neuron.currentBar.class].visualOptions.BORDERSTYLE then
 		local borderStyleCheckboxContainer = AceGUI:Create("SimpleGroup")
 		borderStyleCheckboxContainer:SetWidth(WIDGET_GRID_WIDTH)
 		borderStyleCheckboxContainer:SetHeight(WIDGET_GRID_HEIGHT)

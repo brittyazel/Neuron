@@ -138,9 +138,10 @@ end
 -----------------------------------------------------------------------------
 
 function NeuronGUI:SelectInnerBarTab(tabFrame, _, value)
+	local registeredGUIData = Neuron:RegisterGUI()
 	tabFrame:ReleaseChildren()
 	if value == "general" then
-		NeuronGUI:GeneralConfigPanel(tabFrame)
+		NeuronGUI:GeneralConfigPanel(tabFrame, registeredGUIData)
 		currentTab = "general"
 	elseif value == "states" then
 		NeuronGUI:BarStatesPanel(tabFrame)

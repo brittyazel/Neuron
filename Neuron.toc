@@ -28,6 +28,7 @@ Utilities\DB-Fixer.lua
 Neuron-DB-Defaults.lua
 Neuron.lua
 Neuron-States.lua
+Neuron-RegisteredBarData.lua
 
 
 Objects\Button.lua
