@@ -8,13 +8,6 @@ local Neuron = addonTable.Neuron
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-function Neuron:Startup()
-	local DB = Neuron.db.profile
-	Neuron.registeredBarData = Neuron:RegisterBars(DB)
-	Neuron:CreateBarsAndButtons(DB)
-end
-
-
 function Neuron:CreateBarsAndButtons(DB)
 	if DB.firstRun then
 

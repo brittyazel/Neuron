@@ -95,8 +95,8 @@ function Neuron:OnInitialize()
 	--Neuron:RegisterChatCommand("neuron", "slashHandler")
 
 	--build all bar and button frames and run initial setup
-	Neuron:Startup()
-
+	Neuron.registeredBarData = Neuron:RegisterBars(DB)
+	Neuron:CreateBarsAndButtons(DB)
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
