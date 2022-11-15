@@ -23,12 +23,12 @@ Localizations\Neuron_Localizations.xml
 
 Utilities\Array.lua
 Utilities\Spec.lua
+Utilities\DB-Fixer.lua
 
 Neuron-DB-Defaults.lua
 Neuron.lua
 Neuron-States.lua
 
-Utilities\DB-Fixer.lua
 
 Objects\Button.lua
 Objects\Button_EditorOverlay.lua

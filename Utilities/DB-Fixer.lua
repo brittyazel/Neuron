@@ -198,8 +198,6 @@ local function databaseMigration(DB)
 		else
 			loadingDatabaseFailed(DB)
 		end
-	else
-		loadingDatabaseFailed(DB)
 	end
 
 	--run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
