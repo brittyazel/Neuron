@@ -7,6 +7,7 @@
 local _, addonTable = ...
 
 local Spec = addonTable.utilities.Spec
+local DBFixer = addonTable.utilities.DBFixer
 
 ---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
 addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0", "AceSerializer-3.0")
@@ -18,8 +19,6 @@ local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local LATEST_VERSION_NUM = "1.4.1" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
-
-local LATEST_DB_VERSION = 1.3
 
 --prepare the Neuron table with some sub-tables that will be used down the road
 Neuron.bars = {} --this table will be our main handle for all of our bars.
@@ -68,10 +67,10 @@ function Neuron:OnInitialize()
 	Neuron.db.RegisterCallback(Neuron, "OnProfileReset", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnDatabaseReset", "RefreshConfig")
 
-	DB = Neuron.db.profile
 
 	--Check if the current database needs to be migrated, and attempt the migration
-	Neuron:DatabaseMigration()
+	Neuron.db = DBFixer.databaseMigration(Neuron.db)
+	DB = Neuron.db.profile
 
 
 	--load saved variables into working variable containers
@@ -223,41 +222,6 @@ end
 --------------------Profiles---------------------------------------------
 -------------------------------------------------------------------------
 
-
-function Neuron:DatabaseMigration()
-	----DATABASE VERSION CHECKING AND MIGRATING----------
-	if not DB.DBVersion then
-		--we need to know if a profile doesn't have a DBVersion because it is brand new, or because it pre-dates DB versioning
-		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
-		--eventually we can get rid of this check and just assume that having no DBVersion means that it is a fresh profile
-		if not DB.NeuronCDB then --"NeuronCDB" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
-			DB.DBVersion = LATEST_DB_VERSION
-		else
-			DB.DBVersion = 1.0
-		end
-	end
-
-	if DB.DBVersion ~= LATEST_DB_VERSION then --checks if the DB version is out of date, and if so it calls the DB Fixer
-		local success = pcall(Neuron.DBFixer, Neuron, DB, DB.DBVersion)
-
-		if not success then
-			StaticPopupDialogs["Profile_Migration_Failed"] = {
-				text = "We are sorry, but your Neuron profile migration has failed. By clicking accept you agree to reset your current profile to the its default values.",
-				button1 = ACCEPT,
-				button2 = CANCEL,
-				timeout = 0,
-				whileDead = true,
-				OnAccept = function() Neuron.db:ResetProfile() end,
-				OnCancel = function() DisableAddOn("Neuron"); ReloadUI() end,
-			}
-			StaticPopup_Show("Profile_Migration_Failed")
-		else
-			DB.DBVersion = LATEST_DB_VERSION
-			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", addonTable.databaseDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
-		end
-	end
-
-end
 
 function Neuron:RefreshConfig()
 	StaticPopup_Show("ReloadUI")
