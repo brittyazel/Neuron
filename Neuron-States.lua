@@ -249,7 +249,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[outdoors] outdoors1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 20,
+			order = 19,
 			localizedName = L["Outdoors"],
 		},
 		mounted = {
@@ -257,7 +257,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[mounted] mounted1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 21,
+			order = 20,
 			localizedName = L["Mounted"],
 		},
 		flying = {
@@ -265,7 +265,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[flying] flying1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 22,
+			order = 21,
 			localizedName = L["Flying"],
 		},
 		help = {
@@ -273,7 +273,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[help] help1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 23,
+			order = 22,
 			localizedName = L["Help"],
 		},
 		harm = {
@@ -281,7 +281,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[harm] harm1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 24,
+			order = 23,
 			localizedName = L["Harm"],
 		},
 		resting = {
@@ -289,7 +289,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[resting] resting1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 25,
+			order = 24,
 			localizedName = L["Resting"],
 		},
 		swimming = {
@@ -297,7 +297,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[swimming] swimming1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 26,
+			order = 25,
 			localizedName = L["Swimming"],
 		},
 	}
