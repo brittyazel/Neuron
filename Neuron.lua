@@ -96,7 +96,10 @@ function Neuron:OnInitialize()
 
 	--build all bar and button frames and run initial setup
 	Neuron.registeredBarData = Neuron:RegisterBars(DB)
-	Neuron:CreateBarsAndButtons(DB)
+	if DB.firstRun then
+		Neuron:InitializeEmptyDatabase(DB)
+	end
+	Neuron:CreateBarsAndButtons()
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.

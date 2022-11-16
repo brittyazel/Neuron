@@ -7,45 +7,58 @@ local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
+local Array = addonTable.utilities.Array
 
-function Neuron:CreateBarsAndButtons(DB)
-	if DB.firstRun then
+--- this function has no business existing
+--- database defaults should be in the database
+--- but we have them scattered between neuron-defaults and neuron-db-defaults
+function Neuron:InitializeEmptyDatabase(DB)
+	print "first run"
+	DB.firstRun = false
 
-		for barClass, barDefaults in pairs(addonTable.defaultBarOptions) do
-			if Neuron.registeredBarData[barClass] then --only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
-				for i, defaults in ipairs(barDefaults) do --create the bar objects
-					local newBar = Neuron.Bar.new(barClass, i) --this calls the bar constructor
+	--only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
+	for barClass, registeredData in pairs(Neuron.registeredBarData) do
+		local newBars = Array.map(
+			function(bar)
+				-- MergeTable modifies in place, so copy first
+				local newBar = CopyTable(addonTable.databaseDefaults.profile[barClass]['*'])
+				local newButtons = Array.map(
+					function(button)
+						local newButton = CopyTable(newBar.buttons['*'])
+						local newConfig = CopyTable(newButton.config)
 
-					--create the default button objects for a given bar with the default values
-					newBar:SetDefaults(defaults)
+						MergeTable(newConfig, button.config or {})
+						MergeTable(newButton, button)
+						MergeTable(newButton, {config = newConfig})
+						return newButton
+					end,
+					bar.buttons
+				)
+				MergeTable(newBar, bar)
+				MergeTable(newBar, {buttons=newButtons})
+				return newBar
+			end,
+			addonTable.defaultBarOptions[barClass]
+		)
+		MergeTable(registeredData.barDB, newBars)
+	end
+end
 
-					for buttonID=1,#defaults.buttons do
-						newBar.objTemplate.new(newBar, buttonID, defaults.buttons[buttonID]) --newBar.objTemplate is something like ActionButton or ExtraButton, we just need to code it agnostic
-					end
-				end
-			end
+function Neuron:CreateBarsAndButtons()
+	for barClass, barClassData in pairs (Neuron.registeredBarData) do
+		for id,data in pairs(barClassData.barDB) do
+			if data ~= nil then
+				print("creating",barClass, id)
+				local newBar = Neuron.Bar.new(barClass, id) --this calls the bar constructor
 
-		end
-
-		DB.firstRun = false
-
-	else
-
-		for barClass, barClassData in pairs (Neuron.registeredBarData) do
-			for id,data in pairs(barClassData.barDB) do
-				if data ~= nil then
-					local newBar = Neuron.Bar.new(barClass, id) --this calls the bar constructor
-
-					--create all the saved button objects for a given bar
-					for buttonID=1,#newBar.data.buttons do
-						newBar.objTemplate.new(newBar, buttonID) --newBar.objTemplate is something like ActionButton or ExtraButton, we just need to code it agnostic
-					end
+				--create all the saved button objects for a given bar
+				for buttonID=1,#newBar.data.buttons do
+					newBar.objTemplate.new(newBar, buttonID) --newBar.objTemplate is something like ActionButton or ExtraButton, we just need to code it agnostic
 				end
 			end
 		end
 	end
 end
-
 
 function Neuron:Overrides()
 	---disabled temporarily for 10.0 porting purposes
