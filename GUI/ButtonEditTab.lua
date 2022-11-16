@@ -12,11 +12,11 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
 
 local Spec = addonTable.utilities.Spec
+local Array = addonTable.utilities.Array
 
 -----------------------------------------------------------------------------
 --------------------------Button Editor--------------------------------------
 -----------------------------------------------------------------------------
-
 local function buttonEditPanel(specData, update)
 	--container to hold all of our widgets, added to our tab frame
 	local settingContainer = AceGUI:Create("SimpleGroup")
@@ -62,42 +62,75 @@ local function buttonEditPanel(specData, update)
 	return settingContainer
 end
 
-function NeuronGUI:ButtonsEditPanel(tabContainer)
+function NeuronGUI:ButtonsEditPanel(topContainer)
 	Neuron:ToggleButtonEditMode(true)
 
 	if not Neuron.currentButton then
 		return
 	end
 
+	topContainer = NeuronGUI:MakeScrollFrame(topContainer)
+
 	local multiSpec = Neuron.currentButton.bar:GetMultiSpec()
 
-	for specIndex, specName in ipairs(Spec.names(multiSpec)) do
-		-- TODO: Figure out multistate stuff
-		local state = "homestate"
-		local specData = Neuron.currentButton.DB[specIndex][state]
+	local specs = Spec.names(multiSpec)
+	specs[5] =  L["No Spec"]
 
-		local update = function(data)
-			for k,v in pairs(data) do
-				specData[k] = v
-			end
+	for specIndex, specName in pairs(specs) do
+		local specData = Neuron.currentButton.DB[specIndex]
 
-			if Spec.active(multiSpec) ~= specIndex then
-				-- don't update the button if the modified spec isn't active
-				return
-			end
+		-- these steps happen inside out--reverse
+		-- convert specData to key value pairs
+		-- convert key value pairs to keys
+		-- remove homestate key
+		local nonHomeStates =
+			Array.filter(function(key) return key ~= "homestate" end,
+			Array.map(function(keyValuePair) return keyValuePair[1] end,
+			Array.fromIterator(pairs(specData))))
 
-			Neuron.currentButton:LoadDataFromDatabase(specIndex, state)
-			Neuron.currentButton:UpdateAll()
-		end
+		local buttonTree = {
+			value = "homestate",
+			text = specName,
+			children = Array.map(
+				function(state) return {value=state, text=Neuron.STATES[state]} end,
+				nonHomeStates
+			),
+		}
 
-		local settingContainer = buttonEditPanel(specData, update)
-		local specLabel = AceGUI:Create("Heading")
-		specLabel:SetHeight(45)
-		specLabel:SetText(specName)
-		specLabel:SetFullWidth(true)
+		local specButtonTree = AceGUI:Create("TreeGroup")
+		specButtonTree:SetFullWidth(true)
+		specButtonTree:SetLayout("Flow")
+		specButtonTree:SetTree({buttonTree})
+		specButtonTree:SetCallback("OnGroupSelected", function(container, _, joinedState)
+			container:ReleaseChildren()
 
-		tabContainer:AddChild(specLabel)
-		tabContainer:AddChild(settingContainer)
+			-- this seems unnecessarily complicated...that moment when you have to
+			-- read the source of your library figure out...this? smh
+			local splitState = {string.split("\001",joinedState)}
+			local state = splitState[#splitState]
+
+			local buttonEditor = buttonEditPanel(specData[state], function(data)
+				for k,v in pairs(data) do
+					specData[state][k] = v
+				end
+
+				if Spec.active(multiSpec) ~= specIndex then
+					-- don't update the button if the modified spec isn't active
+					return
+				end
+
+				-- for some reason we need to do a full bar load or the buttons don't
+				-- update. we can investigate further, but note that switching specs
+				-- probably needs the same fix
+				Neuron.currentButton.bar:Load()
+				--Neuron.currentButton:LoadDataFromDatabase(specIndex, state)
+				--Neuron.currentButton:UpdateAll()
+			end)
+			container:AddChild(buttonEditor)
+		end)
+
+		topContainer:AddChild(specButtonTree)
+		specButtonTree:SelectByValue("homestate")
 	end
 end
 
@@ -109,4 +142,28 @@ function NeuronGUI:RefreshIconPreview(frame, data)
 	else --fallback to question mark icon if nothing is found
 		frame:SetImage("INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK")
 	end
+end
+
+---take a parent frame and fills it with a child scroll frame
+---@param parent any @parent frame--we need this because we want to abstract out the parent group, and only return the scroll frame
+---@param height? number @the default zero does nothing
+---@param layout? "Flow"|"List"|nil @"Flow" is the default
+---@return any @the scroll frame
+function NeuronGUI:MakeScrollFrame(parent, height, layout)
+		local scrollContainer = AceGUI:Create("SimpleGroup")
+		scrollContainer:SetFullWidth(true)
+	if height then
+		scrollContainer:SetHeight(height)
+	else
+		scrollContainer:SetFullHeight(true)
+	end
+		scrollContainer:SetLayout("Fill")
+
+		parent:AddChild(scrollContainer)
+
+		local scroll = AceGUI:Create("ScrollFrame")
+		scroll:SetLayout(layout or "Flow")
+		scrollContainer:AddChild(scroll)
+
+		return scroll
 end
