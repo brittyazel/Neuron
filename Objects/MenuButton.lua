@@ -13,7 +13,7 @@ local MenuButton = setmetatable({}, {__index = Neuron.Button})
 Neuron.MenuButton = MenuButton
 
 local blizzMenuButtons = not Neuron.isWoWRetail
-	and Array.initialize(#MICRO_ButtonS, function(i) return _G[MICRO_ButtonS[i]] end)
+	and Array.initialize(#MICRO_BUTTONS, function(i) return _G[MICRO_BUTTONS[i]] end)
 	or {
 		CharacterMicroButton,
 		SpellbookMicroButton,
