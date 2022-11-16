@@ -4,7 +4,6 @@
 -- This code is licensed under the MIT license (see LICENSE for details)
 
 local _, addonTable = ...
-local Neuron = addonTable.Neuron
 
 ---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 

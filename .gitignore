@@ -1,1 +1,6 @@
+.env
 .idea
+.libcache
+.luarc.json
+Libs
+dist

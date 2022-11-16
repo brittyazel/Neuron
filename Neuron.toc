@@ -1,4 +1,4 @@
-## Interface: 100000
+## Interface: 100002
 ## Interface-Classic: 11403
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30400
@@ -23,12 +23,13 @@ Localizations\Neuron_Localizations.xml
 
 Utilities\Array.lua
 Utilities\Spec.lua
+Utilities\DB-Fixer.lua
 
 Neuron-DB-Defaults.lua
 Neuron.lua
 Neuron-States.lua
+Neuron-RegisteredBarData.lua
 
-Utilities\DB-Fixer.lua
 
 Objects\Button.lua
 Objects\Button_EditorOverlay.lua

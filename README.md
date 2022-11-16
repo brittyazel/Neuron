@@ -35,6 +35,10 @@ Development of Neuron requires an understanding of **[Lua syntax](https://www.lu
 
 A good place to start coding is by looking through the **[issue tracker](https://github.com/brittyazel/Neuron/issues)** to find any issues marked as "[good first issue](https://github.com/brittyazel/Neuron/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)". All code change submissions should come in the form of pull requests, so that I can review it and provide comments before merging.
 
+## Alternative Development
+If an IDE is not your scene, then we have provided a Nix based development environment. If you need Nix, then see the following section. Once you have Nix then you can type `env NEURON_INSTALL_DIR="<your WoW addon path>/Neuron" nix-shell --run make` and the build system will automatically install neuron and keep it synced with your changes
+### Nix
+Installing Nix can probably be done from your package manage in Linux or WSL. Alternatively you can type `sh <(curl -L https://nixos.org/nix/install) --daemon`. See https://nixos.org for more details.
 
 
 ### Disclaimer:

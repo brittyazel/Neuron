@@ -7,6 +7,7 @@
 local _, addonTable = ...
 
 local Spec = addonTable.utilities.Spec
+local DBFixer = addonTable.utilities.DBFixer
 
 ---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
 addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0", "AceSerializer-3.0")
@@ -19,13 +20,10 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 local LATEST_VERSION_NUM = "1.4.1" --this variable is set to popup a welcome message upon updating/installing. Only change it if you want to pop up a message after the users next update
 
-local LATEST_DB_VERSION = 1.3
-
 --prepare the Neuron table with some sub-tables that will be used down the road
 Neuron.bars = {} --this table will be our main handle for all of our bars.
 
 Neuron.registeredBarData = {}
-Neuron.registeredGUIData = {}
 
 --these are the database tables that are going to hold our data. They are global because every .lua file needs access to them
 Neuron.itemCache = {} --Stores a cache of all items that have been seen by a Neuron button
@@ -68,10 +66,10 @@ function Neuron:OnInitialize()
 	Neuron.db.RegisterCallback(Neuron, "OnProfileReset", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnDatabaseReset", "RefreshConfig")
 
-	DB = Neuron.db.profile
 
 	--Check if the current database needs to be migrated, and attempt the migration
-	Neuron:DatabaseMigration()
+	Neuron.db = DBFixer.databaseMigration(Neuron.db)
+	DB = Neuron.db.profile
 
 
 	--load saved variables into working variable containers
@@ -79,6 +77,7 @@ function Neuron:OnInitialize()
 	Neuron.spellCache = DB.NeuronSpellCache
 
 	Neuron.class = select(2, UnitClass("player"))
+	Neuron:UpdateStanceStrings()
 
 	StaticPopupDialogs["ReloadUI"] = {
 		text = "ReloadUI",
@@ -96,8 +95,11 @@ function Neuron:OnInitialize()
 	--Neuron:RegisterChatCommand("neuron", "slashHandler")
 
 	--build all bar and button frames and run initial setup
-	Neuron:Startup()
-
+	Neuron.registeredBarData = Neuron:RegisterBars(DB)
+	if DB.firstRun then
+		Neuron:InitializeEmptyDatabase(DB)
+	end
+	Neuron:CreateBarsAndButtons()
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -222,41 +224,6 @@ end
 --------------------Profiles---------------------------------------------
 -------------------------------------------------------------------------
 
-
-function Neuron:DatabaseMigration()
-	----DATABASE VERSION CHECKING AND MIGRATING----------
-	if not DB.DBVersion then
-		--we need to know if a profile doesn't have a DBVersion because it is brand new, or because it pre-dates DB versioning
-		--when DB Versioning was introduced we also changed xbars to be called "extrabar", so if xbars exists in the database it means it's an old database, not a fresh one
-		--eventually we can get rid of this check and just assume that having no DBVersion means that it is a fresh profile
-		if not DB.NeuronCDB then --"NeuronCDB" is just a random table value that no longer exists. It's not important aside from the fact it no longer exists
-			DB.DBVersion = LATEST_DB_VERSION
-		else
-			DB.DBVersion = 1.0
-		end
-	end
-
-	if DB.DBVersion ~= LATEST_DB_VERSION then --checks if the DB version is out of date, and if so it calls the DB Fixer
-		local success = pcall(Neuron.DBFixer, Neuron, DB, DB.DBVersion)
-
-		if not success then
-			StaticPopupDialogs["Profile_Migration_Failed"] = {
-				text = "We are sorry, but your Neuron profile migration has failed. By clicking accept you agree to reset your current profile to the its default values.",
-				button1 = ACCEPT,
-				button2 = CANCEL,
-				timeout = 0,
-				whileDead = true,
-				OnAccept = function() Neuron.db:ResetProfile() end,
-				OnCancel = function() DisableAddOn("Neuron"); ReloadUI() end,
-			}
-			StaticPopup_Show("Profile_Migration_Failed")
-		else
-			DB.DBVersion = LATEST_DB_VERSION
-			Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", addonTable.databaseDefaults) --run again to re-register all of our wildcard ['*'] tables back in the newly shifted DB
-		end
-	end
-
-end
 
 function Neuron:RefreshConfig()
 	StaticPopup_Show("ReloadUI")
@@ -400,52 +367,6 @@ function Neuron:UpdateSpellCache()
 	end
 end
 
-function Neuron:UpdateStanceStrings()
-	if Neuron.class == "DRUID" or Neuron.class == "ROGUE" then
-
-		local icon, active, castable, spellID
-
-		local states = "[stance:0] stance0; "
-
-		if Neuron.class == "DRUID" then
-
-			Neuron.STATES["stance0"] = L["Caster Form"]
-
-			for i=1,6 do
-				Neuron.STATES["stance"..i] = nil
-			end
-
-			for i=1,GetNumShapeshiftForms() do
-				icon, active, castable, spellID = GetShapeshiftFormInfo(i)
-				Neuron.STATES["stance"..i], _, _, _, _, _, _ = GetSpellInfo(spellID) --Get the string name of the shapeshift form (now that shapeshifts are considered spells)
-				states = states.."[stance:"..i.."] stance"..i.."; "
-
-			end
-		end
-
-		--Adds Shadow Dance State for Subelty Rogues
-		if Neuron.class == "ROGUE" then
-
-			Neuron.STATES["stance0"] = L["Melee"]
-
-			Neuron.STATES["stance1"] = L["Stealth"]
-			states = states.."[stance:1] stance1; "
-
-			Neuron.STATES["stance2"] = L["Vanish"]
-			states = states.."[stance:2] stance2; "
-
-			if Neuron.isWoWRetail and GetSpecialization() == 3 then
-				Neuron.STATES["stance3"] = L["Shadow Dance"]
-				states = states.."[stance:3] stance3; "
-			end
-		end
-
-		states = states:gsub("; $", "")
-
-		Neuron.MANAGED_BAR_STATES.stance.states = states
-	end
-end
-
 function Neuron:ToggleMainMenu()
 	---need to run the command twice for some reason. The first one only seems to open the Interface panel
 	InterfaceOptionsFrame_OpenToCategory("Neuron");
@@ -566,28 +487,6 @@ function Neuron:ToggleBindingMode(show)
 		end
 	end
 end
-
----This function is called each and every time a Bar-Module loads. It adds the module to the list of currently available bars. If we add new bars in the future, this is the place to start
-function Neuron:RegisterBarClass(class, barType, barLabel, objType, barDB, objTemplate, objMax)
-	Neuron.registeredBarData[class] = {
-		class = class;
-		barType = barType,
-		barLabel = barLabel,
-		objType = objType,
-		barDB = barDB,
-		objTemplate = objTemplate,
-		objMax = objMax,
-	}
-end
-
-function Neuron:RegisterGUIOptions(class, generalOptions, visualOptions)
-	Neuron.registeredGUIData[class] = {
-		class = class;
-		generalOptions = generalOptions,
-		visualOptions = visualOptions,
-	}
-end
-
 
 function Neuron:GetSerializedAndCompressedProfile()
 	local uncompressed = Neuron:Serialize(Neuron.db.profile) --serialize the database into a string value
