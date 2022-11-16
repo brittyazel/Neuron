@@ -13,7 +13,6 @@ local Array = addonTable.utilities.Array
 --- database defaults should be in the database
 --- but we have them scattered between neuron-defaults and neuron-db-defaults
 function Neuron:InitializeEmptyDatabase(DB)
-	print "first run"
 	DB.firstRun = false
 
 	--only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
@@ -48,7 +47,6 @@ function Neuron:CreateBarsAndButtons()
 	for barClass, barClassData in pairs (Neuron.registeredBarData) do
 		for id,data in pairs(barClassData.barDB) do
 			if data ~= nil then
-				print("creating",barClass, id)
 				local newBar = Neuron.Bar.new(barClass, id) --this calls the bar constructor
 
 				--create all the saved button objects for a given bar
