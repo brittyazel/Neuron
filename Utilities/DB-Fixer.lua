@@ -189,8 +189,7 @@ local function profileMigrate(profileDatabase)
 		-- we need to copy the table for the og fixer, since it modifies in place
 		return profileMigrate(ogFixer(CopyTable(profileDatabase)))
 	elseif profileDatabase.DBVersion == 1.3 then
-		-- TODO: call this recursively, once we actually bump the database version
-		return migrate1_3To1_4(profileDatabase)
+		return profileMigrate(migrate1_3To1_4(profileDatabase))
 	else
 		return profileDatabase
 	end
