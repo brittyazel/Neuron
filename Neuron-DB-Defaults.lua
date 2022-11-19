@@ -271,7 +271,19 @@ local genericBarData = {
 
 addonTable.databaseDefaults = {
 	profile = {
-		blizzbar = false,
+		blizzBars = {
+			ActionBar = false,
+			BagBar = false,
+			CastBar = false,
+			ExitBar = false,
+			ExtraBar = false,
+			MenuBar = false,
+			MirrorBar = false,
+			PetBar = false,
+			RepBar = false,
+			XPBar = false,
+			ZoneAbilityBar = false,
+		},
 
 		mouseOverMod= "NONE",
 

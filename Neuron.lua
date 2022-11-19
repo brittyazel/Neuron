@@ -99,7 +99,7 @@ function Neuron:OnInitialize()
 	if DB.firstRun then
 		Neuron:InitializeEmptyDatabase(DB)
 	end
-	Neuron:CreateBarsAndButtons()
+	Neuron:CreateBarsAndButtons(DB)
 end
 
 --- **OnEnable** which gets called during the PLAYER_LOGIN event, when most of the data provided by the game is already present.
@@ -153,8 +153,6 @@ function Neuron:OnEnable()
 	--SecureActionButtons see SecureTemplates.lua SecureActionButton_OnClick() for more information
 	SetCVar("ActionButtonUseKeyDown", 0)
 
-	Neuron:Overrides()
-
 	Neuron.NeuronGUI:LoadInterfaceOptions()
 
 end
@@ -195,9 +193,7 @@ function Neuron:PLAYER_ENTERING_WORLD()
 		TitanUtils_AddonAdjust("MainMenuBar", true)
 	end
 
-	if DB.blizzbar == false then
-		Neuron:HideBlizzardUI()
-	end
+	Neuron:HideBlizzardUI(DB)
 end
 
 function Neuron:ACTIVE_TALENT_GROUP_CHANGED()

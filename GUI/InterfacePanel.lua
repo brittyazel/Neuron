@@ -90,23 +90,25 @@ end
 
 local function guiOptions()
 	local DB = Neuron.db.profile
+	local args = {}
+	for bar, _ in pairs(DB.blizzBars) do
+		args[bar] = {
+			name = Neuron.registeredBarData[bar].barLabel,
+			desc = L["Shows / Hides the Default Blizzard UI"],
+			type = "toggle",
+			set = function() Neuron:ToggleBlizzUI({[bar]=not DB.blizzBars[bar]}) end,
+			get = function() return DB.blizzBars[bar] end,
+			width = "full",
+		}
+	end
+
 	return {
 		name = L["Options"],
 		type = "group",
 		order = 0,
 		args={
-			BlizzardBar = {
-				order = 1,
-				name = L["Display the Blizzard UI"],
-				desc = L["Shows / Hides the Default Blizzard UI"],
-				type = "toggle",
-				set = function() Neuron:ToggleBlizzUI() end,
-				get = function() return DB.blizzbar end,
-				width = "full",
-			},
-
 			NeuronMinimapButton = {
-				order = 2,
+				order = 1,
 				name = L["Display Minimap Button"],
 				desc = L["Toggles the minimap button."],
 				type = "toggle",
@@ -114,7 +116,14 @@ local function guiOptions()
 				get = function() return not DB.NeuronIcon.hide end,
 				width = "full"
 			},
-		},
+			NeuronOverrides = {
+				name = L["Display the Blizzard UI"],
+				desc = L["Shows / Hides the Default Blizzard UI"],
+				type = "group",
+				order = 2,
+				args = args,
+			},
+		}
 	}
 end
 

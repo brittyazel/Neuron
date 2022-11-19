@@ -14,7 +14,7 @@ Neuron.NUM_BAG_BUTTONS = 6
 
 local blizzBagButtons = {
 	--wow classic has a keyring button
-	Neuron.isWowRetail and CharacterReagentBag0Slot or KeyRingButton,
+	Neuron.isWoWRetail and CharacterReagentBag0Slot or KeyRingButton,
 	CharacterBag3Slot,
 	CharacterBag2Slot,
 	CharacterBag1Slot,
