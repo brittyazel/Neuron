@@ -179,7 +179,7 @@ local function migrate1_3To1_4(profile)
 		MirrorBar = blizzbar,
 	}
 
-	newProfile.blizzBar = nil
+	newProfile.blizzbar = nil
 	newProfile.DBVersion = 1.4
 	return newProfile
 end
