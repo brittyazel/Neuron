@@ -216,6 +216,5 @@ function Neuron:ToggleBlizzUI(blizzBars)
 		local DB = Neuron.db.profile
 		DB.blizzBars = CopyTable(DB.blizzBars)
 		MergeTable(DB.blizzBars, blizzBars)
-		StaticPopup_Show("ReloadUI")
 	end
 end

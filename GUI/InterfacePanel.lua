@@ -90,14 +90,48 @@ end
 
 local function guiOptions()
 	local DB = Neuron.db.profile
-	local args = {}
-	for bar, _ in pairs(DB.blizzBars) do
+	local changes = CopyTable(DB.blizzBars)
+	local args = {
+		RevertButton = {
+			order = 1,
+			name = L["Revert"],
+			type = "execute",
+			width = "half",
+			disabled = function()
+				return tCompare(DB.blizzBars, changes)
+			end,
+			func = function()
+				changes = CopyTable(DB.blizzBars)
+			end
+		},
+		ApplyButton = {
+			order = 2,
+			name = L["Apply"],
+			desc = L["ReloadUI"],
+			type = "execute",
+			confirm = true,
+			width = "half",
+			disabled = function()
+				return tCompare(DB.blizzBars, changes)
+			end,
+			func = function()
+				Neuron:ToggleBlizzUI(changes)
+				ReloadUI()
+			end
+		},
+	}
+	for bar, _ in pairs(changes) do
 		args[bar] = {
+			order = 0,
 			name = Neuron.registeredBarData[bar].barLabel,
 			desc = L["Shows / Hides the Default Blizzard UI"],
 			type = "toggle",
-			set = function() Neuron:ToggleBlizzUI({[bar]=not DB.blizzBars[bar]}) end,
-			get = function() return DB.blizzBars[bar] end,
+			set = function(_, value)
+				changes[bar] = value
+			end,
+			get = function()
+				return changes[bar]
+			end,
 			width = "full",
 		}
 	end
