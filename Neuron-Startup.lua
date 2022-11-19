@@ -9,34 +9,43 @@ local Neuron = addonTable.Neuron
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local Array = addonTable.utilities.Array
 
+-- this function takes a partial bar config and fills out the missing fields
+-- from the database default skeleton to create a complete bar database entry
+local function initializeBar(bar)
+	-- MergeTable modifies in place, so copy  the default first
+	local newBar = CopyTable(addonTable.databaseDefaults.profile[barClass]['*'])
+
+	-- use the skeleton button from the default database to generate buttons
+	local newButtons = Array.map(
+		function(button)
+			local newButton = CopyTable(newBar.buttons['*'])
+			local newConfig = CopyTable(newButton.config)
+
+			MergeTable(newConfig, button.config or {})
+			MergeTable(newButton, button)
+			MergeTable(newButton, {config = newConfig})
+			return newButton
+		end,
+		bar.buttons
+	)
+
+	-- merge the bar config and then the buttons into the skeleton
+	MergeTable(newBar, bar)
+	MergeTable(newBar, {buttons=newButtons})
+	return newBar
+end
+
 --- this function has no business existing
 --- database defaults should be in the database
 --- but we have them scattered between neuron-defaults and neuron-db-defaults
 function Neuron:InitializeEmptyDatabase(DB)
 	DB.firstRun = false
 
-	--only build default bars for registered bars types (Classic doesn't use all the bar types that Retail does)
+	--initialize default bars using the skeleton data in defaultBarOptions
+	--and pulling from registeredBarData so we create the correct bars for classic/retail
 	for barClass, registeredData in pairs(Neuron.registeredBarData) do
 		local newBars = Array.map(
-			function(bar)
-				-- MergeTable modifies in place, so copy first
-				local newBar = CopyTable(addonTable.databaseDefaults.profile[barClass]['*'])
-				local newButtons = Array.map(
-					function(button)
-						local newButton = CopyTable(newBar.buttons['*'])
-						local newConfig = CopyTable(newButton.config)
-
-						MergeTable(newConfig, button.config or {})
-						MergeTable(newButton, button)
-						MergeTable(newButton, {config = newConfig})
-						return newButton
-					end,
-					bar.buttons
-				)
-				MergeTable(newBar, bar)
-				MergeTable(newBar, {buttons=newButtons})
-				return newBar
-			end,
+			initializeBar,
 			addonTable.defaultBarOptions[barClass]
 		)
 		MergeTable(registeredData.barDB, newBars)
@@ -44,6 +53,7 @@ function Neuron:InitializeEmptyDatabase(DB)
 end
 
 function Neuron:CreateBarsAndButtons(profileData)
+	-- remove blizzard controlled bars from the list of bars we will create
 	local neuronBars =
 		Array.filter(
 			function (barPair)
@@ -52,6 +62,7 @@ function Neuron:CreateBarsAndButtons(profileData)
 			end,
 		Array.fromIterator(pairs(Neuron.registeredBarData)))
 
+	-- make the frames for the bars now
 	for _, barData in pairs (neuronBars) do
 		local barClass, barClassData = unpack(barData)
 		for id,data in pairs(barClassData.barDB) do
