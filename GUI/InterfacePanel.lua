@@ -172,8 +172,9 @@ end
 
 ---This is the main entry point
 function NeuronGUI:LoadInterfaceOptions()
-	local mainPanel = mainOptions()
-	local subPanels = {guiOptions(), profileOptions(), experimentalOptions()}
+	-- local mainPanel = mainOptions()
+	local mainPanel = profileOptions()
+	local subPanels = {guiOptions(), experimentalOptions()}
 
 	-- set up the top level panel
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(mainPanel, addonName)
