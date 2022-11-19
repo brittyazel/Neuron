@@ -128,10 +128,13 @@ function Neuron:HideBlizzardUI(profileDatabase)
 		]]
 	end
 	if not blizzBars.CastBar then
-		PlayerCastingBarFrame:UnregisterAllEvents()
-		PlayerCastingBarFrame:SetParent(Neuron.hiddenFrame)
-		-- CastingBarFrame:UnregisterAllEvents()
-		-- CastingBarFrame:SetParent(Neuron.hiddenFrame)
+		if Neuron.isWoWRetail then
+			PlayerCastingBarFrame:UnregisterAllEvents()
+			PlayerCastingBarFrame:SetParent(Neuron.hiddenFrame)
+		else
+			CastingBarFrame:UnregisterAllEvents()
+			CastingBarFrame:SetParent(Neuron.hiddenFrame)
+		end
 	end
 	if not blizzBars.ExitBar then
 		disableBarFrame(MainMenuBarVehicleLeaveButton)
