@@ -329,6 +329,8 @@ L["Object Editor"] = true
 L["Macro Data"] = true
 L["Action Data"] = true
 L["Options"] = true
+L["Revert"] = true
+L["ReloadUI"] = "This action will cause the UI to reload."
 
 L["Click here to edit macro note"] = true
 L["Use macro note as button tooltip"] = true

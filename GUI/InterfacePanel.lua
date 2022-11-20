@@ -90,31 +90,72 @@ end
 
 local function guiOptions()
 	local DB = Neuron.db.profile
+	local changes = CopyTable(DB.blizzBars)
+	local args = {
+		RevertButton = {
+			order = 3,
+			name = L["Revert"],
+			type = "execute",
+			width = "half",
+			disabled = function()
+				return tCompare(DB.blizzBars, changes)
+			end,
+			func = function()
+				changes = CopyTable(DB.blizzBars)
+			end
+		},
+		ApplyButton = {
+			order = 4,
+			name = L["Apply"],
+			desc = L["ReloadUI"],
+			type = "execute",
+			confirm = true,
+			width = "half",
+			disabled = function()
+				return tCompare(DB.blizzBars, changes)
+			end,
+			func = function()
+				Neuron:ToggleBlizzUI(changes)
+				ReloadUI()
+			end
+		},
+	}
+	for bar, _ in pairs(changes) do
+		args[bar] = {
+			order = 2,
+			name = Neuron.registeredBarData[bar].barLabel,
+			desc = L["Shows / Hides the Default Blizzard UI"],
+			type = "toggle",
+			set = function(_, value)
+				changes[bar] = value
+			end,
+			get = function()
+				return changes[bar]
+			end,
+			width = "full",
+		}
+	end
+
+	args.NeuronMinimapButton = {
+		order = 0,
+		name = L["Display Minimap Button"],
+		desc = L["Toggles the minimap button."],
+		type = "toggle",
+		set =  function() Neuron:Minimap_ToggleIcon() end,
+		get = function() return not DB.NeuronIcon.hide end,
+		width = "full"
+	}
+	args.NeuronOverrides = {
+		name = L["Display the Blizzard UI"],
+		desc = L["Shows / Hides the Default Blizzard UI"],
+		type = "header",
+		order = 1,
+	}
 	return {
 		name = L["Options"],
 		type = "group",
 		order = 0,
-		args={
-			BlizzardBar = {
-				order = 1,
-				name = L["Display the Blizzard UI"],
-				desc = L["Shows / Hides the Default Blizzard UI"],
-				type = "toggle",
-				set = function() Neuron:ToggleBlizzUI() end,
-				get = function() return DB.blizzbar end,
-				width = "full",
-			},
-
-			NeuronMinimapButton = {
-				order = 2,
-				name = L["Display Minimap Button"],
-				desc = L["Toggles the minimap button."],
-				type = "toggle",
-				set =  function() Neuron:Minimap_ToggleIcon() end,
-				get = function() return not DB.NeuronIcon.hide end,
-				width = "full"
-			},
-		},
+		args=args
 	}
 end
 
@@ -129,8 +170,9 @@ end
 
 ---This is the main entry point
 function NeuronGUI:LoadInterfaceOptions()
-	local mainPanel = mainOptions()
-	local subPanels = {guiOptions(), profileOptions(), experimentalOptions()}
+	-- local mainPanel = mainOptions()
+	local mainPanel = guiOptions()
+	local subPanels = {profileOptions(), experimentalOptions()}
 
 	-- set up the top level panel
 	LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(mainPanel, addonName)

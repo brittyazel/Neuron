@@ -6,7 +6,7 @@
 local _, addonTable = ...
 addonTable.utilities = addonTable.utilities or {}
 
-local LATEST_DB_VERSION = 1.3
+local LATEST_DB_VERSION = 1.4
 
 ------------------------------------------------------------
 --------------------Data Fixing Functions-------------------
@@ -160,10 +160,36 @@ local function ogFixer(profile)
 	return profile
 end
 
+-- this is when we made enabling/disabling neuron/blizzard ui
+-- components more granular--eg, enable cast bar but not rep bar
+local function migrate1_3To1_4(profile)
+	local newProfile = CopyTable(profile)
+	local blizzbar = profile.blizzbar
+	newProfile.blizzBars = {
+		ActionBar = blizzbar,
+		ExtraBar = blizzbar,
+		ExitBar = blizzbar,
+		BagBar = blizzbar,
+		ZoneAbilityBar = blizzbar,
+		MenuBar = blizzbar,
+		PetBar = blizzbar,
+		XPBar = blizzbar,
+		RepBar = blizzbar,
+		CastBar = blizzbar,
+		MirrorBar = blizzbar,
+	}
+
+	newProfile.blizzbar = nil
+	newProfile.DBVersion = 1.4
+	return newProfile
+end
+
 local function profileMigrate(profileDatabase)
 	if profileDatabase.DBVersion < 1.3 then
 		-- we need to copy the table for the og fixer, since it modifies in place
-		return profileFixer(ogFixer(CopyTable(profileDatabase)))
+		return profileMigrate(ogFixer(CopyTable(profileDatabase)))
+	elseif profileDatabase.DBVersion == 1.3 then
+		return profileMigrate(migrate1_3To1_4(profileDatabase))
 	else
 		return profileDatabase
 	end

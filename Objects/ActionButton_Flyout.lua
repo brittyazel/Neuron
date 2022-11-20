@@ -1022,6 +1022,8 @@ function ActionButton:Flyout_RemoveBar()
 end
 
 function ActionButton:UpdateFlyout(init)
+	-- temporarily disabling action buttons, since they are broken atm
+	if true then return end
 	local options
 
 	if self:GetMacroText() then

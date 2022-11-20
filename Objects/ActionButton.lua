@@ -428,9 +428,9 @@ function ActionButton:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
 	self:KeybindOverlay_ApplyBindings()
 
-	if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
-		self:ScheduleTimer(function() self:InitializeButton() end, 1)
-	end
+	-- if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
+	-- 	self:ScheduleTimer(function() self:InitializeButton() end, 1)
+	-- end
 end
 
 function ActionButton:UNIT_SPELLCAST_INTERRUPTED(unit)
