@@ -833,6 +833,10 @@ end
 
 
 function ActionButton:UpdateIcon()
+	if Neuron.pendingReload then
+		return
+	end
+
 	local spec = Spec.active(self.bar:GetMultiSpec())
 	local state = self.bar.handler:GetAttribute("activestate") or "homestate"
 

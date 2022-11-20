@@ -249,6 +249,10 @@ function CastButton:OnEvent(event,...)
 end
 
 function CastButton:OnUpdate(elapsed)
+	if Neuron.pendingReload then
+		return
+	end
+
 	--bail out if these values don't exist. Otherwise we will error later on
 	if not self.value and not self.maxValue then
 		self:Reset()

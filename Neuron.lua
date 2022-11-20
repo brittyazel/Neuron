@@ -65,13 +65,10 @@ function Neuron:OnInitialize()
 	Neuron.db = DBFixer.databaseMigration(Neuron.db)
 	DB = Neuron.db.profile
 
-
 	Neuron.db.RegisterCallback(Neuron, "OnProfileChanged", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnProfileCopied", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnProfileReset", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnDatabaseReset", "RefreshConfig")
-
-
 
 	--load saved variables into working variable containers
 	Neuron.itemCache = DB.NeuronItemCache
@@ -222,8 +219,9 @@ end
 -------------------------------------------------------------------------
 
 
-function Neuron:RefreshConfig()
+function Neuron:RefreshConfig(db, profile)
 	StaticPopup_Show("ReloadUI")
+	Neuron.pendingReload = true
 end
 
 -----------------------------------------------------------------
