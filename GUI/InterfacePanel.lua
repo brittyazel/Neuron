@@ -93,7 +93,7 @@ local function guiOptions()
 	local changes = CopyTable(DB.blizzBars)
 	local args = {
 		RevertButton = {
-			order = 1,
+			order = 3,
 			name = L["Revert"],
 			type = "execute",
 			width = "half",
@@ -105,7 +105,7 @@ local function guiOptions()
 			end
 		},
 		ApplyButton = {
-			order = 2,
+			order = 4,
 			name = L["Apply"],
 			desc = L["ReloadUI"],
 			type = "execute",
@@ -122,7 +122,7 @@ local function guiOptions()
 	}
 	for bar, _ in pairs(changes) do
 		args[bar] = {
-			order = 0,
+			order = 2,
 			name = Neuron.registeredBarData[bar].barLabel,
 			desc = L["Shows / Hides the Default Blizzard UI"],
 			type = "toggle",
@@ -136,28 +136,26 @@ local function guiOptions()
 		}
 	end
 
+	args.NeuronMinimapButton = {
+		order = 0,
+		name = L["Display Minimap Button"],
+		desc = L["Toggles the minimap button."],
+		type = "toggle",
+		set =  function() Neuron:Minimap_ToggleIcon() end,
+		get = function() return not DB.NeuronIcon.hide end,
+		width = "full"
+	}
+	args.NeuronOverrides = {
+		name = L["Display the Blizzard UI"],
+		desc = L["Shows / Hides the Default Blizzard UI"],
+		type = "header",
+		order = 1,
+	}
 	return {
 		name = L["Options"],
 		type = "group",
 		order = 0,
-		args={
-			NeuronMinimapButton = {
-				order = 1,
-				name = L["Display Minimap Button"],
-				desc = L["Toggles the minimap button."],
-				type = "toggle",
-				set =  function() Neuron:Minimap_ToggleIcon() end,
-				get = function() return not DB.NeuronIcon.hide end,
-				width = "full"
-			},
-			NeuronOverrides = {
-				name = L["Display the Blizzard UI"],
-				desc = L["Shows / Hides the Default Blizzard UI"],
-				type = "group",
-				order = 2,
-				args = args,
-			},
-		}
+		args=args
 	}
 end
 
