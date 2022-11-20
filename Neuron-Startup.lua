@@ -11,28 +11,30 @@ local Array = addonTable.utilities.Array
 
 -- this function takes a partial bar config and fills out the missing fields
 -- from the database default skeleton to create a complete bar database entry
-local function initializeBar(bar)
-	-- MergeTable modifies in place, so copy  the default first
-	local newBar = CopyTable(addonTable.databaseDefaults.profile[barClass]['*'])
+local function initializeBar(barClass)
+	return function (bar)
+		-- MergeTable modifies in place, so copy  the default first
+		local newBar = CopyTable(addonTable.databaseDefaults.profile[barClass]['*'])
 
-	-- use the skeleton button from the default database to generate buttons
-	local newButtons = Array.map(
-		function(button)
-			local newButton = CopyTable(newBar.buttons['*'])
-			local newConfig = CopyTable(newButton.config)
+		-- use the skeleton button from the default database to generate buttons
+		local newButtons = Array.map(
+			function(button)
+				local newButton = CopyTable(newBar.buttons['*'])
+				local newConfig = CopyTable(newButton.config)
 
-			MergeTable(newConfig, button.config or {})
-			MergeTable(newButton, button)
-			MergeTable(newButton, {config = newConfig})
-			return newButton
-		end,
-		bar.buttons
-	)
+				MergeTable(newConfig, button.config or {})
+				MergeTable(newButton, button)
+				MergeTable(newButton, {config = newConfig})
+				return newButton
+			end,
+			bar.buttons
+		)
 
-	-- merge the bar config and then the buttons into the skeleton
-	MergeTable(newBar, bar)
-	MergeTable(newBar, {buttons=newButtons})
-	return newBar
+		-- merge the bar config and then the buttons into the skeleton
+		MergeTable(newBar, bar)
+		MergeTable(newBar, {buttons=newButtons})
+		return newBar
+	end
 end
 
 --- this function has no business existing
@@ -45,7 +47,7 @@ function Neuron:InitializeEmptyDatabase(DB)
 	--and pulling from registeredBarData so we create the correct bars for classic/retail
 	for barClass, registeredData in pairs(Neuron.registeredBarData) do
 		local newBars = Array.map(
-			initializeBar,
+			initializeBar(barClass),
 			addonTable.defaultBarOptions[barClass]
 		)
 		MergeTable(registeredData.barDB, newBars)
