@@ -8,14 +8,12 @@ local Neuron = addonTable.Neuron
 
 local Array = addonTable.utilities.Array
 
-Neuron.DefaultBarOptions = {}
-
-addonTable.defaultBarOptions = {}
+addonTable.defaultProfile = {}
 
 -----------------------------------
 --------- Action Bar --------------
 -----------------------------------
-addonTable.defaultBarOptions.ActionBar = {
+addonTable.defaultProfile.ActionBar = {
 	[1] = {
 		snapTo = false,
 		snapToFrame = false,
@@ -51,7 +49,7 @@ addonTable.defaultBarOptions.ActionBar = {
 -----------------------------------
 --------- Zone Ability Bar --------
 -----------------------------------
-addonTable.defaultBarOptions.ZoneAbilityBar = {
+addonTable.defaultProfile.ZoneAbilityBar = {
 	[1] = {
 		hidestates = ":",
 		snapTo = false,
@@ -70,7 +68,7 @@ addonTable.defaultBarOptions.ZoneAbilityBar = {
 -----------------------------------
 --------- Extra Action Bar --------
 -----------------------------------
-addonTable.defaultBarOptions.ExtraBar = {
+addonTable.defaultProfile.ExtraBar = {
 	[1] = {
 		hidestates = ":",
 		snapTo = false,
@@ -91,7 +89,7 @@ addonTable.defaultBarOptions.ExtraBar = {
 ------------- XP Bar --------------
 -----------------------------------
 
-addonTable.defaultBarOptions.XPBar = {
+addonTable.defaultProfile.XPBar = {
 	[1] = {
 		showGrid = true,
 		snapTo = false,
@@ -114,7 +112,7 @@ addonTable.defaultBarOptions.XPBar = {
 ------------ Rep Bar --------------
 -----------------------------------
 
-addonTable.defaultBarOptions.RepBar = {
+addonTable.defaultProfile.RepBar = {
 
 	[1] = {
 		showGrid = true,
@@ -138,7 +136,7 @@ addonTable.defaultBarOptions.RepBar = {
 ----------- Cast Bar --------------
 -----------------------------------
 
-addonTable.defaultBarOptions.CastBar = {
+addonTable.defaultProfile.CastBar = {
 	[1] = {
 		showGrid = true,
 		snapTo = false,
@@ -161,7 +159,7 @@ addonTable.defaultBarOptions.CastBar = {
 --------- Mirror Bar --------------
 -----------------------------------
 
-addonTable.defaultBarOptions.MirrorBar = {
+addonTable.defaultProfile.MirrorBar = {
 
 	[1] = {
 		showGrid = true,
@@ -183,7 +181,7 @@ addonTable.defaultBarOptions.MirrorBar = {
 -----------------------------------
 ----------- Exit Bar --------------
 -----------------------------------
-addonTable.defaultBarOptions.ExitBar = {
+addonTable.defaultProfile.ExitBar = {
 	[1] = {
 		snapTo = false,
 		snapToFrame = false,
@@ -201,7 +199,7 @@ addonTable.defaultBarOptions.ExitBar = {
 -----------------------------------
 ------------ Pet Bar --------------
 -----------------------------------
-addonTable.defaultBarOptions.PetBar = {
+addonTable.defaultProfile.PetBar = {
 	[1] = {
 		hidestates = ":pet0:",
 		showGrid = true,
@@ -223,7 +221,7 @@ addonTable.defaultBarOptions.PetBar = {
 ----------- Menu Bar --------------
 -----------------------------------
 if Neuron.isWoWRetail then
-	addonTable.defaultBarOptions.MenuBar = {
+	addonTable.defaultProfile.MenuBar = {
 		[1] = {
 			snapTo = false,
 			snapToFrame = false,
@@ -238,7 +236,7 @@ if Neuron.isWoWRetail then
 		}
 	}
 else
-	addonTable.defaultBarOptions.MenuBar = {
+	addonTable.defaultProfile.MenuBar = {
 		[1] = {
 			snapTo = false,
 			snapToFrame = false,
@@ -256,7 +254,7 @@ end
 ------------ Bag Bar --------------
 -----------------------------------
 if Neuron.isWoWRetail then
-	addonTable.defaultBarOptions.BagBar = {
+	addonTable.defaultProfile.BagBar = {
 		[1] = {
 			padH = 1,
 			scale = 1.1,
@@ -271,7 +269,7 @@ if Neuron.isWoWRetail then
 		}
 	}
 else
-	addonTable.defaultBarOptions.BagBar = {
+	addonTable.defaultProfile.BagBar = {
 		[1] = {
 			padH = 4,
 			scale = 1.1,

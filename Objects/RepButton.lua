@@ -87,16 +87,16 @@ end
 
 function RepButton:UpdateData(repGainedString)
 	local BAR_REP_DATA = {
-		[0] = { l="Unknown", r=0.5, g=0.5, b=0.5, a=1.0 },
-		[1] = { l="Hated", r=0.6, g=0.1, b=0.1, a=1.0 },
-		[2] = { l="Hostile", r=0.7, g=0.2, b=0.2, a=1.0 },
-		[3] = { l="Unfriendly", r=0.75, g=0.27, b=0, a=1.0 },
-		[4] = { l="Neutral", r=0.9, g=0.7, b=0, a=1.0 },
-		[5] = { l="Friendly", r=0.5, g=0.6, b=0.1, a=1.0 },
-		[6] = { l="Honored", r=0.1, g=0.5, b=0.20, a=1.0 },
-		[7] = { l="Revered", r=0.0, g=0.39, b=0.88, a=1.0 },
-		[8] = { l="Exalted", r=0.58, g=0.0, b=0.55, a=1.0 },
-		[9] = { l="Paragon", r=1, g=0.5, b=0, a=1.0 },
+		[0] = { l="Unknown", r=0.5, g=0.5, b=0.5},
+		[1] = { l="Hated", r=0.6, g=0.1, b=0.1},
+		[2] = { l="Hostile", r=0.7, g=0.2, b=0.2},
+		[3] = { l="Unfriendly", r=0.75, g=0.27, b=0},
+		[4] = { l="Neutral", r=0.9, g=0.7, b=0},
+		[5] = { l="Friendly", r=0.5, g=0.6, b=0.1},
+		[6] = { l="Honored", r=0.1, g=0.5, b=0.20},
+		[7] = { l="Revered", r=0.0, g=0.39, b=0.88},
+		[8] = { l="Exalted", r=0.58, g=0.0, b=0.55},
+		[9] = { l="Paragon", r=1, g=0.5, b=0},
 	}
 
 	if GetNumFactions() <= 0 then --quit if for some reason the number of known factions is 0 or less (should never happen, this is just for safety)

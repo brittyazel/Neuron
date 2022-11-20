@@ -43,12 +43,12 @@ end
 function Neuron:InitializeEmptyDatabase(DB)
 	DB.firstRun = false
 
-	--initialize default bars using the skeleton data in defaultBarOptions
+	--initialize default bars using the skeleton data in defaultProfile
 	--and pulling from registeredBarData so we create the correct bars for classic/retail
 	for barClass, registeredData in pairs(Neuron.registeredBarData) do
 		local newBars = Array.map(
 			initializeBar(barClass),
-			addonTable.defaultBarOptions[barClass]
+			addonTable.defaultProfile[barClass]
 		)
 		MergeTable(registeredData.barDB, newBars)
 	end

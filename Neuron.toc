@@ -61,7 +61,7 @@ XML\NeuronBarTemplate.xml
 XML\NeuronOverlayFrameTemplate.xml
 XML\NeuronStatusBarTemplate.xml
 
-Neuron-Defaults.lua
+Neuron-Default-Profile.lua
 Neuron-Startup.lua
 
 GUI\Neuron-GUI.xml

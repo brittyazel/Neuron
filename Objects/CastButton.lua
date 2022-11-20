@@ -88,7 +88,7 @@ function CastButton:OnEvent(event,...)
 			return
 		end
 
-		self.StatusBar:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
+		self.StatusBar:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3])
 
 		self.StatusBar.Spark:SetTexture("Interface\\AddOns\\Neuron\\Images\\CastingBar_Spark_"..self.orientation)
 		self.StatusBar.Spark:Show()
@@ -134,7 +134,7 @@ function CastButton:OnEvent(event,...)
 			return
 		end
 
-		self.StatusBar:SetStatusBarColor(self.config.channelColor[1], self.config.channelColor[2], self.config.channelColor[3], self.config.channelColor[4])
+		self.StatusBar:SetStatusBarColor(self.config.channelColor[1], self.config.channelColor[2], self.config.channelColor[3])
 
 		self.value = ((endTime/1000)-GetTime())
 		self.maxValue = (endTime - startTime) / 1000;
@@ -169,7 +169,7 @@ function CastButton:OnEvent(event,...)
 		self.StatusBar:Show()
 
 	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and not self.channeling then --don't do anything with this event when channeling as it fires at each pulse of a spell channel
-		self.StatusBar:SetStatusBarColor(self.config.successColor[1], self.config.successColor[2], self.config.successColor[3], self.config.successColor[4])
+		self.StatusBar:SetStatusBarColor(self.config.successColor[1], self.config.successColor[2], self.config.successColor[3])
 
 	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.channeling then
 		-- do nothing (when Tranquility is channeling if reports UNIT_SPELLCAST_SUCCEEDED many times during the duration)
@@ -177,7 +177,7 @@ function CastButton:OnEvent(event,...)
 	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") and self.castID == eventCastID or event == "UNIT_SPELLCAST_CHANNEL_STOP"  then
 		if self.StatusBar:IsShown() and (self.casting or self.channeling) and not self.fadeout then
 			self.StatusBar:SetValue(self.maxValue)
-			self.StatusBar:SetStatusBarColor(self.config.failColor[1], self.config.failColor[2], self.config.failColor[3], self.config.failColor[4])
+			self.StatusBar:SetStatusBarColor(self.config.failColor[1], self.config.failColor[2], self.config.failColor[3])
 			self.StatusBar.Spark:Hide()
 
 			if event == "UNIT_SPELLCAST_FAILED" then
@@ -207,7 +207,7 @@ function CastButton:OnEvent(event,...)
 			self.StatusBar:SetMinMaxValues(0, self.maxValue)
 
 			if not self.casting then
-				self.StatusBar:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
+				self.StatusBar:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3])
 				self.StatusBar.Spark:Show()
 				self.StatusBar.BarFlash:SetAlpha(0.0)
 				self.StatusBar.BarFlash:Hide()
@@ -341,7 +341,7 @@ function CastButton:Reset()
 	self.fadeout = true
 	self.casting = nil
 	self.channeling = nil
-	self.StatusBar:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3], self.config.castColor[4])
+	self.StatusBar:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3])
 
 	if not Neuron.barEditMode and not Neuron.buttonEditMode then
 		self.StatusBar:Hide()

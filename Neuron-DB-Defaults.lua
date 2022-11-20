@@ -57,7 +57,7 @@ local genericXPBtnData= {
 	tIndex = 1,
 	tColor = {1,1,1},
 
-	bordercolor = {1,1,1},
+	borderColor = {1,1,1},
 
 }
 
@@ -87,7 +87,7 @@ local genericRepBtnData= {
 	tIndex = 1,
 	tColor = {1,1,1},
 
-	bordercolor = {1,1,1},
+	borderColor = {1,1,1},
 }
 
 local genericCastBtnData= {
@@ -113,7 +113,7 @@ local genericCastBtnData= {
 	tIndex = 1,
 	tColor = {1,1,1},
 
-	bordercolor = {1,1,1},
+	borderColor = {1,1,1},
 
 	castColor = {1,0.7,0},
 	channelColor = {0,1,0},
@@ -147,7 +147,7 @@ local genericMirrorBtnData= {
 	tIndex = 1,
 	tColor = {1,1,1},
 
-	bordercolor = {1,1,1},
+	borderColor = {1,1,1},
 }
 
 

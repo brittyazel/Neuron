@@ -138,7 +138,7 @@ function StatusButton:SetBorder()
 	self.StatusBar.Border:SetPoint("BOTTOMRIGHT", BAR_BORDERS[self.config.border][11], BAR_BORDERS[self.config.border][12])
 
 	self.StatusBar.Border:SetBackdropColor(0, 0, 0, 0)
-	self.StatusBar.Border:SetBackdropBorderColor(self.config.bordercolor[1], self.config.bordercolor[2], self.config.bordercolor[3], 1)
+	self.StatusBar.Border:SetBackdropBorderColor(self.config.borderColor[1], self.config.borderColor[2], self.config.borderColor[3], 1)
 
 	self.StatusBar.Background:SetBackdropColor(0, 0, 0, 1)
 	self.StatusBar.Background:SetBackdropBorderColor(0, 0, 0, 0)
@@ -175,7 +175,7 @@ function StatusButton:OnEnter()
 
 		if self.bar:GetTooltipOption() ~= "off" then
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-			GameTooltip:SetText(self:tFunc() or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1, self.tColor[4] or 1)
+			GameTooltip:SetText(self:tFunc() or "", self.tColor[1] or 1, self.tColor[2] or 1, self.tColor[3] or 1)
 			GameTooltip:Show()
 		end
 	end
