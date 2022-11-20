@@ -61,15 +61,16 @@ Neuron.DEBUG = true
 function Neuron:OnInitialize()
 	Neuron.db = LibStub("AceDB-3.0"):New("NeuronProfilesDB", addonTable.databaseDefaults)
 
+	--Check if the current database needs to be migrated, and attempt the migration
+	Neuron.db = DBFixer.databaseMigration(Neuron.db)
+	DB = Neuron.db.profile
+
+
 	Neuron.db.RegisterCallback(Neuron, "OnProfileChanged", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnProfileCopied", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnProfileReset", "RefreshConfig")
 	Neuron.db.RegisterCallback(Neuron, "OnDatabaseReset", "RefreshConfig")
 
-
-	--Check if the current database needs to be migrated, and attempt the migration
-	Neuron.db = DBFixer.databaseMigration(Neuron.db)
-	DB = Neuron.db.profile
 
 
 	--load saved variables into working variable containers
@@ -80,8 +81,8 @@ function Neuron:OnInitialize()
 	Neuron:UpdateStanceStrings()
 
 	StaticPopupDialogs["ReloadUI"] = {
-		text = "ReloadUI",
-		button1 = "Yes",
+		text = L["ReloadUI"],
+		button1 = OKAY,
 		OnAccept = function()
 			ReloadUI()
 		end,
