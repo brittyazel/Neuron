@@ -258,7 +258,7 @@ function Button:CooldownCounterUpdate()
 				self.Cooldown.cdsize = size
 			end
 
-			self.Cooldown.timer:SetText(formatted)
+			self.Countdown:SetText(formatted)
 
 		end
 	end
