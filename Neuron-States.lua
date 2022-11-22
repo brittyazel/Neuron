@@ -157,7 +157,7 @@ function Neuron.UpdateStanceStrings()
 		},
 
 		vehicle = {
-			modifier = "Vehicle",
+			modifier = "vehicle",
 			states = "[vehicleui] vehicle1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
