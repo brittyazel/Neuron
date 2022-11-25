@@ -46,8 +46,10 @@ function NeuronGUI:CreateEditor(defaultTab)
 	else
 		addonTable.NeuronEditor.frame:SetMinResize(760,600)
 	end
+	-- assuming that 720p is a reasonable minimum target for what people will be using
+	-- my ryzen 7 gen 4 laptop with integrated RDNA graphics can not do much more
 	addonTable.NeuronEditor:SetWidth("760")
-	addonTable.NeuronEditor:SetHeight("840")
+	addonTable.NeuronEditor:SetHeight("700")
 	if Neuron.currentBar then
 		addonTable.NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
 	else
@@ -88,7 +90,7 @@ function NeuronGUI:PopulateEditorWindow()
 	local tabFrame = AceGUI:Create("TabGroup")
 	tabFrame:SetLayout("Flow")
 	tabFrame:SetTabs(tabs)
-	tabFrame:SetCallback("OnGroupSelected", function(self, _, value) NeuronGUI:SelectTab(self, _, value) end)
+	tabFrame:SetCallback("OnGroupSelected", function(frame, _, value) NeuronGUI:SelectTab(frame, _, value) end)
 	addonTable.NeuronEditor:AddChild(tabFrame)
 	tabFrame:SelectTab(currentTab)
 end
