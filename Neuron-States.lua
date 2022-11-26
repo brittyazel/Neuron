@@ -78,15 +78,13 @@ function Neuron.UpdateStanceStrings()
 	-- See "RegisterAttributeDriver" and "SetAttribute"
 	-- example: if a priest is in shadowform (stance1) then
 	-- "[stance0] noshadow; [stance1] shadow" will make newstate="shadow"
-	Neuron.MANAGED_BAR_STATES = {
-
+	Neuron.MANAGED_HOME_STATES = {
 		paged = {
 			modifier = "paged",
 			homestate = "paged1",
 			states = "[bar:1] paged1; [bar:2] paged2; [bar:3] paged3; [bar:4] paged4; [bar:5] paged5; [bar:6] paged6",
 			rangeStart = 2,
 			rangeStop = 6,
-			order = 1,
 			localizedName = L["Paged"],
 		},
 
@@ -97,7 +95,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[stance:0] stance0; [stance:1] stance1; [stance:2] stance2; [stance:3] stance3; [stance:4] stance4; [stance:5] stance5; [stance:6] stance6;",
 			rangeStart = 1,
 			rangeStop = 8,
-			order = 2,
 			localizedName =
 				(Neuron.class == "ROGUE" and L["Stealth"]) or
 				(Neuron.class == "DRUID" and L["Shapeshift"]) or
@@ -111,16 +108,15 @@ function Neuron.UpdateStanceStrings()
 			states = "[nopet] pet1; [@pet,exists,nodead] pet2",
 			rangeStart = 2,
 			rangeStop = 3,
-			order = 3,
 			localizedName = L["Pet"],
 		},
-
+	}
+	Neuron.MANAGED_SECONDARY_STATES = {
 		alt = {
 			modifier = "alt",
 			states = "[mod:alt] alt1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 4,
 			localizedName = L["Alt"],
 		},
 
@@ -129,7 +125,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[mod:ctrl] ctrl1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 5,
 			localizedName = L["Ctrl"],
 		},
 
@@ -138,7 +133,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[mod:shift] shift1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 6,
 			localizedName = L["Shift"],
 		},
 
@@ -147,7 +141,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[stealth] stealth1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 7,
 			localizedName = L["Stealth"],
 		},
 
@@ -156,7 +149,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[@target,harm] reaction1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 8,
 			localizedName = L["Reaction"],
 		},
 
@@ -165,7 +157,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[vehicleui] vehicle1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 9,
 			localizedName = L["Vehicle"],
 		},
 
@@ -174,7 +165,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[group:raid] group1; [group:party] group2; laststate",
 			rangeStart = 1,
 			rangeStop = 2,
-			order = 10,
 			localizedName = L["Group"],
 		},
 
@@ -183,17 +173,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[worn:fishing poles] fishing1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 11,
 			localizedName = L["Fishing"],
-		},
-
-		custom = {
-			modifier = "custom",
-			states = "",
-			rangeStart = 1,
-			rangeStop = 1,
-			order = 12,
-			localizedName = L["Custom"],
 		},
 
 		combat = {
@@ -201,7 +181,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[combat] combat1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 13,
 			localizedName = L["Combat"],
 		},
 
@@ -210,7 +189,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[possessbar] possess1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 14,
 			localizedName = L["Possess"],
 		},
 
@@ -219,17 +197,7 @@ function Neuron.UpdateStanceStrings()
 			states = "[overridebar] override1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 15,
 			localizedName = L["Override"],
-		},
-
-		extrabar = {
-			modifier = "extrabar",
-			states = "[extrabar] extrabar1; laststate",
-			rangeStart = 1,
-			rangeStop = 1,
-			order = 16,
-			localizedName = L["Extrabar"],
 		},
 
 		target = {
@@ -237,7 +205,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[exists] target1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 17,
 			localizedName = L["Target"],
 		},
 		indoors = {
@@ -245,7 +212,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[indoors] indoors1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 18,
 			localizedName = L["Indoors"],
 		},
 		outdoors = {
@@ -253,7 +219,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[outdoors] outdoors1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 19,
 			localizedName = L["Outdoors"],
 		},
 		mounted = {
@@ -261,7 +226,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[mounted] mounted1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 20,
 			localizedName = L["Mounted"],
 		},
 		flying = {
@@ -269,7 +233,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[flying] flying1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 21,
 			localizedName = L["Flying"],
 		},
 		help = {
@@ -277,7 +240,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[help] help1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 22,
 			localizedName = L["Help"],
 		},
 		harm = {
@@ -285,7 +247,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[harm] harm1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 23,
 			localizedName = L["Harm"],
 		},
 		resting = {
@@ -293,7 +254,6 @@ function Neuron.UpdateStanceStrings()
 			states = "[resting] resting1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 24,
 			localizedName = L["Resting"],
 		},
 		swimming = {
@@ -301,8 +261,30 @@ function Neuron.UpdateStanceStrings()
 			states = "[swimming] swimming1; laststate",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 25,
 			localizedName = L["Swimming"],
 		},
 	}
+
+	Neuron.MANAGED_OTHER_STATES = {
+		custom = {
+			modifier = "custom",
+			states = "",
+			rangeStart = 1,
+			rangeStop = 1,
+			localizedName = L["Custom"],
+		},
+
+		extrabar = {
+			modifier = "extrabar",
+			states = "[extrabar] extrabar1; laststate",
+			rangeStart = 1,
+			rangeStop = 1,
+			localizedName = L["Extrabar"],
+		},
+	}
+
+	Neuron.MANAGED_BAR_STATES = {}
+	MergeTable(Neuron.MANAGED_BAR_STATES, Neuron.MANAGED_HOME_STATES)
+	MergeTable(Neuron.MANAGED_BAR_STATES, Neuron.MANAGED_SECONDARY_STATES)
+	MergeTable(Neuron.MANAGED_BAR_STATES, Neuron.MANAGED_OTHER_STATES)
 end
