@@ -98,7 +98,11 @@ function Neuron.UpdateStanceStrings()
 			rangeStart = 1,
 			rangeStop = 8,
 			order = 2,
-			localizedName = L["Stance"],
+			localizedName =
+				(Neuron.class == "ROGUE" and L["Stealth"]) or
+				(Neuron.class == "DRUID" and L["Shapeshift"]) or
+				(Neuron.class == "SHAMAN" and L["Shapeshift"]) or
+				L["Stance"],
 		},
 
 		pet = {
