@@ -23,7 +23,7 @@ local function actionPrimaryBarKindOptions()
     function (kind, candidate)
       return Neuron.currentBar.data[candidate] and candidate or kind
     end,
-    "paged",
+    "none",
     barKinds
   )
   local kindList = Array.foldl(
@@ -31,7 +31,7 @@ local function actionPrimaryBarKindOptions()
       list[kind] = Neuron.MANAGED_HOME_STATES[kind].localizedName
       return list
     end,
-    {},
+    {none = L["None"]},
     barKinds
   )
 
@@ -42,7 +42,13 @@ local function actionPrimaryBarKindOptions()
   barKindDropdown:SetFullHeight(false)
   barKindDropdown:SetValue(currentKind)
   barKindDropdown:SetCallback("OnValueChanged", function(_, _, key)
-    Neuron.currentBar:SetState(key, true, true)
+    if key == "none" then
+      for _,kind in ipairs(barKinds) do
+        Neuron.currentBar:SetState(kind, true, false)
+      end
+    else
+      Neuron.currentBar:SetState(key, true, true)
+    end
   end)
 
   return barKindDropdown
@@ -69,7 +75,7 @@ local function actionSecondaryStateOptions()
   for _,state in ipairs(stateList) do
     local checkbox = AceGUI:Create("CheckBox")
     checkbox:SetLabel(Neuron.MANAGED_SECONDARY_STATES[state].localizedName)
-    checkbox:SetValue(Neuron.currentBar[state])
+    checkbox:SetValue(Neuron.currentBar.data[state])
     checkbox:SetCallback("OnValueChanged", function(_,_,value)
       Neuron.currentBar:SetState(state, true, value)
     end)

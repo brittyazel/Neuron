@@ -52,6 +52,45 @@ local function makeScrollFrame(parent, height, layout)
 		return scroll
 end
 
+--our states come from the VISIBILITY_STATES but we only show the states that
+--are enabled for the bar _and_ that are in the states field of the
+--corresponding MANAGED_BAR_STATES entry
+local function getStateList()
+	local barData = Neuron.currentButton.bar.data
+
+	local barStates =
+		Array.filter(function(state) return barData[state] end,
+		Array.map(function(state) return state[1] end,
+		Array.fromIterator(pairs(Neuron.MANAGED_BAR_STATES))))
+
+	local visibilityStates =
+		Array.filter(
+			function(visibilityState)
+				return Array.find(
+					function(barState)
+						local match = Neuron.MANAGED_BAR_STATES[barState].states:find(visibilityState)
+						return not not match and Neuron.MANAGED_BAR_STATES[barState].homestate ~= visibilityState
+					end,
+					barStates
+				)
+			end,
+		Array.map(function(state) return state[1] end,
+		Array.fromIterator(pairs(Neuron.VISIBILITY_STATES))))
+
+	--TODO: custom states? or nah?
+	--[[
+	if (bar and bar.data.customNames) then
+		local i = 0
+		for index,state in pairs(bar.data.customNames) do
+			stateList[state] = index
+			data[count] = state; count = count + 1
+		end
+	end
+	]]
+
+	return visibilityStates
+end
+
 ---@param specData GenericSpecData
 ---@param update fun(data: GenericSpecData): nil
 ---@return Frame
@@ -140,21 +179,12 @@ function NeuronGUI:ButtonsEditPanel(topContainer)
 	for specIndex, specName in pairs(specs) do
 		local specData = Neuron.currentButton.DB[specIndex]
 
-		-- these steps happen inside out--reverse
-		-- convert specData to key value pairs
-		-- convert key value pairs to keys
-		-- remove homestate key
-		local nonHomeStates =
-			Array.filter(function(key) return key ~= "homestate" end,
-			Array.map(function(keyValuePair) return keyValuePair[1] end,
-			Array.fromIterator(pairs(specData))))
-
 		local buttonTree = {
 			value = "homestate",
 			text = specName,
 			children = Array.map(
 				function(state) return {value=state, text=Neuron.STATES[state]} end,
-				nonHomeStates
+				getStateList()
 			),
 		}
 
