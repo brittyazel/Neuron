@@ -12,6 +12,17 @@ local genericButtonData = {
 }
 
 
+---@class GenericSpecData
+---@field actionID number|false|nil
+---@field macro_Text string
+---@field macro_Icon number|string|false
+---@field macro_Name string
+---@field macro_Note string
+---@field macro_UseNote false
+---@field macro_BlizzMacro string|false
+---@field macro_EquipmentSet any|false
+
+---@type GenericSpecData
 local genericSpecData = {
 	actionID = false,
 

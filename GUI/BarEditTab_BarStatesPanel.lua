@@ -10,8 +10,85 @@ local NeuronGUI = Neuron.NeuronGUI
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
+local Array = addonTable.utilities.Array
 
 
+---@return Frame @a dropdown widget
+local function actionPrimaryBarKindOptions()
+  local barKinds =
+    Array.map(
+      function(state) return state[1] end,
+    Array.fromIterator(pairs(Neuron.MANAGED_HOME_STATES)))
+  local currentKind = Array.foldl(
+    function (kind, candidate)
+      return Neuron.currentBar.data[candidate] and candidate or kind
+    end,
+    "paged",
+    barKinds
+  )
+  local kindList = Array.foldl(
+    function (list, kind)
+      list[kind] = Neuron.MANAGED_HOME_STATES[kind].localizedName
+      return list
+    end,
+    {},
+    barKinds
+  )
+
+  local barKindDropdown = AceGUI:Create("Dropdown")
+  barKindDropdown:SetLabel(L["Home State"])
+  barKindDropdown:SetList(kindList)
+  barKindDropdown:SetFullWidth(false)
+  barKindDropdown:SetFullHeight(false)
+  barKindDropdown:SetValue(currentKind)
+  barKindDropdown:SetCallback("OnValueChanged", function(_, _, key)
+    Neuron.currentBar:SetState(key, true, true)
+  end)
+
+  return barKindDropdown
+end
+
+---@return Frame @a group containing checkboxes
+local function actionSecondaryStateOptions()
+  local stateList =
+    Array.map(
+      function(state) return state[1] end,
+    Array.fromIterator(pairs(Neuron.MANAGED_SECONDARY_STATES)))
+
+	--Might want to add some checks for states like stealth for classes that
+  --don't have stealth. But for now it doesn't break anything to have it show
+  --generically
+  if Neuron.class == "ROGUE" then
+    stateList = Array.filter(function (state) return state ~= "stealth" end, stateList)
+  end
+
+	local secondaryStatesContainer = AceGUI:Create("SimpleGroup")
+	secondaryStatesContainer:SetFullWidth(true)
+	secondaryStatesContainer:SetLayout("Flow")
+
+  for _,state in ipairs(stateList) do
+    local checkbox = AceGUI:Create("CheckBox")
+    checkbox:SetLabel(Neuron.MANAGED_SECONDARY_STATES[state].localizedName)
+    checkbox:SetValue(Neuron.currentBar[state])
+    checkbox:SetCallback("OnValueChanged", function(_,_,value)
+      Neuron.currentBar:SetState(state, true, value)
+    end)
+    secondaryStatesContainer:AddChild(checkbox)
+  end
+
+  return secondaryStatesContainer
+end
+
+---@param tabFrame Frame
 function NeuronGUI:BarStatesPanel(tabFrame)
+  -- weird stuff happens if we don't wrap this in a group
+  -- like dropdowns showing at the bottom of the screen and stuff
+	local settingContainer = AceGUI:Create("SimpleGroup")
+	settingContainer:SetFullWidth(true)
+	settingContainer:SetLayout("Flow")
 
+  settingContainer:AddChild(actionPrimaryBarKindOptions())
+  settingContainer:AddChild(actionSecondaryStateOptions())
+
+  tabFrame:AddChild(settingContainer)
 end

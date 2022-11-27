@@ -53,6 +53,19 @@ local Array; Array = {
 		return newArray
 	end,
 
+	---aka reduce
+	---@generic A, B
+	---@param fn fun(a: `A`, b: `B`):A
+	---@param initial A @initial value
+	---@param array B[] @input array
+	---@return A @folded value
+	foldl = function (fn, initial, array)
+		for _,v in ipairs(array) do
+			initial = fn(initial, v)
+		end
+		return initial
+	end,
+
 	---converts an iterator to an array
 	---this exists because iterators are thruples, but lua has no real support
 	---for tuples outside of return/parameter values. this results in way to much

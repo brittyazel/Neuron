@@ -358,6 +358,12 @@ end
 ------------------------------------- Update Functions ----------------------------------
 -----------------------------------------------------------------------------------------
 
+	-- spell in action, extra, pet, zone,
+	-- actionID in action, extra, pet,
+	-- spellID in action, extra, zone
+	-- macroequipmentset used in action
+	-- item in action
+	-- macro_BlizzMacro in action
 function Button:UpdateAll()
 	self:UpdateData()
 	self:UpdateIcon()
@@ -609,16 +615,23 @@ end
 -------------------------------------- Set Status ---------------------------------------
 -----------------------------------------------------------------------------------------
 
+---used by actionbutton, extra, zone, exit
 function Button:UpdateStatus()
+	-- actionID in pet, action, extra
 	if self.actionID then
 		self:UpdateActionStatus()
+	-- macroequipmentset used in action and flyout
 	elseif self:GetMacroEquipmentSet() then
 		self.Name:SetText(self:GetMacroName())
+	-- spell in zone, extra, pet, action
+	-- spellID in zone, extra, action
 	elseif self.spell then
 		self:UpdateSpellStatus()
+	-- item in action
 	elseif self.item then
 		self:UpdateItemStatus()
 	-- macro must go after spells and items, for blizz macro #showtooltip to work
+	-- macro_BlizzMacro in action
 	elseif self:GetMacroBlizzMacro() then
 		self.Name:SetText(self:GetMacroName())
 	else

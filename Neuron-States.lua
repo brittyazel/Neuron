@@ -9,9 +9,8 @@ local Neuron = addonTable.Neuron
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 function Neuron.UpdateStanceStrings()
-	Neuron.STATES = {
-		homestate = L["Home State"],
-		laststate = L["Last State"],
+	-- these are the results of the visibility macro conditional in the MANAGED_SECONDARY_STATES table
+	Neuron.VISIBILITY_STATES = {
 		paged1 = L["Page 1"],
 		paged2 = L["Page 2"],
 		paged3 = L["Page 3"],
@@ -46,10 +45,15 @@ function Neuron.UpdateStanceStrings()
 		override1 = L["Override Bar"],
 		extrabar0 = L["No Extra Bar"],
 		extrabar1 = L["Extra Bar"],
-		custom0 = L["Custom States"],
 		target0 = L["Has Target"],
 		target1 = L["No Target"],
 	}
+	Neuron.STATES = {
+		homestate = L["Home State"],
+		laststate = L["Last State"],
+		custom0 = L["Custom States"],
+	}
+	MergeTable(Neuron.STATES, Neuron.VISIBILITY_STATES)
 
 
 	--- this is actually a lot of classes. rogues stealth, paladins have
@@ -73,20 +77,19 @@ function Neuron.UpdateStanceStrings()
 	end
 
 
-	-- the "states" field is a macro conditional. it will pass the result of the
-	-- conditional as "newstate" into the attribute driver
+	-- the "states" and "visibility" fields are macro conditionals. they will
+	-- pass the result of the conditional as "message" into the attribute driver
 	-- See "RegisterAttributeDriver" and "SetAttribute"
 	-- example: if a priest is in shadowform (stance1) then
-	-- "[stance0] noshadow; [stance1] shadow" will make newstate="shadow"
-	Neuron.MANAGED_BAR_STATES = {
-
+	-- "[stance0] noshadow; [stance1] shadow" will make message="shadow"
+	Neuron.MANAGED_HOME_STATES = {
 		paged = {
 			modifier = "paged",
 			homestate = "paged1",
 			states = "[bar:1] paged1; [bar:2] paged2; [bar:3] paged3; [bar:4] paged4; [bar:5] paged5; [bar:6] paged6",
+			visibility = "[bar:1] paged1; [bar:2] paged2; [bar:3] paged3; [bar:4] paged4; [bar:5] paged5; [bar:6] paged6",
 			rangeStart = 2,
 			rangeStop = 6,
-			order = 1,
 			localizedName = L["Paged"],
 		},
 
@@ -95,210 +98,221 @@ function Neuron.UpdateStanceStrings()
 			homestate = "stance0",
 			-- the class with the maximum "stances" is the druid with 6. no need for more than this
 			states = "[stance:0] stance0; [stance:1] stance1; [stance:2] stance2; [stance:3] stance3; [stance:4] stance4; [stance:5] stance5; [stance:6] stance6;",
+			visibility = "[stance:0] stance0; [stance:1] stance1; [stance:2] stance2; [stance:3] stance3; [stance:4] stance4; [stance:5] stance5; [stance:6] stance6;",
 			rangeStart = 1,
 			rangeStop = 8,
-			order = 2,
-			localizedName = L["Stance"],
+			localizedName =
+				(Neuron.class == "ROGUE" and L["Stealth"]) or
+				(Neuron.class == "DRUID" and L["Shapeshift"]) or
+				(Neuron.class == "SHAMAN" and L["Shapeshift"]) or
+				L["Stance"],
 		},
 
 		pet = {
 			modifier = "pet",
 			homestate = "pet1",
 			states = "[nopet] pet1; [@pet,exists,nodead] pet2",
+			visibility = "[vehicleui] pet0; [possessbar] pet0; [overridebar] pet0; [nopet] pet0; [pet] pet1",
 			rangeStart = 2,
 			rangeStop = 3,
-			order = 3,
 			localizedName = L["Pet"],
 		},
-
+	}
+	Neuron.MANAGED_SECONDARY_STATES = {
 		alt = {
 			modifier = "alt",
 			states = "[mod:alt] alt1; laststate",
+			visibility = "[nomod:alt] alt0; [mod:alt] alt1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 4,
 			localizedName = L["Alt"],
 		},
 
 		ctrl = {
 			modifier = "ctrl",
 			states = "[mod:ctrl] ctrl1; laststate",
+			visibility = "[nomod:ctrl] ctrl0; [mod:ctrl] ctrl1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 5,
 			localizedName = L["Ctrl"],
 		},
 
 		shift = {
 			modifier = "shift",
 			states = "[mod:shift] shift1; laststate",
+			visibility = "[nomod:shift] shift0; [mod:shift] shift1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 6,
 			localizedName = L["Shift"],
 		},
 
 		stealth = {
 			modifier = "stealth",
 			states = "[stealth] stealth1; laststate",
+			visibility = "[nostealth] stealth0; [stealth] stealth1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 7,
 			localizedName = L["Stealth"],
 		},
 
 		reaction = {
 			modifier = "reaction",
 			states = "[@target,harm] reaction1; laststate",
+			visibility = "[@target,help] reaction0; [@target,harm] reaction1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 8,
 			localizedName = L["Reaction"],
 		},
 
 		vehicle = {
 			modifier = "vehicle",
 			states = "[vehicleui] vehicle1; laststate",
+			visibility = "[novehicleui] vehicle0; [vehicleui] vehicle1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 9,
 			localizedName = L["Vehicle"],
 		},
 
 		group = {
 			modifier = "group",
 			states = "[group:raid] group1; [group:party] group2; laststate",
+			visibility = "[nogroup] group0; [group:raid] group1; [group:party] group2",
 			rangeStart = 1,
 			rangeStop = 2,
-			order = 10,
 			localizedName = L["Group"],
 		},
 
 		fishing = {
 			modifier = "fishing",
 			states = "[worn:fishing poles] fishing1; laststate",
+			visibility = "[noworn:fishing poles] fishing0; [worn:fishing poles] fishing1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 11,
 			localizedName = L["Fishing"],
-		},
-
-		custom = {
-			modifier = "custom",
-			states = "",
-			rangeStart = 1,
-			rangeStop = 1,
-			order = 12,
-			localizedName = L["Custom"],
 		},
 
 		combat = {
 			modifier = "combat",
 			states = "[combat] combat1; laststate",
+			visibility = "[nocombat] combat0; [combat] combat1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 13,
 			localizedName = L["Combat"],
 		},
 
 		possess = {
 			modifier = "possess",
 			states = "[possessbar] possess1; laststate",
+			visibility = "[nopossessbar] possess0; [possessbar] possess1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 14,
 			localizedName = L["Possess"],
 		},
 
 		override = {
 			modifier = "override",
 			states = "[overridebar] override1; laststate",
+			visibility = "[nooverridebar] override0; [overridebar] override1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 15,
 			localizedName = L["Override"],
-		},
-
-		extrabar = {
-			modifier = "extrabar",
-			states = "[extrabar] extrabar1; laststate",
-			rangeStart = 1,
-			rangeStop = 1,
-			order = 16,
-			localizedName = L["Extrabar"],
 		},
 
 		target = {
 			modifier = "target",
 			states = "[exists] target1; laststate",
+			visibility = "[noexists] target0; [exists] target1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 17,
 			localizedName = L["Target"],
 		},
 		indoors = {
 			modifier = "indoors",
 			states = "[indoors] indoors1; laststate",
+			visibility = "[noindoors] indoors0; [indoors] indoors1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 18,
 			localizedName = L["Indoors"],
 		},
 		outdoors = {
 			modifier = "outdoors",
 			states = "[outdoors] outdoors1; laststate",
+			visibility = "[nooutdoors] outdoors0; [outdoors] outdoors1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 19,
 			localizedName = L["Outdoors"],
 		},
 		mounted = {
 			modifier = "mounted",
 			states = "[mounted] mounted1; laststate",
+			visibility = "[nomounted] mounted0; [mounted] mounted1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 20,
 			localizedName = L["Mounted"],
 		},
 		flying = {
 			modifier = "flying",
 			states = "[flying] flying1; laststate",
+			visibility = "[noflying] flying0; [flying] flying1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 21,
 			localizedName = L["Flying"],
 		},
 		help = {
 			modifier = "help",
 			states = "[help] help1; laststate",
+			visibility = "[nohelp] help0; [help] help1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 22,
 			localizedName = L["Help"],
 		},
 		harm = {
 			modifier = "harm",
 			states = "[harm] harm1; laststate",
+			visibility = "[noharm] harm0; [harm] harm1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 23,
 			localizedName = L["Harm"],
 		},
 		resting = {
 			modifier = "resting",
 			states = "[resting] resting1; laststate",
+			visibility = "[noresting] resting0; [resting] resting1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 24,
 			localizedName = L["Resting"],
 		},
 		swimming = {
 			modifier = "swimming",
 			states = "[swimming] swimming1; laststate",
+			visibility = "[noswimming] swimming0; [swimming] swimming1",
 			rangeStart = 1,
 			rangeStop = 1,
-			order = 25,
 			localizedName = L["Swimming"],
 		},
 	}
+
+	Neuron.MANAGED_OTHER_STATES = {
+		custom = {
+			modifier = "custom",
+			states = "",
+			rangeStart = 1,
+			rangeStop = 1,
+			localizedName = L["Custom"],
+		},
+
+		extrabar = {
+			modifier = "extrabar",
+			states = "[extrabar] extrabar1; laststate",
+			visibility = "[noextrabar] extrabar0; [extrabar] extrabar1",
+			rangeStart = 1,
+			rangeStop = 1,
+			localizedName = L["Extrabar"],
+		},
+	}
+
+	Neuron.MANAGED_BAR_STATES = {}
+	MergeTable(Neuron.MANAGED_BAR_STATES, Neuron.MANAGED_HOME_STATES)
+	MergeTable(Neuron.MANAGED_BAR_STATES, Neuron.MANAGED_SECONDARY_STATES)
+	MergeTable(Neuron.MANAGED_BAR_STATES, Neuron.MANAGED_OTHER_STATES)
 end

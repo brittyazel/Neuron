@@ -134,8 +134,10 @@ function Neuron:PrintStateList()
 	local data = {}
 	local list
 
+	local count = 1
 	for _,v in pairs(Neuron.MANAGED_BAR_STATES) do
-		data[v.order] = v.localizedName
+		data[count] = v.localizedName
+		count = count + 1
 	end
 
 	for _,v in ipairs(data) do

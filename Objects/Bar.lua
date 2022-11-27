@@ -528,9 +528,9 @@ function Bar:UpdateBarVisibility(driver)
 					self.vis[state] = {}
 				end
 				if state == "stance" and self.data.hidestates:find(":stance8") then
-					self:AddVisibilityDriver(driver,state, "[stance:2/3,stealth] stance8; "..values.states)
+					self:AddVisibilityDriver(driver,state, "[stance:2/3,stealth] stance8; "..values.visibility)
 				else
-					self:AddVisibilityDriver(driver, state, values.states)
+					self:AddVisibilityDriver(driver, state, values.visibility)
 				end
 			end
 		elseif self.vis[state] and self.vis[state].registered then
@@ -1674,89 +1674,30 @@ function Bar:SetState(msg, gui, checked)
 end
 
 --TODO: Rewrite this and simplify it
-function Bar:SetVisibility(msg)
-	wipe(statetable)
-	local toggle, index, num = (" "):split(msg)
+---@param toggle string
+---@param visible boolean
+function Bar:SetVisibility(toggle, visible)
 	toggle = toggle:lower()
 
-	if toggle and Neuron.MANAGED_BAR_STATES[toggle] then
-		if index then
-			num = index:match("%d+")
-
-			if num then
-				local hidestate = Neuron.MANAGED_BAR_STATES[toggle].modifier..num
-				if Neuron.STATES[hidestate] or (toggle == "custom" and self.data.customNames) then
-					if self.data.hidestates:find(hidestate) then
-						self.data.hidestates = self.data.hidestates:gsub(hidestate..":", "")
-					else
-						self.data.hidestates = self.data.hidestates..hidestate..":"
-					end
-				else
-					Neuron:Print(L["Invalid index"]); return
-				end
-
-			elseif index == L["Show"] then
-				local hidestate = Neuron.MANAGED_BAR_STATES[toggle].modifier.."%d+"
-				self.data.hidestates = self.data.hidestates:gsub(hidestate..":", "")
-			elseif index == L["Hide"] then
-				local hidestate = Neuron.MANAGED_BAR_STATES[toggle].modifier
-
-				for state in pairs(Neuron.STATES) do
-					if state:find("^"..hidestate) and not self.data.hidestates:find(state) then
-						self.data.hidestates = self.data.hidestates..state..":"
-					end
-				end
-			end
-		end
-
-
-		local hidestates = self.data.hidestates
-		local showhide
-
-		local highindex = 0
-
-		for state,desc in pairs(Neuron.STATES) do
-			index = state:match("%d+$")
-
-			if index then
-				index = tonumber(index)
-
-				if index and state:find("^"..toggle) then
-					if hidestates:find(state) then
-						statetable[index] = desc..":".."Hide:"..state
-					else
-						statetable[index] = desc..":".."Show:"..state
-					end
-
-					if index > highindex then
-						highindex = index
-					end
-				end
-			end
-		end
-
-		for i=1,highindex do
-			if not statetable[i] then
-				statetable[i] = "ignore"
-			end
-		end
-
-		if #statetable > 0 then
-
-			for k,v in ipairs(statetable) do
-				if v ~= "ignore" then
-					desc, showhide = (":"):split(v)
-				end
-			end
-		end
-
-
-		self.vischanged = true
-		self:UpdateBarStatus()
-	else
-		Neuron:PrintStateList()
+	if not toggle
+		or not Neuron.STATES[toggle]
+	then
+		return
 	end
 
+	-- update the preferences - model
+	if Neuron.STATES[toggle] or (toggle == "custom" and self.data.customNames) then
+		if visible and self.data.hidestates:find(toggle) then
+			self.data.hidestates = self.data.hidestates:gsub(toggle..":", "")
+		elseif not visible and not self.data.hidestates:find(toggle) then
+			self.data.hidestates = self.data.hidestates..toggle..":"
+		end
+	else
+		Neuron:Print(L["Invalid index"]); return
+	end
+
+	self.vischanged = true
+	self:UpdateBarStatus()
 end
 
 

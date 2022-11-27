@@ -730,13 +730,21 @@ function ActionButton:UpdateAll()
 	end
 end
 
+---@return {}|{spell: string, spellID: number, unit:string}|{item:string, unit:string}
 function ActionButton.ExtractMacroData(macro)
 	if not macro then
 		return {}
 	end
 
 	-- the results. probably either spell or item will be nil
-	local spell, spellID, item, unit
+	---@type string|nil
+	local spell
+	---@type number|nil
+	local spellID
+	---@type string|nil
+	local item
+	---@type string
+	local unit
 
 	--extract the parsed contents of a macro and assign them for further processing
 	local command, abilityOrItem, target
@@ -844,6 +852,7 @@ function ActionButton:UpdateIcon()
 	-- then we can build our data from our ActionButton instead of using
 	-- the database values. but we need to keep GetAppearance stateless
 	-- so that we can use it in other contexts: like the settings dialog
+	---@type GenericSpecData
 	local data = (
 		self.DB
 		and self.DB[spec][state]
@@ -856,18 +865,19 @@ function ActionButton:UpdateIcon()
 	self:UpdateNormalTexture()
 end
 
---- @param data genericSpecData: actionID, macro_Text, macro_Icon
---- @return texture, border an icon texture, and an rgb tuple, both nilable
-function ActionButton:GetAppearance(data)
-	if data.actionID then
-		return self.GetActionAppearance(data.actionID)
-	end
+---@alias Border {[1]:number,[2]:number,[3]:number,[4]:number}|nil
+---@alias TextureRef number|string
 
+--- @param data GenericSpecData
+--- @return TextureRef, Border an icon texture, and an rgb tuple, both nilable
+function ActionButton:GetAppearance(data)
 	local spellItem = self.ExtractMacroData(self.SanitizedMacro(data.macro_Text))
 	local spell, item = spellItem.spell, spellItem.item
-
 	local texture, border
-	if spell then
+
+	if data.actionID then
+		return self.GetActionAppearance(data.actionID)
+	elseif spell then
 		texture, border = self.GetSpellAppearance(spell)
 	elseif item then
 		texture, border = self.GetItemAppearance(item)
@@ -899,12 +909,13 @@ function ActionButton:ApplyAppearance(texture, border)
 	end
 end
 
---- @return texture, border an icon texture, and an rgb tuple, both nilable
+--- @return number|string, nil @an icon texture, and an rgb tuple, both nilable
 function ActionButton.GetSpellAppearance(spell)
 	--Hide the border in case this button used to have an equipped item in it
 	--otherwise it will continue to have a green border until a reload takes place
 	local border = nil
 
+	---@type number|string|nil
 	local texture = GetSpellTexture(spell)
 
 	if not texture then
@@ -920,14 +931,15 @@ function ActionButton.GetSpellAppearance(spell)
 	return texture, border
 end
 
---- @return texture, border an icon texture, and an rgb tuple, both nilable
+--- @return number|string, Border @an icon texture, and an rgb tuple, both nilable
 function ActionButton.GetItemAppearance(item)
 	local border = nil
+	---@type number|string|nil
 	local texture = GetItemIcon(item)
 
 	if not texture then
 		if Neuron.itemCache[item:lower()] then
-			texture = GetItemIcon("item:"..Neuron.itemCache[item:lower()]..":0:0:0:0:0:0:0")
+			texture = GetItemIcon("item:"..Neuron.itemCache[item:lower()]..":0:0:0:0:0:0:0"--[[@as number]])
 		end
 	end
 
