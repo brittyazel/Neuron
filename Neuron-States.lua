@@ -9,6 +9,7 @@ local Neuron = addonTable.Neuron
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 function Neuron.UpdateStanceStrings()
+	-- these are the results of the states macro conditional in the MANAGED_SECONDARY_STATES table
 	Neuron.VISIBILITY_STATES = {
 		paged1 = L["Page 1"],
 		paged2 = L["Page 2"],
@@ -108,7 +109,8 @@ function Neuron.UpdateStanceStrings()
 		pet = {
 			modifier = "pet",
 			homestate = "pet1",
-			states = "[nopet] pet1; [@pet,exists,nodead] pet2",
+			--states = "[nopet] pet1; [@pet,exists,nodead] pet2",
+			states = "[vehicleui] pet0; [possessbar] pet0; [overridebar] pet0; [nopet] pet0; [pet] pet1",
 			rangeStart = 2,
 			rangeStop = 3,
 			localizedName = L["Pet"],
@@ -117,7 +119,8 @@ function Neuron.UpdateStanceStrings()
 	Neuron.MANAGED_SECONDARY_STATES = {
 		alt = {
 			modifier = "alt",
-			states = "[mod:alt] alt1; laststate",
+			--states = "[mod:alt] alt1; laststate",
+			states = "[nomod:alt] alt0; [mod:alt] alt1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Alt"],
@@ -125,7 +128,8 @@ function Neuron.UpdateStanceStrings()
 
 		ctrl = {
 			modifier = "ctrl",
-			states = "[mod:ctrl] ctrl1; laststate",
+			--states = "[mod:ctrl] ctrl1; laststate",
+			states = "[nomod:ctrl] ctrl0; [mod:ctrl] ctrl1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Ctrl"],
@@ -133,7 +137,8 @@ function Neuron.UpdateStanceStrings()
 
 		shift = {
 			modifier = "shift",
-			states = "[mod:shift] shift1; laststate",
+			--states = "[mod:shift] shift1; laststate",
+			states = "[nomod:shift] shift0; [mod:shift] shift1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Shift"],
@@ -141,7 +146,8 @@ function Neuron.UpdateStanceStrings()
 
 		stealth = {
 			modifier = "stealth",
-			states = "[stealth] stealth1; laststate",
+			--states = "[stealth] stealth1; laststate",
+			states = "[nostealth] stealth0; [stealth] stealth1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Stealth"],
@@ -149,7 +155,8 @@ function Neuron.UpdateStanceStrings()
 
 		reaction = {
 			modifier = "reaction",
-			states = "[@target,harm] reaction1; laststate",
+			--states = "[@target,harm] reaction1; laststate",
+			states = "[@target,help] reaction0; [@target,harm] reaction1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Reaction"],
@@ -157,7 +164,8 @@ function Neuron.UpdateStanceStrings()
 
 		vehicle = {
 			modifier = "vehicle",
-			states = "[vehicleui] vehicle1; laststate",
+			--states = "[vehicleui] vehicle1; laststate",
+			states = "[novehicleui] vehicle0; [vehicleui] vehicle1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Vehicle"],
@@ -165,7 +173,8 @@ function Neuron.UpdateStanceStrings()
 
 		group = {
 			modifier = "group",
-			states = "[group:raid] group1; [group:party] group2; laststate",
+			--states = "[group:raid] group1; [group:party] group2; laststate",
+			states = "[nogroup] group0; [group:raid] group1; [group:party] group2",
 			rangeStart = 1,
 			rangeStop = 2,
 			localizedName = L["Group"],
@@ -173,7 +182,8 @@ function Neuron.UpdateStanceStrings()
 
 		fishing = {
 			modifier = "fishing",
-			states = "[worn:fishing poles] fishing1; laststate",
+			--states = "[worn:fishing poles] fishing1; laststate",
+			states = "[noworn:fishing poles] fishing0; [worn:fishing poles] fishing1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Fishing"],
@@ -181,7 +191,8 @@ function Neuron.UpdateStanceStrings()
 
 		combat = {
 			modifier = "combat",
-			states = "[combat] combat1; laststate",
+			--states = "[combat] combat1; laststate",
+			states = "[nocombat] combat0; [combat] combat1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Combat"],
@@ -189,7 +200,8 @@ function Neuron.UpdateStanceStrings()
 
 		possess = {
 			modifier = "possess",
-			states = "[possessbar] possess1; laststate",
+			--states = "[possessbar] possess1; laststate",
+			states = "[nopossessbar] possess0; [possessbar] possess1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Possess"],
@@ -197,7 +209,8 @@ function Neuron.UpdateStanceStrings()
 
 		override = {
 			modifier = "override",
-			states = "[overridebar] override1; laststate",
+			--states = "[overridebar] override1; laststate",
+			states = "[nooverridebar] override0; [overridebar] override1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Override"],
@@ -205,63 +218,72 @@ function Neuron.UpdateStanceStrings()
 
 		target = {
 			modifier = "target",
-			states = "[exists] target1; laststate",
+			--states = "[exists] target1; laststate",
+			states = "[noexists] target0; [exists] target1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Target"],
 		},
 		indoors = {
 			modifier = "indoors",
-			states = "[indoors] indoors1; laststate",
+			--states = "[indoors] indoors1; laststate",
+			states = "[noindoors] indoors0; [indoors] indoors1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Indoors"],
 		},
 		outdoors = {
 			modifier = "outdoors",
-			states = "[outdoors] outdoors1; laststate",
+			--states = "[outdoors] outdoors1; laststate",
+			states = "[nooutdoors] outdoors0; [outdoors] outdoors1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Outdoors"],
 		},
 		mounted = {
 			modifier = "mounted",
-			states = "[mounted] mounted1; laststate",
+			--states = "[mounted] mounted1; laststate",
+			states = "[nomounted] mounted0; [mounted] mounted1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Mounted"],
 		},
 		flying = {
 			modifier = "flying",
-			states = "[flying] flying1; laststate",
+			--states = "[flying] flying1; laststate",
+			states = "[noflying] flying0; [flying] flying1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Flying"],
 		},
 		help = {
 			modifier = "help",
-			states = "[help] help1; laststate",
+			--states = "[help] help1; laststate",
+			states = "[nohelp] help0; [help] help1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Help"],
 		},
 		harm = {
 			modifier = "harm",
-			states = "[harm] harm1; laststate",
+			--states = "[harm] harm1; laststate",
+			states = "[noharm] harm0; [harm] harm1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Harm"],
 		},
 		resting = {
 			modifier = "resting",
-			states = "[resting] resting1; laststate",
+			--states = "[resting] resting1; laststate",
+			states = "[noresting] resting0; [resting] resting1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Resting"],
 		},
 		swimming = {
 			modifier = "swimming",
-			states = "[swimming] swimming1; laststate",
+			--states = "[swimming] swimming1; laststate",
+			states = "[noswimming] swimming0; [swimming] swimming1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Swimming"],
@@ -279,7 +301,8 @@ function Neuron.UpdateStanceStrings()
 
 		extrabar = {
 			modifier = "extrabar",
-			states = "[extrabar] extrabar1; laststate",
+			--states = "[extrabar] extrabar1; laststate",
+			states = "[noextrabar] extrabar0; [extrabar] extrabar1",
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Extrabar"],
