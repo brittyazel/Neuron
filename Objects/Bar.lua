@@ -1557,19 +1557,9 @@ function Bar:SetState(msg, gui, checked)
 		end
 
 		if gui then
-			if checked then
-				self.data[state] = true
-			else
-				self.data[state] = false
-			end
+			self.data[state] = not not checked
 		else
-			local toggle = self.data[state]
-
-			if toggle then
-				self.data[state] = false
-			else
-				self.data[state] = true
-			end
+			self.data[state] = not self.data[state]
 		end
 
 		if state == "paged" then

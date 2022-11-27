@@ -53,6 +53,21 @@ local Array; Array = {
 		return newArray
 	end,
 
+	---remove items from an array if a test function returns falsey
+	---@generic A
+	---@param fn fun(a:`A`):boolean @test function
+	---@param array A[] @input array
+	---@return number|nil, A|nil @position of element
+	find = function (fn, array)
+		for i,v in ipairs(array) do
+			if fn(v) then
+				return i, v
+			end
+		end
+
+		return nil
+	end,
+
 	---aka reduce
 	---@generic A, B
 	---@param fn fun(a: `A`, b: `B`):A
