@@ -9,9 +9,7 @@ local Neuron = addonTable.Neuron
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
 function Neuron.UpdateStanceStrings()
-	Neuron.STATES = {
-		homestate = L["Home State"],
-		laststate = L["Last State"],
+	Neuron.VISIBILITY_STATES = {
 		paged1 = L["Page 1"],
 		paged2 = L["Page 2"],
 		paged3 = L["Page 3"],
@@ -46,10 +44,15 @@ function Neuron.UpdateStanceStrings()
 		override1 = L["Override Bar"],
 		extrabar0 = L["No Extra Bar"],
 		extrabar1 = L["Extra Bar"],
-		custom0 = L["Custom States"],
 		target0 = L["Has Target"],
 		target1 = L["No Target"],
 	}
+	Neuron.STATES = {
+		homestate = L["Home State"],
+		laststate = L["Last State"],
+		custom0 = L["Custom States"],
+	}
+	MergeTable(Neuron.STATES, Neuron.VISIBILITY_STATES)
 
 
 	--- this is actually a lot of classes. rogues stealth, paladins have
