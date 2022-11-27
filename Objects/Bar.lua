@@ -528,9 +528,9 @@ function Bar:UpdateBarVisibility(driver)
 					self.vis[state] = {}
 				end
 				if state == "stance" and self.data.hidestates:find(":stance8") then
-					self:AddVisibilityDriver(driver,state, "[stance:2/3,stealth] stance8; "..values.states)
+					self:AddVisibilityDriver(driver,state, "[stance:2/3,stealth] stance8; "..values.visibility)
 				else
-					self:AddVisibilityDriver(driver, state, values.states)
+					self:AddVisibilityDriver(driver, state, values.visibility)
 				end
 			end
 		elseif self.vis[state] and self.vis[state].registered then
