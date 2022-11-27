@@ -13,9 +13,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 local Array = addonTable.utilities.Array
 
-function barVisibilityOptions()
-	local bar = Neuron.CurrentBar
-
+local function barVisibilityOptions()
 	local stateList =
     Array.map(
     function (state)
@@ -30,8 +28,6 @@ function barVisibilityOptions()
       stateList
     )
   end
-
-	local button, text
 
 	local visibilityStatesContainer = AceGUI:Create("SimpleGroup")
 	visibilityStatesContainer:SetFullWidth(true)
@@ -56,7 +52,22 @@ function NeuronGUI:BarVisibilityPanel(tabFrame)
 	settingContainer:SetFullWidth(true)
 	settingContainer:SetLayout("Flow")
 
-  settingContainer:AddChild(barVisibilityOptions())
 
+  --sometimes the apply button doesn't appear
+  --so far it doesn't seem to happen when it is in
+  --it's own group :-/
+	local reloadButtonContainer = AceGUI:Create("SimpleGroup")
+	reloadButtonContainer:SetFullWidth(true)
+	reloadButtonContainer:SetLayout("Flow")
+
+  --visibility status doesn't apply properly
+  --so just suggest a ui reload with this apply button
+  local reloadButton = AceGUI:Create("Button")
+  reloadButton:SetText(L["Apply"])
+  reloadButton:SetCallback("OnClick", ReloadUI)
+  reloadButtonContainer:AddChild(reloadButton)
+
+  settingContainer:AddChild(barVisibilityOptions())
+  settingContainer:AddChild(reloadButtonContainer)
   tabFrame:AddChild(settingContainer)
 end
