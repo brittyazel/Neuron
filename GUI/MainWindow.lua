@@ -58,6 +58,10 @@ function NeuronGUI:CreateEditor(defaultTab)
 	addonTable.NeuronEditor:SetCallback("OnClose", function() NeuronGUI:DestroyEditor() end)
 	addonTable.NeuronEditor:SetLayout("Fill")
 
+	-- make the thing closable with escape
+	_G.NeuronEditorMainFrame = addonTable.NeuronEditor
+	tinsert(UISpecialFrames, "NeuronEditorMainFrame")
+
 	if defaultTab then
 		currentTab = defaultTab
 	end
