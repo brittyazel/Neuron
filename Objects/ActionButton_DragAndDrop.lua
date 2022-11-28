@@ -144,11 +144,14 @@ end
 
 --we need to hook to the WorldFrame OnReceiveDrag and OnMouseDown so that we can "let go" of the spell when we drag it off the bar
 function ActionButton:WorldFrame_OnReceiveDrag()
-	SetCursor(nil)
-	ClearCursor()
-	Neuron.dragging = false
+	--CAREFUL! see brittyazel/Neuron/issues/468
+	--only do something if there's currently data in macroDrag. Otherwise it is
+	--just for normal Blizzard behavior.
+	if #macroDrag > 0 then
+		SetCursor(nil)
+		ClearCursor()
+		Neuron.dragging = false
 
-	if #macroDrag > 0 then --only do something if there's currently data in macroDrag. Otherwise it is just for normal Blizzard behavior
 		wipe(macroDrag)
 		wipe(macroCache)
 	end
