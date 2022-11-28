@@ -259,6 +259,9 @@ function CastButton:OnUpdate(elapsed)
 		return
 	end
 
+	if not castWatch[self:GetUnit()] then
+		castWatch[self:GetUnit()] = {}
+	end
 	if self.maxValue then
 		castWatch[self:GetUnit()].timer = string.format("%0.1f", self.value).."/"..format("%0.1f", self.maxValue)
 	else
@@ -356,8 +359,10 @@ end
 -------------------Sets and Gets---------------------
 -----------------------------------------------------
 
+---@alias BarUnit "player"|"pet"|"target"|"targettarget"|"focus"|"mouseover"|"party1"|"party2"|"party3"|"party4"
+
+---@param unit BarUnid
 function CastButton:SetUnit(unit)
-	--possible types are "player", "pet", "target", "targettarget", "focus", "mouseover", "party1", "party2", "party3", or "party4"
 	if unit then
 		self.config.unit = unit
 	else

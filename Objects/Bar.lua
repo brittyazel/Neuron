@@ -932,6 +932,8 @@ function Bar:UpdateBarStatus(show)
 		self.vischanged = false
 	end
 
+	-- the fix for github #362 goes here: SetHidden conceal concealed
+	-- possibly autohide is broken as well and that will go here as well
 	self.Text:SetText(self:GetBarName())
 	self.handler:SetAlpha(self:GetBarAlpha())
 end

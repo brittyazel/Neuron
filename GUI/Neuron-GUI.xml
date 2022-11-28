@@ -14,5 +14,6 @@
 	<Script file="BarEditTab_BarStatesPanel.lua"/>
 	<Script file="BarEditTab_BarVisibilityPanel.lua"/>
 	<Script file="ButtonEditTab.lua"/>
+	<Script file="ButtonStatusEditTab.lua"/>
 	<Script file="IconSelectorPanel.lua"/>
 </Ui>
