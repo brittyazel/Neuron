@@ -12,7 +12,7 @@ Neuron.StatusButton = StatusButton
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 
-local BAR_TEXTURES = {
+Neuron.BAR_TEXTURES = {
 	[1] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Default_2", L["Default"] },
 	[2] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Contrast_2", L["Contrast"] },
 	[3] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Carpaint_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Carpaint_2", L["Carpaint"] },
@@ -22,14 +22,14 @@ local BAR_TEXTURES = {
 	[7] = { "Interface\\AddOns\\Neuron\\Images\\BarFill_Velvet_1", "Interface\\AddOns\\Neuron\\Images\\BarFill_Velvet_3", L["Velvet"] },
 }
 
-local BAR_BORDERS = {
+Neuron.BAR_BORDERS = {
 	[1] = { L["Tooltip"], "Interface\\Tooltips\\UI-Tooltip-Border", 2, 2, 3, 3, 12, 12, -2, 3, 2, -3 },
 	[2] = { L["Slider"], "Interface\\Buttons\\UI-SliderBar-Border", 3, 3, 6, 6, 8, 8 , -1, 5, 1, -5 },
 	[3] = { L["Dialog"], "Interface\\AddOns\\Neuron\\Images\\Border_Dialog", 11, 12, 12, 11, 26, 26, -7, 7, 7, -7 },
 	[4] = { L["None"], "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 }
 
-local BAR_ORIENTATIONS = {
+Neuron.BAR_ORIENTATIONS = {
 	[1] = "Horizontal",
 	[2] = "Vertical",
 }
@@ -96,7 +96,7 @@ function StatusButton:InitializeButtonSettings()
 	self.StatusBar.MouseoverText:SetText(self:mFunc())
 
 	self.orientation = self.config.orientation
-	self.StatusBar:SetOrientation(BAR_ORIENTATIONS[self.config.orientation]:lower())
+	self.StatusBar:SetOrientation(Neuron.BAR_ORIENTATIONS[self.config.orientation]:lower())
 
 	if self.config.orientation == 2 then
 		self.StatusBar.CenterText:SetAlpha(0)
@@ -110,10 +110,10 @@ function StatusButton:InitializeButtonSettings()
 		self.StatusBar.MouseoverText:SetAlpha(1)
 	end
 
-	if BAR_TEXTURES[self.config.texture] then
-		self.StatusBar:SetStatusBarTexture(BAR_TEXTURES[self.config.texture][self.config.orientation])
+	if Neuron.BAR_TEXTURES[self.config.texture] then
+		self.StatusBar:SetStatusBarTexture(Neuron.BAR_TEXTURES[self.config.texture][self.config.orientation])
 	else
-		self.StatusBar:SetStatusBarTexture(BAR_TEXTURES[1][self.config.orientation])
+		self.StatusBar:SetStatusBarTexture(Neuron.BAR_TEXTURES[1][self.config.orientation])
 	end
 
 	self:SetBorder()
@@ -122,20 +122,20 @@ end
 function StatusButton:SetBorder()
 	self.StatusBar.Border:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = BAR_BORDERS[self.config.border][2],
+		edgeFile = Neuron.BAR_BORDERS[self.config.border][2],
 		tile = true,
-		tileSize = BAR_BORDERS[self.config.border][7],
-		edgeSize = BAR_BORDERS[self.config.border][8],
+		tileSize = Neuron.BAR_BORDERS[self.config.border][7],
+		edgeSize = Neuron.BAR_BORDERS[self.config.border][8],
 		insets = {
-			left = BAR_BORDERS[self.config.border][3],
-			right = BAR_BORDERS[self.config.border][4],
-			top = BAR_BORDERS[self.config.border][5],
-			bottom = BAR_BORDERS[self.config.border][6]
+			left = Neuron.BAR_BORDERS[self.config.border][3],
+			right = Neuron.BAR_BORDERS[self.config.border][4],
+			top = Neuron.BAR_BORDERS[self.config.border][5],
+			bottom = Neuron.BAR_BORDERS[self.config.border][6]
 		}
 	})
 
-	self.StatusBar.Border:SetPoint("TOPLEFT", BAR_BORDERS[self.config.border][9], BAR_BORDERS[self.config.border][10])
-	self.StatusBar.Border:SetPoint("BOTTOMRIGHT", BAR_BORDERS[self.config.border][11], BAR_BORDERS[self.config.border][12])
+	self.StatusBar.Border:SetPoint("TOPLEFT", Neuron.BAR_BORDERS[self.config.border][9], Neuron.BAR_BORDERS[self.config.border][10])
+	self.StatusBar.Border:SetPoint("BOTTOMRIGHT", Neuron.BAR_BORDERS[self.config.border][11], Neuron.BAR_BORDERS[self.config.border][12])
 
 	self.StatusBar.Border:SetBackdropColor(0, 0, 0, 0)
 	self.StatusBar.Border:SetBackdropBorderColor(self.config.borderColor[1], self.config.borderColor[2], self.config.borderColor[3], 1)
@@ -145,15 +145,15 @@ function StatusButton:SetBorder()
 
 	self.StatusBar.BarFlash:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-		edgeFile = BAR_BORDERS[self.config.border][2],
+		edgeFile = Neuron.BAR_BORDERS[self.config.border][2],
 		tile = true,
-		tileSize = BAR_BORDERS[self.config.border][7],
-		edgeSize = BAR_BORDERS[self.config.border][8],
+		tileSize = Neuron.BAR_BORDERS[self.config.border][7],
+		edgeSize = Neuron.BAR_BORDERS[self.config.border][8],
 		insets = {
-			left = BAR_BORDERS[self.config.border][3],
-			right = BAR_BORDERS[self.config.border][4],
-			top = BAR_BORDERS[self.config.border][5],
-			bottom = BAR_BORDERS[self.config.border][6]
+			left = Neuron.BAR_BORDERS[self.config.border][3],
+			right = Neuron.BAR_BORDERS[self.config.border][4],
+			top = Neuron.BAR_BORDERS[self.config.border][5],
+			bottom = Neuron.BAR_BORDERS[self.config.border][6]
 		}
 	})
 end
@@ -221,15 +221,15 @@ end
 
 function StatusButton:UpdateBarFill(command)
 	local index = tonumber(command)
-	if index and BAR_TEXTURES[index] then
+	if index and Neuron.BAR_TEXTURES[index] then
 		self.config.texture = index
-		self.StatusBar:SetStatusBarTexture(BAR_TEXTURES[self.config.texture][self.config.orientation])
+		self.StatusBar:SetStatusBarTexture(Neuron.BAR_TEXTURES[self.config.texture][self.config.orientation])
 	end
 end
 
 function StatusButton:UpdateBorder(command)
 	local index = tonumber(command)
-	if index and BAR_BORDERS[index] then
+	if index and Neuron.BAR_BORDERS[index] then
 		self.config.border = index
 		self:SetBorder()
 	end
@@ -242,7 +242,7 @@ function StatusButton:UpdateOrientation(command)
 		if self.config.orientation ~= index then
 			self.config.orientation = index
 			self.orientation = self.config.orientation
-			self.StatusBar:SetOrientation(BAR_ORIENTATIONS[self.config.orientation]:lower())
+			self.StatusBar:SetOrientation(Neuron.BAR_ORIENTATIONS[self.config.orientation]:lower())
 
 			if self.config.orientation == 2 then
 				self.StatusBar.CenterText:SetAlpha(0)

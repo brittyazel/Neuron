@@ -12,6 +12,8 @@ Neuron.NeuronGUI = NeuronGUI
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
 
+local Array = addonTable.utilities.Array
+
 local currentTab = "bar" --remember which tab we were using between refreshes
 
 -----------------------------------------------------------------------------
@@ -58,6 +60,10 @@ function NeuronGUI:CreateEditor(defaultTab)
 	addonTable.NeuronEditor:SetCallback("OnClose", function() NeuronGUI:DestroyEditor() end)
 	addonTable.NeuronEditor:SetLayout("Fill")
 
+	-- make the thing closable with escape
+	_G.NeuronEditorMainFrame = addonTable.NeuronEditor
+	tinsert(UISpecialFrames, "NeuronEditorMainFrame")
+
 	if defaultTab then
 		currentTab = defaultTab
 	end
@@ -77,14 +83,28 @@ end
 
 function NeuronGUI:PopulateEditorWindow()
 	local tabs ={{text="Bar Settings", value="bar"}}
-	if Neuron.currentBar.barType ~= "ActionBar" then
-		-- make sure that we switch to the bar tab
-		-- when selecting a non-action bar
-		currentTab = "bar"
-	else
+	if Neuron.currentBar.barType == "ActionBar" then
 		-- only action bars have editable buttons
-		table.insert(tabs, {text="Button Settings", value="button"})
+		table.insert(tabs, {text=L["Configure Buttons"], value="button"})
+	elseif Neuron.currentBar.barType == "XPBar" then
+		table.insert(tabs, {text=L["Configure Appearance"], value="status"})
+	elseif Neuron.currentBar.barType == "RepBar" then
+		table.insert(tabs, {text=L["Configure Appearance"], value="status"})
+	elseif Neuron.currentBar.barType == "CastBar" then
+		table.insert(tabs, {text=L["Configure Appearance"], value="status"})
+	elseif Neuron.currentBar.barType == "MirrorBar" then
+		table.insert(tabs, {text=L["Configure Appearance"], value="status"})
 	end
+
+	-- make sure that we switch to the bar tab
+	-- when selecting a bar without the current tab
+	currentTab = Array.foldl(
+		function(current, candidate)
+			return candidate.value == currentTab and currentTab or current
+		end,
+		"bar",
+		tabs
+	)
 
 	--Tab group that will contain all of our settings to configure
 	local tabFrame = AceGUI:Create("TabGroup")
@@ -104,6 +124,8 @@ function NeuronGUI:SelectTab(tabFrame, _, value)
 		-- whenever we change a button, RefreshEditor is called upstream
 		-- so we don't need to keep track of updating currentButton here
 		NeuronGUI:ButtonsEditPanel(tabFrame)
+	elseif value == "status" then
+		NeuronGUI:ButtonStatusEditPanel(tabFrame)
 	else
 		return -- if we get here we forgot to add a tab!
 	end

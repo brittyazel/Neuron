@@ -383,7 +383,7 @@ end
 function Button:UpdateNormalTexture()
 	local actionTexture, noactionTexture
 
-	if self.__MSQ_NormalSkin then
+	if self.__MSQ_NormalSkin and self.__MSQ_NormalSkin.Texture then
 		actionTexture = self.__MSQ_NormalSkin.Texture
 		noactionTexture = self.__MSQ_NormalSkin.Texture.EmptyTexture
 	else

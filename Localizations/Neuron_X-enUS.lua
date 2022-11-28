@@ -257,6 +257,8 @@ L["Right-Click"] = true
 
 L["Configure Bars"] = true
 L["Configure Buttons"] = true
+L["Configure Buttons"] = true
+L["Configure Appearance"] = true
 
 L["Toggle Keybind Mode"] = true
 L["Open the Interface Menu"] = true
