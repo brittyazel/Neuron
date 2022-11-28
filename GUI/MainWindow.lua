@@ -51,7 +51,7 @@ function NeuronGUI:CreateEditor(defaultTab)
 	-- assuming that 720p is a reasonable minimum target for what people will be using
 	-- my ryzen 7 gen 4 laptop with integrated RDNA graphics can not do much more
 	addonTable.NeuronEditor:SetWidth("760")
-	addonTable.NeuronEditor:SetHeight("700")
+	addonTable.NeuronEditor:SetHeight("850")
 	if Neuron.currentBar then
 		addonTable.NeuronEditor:SetStatusText("|cffffd200" .. Neuron.currentBar:GetBarName().."|cFFFFFFFF is currently selected. Left-click a different bar to change your selection.")
 	else
