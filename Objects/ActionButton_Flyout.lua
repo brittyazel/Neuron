@@ -1146,7 +1146,7 @@ function ActionButton:Flyout_GetButton()
 	newButton:SetID(0)
 	newButton:SetToplevel(true)
 	newButton.objTIndex = id
-	newButton.objType = "FLYOUTButton"
+	newButton.objType = "FlyoutButton"
 	newButton.data = { macro_Text = "" }
 
 	newButton.anchor = self

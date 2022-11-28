@@ -44,7 +44,7 @@ function Button.new(bar, buttonID, baseObj, barClass, objType, template)
 
 	newButton.class = barClass
 	newButton.id = buttonID
-	newButton.objType = objType:upper()
+	newButton.objType = objType
 
 	if not bar.data.buttons[buttonID] then --if the database for a bar doesn't exist (because it's a new bar) make a new table
 		bar.data.buttons[buttonID] = {}

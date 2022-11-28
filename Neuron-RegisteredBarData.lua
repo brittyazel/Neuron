@@ -14,7 +14,7 @@ function Neuron:RegisterBars(DB)
       class = "ActionBar",
       barType = "ActionBar",
       barLabel = L["Action Bar"],
-      objType = "Action Button",
+      objType = "ActionButton",
       barDB = DB.ActionBar,
       objTemplate = Neuron.ActionButton,
       objMax = 250
@@ -23,7 +23,7 @@ function Neuron:RegisterBars(DB)
       class = "BagBar",
       barType = "BagBar",
       barLabel = L["Bag Bar"],
-      objType = "Bag Button",
+      objType = "BagButton",
       barDB = DB.BagBar,
       objTemplate = Neuron.BagButton,
       objMax = Neuron.NUM_BAG_BUTTONS
@@ -32,7 +32,7 @@ function Neuron:RegisterBars(DB)
       class = "MenuBar",
       barType = "MenuBar",
       barLabel = L["Menu Bar"],
-      objType = "Menu Button",
+      objType = "MenuButton",
       barDB = DB.MenuBar,
       objTemplate = Neuron.MenuButton,
       objMax = 11
@@ -41,7 +41,7 @@ function Neuron:RegisterBars(DB)
       class = "PetBar",
       barType = "PetBar",
       barLabel = L["Pet Bar"],
-      objType = "Pet Button",
+      objType = "PetButton",
       barDB = DB.PetBar,
       objTemplate = Neuron.PetButton,
       objMax = 10
@@ -50,7 +50,7 @@ function Neuron:RegisterBars(DB)
       class = "XPBar",
       barType = "XPBar",
       barLabel = L["XP Bar"],
-      objType = "XP Button",
+      objType = "ExpButton",
       barDB = DB.XPBar,
       objTemplate = Neuron.ExpButton,
       objMax = 10
@@ -59,7 +59,7 @@ function Neuron:RegisterBars(DB)
       class = "RepBar",
       barType = "RepBar",
       barLabel = L["Rep Bar"],
-      objType = "Rep Button",
+      objType = "RepButton",
       barDB = DB.RepBar,
       objTemplate = Neuron.RepButton,
       objMax = 10
@@ -68,7 +68,7 @@ function Neuron:RegisterBars(DB)
       class = "CastBar",
       barType = "CastBar",
       barLabel = L["Cast Bar"],
-      objType = "Cast Button",
+      objType = "CastButton",
       barDB = DB.CastBar,
       objTemplate = Neuron.CastButton,
       objMax = 10
@@ -77,7 +77,7 @@ function Neuron:RegisterBars(DB)
       class = "MirrorBar",
       barType = "MirrorBar",
       barLabel = L["Mirror Bar"],
-      objType = "Mirror Button",
+      objType = "MirrorButton",
       barDB = DB.MirrorBar,
       objTemplate = Neuron.MirrorButton,
       objMax = 10
@@ -90,7 +90,7 @@ function Neuron:RegisterBars(DB)
         class = "ZoneAbilityBar",
         barType = "ZoneAbilityBar",
         barLabel = L["Zone Action Bar"],
-        objType = "Zone Action Button",
+        objType = "ZoneActionButton",
         barDB = DB.ZoneAbilityBar,
         objTemplate = Neuron.ZoneAbilityButton,
         objMax = 5, true
@@ -99,7 +99,7 @@ function Neuron:RegisterBars(DB)
         class = "ExtraBar",
         barType = "ExtraBar",
         barLabel = L["Extra Action Bar"],
-        objType = "Extra Action Button",
+        objType = "ExtraActionButton",
         barDB = DB.ExtraBar,
         objTemplate = Neuron.ExtraButton,
         objMax = 1
@@ -108,7 +108,7 @@ function Neuron:RegisterBars(DB)
         class = "ExitBar",
         barType = "ExitBar",
         barLabel = L["Vehicle Exit Bar"],
-        objType = "Vehicle Exit Button",
+        objType = "VehicleExitButton",
         barDB = DB.ExitBar,
         objTemplate = Neuron.ExitButton,
         objMax = 1
