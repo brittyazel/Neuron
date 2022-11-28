@@ -48,8 +48,6 @@ function StatusButton.new(bar, buttonID, defaults, barObj, barType, objType)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:EditorOverlay_CreateEditFrame()
-
 	return newButton
 end
 

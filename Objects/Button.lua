@@ -6,7 +6,7 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
----@class Button : CheckButton @define Button as inheriting from CheckButton
+---@class NeuronButton : CheckButton @define Button as inheriting from CheckButton
 local Button = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.Button = Button
 
@@ -18,6 +18,7 @@ LibStub("AceEvent-3.0"):Embed(Button)
 LibStub("AceTimer-3.0"):Embed(Button)
 LibStub("AceHook-3.0"):Embed(Button)
 
+local ButtonEditor = addonTable.overlay.ButtonEditor
 
 ---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
 ---@param bar Bar @Bar Object this button will be a child of
@@ -26,7 +27,7 @@ LibStub("AceHook-3.0"):Embed(Button)
 ---@param barClass string @Class type for the bar the button will be on
 ---@param objType string @Type of object this button will be
 ---@param template string @The template name that this frame will derive from
----@return Button @ A newly created Button object
+---@return NeuronButton @ A newly created Button object
 function Button.new(bar, buttonID, baseObj, barClass, objType, template)
 	local newButton
 	local newButtonName = bar:GetName().."_"..objType..buttonID
@@ -65,8 +66,10 @@ end
 ------------------------------------------------
 
 function Button.ChangeSelectedButton(newButton)
-	if newButton and newButton ~= Neuron.currentButton then
-		if Neuron.currentButton and Neuron.currentButton.bar ~= newButton.bar then
+	if newButton == Neuron.currentButton then
+		return
+	elseif newButton and Neuron.currentButton then
+		if Neuron.currentButton.bar ~= newButton.bar then
 			local bar = Neuron.currentButton.bar
 
 			if bar.handler:GetAttribute("assertstate") then
@@ -76,28 +79,17 @@ function Button.ChangeSelectedButton(newButton)
 			newButton.bar.handler:SetAttribute("fauxstate", bar.handler:GetAttribute("activestate"))
 		end
 
+		ButtonEditor.deactivate(Neuron.currentButton.editFrame)
+		ButtonEditor.activate(newButton.editFrame)
 		Neuron.currentButton = newButton
 		Neuron.currentBar = newButton.bar
-		newButton.editFrame.select:Show()
-	elseif not newButton then
+	elseif newButton and not Neuron.currentButton then
+		ButtonEditor.activate(newButton.editFrame)
+		Neuron.currentButton = newButton
+		Neuron.currentBar = newButton.bar
+	else -- not newButton and Neuron.currentButton
+		ButtonEditor.deactivate(Neuron.currentButton.editFrame)
 		Neuron.currentButton = nil
-		for _, bar in pairs(Neuron.bars) do
-			for _, button in pairs(bar.buttons) do
-				if button.editFrame then
-					button.editFrame.select:Hide()
-				end
-			end
-		end
-	end
-
-	for _, bar in pairs(Neuron.bars) do
-		for _, button in pairs(bar.buttons) do
-			if button.editFrame then
-				if newButton and button.editFrame ~= newButton.editFrame then
-					button.editFrame.select:Hide()
-				end
-			end
-		end
 	end
 end
 

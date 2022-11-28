@@ -163,6 +163,11 @@ local function castButtonOptions(button)
   return castContainer
 end
 function NeuronGUI:ButtonStatusEditPanel(tabFrame)
+	Neuron.ToggleButtonEditMode(true)
+	if not Neuron.currentButton then
+		return
+	end
+
   -- weird stuff happens if we don't wrap this in a group
   -- like dropdowns showing at the bottom of the screen and stuff
 	local settingContainer = AceGUI:Create("SimpleGroup")
@@ -184,9 +189,9 @@ function NeuronGUI:ButtonStatusEditPanel(tabFrame)
   reloadButton:SetCallback("OnClick", ReloadUI)
   reloadButtonContainer:AddChild(reloadButton)
 
-  settingContainer:AddChild(statusButtonOptions(Neuron.currentBar.buttons[1]))
+  settingContainer:AddChild(statusButtonOptions(Neuron.currentButton))
   if Neuron.currentBar.barType == "CastBar" then
-    settingContainer:AddChild(castButtonOptions(Neuron.currentBar.buttons[1]))
+    settingContainer:AddChild(castButtonOptions(Neuron.currentButton))
   end
   settingContainer:AddChild(reloadButtonContainer)
   tabFrame:AddChild(settingContainer)
