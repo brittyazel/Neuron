@@ -56,11 +56,12 @@ end
 
 function Neuron:CreateBarsAndButtons(profileData)
 	-- remove blizzard controlled bars from the list of bars we will create
+	-- but still keep neuron action bars regardless
 	local neuronBars =
 		Array.filter(
 			function (barPair)
 				local bar, _ = unpack(barPair)
-			  return not profileData.blizzBars[bar]
+			  return not profileData.blizzBars[bar] or bar == "ActionBar"
 			end,
 		Array.fromIterator(pairs(Neuron.registeredBarData)))
 
