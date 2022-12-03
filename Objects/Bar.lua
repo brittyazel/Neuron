@@ -93,6 +93,11 @@ function Bar.new(class, barID)
 	newBar:SetScript("OnShow", function(self) self:OnShow() end)
 	newBar:SetScript("OnHide", function(self) self:OnHide() end)
 
+	-- TODO: i think that allowing the bars to register themselves with the list
+	-- of bars is causing a back write to the DB somewhere which results in
+	-- bars whose frame is not created to be deleted from the DB. This is
+	-- more of a structural issue I think, and hopefully resolve itself when
+	-- we start making separate objects for bar data and bar frames
 	table.insert(Neuron.bars, newBar) --insert our new bar at the end of the table
 
 	newBar:CreateDriver()

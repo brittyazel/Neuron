@@ -283,7 +283,9 @@ local genericBarData = {
 addonTable.databaseDefaults = {
 	profile = {
 		blizzBars = {
+			-- ActionBar is special: showing blizz action bars doesn't hide neuron action bars
 			ActionBar = false,
+
 			BagBar = false,
 			CastBar = false,
 			ExitBar = false,
