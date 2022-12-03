@@ -10,6 +10,7 @@ local Spec = addonTable.utilities.Spec
 local DBFixer = addonTable.utilities.DBFixer
 local Array = addonTable.utilities.Array
 local ButtonEditor = addonTable.overlay.ButtonEditor
+local BarEditor = addonTable.overlay.BarEditor
 
 ---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
 addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0", "AceSerializer-3.0")
@@ -377,7 +378,12 @@ function Neuron:ToggleBarEditMode(show)
 		Neuron:ToggleBindingMode(false)
 
 		for _, bar in pairs(Neuron.bars) do
-			bar:Show() --this shows the transparent overlay over a bar
+			bar.editFrame =
+				bar.editFrame or
+				BarEditor.allocate(bar, function(overlay, button, down)
+					overlay.bar:OnClick(button, down)
+				end)
+
 			bar:UpdateObjectVisibility(true)
 			bar:UpdateBarStatus(true)
 			bar:UpdateObjectStatus()
@@ -385,13 +391,20 @@ function Neuron:ToggleBarEditMode(show)
 
 		--if there is no bar selected, default to the first in the BarList
 		--TODO: This logic may be unintuitive. Should probably be fixed
-		if not Neuron.currentBar then
+		if not Neuron.currentBar and #Neuron.bars then
 			Neuron.Bar.ChangeSelectedBar(Neuron.bars[1])
+		elseif Neuron.currentBar then
+			BarEditor.activate(Neuron.currentBar.editFrame)
 		end
 	else
 		Neuron.barEditMode = false
 		for _, bar in pairs(Neuron.bars) do
-			bar:Hide()
+			local overlay = bar.editFrame
+			bar.editFrame = nil
+			if overlay then
+				BarEditor.free(overlay)
+			end
+
 			bar:UpdateObjectVisibility()
 			bar:UpdateBarStatus()
 			bar:UpdateObjectStatus()

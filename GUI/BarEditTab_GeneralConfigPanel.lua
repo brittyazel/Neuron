@@ -747,7 +747,6 @@ function NeuronGUI:updateBarName(editBox)
 
 	if bar then
 		bar:SetBarName(editBox:GetText())
-		bar.Text:SetText(bar:GetBarName())
 
 		editBox:ClearFocus()
 		NeuronGUI:RefreshEditor()

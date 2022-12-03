@@ -9,21 +9,21 @@
 	<Button name="NeuronBarTemplate" enableMouse="true" movable="true" frameStrata="MEDIUM" virtual="true" inherits="SecureHandlerStateTemplate, BackdropTemplate" >
 		<Layers>
 			<Layer level="BACKGROUND">
-				<FontString name="$parentText" parentKey="Text" inherits="GameFontNormal">
+				<FontString name="$parentText" parentKey="Text" inherits="GameFontNormal" hidden="true">
 					<Anchors>
-						<Anchor point="BOTTOM" relativeTo="$parent" relativePoint="TOP" x="0" y="1"/>
+						<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="1"/>
 					</Anchors>
 				</FontString>
 				<Texture name="$parentMessageBG" parentKey="MessageBG" hidden="true">
 					<Size x="1" y="1"/>
 					<Anchors>
-						<Anchor point="TOP" relativeTo="$parent" relativePoint="BOTTOM" x="0" y="-1"/>
+						<Anchor point="TOP" relativePoint="BOTTOM" x="0" y="-1"/>
 					</Anchors>
 					<Color r="0" g="0" b="0" a="0.9"/>
 				</Texture>
-				<FontString name="$parentMessage" parentKey="Message" inherits="FriendsFont_UserText" justifyV="TOP">
+				<FontString name="$parentMessage" parentKey="Message" inherits="FriendsFont_UserText" justifyV="TOP" hidden="true">
 					<Anchors>
-						<Anchor point="CENTER" relativeTo="$parentMessageBG" relativePoint="CENTER" x="0" y="0"/>
+						<Anchor point="TOP" relativePoint="BOTTOM" x="0" y="-1"/>
 					</Anchors>
 					<FontHeight>
 						<AbsValue val="12"/>
