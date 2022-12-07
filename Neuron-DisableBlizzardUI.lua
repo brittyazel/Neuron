@@ -94,11 +94,13 @@ function Neuron:HideBlizzardUI(profileDatabase)
 			Neuron:RawHook("MultiActionBar_HideAllGrids", function() end, true)
 		end
 	end
+
+	-- we can't hide the microbutton/bag bar without also hiding the
+	-- group finder eye :-/ also it hides the big bag icon
 	if not blizzBars.BagBar and not blizzBars.MenuBar then
-		-- i think this contains bags and micro buttons?
-		-- but it hides them both if it hides one
-		disableBarFrame(MicroButtonAndBagsBar)
+		-- disableBarFrame(MicroButtonAndBagsBar)
 	end
+
 	if not blizzBars.BagBar then
 		--hide the weird color border around bag bars
 		--[[
