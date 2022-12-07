@@ -281,7 +281,6 @@ function ActionButton:SetupEvents()
 end
 
 function ActionButton:OnAttributeChanged(name, value)
-
 	if value and self.data then
 		if name == "activestate" then
 			--Part 2 of Druid Prowl overwrite fix (part 1 below)
@@ -855,9 +854,10 @@ function ActionButton:UpdateIcon()
 	---@type GenericSpecData
 	local data = (
 		self.DB
-		and self.DB[spec][state]
-		or {actionID = self.actionID, macro_Text = self:GetMacroText(), macro_Icon = self:GetMacroIcon()}
+		and CopyTable(self.DB[spec][state], true)
+		or {macro_Text = self:GetMacroText(), macro_Icon = self:GetMacroIcon()}
 	)
+	data.actionID = self.actionID -- this is for vehicle, possession, etc
 
 	self:ApplyAppearance(self:GetAppearance(data))
 
