@@ -8,6 +8,8 @@ local _, addonTable = ...
 
 local Spec = addonTable.utilities.Spec
 local DBFixer = addonTable.utilities.DBFixer
+local Array = addonTable.utilities.Array
+local ButtonEditor = addonTable.overlay.ButtonEditor
 
 ---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
 addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0", "AceSerializer-3.0")
@@ -398,30 +400,60 @@ function Neuron:ToggleBarEditMode(show)
 end
 
 function Neuron:ToggleButtonEditMode(show)
+	local isActionBar = function(bar)
+		return bar and bar.class == "ActionBar"
+	end
+
+	local isStatusBar = function(bar)
+		return
+			bar and (
+				bar.class == "XPBar" or
+				bar.class == "RepBar" or
+				bar.class == "CastBar" or
+				bar.class == "MirrorBar"
+			)
+	end
+
+	local bars = Array.concatenate(
+		Array.filter(isActionBar, Neuron.bars),
+		Array.filter(isStatusBar, Neuron.bars)
+	)
+
 	if show then
 		Neuron.buttonEditMode = true
 
 		Neuron:ToggleBarEditMode(false)
 		Neuron:ToggleBindingMode(false)
-		
-		for _, bar in pairs(Neuron.bars) do
-			for _, button in pairs(bar.buttons) do
-				if button.editFrame then
-					button.editFrame:Show()
 
-					--TODO: This code needs work. This logic is very rudimentary
-					if not Neuron.currentButton then
-						if Neuron.currentBar then
-							if Neuron.currentBar.buttons[1].editFrame then --try to set the selected button to the first button on the selected bar, if it has an edit frame
-								Neuron.Button.ChangeSelectedButton(Neuron.currentBar.buttons[1])
-							else
-								Neuron.Button.ChangeSelectedButton(button) --if there's no edit frame, then just default to the selected button to the first bar in the list
-							end
-						else
-							Neuron.Button.ChangeSelectedButton(button) --default to the selected button to the first bar in the list
+		local currentButton =
+			Neuron.currentButton or
+			(
+				(isActionBar(Neuron.currentBar) or isStatusBar(Neuron.currentBar))
+				and unpack(Neuron.currentBar.buttons)
+			) or
+			Array.foldl(
+				function(button, bar) return button or unpack(bar.buttons) end,
+				nil,
+				bars
+			)
+
+		if not currentButton then
+			Neuron.buttonEditMode = false
+			return
+		end
+
+		for _, bar in pairs(bars) do
+			for _, button in pairs(bar.buttons) do
+				button.editFrame = button.editFrame or ButtonEditor.allocate(
+					button,
+					isActionBar(bar) and "corners" or "sides",
+					function(btn)
+						Neuron.Button.ChangeSelectedButton(btn)
+						if addonTable.NeuronEditor then
+							Neuron.NeuronGUI:RefreshEditor()
 						end
 					end
-				end
+				)
 			end
 
 			bar:UpdateObjectVisibility(true)
@@ -430,13 +462,19 @@ function Neuron:ToggleButtonEditMode(show)
 			bar:UpdateObjectUsability()
 		end
 
+		-- change the button, but also manually activate it
+		-- just in case it was already the current button and
+		-- so if the change is a noop, we still show the recticle
+		Neuron.Button.ChangeSelectedButton(currentButton)
+		ButtonEditor.activate(currentButton.editFrame)
 	else
 		Neuron.buttonEditMode = false
 
-		for _, bar in pairs(Neuron.bars) do
+		for _, bar in pairs(bars) do
 			for _, button in pairs(bar.buttons) do
 				if button.editFrame then
-					button.editFrame:Hide()
+					ButtonEditor.free(button.editFrame)
+					button.editFrame = nil
 				end
 			end
 

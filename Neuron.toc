@@ -25,6 +25,8 @@ Utilities\Array.lua
 Utilities\Spec.lua
 Utilities\DB-Fixer.lua
 
+Overlay\ButtonEditor.lua
+
 Neuron-DB-Defaults.lua
 Neuron.lua
 Neuron-States.lua
@@ -32,7 +34,6 @@ Neuron-RegisteredBarData.lua
 
 
 Objects\Button.lua
-Objects\Button_EditorOverlay.lua
 Objects\Button_KeybindOverlay.lua
 Objects\Bar.lua
 Objects\ActionButton.lua

@@ -62,7 +62,6 @@ function ActionButton.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:EditorOverlay_CreateEditFrame()
 	newButton:KeybindOverlay_CreateEditFrame()
 
 	return newButton

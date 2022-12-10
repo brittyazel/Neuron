@@ -6,8 +6,8 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
-local NeuronGUI = {}
-Neuron.NeuronGUI = NeuronGUI
+Neuron.NeuronGUI = Neuron.NeuronGUI or {}
+local NeuronGUI = Neuron.NeuronGUI
 
 local L = LibStub("AceLocale-3.0"):GetLocale("Neuron")
 local AceGUI = LibStub("AceGUI-3.0")
