@@ -25,6 +25,7 @@ addonTable.defaultProfile.ActionBar = {
 		multiSpec = true,
 		vehicle = true,
 		possess = true,
+		dragonriding = true,
 		override = true,
 
 		buttons = Array.map(

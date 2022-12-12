@@ -255,6 +255,7 @@ local genericBarData = {
 	fishing = false,
 	vehicle = false,
 	possess = false,
+	dragonriding = false,
 	override = false,
 	extrabar = false,
 	alt = false,
