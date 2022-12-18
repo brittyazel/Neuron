@@ -26,6 +26,7 @@ Utilities\Spec.lua
 Utilities\DB-Fixer.lua
 
 Overlay\ButtonEditor.lua
+Overlay\BarEditor.lua
 
 Neuron-DB-Defaults.lua
 Neuron.lua

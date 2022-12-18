@@ -7,6 +7,7 @@ local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
 local Spec = addonTable.utilities.Spec
+local BarEditor = addonTable.overlay.BarEditor
 
 ---@class Bar : CheckButton @This is our bar object that serves as the container for all of our button objects
 local Bar = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
@@ -63,33 +64,13 @@ function Bar.new(class, barID)
 	newBar.class = class
 	newBar.stateschanged = true
 	newBar.vischanged =true
-	newBar.microAdjust = false
 	newBar.vis = {}
-	newBar.Text:Hide()
-	newBar.Message:Hide()
-	newBar.MessageBG:Hide()
 
 	newBar:SetWidth(375)
 	newBar:SetHeight(40)
-	newBar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-						edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-						tile = true, tileSize = 16, edgeSize = 12,
-						insets = {left = 4, right = 4, top = 4, bottom = 4}})
-	newBar:SetBackdropColor(0,0,0,0.4)
-	newBar:SetBackdropBorderColor(0,0,0,0)
-	newBar:RegisterForClicks("AnyDown", "AnyUp")
-	newBar:RegisterForDrag("LeftButton")
-	newBar:SetMovable(true)
 	newBar:EnableKeyboard(false)
 	newBar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
-	newBar:SetScript("OnClick", function(self, ...) self:OnClick(...) end)
-	newBar:SetScript("OnDragStart", function(self, ...) self:OnDragStart(...) end)
-	newBar:SetScript("OnDragStop", function(self, ...) self:OnDragStop(...) end)
-	newBar:SetScript("OnEnter", function(self, ...) self:OnEnter(...) end)
-	newBar:SetScript("OnLeave", function(self, ...) self:OnLeave(...) end)
-	newBar:SetScript("OnKeyDown", function(self, key, onupdate) self:OnKeyDown(key, onupdate) end)
-	newBar:SetScript("OnKeyUp", function(self, key) self:OnKeyUp(key) end)
 	newBar:SetScript("OnShow", function(self) self:OnShow() end)
 	newBar:SetScript("OnHide", function(self) self:OnHide() end)
 
@@ -185,8 +166,7 @@ function Bar:CreateNewBar(class)
 	newBar.objTemplate.new(newBar, 1) --add at least 1 button to a new bar
 	Bar.ChangeSelectedBar(newBar)
 	newBar:Load() --load the bar
-
-	newBar:Show() --Show the transparent blue overlay that we show in the edit mode
+	--TODO: Show the transparent blue overlay that we show in the edit mode
 end
 Neuron.CreateNewBar = Bar.CreateNewBar --this is so the slash function works correctly
 
@@ -216,13 +196,6 @@ function Bar:DeleteBar()
 		self:RemoveObjectFromBar()
 	end
 
-	self:SetScript("OnClick", function() end)
-	self:SetScript("OnDragStart", function() end)
-	self:SetScript("OnDragStop", function() end)
-	self:SetScript("OnEnter", function() end)
-	self:SetScript("OnLeave", function() end)
-	self:SetScript("OnKeyDown", function() end)
-	self:SetScript("OnKeyUp", function() end)
 	self:SetScript("OnShow", function() end)
 	self:SetScript("OnHide", function() end)
 
@@ -316,46 +289,23 @@ function Bar:Load()
 	self:UpdateBarStatus()
 end
 
+---@param newBar Bar|nil
 function Bar.ChangeSelectedBar(newBar)
-	if newBar and Neuron.currentBar ~= newBar then
-		Neuron.currentBar = newBar
-
-		if newBar.data.hidden then
-			newBar:SetBackdropColor(1,0,0,0.6)
-		else
-			newBar:SetBackdropColor(0,0,1,0.5)
-		end
-	end
-
-	if not newBar then
-		Neuron.currentBar = nil
-	elseif newBar.text then
-		newBar.Text:Show()
-	end
-
-	for k,v in pairs(Neuron.bars) do
-		if v ~= newBar then
-
-			if v:GetBarConceal() then
-				v:SetBackdropColor(1,0,0,0.4)
-			else
-				v:SetBackdropColor(0,0,0,0.4)
-			end
-
-			v.microAdjust = false
-			v:EnableKeyboard(false)
-			v.Text:Hide()
-			v.Message:Hide()
-			v.MessageBG:Hide()
-			v.mousewheelfunc = nil
-			v.mousewheelfunc = nil
-		end
+	if newBar == Neuron.currentBar then
+		return
 	end
 
 	if Neuron.currentBar then
-		newBar:OnEnter(Neuron.currentBar)
+		BarEditor.deactivate(Neuron.currentBar.editFrame)
 	end
+
+	if newBar then
+		BarEditor.activate(newBar.editFrame)
+	end
+
+	Neuron.currentBar = newBar
 end
+
 -----------------------------------
 
 
@@ -1246,37 +1196,14 @@ end
 ------------------------OnEvent Functions-----------------------------
 ----------------------------------------------------------------------
 
-function Bar:OnClick(...)
-	local click, down = select(1, ...), select(2, ...)
-
+function Bar:OnClick(click, down)
 	if not down then
 		Bar.ChangeSelectedBar(self)
 	end
 
 	if IsShiftKeyDown() and not down then
-
-		if self.microAdjust then
-			self.microAdjust = false
-			self:EnableKeyboard(false)
-			self.Message:Hide()
-			self.MessageBG:Hide()
-		else
-			self.microAdjust = 1
-			self:EnableKeyboard(true)
-			self.Message:Show()
-			self.Message:SetText(self.data.point:lower().."     x: "..format("%0.2f", self:GetXAxis()).."     y: "..format("%0.2f", self:GetYAxis()))
-			self.MessageBG:Show()
-			self.MessageBG:SetWidth(self.Message:GetWidth()*1.05)
-			self.MessageBG:SetHeight(self.Message:GetHeight()*1.1)
-		end
-
-	elseif click == "MiddleButton" then
-		if GetMouseFocus() ~= Neuron.currentBar then
-			Bar.ChangeSelectedBar(self)
-		end
-
+		BarEditor.microadjust(self.editFrame)
 	elseif click == "RightButton" and not down then
-		self.mousewheelfunc = nil
 		if not addonTable.NeuronEditor then
 			Neuron.NeuronGUI:CreateEditor()
 		end
@@ -1287,139 +1214,7 @@ function Bar:OnClick(...)
 	end
 end
 
-
-function Bar:OnEnter(...)
-	if self:GetBarConceal() then
-		self:SetBackdropColor(1,0,0,0.6)
-	else
-		self:SetBackdropColor(0,0,1,0.5)
-	end
-
-	self.Text:Show()
-end
-
-
-function Bar:OnLeave(...)
-	if self ~= Neuron.currentBar then
-		if self:GetBarConceal() then
-			self:SetBackdropColor(1,0,0,0.4)
-		else
-			self:SetBackdropColor(0,0,0,0.4)
-		end
-	end
-
-	if self ~= Neuron.CurrentBar then
-		self.Text:Hide()
-		if self ~= Neuron.currentBar then
-			self.Text:Hide()
-		end
-	end
-
-end
-
-
-function Bar:OnDragStart(...)
-	Bar.ChangeSelectedBar(self)
-
-	self:SetFrameStrata(Neuron.STRATAS[self:GetStrata()])
-	self:EnableKeyboard(false)
-
-	self.data.snapToPoint = false
-	self.data.snapToFrame = false
-
-	self:StartMoving()
-end
-
-
-function Bar:OnDragStop(...)
-
-	local point
-	self:StopMovingOrSizing()
-
-	for _,v in pairs(Neuron.bars) do
-		if not point and self:GetSnapTo() and v:GetSnapTo() and self ~= v then
-			point = self:Stick(v, Neuron.SNAPTO_TOLERANCE, self:GetHorizontalPad(), self:GetVerticalPad())
-
-			if point then
-				self.data.snapToPoint = point
-				self.data.snapToFrame = v:GetName()
-				self.data.point = "SnapTo: "..point
-			end
-		end
-	end
-
-	if not point then
-		self.data.snapToPoint = false
-		self.data.snapToFrame = false
-
-		local newPoint, x, y = self:GetPosition()
-		self.data.point = newPoint
-		self:SetXAxis(x)
-		self:SetYAxis(y)
-
-		self:SetPosition()
-	end
-
-	if self:GetSnapTo() and not self.data.snapToPoint then
-		self:StickToEdge()
-	end
-
-	self:UpdateBarStatus()
-end
-
-function Bar:OnKeyDown(key)
-	if self.microAdjust then
-		self.keydown = key
-
-		local newPoint, x, y = self:GetPosition()
-		self.data.point = newPoint
-		self:SetXAxis(x)
-		self:SetYAxis(y)
-
-		self:SetUserPlaced(false)
-		self:ClearAllPoints()
-
-		if key == "UP" then
-			self:SetYAxis(self:GetYAxis() + .1 * self.microAdjust)
-		elseif key == "DOWN" then
-			self:SetYAxis(self:GetYAxis() - .1 * self.microAdjust)
-		elseif key == "LEFT" then
-			self:SetXAxis(self:GetXAxis() - .1 * self.microAdjust)
-		elseif key == "RIGHT" then
-			self:SetXAxis(self:GetXAxis() + .1 * self.microAdjust)
-		elseif not key:find("SHIFT") then
-			self.microAdjust = false
-			self:EnableKeyboard(false)
-		end
-
-		self:SetPosition()
-	end
-end
-
-
-function Bar:OnKeyUp(key)
-	if self.microAdjust and not key:find("SHIFT") then
-		self.microAdjust = 1
-		self.keydown = nil
-	end
-end
-
-
 function Bar:OnShow()
-	if self == Neuron.currentBar then
-		if self:GetBarConceal() then
-			self:SetBackdropColor(1,0,0,0.6)
-		else
-			self:SetBackdropColor(0,0,1,0.5)
-		end
-	else
-		if self:GetBarConceal() then
-			self:SetBackdropColor(1,0,0,0.4)
-		else
-			self:SetBackdropColor(0,0,0,0.4)
-		end
-	end
-
 	self.handler:SetAttribute("editmode", true)
 	self.handler:Show()
 	self:UpdateObjectVisibility()
@@ -1437,7 +1232,6 @@ function Bar:OnHide()
 	self:UpdateObjectVisibility()
 	self:EnableKeyboard(false)
 end
-
 
 function Bar:Pulse(elapsed)
 	alphaTimer = alphaTimer + elapsed * 1.5
@@ -1812,13 +1606,7 @@ end
 
 
 function Bar:SetBarConceal(checked)
-	if checked then
-		self.data.conceal = true
-		self:SetBackdropColor(1,0,0,0.4)
-	else
-		self.data.conceal = false
-		self:SetBackdropColor(0,0,0,0.4)
-	end
+	self.data.conceal = not not checked
 
 	self:UpdateBarStatus()
 end

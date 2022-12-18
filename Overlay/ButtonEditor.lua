@@ -60,7 +60,7 @@ local ButtonEditor= {
 			button = button,
 			frame = -- try to pop a frame off the stack, otherwise make a new one
 				table.remove(framePool) or
-				CreateFrame("Button", nil, button, "NeuronOverlayFrameTemplate") --[[@as ButtonOverlayFrame]],
+				CreateFrame("Button", nil, UIParent, "NeuronOverlayFrameTemplate") --[[@as ButtonOverlayFrame]],
 			onClick = onClickCallback,
 		}
 
