@@ -35,6 +35,8 @@ function Neuron.UpdateStanceStrings()
 		group0 = L["No Group"],
 		group1 = L["Group: Raid"],
 		group2 = L["Group: Party"],
+		dragonriding0 = L["No Dragon Riding"],
+		dragonriding1 = L["Dragon Riding"],
 		fishing0 = L["No Fishing Pole"],
 		fishing1 = L["Fishing Pole"],
 		vehicle0 = L["No Vehicle"],
@@ -162,6 +164,15 @@ function Neuron.UpdateStanceStrings()
 			rangeStart = 1,
 			rangeStop = 1,
 			localizedName = L["Reaction"],
+		},
+
+		dragonriding = {
+			modifier = "dragonriding",
+			states = "[bonusbar:5,nopossessbar] dragonriding1; laststate",
+			visibility = "[possessbar] dragonriding0; [nobonusbar:5] dragonriding0; [bonusbar:5] dragonriding1",
+			rangeStart = 1,
+			rangeStop = 1,
+			localizedName = L["Dragon Riding"],
 		},
 
 		vehicle = {

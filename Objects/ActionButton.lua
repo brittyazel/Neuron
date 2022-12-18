@@ -102,6 +102,7 @@ function ActionButton:InitializeButton()
 	if Neuron.isWoWRetail then
 		self:SetAttribute("overrideID_Offset", 204)
 		self:SetAttribute("vehicleID_Offset", 180)
+		self:SetAttribute("dragonridingID_Offset", 120)
 	else
 		self:SetAttribute("overrideID_Offset", 156)
 		self:SetAttribute("vehicleID_Offset", 132)
@@ -133,6 +134,14 @@ function ActionButton:InitializeButton()
 						if not self:GetAttribute(msg.."-actionID") then
 							self:SetAttribute("type", "action")
 							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("vehicleID_Offset"))
+						end
+						self:SetAttribute("HasActionID", true)
+						self:Show()
+
+					elseif msg:find("dragonriding") then
+						if not self:GetAttribute(msg.."-actionID") then
+							self:SetAttribute("type", "action")
+							self:SetAttribute("*action*", self:GetAttribute("barPos")+self:GetAttribute("dragonridingID_Offset"))
 						end
 						self:SetAttribute("HasActionID", true)
 						self:Show()

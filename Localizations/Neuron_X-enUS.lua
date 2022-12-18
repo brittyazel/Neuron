@@ -231,6 +231,8 @@ L["Group: Party"] = true
 L["No Fishing Pole"] = true
 L["Fishing Pole"] = true
 
+L["No Dragon Riding"] = true
+L["Dragon Riding"] = true
 L["No Vehicle"] = true
 L["Vehicle"] = true
 L["No Possess"] = true
