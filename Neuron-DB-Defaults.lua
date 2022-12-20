@@ -165,7 +165,6 @@ local genericMirrorBtnData= {
 local genericKeyData = {
 	hotKeyLock = false,
 	hotKeyPri = false,
-	hotKeyText = ":",
 	hotKeys = ":"
 }
 

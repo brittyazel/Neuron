@@ -71,7 +71,7 @@ end
 --- Returns the text value of a keybind
 --- @param key string @The key to look up
 --- @return string @The text value for the key
-local function GetKeyText(key)
+local function hotKeyText(key)
 	local keytext
 	if key:find("Button") then
 		keytext = key:gsub("([Bb][Uu][Tt][Tt][Oo][Nn])(%d+)","m%2")
@@ -113,7 +113,7 @@ function Button:KeybindOverlay_GetBindKeyList()
 		return L["None"]
 	end
 
-	local bindkeys = self.keys.hotKeyText:gsub(":", ", ")
+	local bindkeys = self.keys.hotKeys:gsub("[^:]+", hotKeyText):gsub(":", ", ")
 
 	bindkeys = bindkeys:gsub("^, ", "")
 	bindkeys = bindkeys:gsub(", $", "")
@@ -131,13 +131,9 @@ function Button:KeybindOverlay_ClearBindings(key)
 	if key then
 		local newkey = key:gsub("%-", "%%-")
 		self.keys.hotKeys = self.keys.hotKeys:gsub(newkey..":", "")
-
-		local keytext = GetKeyText(key)
-		self.keys.hotKeyText = self.keys.hotKeyText:gsub(keytext..":", "")
 	else
 		ClearOverrideBindings(self)
 		self.keys.hotKeys = ":"
-		self.keys.hotKeyText = ":"
 	end
 
 	self:KeybindOverlay_ApplyBindings()
@@ -165,7 +161,7 @@ function Button:KeybindOverlay_ApplyBindings()
 		self:SetAttribute("hotkeys", self.keys.hotKeys)
 	end
 
-	self.Hotkey:SetText(self.keys.hotKeyText:match("^:([^:]+)") or "")
+	self.Hotkey:SetText(hotKeyText(self.keys.hotKeys:match("^:([^:]+)") or ""))
 
 	if self.bar:GetShowBindText() then
 		self.Hotkey:Show()
@@ -214,9 +210,7 @@ function Button:KeybindOverlay_ProcessBinding(key)
 		end)
 
 		if not found then
-			local keytext = GetKeyText(key)
 			self.keys.hotKeys = self.keys.hotKeys..key..":"
-			self.keys.hotKeyText = self.keys.hotKeyText..keytext..":"
 		end
 
 		self:KeybindOverlay_ApplyBindings()
