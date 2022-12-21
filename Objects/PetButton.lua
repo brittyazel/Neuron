@@ -29,8 +29,6 @@ function PetButton.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:KeybindOverlay_CreateEditFrame()
-
 	return newButton
 end
 
@@ -105,7 +103,7 @@ end
 
 function PetButton:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
-	self:KeybindOverlay_ApplyBindings()
+	self:ApplyBindings()
 
 	self:ScheduleTimer(function() self:UpdateVisibility() end, 1)
 end

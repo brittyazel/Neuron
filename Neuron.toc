@@ -25,6 +25,7 @@ Utilities\Array.lua
 Utilities\Spec.lua
 Utilities\DB-Fixer.lua
 
+Overlay\ButtonBinder.lua
 Overlay\ButtonEditor.lua
 Overlay\BarEditor.lua
 
@@ -35,7 +36,6 @@ Neuron-RegisteredBarData.lua
 
 
 Objects\Button.lua
-Objects\Button_KeybindOverlay.lua
 Objects\Bar.lua
 Objects\ActionButton.lua
 Objects\ActionButton_DragAndDrop.lua

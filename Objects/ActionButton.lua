@@ -62,8 +62,6 @@ function ActionButton.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:KeybindOverlay_CreateEditFrame()
-
 	return newButton
 end
 
@@ -433,7 +431,7 @@ end
 
 function ActionButton:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
-	self:KeybindOverlay_ApplyBindings()
+	self:ApplyBindings()
 
 	-- if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
 	-- 	self:ScheduleTimer(function() self:InitializeButton() end, 1)

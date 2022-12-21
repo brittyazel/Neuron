@@ -20,6 +20,9 @@ LibStub("AceHook-3.0"):Embed(Button)
 
 local ButtonEditor = addonTable.overlay.ButtonEditor
 
+local DEFAULT_VIRTUAL_KEY = "LeftButton"
+local NEURON_VIRTUAL_KEY = "Hotkey"
+
 ---Constructor: Create a new Neuron Button object (this is the base object for all Neuron button types)
 ---@param bar Bar @Bar Object this button will be a child of
 ---@param buttonID number @Button ID that this button will be assigned
@@ -350,6 +353,37 @@ end
 ------------------------------------- Update Functions ----------------------------------
 -----------------------------------------------------------------------------------------
 
+--- Applies binding to button
+function Button:ApplyBindings()
+	local virtualKey
+
+	---checks if the button is a Neuron action or a special Blizzard action (such as a zone ability)
+	---this is necessary because Blizzard buttons usually won't work and can give very weird results
+	---if clicked with a virtual key other than the default "LeftButton"
+	if self.class == "ActionBar" then
+		virtualKey = NEURON_VIRTUAL_KEY
+	else
+		virtualKey = DEFAULT_VIRTUAL_KEY
+	end
+
+	if self:IsVisible() or self:GetParent():GetAttribute("concealed") then
+		self.keys.hotKeys:gsub("[^:]+", function(key) SetOverrideBindingClick(self, self.keys.hotKeyPri, key, self:GetName(), virtualKey) end)
+	end
+
+	if not InCombatLockdown() then
+		self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
+		self:SetAttribute("hotkeys", self.keys.hotKeys)
+	end
+
+	self.Hotkey:SetText(Button.hotKeyText(self.keys.hotKeys:match("^:([^:]+)") or ""))
+
+	if self.bar:GetShowBindText() then
+		self.Hotkey:Show()
+	else
+		self.Hotkey:Hide()
+	end
+end
+
 	-- spell in action, extra, pet, zone,
 	-- actionID in action, extra, pet,
 	-- spellID in action, extra, zone
@@ -404,6 +438,41 @@ function Button:UpdateVisibility()
 	else
 		self:SetAlpha(0)
 	end
+end
+
+--- Returns the text value of a keybind
+--- @param key string @The key to look up
+--- @return string @The text value for the key
+function Button.hotKeyText(key)
+	local keytext
+	if key:find("Button") then
+		keytext = key:gsub("([Bb][Uu][Tt][Tt][Oo][Nn])(%d+)","m%2")
+	elseif key:find("NUMPAD") then
+		keytext = key:gsub("NUMPAD","n")
+		keytext = keytext:gsub("DIVIDE","/")
+		keytext = keytext:gsub("MULTIPLY","*")
+		keytext = keytext:gsub("MINUS","-")
+		keytext = keytext:gsub("PLUS","+")
+		keytext = keytext:gsub("DECIMAL",".")
+	elseif key:find("MOUSEWHEEL") then
+		keytext = key:gsub("MOUSEWHEEL","mw")
+		keytext = keytext:gsub("UP","U")
+		keytext = keytext:gsub("DOWN","D")
+	else
+		keytext = key
+	end
+	keytext = keytext:gsub("ALT%-","a")
+	keytext = keytext:gsub("CTRL%-","c")
+	keytext = keytext:gsub("SHIFT%-","s")
+	keytext = keytext:gsub("INSERT","Ins")
+	keytext = keytext:gsub("DELETE","Del")
+	keytext = keytext:gsub("HOME","Home")
+	keytext = keytext:gsub("END","End")
+	keytext = keytext:gsub("PAGEUP","PgUp")
+	keytext = keytext:gsub("PAGEDOWN","PgDn")
+	keytext = keytext:gsub("BACKSPACE","Bksp")
+	keytext = keytext:gsub("SPACE","Spc")
+	return keytext
 end
 
 -----------------------------------------------------------------------------------------
