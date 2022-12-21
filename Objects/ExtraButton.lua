@@ -25,8 +25,6 @@ function ExtraButton.new(bar, buttonID, defaults)
 		newButton:SetDefaults(defaults)
 	end
 
-	newButton:KeybindOverlay_CreateEditFrame()
-
 	return newButton
 end
 
@@ -69,7 +67,7 @@ end
 function ExtraButton:OnEvent(event, ...)
 	self:UpdateData()
 	if event == "PLAYER_ENTERING_WORLD" then
-		self:KeybindOverlay_ApplyBindings()
+		self:ApplyBindings()
 		self:UpdateIcon()
 	end
 end

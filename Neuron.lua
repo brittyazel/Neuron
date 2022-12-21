@@ -9,6 +9,7 @@ local _, addonTable = ...
 local Spec = addonTable.utilities.Spec
 local DBFixer = addonTable.utilities.DBFixer
 local Array = addonTable.utilities.Array
+local ButtonBinder = addonTable.overlay.ButtonBinder
 local ButtonEditor = addonTable.overlay.ButtonEditor
 local BarEditor = addonTable.overlay.BarEditor
 
@@ -499,17 +500,77 @@ function Neuron:ToggleButtonEditMode(show)
 	end
 end
 
+--- Processes the change to a key bind
+--- @param targetButton Button
+--- @param key string @The key to be used
+local function processKeyBinding(targetButton, key)
+	--if the button is locked, warn the user as to the locked status
+	if targetButton.keys and targetButton.keys.hotKeyLock then
+		UIErrorsFrame:AddMessage(L["Bindings_Locked_Notice"], 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME)
+		return
+	end
+
+	--if the key being pressed is escape, clear the bindings on the button
+	if key == "ESCAPE" then
+		ClearOverrideBindings(targetButton)
+		targetButton.keys.hotKeys = ":"
+		targetButton:ApplyBindings()
+
+		--if the key is anything else, keybind the button to this key
+	elseif key then --checks to see if another keybind already has that key, and if so clears it from the other button
+		--check to see if any other button has this key bound to it, ignoring locked buttons, and if so remove the key from the other button
+		for _, bar in pairs(Neuron.bars) do
+			for _, button in pairs(bar.buttons) do
+				if button.keys then
+					if targetButton ~= button and not button.keys.hotKeyLock then
+						button.keys.hotKeys:gsub("[^:]+", function(binding)
+							if key == binding then
+								local newkey = binding:gsub("%-", "%%-")
+								button.keys.hotKeys = button.keys.hotKeys:gsub(newkey..":", "")
+								button:ApplyBindings()
+							end
+						end)
+					end
+				end
+			end
+		end
+
+		--search the current hotKeys to see if our new key is missing, and if so add it
+		local found
+		targetButton.keys.hotKeys:gsub("[^:]+", function(binding)
+			if binding == key then
+				found = true
+			end
+		end)
+
+		if not found then
+			targetButton.keys.hotKeys = targetButton.keys.hotKeys..key..":"
+		end
+
+		targetButton:ApplyBindings()
+	end
+end
+
 function Neuron:ToggleBindingMode(show)
+	local isBindable = function(bar)
+		return bar and (
+			bar.class == "ActionBar" or
+			bar.class == "ExtraBar" or
+			bar.class == "ZoneAbilityBar" or
+			bar.class == "PetBar"
+		)
+	end
+
+	local bars = Array.filter(isBindable, Neuron.bars)
+
 	if show then
 		Neuron.bindingMode = true
 		Neuron:ToggleButtonEditMode(false)
 		Neuron:ToggleBarEditMode(false)
 
-		for _, bar in pairs(Neuron.bars) do
+		for _, bar in pairs(bars) do
 			for _, button in pairs(bar.buttons) do
-				if button.keybindFrame then
-					button.keybindFrame:Show()
-				end
+				button.keybindFrame = button.keybindFrame or ButtonBinder.allocate(button, processKeyBinding)
 			end
 
 			bar:UpdateObjectVisibility(true)
@@ -520,10 +581,11 @@ function Neuron:ToggleBindingMode(show)
 
 	else
 		Neuron.bindingMode = false
-		for _, bar in pairs(Neuron.bars) do
+		for _, bar in pairs(bars) do
 			for _, button in pairs(bar.buttons) do
 				if button.keybindFrame then
-					button.keybindFrame:Hide()
+					ButtonBinder.free(button.keybindFrame)
+					button.keybindFrame = nil
 				end
 			end
 			bar:UpdateObjectVisibility()
