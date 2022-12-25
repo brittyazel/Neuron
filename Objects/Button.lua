@@ -772,7 +772,6 @@ function Button:UpdateTooltip()
 			self:UpdateActionTooltip()
 		elseif self:GetMacroEquipmentSet() then
 			GameTooltip:SetEquipmentSet(self:GetMacroEquipmentSet())
-			GameTooltip:Show()
 		elseif self.spell then
 			self:UpdateSpellTooltip()
 		elseif self.item then
@@ -784,7 +783,12 @@ function Button:UpdateTooltip()
 			GameTooltip:SetText(self:GetMacroName())
 		end
 
-		GameTooltip:Show()
+		-- it seems that recently wow decided to start hiding tooltips
+		-- if you call "show" on them and they are already visible
+		if not GameTooltip:IsShown() then
+			GameTooltip:Show()
+		end
+
 	end
 end
 
@@ -806,8 +810,6 @@ function Button:UpdateSpellTooltip()
 	end
 end
 
--- note that using SetHyperlink to set the tooltip to the same value
--- twice will close the tooltip. see issue brittyazel/Neuron#354
 function Button:UpdateItemTooltip()
 	local name, link = GetItemInfo(self.item)
 	name = name or Neuron.itemCache[self.item:lower()]
@@ -817,7 +819,7 @@ function Button:UpdateItemTooltip()
 		return
 	end
 
-	if self.bar:GetTooltipOption() == "normal" and select(2,GameTooltip:GetItem()) ~= link then
+	if self.bar:GetTooltipOption() == "normal" then
 		GameTooltip:SetHyperlink(link)
 	elseif self.bar:GetTooltipOption() == "minimal" then
 		GameTooltip:SetText(name, 1, 1, 1)
