@@ -18,9 +18,12 @@ local Array = addonTable.utilities.Array
 --------------------------Button Editor--------------------------------------
 -----------------------------------------------------------------------------
 
+--- @param frame Frame @the icon preview frame
+--- @param data GenericSpecData
+--- @return nil
 local function refreshIconPreview(frame, data)
 	--try to get the texture currently on the button itself
-	local texture = Neuron.currentButton:GetAppearance(data)
+	local texture = Neuron.ActionButton.GetAppearance(data)
 	if texture then
 		frame:SetImage(texture)
 	else --fallback to question mark icon if nothing is found
@@ -55,9 +58,9 @@ end
 --our states come from the VISIBILITY_STATES but we only show the states that
 --are enabled for the bar _and_ that are in the states field of the
 --corresponding MANAGED_BAR_STATES entry
-local function getStateList()
-	local barData = Neuron.currentButton.bar.data
-
+---@param barData GenericBarData
+---@return string[]
+local function getStateList(barData)
 	local barStates =
 		Array.filter(function(state) return barData[state] end,
 		Array.map(function(state) return state[1] end,
@@ -162,29 +165,27 @@ local function buttonEditPanel(specData, update)
 	return settingContainer
 end
 
-function NeuronGUI:ButtonsEditPanel(topContainer)
+---@param button ActionButton
+---@param topContainer Frame
+function NeuronGUI:ButtonsEditPanel(button, topContainer)
 	Neuron:ToggleButtonEditMode(true)
-
-	if not Neuron.currentButton then
-		return
-	end
 
 	topContainer = makeScrollFrame(topContainer)
 
-	local multiSpec = Neuron.currentButton.bar:GetMultiSpec()
+	local multiSpec = button.bar:GetMultiSpec()
 
 	local specs = Spec.names(multiSpec)
 	specs[5] =  L["No Spec"]
 
 	for specIndex, specName in pairs(specs) do
-		local specData = Neuron.currentButton.DB[specIndex]
+		local specData = button.DB[specIndex]
 
 		local buttonTree = {
 			value = "homestate",
 			text = specName,
 			children = Array.map(
 				function(state) return {value=state, text=Neuron.STATES[state]} end,
-				getStateList()
+				getStateList(button.bar.data)
 			),
 		}
 
@@ -205,17 +206,15 @@ function NeuronGUI:ButtonsEditPanel(topContainer)
 					specData[state][k] = v
 				end
 
-				if Spec.active(multiSpec) ~= specIndex then
-					-- don't update the button if the modified spec isn't active
-					return
+				-- don't update the button if the modified spec isn't active
+				if Spec.active(multiSpec) == specIndex then
+					-- for some reason we need to do a full bar load or the buttons don't
+					-- update. we can investigate further, but note that switching specs
+					-- probably needs the same fix
+					button.bar:Load()
+					--button:LoadDataFromDatabase(specIndex, state)
+					--button:UpdateAll()
 				end
-
-				-- for some reason we need to do a full bar load or the buttons don't
-				-- update. we can investigate further, but note that switching specs
-				-- probably needs the same fix
-				Neuron.currentButton.bar:Load()
-				--Neuron.currentButton:LoadDataFromDatabase(specIndex, state)
-				--Neuron.currentButton:UpdateAll()
 			end)
 			container:AddChild(buttonEditor)
 		end)
