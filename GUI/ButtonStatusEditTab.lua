@@ -162,11 +162,11 @@ local function castButtonOptions(button)
 
   return castContainer
 end
-function NeuronGUI:ButtonStatusEditPanel(tabFrame)
+
+---@param button CastButton|ExpButton|MirrorButton|RepButton
+---@param tabFrame Frame
+function NeuronGUI:ButtonStatusEditPanel(button, tabFrame)
 	Neuron.ToggleButtonEditMode(true)
-	if not Neuron.currentButton then
-		return
-	end
 
   -- weird stuff happens if we don't wrap this in a group
   -- like dropdowns showing at the bottom of the screen and stuff
@@ -189,9 +189,9 @@ function NeuronGUI:ButtonStatusEditPanel(tabFrame)
   reloadButton:SetCallback("OnClick", ReloadUI)
   reloadButtonContainer:AddChild(reloadButton)
 
-  settingContainer:AddChild(statusButtonOptions(Neuron.currentButton))
-  if Neuron.currentBar.barType == "CastBar" then
-    settingContainer:AddChild(castButtonOptions(Neuron.currentButton))
+  settingContainer:AddChild(statusButtonOptions(button))
+  if button.bar.barType == "CastBar" then
+    settingContainer:AddChild(castButtonOptions(button))
   end
   settingContainer:AddChild(reloadButtonContainer)
   tabFrame:AddChild(settingContainer)

@@ -123,8 +123,8 @@ function NeuronGUI:SelectTab(tabFrame, _, value)
 		-- whenever we change a button, RefreshEditor is called upstream
 		-- so we don't need to keep track of updating currentButton here
 		NeuronGUI:ButtonsEditPanel(Neuron.currentButton, tabFrame)
-	elseif value == "status" then
-		NeuronGUI:ButtonStatusEditPanel(tabFrame)
+	elseif value == "status" and Neuron.currentButton then
+		NeuronGUI:ButtonStatusEditPanel(Neuron.currentButton, tabFrame)
 	else
 		return -- if we get here we forgot to add a tab! (or a global state is borked)
 	end
