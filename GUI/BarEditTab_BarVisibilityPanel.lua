@@ -13,7 +13,8 @@ local AceGUI = LibStub("AceGUI-3.0")
 
 local Array = addonTable.utilities.Array
 
-local function barVisibilityOptions()
+---@param bar Bar
+local function barVisibilityOptions(bar)
 	local stateList =
     Array.map(
     function (state)
@@ -36,16 +37,18 @@ local function barVisibilityOptions()
   for _,state in ipairs(stateList) do
     local checkbox = AceGUI:Create("CheckBox")
     checkbox:SetLabel(Neuron.VISIBILITY_STATES[state])
-    checkbox:SetValue(not Neuron.currentBar.data.hidestates:find(state))
+    checkbox:SetValue(not bar.data.hidestates:find(state))
     checkbox:SetCallback("OnValueChanged", function(_,_,value)
-      Neuron.currentBar:SetVisibility(state, value)
+      bar:SetVisibility(state, value)
     end)
     visibilityStatesContainer:AddChild(checkbox)
   end
 
   return visibilityStatesContainer
 end
-function NeuronGUI:BarVisibilityPanel(tabFrame)
+
+---@param bar Bar
+function NeuronGUI:BarVisibilityPanel(bar, tabFrame)
   -- weird stuff happens if we don't wrap this in a group
   -- like dropdowns showing at the bottom of the screen and stuff
 	local settingContainer = AceGUI:Create("SimpleGroup")
@@ -67,7 +70,7 @@ function NeuronGUI:BarVisibilityPanel(tabFrame)
   reloadButton:SetCallback("OnClick", ReloadUI)
   reloadButtonContainer:AddChild(reloadButton)
 
-  settingContainer:AddChild(barVisibilityOptions())
+  settingContainer:AddChild(barVisibilityOptions(bar))
   settingContainer:AddChild(reloadButtonContainer)
   tabFrame:AddChild(settingContainer)
 end

@@ -217,7 +217,7 @@ local genericKeyData = {
 ---@field conceal boolean
 ---@field multiSpec boolean
 ---@field spellGlow "default"|"alternate"|false
----@field barLock boolean
+---@field barLock "shift"|"ctrl"|"alt"|false
 ---@field tooltips "normal"|"minimal"|"off"
 ---@field tooltipsCombat boolean
 ---@field bindText boolean

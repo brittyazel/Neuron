@@ -10,6 +10,8 @@ local Spec = addonTable.utilities.Spec
 local BarEditor = addonTable.overlay.BarEditor
 
 ---@class Bar : CheckButton @This is our bar object that serves as the container for all of our button objects
+---@field data GenericBarData
+---@field class "ActionBar"|"BagBar"|"MenuBar"|"PetBar"|"XPBar"|"RepBar"|"CastBar"|"MirrorBar"|"ZoneAbilityBar"|"ExtraBar"|"ExitBar"
 local Bar = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.Bar = Bar
 
@@ -1655,7 +1657,8 @@ function Bar:SetTooltipOption(option)
 end
 
 function Bar:GetTooltipOption()
-	return self.data.tooltips
+	-- fallback to "off" in case there is some falsey value of this in the db somewhere
+	return self.data.tooltips or "off"
 end
 
 function Bar:SetTooltipCombat(checked)
