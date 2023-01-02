@@ -20,6 +20,7 @@ local currentTab = "bar" --remember which tab we were using between refreshes
 --------------------------Main Window----------------------------------------
 -----------------------------------------------------------------------------
 
+---@param defaultTab "bar"|"button"|"status"
 function NeuronGUI:RefreshEditor(defaultTab)
 	addonTable.NeuronEditor:ReleaseChildren()
 
@@ -76,7 +77,6 @@ function NeuronGUI:DestroyEditor()
 		addonTable.NeuronEditor = nil
 	end
 
-	Neuron:ToggleBarEditMode()
 	Neuron:ToggleButtonEditMode()
 end
 
@@ -117,8 +117,8 @@ end
 
 function NeuronGUI:SelectTab(tabFrame, _, value)
 	tabFrame:ReleaseChildren()
-	if value == "bar" then
-		NeuronGUI:BarEditPanel(tabFrame)
+	if value == "bar" and Neuron.currentBar then
+		NeuronGUI:BarEditPanel(Neuron.currentBar, tabFrame)
 	elseif value == "button" and Neuron.currentButton then
 		-- whenever we change a button, RefreshEditor is called upstream
 		-- so we don't need to keep track of updating currentButton here
