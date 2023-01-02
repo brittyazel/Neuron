@@ -6,6 +6,9 @@
 local _, addonTable = ...
 local Neuron = addonTable.Neuron
 
+---@type EditMode
+local EditMode = addonTable.controller.EditMode
+
 --Neuron MinimapIcon makes use of LibDBIcon and LibDataBroker to make sure we play
 --nicely with LDB addons and to simplify dramatically the minimap button
 
@@ -42,50 +45,34 @@ function Neuron:Minimap_OnClickHandler(button)
 
 	PlaySound(SOUNDKIT.IG_CHAT_SCROLL_DOWN)
 
-	if button == "LeftButton" then
-		if IsShiftKeyDown() then
-			if not Neuron.bindingMode then
-				Neuron:ToggleBindingMode(true)
-			else
-				Neuron:ToggleBindingMode(false)
-			end
+	if button == "LeftButton" and IsShiftKeyDown() then
+		if not Neuron.bindingMode then
+			Neuron:ToggleBindingMode(true)
 		else
-			if not Neuron.barEditMode then
-				Neuron:ToggleBarEditMode(true)
-				if not addonTable.NeuronEditor then
-					Neuron.NeuronGUI:CreateEditor("bar")
-				else
-					Neuron.NeuronGUI:RefreshEditor("bar")
-				end
-			else
-				Neuron:ToggleBarEditMode(false)
-				if addonTable.NeuronEditor then
-					Neuron.NeuronGUI:DestroyEditor()
-				end
-			end
+			Neuron:ToggleBindingMode(false)
 		end
-	elseif button == "RightButton" then
-		if IsShiftKeyDown() then
-			if SettingsPanel and SettingsPanel:IsShown() then
-				SettingsPanel:Hide()
-			elseif InterfaceOptionsFrame and InterfaceOptionsFrame:IsShown() then --this is for pre-dragonflight compatibility
-				InterfaceOptionsFrame:Hide();
+	elseif button == "LeftButton" and not IsShiftKeyDown() then
+		Neuron.state = EditMode.enterBarMode(Neuron.state, false, false)
+	elseif button == "RightButton" and IsShiftKeyDown() then
+		if SettingsPanel and SettingsPanel:IsShown() then
+			SettingsPanel:Hide()
+		elseif InterfaceOptionsFrame and InterfaceOptionsFrame:IsShown() then --this is for pre-dragonflight compatibility
+			InterfaceOptionsFrame:Hide();
+		else
+			Neuron:ToggleMainMenu()
+		end
+	elseif button == "RightButton" and not IsShiftKeyDown() then
+		if not Neuron.buttonEditMode then
+			Neuron:ToggleButtonEditMode(true)
+			if not addonTable.NeuronEditor then
+				Neuron.NeuronGUI:CreateEditor("button")
 			else
-				Neuron:ToggleMainMenu()
+				Neuron.NeuronGUI:RefreshEditor("button")
 			end
 		else
-			if not Neuron.buttonEditMode then
-				Neuron:ToggleButtonEditMode(true)
-				if not addonTable.NeuronEditor then
-					Neuron.NeuronGUI:CreateEditor("button")
-				else
-					Neuron.NeuronGUI:RefreshEditor("button")
-				end
-			else
-				Neuron:ToggleButtonEditMode(false)
-				if addonTable.NeuronEditor then
-					Neuron.NeuronGUI:DestroyEditor()
-				end
+			Neuron:ToggleButtonEditMode(false)
+			if addonTable.NeuronEditor then
+				Neuron.NeuronGUI:DestroyEditor()
 			end
 		end
 	end

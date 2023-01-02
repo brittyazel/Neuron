@@ -29,6 +29,8 @@ Overlay\ButtonBinder.lua
 Overlay\ButtonEditor.lua
 Overlay\BarEditor.lua
 
+Controller\EditMode.lua
+
 Neuron-DB-Defaults.lua
 Neuron.lua
 Neuron-States.lua

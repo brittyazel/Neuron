@@ -343,7 +343,7 @@ end
 ---this function is set via a repeating scheduled timer in SetAutoHide()
 function Bar:AutoHideUpdate()
 	if self:GetAutoHide() and self.handler~=nil then
-		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
+		if not Neuron.buttonEditMode and Neuron.state.kind ~= "bar" and not Neuron.bindingMode then
 			if self:IsShown() then
 				self.handler:SetAlpha(1)
 			else
@@ -1197,24 +1197,6 @@ end
 ----------------------------------------------------------------------
 ------------------------OnEvent Functions-----------------------------
 ----------------------------------------------------------------------
-
-function Bar:OnClick(click, down)
-	if not down then
-		Bar.ChangeSelectedBar(self)
-	end
-
-	if IsShiftKeyDown() and not down then
-		BarEditor.microadjust(self.editFrame)
-	elseif click == "RightButton" and not down then
-		if not addonTable.NeuronEditor then
-			Neuron.NeuronGUI:CreateEditor()
-		end
-	end
-
-	if addonTable.NeuronEditor then
-		Neuron.NeuronGUI:RefreshEditor()
-	end
-end
 
 function Bar:OnShow()
 	self.handler:SetAttribute("editmode", true)

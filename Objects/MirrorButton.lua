@@ -152,7 +152,7 @@ function MirrorButton:OnUpdate()
 			mirrorWatch[self.mirror].timer = self.value
 		end
 
-	elseif not Neuron.barEditMode and not Neuron.buttonEditMode then
+	elseif Neuron.state.kind ~= "bar" and not Neuron.buttonEditMode then
 		self.alpha = self.StatusBar:GetAlpha() - CASTING_BAR_ALPHA_STEP
 		if self.alpha > 0 then
 			self.StatusBar:SetAlpha(self.alpha)
@@ -161,7 +161,7 @@ function MirrorButton:OnUpdate()
 		end
 	end
 
-	if not Neuron.barEditMode and not Neuron.buttonEditMode then
+	if Neuron.state.kind ~= "bar" and not Neuron.buttonEditMode then
 		self.StatusBar.CenterText:SetText(self:cFunc())
 		self.StatusBar.LeftText:SetText(self:lFunc())
 		self.StatusBar.RightText:SetText(self:rFunc())

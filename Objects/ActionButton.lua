@@ -821,7 +821,7 @@ end
 
 --overwrite function in parent class Button
 function ActionButton:UpdateVisibility(show)
-	if self:HasAction() or Neuron.dragging or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if self:HasAction() or Neuron.dragging or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.state.kind == "bar" or Neuron.bindingMode then
 		self.isShown = true
 	else
 		self.isShown = false

@@ -320,7 +320,7 @@ end
 
 --overwrite function in parent class Button
 function StatusButton:UpdateVisibility()
-	if Neuron.barEditMode or Neuron.buttonEditMode then
+	if Neuron.state.kind == "bar" or Neuron.buttonEditMode then
 		self.StatusBar:Show()
 		self.StatusBar:SetAlpha(1)
 	end
@@ -328,7 +328,7 @@ end
 
 --overwrite function in parent class Button
 function StatusButton:UpdateStatus()
-	if Neuron.barEditMode or Neuron.buttonEditMode then
+	if Neuron.state.kind == "bar" or Neuron.buttonEditMode then
 		self.StatusBar.CenterText:SetText("")
 		self.StatusBar.LeftText:SetText(self.typeString)
 		self.StatusBar.RightText:SetText("")

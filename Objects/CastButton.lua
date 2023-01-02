@@ -239,7 +239,7 @@ function CastButton:OnEvent(event,...)
 		self.StatusBar.Shield:Show()
 	end
 
-	if not Neuron.barEditMode and not Neuron.buttonEditMode then
+	if Neuron.state.kind ~= "bar" and not Neuron.buttonEditMode then
 		self.StatusBar.CenterText:SetText(self:cFunc())
 		self.StatusBar.LeftText:SetText(self:lFunc())
 		self.StatusBar.RightText:SetText(self:rFunc())
@@ -315,7 +315,7 @@ function CastButton:OnUpdate(elapsed)
 			self.flash = nil
 		end
 
-	elseif self.fadeout and (not Neuron.barEditMode and not Neuron.buttonEditMode) then
+	elseif self.fadeout and (Neuron.state.kind ~= "bar" and not Neuron.buttonEditMode) then
 		local alpha = self.StatusBar:GetAlpha() - CASTING_BAR_ALPHA_STEP
 		if alpha > 0 then
 			self.StatusBar:SetAlpha(alpha)
@@ -326,7 +326,7 @@ function CastButton:OnUpdate(elapsed)
 		self:Reset()
 	end
 
-	if not Neuron.barEditMode and not Neuron.buttonEditMode then
+	if Neuron.state.kind ~= "bar" and not Neuron.buttonEditMode then
 		self.StatusBar.CenterText:SetText(self:cFunc())
 		self.StatusBar.LeftText:SetText(self:lFunc())
 		self.StatusBar.RightText:SetText(self:rFunc())
@@ -350,7 +350,7 @@ function CastButton:Reset()
 	self.channeling = nil
 	self.StatusBar:SetStatusBarColor(self.config.castColor[1], self.config.castColor[2], self.config.castColor[3])
 
-	if not Neuron.barEditMode and not Neuron.buttonEditMode then
+	if Neuron.state.kind ~= "bar" and not Neuron.buttonEditMode then
 		self.StatusBar:Hide()
 	end
 end
