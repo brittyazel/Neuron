@@ -288,13 +288,14 @@ addonTable.databaseDefaults = {
 
 			BagBar = false,
 			CastBar = false,
-			ExitBar = false,
-			ExtraBar = false,
 			MenuBar = false,
 			MirrorBar = false,
 			PetBar = false,
 			RepBar = false,
 			XPBar = false,
+
+			ExtraBar = false,
+			ExitBar = false,
 			ZoneAbilityBar = false,
 		},
 
