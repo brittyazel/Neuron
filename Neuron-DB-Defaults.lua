@@ -286,9 +286,9 @@ addonTable.databaseDefaults = {
 			-- ActionBar is special: showing blizz action bars doesn't hide neuron action bars
 			ActionBar = false,
 
-			BagBar = false,
+			--BagBar = false,
 			CastBar = false,
-			MenuBar = false,
+			--MenuBar = false,
 			MirrorBar = false,
 			PetBar = false,
 			RepBar = false,

@@ -42,6 +42,8 @@ end
 
 --------------------------------------------------------
 
+--TODO: Bag bar seems totally broken after 10.0.5. The bar exists but none of the buttons are attached.
+
 function BagButton:InitializeButton()
 	if blizzBagButtons[self.id] then
 		self.hookedButton = blizzBagButtons[self.id]
