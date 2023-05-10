@@ -1,5 +1,5 @@
 -- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -19,6 +19,9 @@ local icon
 -------------------------------------------------------------------------
 function Neuron:Minimap_IconInitialize()
 	DB = Neuron.db.profile
+
+	--show new compartment icon even when minimap icon is disabled
+	DB.NeuronIcon.showInCompartment = true
 
 	neuronIconLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Neuron", {
 		type = "launcher",

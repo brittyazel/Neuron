@@ -1,5 +1,5 @@
 -- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -69,7 +69,6 @@ function Bar.new(class, barID)
 	newBar:SetWidth(375)
 	newBar:SetHeight(40)
 	newBar:EnableKeyboard(false)
-	newBar:SetPoint("CENTER", "UIParent", "CENTER", 0, 0)
 
 	newBar:SetScript("OnShow", function(self) self:OnShow() end)
 	newBar:SetScript("OnHide", function(self) self:OnHide() end)
