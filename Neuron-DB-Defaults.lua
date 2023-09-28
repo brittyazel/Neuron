@@ -1,5 +1,5 @@
 -- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -165,7 +165,6 @@ local genericMirrorBtnData= {
 local genericKeyData = {
 	hotKeyLock = false,
 	hotKeyPri = false,
-	hotKeyText = ":",
 	hotKeys = ":"
 }
 
@@ -287,15 +286,16 @@ addonTable.databaseDefaults = {
 			-- ActionBar is special: showing blizz action bars doesn't hide neuron action bars
 			ActionBar = false,
 
-			BagBar = false,
+			--BagBar = false,
 			CastBar = false,
-			ExitBar = false,
-			ExtraBar = false,
-			MenuBar = false,
+			--MenuBar = false,
 			MirrorBar = false,
 			PetBar = false,
 			RepBar = false,
 			XPBar = false,
+
+			ExtraBar = false,
+			ExitBar = false,
 			ZoneAbilityBar = false,
 		},
 
@@ -306,7 +306,7 @@ addonTable.databaseDefaults = {
 		NeuronItemCache = {},
 		NeuronSpellCache = {},
 
-		NeuronIcon = {hide = false,},
+		NeuronIcon = {hide = false},
 
 		ActionBar = {
 			['*'] = CopyTable(genericBarData)

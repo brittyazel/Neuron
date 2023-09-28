@@ -1,5 +1,5 @@
 -- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -26,8 +26,6 @@ function ZoneAbilityButton.new(bar, buttonID, defaults)
 	if defaults then
 		newButton:SetDefaults(defaults)
 	end
-
-	newButton:KeybindOverlay_CreateEditFrame()
 
 	return newButton
 end
@@ -73,7 +71,7 @@ end
 function ZoneAbilityButton:OnEvent(event, ...)
 	self:UpdateData();
 	if event == "PLAYER_ENTERING_WORLD" then
-		self:KeybindOverlay_ApplyBindings()
+		self:ApplyBindings()
 		self:UpdateIcon()
 	end
 end

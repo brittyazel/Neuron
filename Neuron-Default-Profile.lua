@@ -1,5 +1,5 @@
 -- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -29,7 +29,7 @@ addonTable.defaultProfile.ActionBar = {
 		override = true,
 
 		buttons = Array.map(
-			function(key) return { keys = { hotKeys = key, hotKeyText = key,}, } end,
+			function(key) return { keys = { hotKeys = key}, } end,
 			{ ":1:", ":2:", ":3:", ":4:", ":5:", ":6:", ":7:", ":8:", ":9:", ":0:", ":-:", ":=:",}
 		),
 	},

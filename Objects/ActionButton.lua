@@ -1,5 +1,5 @@
 ﻿-- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -61,8 +61,6 @@ function ActionButton.new(bar, buttonID, defaults)
 	if defaults then
 		newButton:SetDefaults(defaults)
 	end
-
-	newButton:KeybindOverlay_CreateEditFrame()
 
 	return newButton
 end
@@ -433,7 +431,7 @@ end
 
 function ActionButton:PLAYER_ENTERING_WORLD()
 	self:UpdateAll()
-	self:KeybindOverlay_ApplyBindings()
+	self:ApplyBindings()
 
 	-- if self.flyout then --this is a hack to get around CallPet not working on initial login. (weirdly it worked on /reload, but not login)
 	-- 	self:ScheduleTimer(function() self:InitializeButton() end, 1)

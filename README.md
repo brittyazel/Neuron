@@ -1,5 +1,5 @@
 # Neuron
-Neuron is a full featured action Bar addon for [World of Warcraft: Dragonflight](https://worldofwarcraft.com/en-us/), updated for Patch 10.0.0
+Neuron is a full-featured action Bar addon for [World of Warcraft: Dragonflight](https://worldofwarcraft.com/en-us/), updated for Patch 10.0.0
 
 
 ## Manual Install:
@@ -43,4 +43,4 @@ Installing Nix can probably be done from your package manage in Linux or WSL. Al
 
 ### Disclaimer:
 
-Neuron is a fork of the amazing *Ion Action Bars* addon started by Connor H. Chenoweth. All credit for the work done prior to 2017 should go to him, accordingly.
+Neuron is a continuation of the amazing *Ion Action Bars* addon started by Connor H. Chenoweth. All credit for the work done prior to 2017 should go to him, accordingly.

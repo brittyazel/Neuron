@@ -1,5 +1,5 @@
 -- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -19,7 +19,7 @@ function Neuron:RegisterBars(DB)
       objTemplate = Neuron.ActionButton,
       objMax = 250
     },
-    BagBar = {
+    --[[BagBar = {
       class = "BagBar",
       barType = "BagBar",
       barLabel = L["Bag Bar"],
@@ -27,8 +27,8 @@ function Neuron:RegisterBars(DB)
       barDB = DB.BagBar,
       objTemplate = Neuron.BagButton,
       objMax = Neuron.NUM_BAG_BUTTONS
-    },
-    MenuBar = {
+    },]]
+   --[[MenuBar = {
       class = "MenuBar",
       barType = "MenuBar",
       barLabel = L["Menu Bar"],
@@ -36,7 +36,7 @@ function Neuron:RegisterBars(DB)
       barDB = DB.MenuBar,
       objTemplate = Neuron.MenuButton,
       objMax = 11
-    },
+    },]]
     PetBar = {
       class = "PetBar",
       barType = "PetBar",

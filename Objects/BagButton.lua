@@ -1,5 +1,5 @@
 -- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -41,6 +41,8 @@ function BagButton.new(bar, buttonID, defaults)
 end
 
 --------------------------------------------------------
+
+--TODO: Bag bar seems totally broken after 10.0.5. The bar exists but none of the buttons are attached.
 
 function BagButton:InitializeButton()
 	if blizzBagButtons[self.id] then

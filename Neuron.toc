@@ -1,9 +1,9 @@
-## Interface: 100002
+## Interface: 100100
+## Interface-Wrath: 30401
 ## Interface-Classic: 11403
-## Interface-BCC: 20504
-## Interface-Wrath: 30400
 ## Title: Neuron
 ## Notes: A macro-based action bar and object manager add-on
+## IconTexture: Interface\AddOns\Neuron\Images\static_icon.tga
 ## Author: Britt W. Yazel
 ## Version: @project-version@
 ## DefaultState: enabled
@@ -17,7 +17,6 @@
 ## X-Wago-ID: e56n1AN9
 ## X-WoWI-ID: 10636
 
-
 Libs\embeds.xml
 Localizations\Neuron_Localizations.xml
 
@@ -25,6 +24,7 @@ Utilities\Array.lua
 Utilities\Spec.lua
 Utilities\DB-Fixer.lua
 
+Overlay\ButtonBinder.lua
 Overlay\ButtonEditor.lua
 Overlay\BarEditor.lua
 
@@ -33,9 +33,7 @@ Neuron.lua
 Neuron-States.lua
 Neuron-RegisteredBarData.lua
 
-
 Objects\Button.lua
-Objects\Button_KeybindOverlay.lua
 Objects\Bar.lua
 Objects\ActionButton.lua
 Objects\ActionButton_DragAndDrop.lua

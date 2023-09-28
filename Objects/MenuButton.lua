@@ -1,5 +1,5 @@
 -- Neuron is a World of Warcraft® user interface addon.
--- Copyright (c) 2017-2021 Britt W. Yazel
+-- Copyright (c) 2017-2023 Britt W. Yazel
 -- Copyright (c) 2006-2014 Connor H. Chenoweth
 -- This code is licensed under the MIT license (see LICENSE for details)
 
@@ -49,15 +49,7 @@ end
 ---------------------------------------------------------
 
 function MenuButton:InitializeButton()
-	if Neuron.isWoWRetail then
-		if not self:IsEventRegistered("PET_BATTLE_CLOSE") then --only run this code on the first InitializeButton, not the reloads after pet battles and such
-			self:RegisterEvent("PET_BATTLE_CLOSE")
-		end
-
-		if not Neuron:IsHooked("MoveMicroButtons") then --we need to intercept MoveMicroButtons for during pet battles
-			Neuron:RawHook("MoveMicroButtons", function(...) MenuButton.ModifiedMoveMicroButtons(...) end, true)
-		end
-	end
+	--TODO: Pet battles and anything using the vehicle bar will be missing these menu buttons.
 
 	if blizzMenuButtons[self.id] then
 		self:SetWidth(blizzMenuButtons[self.id]:GetWidth()-2)
@@ -82,30 +74,6 @@ function MenuButton:InitializeButtonSettings()
 	self:SetScale(self.bar:GetBarScale())
 	self.isShown = true
 end
-
-function MenuButton:PET_BATTLE_CLOSE()
-	---we have to reload InitializeButton to put the buttons back at the end of the pet battle
-	self:InitializeButton()
-end
-
----this overwrites the default MoveMicroButtons and basically just extends it to reposition all the other buttons as well, not just the 1st and 6th.
----This is necessary for petbattles, otherwise there's no menubar
-function MenuButton.ModifiedMoveMicroButtons(anchor, anchorTo, relAnchor, x, y, isStacked)
-	blizzMenuButtons[1]:ClearAllPoints();
-	blizzMenuButtons[1]:SetPoint(anchor, anchorTo, relAnchor, x-3, y-1);
-
-	for i=2,#blizzMenuButtons do
-		blizzMenuButtons[i]:ClearAllPoints();
-		blizzMenuButtons[i]:SetPoint("BOTTOMLEFT", blizzMenuButtons[i-1], "BOTTOMRIGHT", -1,0)
-		if isStacked and i == 7 then
-			blizzMenuButtons[7]:ClearAllPoints();
-			blizzMenuButtons[7]:SetPoint("TOPLEFT", blizzMenuButtons[1], "BOTTOMLEFT", 0,2)
-		end
-	end
-
-	UpdateMicroButtons();
-end
-
 
 -----------------------------------------------------
 --------------------- Overrides ---------------------
