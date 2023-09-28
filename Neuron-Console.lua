@@ -72,7 +72,7 @@ function Neuron:slashHandler(input)
 	end
 
 	--somewhat of a hack to insert a "true" as an arg if trying to toggle the edit modes
-	if command == "config" and Neuron.barEditMode == false then
+	if command == "config" and Neuron.state.kind ~= "bar" then
 		args[1] = true
 	end
 	if command == "edit" and Neuron.buttonEditMode == false then

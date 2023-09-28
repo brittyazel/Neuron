@@ -11,7 +11,9 @@ local DBFixer = addonTable.utilities.DBFixer
 local Array = addonTable.utilities.Array
 local ButtonBinder = addonTable.overlay.ButtonBinder
 local ButtonEditor = addonTable.overlay.ButtonEditor
-local BarEditor = addonTable.overlay.BarEditor
+
+---@type EditMode
+local EditMode = addonTable.controller.EditMode
 
 ---@class Neuron : AceAddon-3.0 @define The main addon object for the Neuron Action Bar addon
 addonTable.Neuron = LibStub("AceAddon-3.0"):NewAddon(CreateFrame("Frame", nil, UIParent), "Neuron", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0", "AceTimer-3.0", "AceSerializer-3.0")
@@ -33,7 +35,6 @@ Neuron.registeredBarData = {}
 Neuron.itemCache = {} --Stores a cache of all items that have been seen by a Neuron button
 Neuron.spellCache = {} --Stores a cache of all spells that have been seen by a Neuron button
 
-Neuron.barEditMode = false
 Neuron.buttonEditMode = false
 Neuron.bindingMode = false
 
@@ -54,6 +55,11 @@ Neuron.TIMERLIMIT = 4
 Neuron.SNAPTO_TOLERANCE = 28
 
 Neuron.DEBUG = true
+
+---@type EditModeState
+Neuron.state = {
+	guiState = { kind = "off" },
+}
 
 -------------------------------------------------------------------------
 --------------------Start of Functions-----------------------------------
@@ -121,29 +127,6 @@ function Neuron:OnEnable()
 
 	Neuron:UpdateStanceStrings()
 
-	--this allows for the "Esc" key to disable the Edit Mode instead of bringing up the game menu, but only if an edit mode is activated.
-
-	if not Neuron:IsHooked(GameMenuFrame, "OnUpdate") then
-		Neuron:HookScript(GameMenuFrame, "OnUpdate", function(self)
-
-			if Neuron.barEditMode then
-				HideUIPanel(self)
-				Neuron:ToggleBarEditMode(false)
-			end
-
-			if Neuron.buttonEditMode then
-				HideUIPanel(self)
-				Neuron:ToggleButtonEditMode(false)
-			end
-
-			if Neuron.bindingMode then
-				HideUIPanel(self)
-				Neuron:ToggleBindingMode(false)
-			end
-
-		end)
-	end
-
 	Neuron:LoginMessage()
 
 	--Load all bars and buttons
@@ -169,17 +152,15 @@ end
 
 -------------------------------------------------
 
+--entering combat
 function Neuron:PLAYER_REGEN_DISABLED()
+	Neuron.state = EditMode.exit(Neuron.state)
 	if Neuron.buttonEditMode then
 		Neuron:ToggleButtonEditMode(false)
 	end
 
 	if Neuron.bindingMode then
 		Neuron:ToggleBindingMode(false)
-	end
-
-	if Neuron.barEditMode then
-		Neuron:ToggleBarEditMode(false)
 	end
 end
 
@@ -372,47 +353,6 @@ function Neuron:ToggleMainMenu()
 	InterfaceOptionsFrame_OpenToCategory("Neuron");
 end
 
-function Neuron:ToggleBarEditMode(show)
-	if show then
-		Neuron.barEditMode = true
-		Neuron:ToggleButtonEditMode(false)
-		Neuron:ToggleBindingMode(false)
-
-		for _, bar in pairs(Neuron.bars) do
-			bar.editFrame =
-				bar.editFrame or
-				BarEditor.allocate(bar, function(overlay, button, down)
-					overlay.bar:OnClick(button, down)
-				end)
-
-			bar:UpdateObjectVisibility(true)
-			bar:UpdateBarStatus(true)
-			bar:UpdateObjectStatus()
-		end
-
-		--if there is no bar selected, default to the first in the BarList
-		--TODO: This logic may be unintuitive. Should probably be fixed
-		if not Neuron.currentBar and #Neuron.bars then
-			Neuron.Bar.ChangeSelectedBar(Neuron.bars[1])
-		elseif Neuron.currentBar then
-			BarEditor.activate(Neuron.currentBar.editFrame)
-		end
-	else
-		Neuron.barEditMode = false
-		for _, bar in pairs(Neuron.bars) do
-			local overlay = bar.editFrame
-			bar.editFrame = nil
-			if overlay then
-				BarEditor.free(overlay)
-			end
-
-			bar:UpdateObjectVisibility()
-			bar:UpdateBarStatus()
-			bar:UpdateObjectStatus()
-		end
-	end
-end
-
 function Neuron:ToggleButtonEditMode(show)
 	local isActionBar = function(bar)
 		return bar and bar.class == "ActionBar"
@@ -436,7 +376,6 @@ function Neuron:ToggleButtonEditMode(show)
 	if show then
 		Neuron.buttonEditMode = true
 
-		Neuron:ToggleBarEditMode(false)
 		Neuron:ToggleBindingMode(false)
 
 		local currentButton =
@@ -566,7 +505,6 @@ function Neuron:ToggleBindingMode(show)
 	if show then
 		Neuron.bindingMode = true
 		Neuron:ToggleButtonEditMode(false)
-		Neuron:ToggleBarEditMode(false)
 
 		for _, bar in pairs(bars) do
 			for _, button in pairs(bar.buttons) do

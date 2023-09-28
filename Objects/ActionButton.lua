@@ -75,7 +75,7 @@ function ActionButton:InitializeButton()
 	end
 
 	self:SetAttribute("type", "macro")
-	self:SetAttribute("*macrotext*", self.SanitizedMacro(self:GetMacroText()))
+	self:SetAttribute("*macrotext*", ActionButton.SanitizedMacro(self:GetMacroText()))
 
 	self:SetAttribute("hotkeypri", self.keys.hotKeyPri)
 	self:SetAttribute("hotkeys", self.keys.hotKeys)
@@ -811,8 +811,8 @@ function ActionButton:UpdateData()
 		return
 	end
 
-	local cleanMacro = self.SanitizedMacro(self:GetMacroText())
-	local spellItemUnit = self.ExtractMacroData(cleanMacro)
+	local cleanMacro = ActionButton.SanitizedMacro(self:GetMacroText())
+	local spellItemUnit = ActionButton.ExtractMacroData(cleanMacro)
 	self.spell = spellItemUnit.spell
 	self.spellID = spellItemUnit.spellID
 	self.item = spellItemUnit.item
@@ -821,7 +821,7 @@ end
 
 --overwrite function in parent class Button
 function ActionButton:UpdateVisibility(show)
-	if self:HasAction() or Neuron.dragging or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.barEditMode or Neuron.bindingMode then
+	if self:HasAction() or Neuron.dragging or show or self.bar:GetShowGrid() or Neuron.buttonEditMode or Neuron.state.kind == "bar" or Neuron.bindingMode then
 		self.isShown = true
 	else
 		self.isShown = false
@@ -865,7 +865,7 @@ function ActionButton:UpdateIcon()
 	)
 	data.actionID = self.actionID -- this is for vehicle, possession, etc
 
-	self:ApplyAppearance(self:GetAppearance(data))
+	self:ApplyAppearance(ActionButton.GetAppearance(data))
 
 	--make sure our button gets the correct Normal texture if we're not using a Masque skin
 	self:UpdateNormalTexture()
@@ -876,17 +876,17 @@ end
 
 --- @param data GenericSpecData
 --- @return TextureRef, Border an icon texture, and an rgb tuple, both nilable
-function ActionButton:GetAppearance(data)
-	local spellItem = self.ExtractMacroData(self.SanitizedMacro(data.macro_Text))
+function ActionButton.GetAppearance(data)
+	local spellItem = ActionButton.ExtractMacroData(ActionButton.SanitizedMacro(data.macro_Text))
 	local spell, item = spellItem.spell, spellItem.item
 	local texture, border
 
 	if data.actionID then
-		return self.GetActionAppearance(data.actionID)
+		return ActionButton.GetActionAppearance(data.actionID)
 	elseif spell then
-		texture, border = self.GetSpellAppearance(spell)
+		texture, border = ActionButton.GetSpellAppearance(spell)
 	elseif item then
-		texture, border = self.GetItemAppearance(item)
+		texture, border = ActionButton.GetItemAppearance(item)
 	-- macro must go after spells and items, for blizz macro #showtooltip to work
 	elseif data.macro_Icon then
 		texture, border = data.macro_Icon, nil

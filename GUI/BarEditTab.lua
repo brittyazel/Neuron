@@ -17,10 +17,9 @@ local selectedBarType --remember which bar type was selected for creating new ba
 -----------------------------------------------------------------------------
 --------------------------Bar Editor-----------------------------------------
 -----------------------------------------------------------------------------
-function NeuronGUI:BarEditPanel(tabFrame)
-
-	Neuron:ToggleBarEditMode(true)
-
+---@param currentBar Bar
+---@param tabFrame Frame
+function NeuronGUI:BarEditPanel(currentBar, tabFrame)
 	-------------------------------
 	--Container for the top Row
 	local topRow = AceGUI:Create("SimpleGroup")
@@ -47,9 +46,9 @@ function NeuronGUI:BarEditPanel(tabFrame)
 	local barListDropdown = AceGUI:Create("Dropdown")
 	barListDropdown:SetWidth(180)
 	barListDropdown:SetLabel("Switch selected bar:")
-	barListDropdown:SetText(Neuron.currentBar:GetBarName() or "")
+	barListDropdown:SetText(currentBar:GetBarName() or "")
 	barListDropdown:SetList(barList) --assign the bar type table to the dropdown menu
-	barListDropdown:SetCallback("OnValueChanged", function(self, callBackType, key) Neuron.Bar.ChangeSelectedBar(key); NeuronGUI:RefreshEditor() end)
+	barListDropdown:SetCallback("OnValueChanged", function(_, _, key) Neuron.Bar.ChangeSelectedBar(key); NeuronGUI:RefreshEditor() end)
 	topRow:AddChild(barListDropdown)
 
 	-------------------------------
@@ -78,7 +77,7 @@ function NeuronGUI:BarEditPanel(tabFrame)
 		barTypeDropdown:SetText("- select a bar type -")
 	end
 	barTypeDropdown:SetList(barTypes) --assign the bar type table to the dropdown menu
-	barTypeDropdown:SetCallback("OnValueChanged", function(self, callBackType, key) selectedBarType = key; newBarButton:SetDisabled(false) end)
+	barTypeDropdown:SetCallback("OnValueChanged", function(_, _, key) selectedBarType = key; newBarButton:SetDisabled(false) end)
 	topRow:AddChild(barTypeDropdown)
 
 	-------------------------------
@@ -106,48 +105,43 @@ function NeuronGUI:BarEditPanel(tabFrame)
 	------ Settings Tab Group -------
 	---------------------------------
 
-	if Neuron.currentBar then
-		--Tab group that will contain all of our settings to configure
-		local innerTabFrame = AceGUI:Create("TabGroup")
-		innerTabFrame:SetLayout("Fill")
-		innerTabFrame:SetFullHeight(true)
-		innerTabFrame:SetFullWidth(true)
-		--only show the states tab if the bar is an ActionBar
-		if Neuron.currentBar.class=="ActionBar" then
-			innerTabFrame:SetTabs({{text="General Configuration", value="general"}, {text="Bar States", value="states"}, {text="Bar Visibility", value="visibility"}})
-		else
-			innerTabFrame:SetTabs({{text="General Configuration", value="general"}, {text="Bar Visibility", value="visibility"}})
-			if currentTab == "states" then
-				currentTab = "general"
-			end
-		end
-		innerTabFrame:SetCallback("OnGroupSelected", function(self, _, value) NeuronGUI:SelectInnerBarTab(self, _, value) end)
-		tabFrame:AddChild(innerTabFrame)
-
-		innerTabFrame:SelectTab(currentTab)
+	--Tab group that will contain all of our settings to configure
+	local innerTabFrame = AceGUI:Create("TabGroup")
+	innerTabFrame:SetLayout("Fill")
+	innerTabFrame:SetFullHeight(true)
+	innerTabFrame:SetFullWidth(true)
+	--only show the states tab if the bar is an ActionBar
+	if currentBar.class=="ActionBar" then
+		innerTabFrame:SetTabs({{text="General Configuration", value="general"}, {text="Bar States", value="states"}, {text="Bar Visibility", value="visibility"}})
 	else
-		local selectBarMessage = AceGUI:Create("Label")
-		selectBarMessage:SetText("Please select a bar to continue")
-		selectBarMessage:SetFont("Fonts\\FRIZQT__.TTF", 30)
-		tabFrame:AddChild(selectBarMessage)
+		innerTabFrame:SetTabs({{text="General Configuration", value="general"}, {text="Bar Visibility", value="visibility"}})
+		if currentTab == "states" then
+			currentTab = "general"
+		end
 	end
+	innerTabFrame:SetCallback("OnGroupSelected", function(callbackFrame, _, value) NeuronGUI:SelectInnerBarTab(currentBar, callbackFrame, value) end)
+	tabFrame:AddChild(innerTabFrame)
+
+	innerTabFrame:SelectTab(currentTab)
 end
 
 -----------------------------------------------------------------------------
 ----------------------Inner Tab Frame----------------------------------------
 -----------------------------------------------------------------------------
 
-function NeuronGUI:SelectInnerBarTab(tabFrame, _, value)
-	local registeredGUIData = Neuron:RegisterGUI()
+---@param bar Bar
+---@param tabFrame Frame
+---@param value "general"|"states"|"visibility"
+function NeuronGUI:SelectInnerBarTab(bar, tabFrame, value)
 	tabFrame:ReleaseChildren()
 	if value == "general" then
-		NeuronGUI:GeneralConfigPanel(tabFrame, registeredGUIData)
+		NeuronGUI:GeneralConfigPanel(bar, tabFrame)
 		currentTab = "general"
 	elseif value == "states" then
-		NeuronGUI:BarStatesPanel(tabFrame)
+		NeuronGUI:BarStatesPanel(bar, tabFrame)
 		currentTab = "states"
 	elseif value == "visibility" then
-		NeuronGUI:BarVisibilityPanel(tabFrame)
+		NeuronGUI:BarVisibilityPanel(bar, tabFrame)
 		currentTab = "visibility"
 	end
 end

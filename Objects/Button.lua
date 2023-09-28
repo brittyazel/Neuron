@@ -427,7 +427,7 @@ function Button:UpdateNormalTexture()
 end
 
 function Button:UpdateVisibility()
-	if self.isShown or Neuron.barEditMode or (Neuron.buttonEditMode and self.editFrame) or (Neuron.bindingMode and self.keybindFrame) then
+	if self.isShown or Neuron.state.kind == "bar" or (Neuron.buttonEditMode and self.editFrame) or (Neuron.bindingMode and self.keybindFrame) then
 		self.isShown = true
 	else
 		self.isShown = false

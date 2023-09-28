@@ -10,6 +10,8 @@ local Spec = addonTable.utilities.Spec
 local BarEditor = addonTable.overlay.BarEditor
 
 ---@class Bar : CheckButton @This is our bar object that serves as the container for all of our button objects
+---@field data GenericBarData
+---@field class "ActionBar"|"BagBar"|"MenuBar"|"PetBar"|"XPBar"|"RepBar"|"CastBar"|"MirrorBar"|"ZoneAbilityBar"|"ExtraBar"|"ExitBar"
 local Bar = setmetatable({}, {__index = CreateFrame("CheckButton")}) --this is the metatable for our button object
 Neuron.Bar = Bar
 
@@ -340,7 +342,7 @@ end
 ---this function is set via a repeating scheduled timer in SetAutoHide()
 function Bar:AutoHideUpdate()
 	if self:GetAutoHide() and self.handler~=nil then
-		if not Neuron.buttonEditMode and not Neuron.barEditMode and not Neuron.bindingMode then
+		if not Neuron.buttonEditMode and Neuron.state.kind ~= "bar" and not Neuron.bindingMode then
 			if self:IsShown() then
 				self.handler:SetAlpha(1)
 			else
@@ -1195,24 +1197,6 @@ end
 ------------------------OnEvent Functions-----------------------------
 ----------------------------------------------------------------------
 
-function Bar:OnClick(click, down)
-	if not down then
-		Bar.ChangeSelectedBar(self)
-	end
-
-	if IsShiftKeyDown() and not down then
-		BarEditor.microadjust(self.editFrame)
-	elseif click == "RightButton" and not down then
-		if not addonTable.NeuronEditor then
-			Neuron.NeuronGUI:CreateEditor()
-		end
-	end
-
-	if addonTable.NeuronEditor then
-		Neuron.NeuronGUI:RefreshEditor()
-	end
-end
-
 function Bar:OnShow()
 	self.handler:SetAttribute("editmode", true)
 	self.handler:Show()
@@ -1654,7 +1638,8 @@ function Bar:SetTooltipOption(option)
 end
 
 function Bar:GetTooltipOption()
-	return self.data.tooltips
+	-- fallback to "off" in case there is some falsey value of this in the db somewhere
+	return self.data.tooltips or "off"
 end
 
 function Bar:SetTooltipCombat(checked)

@@ -7,6 +7,10 @@ local _, addonTable = ...
 
 ---**NOTE** values assigned with empty quotes, i.e. name = "", basically don't exist. Lua treats them as nil
 
+---@class GenericButtonData
+---@field btnType "macro"
+
+---@type GenericButtonData
 local genericButtonData = {
 	btnType = "macro",
 }
@@ -162,6 +166,12 @@ local genericMirrorBtnData= {
 }
 
 
+---@class GenericKeyData
+---@field hotKeyLock boolean
+---@field hotKeyPri boolean
+---@field hotKeys string
+
+---@type GenericKeyData
 local genericKeyData = {
 	hotKeyLock = false,
 	hotKeyPri = false,
@@ -169,6 +179,82 @@ local genericKeyData = {
 }
 
 
+---@class GenericBarData
+---@field actionID number|false|nil
+---@field name string
+---@field buttons {config: GenericButtonData, keys: GenericKeyData, data: any}[],
+---@field hidestates string
+---@field point string
+---@field x number
+---@field y number
+---@field scale number
+---@field shape "linear"|"circle"|"circle + one"
+---@field columns number
+---@field alpha number
+---@field alphaUp "off"|"mouseover"|"combat"|"combat + mouseover"
+---@field alphaMax number
+---@field fadeSpeed number
+---@field strata number
+---@field padH number
+---@field padV number
+---@field arcStart number
+---@field arcLength number
+---@field snapTo boolean
+---@field snapToPad number
+---@field snapToPoint boolean
+---@field snapToFrame boolean
+---@field autoHide boolean
+---@field showGrid boolean
+---@field bindColor {[1]:number,[2]:number,[3]:number}
+---@field macroColor {[1]:number,[2]:number,[3]:number}
+---@field countColor {[1]:number,[2]:number,[3]:number}
+---@field cdcolor1 {[1]:number,[2]:number,[3]:number}
+---@field cdcolor2 {[1]:number,[2]:number,[3]:number}
+---@field rangecolor {[1]:number,[2]:number,[3]:number}
+---@field manacolor {[1]:number,[2]:number,[3]:number}
+---@field border boolean
+---@field clickMode "UpClick"|"DownClick"
+---@field conceal boolean
+---@field multiSpec boolean
+---@field spellGlow "default"|"alternate"|false
+---@field barLock "shift"|"ctrl"|"alt"|false
+---@field tooltips "normal"|"minimal"|"off"
+---@field tooltipsCombat boolean
+---@field bindText boolean
+---@field buttonText boolean
+---@field countText boolean
+---@field rangeInd boolean
+---@field cdText boolean
+---@field cdAlpha boolean
+---@field showBorderStyle boolean
+---@field homestate boolean
+---@field paged boolean
+---@field stance boolean
+---@field stealth boolean
+---@field reaction boolean
+---@field combat boolean
+---@field group boolean
+---@field pet boolean
+---@field fishing boolean
+---@field vehicle boolean
+---@field possess boolean
+---@field dragonriding boolean
+---@field override boolean
+---@field extrabar boolean
+---@field alt boolean
+---@field ctrl boolean
+---@field shift boolean
+---@field target boolean
+---@field selfCast boolean
+---@field focusCast boolean
+---@field rightClickTarget boolean
+---@field mouseOverCast boolean
+---@field custom boolean
+---@field customRange boolean
+---@field customNames boolean
+---@field remap boolean
+
+---@type GenericBarData
 local genericBarData = {
 	name = ":",
 

@@ -13,15 +13,16 @@ local AceGUI = LibStub("AceGUI-3.0")
 local Array = addonTable.utilities.Array
 
 
+---@param bar Bar
 ---@return Frame @a dropdown widget
-local function actionPrimaryBarKindOptions()
+local function actionPrimaryBarKindOptions(bar)
   local barKinds =
     Array.map(
       function(state) return state[1] end,
     Array.fromIterator(pairs(Neuron.MANAGED_HOME_STATES)))
   local currentKind = Array.foldl(
     function (kind, candidate)
-      return Neuron.currentBar.data[candidate] and candidate or kind
+      return bar.data[candidate] and candidate or kind
     end,
     "none",
     barKinds
@@ -44,18 +45,19 @@ local function actionPrimaryBarKindOptions()
   barKindDropdown:SetCallback("OnValueChanged", function(_, _, key)
     if key == "none" then
       for _,kind in ipairs(barKinds) do
-        Neuron.currentBar:SetState(kind, true, false)
+        bar:SetState(kind, true, false)
       end
     else
-      Neuron.currentBar:SetState(key, true, true)
+      bar:SetState(key, true, true)
     end
   end)
 
   return barKindDropdown
 end
 
+---@param bar Bar
 ---@return Frame @a group containing checkboxes
-local function actionSecondaryStateOptions()
+local function actionSecondaryStateOptions(bar)
   local stateList =
     Array.map(
       function(state) return state[1] end,
@@ -75,9 +77,9 @@ local function actionSecondaryStateOptions()
   for _,state in ipairs(stateList) do
     local checkbox = AceGUI:Create("CheckBox")
     checkbox:SetLabel(Neuron.MANAGED_SECONDARY_STATES[state].localizedName)
-    checkbox:SetValue(Neuron.currentBar.data[state])
+    checkbox:SetValue(bar.data[state])
     checkbox:SetCallback("OnValueChanged", function(_,_,value)
-      Neuron.currentBar:SetState(state, true, value)
+      bar:SetState(state, true, value)
     end)
     secondaryStatesContainer:AddChild(checkbox)
   end
@@ -85,16 +87,17 @@ local function actionSecondaryStateOptions()
   return secondaryStatesContainer
 end
 
+---@param bar Bar
 ---@param tabFrame Frame
-function NeuronGUI:BarStatesPanel(tabFrame)
+function NeuronGUI:BarStatesPanel(bar, tabFrame)
   -- weird stuff happens if we don't wrap this in a group
   -- like dropdowns showing at the bottom of the screen and stuff
 	local settingContainer = AceGUI:Create("SimpleGroup")
 	settingContainer:SetFullWidth(true)
 	settingContainer:SetLayout("Flow")
 
-  settingContainer:AddChild(actionPrimaryBarKindOptions())
-  settingContainer:AddChild(actionSecondaryStateOptions())
+  settingContainer:AddChild(actionPrimaryBarKindOptions(bar))
+  settingContainer:AddChild(actionSecondaryStateOptions(bar))
 
   tabFrame:AddChild(settingContainer)
 end
