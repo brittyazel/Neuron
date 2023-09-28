@@ -73,7 +73,8 @@ function MirrorButton:OnEvent(event, ...)
 
 	elseif event == "PLAYER_ENTERING_WORLD" then --this doesn't seem to be working as of 8.0, all report as UNKNOWN
 		local type, value, maxvalue, scale, paused, label
-		for i=1, MIRRORTIMER_NUMTIMERS do
+		-- This used to do a look up to grab 
+		for i=1, 3 do
 			type, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(i)
 			if type ~= "UNKNOWN" then
 				self:Start(type, value, maxvalue, scale, paused, label)
